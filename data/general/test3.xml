@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="test3.xsd" id="s">
+    <!-- mixed content -->
+    <info> info_outer <test id="s">
+            <info>info_inner</info>
+    </test>
+        XxX
+    </info>
+</test>

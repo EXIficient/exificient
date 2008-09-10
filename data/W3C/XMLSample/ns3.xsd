@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.dft1.xyz.com" xmlns:nsp="http://www.pok.xyz.com" xmlns:ns1="http://www.dft2.xyz.com" xmlns:ns2="http://www.abc.xyz.com" xmlns:ns3="http://www.dft1.xyz.com" xmlns:nss="http://www.svl.xyz.com">
+  <xs:import schemaLocation="XMLSample.xsd"/>
+  <xs:import namespace="http://www.abc.xyz.com" schemaLocation="ns2.xsd"/>
+  <xs:import namespace="http://www.dft2.xyz.com" schemaLocation="ns1.xsd"/>
+  <xs:import namespace="http://www.pok.xyz.com" schemaLocation="nsp.xsd"/>
+  <xs:import namespace="http://www.svl.xyz.com" schemaLocation="nss.xsd"/>
+  <xs:element name="person">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ns3:name"/>
+        <xs:element ref="ns3:email"/>
+        <xs:element ref="ns3:YearsOfService"/>
+        <xs:element ref="ns3:weight"/>
+        <xs:element ref="ns3:birthday"/>
+        <xs:element ref="ns3:link"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="name">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="ns1:family"/>
+        <xs:element ref="given"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="email" type="xs:string"/>
+  <xs:element name="YearsOfService" type="xs:int"/>
+  <xs:element name="weight" type="xs:float"/>
+  <xs:element name="birthday" type="xs:date"/>
+  <xs:element name="link">
+    <xs:complexType>
+      <xs:attribute name="manager" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
