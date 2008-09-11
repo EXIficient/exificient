@@ -32,6 +32,7 @@ import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
+import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.util.ExpandedName;
@@ -136,6 +137,113 @@ public class EventCodeTest extends TestCase
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "unknown" );
 		assertTrue( r.get1stLevelEventCode ( ev, fo ) == Constants.NOT_FOUND );
 		
+	}
+	
+	public void testEventCodeEXISpecExample() throws Exception
+	{
+		// http://www.w3.org/XML/Group/EXI/docs/format/exi.html#example
+		
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>" +
+		" <xs:element name='product'>" +
+		"  <xs:complexType>" +
+		"   <xs:sequence maxOccurs='2'>" +
+		"    <xs:element name='description' type='xs:string' minOccurs='0'/> " +
+		"    <xs:element name='quantity' type='xs:integer' /> " +
+		"    <xs:element name='price' type='xs:float' />  " +
+		"   </xs:sequence>" +
+		"   <xs:attribute name='sku' type='xs:string' use='required' />   " +
+		"   <xs:attribute name='color' type='xs:string' use='optional' />   " +
+		"  </xs:complexType>" +
+		" </xs:element>" +
+		"" +    
+		" <xs:element name='order'>" +
+		"  <xs:complexType> " +
+		"   <xs:sequence> " +
+		"     <xs:element ref='product' maxOccurs='unbounded' /> " +
+		"   </xs:sequence>" +
+		"  </xs:complexType>" +
+		" </xs:element>" +
+		"</xs:schema>"
+		;
+
+
+		Grammar g = getGrammarFromSchemaAsString ( schema );
+		
+		ElementKey elKey = new ElementKey ( new ExpandedName ( "", "product" ) );
+		Rule Use_color_0 = g.getRule ( elKey );
+		
+		//	default fidelity options
+		FidelityOptions fo = FidelityOptions.createDefault ( );
+
+		Event ev;
+		
+		//	### Use_color_0 ###
+		//	1st level
+		assertTrue ( Use_color_0.get1stLevelCharacteristics ( fo ) == 3 );
+		// AT( color )
+		ev = new Attribute( XMLConstants.NULL_NS_URI, "color" );
+		assertTrue( Use_color_0.get1stLevelEventCode ( ev, fo ) == 0 );
+		// AT( sku )
+		ev = new Attribute( XMLConstants.NULL_NS_URI, "sku" );
+		assertTrue( Use_color_0.get1stLevelEventCode ( ev, fo ) == 1 );
+		//	2nd level
+		assertTrue ( Use_color_0.get2ndLevelCharacteristics ( fo ) == 7 );
+		//	EE  	2.0
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.END_ELEMENT_UNDECLARED, fo ) == 0 );
+		//	AT(xsi:type) Use_color 0	2.1
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_TYPE, fo ) == 1 );
+		//	AT(xsi:nil) Use_color 0	2.2
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_NIL, fo ) == 2 );
+		//	AT(*) Use_color 0	2.3
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED, fo ) == 3 );
+		//	TODO schema invalid value
+		//	AT [schema-invalid value] Use_color 0	2.4.x
+		// assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE, fo ) == 4 );	
+		// AT("color") [schema-invalid value] Use_color 0	2.4.0
+		// AT("sku") [schema-invalid value] Use_color 0	2.4.1
+		// AT(*) [schema-invalid value] Use_color 0	2.4.2
+		//	SE(*) Use_sku 1	2.5
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.START_ELEMENT_GENERIC_UNDECLARED, fo ) == 5 );
+		//	CH [schema-invalid value] Use_sku 1	2.6
+		assertTrue( Use_color_0.get2ndLevelEventCode ( EventType.CHARACTERS_GENERIC_UNDECLARED, fo ) == 6 );
+
+		
+		//	### Use_color_1 ###
+		Rule Use_color_1 = Use_color_0.get1stLevelRule ( 0 );
+		//	1st level
+		assertTrue ( Use_color_1.get1stLevelCharacteristics ( fo ) == 2 );
+		// AT( sku )
+		ev = new Attribute( XMLConstants.NULL_NS_URI, "sku" );
+		assertTrue( Use_color_1.get1stLevelEventCode ( ev, fo ) == 0 );
+		
+		
+		//	### Use_sku_1 ###
+		Rule Use_sku_1 = Use_color_1.get1stLevelRule ( 0 );
+		//	1st level
+		assertTrue ( Use_sku_1.get1stLevelCharacteristics ( fo ) == 3 );
+		// SE( description )
+		ev = new StartElement( XMLConstants.NULL_NS_URI, "description" );
+		assertTrue( Use_sku_1.get1stLevelEventCode ( ev, fo ) == 0 );
+		// SE( quantity )
+		ev = new StartElement( XMLConstants.NULL_NS_URI, "quantity" );
+		assertTrue( Use_sku_1.get1stLevelEventCode ( ev, fo ) == 1 );	
+		
+		
+		//	### Term_description0_1 ###
+
+		//	### Term_quantity0_1 ###
+
+		//	### Term_price0_1 ###		
+
+		//	### Term_description1_1 ###
+
+		//	### Term_quantity1_1 ###
+		
+		//	### Term_price1_1 ###
+		
+		//	### Term_product0_0 ###
+		
+		//	### Term_product1_0 ###
 	}
 
 }
