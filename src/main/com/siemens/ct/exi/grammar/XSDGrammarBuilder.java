@@ -81,7 +81,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080911
  */
 
 /*
@@ -92,9 +92,9 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 public class XSDGrammarBuilder implements DOMErrorHandler
 {
-	protected Map<ElementKey, Rule>					elementDispatcher;
+	protected Map<ElementKey, Rule>						elementDispatcher;
 
-	protected Map<ExpandedName, TypeGrammar>		grammarTypes;
+	protected Map<ExpandedName, TypeGrammar>			grammarTypes;
 
 	// ////////////////
 
@@ -121,6 +121,12 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 	private List<XSElementDeclaration>					outstandingElements;
 	private Map<XSElementDeclaration, XSTypeDefinition>	type4Element;
 
+	// XML Schema loader
+	XSLoader											xsLoader;
+
+	// errors while schema parsing
+	private List<DOMError>								schemaParsingErrors;
+
 	protected XSDGrammarBuilder ()
 	{
 		// allocate memory
@@ -132,6 +138,18 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		sortedLocalNames = new TreeSet<ExpandedName> ( );
 		outstandingElements = new ArrayList<XSElementDeclaration> ( );
 		type4Element = new HashMap<XSElementDeclaration, XSTypeDefinition> ( );
+		schemaParsingErrors = new ArrayList<DOMError> ( );
+
+		// schema loader
+		try
+		{
+			xsLoader = getXSLoader ( );
+		}
+		catch ( Exception e )
+		{
+			//	inidicates problem
+			xsLoader = null;
+		}
 	}
 
 	protected void init ()
@@ -152,11 +170,18 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		return new XSDGrammarBuilder ( );
 	}
 
-	public SchemaInformedGrammar build ( XSModel xsModel )
+	public SchemaInformedGrammar build ( XSModel xsModel ) throws EXIException
 	{
-		if ( xsModel == null )
+		if ( xsModel == null || schemaParsingErrors.size ( ) > 0 )
 		{
-			throw new IllegalArgumentException ( "Given XSModel is null!" );
+			String exMsg = "Problem occured while building XML Schema Model (XSModel)!";
+
+			for( int i =0; i<schemaParsingErrors.size ( ); i++ )
+			{
+				exMsg += "\n. " + schemaParsingErrors.get ( i ).getMessage ( );
+			}
+			
+			throw new EXIException ( exMsg );
 		}
 		this.xsModel = xsModel;
 
@@ -202,61 +227,75 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		return build ( getXSModel ( inputStream ) );
 	}
 
-	private XSLoader getXSLoader () throws EXIException
+	private XSLoader getXSLoader () throws ClassCastException, ClassNotFoundException, InstantiationException,
+			IllegalAccessException
 	{
-		try
-		{
-			// get DOM Implementation using DOM Registry
-			System.setProperty ( DOMImplementationRegistry.PROPERTY,
-					"org.apache.xerces.dom.DOMXSImplementationSourceImpl" );
-			DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance ( );
+		// get DOM Implementation using DOM Registry
+		System.setProperty ( DOMImplementationRegistry.PROPERTY, "org.apache.xerces.dom.DOMXSImplementationSourceImpl" );
+		DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance ( );
 
-			XSImplementation impl = (XSImplementation) registry.getDOMImplementation ( "XS-Loader" );
+		XSImplementation impl = (XSImplementation) registry.getDOMImplementation ( "XS-Loader" );
 
-			XSLoader schemaLoader = impl.createXSLoader ( null );
+		XSLoader schemaLoader = impl.createXSLoader ( null );
 
-			DOMConfiguration config = schemaLoader.getConfig ( );
+		DOMConfiguration config = schemaLoader.getConfig ( );
 
-			// set error handler
-			config.setParameter ( "error-handler", this );
+		// set error handler
+		config.setParameter ( "error-handler", this );
 
-			// set validation feature
-			// config.setParameter("validate", XSDBoolean.TRUE);
+		// set validation feature
+		config.setParameter ( "validate", Boolean.TRUE );
 
-			return schemaLoader;
-		}
-		catch ( Exception e )
-		{
-			throw new EXIException ( e );
-		}
+		return schemaLoader;
 	}
 
 	public boolean handleError ( DOMError error )
 	{
+		//	collect error(s)
+		schemaParsingErrors.add ( error );
+		
 		short severity = error.getSeverity ( );
 		if ( severity == DOMError.SEVERITY_ERROR )
 		{
-			throw new IllegalArgumentException ( "[xs-error]: " + error.getMessage ( ) );
+			String msg = "[xs-error]: " + error.getMessage ( );
+			throw new RuntimeException ( msg );
 		}
 
 		if ( severity == DOMError.SEVERITY_WARNING )
 		{
-			throw new IllegalArgumentException ( "[xs-warning]: " + error.getMessage ( ) );
+			String msg = "[xs-warning]: " + error.getMessage ( );
+			throw new RuntimeException ( msg );
 		}
+		
 		return true;
-
+	}
+	
+	private void checkXSLoader() throws EXIException
+	{
+		if ( xsLoader == null )
+		{
+			throw new EXIException( "Problems while creating XML Schema loader" );
+		}
 	}
 
 	public XSModel getXSModel ( String xsd ) throws EXIException
 	{
-		XSModel model = getXSLoader ( ).loadURI ( xsd );
-		return model;
+		checkXSLoader();
+		
+		//	reset errors
+		schemaParsingErrors.clear ( );
+		
+		return xsLoader.loadURI ( xsd );
 	}
 
 	public XSModel getXSModel ( LSInput ls ) throws EXIException
 	{
-		XSModel model = getXSLoader ( ).load ( ls );
-		return model;
+		checkXSLoader();
+		
+		//	reset errors
+		schemaParsingErrors.clear ( );
+		
+		return xsLoader.load ( ls );
 	}
 
 	public XSModel getXSModel ( InputStream inputStream ) throws EXIException
