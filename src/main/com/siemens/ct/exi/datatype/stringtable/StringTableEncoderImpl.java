@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.datatype.stringtable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
@@ -30,17 +31,17 @@ import com.siemens.ct.exi.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080915
  */
 
 public class StringTableEncoderImpl extends AbstractStringTable implements StringTableEncoder
 {
-	protected StringTablePartitionEncoder									uriPartition;
-	protected HashMap<String, StringTablePartitionEncoder>					prefixPartitions;
-	protected HashMap<String, StringTablePartitionEncoder>					localNamePartitions;
+	protected StringTablePartitionEncoder								uriPartition;
+	protected Map<String, StringTablePartitionEncoder>					prefixPartitions;
+	protected Map<String, StringTablePartitionEncoder>					localNamePartitions;
 
-	protected HashMap<String, HashMap<String, StringTablePartitionEncoder>>	localValuePartitions;
-	protected StringTablePartitionEncoder									globalValuePartition;
+	protected Map<String, HashMap<String, StringTablePartitionEncoder>>	localValuePartitions;
+	protected StringTablePartitionEncoder								globalValuePartition;
 
 	/**
 	 * The constructor will set all tables to their initial states. This
@@ -49,11 +50,11 @@ public class StringTableEncoderImpl extends AbstractStringTable implements Strin
 	public StringTableEncoderImpl ( boolean isSchemaInformed )
 	{
 		uriPartition = getNewPartition ( );
-		prefixPartitions = new HashMap<String, StringTablePartitionEncoder>();
-		localNamePartitions = new HashMap<String, StringTablePartitionEncoder>();
-		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionEncoder>>();
+		prefixPartitions = new HashMap<String, StringTablePartitionEncoder> ( );
+		localNamePartitions = new HashMap<String, StringTablePartitionEncoder> ( );
+		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionEncoder>> ( );
 		globalValuePartition = getNewPartition ( );
-		
+
 		// URI
 		initURI ( uriPartition, isSchemaInformed );
 
@@ -84,7 +85,7 @@ public class StringTableEncoderImpl extends AbstractStringTable implements Strin
 		return ( partition == null ) ? Constants.NOT_FOUND : partition.getIndex ( key );
 	}
 
-	protected StringTablePartitionEncoder getPartition ( HashMap<String, StringTablePartitionEncoder> partitions,
+	protected StringTablePartitionEncoder getPartition ( Map<String, StringTablePartitionEncoder> partitions,
 			String key )
 	{
 		StringTablePartitionEncoder partition = partitions.get ( key );
@@ -168,7 +169,7 @@ public class StringTableEncoderImpl extends AbstractStringTable implements Strin
 	}
 
 	public void addLocalValue ( String uri, String localName, String value )
-	{	
+	{
 		// check URI section first
 		HashMap<String, StringTablePartitionEncoder> uriSection = localValuePartitions.get ( uri );
 

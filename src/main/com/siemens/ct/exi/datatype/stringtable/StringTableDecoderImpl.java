@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.datatype.stringtable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
@@ -30,20 +31,18 @@ import com.siemens.ct.exi.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080915
  */
 
 public class StringTableDecoderImpl extends AbstractStringTable implements StringTableDecoder
 {
-	protected StringTablePartitionDecoder									uriPartition;
-	protected HashMap<String, StringTablePartitionDecoder>					prefixPartitions;
-	protected HashMap<String, StringTablePartitionDecoder>					localNamePartitions;
+	protected StringTablePartitionDecoder								uriPartition;
+	protected Map<String, StringTablePartitionDecoder>					prefixPartitions;
+	protected Map<String, StringTablePartitionDecoder>					localNamePartitions;
 
-	protected HashMap<String, HashMap<String, StringTablePartitionDecoder>>	localValuePartitions;
-	protected StringTablePartitionDecoder									globalValuePartition;
+	protected Map<String, HashMap<String, StringTablePartitionDecoder>>	localValuePartitions;
+	protected StringTablePartitionDecoder								globalValuePartition;
 
-	
-	
 	/**
 	 * The constructor will set all tables to their initial states. This
 	 * includes loading the tables with inital values.
@@ -51,11 +50,11 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 	public StringTableDecoderImpl ( boolean isSchemaInformed )
 	{
 		uriPartition = getNewPartition ( );
-		prefixPartitions = new HashMap<String, StringTablePartitionDecoder>();
-		localNamePartitions = new HashMap<String, StringTablePartitionDecoder>();
-		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionDecoder>>();
+		prefixPartitions = new HashMap<String, StringTablePartitionDecoder> ( );
+		localNamePartitions = new HashMap<String, StringTablePartitionDecoder> ( );
+		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionDecoder>> ( );
 		globalValuePartition = getNewPartition ( );
-		
+
 		// URI
 		initURI ( uriPartition, isSchemaInformed );
 
@@ -75,8 +74,7 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 		initLocalNameXSI ( localNamePartitions.get ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI ) );
 		initLocalNameXSD ( localNamePartitions.get ( XMLConstants.W3C_XML_SCHEMA_NS_URI ) );
 	}
-	
-	
+
 	protected StringTablePartitionDecoder getNewPartition ()
 	{
 		return new StringTablePartitionDecoderImpl ( );
@@ -87,8 +85,7 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 		return ( partition == null ) ? Constants.NOT_FOUND : partition.getIndex ( key );
 	}
 
-	protected StringTablePartitionDecoder getPartition ( HashMap<String, StringTablePartitionDecoder> partitions,
-			String key )
+	protected StringTablePartitionDecoder getPartition ( Map<String, StringTablePartitionDecoder> partitions, String key )
 	{
 		StringTablePartitionDecoder partition = partitions.get ( key );
 
@@ -99,13 +96,13 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 
 		return partition;
 	}
-	
+
 	/*
 	 * ##############################################################################
 	 * #### StringTableDecoder Interface
 	 * ##############################################################################
 	 */
-	
+
 	public String getURIValue ( int id )
 	{
 		return uriPartition.getValue ( id );
@@ -123,9 +120,9 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 
 	public String getLocalValue ( String uri, String localName, int id )
 	{
-		assert( localValuePartitions.get ( uri ).size ( ) > 0 );
-		assert( localValuePartitions.get ( uri ).get ( localName ).getSize ( ) > 0 );
-		
+		assert ( localValuePartitions.get ( uri ).size ( ) > 0 );
+		assert ( localValuePartitions.get ( uri ).get ( localName ).getSize ( ) > 0 );
+
 		return localValuePartitions.get ( uri ).get ( localName ).getValue ( id );
 	}
 
@@ -133,7 +130,6 @@ public class StringTableDecoderImpl extends AbstractStringTable implements Strin
 	{
 		return globalValuePartition.getValue ( id );
 	}
-	
 
 	/*
 	 * ##############################################################################
