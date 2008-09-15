@@ -100,7 +100,7 @@ public class SchemaProperties extends AbstractProperties
 	}
 
 	
-	private void startTest( boolean isXmlSchemaValid ) throws Exception
+	private void startTest( boolean isXmlSchemaValid, boolean isXMLEqual ) throws Exception
 	{
 		//	encode
 		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
@@ -113,7 +113,11 @@ public class SchemaProperties extends AbstractProperties
 		String sXMLDecoded = decodeSchemaInformedToXML ( isEXI );
 		
 		//	equal ?
-		isXMLEqual( sXMLDecoded );
+		if ( isXMLEqual )
+		{
+			isXMLEqual( sXMLDecoded );
+		}
+		
 	}
 
 	
@@ -122,7 +126,7 @@ public class SchemaProperties extends AbstractProperties
 		schema = SIMPLE_XSD;
 		xml = SIMPLE_XML;
 		
-		startTest( true );
+		startTest( true, true );
 	}
 	
 	public void testUnexpectedRoot() throws Exception
@@ -130,7 +134,7 @@ public class SchemaProperties extends AbstractProperties
 		schema = UNEXPECTED_ROOT_XSD;
 		xml = UNEXPECTED_ROOT_XML;
 		
-		startTest( false );
+		startTest( false, true );
 	}
 	
 	public void testXsiType() throws Exception
@@ -138,7 +142,8 @@ public class SchemaProperties extends AbstractProperties
 		schema = XSI_TYPE_XSD;
 		xml= XSI_TYPE_XML;
 		
-		startTest( true );
+		// isXMLEqual == false : xsi:type prefixes are not preserved
+		startTest( true, false );
 	}
 
 }

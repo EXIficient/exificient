@@ -32,9 +32,9 @@ public abstract class AbstractProperties extends XMLTestCase
 		XMLUnit.setIgnoreWhitespace( true ); 
 		
 		//Diff diff = compareXML ( control, test );
-		
 		// XMLUnit.setNormalize ( true );
-		// XMLUnit.setIgnoreAttributeOrder ( b );
+		
+		XMLUnit.setIgnoreAttributeOrder ( true );
 		
 		assertXMLEqual ( control, test );
 	}
