@@ -20,6 +20,8 @@ package com.siemens.ct.exi.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
@@ -46,258 +48,235 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080915
  */
 
 public abstract class AbstractEXICoder
 {
-	protected final EndDocument eventED 			= new EndDocument( );
-	protected final StartElement eventSE 			= new StartElement( null, null );
-	protected final StartElementGeneric eventSEg 	= new StartElementGeneric( );
+	// cached events
+	protected final EndDocument						eventED;
+	protected final StartElement					eventSE;
+	protected final StartElementGeneric				eventSEg;
+	protected final EndElement						eventEE;
+	protected final Attribute						eventAT;
+	protected final AttributeGeneric				eventATg;
+	protected final Characters						eventCH;
+	protected final CharactersGeneric				eventCHg;
 
-	protected final EndElement eventEE 				= new EndElement( );
-	protected final Attribute eventAT 				= new Attribute( null, null );
-	protected final AttributeGeneric eventATg 		= new AttributeGeneric( );
-	protected final Characters eventCH 				= new Characters( null, null );
-	protected final CharactersGeneric eventCHg 		= new CharactersGeneric( );
-	
-	protected ErrorHandler errorHandler;
-	
-	protected EXIFactory exiFactory;
-	
-	//	rules learned while coding ( uri -> localName -> rule)
-	protected HashMap<String, HashMap<String, Rule>> runtimeDispatcher;
-	
-	// saves scope for character StringTable & Channels as well as for content-dispatcher 
-	protected ArrayList<String> scopeURI;
-	protected ArrayList<String> scopeLocalName;
-	
-	protected ArrayList<String> scopeTypeURI;
-	protected ArrayList<String> scopeTypeLocalName;
-	
-	//	stack when traversing the EXI document
-	protected ArrayList<Rule> openRules;
+	// factory
+	protected EXIFactory							exiFactory;
 
-	
-	public AbstractEXICoder( EXIFactory exiFactory ) 
+	// error handler
+	protected ErrorHandler							errorHandler;
+
+	// rules learned while coding ( uri -> localName -> rule)
+	protected Map<String, HashMap<String, Rule>>	runtimeDispatcher;
+
+	// saves scope for character StringTable & Channels as well as for
+	// content-dispatcher
+	protected List<String>							scopeURI;
+	protected List<String>							scopeLocalName;
+
+	protected List<String>							scopeTypeURI;
+	protected List<String>							scopeTypeLocalName;
+
+	// stack when traversing the EXI document
+	protected List<Rule>							openRules;
+
+	public AbstractEXICoder ( EXIFactory exiFactory )
 	{
 		this.exiFactory = exiFactory;
-		this.errorHandler = new DefaultErrorHandler();
-		
+
+		// setup final events
+		eventED = new EndDocument ( );
+		eventSE = new StartElement ( null, null );
+		eventSEg = new StartElementGeneric ( );
+		eventEE = new EndElement ( );
+		eventAT = new Attribute ( null, null );
+		eventATg = new AttributeGeneric ( );
+		eventCH = new Characters ( null, null );
+		eventCHg = new CharactersGeneric ( );
+
+		// use default error handler per default
+		this.errorHandler = new DefaultErrorHandler ( );
+
 		// init once
 		initOnce ( );
 	}
 
-	
 	public void setErrorHandler ( ErrorHandler errorHandler )
 	{
 		this.errorHandler = errorHandler;
 	}
-	
-	protected void initOnce()
+
+	protected void initOnce ()
 	{
-		runtimeDispatcher = new HashMap<String, HashMap<String, Rule>>();
-		openRules = new ArrayList<Rule>();
-		
-		//	scope
-		scopeURI = new ArrayList<String>();
-		scopeLocalName = new ArrayList<String>();
-		//	scopeType
-		scopeTypeURI = new ArrayList<String>();
-		scopeTypeLocalName = new ArrayList<String>();
+		// runtime lists
+		runtimeDispatcher = new HashMap<String, HashMap<String, Rule>> ( );
+		openRules = new ArrayList<Rule> ( );
+
+		// scope
+		scopeURI = new ArrayList<String> ( );
+		scopeLocalName = new ArrayList<String> ( );
+		// scopeType
+		scopeTypeURI = new ArrayList<String> ( );
+		scopeTypeLocalName = new ArrayList<String> ( );
 	}
 
-	//	re-init (rule stack etc)
-	protected void initForEachRun( ) throws EXIException
+	// re-init (rule stack etc)
+	protected void initForEachRun () throws EXIException
 	{
-		//	rules learned while coding
+		// rules learned while coding
 		runtimeDispatcher.clear ( );
-		//	stack when traversing the EXI document
+		// stack when traversing the EXI document
 		openRules.clear ( );
-		//	scope
+		// scope
 		scopeURI.clear ( );
 		scopeLocalName.clear ( );
-		//	scope for root element (unknown)
+		// scope for root element (unknown)
 		pushScope ( null, null );
 		pushScopeType ( null, null );
 	}
 
-
-	protected final void pushScope( String uri, String localName )
+	protected final void pushScope ( String uri, String localName )
 	{
 		scopeURI.add ( uri );
-		scopeLocalName.add ( localName );	
+		scopeLocalName.add ( localName );
 	}
 
-	protected final void pushScopeType( String uri, String localName )
+	protected final void pushScopeType ( String uri, String localName )
 	{
 		scopeTypeURI.add ( uri );
-		scopeTypeLocalName.add ( localName );	
+		scopeTypeLocalName.add ( localName );
 	}
-	
-	protected final void popScope( )
+
+	protected final void popScope ()
 	{
 		scopeURI.remove ( scopeURI.size ( ) - 1 );
 		scopeLocalName.remove ( scopeLocalName.size ( ) - 1 );
-		
-		//	TODO pop scope xsi:type environment as well
-		//	mhhh, needs xsi:type and element matching
+
+		// TODO pop scope xsi:type environment as well
+		// mhhh, needs xsi:type and element matching
 	}
-	
-	public final String getScopeURI()
+
+	public final String getScopeURI ()
 	{
 		return scopeURI.get ( scopeURI.size ( ) - 1 );
 	}
-	public final String getScopeLocalName()
+
+	public final String getScopeLocalName ()
 	{
-		return scopeLocalName.get ( scopeLocalName.size ( ) - 1  );
+		return scopeLocalName.get ( scopeLocalName.size ( ) - 1 );
 	}
-	
-	protected final String getScopeTypeURI()
+
+	protected final String getScopeTypeURI ()
 	{
 		return scopeTypeURI.get ( scopeTypeURI.size ( ) - 1 );
 	}
-	
-	protected final String getScopeTypeLocalName()
+
+	protected final String getScopeTypeLocalName ()
 	{
-		return scopeTypeLocalName.get ( scopeTypeLocalName.size ( ) - 1  );
+		return scopeTypeLocalName.get ( scopeTypeLocalName.size ( ) - 1 );
 	}
 
-	
-	protected final Rule getCurrentRule()
+	protected final Rule getCurrentRule ()
 	{
-		assert ( ! openRules.isEmpty() );
-		
-		return openRules.get ( openRules.size()-1 );
+		assert ( !openRules.isEmpty ( ) );
+
+		return openRules.get ( openRules.size ( ) - 1 );
 	}
-	
-	protected final Rule replaceRuleAtTheTop( Rule top )
+
+	protected final Rule replaceRuleAtTheTop ( Rule top )
 	{
-		assert ( ! openRules.isEmpty() );
-		
-		return openRules.set( openRules.size()- 1, top );
+		assert ( !openRules.isEmpty ( ) );
+
+		return openRules.set ( openRules.size ( ) - 1, top );
 	}
-	
-	
-	protected final void pushRule( Rule r )
+
+	protected final void pushRule ( Rule r )
 	{
 		openRules.add ( r );
 	}
 
-
-	protected final void popRule( ) 
+	protected final void popRule ()
 	{
-		assert ( ! openRules.isEmpty() );
-		
-		openRules.remove ( openRules.size() - 1 );
+		assert ( !openRules.isEmpty ( ) );
+
+		openRules.remove ( openRules.size ( ) - 1 );
 	}
-	
-	protected final FidelityOptions getFidelityOptions( )
+
+	protected final FidelityOptions getFidelityOptions ()
 	{
 		return exiFactory.getFidelityOptions ( );
 	}
 
-	protected Rule getRuleForElement( String namespaceURI, String localName )
-	// , String scopeURI, String scopeLocalName 
+	protected Rule getRuleForElement ( String namespaceURI, String localName )
 	{
 		Grammar g = exiFactory.getGrammar ( );
-		
-		Rule ruleSchema = null ;
-		
+
+		Rule ruleSchema = null;
+
 		if ( g.isSchemaInformed ( ) )
 		{
-			//	1st step
-			ExpandedName name = new ExpandedName( namespaceURI, localName );
-			ElementKey key = new ElementKey( name );
+			// 1st step
+			ExpandedName name = new ExpandedName ( namespaceURI, localName );
+			ElementKey key = new ElementKey ( name );
 			ruleSchema = g.getRule ( key );
-			
+
 			if ( ruleSchema == null )
 			{
-				//	2nd step, including scope
+				// 2nd step, including scope
 				ExpandedName scope = null;
 				if ( getScopeLocalName ( ) != null )
 				{
-					scope = new ExpandedName( getScopeURI ( ), getScopeLocalName ( ) );
+					scope = new ExpandedName ( getScopeURI ( ), getScopeLocalName ( ) );
 				}
 				key.setScope ( scope );
 				ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
-				
+
 				if ( ruleSchema == null && getScopeTypeLocalName ( ) != null )
 				{
-					//	include type
+					// include type
 					key.setScope ( null );
-					ExpandedName scopeType = new ExpandedName( getScopeTypeURI ( ), getScopeTypeLocalName ( ) );
+					ExpandedName scopeType = new ExpandedName ( getScopeTypeURI ( ), getScopeTypeLocalName ( ) );
 					key.setScopeType ( scopeType );
-					
+
 					ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
 				}
-			}			
+			}
 		}
 
-		
-		if ( ruleSchema == null  )
+		if ( ruleSchema == null )
 		{
 			// runtime-grammar
-			return getRuntimeRuleForElement( namespaceURI, localName );			
+			return getRuntimeRuleForElement ( namespaceURI, localName );
 		}
 		else
 		{
-			//	schema-informed grammar
+			// schema-informed grammar
 			return ruleSchema;
 		}
-		
-		
-//		//	OLD version
-//		int schemaRuleCode = exiFactory.getGrammar ( ).getRuleCode( namespaceURI, localName );
-//		
-//		if ( schemaRuleCode == Constants.NOT_FOUND )
-//		{
-//			// runtime-grammar
-//			if ( runtimeDispatcher.containsKey ( namespaceURI ) )
-//			{
-//				if ( ! runtimeDispatcher.get ( namespaceURI ).containsKey ( localName ) )
-//				{
-//					//	URI known, localName unknown
-//					runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag( ) );
-//				}
-//			}
-//			else
-//			{
-//				//	URI & localName unknown
-//				runtimeDispatcher.put ( namespaceURI, new HashMap<String, Rule>() );
-//				runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag( ) );	
-//			}
-//			
-//			return runtimeDispatcher.get ( namespaceURI ).get ( localName );			
-//		}
-//		else
-//		{
-//			//	schema-informed grammar
-//			return exiFactory.getGrammar ( ).getRuleForCode( schemaRuleCode, scopeURI, scopeLocalName );
-//		}
-
 	}
-	
-	protected Rule getRuntimeRuleForElement( String namespaceURI, String localName )
+
+	protected Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
 	{
 		// runtime-grammar
 		if ( runtimeDispatcher.containsKey ( namespaceURI ) )
 		{
-			if ( ! runtimeDispatcher.get ( namespaceURI ).containsKey ( localName ) )
+			if ( !runtimeDispatcher.get ( namespaceURI ).containsKey ( localName ) )
 			{
-				//	URI known, localName unknown
-				runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag( ) );
+				// URI known, localName unknown
+				runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag ( ) );
 			}
 		}
 		else
 		{
-			//	URI & localName unknown
-			runtimeDispatcher.put ( namespaceURI, new HashMap<String, Rule>() );
-			runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag( ) );	
+			// URI & localName unknown
+			runtimeDispatcher.put ( namespaceURI, new HashMap<String, Rule> ( ) );
+			runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag ( ) );
 		}
-		
-		return runtimeDispatcher.get ( namespaceURI ).get ( localName );	
+
+		return runtimeDispatcher.get ( namespaceURI ).get ( localName );
 	}
 
-	
 }

@@ -46,19 +46,19 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080915
  */
 
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXIEncoder
 {
-	protected EncoderBlock	block;
+	protected EncoderBlock			block;
 
-	protected OutputStream	os;
+	protected OutputStream			os;
 
 	// namespace prefixes are related to elements
 	protected NamespacePrefixLevels	nsPrefixes		= new NamespacePrefixLevels ( );
 
-	protected String		lastSEprefix	= null;
+	protected String				lastSEprefix	= null;
 
 	public AbstractEXIEncoder ( EXIFactory exiFactory )
 	{
@@ -174,15 +174,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	protected void encodeGenericValue ( int ec, String uri, String localName, String value ) throws EXIException
 	{
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
 		try
 		{
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
-
 			// content as string
 			block.writeValueAsString ( uri, localName, value );
 		}
-		catch ( Exception e )
+		catch ( IOException e )
 		{
 			throw new EXIException ( e );
 		}
@@ -356,12 +356,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 		if ( this.nsPrefixes.hasPrefixForURI ( uri ) )
 		{
-			//	TODO *overlapping* prefixes: same namespace BUT different prefixes
-			// System.out.println ( "SE_PFX uri found for " + uri + " --> " + prefix  );
+			// TODO *overlapping* prefixes: same namespace BUT different
+			// prefixes
+			// System.out.println ( "SE_PFX uri found for " + uri + " --> " +
+			// prefix );
 		}
 		else
 		{
-			// System.out.println ( "SE_PFX no uri found for = '" + uri + "' (omitted)");
+			// System.out.println ( "SE_PFX no uri found for = '" + uri + "'
+			// (omitted)");
 			/*
 			 * If there are no prefixes specified for the URI of the QName by
 			 * preceding NS events in the EXI stream, the prefix is undefined.
@@ -422,10 +425,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		popRule ( );
 		popScope ( );
 
-		//	TODO how to detect whether we deal with preserve prefix on or not in a smart way
+		// TODO how to detect whether we deal with preserve prefix on or not in
+		// a smart way
 		if ( lastSEprefix != null )
 		{
-			nsPrefixes.removeLevel ( );	
+			nsPrefixes.removeLevel ( );
 		}
 	}
 
@@ -447,7 +451,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				// local-element-ns
 				if ( prefix.equals ( lastSEprefix ) )
 				{
-					// System.out.println ( "Prefix '" + prefix +  "' is part of an SE event followed by an associated NS event");
+					// System.out.println ( "Prefix '" + prefix + "' is part of
+					// an SE event followed by an associated NS event");
 					block.writeBoolean ( true );
 				}
 				else
