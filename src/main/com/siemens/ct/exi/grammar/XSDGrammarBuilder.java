@@ -81,7 +81,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080911
+ * @version 0.1.20080915
  */
 
 /*
@@ -122,7 +122,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 	private Map<XSElementDeclaration, XSTypeDefinition>	type4Element;
 
 	// XML Schema loader
-	XSLoader											xsLoader;
+	private XSLoader									xsLoader;
 
 	// errors while schema parsing
 	private List<DOMError>								schemaParsingErrors;
@@ -147,7 +147,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		}
 		catch ( Exception e )
 		{
-			//	inidicates problem
+			// inidicates problem
 			xsLoader = null;
 		}
 	}
@@ -176,11 +176,11 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		{
 			String exMsg = "Problem occured while building XML Schema Model (XSModel)!";
 
-			for( int i =0; i<schemaParsingErrors.size ( ); i++ )
+			for ( int i = 0; i < schemaParsingErrors.size ( ); i++ )
 			{
 				exMsg += "\n. " + schemaParsingErrors.get ( i ).getMessage ( );
 			}
-			
+
 			throw new EXIException ( exMsg );
 		}
 		this.xsModel = xsModel;
@@ -251,9 +251,9 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 
 	public boolean handleError ( DOMError error )
 	{
-		//	collect error(s)
+		// collect error(s)
 		schemaParsingErrors.add ( error );
-		
+
 		short severity = error.getSeverity ( );
 		if ( severity == DOMError.SEVERITY_ERROR )
 		{
@@ -266,35 +266,35 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			String msg = "[xs-warning]: " + error.getMessage ( );
 			throw new RuntimeException ( msg );
 		}
-		
+
 		return true;
 	}
-	
-	private void checkXSLoader() throws EXIException
+
+	private void checkXSLoader () throws EXIException
 	{
 		if ( xsLoader == null )
 		{
-			throw new EXIException( "Problems while creating XML Schema loader" );
+			throw new EXIException ( "Problems while creating XML Schema loader" );
 		}
 	}
 
 	public XSModel getXSModel ( String xsd ) throws EXIException
 	{
-		checkXSLoader();
-		
-		//	reset errors
+		checkXSLoader ( );
+
+		// reset errors
 		schemaParsingErrors.clear ( );
-		
+
 		return xsLoader.loadURI ( xsd );
 	}
 
 	public XSModel getXSModel ( LSInput ls ) throws EXIException
 	{
-		checkXSLoader();
-		
-		//	reset errors
+		checkXSLoader ( );
+
+		// reset errors
 		schemaParsingErrors.clear ( );
-		
+
 		return xsLoader.load ( ls );
 	}
 
