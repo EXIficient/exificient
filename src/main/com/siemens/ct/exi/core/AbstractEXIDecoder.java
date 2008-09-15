@@ -40,7 +40,7 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080915
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXIDecoder
@@ -50,7 +50,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected EventType nextEventType;
 	protected int ec;
 	
-	//protected TypeDecoder decoder;
+	//	decoder stream
 	protected InputStream is;
 	protected DecoderBlock block;
 	
@@ -70,8 +70,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected String nsPrefix;
 	protected String piTarget;
 	protected String piData;
-	
-	boolean eventOnFirstLevel;
 
 	public AbstractEXIDecoder( EXIFactory exiFactory )
 	{
