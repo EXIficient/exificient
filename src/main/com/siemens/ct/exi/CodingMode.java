@@ -70,7 +70,7 @@ public enum CodingMode
 	private final boolean	usesDeflate;
 	private final boolean	usesRechanneling;
 
-	CodingMode ( boolean deflate, boolean rechanneling )
+	private CodingMode ( boolean deflate, boolean rechanneling )
 	{
 		usesDeflate = deflate;
 		usesRechanneling = rechanneling;
