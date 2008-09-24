@@ -120,12 +120,19 @@ public interface EXIDecoder
 	public void decodeAttribute () throws EXIException;
 
 	/**
-	 * Parses unexpected attribute.
+	 * Parses expected generic attribute.
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeAttributeGeneric () throws EXIException;
 
+	/**
+	 * Parses unexpected attribute.
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeAttributeGenericUndeclared () throws EXIException;
+	
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 

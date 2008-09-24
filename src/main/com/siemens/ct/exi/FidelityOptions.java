@@ -33,7 +33,7 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080922
  */
 
 public class FidelityOptions
@@ -191,6 +191,7 @@ public class FidelityOptions
 		return options.contains ( FEATURE_STRICT );
 	}
 
+	@Override
 	public boolean equals ( Object o )
 	{
 		if ( o instanceof FidelityOptions )
@@ -202,9 +203,16 @@ public class FidelityOptions
 		return false;
 	}
 
+	@Override
 	public int hashCode ()
 	{
 		return options.hashCode ( );
+	}
+	
+	@Override
+	public String toString()
+	{
+		return options.toString ( );
 	}
 
 }

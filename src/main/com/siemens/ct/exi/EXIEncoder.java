@@ -133,7 +133,7 @@ public interface EXIEncoder
 	 * @param nil
 	 * @throws EXIException
 	 */
-	public void encodeXsiNil ( boolean nil ) throws EXIException;
+	public void encodeXsiNil ( String nil ) throws EXIException;
 
 	/**
 	 * Supplies an xsi:type case.
