@@ -44,7 +44,7 @@ public class SchemaTestCase extends AbstractTestCase
 		// SchemaTestCase.setConfigurationSchemaOccurrences2 ( );
 		// SchemaTestCase.setConfigurationSchemaAll ( );
 		// SchemaTestCase.setConfigurationSchemaAll2 ( );
-		// SchemaTestCase.setConfigurationSchemaMixed ( );
+		SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
@@ -58,7 +58,7 @@ public class SchemaTestCase extends AbstractTestCase
 		// SchemaTestCase.setConfigurationSchemaList ( );
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
-		SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
+		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
 		// SchemaTestCase.setConfigurationAttributeSpace ( );
 	}
 
@@ -562,6 +562,28 @@ public class SchemaTestCase extends AbstractTestCase
 		QuickTestConfiguration.setExiLocation( "./out/schema/attributeSpace.exi" );
 	}
 
+	
+	@Test
+	public void testSchemaIdenticalQName2 () throws Exception
+	{
+		// set up configuration
+		setConfigurationSchemaIdenticalQName2 ( );
+
+		//	execute test
+		_test( );
+	}
+	
+
+	@SuppressWarnings("unused")
+	public static void setConfigurationSchemaIdenticalQName2 ()
+	{
+		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName2.xsd" );
+		QuickTestConfiguration.setXmlLocation( "./data/schema/identicalQName2.xml" );
+		QuickTestConfiguration.setExiLocation( "./out/schema/identicalQName2.xml.exi" );
+	}
+
+
+	//	TODO solve dependency  between identicalQName 1 & 2 which causes trouble !?
 	@Test
 	public void testSchemaIdenticalQName () throws Exception
 	{
@@ -580,23 +602,4 @@ public class SchemaTestCase extends AbstractTestCase
 		QuickTestConfiguration.setExiLocation( "./out/schema/identicalQName.xml.exi" );
 	}
 	
-	
-	@Test
-	public void testSchemaIdenticalQName2 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaIdenticalQName2 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	@SuppressWarnings("unused")
-	public static void setConfigurationSchemaIdenticalQName2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName2.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/identicalQName2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/identicalQName2.xml.exi" );
-	}
-
 }

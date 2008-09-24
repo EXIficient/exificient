@@ -47,6 +47,7 @@ public class TestCaseOption
 	{
 		this.fidelityOptions = fidelityOptions;
 	}
+	
 	public boolean isFragments ()
 	{
 		return fragments;
@@ -79,4 +80,26 @@ public class TestCaseOption
 	{
 		this.schemaInformedOnly = schemaInformedOnly;
 	}
+	
+	@Override
+	public String toString()
+	{
+		String s = new String();
+		//	schemaLocation ?
+		if ( schemaLocation == null )
+		{
+			s += "noSchema, ";
+		}
+		else
+		{
+			s += "schema=" + schemaLocation +", ";
+		}
+		//	coding mode
+		s += "codingMode=" + codingMode +", ";
+		//	fidelityOptions
+		s += "fidelityOptions=" + getFidelityOptions ( ).toString ( );
+
+		return s;
+	}
+	
 }

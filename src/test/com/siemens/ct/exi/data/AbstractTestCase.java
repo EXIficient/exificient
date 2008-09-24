@@ -126,10 +126,17 @@ public abstract class AbstractTestCase extends XMLTestCase
 		//	test options
 		for ( int i=0; i<testCaseOptions.size ( ); i++)
 		{
-			TestCaseOption tco = testCaseOptions.elementAt ( i );
+			TestCaseOption tco = testCaseOptions.get ( i );
 			//	update schema
 			tco.setSchemaLocation ( schemaLocation );
-			_testOption( tco );
+			try
+			{
+				_testOption( tco );
+			}
+			catch ( Exception e )
+			{
+				throw new Exception( e.getLocalizedMessage ( ) + " [" + tco.toString ( ) + "]", e );
+			}
 		}
 	}
 	
