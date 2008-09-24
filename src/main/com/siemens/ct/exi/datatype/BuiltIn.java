@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.datatype;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
@@ -40,57 +41,88 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080924
  */
 
 public class BuiltIn
 {
 	// Binary
-	protected static final ExpandedName					XSD_BASE64BINARY			= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"base64Binary" );
-	protected static final ExpandedName					XSD_HEXBINARY				= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"hexBinary" );
+	protected static final ExpandedName				XSD_BASE64BINARY;
+	protected static final ExpandedName				XSD_HEXBINARY;
 	// Boolean
-	public static final ExpandedName					XSD_BOOLEAN					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean" );
+	public static final ExpandedName				XSD_BOOLEAN;
 	// Date-Time
-	protected static final ExpandedName					XSD_DATETIME				= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime" );
-	protected static final ExpandedName					XSD_TIME					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "time" );
-	protected static final ExpandedName					XSD_DATE					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "date" );
-	protected static final ExpandedName					XSD_GYEARMONTH				= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"gYearMonth" );
-	protected static final ExpandedName					XSD_GYEAR					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear" );
-	protected static final ExpandedName					XSD_GMONTHDAY				= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"gMonthDay" );
-	protected static final ExpandedName					XSD_GDAY					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay" );
-	protected static final ExpandedName					XSD_GMONTH					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth" );
+	protected static final ExpandedName				XSD_DATETIME;
+	protected static final ExpandedName				XSD_TIME;
+	protected static final ExpandedName				XSD_DATE;
+	protected static final ExpandedName				XSD_GYEARMONTH;
+	protected static final ExpandedName				XSD_GYEAR;
+	protected static final ExpandedName				XSD_GMONTHDAY;
+	protected static final ExpandedName				XSD_GDAY;
+	protected static final ExpandedName				XSD_GMONTH;
 	// Decimal
-	protected static final ExpandedName					XSD_DECIMAL					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal" );
+	protected static final ExpandedName				XSD_DECIMAL;
 	// Float
-	protected static final ExpandedName					XSD_FLOAT					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "float" );
-	protected static final ExpandedName					XSD_DOUBLE					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "double" );
+	protected static final ExpandedName				XSD_FLOAT;
+	protected static final ExpandedName				XSD_DOUBLE;
 	// Integer
-	protected static final ExpandedName					XSD_INTEGER					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer" );
-	protected static final ExpandedName					XSD_NON_NEGATIVE_INTEGER	= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"nonNegativeInteger" );
+	protected static final ExpandedName				XSD_INTEGER;
+	protected static final ExpandedName				XSD_NON_NEGATIVE_INTEGER;
 	// String
-	protected static final ExpandedName					XSD_STRING					= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "string" );
-
+	protected static final ExpandedName				XSD_STRING;
 	//	
-	protected static final ExpandedName					XSD_ANY_SIMPLE_TYPE			= new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI,
-																						"anySimpleType" );
+	protected static final ExpandedName				XSD_ANY_SIMPLE_TYPE;
 
 	// default QName / BuiltInType / Datatype
-	//public static final QName						DEFAULT_QNAME				= XSD_STRING;
-	public static final ExpandedName						DEFAULT_VALUE_NAME				= XSD_STRING;
-	public static final BuiltInType					DEFAULT_BUILTIN				= BuiltInType.BUILTIN_STRING;
-	public static final Datatype					DEFAULT_DATATYPE			= new DatatypeString ( DEFAULT_VALUE_NAME );
-	public static final Datatype					BOOLEAN_DATATYPE			= new DatatypeString ( XSD_BOOLEAN );
+	public static final ExpandedName				DEFAULT_VALUE_NAME;
+	public static final BuiltInType					DEFAULT_BUILTIN;
+	public static final Datatype					DEFAULT_DATATYPE;
+	public static final Datatype					BOOLEAN_DATATYPE;
 
 	// built-In mapping
-	private static HashMap<ExpandedName, BuiltInType>	datatypeMapping				= new HashMap<ExpandedName, BuiltInType> ( );
+	private static Map<ExpandedName, BuiltInType>	datatypeMapping;
 
 	static
 	{
+		/*
+		 * Datatype names
+		 */
+		// Binary
+		XSD_BASE64BINARY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "base64Binary" );
+		XSD_HEXBINARY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "hexBinary" );
+		// Boolean
+		XSD_BOOLEAN = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean" );
+		// Date-Time
+		XSD_DATETIME = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime" );
+		XSD_TIME = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "time" );
+		XSD_DATE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "date" );
+		XSD_GYEARMONTH = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYearMonth" );
+		XSD_GYEAR = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear" );
+		XSD_GMONTHDAY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonthDay" );
+		XSD_GDAY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay" );
+		XSD_GMONTH = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth" );
+		// Decimal
+		XSD_DECIMAL = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal" );
+		// Float
+		XSD_FLOAT = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "float" );
+		XSD_DOUBLE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "double" );
+		// Integer
+		XSD_INTEGER = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer" );
+		XSD_NON_NEGATIVE_INTEGER = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger" );
+		// String
+		XSD_STRING = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "string" );
+		//	
+		XSD_ANY_SIMPLE_TYPE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType" );
+		// default
+		DEFAULT_VALUE_NAME = XSD_STRING;
+		DEFAULT_BUILTIN = BuiltInType.BUILTIN_STRING;
+		DEFAULT_DATATYPE = new DatatypeString ( DEFAULT_VALUE_NAME );
+		BOOLEAN_DATATYPE = new DatatypeString ( XSD_BOOLEAN );
+
+		/*
+		 * Datatype mappings
+		 */
+		datatypeMapping = new HashMap<ExpandedName, BuiltInType> ( );
 		// Binary
 		datatypeMapping.put ( XSD_BASE64BINARY, BuiltInType.BUILTIN_BINARY );
 		datatypeMapping.put ( XSD_HEXBINARY, BuiltInType.BUILTIN_BINARY );
@@ -215,7 +247,7 @@ public class BuiltIn
 				if ( facet.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_MININCLUSIVE )
 				{
 					String sValueIncl = facet.getLexicalFacetValue ( );
-					//if ( Integer.parseInt ( sValueIncl ) >= 0 )
+					// if ( Integer.parseInt ( sValueIncl ) >= 0 )
 					if ( Long.parseLong ( sValueIncl ) >= 0 )
 					{
 						isUnsigned = true;
@@ -224,7 +256,7 @@ public class BuiltIn
 				if ( facet.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_MINEXCLUSIVE )
 				{
 					String sValueExcl = facet.getLexicalFacetValue ( );
-					//if ( Integer.parseInt ( sValueExcl ) >= 0 )
+					// if ( Integer.parseInt ( sValueExcl ) >= 0 )
 					if ( Long.parseLong ( sValueExcl ) >= 0 )
 					{
 						isUnsigned = true;
