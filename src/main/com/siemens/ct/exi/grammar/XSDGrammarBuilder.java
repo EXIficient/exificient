@@ -67,7 +67,6 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.Lambda;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleContentAll;
@@ -81,7 +80,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080915
+ * @version 0.1.20080924
  */
 
 /*
@@ -733,35 +732,44 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		// simple vs. complex type handling
 		if ( td.getTypeCategory ( ) == XSTypeDefinition.COMPLEX_TYPE )
 		{
-			XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
-
-			SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA ( ctd );
-
-			// resolve lambdas
-			if ( RESOLVE_LAMBDAS )
+			if ( "anyType".equals ( td.getName ( ) ) &&  "http://www.w3.org/2001/XMLSchema".equals ( td.getNamespace ( ) ) )
 			{
-				ruleContent.resolveLambdaTransitions ( new ArrayList<EventRule> ( ), new ArrayList<Rule> ( ) );
+				//	ur-type
+				type_i = SchemaInformedGrammar.getUrTypeRule ( );
+				//	TODO typeEmpty
+				typeEmpty_i = type_i;
 			}
+			else
+			{
+				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
+				
+				SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA ( ctd );
 
-			// create copy of Element_i_content --> Element_i_content_2
-			// (used for content schema-deviations in start-tags, direct jumps)
-			SchemaInformedRule ruleContent2 = ruleContent.clone ( );
+				// resolve lambdas
+				if ( RESOLVE_LAMBDAS )
+				{
+					ruleContent.resolveLambdaTransitions ( new ArrayList<EventRule> ( ), new ArrayList<Rule> ( ) );
+				}
 
-			// attributes
-			XSObjectList attributes = ctd.getAttributeUses ( );
+				// create copy of Element_i_content --> Element_i_content_2
+				// (used for content schema-deviations in start-tags, direct jumps)
+				SchemaInformedRule ruleContent2 = ruleContent.clone ( );
 
-			// TODO attribute wildcard AT(*) plus AT(uri, *)
-			// XSWildcard attributeWC = ctd.getAttributeWildcard ( );
+				// attributes
+				XSObjectList attributes = ctd.getAttributeUses ( );
 
-			// type_i (start tag)
-			type_i = handleAttributes ( ruleContent, ruleContent2, attributes );
-			type_i.setHasNamedSubtypes ( hasNamedSubTypes ( ctd ) );
+				// TODO attribute wildcard AT(*) plus AT(uri, *)
+				// XSWildcard attributeWC = ctd.getAttributeWildcard ( );
 
-			// typeEmpty_i
-			SchemaInformedRule ruleEnd = new SchemaInformedRuleElement ( );
-			ruleEnd.addTerminalRule ( END_ELEMENT );
-			typeEmpty_i = handleAttributes ( ruleEnd, ruleEnd, attributes );
+				// type_i (start tag)
+				type_i = handleAttributes ( ruleContent, ruleContent2, attributes );
+				type_i.setHasNamedSubtypes ( hasNamedSubTypes ( ctd ) );
 
+				// typeEmpty_i
+				SchemaInformedRule ruleEnd = new SchemaInformedRuleElement ( );
+				ruleEnd.addTerminalRule ( END_ELEMENT );
+				typeEmpty_i = handleAttributes ( ruleEnd, ruleEnd, attributes );				
+			}
 		}
 		else if ( td.getTypeCategory ( ) == XSTypeDefinition.SIMPLE_TYPE )
 		{
@@ -856,7 +864,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 				ruleEE3.addTerminalRule ( END_ELEMENT );
 				ruleContent = translateParticleToFSA ( xsParticleMixed, ruleEE3 );
 
-				// mixed transition ?!?!?
+				// mixed transition
 				addMixedTransitions ( ruleContent );
 				ruleContent.setLabel ( "MixedContent" );
 
@@ -874,7 +882,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		addMixedTransitions ( ruleMixedContent, new ArrayList<Rule> ( ) );
 	}
 
-	private void addMixedTransitions ( Rule ruleMixedContent, ArrayList<Rule> handled )
+	private void addMixedTransitions ( Rule ruleMixedContent, List<Rule> handled )
 	{
 		if ( handled.contains ( ruleMixedContent ) )
 		{
@@ -1186,25 +1194,35 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			// {process contents}
 			XSWildcard xsWildcard = (XSWildcard) xsTerm;
 
-			SchemaInformedRule particleTerm_i_1 = s;
-			particleTerm_i_1.addTerminalRule ( END_ELEMENT );
+			SchemaInformedRule b = s;
 
-			SchemaInformedRule particleTerm_i_0 = new SchemaInformedRuleElement ( );
+			// SchemaInformedRule particleTerm_i_1 = s;
+			// particleTerm_i_1.addTerminalRule ( END_ELEMENT );
+			// SchemaInformedRule particleTerm_i_0 = new
+			// SchemaInformedRuleElement ( );
+
+			SchemaInformedRule urType = SchemaInformedGrammar.getUrTypeRule ( );
+			b.joinRules ( urType );
 
 			short constraintType = xsWildcard.getConstraintType ( );
 			if ( constraintType == XSWildcard.NSCONSTRAINT_ANY || constraintType == XSWildcard.NSCONSTRAINT_NOT )
 			{
 				// SE (*)
-				particleTerm_i_0.addRule ( new StartElementGeneric ( ), particleTerm_i_1 );
+				// b.addRule ( new StartElementGeneric ( ), urType );
+				// particleTerm_i_0.addRule ( new StartElementGeneric ( ),
+				// particleTerm_i_1 );
 			}
 			else
 			{
 				// ns list ?
 				// TODO SE(uri, *) --> StartElementNS( * )
-				particleTerm_i_0.addRule ( new StartElementGeneric ( ), particleTerm_i_1 );
+				// b.addRule ( new StartElementGeneric ( ), urType );
+				// particleTerm_i_0.addRule ( new StartElementGeneric ( ),
+				// urType );
 			}
 
-			return particleTerm_i_0;
+			// return particleTerm_i_0;
+			return b;
 		}
 		else
 		{

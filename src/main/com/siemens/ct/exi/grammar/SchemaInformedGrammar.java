@@ -21,15 +21,22 @@ package com.siemens.ct.exi.grammar;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.siemens.ct.exi.grammar.event.AttributeGeneric;
+import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndDocument;
+import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
 import com.siemens.ct.exi.grammar.rule.RuleDocument;
 import com.siemens.ct.exi.grammar.rule.RuleFragment;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleDocContent;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleFragmentContent;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleStartTag;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -38,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080804
+ * @version 0.1.20080919
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar
@@ -46,6 +53,8 @@ public class SchemaInformedGrammar extends AbstractGrammar
 	protected Map<ElementKey, Rule>				elementDispatcher;
 
 	protected Map<ExpandedName, TypeGrammar>	grammarTypes;
+	
+	protected final TypeGrammar urType;
 
 	protected SchemaInformedGrammar ( ExpandedName[] globalElements )
 	{
@@ -57,6 +66,29 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		// allocate memory
 		elementDispatcher = new HashMap<ElementKey, Rule> ( );
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar> ( );
+		
+		//	ur-type
+		SchemaInformedRule urType0 = SchemaInformedGrammar.getUrTypeRule ( );
+		// TODO typeEmpty ?
+		urType = new TypeGrammar( urType0, urType0 );
+	}
+	
+	public static SchemaInformedRule getUrTypeRule()
+	{
+		SchemaInformedRule  urType1 = new SchemaInformedRuleElement();
+		urType1.addRule ( new StartElementGeneric(), urType1 );
+		urType1.addTerminalRule ( new EndElement() );
+		urType1.addRule ( new CharactersGeneric(), urType1 );
+		
+		SchemaInformedRule urType0 = new SchemaInformedRuleStartTag( urType1 );
+		urType0.addRule ( new AttributeGeneric(), urType0 );
+		urType0.addRule ( new StartElementGeneric(), urType1 );
+		urType0.addTerminalRule ( new EndElement() );
+		urType0.addRule ( new CharactersGeneric(), urType1 );
+		urType0.setHasNamedSubtypes ( true );
+		urType0.setFirstElementRule ( );
+		
+		return urType0;
 	}
 	
 	protected void setUriEntries( String[] uris )
@@ -88,6 +120,11 @@ public class SchemaInformedGrammar extends AbstractGrammar
 	{
 		ExpandedName en = new ExpandedName ( namespaceURI, name );
 		return grammarTypes.get ( en );
+	}
+	
+	public TypeGrammar getUrType( )
+	{
+		return urType;
 	}
 
 	private void initDocumentGrammar( ExpandedName[] globalElements )
