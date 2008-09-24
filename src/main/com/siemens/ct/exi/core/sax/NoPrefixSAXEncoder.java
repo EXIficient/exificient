@@ -116,7 +116,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 				handleAttributes ( attributes );
 			}
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "startElement: " + raw, e );
 		}
@@ -138,7 +138,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 	 * processing the associated element.
 	 * 
 	 */
-	protected void handleAttributes ( Attributes attributes ) throws Exception
+	protected void handleAttributes ( Attributes attributes ) throws EXIException
 	{
 		exiAttributes.parse ( attributes, this.globalPrefixMapping );
 
@@ -199,7 +199,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 
 			encoder.encodeEndDocument ( );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "endDocument", e );
 		}
@@ -213,7 +213,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 
 			encoder.encodeProcessingInstruction ( target, data );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "processingInstruction", e );
 		}
@@ -227,10 +227,10 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 
 			encoder.encodeEndElement ( );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 
-			throw new SAXException ( "endElement", e );
+			throw new SAXException ( "endElement=" + raw, e );
 		}
 	}
 
@@ -267,7 +267,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 
 			encoder.encodeComment ( ch, start, length );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "comment", e );
 		}
@@ -279,7 +279,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 		{
 			checkPendingCharacters ( );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "startCDATA", e );
 		}
@@ -292,7 +292,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 			checkPendingCharacters ( );
 
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "endCDATA", e );
 		}
@@ -304,7 +304,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 		{
 			checkPendingCharacters ( );
 		}
-		catch ( Exception e )
+		catch ( EXIException e )
 		{
 			throw new SAXException ( "startDTD", e );
 		}

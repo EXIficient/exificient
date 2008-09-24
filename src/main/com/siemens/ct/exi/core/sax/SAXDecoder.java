@@ -41,6 +41,7 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
  * TODO Description
@@ -226,7 +227,14 @@ public class SAXDecoder implements XMLReader
 					break;
 				case ATTRIBUTE_GENERIC:
 				case ATTRIBUTE_GENERIC_UNDECLARED:
-					decoder.decodeAttributeGeneric ( );
+					if ( decoder.getNextEventType ( ) ==  EventType.ATTRIBUTE_GENERIC )
+					{
+						decoder.decodeAttributeGeneric ( );
+					}
+					else if ( decoder.getNextEventType ( ) ==  EventType.ATTRIBUTE_GENERIC_UNDECLARED )
+					{
+						decoder.decodeAttributeGenericUndeclared ( );
+					}
 
 					atQName = this.getQName ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ) );
 
