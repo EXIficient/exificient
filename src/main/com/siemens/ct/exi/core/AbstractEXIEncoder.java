@@ -30,6 +30,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.sax.NamespacePrefixLevels;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.TypeGrammar;
@@ -39,6 +40,7 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.EncoderBlock;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
 /**
  * TODO Description
@@ -55,14 +57,20 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	protected OutputStream			os;
 
+	// to parse raw nil value
+	protected XSDBoolean			nil;
+
 	// namespace prefixes are related to elements
-	protected NamespacePrefixLevels	nsPrefixes		= new NamespacePrefixLevels ( );
+	protected NamespacePrefixLevels	nsPrefixes;
 
 	protected String				lastSEprefix	= null;
 
 	public AbstractEXIEncoder ( EXIFactory exiFactory )
 	{
 		super ( exiFactory );
+
+		nsPrefixes = new NamespacePrefixLevels ( );
+		nil = XSDBoolean.newInstance ( );
 	}
 
 	@Override
@@ -190,22 +198,27 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	protected void encodeUnexpectedAttribute ( String uri, String localName, String value ) throws EXIException
 	{
-
 		// encode expanded name
 		encodeExpandedName ( uri, localName );
 
-		// learn attribute event ?
-		getCurrentRule ( ).learnAttribute ( uri, localName );
-
+		// encode content as string
 		try
 		{
-			// content as string
 			block.writeValueAsString ( uri, localName, value );
 		}
 		catch ( IOException e )
 		{
 			throw new EXIException ( e );
 		}
+	}
+
+	protected void encodeUnexpectedAttributeAndLearn ( String uri, String localName, String value ) throws EXIException
+	{
+		// encode unexpected attribute
+		encodeUnexpectedAttribute ( uri, localName, value );
+
+		// learn attribute event ?
+		getCurrentRule ( ).learnAttribute ( uri, localName );
 	}
 
 	protected void encodeExpandedName ( String uri, String localName ) throws EXIException
@@ -222,14 +235,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		}
 	}
 
-	protected void updateSchemaValidStartElement ( int ec, String uri, String localName ) throws EXIException
-	{
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
-
-		// push next rule
-		pushRule ( getRuleForElement ( uri, localName ) );
-	}
 
 	public void encodeStartDocument () throws EXIException
 	{
@@ -311,11 +316,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 					replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRuleForUndeclaredSE ( ) );
 
 					// push next rule
-					pushRule ( getRuleForElement ( uri, localName ) );
+					pushRule ( uri, localName );
 				}
 			}
 			else
 			{
+				//	SE(*) on first level
 				// encode EventCode
 				encode1stLevelEventCode ( ecGeneric );
 
@@ -324,11 +330,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 				Rule tmpStorage = getCurrentRule ( );
 
-				// update grammars etc.
-				updateSchemaValidStartElement ( ecGeneric, uri, localName );
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ecGeneric ) );
+
+				// push next rule
+				pushRule ( uri, localName );
 
 				// learning in schema-less case
-				// getCurrentRule ( ).learnStartElement ( uri, localName );
 				tmpStorage.learnStartElement ( uri, localName );
 			}
 		}
@@ -337,8 +345,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			// encode EventCode
 			encode1stLevelEventCode ( ec );
 
-			// update grammars etc.
-			updateSchemaValidStartElement ( ec, uri, localName );
+			// step forward in current rule (replace rule at the top)
+			replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+			// push next rule
+			pushRule ( uri, localName );
 		}
 
 		// update scope
@@ -363,8 +374,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		}
 		else
 		{
-			// System.out.println ( "SE_PFX no uri found for = '" + uri + "'
-			// (omitted)");
 			/*
 			 * If there are no prefixes specified for the URI of the QName by
 			 * preceding NS events in the EXI stream, the prefix is undefined.
@@ -470,9 +479,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeXsiType ( String uri, String localName, String raw ) throws EXIException
 	{
-		Grammar g = exiFactory.getGrammar ( );
-
-		if ( g.isSchemaInformed ( ) )
+		if ( getCurrentRule ( ).isSchemaRule ( ) )
 		{
 			int ec2 = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_TYPE,
 					exiFactory.getFidelityOptions ( ) );
@@ -488,6 +495,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			else
 			{
 				// lookup type-grammar
+				Grammar g = exiFactory.getGrammar ( );
 				TypeGrammar tg = ( (SchemaInformedGrammar) g ).getTypeGrammar ( uri, localName );
 
 				if ( tg == null )
@@ -511,55 +519,106 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		}
 		else
 		{
-			// schema-less --> handle as normal attribute
-			// TODO without AT learning!
+			// schema-less mode
 
-			// Note: The value of each AT (xsi:type) event matching the AT(*)
-			// terminal is represented as a QName (see 7.1.7 QName). If there is
-			// no namespace in scope for the specified qname prefix, the QName
-			// uri is set to empty ("") and the QName localName is set to the
-			// full lexical value of the QName, including the prefix.
-			encodeAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE, raw );
+			// AT(*) can be found on 2nd level
+			int ecATundeclared = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+					exiFactory.getFidelityOptions ( ) );
+
+			if ( ecATundeclared == Constants.NOT_FOUND )
+			{
+				// Warn encoder that the attribute is simply skipped
+				String msg = "Skip AT xsi:type: " + raw;
+				errorHandler.warning ( new EXIException ( msg ) );
+			}
+			else
+			{
+				// encode event-code
+				encode2ndLevelEventCode ( ecATundeclared );
+
+
+				// TODO The value of each AT (xsi:type) event matching the AT(*)
+				// terminal is represented as a QName (see 7.1.7 QName). If there is
+				// no namespace in scope for the specified qname prefix, the QName
+				// uri is set to empty ("") and the QName localName is set to the
+				// full lexical value of the QName, including the prefix.
+				encodeUnexpectedAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE, raw );
+			}
 		}
 	}
 
-	public void encodeXsiNil ( boolean nil ) throws EXIException
+	public void encodeXsiNil ( String rawNil ) throws EXIException
 	{
-		int ec2 = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_NIL,
-				exiFactory.getFidelityOptions ( ) );
-
-		if ( ec2 == Constants.NOT_FOUND )
+		if ( getCurrentRule ( ).isSchemaRule ( ) )
 		{
-			// deviation
-			System.err.println ( "xsi:nil deviation not handled yet" );
+			// nillable ?
+			int ec2 = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_NIL,
+					exiFactory.getFidelityOptions ( ) );
+
+			if ( ec2 == Constants.NOT_FOUND )
+			{
+				System.err.println ( "xsi:nil schema deviation not handled yet!" );
+			}
+			else
+			{
+				// schema-valid boolean ?
+				try
+				{
+					nil.parse ( rawNil );
+
+					// encode event-code + nil value
+					encode2ndLevelEventCode ( ec2 );
+					try
+					{
+						block.writeBoolean ( nil.getBoolean ( ) );
+					}
+					catch ( IOException e )
+					{
+						throw new EXIException ( e );
+					}
+
+					if ( nil.getBoolean ( ) )
+					{
+						if ( getCurrentRule ( ) instanceof SchemaInformedRule )
+						{
+
+							replaceRuleAtTheTop ( ( (SchemaInformedRule) getCurrentRule ( ) ).getTypeEmpty ( ) );
+						}
+						else
+						{
+							throw new EXIException ( "EXI, no typeEmpty defined for xsi:nil" );
+						}
+					}
+
+				}
+				catch ( XMLParsingException e )
+				{
+					// TODO If the value is not a schema-valid Boolean, the AT
+					// (xsi:nil) event is represented by the AT(*)
+					// [schema-invalid value] terminal
+				}
+			}
 		}
 		else
 		{
-			// encode event-code + nil value
-			encode2ndLevelEventCode ( ec2 );
-			try
+			// schema-less mode
+
+			// AT(*) can be found on 2nd level
+			int ecATundeclared = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+					exiFactory.getFidelityOptions ( ) );
+
+			if ( ecATundeclared == Constants.NOT_FOUND )
 			{
-				block.writeBoolean ( nil );
+				// Warn encoder that the attribute is simply skipped
+				String msg = "Skip AT xsi:nil";
+				errorHandler.warning ( new EXIException ( msg ) );
 			}
-			catch ( IOException e )
+			else
 			{
-				throw new EXIException ( e );
-			}
+				// encode event-code
+				encode2ndLevelEventCode ( ecATundeclared );
 
-			if ( nil )
-			{
-				if ( getCurrentRule ( ) instanceof SchemaInformedRule )
-				{
-
-					replaceRuleAtTheTop ( ( (SchemaInformedRule) getCurrentRule ( ) ).getTypeEmpty ( ) );
-				}
-				else
-				{
-					throw new EXIException ( "EXI, no typeEmpty defined for xsi:nil" );
-				}
-
-				// // TODO jump to type empty
-				// System.err.println( "TODO xsi:nil jump to type empty");
+				encodeUnexpectedAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, rawNil );
 			}
 		}
 	}
@@ -598,7 +657,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 					// encode event-code
 					encode2ndLevelEventCode ( ecATundeclared );
 
-					encodeUnexpectedAttribute ( uri, localName, value );
+					encodeUnexpectedAttributeAndLearn ( uri, localName, value );
 				}
 			}
 			else
@@ -606,10 +665,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				// encode EventCode
 				encode1stLevelEventCode ( ecGeneric );
 
-				encodeUnexpectedAttribute ( uri, localName, value );
+				encodeUnexpectedAttributeAndLearn ( uri, localName, value );
 
 				// step forward in current rule (replace rule at the top)
-				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ecGeneric ) );
 
 			}
 		}
@@ -717,9 +776,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		{
 			try
 			{
-				// System.out.println ( "CM <!--" + new String ( ch, start,
-				// length ) + " -->" );
-
 				// comments can be found on 3rd level
 				int ec3 = getCurrentRule ( ).get3rdLevelEventCode ( EventType.COMMENT, getFidelityOptions ( ) );
 				encode3rdLevelEventCode ( ec3 );
@@ -743,8 +799,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		{
 			try
 			{
-				// System.out.println ( "PI " + target + " --> " + data );
-
 				// processing instructions can be found on 3rd level
 				int ec3 = getCurrentRule ( ).get3rdLevelEventCode ( EventType.PROCESSING_INSTRUCTION,
 						getFidelityOptions ( ) );

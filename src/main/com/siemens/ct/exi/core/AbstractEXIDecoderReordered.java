@@ -405,7 +405,7 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 	
 	protected void decodeAttributeGenericInternal( ) throws EXIException
 	{
-		decodeAttributeGenericStructure ( );
+		decodeAttributeGenericUndeclaredStructure ( );
 		
 		ExpandedName n = new ExpandedName( attributeURI, attributeLocalName );
 		genericAttributes.add( n );
@@ -433,6 +433,11 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		}
 	}
 
+	public void decodeAttributeGenericUndeclared( ) throws EXIException
+	{
+		this.decodeAttributeGeneric();
+	}
+	
 
 	protected void decodeAttributeXsiTypeInternal( ) throws EXIException
 	{
@@ -573,11 +578,12 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 	
 	public void decodeEndElement( ) throws EXIException
 	{
-		Event ev = stepToNextEvent ( );
+		// Event ev = stepToNextEvent ( );
+		stepToNextEvent ( );
 		
 		popScope ( );
 		
-		assert ( ev.isEventType( EventType.END_ELEMENT ) );
+		// assert ( ev.isEventType( EventType.END_ELEMENT ) );
 	}
 	
 	protected void decodeEndDocumentInternal( ) throws EXIException

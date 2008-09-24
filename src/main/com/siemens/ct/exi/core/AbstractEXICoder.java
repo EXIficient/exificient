@@ -29,6 +29,8 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.ElementKey;
 import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeGeneric;
 import com.siemens.ct.exi.grammar.event.Characters;
@@ -48,7 +50,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080915
+ * @version 0.1.20080922
  */
 
 public abstract class AbstractEXICoder
@@ -65,6 +67,7 @@ public abstract class AbstractEXICoder
 
 	// factory
 	protected EXIFactory							exiFactory;
+	protected Grammar								grammar;
 
 	// error handler
 	protected ErrorHandler							errorHandler;
@@ -86,6 +89,7 @@ public abstract class AbstractEXICoder
 	public AbstractEXICoder ( EXIFactory exiFactory )
 	{
 		this.exiFactory = exiFactory;
+		this.grammar = exiFactory.getGrammar ( );
 
 		// setup final events
 		eventED = new EndDocument ( );
@@ -130,11 +134,13 @@ public abstract class AbstractEXICoder
 		runtimeDispatcher.clear ( );
 		// stack when traversing the EXI document
 		openRules.clear ( );
-		// scope
+		// reset scope root element (unknown)
 		scopeURI.clear ( );
 		scopeLocalName.clear ( );
-		// scope for root element (unknown)
 		pushScope ( null, null );
+		// reset scopeType
+		scopeTypeURI.clear ( );
+		scopeTypeLocalName.clear ( );
 		pushScopeType ( null, null );
 	}
 
@@ -210,55 +216,65 @@ public abstract class AbstractEXICoder
 		return exiFactory.getFidelityOptions ( );
 	}
 
-	protected Rule getRuleForElement ( String namespaceURI, String localName )
+	protected void pushRule ( final String namespaceURI, final String localName )
 	{
-		Grammar g = exiFactory.getGrammar ( );
+		Rule ruleToPush = null;
 
-		Rule ruleSchema = null;
-
-		if ( g.isSchemaInformed ( ) )
+		if ( grammar.isSchemaInformed ( ) )
 		{
-			// 1st step
-			ExpandedName name = new ExpandedName ( namespaceURI, localName );
-			ElementKey key = new ElementKey ( name );
-			ruleSchema = g.getRule ( key );
-
-			if ( ruleSchema == null )
+			// element rule known from schema ?
+			if ( ( ruleToPush = getSchemaRuleForElement ( namespaceURI, localName ) ) == null )
 			{
-				// 2nd step, including scope
-				ExpandedName scope = null;
-				if ( getScopeLocalName ( ) != null )
-				{
-					scope = new ExpandedName ( getScopeURI ( ), getScopeLocalName ( ) );
-				}
-				key.setScope ( scope );
-				ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
-
-				if ( ruleSchema == null && getScopeTypeLocalName ( ) != null )
-				{
-					// include type
-					key.setScope ( null );
-					ExpandedName scopeType = new ExpandedName ( getScopeTypeURI ( ), getScopeTypeLocalName ( ) );
-					key.setScopeType ( scopeType );
-
-					ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
-				}
+				// if rule not present use ur-type
+				TypeGrammar urType = ( (SchemaInformedGrammar) grammar ).getUrType ( );
+				ruleToPush = urType.getType ( );
 			}
-		}
-
-		if ( ruleSchema == null )
-		{
-			// runtime-grammar
-			return getRuntimeRuleForElement ( namespaceURI, localName );
 		}
 		else
 		{
-			// schema-informed grammar
-			return ruleSchema;
+			// runtime-grammar
+			ruleToPush = getRuntimeRuleForElement ( namespaceURI, localName );
 		}
+
+		// pushing the rule on the top of the stack
+		pushRule ( ruleToPush );
 	}
 
-	protected Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
+	private Rule getSchemaRuleForElement ( final String namespaceURI, final String localName )
+	{
+		Rule ruleSchema = null;
+
+		// 1st step
+		ExpandedName name = new ExpandedName ( namespaceURI, localName );
+		ElementKey key = new ElementKey ( name );
+		ruleSchema = grammar.getRule ( key );
+
+		if ( ruleSchema == null )
+		{
+			// 2nd step, including scope
+			ExpandedName scope = null;
+			if ( getScopeLocalName ( ) != null )
+			{
+				scope = new ExpandedName ( getScopeURI ( ), getScopeLocalName ( ) );
+			}
+			key.setScope ( scope );
+			ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
+
+			if ( ruleSchema == null && getScopeTypeLocalName ( ) != null )
+			{
+				// include type
+				key.setScope ( null );
+				ExpandedName scopeType = new ExpandedName ( getScopeTypeURI ( ), getScopeTypeLocalName ( ) );
+				key.setScopeType ( scopeType );
+
+				ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
+			}
+		}
+
+		return ruleSchema;
+	}
+
+	private Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
 	{
 		// runtime-grammar
 		if ( runtimeDispatcher.containsKey ( namespaceURI ) )

@@ -21,6 +21,8 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
+
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
@@ -40,89 +42,88 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080915
+ * @version 0.1.20080922
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXIDecoder
 {
-	//	next event
-	protected Event nextEvent;
-	protected EventType nextEventType;
-	protected int ec;
-	
-	//	decoder stream
-	protected InputStream is;
-	protected DecoderBlock block;
-	
-	//	current values
-	protected String elementURI;
-	protected String elementLocalName;
-	protected String attributeURI;
-	protected String attributeLocalName;
-	
-	protected String attributeValue;
-	protected String xsiTypeUri;
-	protected String xsiTypeName;
-	protected boolean xsiNil;
-	protected String characters;
-	protected String comment;
-	protected String nsURI;
-	protected String nsPrefix;
-	protected String piTarget;
-	protected String piData;
+	// next event
+	protected Event			nextEvent;
+	protected EventType		nextEventType;
+	protected int			ec;
 
-	public AbstractEXIDecoder( EXIFactory exiFactory )
+	// decoder stream
+	protected InputStream	is;
+	protected DecoderBlock	block;
+
+	// current values
+	protected String		elementURI;
+	protected String		elementLocalName;
+	protected String		attributeURI;
+	protected String		attributeLocalName;
+
+	protected String		attributeValue;
+	protected String		xsiTypeUri;
+	protected String		xsiTypeName;
+	protected boolean		xsiNil;
+	protected String		characters;
+	protected String		comment;
+	protected String		nsURI;
+	protected String		nsPrefix;
+	protected String		piTarget;
+	protected String		piData;
+
+	public AbstractEXIDecoder ( EXIFactory exiFactory )
 	{
-		super( exiFactory );
+		super ( exiFactory );
 	}
-	
+
 	@Override
-	protected void initForEachRun( ) throws EXIException
-	{	
+	protected void initForEachRun () throws EXIException
+	{
 		super.initForEachRun ( );
-		
+
 		try
-		{	
+		{
 			block = exiFactory.createDecoderBlock ( is );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	
-	public void setInputStream( InputStream is ) throws EXIException
+
+	public void setInputStream ( InputStream is ) throws EXIException
 	{
 		this.is = is;
-		
-		//	parse header (bit-wise BUT byte padded!)
-		BitDecoderChannel headerChannel = new BitDecoderChannel( is );
+
+		// parse header (bit-wise BUT byte padded!)
+		BitDecoderChannel headerChannel = new BitDecoderChannel ( is );
 		EXIHeader.parse ( headerChannel );
-		
-		initForEachRun();
+
+		initForEachRun ( );
 	}
-	
-	protected void decodeEventCode( ) throws EXIException
+
+	protected void decodeEventCode () throws EXIException
 	{
 		ec = decode1stLevelEventCode ( );
-		
+
 		if ( ec == Constants.NOT_FOUND )
 		{
 			nextEvent = null;
-			
-			//	2nd level ?
+
+			// 2nd level ?
 			int ec2 = decode2ndLevelEventCode ( );
-			
+
 			if ( ec2 == Constants.NOT_FOUND )
 			{
-				//	3rd level
-				int ec3 = decode3rdLevelEventCode();
-				nextEventType = getCurrentRule ( ).get3rdLevelEvent( ec3, getFidelityOptions( ) );
+				// 3rd level
+				int ec3 = decode3rdLevelEventCode ( );
+				nextEventType = getCurrentRule ( ).get3rdLevelEvent ( ec3, getFidelityOptions ( ) );
 			}
 			else
 			{
-				nextEventType = getCurrentRule ( ).get2ndLevelEvent ( ec2, getFidelityOptions() );
+				nextEventType = getCurrentRule ( ).get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
 			}
 		}
 		else
@@ -131,362 +132,361 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			nextEventType = nextEvent.getEventType ( );
 		}
 	}
-	
-	protected int decode1stLevelEventCode( ) throws EXIException
-	{		
+
+	protected int decode1stLevelEventCode () throws EXIException
+	{
 		try
 		{
-			int ch1 = getCurrentRule().get1stLevelCharacteristics( getFidelityOptions() );
+			int ch1 = getCurrentRule ( ).get1stLevelCharacteristics ( getFidelityOptions ( ) );
 			int level1 = block.readEventCode ( ch1 );
-			
-			
-			if ( getCurrentRule().hasSecondOrThirdLevel ( exiFactory.getFidelityOptions ( ) ) )
+
+			if ( getCurrentRule ( ).hasSecondOrThirdLevel ( exiFactory.getFidelityOptions ( ) ) )
 			{
-				return ( level1 < ( ch1 - 1 ) ? level1: Constants.NOT_FOUND);
+				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
 			}
 			else
 			{
-				return ( level1 < ch1 ? level1: Constants.NOT_FOUND);
+				return ( level1 < ch1 ? level1 : Constants.NOT_FOUND );
 			}
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected int decode2ndLevelEventCode( ) throws EXIException
+
+	protected int decode2ndLevelEventCode () throws EXIException
 	{
 		try
 		{
-			int ch2 = getCurrentRule().get2ndLevelCharacteristics( getFidelityOptions() );
+			int ch2 = getCurrentRule ( ).get2ndLevelCharacteristics ( getFidelityOptions ( ) );
 			int level2 = block.readEventCode ( ch2 );
-			
-			if ( getCurrentRule().get3rdLevelCharacteristics ( getFidelityOptions() ) > 0 )
+
+			if ( getCurrentRule ( ).get3rdLevelCharacteristics ( getFidelityOptions ( ) ) > 0 )
 			{
-				return ( level2 < ( ch2 - 1 ) ? level2 : Constants.NOT_FOUND);
+				return ( level2 < ( ch2 - 1 ) ? level2 : Constants.NOT_FOUND );
 			}
 			else
 			{
-				return ( level2 < ch2 ? level2: Constants.NOT_FOUND);
+				return ( level2 < ch2 ? level2 : Constants.NOT_FOUND );
 			}
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected int decode3rdLevelEventCode( ) throws EXIException
+
+	protected int decode3rdLevelEventCode () throws EXIException
 	{
 		try
 		{
-			int ch3 = getCurrentRule().get3rdLevelCharacteristics( getFidelityOptions() );
+			int ch3 = getCurrentRule ( ).get3rdLevelCharacteristics ( getFidelityOptions ( ) );
 			return block.readEventCode ( ch3 );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
 
-	
-	
-	protected void decodeStartDocumentStructure( ) throws EXIException
+	protected void decodeStartDocumentStructure () throws EXIException
 	{
-		//	step forward
+		// step forward
 		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 	}
 
-	protected void decodeStartElementStructure( ) throws EXIException
-	{	
-		//	StartEvent
-		this.elementURI = ((StartElement)nextEvent).getNamespaceURI ( );
-		this.elementLocalName = ((StartElement)nextEvent).getLocalPart ( );
-		
-		//	step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop( getCurrentRule ( ).get1stLevelRule ( ec ) );
-		
-		//	update grammars etc.
-		updateStartElement();
-		
+	protected void decodeStartElementStructure () throws EXIException
+	{
+		// StartEvent
+		this.elementURI = ( (StartElement) nextEvent ).getNamespaceURI ( );
+		this.elementLocalName = ( (StartElement) nextEvent ).getLocalPart ( );
+
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+		// update grammars etc.
+		pushRule ( elementURI, elementLocalName );
 		pushScope ( elementURI, elementLocalName );
 	}
-	
-	
-	protected void decodeStartElementGenericStructure( ) throws EXIException
+
+	protected void decodeStartElementGenericStructure () throws EXIException
 	{
-		//	decode uri & local-name
-		decodeStartElementExpandedName( );
-		
+		// decode uri & local-name
+		decodeStartElementExpandedName ( );
+
 		Rule tmpStorage = getCurrentRule ( );
 
-		//	step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop( getCurrentRule ( ).get1stLevelRule ( ec ) );
-		
-		//	learn start-element ?
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+		// learn start-element ?
 		tmpStorage.learnStartElement ( elementURI, elementLocalName );
-		
-		//	update grammars etc.
-		updateStartElement();
-		
+
+		// update grammars etc.
+		pushRule ( elementURI, elementLocalName );
 		pushScope ( elementURI, elementLocalName );
 	}
-	
-	protected void decodeStartElementGenericUndeclaredStructure( ) throws EXIException
+
+	protected void decodeStartElementGenericUndeclaredStructure () throws EXIException
 	{
-		//	decode uri & local-name
-		decodeStartElementExpandedName( );
-		
-		//	learn start-element ?
+		// decode uri & local-name
+		decodeStartElementExpandedName ( );
+
+		// learn start-element ?
 		getCurrentRule ( ).learnStartElement ( elementURI, elementLocalName );
-		
+
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRuleForUndeclaredSE ( ) );
-		
-		//	update grammars etc.
-		updateStartElement();
-		
+
+		// update grammars etc.
+		pushRule ( elementURI, elementLocalName );
 		pushScope ( elementURI, elementLocalName );
 	}
-	
 
-	protected void decodeStartElementExpandedName( ) throws EXIException
+	protected void decodeStartElementExpandedName () throws EXIException
 	{
 		try
 		{
-			//	decode uri & local-name
-			this.elementURI = block.readUri ( ) ;
+			// decode uri & local-name
+			this.elementURI = block.readUri ( );
 			this.elementLocalName = block.readLocalName ( elementURI );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected void updateStartElement()
-	{
-		//	extend open rules
-		pushRule( getRuleForElement ( elementURI, elementLocalName ) );
-	}
 
-
-	
-	protected void decodeNamespaceDeclarationStructure( ) throws EXIException
+	protected void decodeNamespaceDeclarationStructure () throws EXIException
 	{
 		try
 		{
-			//	prefix mapping
+			// prefix mapping
 			nsURI = block.readUri ( );
 			nsPrefix = block.readPrefix ( nsURI );
 			boolean local_element_ns = block.readBoolean ( );
 			if ( local_element_ns )
 			{
-				//	TODO local_element_ns
+				// TODO local_element_ns
 				// System.out.println ( "local_element_ns: " + nsPrefix );
 			}
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected Attribute decodeAttributeStructure( ) throws EXIException
+
+	protected Attribute decodeAttributeStructure () throws EXIException
 	{
-		//	Attribute
-		Attribute at = ((Attribute)nextEvent);
+		// Attribute
+		Attribute at = ( (Attribute) nextEvent );
 		this.attributeURI = at.getNamespaceURI ( );
 		this.attributeLocalName = at.getLocalPart ( );
-		
-		//	step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 
 		return at;
 	}
+
+	protected void decodeAttributeGenericStructure () throws EXIException
+	{
+		//	decode structure
+		decodeAttributeGenericUndeclaredStructure ();
+		
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+	}
 	
-	protected void decodeAttributeGenericStructure( ) throws EXIException
+	protected void decodeAttributeGenericUndeclaredStructure () throws EXIException
 	{
 		try
 		{
-			//	decode uri & local-name
+			// decode uri & local-name
 			this.attributeURI = block.readUri ( );
-			this.attributeLocalName = block.readLocalName ( attributeURI ); 
-			
-			//	update grammar
-			getCurrentRule( ).learnAttribute ( attributeURI, attributeLocalName );
+			this.attributeLocalName = block.readLocalName ( attributeURI );
+
+			if ( attributeURI.equals ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI )
+					&& ( attributeLocalName.equals ( Constants.XSI_NIL ) || attributeLocalName.equals ( Constants.XSI_TYPE ) ) )
+			{
+				//	no learning for xsi:type or xsi:nil
+			}
+			else
+			{
+				// update grammar
+				getCurrentRule ( ).learnAttribute ( attributeURI, attributeLocalName );				
+			}
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
 
-	protected void decodeAttributeXsiType( ) throws EXIException
+	protected void decodeAttributeXsiType () throws EXIException
 	{
 		try
 		{
-			//	decode type
+			// decode type
 			xsiTypeUri = block.readUri ( );
 			xsiTypeName = block.readLocalName ( xsiTypeUri );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected void decodeAttributeXsiNil( ) throws EXIException
+
+	protected void decodeAttributeXsiNil () throws EXIException
 	{
 		try
 		{
-			//	decode nil
+			// decode nil
 			this.xsiNil = block.readBoolean ( );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e ); 
+			throw new EXIException ( e );
 		}
 	}
-	
-	protected Characters decodeCharactersStructure( ) throws IOException
+
+	protected Characters decodeCharactersStructure () throws IOException
 	{
-		//	step forward
-		replaceRuleAtTheTop( getCurrentRule ( ).get1stLevelRule ( ec ) );
-		
-		return (Characters)nextEvent;
+		// step forward
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+		return (Characters) nextEvent;
 	}
-	
-	protected void decodeCharactersGenericStructure( )
-	{	
-		replaceRuleAtTheTop( getCurrentRule ( ).get1stLevelRule ( ec ) );
+
+	protected void decodeCharactersGenericStructure ()
+	{
+		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 	}
-	
-	protected void decodeCharactersUndeclaredStructure( )
-	{	
-		//	learn character event ?
-		getCurrentRule ( ).learnCharacters();
-		
+
+	protected void decodeCharactersUndeclaredStructure ()
+	{
+		// learn character event ?
+		getCurrentRule ( ).learnCharacters ( );
+
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );	
+		replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
 	}
-	
-	protected void decodeEndElementStructure( )
+
+	protected void decodeEndElementStructure ()
 	{
-		//	pop top rule
-		popRule();
+		// pop top rule
+		popRule ( );
 		popScope ( );
 	}
-	
-	protected void decodeEndDocumentStructure( ) throws EXIException
-	{	
+
+	protected void decodeEndDocumentStructure () throws EXIException
+	{
 		popRule ( );
-		
+
 		assert ( openRules.size ( ) == 0 );
 	}
-	
-	protected void decodeCommentStructure( ) throws EXIException
+
+	protected void decodeCommentStructure () throws EXIException
 	{
 		try
 		{
 			comment = block.readString ( );
-			
-			//	step forward
+
+			// step forward
 			replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 
 	}
-	
-	protected void decodeProcessingInstructionStructure( ) throws EXIException
+
+	protected void decodeProcessingInstructionStructure () throws EXIException
 	{
 		try
 		{
-			//	target & data
+			// target & data
 			piTarget = block.readString ( );
 			piData = block.readString ( );
 
-			
-			//	step forward
+			// step forward
 			replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
 	}
-	
-	public String getElementURI( )
+
+	public String getElementURI ()
 	{
 		return elementURI;
 	}
-	public String getElementLocalName( )
+
+	public String getElementLocalName ()
 	{
 		return elementLocalName;
 	}
-	
-	public String getAttributeURI( )
+
+	public String getAttributeURI ()
 	{
 		return attributeURI;
 	}
-	public String getAttributeLocalName( )
+
+	public String getAttributeLocalName ()
 	{
 		return attributeLocalName;
 	}
 
-	public String getAttributeValue( )
+	public String getAttributeValue ()
 	{
 		return attributeValue;
 	}
-	
-	public String getXsiTypeUri( )
+
+	public String getXsiTypeUri ()
 	{
 		return this.xsiTypeUri;
 	}
-	public String getXsiTypeName( )
+
+	public String getXsiTypeName ()
 	{
 		return this.xsiTypeName;
 	}
-	
-	public boolean getXsiNil( )
+
+	public boolean getXsiNil ()
 	{
 		return xsiNil;
 	}
 
-	public String getCharacters( )
+	public String getCharacters ()
 	{
 		return characters;
 	}
-	
 
-	public String getComment( )
-	{	
+	public String getComment ()
+	{
 		return comment;
-	}	
-	
+	}
 
-	public String getNSUri( )
+	public String getNSUri ()
 	{
 		return nsURI;
 	}
-	
 
-	public String getNSPrefix( )
+	public String getNSPrefix ()
 	{
 		return nsPrefix;
 	}
-	
-	public String getPITarget( )
+
+	public String getPITarget ()
 	{
 		return piTarget;
 	}
-	
-	public String getPIData( )
+
+	public String getPIData ()
 	{
 		return piData;
 	}

@@ -108,7 +108,6 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		}
 	}
 	
-	
 	public void decodeAttributeGeneric( ) throws EXIException
 	{
 		try
@@ -123,6 +122,22 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 			throw new EXIException( e );
 		}
 	}
+	
+	public void decodeAttributeGenericUndeclared( ) throws EXIException
+	{
+		try
+		{
+			decodeAttributeGenericUndeclaredStructure ( );
+					
+			//	decode attribute value
+			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException( e );
+		}
+	}
+	
 	public void decodeXsiType( ) throws EXIException
 	{
 		decodeAttributeXsiType ( );
@@ -135,6 +150,7 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		//
 		this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );
 	}
+	
 	public void decodeXsiNil( ) throws EXIException
 	{
 		decodeAttributeXsiNil ( );
