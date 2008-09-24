@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.attributes;
 
-
 /**
  * TODO Description
  * 
@@ -28,26 +27,49 @@ package com.siemens.ct.exi.attributes;
  * @version 0.1.20080924
  */
 
-public class AttributeFactory
+public class SchemaInformedAttributeList extends AbstractAttributeList
 {
-	protected AttributeFactory()
+	public SchemaInformedAttributeList ()
 	{
+		super ( );
 	}
-	
-	public static AttributeFactory newInstance ()
+
+	/*
+	 * *Inserting an item into a sorted list*
+	 * http://www.brpreiss.com/books/opus5/html/page192.html
+	 */
+	@Override
+	protected void insertAttribute ( String uri, String localName, String pfx, String value )
 	{
-		return new AttributeFactory ( );
-	}
-	
-	public AttributeList createAttributeListInstance( boolean schemaInformed )
-	{
-		if ( schemaInformed )
+		// int i = numberOfAttributes;
+		int i = this.getNumberOfAttributes ( );
+
+		// greater ?
+		while ( i > 0 && isGreaterAttribute ( i - 1, uri, localName ) )
 		{
-			return new SchemaInformedAttributeList();
+			// move right
+			i--;
+		}
+
+		// update position i
+		attributeURI.add ( i, uri );
+		attributeLocalName.add ( i, localName );
+		attributePrefix.add ( i, pfx );
+		attributeValue.add ( i, value );
+	}
+
+	protected boolean isGreaterAttribute ( int attributeIndex, String uri, String localName )
+	{
+
+		if ( getAttributeLocalName ( attributeIndex ).compareTo ( localName ) > 0 )
+		{
+			return true;
 		}
 		else
 		{
-			return new SchemaLessAttributeList();
+
+			return ( getAttributeURI ( attributeIndex ).compareTo ( uri ) > 0 );
 		}
 	}
+
 }

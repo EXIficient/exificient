@@ -28,26 +28,15 @@ package com.siemens.ct.exi.attributes;
  * @version 0.1.20080924
  */
 
-public class AttributeFactory
+public class SchemaLessAttributeList extends AbstractAttributeList
 {
-	protected AttributeFactory()
+	@Override
+	protected void insertAttribute ( String uri, String localName, String pfx, String value )
 	{
+		attributeURI.add ( uri );
+		attributeLocalName.add ( localName );
+		attributePrefix.add ( pfx );
+		attributeValue.add ( value );
 	}
-	
-	public static AttributeFactory newInstance ()
-	{
-		return new AttributeFactory ( );
-	}
-	
-	public AttributeList createAttributeListInstance( boolean schemaInformed )
-	{
-		if ( schemaInformed )
-		{
-			return new SchemaInformedAttributeList();
-		}
-		else
-		{
-			return new SchemaLessAttributeList();
-		}
-	}
+
 }
