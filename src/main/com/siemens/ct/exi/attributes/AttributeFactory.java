@@ -25,7 +25,7 @@ package com.siemens.ct.exi.attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080919
  */
 
 public class AttributeFactory
@@ -41,13 +41,6 @@ public class AttributeFactory
 	
 	public AttributeList createAttributeListInstance( boolean schemaInformed )
 	{
-		if ( schemaInformed )
-		{
-			return new SchemaInformedAttributeList();
-		}
-		else
-		{
-			return new SchemaLessAttributeList();
-		}
+		return new AttributeListImpl();
 	}
 }

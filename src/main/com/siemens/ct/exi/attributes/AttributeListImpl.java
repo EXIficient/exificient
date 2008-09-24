@@ -30,8 +30,6 @@ import org.xml.sax.Attributes;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.core.CompileConfiguration;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
 /*
  * Namespace (NS) and attribute (AT) events are encoded in a specific order
@@ -49,17 +47,15 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080919
  */
 
-public class SchemaInformedAttributeList extends AbstractAttributeList
+public class AttributeListImpl extends AbstractAttributeList
 {
 	private List<String>	nsURIs		= new ArrayList<String> ( );
 	private List<String>	nsPrefixes	= new ArrayList<String> ( );
-
-	private XSDBoolean		bool		= XSDBoolean.newInstance ( );
-
-	public SchemaInformedAttributeList ()
+	
+	public AttributeListImpl ()
 	{
 		super ( );
 	}
@@ -74,10 +70,10 @@ public class SchemaInformedAttributeList extends AbstractAttributeList
 		nsPrefixes.add ( pfx );
 	}
 
-	private void setXsiNil ( boolean nil )
+	private void setXsiNil ( String rawNil )
 	{
 		hasXsiNil = true;
-		xsiNil = nil;
+		xsiNil = rawNil;
 	}
 
 	private void setXsiType ( String xsiValue, Map<String, String> prefixMapping )
@@ -149,17 +145,7 @@ public class SchemaInformedAttributeList extends AbstractAttributeList
 				// xsi:nil
 				else if ( localName.equals ( Constants.XSI_NIL ) )
 				{
-					try
-					{
-						bool.parse ( atts.getValue ( i ) );
-						setXsiNil ( bool.getBoolean ( ) );
-					}
-					catch ( XMLParsingException e )
-					{
-						// --> default attribute
-						insertAttributeInSortedArray ( atts.getURI ( i ), atts.getLocalName ( i ), getPrefixOf ( atts,
-								i ), atts.getValue ( i ) );
-					}
+					setXsiNil ( atts.getValue ( i ) );
 				}
 				else if ( localName.equals ( Constants.XSI_SCHEMA_LOCATION )
 						&& !CompileConfiguration.PRESERVE_XSI_SCHEMA_LOCATION )
@@ -214,19 +200,7 @@ public class SchemaInformedAttributeList extends AbstractAttributeList
 				// xsi:nil
 				else if ( at.getLocalName ( ).equals ( Constants.XSI_NIL ) )
 				{
-					try
-					{
-						bool.parse ( at.getNodeValue ( ) );
-						setXsiNil ( bool.getBoolean ( ) );
-					}
-					catch ( XMLParsingException e )
-					{
-						// --> default attribute
-						insertAttributeInSortedArray ( at.getNamespaceURI ( ) == null ? XMLConstants.NULL_NS_URI : at
-								.getNamespaceURI ( ), at.getLocalName ( ),
-								at.getPrefix ( ) == null ? XMLConstants.DEFAULT_NS_PREFIX : at.getPrefix ( ), at
-										.getNodeValue ( ) );
-					}
+					setXsiNil ( at.getNodeValue ( ) );
 				}
 				else if ( at.getLocalName ( ).equals ( Constants.XSI_SCHEMA_LOCATION )
 						&& !CompileConfiguration.PRESERVE_XSI_SCHEMA_LOCATION )

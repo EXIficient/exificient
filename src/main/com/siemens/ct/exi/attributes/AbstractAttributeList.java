@@ -43,7 +43,7 @@ public abstract class AbstractAttributeList implements AttributeList
 
 	// xsi:nil
 	protected boolean		hasXsiNil;
-	protected boolean		xsiNil;
+	protected String		xsiNil;
 
 	// namespace declarations
 	protected List<String>	namespaceURI;
@@ -119,7 +119,7 @@ public abstract class AbstractAttributeList implements AttributeList
 		return hasXsiNil;
 	}
 
-	public boolean getXsiNil ()
+	public String getXsiNil ()
 	{
 		return xsiNil;
 	}

@@ -29,7 +29,7 @@ import org.xml.sax.Attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080919
  */
 
 public interface AttributeList
@@ -55,7 +55,7 @@ public interface AttributeList
 	 * XSI-Nil
 	 */
 	public boolean hasXsiNil ();
-	public boolean getXsiNil ();
+	public String getXsiNil ();
 
 	/*
 	 * Namespace Declarations
