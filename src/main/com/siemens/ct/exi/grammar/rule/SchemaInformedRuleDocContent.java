@@ -20,7 +20,9 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -47,25 +49,61 @@ import com.siemens.ct.exi.grammar.event.EventType;
 
 public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 {
-	Rule docEnd;
-
+	protected Rule docEnd;
+	
+	protected final Event seGeneric;
+	
+	public SchemaInformedRuleDocContent ( Rule docEnd, String label )
+	{
+		super( label );
+		
+		this.docEnd = docEnd;
+		this.seGeneric = new StartElementGeneric();
+	}
+	
 	public SchemaInformedRuleDocContent( Rule docEnd )
 	{
 		this.docEnd = docEnd;
+		this.seGeneric = new StartElementGeneric();
 	}
 	
-	public SchemaInformedRuleDocContent( Rule docEnd, String label )
+	@Override
+	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
 	{
-		super( label );
-		this.docEnd = docEnd;
+		if ( fidelityOptions.isStrict ( ) && event.isEventType ( EventType.START_ELEMENT_GENERIC ) )
+		{
+			return getNumberOfEvents ( );
+		}
+		else
+		{
+			return super.get1stLevelEventCode ( event, fidelityOptions );
+		}
 	}
 	
-//	public Rule getElementContentRule()
-//	{
-//		//super.getElementContentRule ( );
-//		// return this.docEnd;
-//		return this;
-//	}
+	@Override
+	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
+	{
+		if ( ec == getNumberOfEvents ( ) )
+		{
+			return docEnd;
+		}
+		else
+		{
+			return super.get1stLevelRule ( ec );
+		}
+	}
+	
+	public Event get1stLevelEvent ( int eventCode )
+	{
+		if ( eventCode == getNumberOfEvents ( ) )
+		{
+			return seGeneric;
+		}
+		else
+		{
+			return super.get1stLevelEvent ( eventCode );
+		}
+	}
 	
 	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
 	{
@@ -97,7 +135,7 @@ public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 	
 	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
 	{
-		//	DocContent contains in any case (even in strict mode) SE(*) event on 2nd level
+		//	DocContent contains in any case (even in strict mode) SE(*)
 		return getNumberOfEvents ( ) + 1;
 	}
 	
@@ -112,39 +150,17 @@ public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 		return ch2;
 	}
 	
-//	public int get3rdLevelCharacteristics( FidelityOptions fidelityOptions )
-//	{
-//		return FidelityOptionsUtilities.getThirdLevelSize ( fidelityOptions );
-//	}
-
 	
-	@Override
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-	{
-		//	DocContent contains in any case SE(*) (even in strict mode) 
-		return true;
-	}
+//	@Override
+//	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
+//	{
+//		//	DocContent contains in any case SE(*) (even in strict mode) 
+//		return true;
+//	}
 	
 	public Rule getElementContentRuleForUndeclaredSE()
 	{
 		return this.docEnd;
 	}
-	
-//	//public Rule stepForward( RuleType ruleType, EventType eventType )
-//	public Rule stepForward( boolean isStartTag, EventType eventType )
-//	{
-//		switch ( eventType )
-//		{
-//			case START_ELEMENT_GENERIC:
-//			case START_ELEMENT_GENERIC_UNDECLARED:
-//				return docEnd;
-//			case DOC_TYPE:
-//			case COMMENT:
-//			case PROCESSING_INSTRUCTION:
-//				return this;	//	DocContent 
-//			default:
-//				throw new RuntimeException();
-//		}
-//	}
 	
 }

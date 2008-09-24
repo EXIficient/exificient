@@ -28,7 +28,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080919
  */
 
 public interface Rule
@@ -37,6 +37,11 @@ public interface Rule
 	 * end-rule
 	 */
 	public boolean isTerminalRule ();
+	
+	/*
+	 * rule created according to schema information
+	 */
+	public boolean isSchemaRule ();
 	
 	/*
 	 * number of events

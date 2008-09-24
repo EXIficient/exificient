@@ -38,7 +38,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080924
  */
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements SchemaInformedRule
@@ -77,6 +77,11 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		hmRules = new HashMap<Integer, Rule> ( );
 
 		lambdaTransitions = new ArrayList<SchemaInformedRule> ( );
+	}
+	
+	public final boolean isSchemaRule ()
+	{
+		return true;
 	}
 
 	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
@@ -246,25 +251,12 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			// undecidable choice not allowed
 			if ( contains ( event ) )
 			{
-				int id = getInternalEventId ( event );
-				EventRule er = this.getEventRuleAt ( id );
-
-				if ( event.equals ( er.getEvent ( ) ) )
-				{
-					( (SchemaInformedRule) er.getRule ( ) ).joinRules ( rule );
-				}
-				else
-				{
-					throw new IllegalArgumentException ( "Illegal Duplicate Event: " + event + " for " + this );
-				}
-
+				checkUndecidableEvent( event );
 			}
 			else
 			{
 				// construct new event array and update event-codes
 				updateSortedEventRules ( event, rule );
-				// resetEventRules ( constructSortedEventRules ( event, rule )
-				// );
 			}
 		}
 	}
@@ -283,7 +275,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		//  *new* event
 		sorted.add ( new EventRule ( newEvent, newRule ) );
 
-		
 		// reset all maps
 		hmEventCodes.clear ( );
 		hmEvents.clear ( );
@@ -302,22 +293,34 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			ec++;
 		}
 	}
+	
+	private void checkUndecidableEvent( Event event )
+	{
+		int id = getInternalEventId ( event );
+		EventRule er = this.getEventRuleAt ( id );
+
+		//	NOT same event ? -> throw error
+		if ( ! event.equals ( er.getEvent ( ) ) )
+		{
+			throw new IllegalArgumentException ( "Illegal Duplicate Event: " + event + " for " + this );
+		}		
+	}
 
 	public void joinRules ( Rule rule )
 	{
 		// add *new* events-rules
 		for ( int i = 0; i < rule.getNumberOfEvents ( ); i++ )
 		{
-			Event ev = rule.get1stLevelEvent ( i );
+			Event event = rule.get1stLevelEvent ( i );
 			Rule r = rule.get1stLevelRule ( i );
 
-			if ( !contains ( ev ) )
+			if ( contains ( event ) )
 			{
-				updateSortedEventRules ( ev, r );
+				checkUndecidableEvent( event );
 			}
 			else
 			{
-				throw new IllegalArgumentException ( this + " contains already " + ev );
+				updateSortedEventRules ( event, r );
 			}
 		}
 

@@ -31,7 +31,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20080919
  */
 
 public abstract class AbstractSchemaLessRule extends AbstractRule implements SchemaLessRule
@@ -49,6 +49,11 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 	{
 		events = new ArrayList<Event> ( );
 		rules = new ArrayList<Rule> ( );
+	}
+	
+	public final boolean isSchemaRule ()
+	{
+		return false;
 	}
 
 	protected int getInternalIndex ( int eventCode )
