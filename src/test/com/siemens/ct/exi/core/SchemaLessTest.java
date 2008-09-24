@@ -268,7 +268,7 @@ public class SchemaLessTest extends TestCase {
 	    	
 	    	decoder.inspectEvent ( );
 	    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE_GENERIC_UNDECLARED );
-	    	decoder.decodeAttributeGeneric ( );
+	    	decoder.decodeAttributeGenericUndeclared ( );
         	assertTrue ( decoder.getAttributeURI ( ).equals (at1.namespaceURI ) );
         	assertTrue ( decoder.getAttributeLocalName ( ).equals ( at1.localName ) );
 	    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh1 ) );
@@ -293,7 +293,7 @@ public class SchemaLessTest extends TestCase {
             	assertTrue ( decoder.getElementLocalName ( ).equals ( el2.localName ) );
 	    		decoder.inspectEvent ( );
 		    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE_GENERIC_UNDECLARED );
-		    	decoder.decodeAttributeGeneric ( );
+		    	decoder.decodeAttributeGenericUndeclared ( );
 	        	assertTrue ( decoder.getAttributeURI ( ).equals (at1.namespaceURI ) );
 	        	assertTrue ( decoder.getAttributeLocalName ( ).equals ( at1.localName ) );
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh1 ) );
@@ -422,7 +422,7 @@ public class SchemaLessTest extends TestCase {
 
 	    		decoder.inspectEvent ( );
 		    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE_GENERIC_UNDECLARED );
-		    	decoder.decodeAttributeGeneric ( );
+		    	decoder.decodeAttributeGenericUndeclared ( );
 		    	assertTrue ( decoder.getAttributeURI ( ).equals (at1.namespaceURI ) );
 	        	assertTrue ( decoder.getAttributeLocalName ( ).equals ( at1.localName ) );
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh1 ) );
