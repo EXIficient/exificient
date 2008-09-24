@@ -81,18 +81,18 @@ public class QuickTestConfiguration
 	// CODING MODE
 	static
 	{
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static
 	{
-		fidelityOptions = FidelityOptions.createDefault ( );
-		// fidelityOptions = FidelityOptions.createStrict ( );
+		// fidelityOptions = FidelityOptions.createDefault ( );
+		fidelityOptions = FidelityOptions.createStrict ( );
 		// fidelityOptions = FidelityOptions.createAll ( );
 	}
 
@@ -100,9 +100,9 @@ public class QuickTestConfiguration
 	// TEST CASE (GROUP)
 	static
 	{
-		// SchemaTestCase.setupQuickTest ( );
+		SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest ( );
-		W3CTestCase.setupQuickTest ( );
+		// W3CTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}
