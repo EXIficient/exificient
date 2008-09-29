@@ -579,15 +579,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 					if ( nil.getBoolean ( ) )
 					{
-						if ( getCurrentRule ( ) instanceof SchemaInformedRule )
-						{
-
-							replaceRuleAtTheTop ( ( (SchemaInformedRule) getCurrentRule ( ) ).getTypeEmpty ( ) );
-						}
-						else
-						{
-							throw new EXIException ( "EXI, no typeEmpty defined for xsi:nil" );
-						}
+						replaceRuleAtTheTop ( ( (SchemaInformedRule) getCurrentRule ( ) ).getTypeEmpty ( ) );
 					}
 
 				}
