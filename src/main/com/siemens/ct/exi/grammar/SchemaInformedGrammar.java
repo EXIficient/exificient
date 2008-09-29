@@ -88,6 +88,9 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		urType0.setHasNamedSubtypes ( true );
 		urType0.setFirstElementRule ( );
 		
+		//	nillable ?
+		urType0.setNillable ( true, urType1 );
+		
 		return urType0;
 	}
 	
