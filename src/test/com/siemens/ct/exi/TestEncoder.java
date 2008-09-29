@@ -20,6 +20,7 @@ package com.siemens.ct.exi;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,14 +29,22 @@ import java.io.OutputStream;
 
 import javax.xml.transform.sax.SAXResult;
 
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+
+class MyEntityResolver implements EntityResolver
+{
+	public InputSource resolveEntity ( String publicId, String systemId )
+	{
+		return new InputSource ( new ByteArrayInputStream ( "<?xml version='1.0' encoding='UTF-8'?>".getBytes ( ) ) );
+	}
+}
 
 public class TestEncoder extends AbstractTestCoder
 {
@@ -46,7 +55,10 @@ public class TestEncoder extends AbstractTestCoder
 	{
 		try
 		{
+
 			parser = XMLReaderFactory.createXMLReader ( );
+			// *skip* resolving entities like DTDs 
+			parser.setEntityResolver ( new MyEntityResolver ( ) );
 		}
 		catch ( SAXException e )
 		{
@@ -94,7 +106,7 @@ public class TestEncoder extends AbstractTestCoder
 		OutputStream encodedOutput = new BufferedOutputStream ( new FileOutputStream ( f ) );
 
 		encodeTo ( ef, xmlInput, encodedOutput );
-		
+
 		encodedOutput.flush ( );
 
 		System.out.println ( "[ENC] " + QuickTestConfiguration.getXmlLocation ( ) + " --> "
