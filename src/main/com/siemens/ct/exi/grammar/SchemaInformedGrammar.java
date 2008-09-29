@@ -175,9 +175,8 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		for ( ElementKey elKey : elementDispatcher.keySet ( ) )
 		{
 			ExpandedName name = elKey.getName ( );
-
 			StartElement se = new StartElement ( name.namespaceURI, name.localName );
-			builtInFragmentContentGrammar.addRule ( se, elementDispatcher.get ( elKey ) );
+			builtInFragmentContentGrammar.addRule ( se, builtInFragmentContentGrammar );
 		}
 
 		/*
