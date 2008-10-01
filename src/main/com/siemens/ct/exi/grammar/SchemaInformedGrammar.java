@@ -45,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080919
+ * @version 0.1.20081001
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar
@@ -68,13 +68,12 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar> ( );
 		
 		//	ur-type
-		SchemaInformedRule urType0 = SchemaInformedGrammar.getUrTypeRule ( );
-		// TODO typeEmpty ?
-		urType = new TypeGrammar( urType0, urType0 );
+		urType = SchemaInformedGrammar.getUrTypeRule ( );
 	}
 	
-	public static SchemaInformedRule getUrTypeRule()
+	public static TypeGrammar getUrTypeRule()
 	{
+		//	ur-Type
 		SchemaInformedRule  urType1 = new SchemaInformedRuleElement();
 		urType1.addRule ( new StartElementGeneric(), urType1 );
 		urType1.addTerminalRule ( new EndElement() );
@@ -88,10 +87,16 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		urType0.setHasNamedSubtypes ( true );
 		urType0.setFirstElementRule ( );
 		
-		//	nillable ?
-		urType0.setNillable ( true, urType1 );
+		//	empty ur-Type
+		SchemaInformedRule emptyUrType0 = new SchemaInformedRuleElement();
+		emptyUrType0.addRule ( new AttributeGeneric(), emptyUrType0 );
+		emptyUrType0.addTerminalRule ( new EndElement() );
+		emptyUrType0.setFirstElementRule ( );
 		
-		return urType0;
+//		//	nillable ?
+//		emptyUrType0.setNillable ( true, urType1 );
+		
+		return new TypeGrammar( urType0, emptyUrType0 );
 	}
 	
 	protected void setUriEntries( String[] uris )

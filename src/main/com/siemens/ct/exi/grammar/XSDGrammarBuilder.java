@@ -58,6 +58,7 @@ import org.w3c.dom.DOMErrorHandler;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.LSInput;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -732,12 +733,12 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		// simple vs. complex type handling
 		if ( td.getTypeCategory ( ) == XSTypeDefinition.COMPLEX_TYPE )
 		{
-			if ( "anyType".equals ( td.getName ( ) ) &&  "http://www.w3.org/2001/XMLSchema".equals ( td.getNamespace ( ) ) )
+			if ( Constants.XSD_ANY_TYPE.equals ( td.getName ( ) ) && XMLConstants.W3C_XML_SCHEMA_NS_URI.equals ( td.getNamespace ( ) ) )
 			{
 				//	ur-type
-				type_i = SchemaInformedGrammar.getUrTypeRule ( );
-				//	TODO typeEmpty
-				typeEmpty_i = type_i;
+				TypeGrammar urType = SchemaInformedGrammar.getUrTypeRule ( );
+				type_i = urType.type;
+				typeEmpty_i = urType.typeEmpty;
 			}
 			else
 			{
@@ -1201,7 +1202,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			// SchemaInformedRule particleTerm_i_0 = new
 			// SchemaInformedRuleElement ( );
 
-			SchemaInformedRule urType = SchemaInformedGrammar.getUrTypeRule ( );
+			SchemaInformedRule urType = SchemaInformedGrammar.getUrTypeRule ( ).type;
 			b.joinRules ( urType );
 
 			short constraintType = xsWildcard.getConstraintType ( );
