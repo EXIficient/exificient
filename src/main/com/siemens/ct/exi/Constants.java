@@ -43,6 +43,8 @@ public interface Constants
 	public static final String	COLON					= ":";
 
 	public static final String	XSD_LIST_DELIM			= " ";
+	
+	public static final String	XSD_ANY_TYPE			= "anyType";
 
 	public static final String	XSD_BOOLEAN_TRUE		= "true";
 	public static final String	XSD_BOOLEAN_1			= "1";
