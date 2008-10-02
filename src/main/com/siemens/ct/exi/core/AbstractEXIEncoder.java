@@ -704,8 +704,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 					if ( ecCHundeclared == Constants.NOT_FOUND )
 					{
-						// TODO skip characters ?
-						throw new IllegalArgumentException ( "CH: " + chars );
+						// skip characters & throw warning
+						String msg = "Skip CH: '" + chars + "'";
+						errorHandler.warning ( new EXIException ( msg ) );
 					}
 					else
 					{
