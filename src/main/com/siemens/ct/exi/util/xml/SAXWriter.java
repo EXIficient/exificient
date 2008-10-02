@@ -100,6 +100,13 @@ public class SAXWriter extends DefaultHandler2 implements LexicalHandler
 	{
 		documentLocator = locator;
 	}
+	
+	/** Set whether XML declaration needs to be written. Per Default XML
+	 * declaration will be written */
+	public void setBypassXMLDeclaration( boolean bypass )
+	{
+		xmlDeclarationAlreadyWritten = bypass;
+	}
 
 	/** Start document. */
 	public void startDocument () throws SAXException
