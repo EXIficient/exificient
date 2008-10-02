@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.xml.sax.InputSource;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
@@ -39,6 +40,7 @@ import com.siemens.ct.exi.TestDecoder;
 import com.siemens.ct.exi.TestEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.util.FragmentUtilities;
 import com.siemens.ct.exi.util.xml.SAXWriter;
 
 public abstract class AbstractTestCase extends XMLTestCase
@@ -84,7 +86,8 @@ public abstract class AbstractTestCase extends XMLTestCase
 		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
 		
 		//	-> encode
-		TestEncoder.encodeTo ( ef, xmlInput, encodedOutput );
+		TestEncoder testEncoder = new TestEncoder();
+		testEncoder.encodeTo ( ef, xmlInput, encodedOutput );
 		
 		//	EXI input stream
 		ByteArrayInputStream exiDocument =  new ByteArrayInputStream( encodedOutput.toByteArray ( ) );
@@ -92,15 +95,25 @@ public abstract class AbstractTestCase extends XMLTestCase
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 		
 		//	<-- decode
-		TestDecoder.decodeTo ( ef, exiDocument, xmlOutput );
+		TestDecoder testDecoder = new TestDecoder();
+		testDecoder.decodeTo ( ef, exiDocument, xmlOutput );
 
 		//	check XML validity
 		if ( tco.isXmlEqual ( ) )
 		{
-			Reader control = new FileReader( QuickTestConfiguration.getXmlLocation ( ) );
-			String decodedXML = xmlOutput.toString ( );
-			Reader test = new StringReader( decodedXML );
-			assertXMLEqual ( control, test );
+			//Reader control = new FileReader( QuickTestConfiguration.getXmlLocation ( ) );
+			InputStream control = new FileInputStream( QuickTestConfiguration.getXmlLocation ( ) );
+			//Reader test = new StringReader( xmlOutput.toString ( ) );
+			InputStream test = new ByteArrayInputStream( xmlOutput.toByteArray ( ) );
+			
+			if ( ef.isFragment ( ) )
+			{
+				//	surround with root element for equality check
+				control = FragmentUtilities.getSurroundingRootInputStream ( control );
+				test = FragmentUtilities.getSurroundingRootInputStream ( test );
+			}
+			
+			assertXMLEqual ( new InputSource( control ), new InputSource( test ) );
 		}
 		else
 		{

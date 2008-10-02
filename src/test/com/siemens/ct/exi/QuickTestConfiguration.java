@@ -20,6 +20,7 @@ package com.siemens.ct.exi;
 
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.data.FragmentTestCase;
 import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
@@ -91,8 +92,8 @@ public class QuickTestConfiguration
 	// FIDELITY OPTIONS
 	static
 	{
-		// fidelityOptions = FidelityOptions.createDefault ( );
-		fidelityOptions = FidelityOptions.createStrict ( );
+		fidelityOptions = FidelityOptions.createDefault ( );
+		// fidelityOptions = FidelityOptions.createStrict ( );
 		// fidelityOptions = FidelityOptions.createAll ( );
 	}
 
@@ -100,9 +101,10 @@ public class QuickTestConfiguration
 	// TEST CASE (GROUP)
 	static
 	{
-		SchemaTestCase.setupQuickTest ( );
+		// SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest ( );
 		// W3CTestCase.setupQuickTest ( );
+		FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}

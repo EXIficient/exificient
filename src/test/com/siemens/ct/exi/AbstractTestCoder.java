@@ -20,33 +20,35 @@ package com.siemens.ct.exi;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder
 {
-	protected static EXIFactory getQuickTestEXIactory() throws Exception
+	protected GrammarFactory grammarFactory = GrammarFactory.newInstance ( );
+	
+	protected  EXIFactory getQuickTestEXIactory() throws Exception
 	{
 		return getQuickTestEXIactory( QuickTestConfiguration.getXsdLocation ( ) );
 	}
 	
-	protected static EXIFactory getQuickTestEXIactory( String xsdLocation ) throws Exception
+	protected Grammar getGrammar( String xsdLocation ) throws EXIException
+	{
+		return grammarFactory.createGrammar ( xsdLocation );
+	}
+	
+	protected EXIFactory getQuickTestEXIactory( String xsdLocation ) throws Exception
 	{
 		EXIFactory ef = DefaultEXIFactory.newInstance ( );
 		ef.setCodingMode ( QuickTestConfiguration.CODING_MODE );
 		ef.setFidelityOptions ( QuickTestConfiguration.fidelityOptions );
 		ef.setFragment ( QuickTestConfiguration.FRAGMENTS );
-		Grammar grammar;
-		GrammarFactory grammarFactory = GrammarFactory.newInstance ( );
+		
 		if ( QuickTestConfiguration.USE_SCHEMA )
 		{
-			grammar = grammarFactory.createGrammar ( xsdLocation );	
+			ef.setGrammar ( getGrammar( xsdLocation ) );
 		}
-		else
-		{
-			grammar = grammarFactory.createSchemaLessGrammar( );	
-		}
-		ef.setGrammar ( grammar );
 		
 		return ef;
 	}

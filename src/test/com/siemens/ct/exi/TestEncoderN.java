@@ -32,10 +32,13 @@ public class TestEncoderN extends TestEncoder
 	
 	protected static void test( String xmlLocation, String exiLocation ) throws Exception
 	{
+		//	create test-encoder
+		TestEncoderN testEncoderN = new TestEncoderN();
+		
 		long startTime = System.currentTimeMillis ( );
 
 		// get factory
-		EXIFactory ef = getQuickTestEXIactory ( );
+		EXIFactory ef = testEncoderN.getQuickTestEXIactory ( );
 
 		// EXI output stream
 		File f = new File ( exiLocation );
@@ -53,7 +56,7 @@ public class TestEncoderN extends TestEncoder
 			// XML input stream
 			InputStream xmlInput = new BufferedInputStream ( new FileInputStream ( xmlLocation ) );
 
-			encodeTo ( ef, xmlInput, encodedOutput );
+			testEncoderN.encodeTo ( ef, xmlInput, encodedOutput );
 		}
 
 		System.out.println ( "[ENC] " + QuickTestConfiguration.getXmlLocation ( ) + " --> " + exiLocation );

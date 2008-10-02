@@ -43,9 +43,10 @@ public class TestDecoder extends AbstractTestCoder
     	return xmlWriter;
 	}
 	
-	public static void decodeTo( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws IOException, SAXException
+	public void decodeTo( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws IOException, SAXException
 	{
 		SAXWriter saxWriter = getXMLWriter( xmlOutput );
+		saxWriter.setBypassXMLDeclaration ( ef.isFragment ( ) );
 		XMLReader reader = ef.createEXIReader( );
 		reader.setContentHandler ( saxWriter );
 		reader.setErrorHandler( saxWriter );
@@ -54,8 +55,11 @@ public class TestDecoder extends AbstractTestCoder
 	
 	public static void main ( String[] args ) throws Exception
 	{
+		//	create test-decoder
+		TestDecoder testDecoder = new TestDecoder();
+		
 		//	get factory
-		EXIFactory ef = getQuickTestEXIactory();
+		EXIFactory ef = testDecoder.getQuickTestEXIactory();
 		
 		//	exi document
 		InputStream exiDocument = new FileInputStream( QuickTestConfiguration.getExiLocation ( ) );
@@ -64,7 +68,8 @@ public class TestDecoder extends AbstractTestCoder
 		String decodedXMLLocation = QuickTestConfiguration.getExiLocation ( ) + ".xml";
 		OutputStream xmlOutput = new FileOutputStream( decodedXMLLocation );
 		
-		decodeTo( ef, exiDocument, xmlOutput );
+		//	decode EXI to XML
+		testDecoder.decodeTo( ef, exiDocument, xmlOutput );
 		
 		System.out.println( "[DEC] " + QuickTestConfiguration.getExiLocation ( ) + " --> " + decodedXMLLocation );
 	}
