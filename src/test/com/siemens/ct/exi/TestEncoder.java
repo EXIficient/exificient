@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -44,31 +45,42 @@ import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
 public class TestEncoder extends AbstractTestCoder
 {
-	protected XMLReader	xmlReader;
-	
-	protected XMLReader getXMLReader() throws SAXException
+	protected XMLReader getXMLReader( ) throws SAXException
 	{
-		if ( xmlReader == null )
-		{
-			//	create xml reader
-			xmlReader = XMLReaderFactory.createXMLReader ( );
-			// *skip* resolving entities like DTDs 
-			xmlReader.setEntityResolver ( new MyEntityResolver ( ) );
-		}
+		//	create xml reader
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader ( );
+		// *skip* resolving entities like DTDs 
+		xmlReader.setEntityResolver ( new MyEntityResolver ( ) );
 		
 		return xmlReader;
+	}
+	
+	protected XMLReader updateXMLReaderToFragment( XMLReader xmlReader ) throws IOException
+	{	
+		//	skip root element when passing infoset to EXI encoder
+		return new SkipRootElementXMLReader( xmlReader );
+	}
+	
+	protected InputStream updateInputStreamToFragment( InputStream xmlInput ) throws IOException
+	{
+		//	surround fragment section with *root* element 
+		//	(necessary for xml reader to avoid messages like "root element must be well-formed")
+		return FragmentUtilities.getSurroundingRootInputStream ( xmlInput );
 	}
 
 	public void encodeTo ( EXIFactory ef, InputStream xmlInput, OutputStream exiOuput ) throws Exception
 	{
+		//	XML reader
+		XMLReader xmlReader = getXMLReader( );
+		
 		// set EXI as content & lexical handler
 		SAXResult saxResult = new EXIResult ( exiOuput, ef );
-		getXMLReader().setContentHandler ( saxResult.getHandler ( ) );
+		xmlReader.setContentHandler ( saxResult.getHandler ( ) );
 		
 		try
 		{
 			// set LexicalHandler
-			getXMLReader().setProperty ( "http://xml.org/sax/properties/lexical-handler", saxResult.getLexicalHandler ( ) );
+			xmlReader.setProperty ( "http://xml.org/sax/properties/lexical-handler", saxResult.getLexicalHandler ( ) );
 		}
 		catch ( SAXNotRecognizedException e )
 		{
@@ -76,20 +88,11 @@ public class TestEncoder extends AbstractTestCoder
 		
 		if ( ef.isFragment ( ) )
 		{
-			//	surround fragment section with *root* element 
-			//	(necessary for xml reader to avoid messages like "root element must be well-formed")
-			xmlInput = FragmentUtilities.getSurroundingRootInputStream ( xmlInput );
-			
-			//	skip root element again when passing infoset to EXI encoder
-			XMLReader fragmentReader = new SkipRootElementXMLReader( getXMLReader() );
-			fragmentReader.parse ( new InputSource ( xmlInput ) );
+			xmlInput = updateInputStreamToFragment( xmlInput );
+			xmlReader = updateXMLReaderToFragment( xmlReader );
 		}
-		else
-		{
 			
-			getXMLReader().parse ( new InputSource ( xmlInput ) );			
-		}
-
+		xmlReader.parse ( new InputSource ( xmlInput ) );
 	}
 	
 	protected static OutputStream getOutputStream( String exiLocation ) throws FileNotFoundException

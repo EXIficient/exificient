@@ -39,10 +39,10 @@ public class TestEncoderN extends TestEncoder
 
 		// get factory
 		EXIFactory ef = testEncoderN.getQuickTestEXIactory ( );
-
+		
 		// EXI output stream
 		File f = new File ( exiLocation );
-
+		
 		File path = f.getParentFile ( );
 		if ( !path.exists ( ) )
 		{

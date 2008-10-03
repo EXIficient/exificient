@@ -26,30 +26,40 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder
 {
-	protected GrammarFactory grammarFactory = GrammarFactory.newInstance ( );
-	
-	protected  EXIFactory getQuickTestEXIactory() throws Exception
+	protected GrammarFactory	grammarFactory	= GrammarFactory.newInstance ( );
+
+	protected EXIFactory getQuickTestEXIactory () throws Exception
 	{
-		return getQuickTestEXIactory( QuickTestConfiguration.getXsdLocation ( ) );
+		if ( QuickTestConfiguration.USE_SCHEMA )
+		{
+			return getFactorySchema ( );
+		}
+		else
+		{
+			return getFactoryNoSchema ( );
+		}
 	}
-	
-	protected Grammar getGrammar( String xsdLocation ) throws EXIException
-	{
-		return grammarFactory.createGrammar ( xsdLocation );
-	}
-	
-	protected EXIFactory getQuickTestEXIactory( String xsdLocation ) throws Exception
+
+	protected EXIFactory getFactoryNoSchema ()
 	{
 		EXIFactory ef = DefaultEXIFactory.newInstance ( );
 		ef.setCodingMode ( QuickTestConfiguration.CODING_MODE );
 		ef.setFidelityOptions ( QuickTestConfiguration.fidelityOptions );
 		ef.setFragment ( QuickTestConfiguration.FRAGMENTS );
-		
-		if ( QuickTestConfiguration.USE_SCHEMA )
-		{
-			ef.setGrammar ( getGrammar( xsdLocation ) );
-		}
-		
+
 		return ef;
+	}
+
+	protected EXIFactory getFactorySchema () throws EXIException
+	{
+		EXIFactory ef = getFactoryNoSchema ( );
+		ef.setGrammar ( getGrammar ( QuickTestConfiguration.getXsdLocation ( ) ) );
+
+		return ef;
+	}
+
+	public Grammar getGrammar ( String xsdLocation ) throws EXIException
+	{
+		return grammarFactory.createGrammar ( xsdLocation );
 	}
 }
