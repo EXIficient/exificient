@@ -77,13 +77,14 @@ public abstract class AbstractTestCase extends XMLTestCase
 			ef.setGrammar ( grammar );
 		}
 		
+		TestEncoder testEncoder = new TestEncoder();
+		
 		//	XML input stream
 		InputStream xmlInput = new FileInputStream( QuickTestConfiguration.getXmlLocation ( ) );
 		//	EXI output stream
 		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
 		
 		//	-> encode
-		TestEncoder testEncoder = new TestEncoder();
 		testEncoder.encodeTo ( ef, xmlInput, encodedOutput );
 		
 		//	EXI input stream
@@ -98,9 +99,7 @@ public abstract class AbstractTestCase extends XMLTestCase
 		//	check XML validity
 		if ( tco.isXmlEqual ( ) )
 		{
-			//Reader control = new FileReader( QuickTestConfiguration.getXmlLocation ( ) );
 			InputStream control = new FileInputStream( QuickTestConfiguration.getXmlLocation ( ) );
-			//Reader test = new StringReader( xmlOutput.toString ( ) );
 			InputStream test = new ByteArrayInputStream( xmlOutput.toByteArray ( ) );
 			
 			if ( ef.isFragment ( ) )
