@@ -27,7 +27,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081003
  */
 
 public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement
@@ -45,20 +45,22 @@ public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement
 		Rule original = super.get1stLevelRule ( ec );
 		
 		SchemaInformedRuleContentAll clone = new SchemaInformedRuleContentAll();
-
-		for ( int i=0; i<original.getNumberOfEvents ( ); i++)
-		{
-			if ( i != ec )
-			{
-				//clone.addRule ( original.getEventRuleAt ( i ).getEvent ( ), clone );
-				clone.addRule ( original.get1stLevelEvent ( i ), clone );
-			}
-		}
 		
-		if ( clone.getNumberOfEvents ( ) == 0 )
+		if ( original.getNumberOfEvents ( ) > 0 )
 		{
-			//	add final EE event
-			clone.addTerminalRule ( END_ELEMENT );
+			for ( int i=0; i<original.getNumberOfEvents ( ); i++)
+			{
+				if ( i != ec )
+				{
+					clone.addRule ( original.get1stLevelEvent ( i ), clone );
+				}
+			}
+			
+			if ( clone.getNumberOfEvents ( ) == 0 )
+			{
+				//	add final EE event
+				clone.addTerminalRule ( END_ELEMENT );
+			}	
 		}
 		
 		return clone;
