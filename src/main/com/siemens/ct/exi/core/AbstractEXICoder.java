@@ -50,7 +50,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080922
+ * @version 0.1.20081003
  */
 
 public abstract class AbstractEXICoder
@@ -195,12 +195,15 @@ public abstract class AbstractEXICoder
 	protected final Rule replaceRuleAtTheTop ( Rule top )
 	{
 		assert ( !openRules.isEmpty ( ) );
+		assert( top != null );
 
 		return openRules.set ( openRules.size ( ) - 1, top );
 	}
 
 	protected final void pushRule ( Rule r )
 	{
+		assert( r != null );
+		
 		openRules.add ( r );
 	}
 
