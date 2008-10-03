@@ -27,7 +27,7 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081003
  */
 
 public class EventRule implements Comparable<EventRule>
@@ -44,12 +44,12 @@ public class EventRule implements Comparable<EventRule>
 		this.rule = rule;
 	}
 
-	public Event getEvent ()
+	public final Event getEvent ()
 	{
 		return this.event;
 	}
 
-	public Rule getRule ()
+	public final Rule getRule ()
 	{
 		return this.rule;
 	}
