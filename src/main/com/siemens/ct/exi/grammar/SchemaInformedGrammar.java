@@ -45,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081001
+ * @version 0.1.20081003
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar
@@ -93,8 +93,8 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		emptyUrType0.addTerminalRule ( new EndElement() );
 		emptyUrType0.setFirstElementRule ( );
 		
-//		//	nillable ?
-//		emptyUrType0.setNillable ( true, urType1 );
+		//	nillable ?
+		urType0.setNillable ( false, emptyUrType0 );
 		
 		return new TypeGrammar( urType0, emptyUrType0 );
 	}
