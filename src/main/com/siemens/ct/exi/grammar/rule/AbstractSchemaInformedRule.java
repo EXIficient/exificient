@@ -19,10 +19,8 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,14 +36,12 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080924
+ * @version 0.1.20081003
  */
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements SchemaInformedRule
 {
-	protected Map<Event, Integer>		hmEventCodes;
-	protected Map<Integer, Event>		hmEvents;
-	protected Map<Integer, Rule>		hmRules;
+	protected List<EventRule>			eventRules;
 
 	protected boolean					lambdasResolved		= false;
 
@@ -72,9 +68,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	private void init ()
 	{
-		hmEventCodes = new HashMap<Event, Integer> ( );
-		hmEvents = new HashMap<Integer, Event> ( );
-		hmRules = new HashMap<Integer, Rule> ( );
+		eventRules = new ArrayList<EventRule>();
 
 		lambdaTransitions = new ArrayList<SchemaInformedRule> ( );
 	}
@@ -86,13 +80,25 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
 	{
-		Integer i;
-		return ( ( i = hmEventCodes.get ( event ) ) == null ? Constants.NOT_FOUND : i );
+		int ec = 0;
+		for ( EventRule er : eventRules ) 
+		{
+			if ( er.getEvent ( ).equals ( event ) ) 
+			{
+				return ec;
+			}
+			//	increment event-code
+			ec++;
+		}
+		
+		//	event not found
+		return Constants.NOT_FOUND;
 	}
 
 	public Event get1stLevelEvent ( int eventCode )
 	{
-		return hmEvents.get ( eventCode );
+		// return hmEvents.get ( eventCode );
+		return eventRules.get ( eventCode ).getEvent ( );
 	}
 
 	public void setHasNamedSubtypes ( boolean hasNamedSubtypes )
@@ -176,7 +182,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			// go over all target rules and resolve lambdas
 			for ( int i = 0; i < getNumberOfEvents ( ); i++ )
 			{
-				SchemaInformedRule sir = this.getRuleAt ( i );
+				SchemaInformedRule sir = (SchemaInformedRule)eventRules.get ( i ).getRule ( );
 
 				if ( !sir.isLambdaResolved ( ) )
 				{
@@ -188,27 +194,18 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	public int getNumberOfEvents ()
 	{
-		return this.hmEvents.size ( );
-	}
-
-	protected Event getEventAt ( int ec ) throws IndexOutOfBoundsException
-	{
-		return hmEvents.get ( ec );
-	}
-
-	protected SchemaInformedRule getRuleAt ( int ec ) throws IndexOutOfBoundsException
-	{
-		return (SchemaInformedRule) hmRules.get ( ec );
+		// return this.hmEvents.size ( );
+		return eventRules.size ( );
 	}
 
 	protected EventRule getEventRuleAt ( int ec ) throws IndexOutOfBoundsException
 	{
-		return new EventRule ( getEventAt ( ec ), getRuleAt ( ec ) );
+		return eventRules.get ( ec );
 	}
 
 	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
 	{
-		return this.hmRules.get ( ec );
+		return eventRules.get ( ec ).getRule ( );
 	}
 
 	protected boolean contains ( Event event )
@@ -275,23 +272,9 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		//  *new* event
 		sorted.add ( new EventRule ( newEvent, newRule ) );
 
-		// reset all maps
-		hmEventCodes.clear ( );
-		hmEvents.clear ( );
-		hmRules.clear ( );
-
-		//	set new event-code etc.
-		int ec = 0;
-		for (Iterator<EventRule> i = sorted.iterator(); i.hasNext(); )
-		{
-			EventRule er = i.next();
-
-			hmEventCodes.put ( er.getEvent ( ), ec );
-			hmEvents.put ( ec, er.getEvent ( ) );
-			hmRules.put ( ec, er.getRule ( ) );
-
-			ec++;
-		}
+		//	reset event-rules
+		eventRules.clear ( );
+		eventRules.addAll ( sorted );
 	}
 	
 	private void checkUndecidableEvent( Event event )
@@ -349,7 +332,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 		for ( int i = 0; i < getNumberOfEvents ( ); i++ )
 		{
-			sb.append ( this.hmEvents.get ( i ).toString ( ) );
+			sb.append ( get1stLevelEvent ( i ).toString ( ) );
 			if ( i < ( getNumberOfEvents ( ) - 1 ) )
 			{
 				sb.append ( ", " );
