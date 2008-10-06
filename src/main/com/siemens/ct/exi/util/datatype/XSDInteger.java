@@ -76,9 +76,17 @@ public class XSDInteger
 			}
 			catch ( NumberFormatException el )
 			{
-				// OK, we have to use BigInteger
-				bInt = new BigInteger ( s );
-				type = IntegerType.BIG_INTEGER;
+				// BigInteger ?
+				try
+				{
+					bInt = new BigInteger ( s );
+					type = IntegerType.BIG_INTEGER;
+				}
+				catch ( NumberFormatException eb )
+				{
+					// OK, seems to be a deviation
+					throw new XMLParsingException( "'" + s + "' cannot be parsed as Integer");
+				}
 			}	
 		}
 	}
