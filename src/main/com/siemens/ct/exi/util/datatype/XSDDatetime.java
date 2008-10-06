@@ -74,59 +74,66 @@ public class XSDDatetime
 		//StringBuffer sbCal = new StringBuffer ( cal.trim ( ) );
 		StringBuffer sbCal = new StringBuffer ( cal );
 		
-		switch ( type )
+		try
 		{
-			case gYear: // gYear Year, [Time-Zone]
-				iYear = parseYear ( sbCal ) - YEAR_OFFSET;
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-				iYear = parseYear ( sbCal ) - YEAR_OFFSET;
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseMonth ( sbCal ) * MONTH_MULTIPLICATOR;
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case date: // date Year, MonthDay, [TimeZone]
-				iYear = parseYear ( sbCal ) - YEAR_OFFSET; // year
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseMonthDay ( sbCal );
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs], [TimeZone]
-				iYear = parseYear ( sbCal ) - YEAR_OFFSET;
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseMonthDay ( sbCal );
-				checkCharacter ( sbCal, 'T' ); // Time
-				iTime = parseTime ( sbCal );
-				iFractionalSecs = parseFractionalSecondsReverse ( sbCal );
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case gMonth: // gMonth MonthDay, [TimeZone]
-				checkCharacter ( sbCal, '-' ); // hyphen
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseMonth ( sbCal ) * MONTH_MULTIPLICATOR;
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-				checkCharacter ( sbCal, '-' ); // hyphen
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseMonthDay ( sbCal );
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case gDay: // gDay MonthDay, [TimeZone]
-				checkCharacter ( sbCal, '-' ); // hyphen
-				checkCharacter ( sbCal, '-' ); // hyphen
-				checkCharacter ( sbCal, '-' ); // hyphen
-				iMonthDay = parseDay ( sbCal );
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			case time: // time Time, [FractionalSecs], [TimeZone]
-				iTime = parseTime ( sbCal );
-				iFractionalSecs = parseFractionalSecondsReverse ( sbCal );
-				iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
-				break;
-			default:
-				throw new UnsupportedOperationException ( );
+			switch ( type )
+			{
+				case gYear: // gYear Year, [Time-Zone]
+					iYear = parseYear ( sbCal ) - YEAR_OFFSET;
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
+					iYear = parseYear ( sbCal ) - YEAR_OFFSET;
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseMonth ( sbCal ) * MONTH_MULTIPLICATOR;
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case date: // date Year, MonthDay, [TimeZone]
+					iYear = parseYear ( sbCal ) - YEAR_OFFSET; // year
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseMonthDay ( sbCal );
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs], [TimeZone]
+					iYear = parseYear ( sbCal ) - YEAR_OFFSET;
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseMonthDay ( sbCal );
+					checkCharacter ( sbCal, 'T' ); // Time
+					iTime = parseTime ( sbCal );
+					iFractionalSecs = parseFractionalSecondsReverse ( sbCal );
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case gMonth: // gMonth MonthDay, [TimeZone]
+					checkCharacter ( sbCal, '-' ); // hyphen
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseMonth ( sbCal ) * MONTH_MULTIPLICATOR;
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case gMonthDay: // gMonthDay MonthDay, [TimeZone]
+					checkCharacter ( sbCal, '-' ); // hyphen
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseMonthDay ( sbCal );
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case gDay: // gDay MonthDay, [TimeZone]
+					checkCharacter ( sbCal, '-' ); // hyphen
+					checkCharacter ( sbCal, '-' ); // hyphen
+					checkCharacter ( sbCal, '-' ); // hyphen
+					iMonthDay = parseDay ( sbCal );
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				case time: // time Time, [FractionalSecs], [TimeZone]
+					iTime = parseTime ( sbCal );
+					iFractionalSecs = parseFractionalSecondsReverse ( sbCal );
+					iTZMinutes = parseTimezoneInMinutesOffset ( sbCal );
+					break;
+				default:
+					throw new UnsupportedOperationException ( );
+			}
+		}
+		catch ( RuntimeException e )
+		{
+			throw new XMLParsingException( "'" + cal + "' is valid datetime type (" + type + ")" );
 		}
 	}
 
@@ -162,7 +169,6 @@ public class XSDDatetime
 		sb.delete ( 0, len );
 
 		return year;
-		// return year - 2000;
 	}
 
 	public static int parseMonth ( StringBuffer sb )
