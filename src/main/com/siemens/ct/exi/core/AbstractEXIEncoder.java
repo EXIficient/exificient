@@ -235,7 +235,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		}
 	}
 
-
 	public void encodeStartDocument () throws EXIException
 	{
 		if ( this.os == null )
@@ -321,7 +320,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			}
 			else
 			{
-				//	SE(*) on first level
+				// SE(*) on first level
 				// encode EventCode
 				encode1stLevelEventCode ( ecGeneric );
 
@@ -536,11 +535,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				// encode event-code
 				encode2ndLevelEventCode ( ecATundeclared );
 
-
 				// TODO The value of each AT (xsi:type) event matching the AT(*)
-				// terminal is represented as a QName (see 7.1.7 QName). If there is
-				// no namespace in scope for the specified qname prefix, the QName
-				// uri is set to empty ("") and the QName localName is set to the
+				// terminal is represented as a QName (see 7.1.7 QName). If
+				// there is
+				// no namespace in scope for the specified qname prefix, the
+				// QName
+				// uri is set to empty ("") and the QName localName is set to
+				// the
 				// full lexical value of the QName, including the prefix.
 				encodeUnexpectedAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE, raw );
 			}
@@ -691,7 +692,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		{
 			int ec = getCurrentRule ( ).get1stLevelEventCode ( eventCH, getFidelityOptions ( ) );
 
-			if ( ec == Constants.NOT_FOUND )
+			// valid value and valid event-code ?
+			if ( ec == Constants.NOT_FOUND || !block.isTypeValid ( getDatatypeOfEvent ( ec ), chars ) )
 			{
 				// generic CH (on first level)
 				int ecGeneric = getCurrentRule ( ).get1stLevelEventCode ( eventCHg, getFidelityOptions ( ) );
@@ -736,17 +738,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			}
 			else
 			{
-				// characters event found
-				if ( block.isTypeValid ( getDatatypeOfEvent ( ec ), chars ) )
-				{
-					// encode EventCode, schema-valid content plus moves on in
-					// grammar
-					encodeTypeValidValue ( ec, getScopeURI ( ), getScopeLocalName ( ) );
-				}
-				else
-				{
-					throw new IllegalArgumentException ( "expected CH with deviated content!" );
-				}
+				// right characters event found & data type-valid
+				// --> encode EventCode, schema-valid content plus grammar moves
+				// on
+				encodeTypeValidValue ( ec, getScopeURI ( ), getScopeLocalName ( ) );
 			}
 		}
 		catch ( IOException e )
