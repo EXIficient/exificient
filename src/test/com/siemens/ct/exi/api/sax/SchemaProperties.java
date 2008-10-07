@@ -20,8 +20,6 @@ package com.siemens.ct.exi.api.sax;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
@@ -34,9 +32,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.util.xml.SAXWriter;
 
 
 public class SchemaProperties extends AbstractProperties
@@ -85,21 +81,6 @@ public class SchemaProperties extends AbstractProperties
 		xmlReader.parse( new InputSource( new StringReader( xml ) ) );
 	}
 	
-	private String decodeSchemaInformedToXML( InputStream isEXI ) throws IOException, SAXException
-	{
-		XMLReader exiReader = factory.createEXIReader( );
-		SAXWriter xmlWriter = new SAXWriter ( );
-		ByteArrayOutputStream xmlDecoded = new ByteArrayOutputStream();
-		xmlWriter.setOutput ( xmlDecoded, "UTF8" );
-		exiReader.setContentHandler( xmlWriter );
-		exiReader.parse( new InputSource( isEXI ) );
-		
-		String sXMLDecoded = xmlDecoded.toString ( );
-		
-		return sXMLDecoded;
-	}
-
-	
 	private void startTest( boolean isXmlSchemaValid, boolean isXMLEqual ) throws Exception
 	{
 		//	encode
@@ -110,7 +91,7 @@ public class SchemaProperties extends AbstractProperties
 		ByteArrayInputStream isEXI = new ByteArrayInputStream( osEXI.toByteArray ( ) );
 		
 		//	decode
-		String sXMLDecoded = decodeSchemaInformedToXML ( isEXI );
+		String sXMLDecoded = decodeEXIToXML ( isEXI );
 		
 		//	equal ?
 		if ( isXMLEqual )

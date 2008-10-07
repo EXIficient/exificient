@@ -21,10 +21,7 @@ package com.siemens.ct.exi.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -38,7 +35,6 @@ import com.siemens.ct.exi.TestEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.util.FragmentUtilities;
-import com.siemens.ct.exi.util.xml.SAXWriter;
 
 public abstract class AbstractTestCase extends XMLTestCase
 {
@@ -48,14 +44,6 @@ public abstract class AbstractTestCase extends XMLTestCase
 	public AbstractTestCase ( String s )
 	{
 		super ( s );
-	}
-	
-	public static SAXWriter getXMLWriter( OutputStream os ) throws UnsupportedEncodingException, FileNotFoundException
-	{
-		SAXWriter xmlWriter = new SAXWriter();
-		xmlWriter.setOutput( os, "UTF8");
-    	
-    	return xmlWriter;
 	}
 	
 	private void _testOption( TestCaseOption tco ) throws Exception

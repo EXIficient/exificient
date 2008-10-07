@@ -19,59 +19,55 @@
 package com.siemens.ct.exi;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.util.xml.SAXWriter;
 
 public class TestDecoder extends AbstractTestCoder
 {
-	public static SAXWriter getXMLWriter( OutputStream os ) throws UnsupportedEncodingException, FileNotFoundException
+	public void decodeTo ( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws Exception
 	{
-		SAXWriter xmlWriter = new SAXWriter();
-		xmlWriter.setOutput( os, "UTF8");
-    	
-    	return xmlWriter;
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		
+		if ( ef.isFragment ( ) )
+		{
+			transformer.setOutputProperty ( OutputKeys.OMIT_XML_DECLARATION , "yes" );
+		}
+		
+		SAXSource exiSource = new SAXSource( new InputSource ( exiDocument ) );
+		exiSource.setXMLReader ( ef.createEXIReader ( ) );
+
+		transformer.transform( exiSource, new StreamResult ( xmlOutput )  );
 	}
-	
-	public void decodeTo( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws IOException, SAXException
-	{
-		SAXWriter saxWriter = getXMLWriter( xmlOutput );
-		saxWriter.setBypassXMLDeclaration ( ef.isFragment ( ) );
-		XMLReader reader = ef.createEXIReader( );
-		reader.setContentHandler ( saxWriter );
-		reader.setErrorHandler( saxWriter );
-		reader.parse ( new InputSource( exiDocument ) );
-	}
-	
+
 	public static void main ( String[] args ) throws Exception
 	{
-		//	create test-decoder
-		TestDecoder testDecoder = new TestDecoder();
-		
-		//	get factory
-		EXIFactory ef = testDecoder.getQuickTestEXIactory();
-		
-		//	exi document
-		InputStream exiDocument = new FileInputStream( QuickTestConfiguration.getExiLocation ( ) );
-		
-		//	decoded xml output
+		// create test-decoder
+		TestDecoder testDecoder = new TestDecoder ( );
+
+		// get factory
+		EXIFactory ef = testDecoder.getQuickTestEXIactory ( );
+
+		// exi document
+		InputStream exiDocument = new FileInputStream ( QuickTestConfiguration.getExiLocation ( ) );
+
+		// decoded xml output
 		String decodedXMLLocation = QuickTestConfiguration.getExiLocation ( ) + ".xml";
-		OutputStream xmlOutput = new FileOutputStream( decodedXMLLocation );
-		
-		//	decode EXI to XML
-		testDecoder.decodeTo( ef, exiDocument, xmlOutput );
-		
-		System.out.println( "[DEC] " + QuickTestConfiguration.getExiLocation ( ) + " --> " + decodedXMLLocation );
+		OutputStream xmlOutput = new FileOutputStream ( decodedXMLLocation );
+
+		// decode EXI to XML
+		testDecoder.decodeTo ( ef, exiDocument, xmlOutput );
+
+		System.out.println ( "[DEC] " + QuickTestConfiguration.getExiLocation ( ) + " --> " + decodedXMLLocation );
 	}
 
 }

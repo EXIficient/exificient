@@ -20,6 +20,7 @@ package com.siemens.ct.exi;
 
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.data.DeviationsTestCase;
 import com.siemens.ct.exi.data.FragmentTestCase;
 import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
@@ -82,8 +83,8 @@ public class QuickTestConfiguration
 	// CODING MODE
 	static
 	{
-		CODING_MODE = CodingMode.BIT_PACKED;
-		// CODING_MODE = CodingMode.BYTE_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
 		// CODING_MODE = CodingMode.COMPRESSION;
 	}
@@ -103,8 +104,8 @@ public class QuickTestConfiguration
 	{
 		// SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest ( );
-		// W3CTestCase.setupQuickTest ( );
-		FragmentTestCase.setupQuickTest ( );
+		W3CTestCase.setupQuickTest ( );
+		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}

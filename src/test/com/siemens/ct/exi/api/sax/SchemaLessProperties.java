@@ -20,20 +20,14 @@ package com.siemens.ct.exi.api.sax;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
 import javax.xml.transform.sax.SAXResult;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import com.siemens.ct.exi.api.sax.EXIResult;
-import com.siemens.ct.exi.util.xml.SAXWriter;
 
 
 public class SchemaLessProperties extends AbstractProperties
@@ -49,21 +43,6 @@ public class SchemaLessProperties extends AbstractProperties
 		
 		xmlReader.parse( new InputSource( new StringReader( xml ) ) );
 	}
-	
-	private String decodeSchemaLessToXML( InputStream isEXI ) throws IOException, SAXException
-	{
-		XMLReader exiReader = factory.createEXIReader( );
-		SAXWriter xmlWriter = new SAXWriter ( );
-		ByteArrayOutputStream xmlDecoded = new ByteArrayOutputStream();
-		xmlWriter.setOutput ( xmlDecoded, "UTF8" );
-		exiReader.setContentHandler( xmlWriter );
-		exiReader.parse( new InputSource( isEXI ) );
-		
-		String sXMLDecoded = xmlDecoded.toString ( );
-		
-		return sXMLDecoded;
-	}
-	
 
 	
 	private void startTest( ) throws Exception
@@ -76,7 +55,7 @@ public class SchemaLessProperties extends AbstractProperties
 		ByteArrayInputStream isEXI = new ByteArrayInputStream( osEXI.toByteArray ( ) );
 		
 		//	decode
-		String sXMLDecoded = decodeSchemaLessToXML ( isEXI );
+		String sXMLDecoded = decodeEXIToXML ( isEXI );
 		
 		//	equal ?
 		isXMLEqual( sXMLDecoded );

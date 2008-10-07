@@ -35,11 +35,11 @@ public class DeviationsTestCase extends AbstractTestCase
 
 	public static void setupQuickTest ()
 	{
-		DeviationsTestCase.setConfigurationDeviationAt1 ( );
+		// DeviationsTestCase.setConfigurationDeviationAt1 ( );
 		// DeviationsTestCase.setConfigurationDeviationEl1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype2 ( );
-		// DeviationsTestCase.setConfigurationDeviationDatatype3 ( );
+		DeviationsTestCase.setConfigurationDeviationDatatype3 ( );
 	}
 
 	protected void setUp ()
@@ -58,19 +58,19 @@ public class DeviationsTestCase extends AbstractTestCase
 		testCaseOptions.lastElement ( ).setFragments ( false );
 		testCaseOptions.lastElement ( ).setXmlEqual ( false );
 		
-//		//	#3 (all)
-//		testCaseOptions.add ( new TestCaseOption() );
-//		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-//		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
-//		testCaseOptions.lastElement ( ).setFragments ( false );
-//		testCaseOptions.lastElement ( ).setXmlEqual ( true );
-//		
-//		//	#4
-//		testCaseOptions.add ( new TestCaseOption() );
-//		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-//		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
-//		testCaseOptions.lastElement ( ).setFragments ( false );
-//		testCaseOptions.lastElement ( ).setXmlEqual ( true );
+		//	#3 (all)
+		testCaseOptions.add ( new TestCaseOption() );
+		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
+		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
+		testCaseOptions.lastElement ( ).setFragments ( false );
+		testCaseOptions.lastElement ( ).setXmlEqual ( true );
+		
+		//	#4
+		testCaseOptions.add ( new TestCaseOption() );
+		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
+		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
+		testCaseOptions.lastElement ( ).setFragments ( false );
+		testCaseOptions.lastElement ( ).setXmlEqual ( true );
 		
 	}
 
@@ -104,7 +104,7 @@ public class DeviationsTestCase extends AbstractTestCase
 	public void testDeviationDatatype1 () throws Exception
 	{
 		// set up configuration
-		setConfigurationDeviationEl1 ( );
+		setConfigurationDeviationDatatype1 ( );
 
 		//	execute test
 		_test( );
@@ -122,7 +122,7 @@ public class DeviationsTestCase extends AbstractTestCase
 	public void testDeviationDatatype2 () throws Exception
 	{
 		// set up configuration
-		setConfigurationDeviationEl1 ( );
+		setConfigurationDeviationDatatype2 ( );
 
 		//	execute test
 		_test( );
@@ -140,7 +140,7 @@ public class DeviationsTestCase extends AbstractTestCase
 	public void testDeviationDatatype3 () throws Exception
 	{
 		// set up configuration
-		setConfigurationDeviationEl1 ( );
+		setConfigurationDeviationDatatype3 ( );
 
 		//	execute test
 		_test( );

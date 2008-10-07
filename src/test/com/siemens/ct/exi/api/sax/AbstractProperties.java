@@ -1,10 +1,19 @@
 package com.siemens.ct.exi.api.sax;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.EXIFactory;
@@ -20,6 +29,20 @@ public abstract class AbstractProperties extends XMLTestCase
 	protected void setUp()
 	{
 		factory = DefaultEXIFactory.newInstance ( );	
+	}
+	
+	
+	protected String decodeEXIToXML( InputStream isEXI ) throws IOException, SAXException, TransformerException
+	{
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		SAXSource exiSource = new SAXSource( new InputSource ( isEXI ) );
+		exiSource.setXMLReader ( factory.createEXIReader ( ) );
+
+		ByteArrayOutputStream xmlDecoded = new ByteArrayOutputStream();
+		transformer.transform( exiSource, new StreamResult ( xmlDecoded )  );
+		
+		return xmlDecoded.toString ( );
 	}
 	
 	
