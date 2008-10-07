@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081007
  */
 
 final public class ByteEncoderChannel extends AbstractEncoderChannel implements EncoderChannel
@@ -68,7 +68,7 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements 
 	 */
 	public void encodeBoolean ( boolean b ) throws IOException, IllegalArgumentException
 	{
-		os.write ( b ? 1 : 0 );
+		encode ( b ? 1 : 0 );
 	}
 
 	/**
@@ -92,28 +92,28 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements 
 		else if ( n < 9 )
 		{
 			// 1 byte
-			os.write ( b & 0xff );
+			encode ( b & 0xff );
 		}
 		else if ( n < 17 )
 		{
 			// 2 bytes
-			os.write ( b & 0x00ff );
-			os.write ( ( b & 0xff00 ) >> 8 );
+			encode ( b & 0x00ff );
+			encode ( ( b & 0xff00 ) >> 8 );
 		}
 		else if ( n < 25 )
 		{
 			// 3 bytes
-			os.write ( b & 0x0000ff );
-			os.write ( ( b & 0x00ff00 ) >> 8 );
-			os.write ( ( b & 0xff0000 ) >> 16 );
+			encode ( b & 0x0000ff );
+			encode ( ( b & 0x00ff00 ) >> 8 );
+			encode ( ( b & 0xff0000 ) >> 16 );
 		}
 		else if ( n < 33 )
 		{
 			// 4 bytes
-			os.write ( b & 0x000000ff );
-			os.write ( ( b & 0x0000ff00 ) >> 8 );
-			os.write ( ( b & 0x00ff0000 ) >> 16 );
-			os.write ( ( b & 0xff000000 ) >> 24 );
+			encode ( b & 0x000000ff );
+			encode ( ( b & 0x0000ff00 ) >> 8 );
+			encode ( ( b & 0x00ff0000 ) >> 16 );
+			encode ( ( b & 0xff000000 ) >> 24 );
 		}
 		else
 		{
