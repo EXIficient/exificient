@@ -36,21 +36,28 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081003
+ * @version 0.1.20081009
  */
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements SchemaInformedRule
 {
 	protected List<EventRule>			eventRules;
 
-	protected boolean					lambdasResolved		= false;
+	protected boolean					lambdasResolved				= false;
 
-	protected boolean					hasNamedSubtypes	= false;
+	protected boolean					hasNamedSubtypes			= false;
 
-	protected boolean					isNillable			= false;
+	protected boolean					isNillable					= false;
+
 	protected SchemaInformedRule		typeEmpty;
 
-	protected boolean					isFirstElementRule	= false;
+	protected boolean					isFirstElementRule			= false;
+
+	/*
+	 * schema-deviated attributes
+	 */
+	protected int						leastAttributeEventCode		= Constants.NOT_FOUND;
+	protected int						numberDeviatedAttributes	= 0;
 
 	protected List<SchemaInformedRule>	lambdaTransitions;
 
@@ -68,11 +75,11 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	private void init ()
 	{
-		eventRules = new ArrayList<EventRule>();
+		eventRules = new ArrayList<EventRule> ( );
 
 		lambdaTransitions = new ArrayList<SchemaInformedRule> ( );
 	}
-	
+
 	public final boolean isSchemaRule ()
 	{
 		return true;
@@ -81,23 +88,22 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
 	{
 		int ec = 0;
-		for ( EventRule er : eventRules ) 
+		for ( EventRule er : eventRules )
 		{
-			if ( er.getEvent ( ).equals ( event ) ) 
+			if ( er.getEvent ( ).equals ( event ) )
 			{
 				return ec;
 			}
-			//	increment event-code
+			// increment event-code
 			ec++;
 		}
-		
-		//	event not found
+
+		// event not found
 		return Constants.NOT_FOUND;
 	}
 
 	public Event get1stLevelEvent ( int eventCode )
 	{
-		// return hmEvents.get ( eventCode );
 		return eventRules.get ( eventCode ).getEvent ( );
 	}
 
@@ -122,17 +128,22 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		isFirstElementRule = true;
 	}
 
-	public List<SchemaInformedRule> getLambdaRules ()
+	public int getNumberOfSchemaDeviatedAttributes ()
 	{
-		return this.lambdaTransitions;
+		return numberDeviatedAttributes;
 	}
 
-	public boolean isLambdaResolved ()
+	public int getLeastAttributeEventCode ()
 	{
-		return this.lambdasResolved;
+		return leastAttributeEventCode;
 	}
 
-	public void resolveLambdaTransitions ( ArrayList<EventRule> reachableEventRules, ArrayList<Rule> alreadyHandledRules )
+	public void resolveLambdaTransitions ()
+	{
+		resolveLambdaTransitions ( new ArrayList<EventRule> ( ), new ArrayList<Rule> ( ) );
+	}
+
+	protected void resolveLambdaTransitions ( List<EventRule> reachableEventRules, List<Rule> alreadyHandledRules )
 	{
 		// abort
 		if ( alreadyHandledRules.contains ( this ) )
@@ -154,7 +165,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 			while ( iterLambdas.hasNext ( ) )
 			{
-				SchemaInformedRule lambdaRule = iterLambdas.next ( );
+				AbstractSchemaInformedRule lambdaRule = (AbstractSchemaInformedRule) iterLambdas.next ( );
 
 				lambdaRule.resolveLambdaTransitions ( reachableEventRules, alreadyHandledRules );
 			}
@@ -164,11 +175,11 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		// only first item is of interest
 		if ( alreadyHandledRules.get ( 0 ) == this )
 		{
-			//	add if not already present
-			for( int i=0; i < reachableEventRules.size ( ); i++ )
+			// add if not already present
+			for ( int i = 0; i < reachableEventRules.size ( ); i++ )
 			{
 				EventRule er = reachableEventRules.get ( i );
-				if ( ! contains ( er.getEvent ( ) ) )
+				if ( !contains ( er.getEvent ( ) ) )
 				{
 					updateSortedEventRules ( er.getEvent ( ), er.getRule ( ) );
 				}
@@ -182,9 +193,10 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			// go over all target rules and resolve lambdas
 			for ( int i = 0; i < getNumberOfEvents ( ); i++ )
 			{
-				SchemaInformedRule sir = (SchemaInformedRule)eventRules.get ( i ).getRule ( );
+				// TODO find *nicer* way
+				AbstractSchemaInformedRule sir = (AbstractSchemaInformedRule) eventRules.get ( i ).getRule ( );
 
-				if ( !sir.isLambdaResolved ( ) )
+				if ( !sir.lambdasResolved )
 				{
 					sir.resolveLambdaTransitions ( new ArrayList<EventRule> ( ), new ArrayList<Rule> ( ) );
 				}
@@ -248,7 +260,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			// undecidable choice not allowed
 			if ( contains ( event ) )
 			{
-				checkUndecidableEvent( event );
+				checkUndecidableEvent ( event );
 			}
 			else
 			{
@@ -260,33 +272,65 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	protected void updateSortedEventRules ( Event newEvent, Rule newRule )
 	{
-		Set<EventRule> sorted = new TreeSet<EventRule>();
+		Set<EventRule> sorted = new TreeSet<EventRule> ( );
 
-		// *old* events
+		/*
+		 * *old* events
+		 */ 
 		for ( int i = 0; i < getNumberOfEvents ( ); i++ )
 		{
 			EventRule curr = getEventRuleAt ( i );
 			sorted.add ( curr );
 		}
-		
-		//  *new* event
+
+		/*
+		 * *new* event
+		 */ 
 		sorted.add ( new EventRule ( newEvent, newRule ) );
 
-		//	reset event-rules
+		/*
+		 * reset event-rules
+		 */ 
 		eventRules.clear ( );
 		eventRules.addAll ( sorted );
+
+		/*
+		 * reset least-attribute & number of deviated attributes
+		 */ 
+		leastAttributeEventCode = Constants.NOT_FOUND;
+		numberDeviatedAttributes = 0;
+		
+		for ( int i = 0; i < eventRules.size ( ); i++ )
+		{
+			EventRule er = eventRules.get ( i );
+			if ( er.getEvent ( ).isEventType ( EventType.ATTRIBUTE ) )
+			{
+				if ( leastAttributeEventCode == Constants.NOT_FOUND )
+				{
+					// set least attribute
+					leastAttributeEventCode = i;
+				}
+
+				// count all AT (qname) [schema-invalid value]
+				numberDeviatedAttributes++;
+			}
+
+		}
+		
+		// add AT (*) [schema-invalid value]
+		numberDeviatedAttributes++;
 	}
-	
-	private void checkUndecidableEvent( Event event )
+
+	private void checkUndecidableEvent ( Event event )
 	{
 		int id = getInternalEventId ( event );
 		EventRule er = this.getEventRuleAt ( id );
 
-		//	NOT same event ? -> throw error
-		if ( ! event.equals ( er.getEvent ( ) ) )
+		// NOT same event ? -> throw error
+		if ( !event.equals ( er.getEvent ( ) ) )
 		{
 			throw new IllegalArgumentException ( "Illegal Duplicate Event: " + event + " for " + this );
-		}		
+		}
 	}
 
 	public void joinRules ( Rule rule )
@@ -299,7 +343,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 			if ( contains ( event ) )
 			{
-				checkUndecidableEvent( event );
+				checkUndecidableEvent ( event );
 			}
 			else
 			{
@@ -344,8 +388,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return sb.toString ( );
 	}
 
-	@Override
-	public SchemaInformedRule clone ()
+	public SchemaInformedRule duplicate ()
 	{
 		return this;
 	}

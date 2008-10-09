@@ -31,7 +31,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 /*
@@ -220,7 +220,7 @@ public class SchemaInformedRuleStartTag extends AbstractSchemaInformedRuleConten
 						eventCode2 = 0;
 					}
 					// AT[schema-invalid]
-					else if ( eventType == EventType.ATTRIBUTE )
+					else if ( eventType == EventType.ATTRIBUTE_INVALID_VALUE )
 					{
 						eventCode2 = 1;
 					}
@@ -312,7 +312,7 @@ public class SchemaInformedRuleStartTag extends AbstractSchemaInformedRuleConten
 					// AT[schema-invalid]
 					else if ( eventCode == 1 )
 					{
-						eventType = EventType.ATTRIBUTE;
+						eventType = EventType.ATTRIBUTE_INVALID_VALUE;
 					}
 					else
 					{
@@ -376,7 +376,7 @@ public class SchemaInformedRuleStartTag extends AbstractSchemaInformedRuleConten
 	}
 
 	@Override
-	public SchemaInformedRuleStartTag clone ()
+	public SchemaInformedRuleStartTag duplicate ()
 	{
 		SchemaInformedRuleStartTag clone = new SchemaInformedRuleStartTag ( elementContent2 );
 		clone.joinRules ( this );

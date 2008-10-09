@@ -18,10 +18,6 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.siemens.ct.exi.grammar.EventRule;
 
 /**
  * TODO Description
@@ -29,23 +25,35 @@ import com.siemens.ct.exi.grammar.EventRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081008
  */
 
-public interface SchemaInformedRule extends Rule, Cloneable
+public interface SchemaInformedRule extends Rule
 {
 	/*
 	 * Add top rules (merge them)
 	 */
 	public void joinRules( Rule rule );
 	
+	/*
+	 * first rule is different (namespace declaration, xsi:typ and xsi:nil)
+	 */
+	public void setFirstElementRule();
+	
+	/*
+	 * sets whether type is castable
+	 */
 	public void setHasNamedSubtypes( boolean hasNamedSubtypes );
 
+	/*
+	 * sets whether element is nillable
+	 */
 	public void setNillable( boolean nillable, SchemaInformedRule typeEmpty );
 	
+	/*
+	 * get ur-type
+	 */
 	public SchemaInformedRule getTypeEmpty();
-	
-	public void setFirstElementRule();
 	
 	
 	/*
@@ -55,15 +63,22 @@ public interface SchemaInformedRule extends Rule, Cloneable
 	public String getLabel ();
 	
 	/*
-	 * return reachable event-rules
+	 * Schema-deviated attributes
 	 */
-	public void resolveLambdaTransitions( ArrayList<EventRule> reachableEventRules, ArrayList<Rule> alreadyHandledRules );
+	public int getNumberOfSchemaDeviatedAttributes();
 	
-	public boolean isLambdaResolved( );
+	public int getLeastAttributeEventCode();
 	
-	//	temp
-	public List<SchemaInformedRule> getLambdaRules( );
 	
-	public SchemaInformedRule clone();
+	
+	/*
+	 * resolves reachable event-rules & replaces Lambdas
+	 */
+	public void resolveLambdaTransitions( );
+	
+	/*
+	 * clones schema-informed rule
+	 */
+	public SchemaInformedRule duplicate();
 	
 }

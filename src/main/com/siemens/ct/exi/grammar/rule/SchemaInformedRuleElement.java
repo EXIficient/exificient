@@ -127,7 +127,7 @@ public class SchemaInformedRuleElement extends AbstractSchemaInformedRuleContent
 	}
 	
 	@Override
-	public SchemaInformedRuleElement clone()
+	public SchemaInformedRuleElement duplicate()
 	{	
 		SchemaInformedRuleElement clone = new SchemaInformedRuleElement();
 		
