@@ -81,7 +81,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080924
+ * @version 0.1.20081009
  */
 
 /*
@@ -92,6 +92,12 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 public class XSDGrammarBuilder implements DOMErrorHandler
 {
+	private final Event									END_ELEMENT;
+
+	private final Event									LAMBDA;
+
+	// ///////////////
+
 	protected Map<ElementKey, Rule>						elementDispatcher;
 
 	protected Map<ExpandedName, TypeGrammar>			grammarTypes;
@@ -100,14 +106,6 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 
 	// sorted LocalNames (pre-initializing LocalName Partition)
 	protected Set<ExpandedName>							sortedLocalNames;
-
-	// ///////////////
-
-	private static final Event							END_ELEMENT		= new EndElement ( );
-
-	private static final Event							LAMBDA			= new Lambda ( );
-
-	private static boolean								RESOLVE_LAMBDAS	= true;				// Default
 
 	private XSModel										xsModel;
 
@@ -129,6 +127,9 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 
 	protected XSDGrammarBuilder ()
 	{
+		END_ELEMENT = new EndElement ( );
+		LAMBDA = new Lambda ( );
+
 		// allocate memory
 		elementDispatcher = new HashMap<ElementKey, Rule> ( );
 		handledElements = new Vector<XSElementDeclaration> ( );
@@ -691,7 +692,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			// *duplicate* first productions to allow different behavior
 			// (e.g. property nillable element not type dependent)
 
-			SchemaInformedRule sir = tg.getType ( ).clone ( );
+			SchemaInformedRule sir = tg.getType ( ).duplicate ( );
 			typeGrammar = new TypeGrammar ( sir, tg.typeEmpty );
 		}
 
@@ -733,9 +734,10 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		// simple vs. complex type handling
 		if ( td.getTypeCategory ( ) == XSTypeDefinition.COMPLEX_TYPE )
 		{
-			if ( Constants.XSD_ANY_TYPE.equals ( td.getName ( ) ) && XMLConstants.W3C_XML_SCHEMA_NS_URI.equals ( td.getNamespace ( ) ) )
+			if ( Constants.XSD_ANY_TYPE.equals ( td.getName ( ) )
+					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals ( td.getNamespace ( ) ) )
 			{
-				//	ur-type
+				// ur-type
 				TypeGrammar urType = SchemaInformedGrammar.getUrTypeRule ( );
 				type_i = urType.type;
 				typeEmpty_i = urType.typeEmpty;
@@ -743,18 +745,16 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			else
 			{
 				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
-				
+
 				SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA ( ctd );
 
 				// resolve lambdas
-				if ( RESOLVE_LAMBDAS )
-				{
-					ruleContent.resolveLambdaTransitions ( new ArrayList<EventRule> ( ), new ArrayList<Rule> ( ) );
-				}
+				ruleContent.resolveLambdaTransitions ( );
 
 				// create copy of Element_i_content --> Element_i_content_2
-				// (used for content schema-deviations in start-tags, direct jumps)
-				SchemaInformedRule ruleContent2 = ruleContent.clone ( );
+				// (used for content schema-deviations in start-tags, direct
+				// jumps)
+				SchemaInformedRule ruleContent2 = ruleContent.duplicate ( );
 
 				// attributes
 				XSObjectList attributes = ctd.getAttributeUses ( );
@@ -769,7 +769,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 				// typeEmpty_i
 				SchemaInformedRule ruleEnd = new SchemaInformedRuleElement ( );
 				ruleEnd.addTerminalRule ( END_ELEMENT );
-				typeEmpty_i = handleAttributes ( ruleEnd, ruleEnd, attributes );				
+				typeEmpty_i = handleAttributes ( ruleEnd, ruleEnd, attributes );
 			}
 		}
 		else if ( td.getTypeCategory ( ) == XSTypeDefinition.SIMPLE_TYPE )
