@@ -84,9 +84,9 @@ public class QuickTestConfiguration
 	static
 	{
 		// CODING_MODE = CodingMode.BIT_PACKED;
-		CODING_MODE = CodingMode.BYTE_PACKED;
+		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
@@ -104,9 +104,9 @@ public class QuickTestConfiguration
 	{
 		// SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest ( );
-		W3CTestCase.setupQuickTest ( );
+		// W3CTestCase.setupQuickTest ( );
 		// FragmentTestCase.setupQuickTest ( );
-		// DeviationsTestCase.setupQuickTest();
+		DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}
 

@@ -26,8 +26,13 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder
 {
-	protected GrammarFactory	grammarFactory	= GrammarFactory.newInstance ( );
-
+	protected GrammarFactory	grammarFactory;
+	
+	public AbstractTestCoder()
+	{
+		grammarFactory	= GrammarFactory.newInstance ( );
+	}
+	
 	protected EXIFactory getQuickTestEXIactory () throws Exception
 	{
 		if ( QuickTestConfiguration.USE_SCHEMA )

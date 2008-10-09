@@ -45,11 +45,16 @@ import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
 public class TestEncoder extends AbstractTestCoder
 {
+	public TestEncoder()
+	{
+		super();
+	}
+	
 	protected XMLReader getXMLReader( ) throws SAXException
 	{
-		//	create xml reader
+		// create xml reader
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader ( );
-		// *skip* resolving entities like DTDs 
+		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver ( new MyEntityResolver ( ) );
 		
 		return xmlReader;
@@ -57,20 +62,21 @@ public class TestEncoder extends AbstractTestCoder
 	
 	protected XMLReader updateXMLReaderToFragment( XMLReader xmlReader ) throws IOException
 	{	
-		//	skip root element when passing infoset to EXI encoder
+		// skip root element when passing infoset to EXI encoder
 		return new SkipRootElementXMLReader( xmlReader );
 	}
 	
 	protected InputStream updateInputStreamToFragment( InputStream xmlInput ) throws IOException
 	{
-		//	surround fragment section with *root* element 
-		//	(necessary for xml reader to avoid messages like "root element must be well-formed")
+		// surround fragment section with *root* element
+		// (necessary for xml reader to avoid messages like "root element must
+		// be well-formed")
 		return FragmentUtilities.getSurroundingRootInputStream ( xmlInput );
 	}
 
 	public void encodeTo ( EXIFactory ef, InputStream xmlInput, OutputStream exiOuput ) throws Exception
 	{
-		//	XML reader
+		// XML reader
 		XMLReader xmlReader = getXMLReader( );
 		
 		// set EXI as content & lexical handler
@@ -110,7 +116,7 @@ public class TestEncoder extends AbstractTestCoder
 
 	public static void main ( String[] args ) throws Exception
 	{
-		//	create test-encoder
+		// create test-encoder
 		TestEncoder testEncoder = new TestEncoder();
 		
 		// get factory
@@ -123,7 +129,7 @@ public class TestEncoder extends AbstractTestCoder
 		// EXI output stream
 		OutputStream encodedOutput = getOutputStream ( QuickTestConfiguration.getExiLocation ( ) );
 		
-		//	encode to EXI
+		// encode to EXI
 		testEncoder.encodeTo ( ef, xmlInput, encodedOutput );
 
 		encodedOutput.flush ( );

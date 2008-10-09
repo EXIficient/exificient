@@ -33,9 +33,17 @@ import org.xml.sax.InputSource;
 
 public class TestDecoder extends AbstractTestCoder
 {
+	protected TransformerFactory tf;
+
+	public TestDecoder()
+	{
+		super();
+		
+		tf = TransformerFactory.newInstance();
+	}
+	
 	public void decodeTo ( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws Exception
 	{
-		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
 		
 		if ( ef.isFragment ( ) )
