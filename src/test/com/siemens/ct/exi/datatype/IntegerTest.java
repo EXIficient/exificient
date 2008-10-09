@@ -56,6 +56,18 @@ public class IntegerTest extends AbstractTestCase {
         assertTrue(getByteDecoder().decodeInteger() == 1 );
     }
     
+    public void testIntegerMaxNegativeInteger() throws IOException
+    {
+    	//	Bit
+    	EncoderChannel bitEC = getBitEncoder();
+    	bitEC.encodeInteger( Integer.MIN_VALUE );
+    	bitEC.flush();
+    	assertTrue(getBitDecoder().decodeInteger() == Integer.MIN_VALUE );
+        //	Byte
+        getByteEncoder().encodeInteger( Integer.MIN_VALUE );
+        assertTrue(getByteDecoder().decodeInteger() == Integer.MIN_VALUE );
+    }
+    
     public void testInteger0S() throws IOException, XMLParsingException
     {
     	String s = "0";
