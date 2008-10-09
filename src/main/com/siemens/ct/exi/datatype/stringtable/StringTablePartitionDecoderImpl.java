@@ -18,8 +18,8 @@
 
 package com.siemens.ct.exi.datatype.stringtable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO Description
@@ -27,33 +27,22 @@ import java.util.Map;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 public class StringTablePartitionDecoderImpl implements StringTablePartitionDecoder
 {
-	private static final boolean TEST_DECODER_PERFORMANCE = true;
-	
 	/**
 	 * The contents of the table.
 	 */
-	protected Map<Integer, String>	hmValue;
-	
-	protected ValueList valueList;
+	protected List<String>	valueList;
 
 	/**
 	 * Create a new string table.
 	 */
 	public StringTablePartitionDecoderImpl ()
 	{
-		if ( TEST_DECODER_PERFORMANCE )
-		{
-			valueList= new ValueList();
-		}
-		else
-		{
-			hmValue = new HashMap<Integer, String> ( );
-		}
+		valueList = new ArrayList<String> ( );
 	}
 
 	/**
@@ -64,15 +53,7 @@ public class StringTablePartitionDecoderImpl implements StringTablePartitionDeco
 	 */
 	public void add ( final String value )
 	{
-		if ( TEST_DECODER_PERFORMANCE )
-		{
-			valueList.add ( value );
-		}
-		else
-		{
-			//	TODO remove autoboxing
-			hmValue.put ( hmValue.size ( ), value );
-		}
+		valueList.add ( value );
 	}
 
 	/**
@@ -80,30 +61,14 @@ public class StringTablePartitionDecoderImpl implements StringTablePartitionDeco
 	 */
 	public int getSize ()
 	{
-		if ( TEST_DECODER_PERFORMANCE )
-		{
-			return valueList.size ( );
-		}
-		else
-		{
-			return hmValue.size ( );
-		}
+		return valueList.size ( );
 	}
-
 
 	/**
 	 * Get string at given index.
 	 */
 	public String getValue ( int index )
 	{
-		if ( TEST_DECODER_PERFORMANCE )
-		{
-			return valueList.getValue ( index );
-		}
-		else
-		{
-			return hmValue.get ( index );	
-		}
+		return valueList.get ( index );
 	}
-
 }
