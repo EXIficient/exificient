@@ -279,6 +279,8 @@ public abstract class AbstractEXICoder
 
 	private Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
 	{
+		//	TODO replace containsKey replace with get & check against null
+		
 		// runtime-grammar
 		if ( runtimeDispatcher.containsKey ( namespaceURI ) )
 		{

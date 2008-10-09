@@ -35,7 +35,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
@@ -108,13 +108,28 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		}
 	}
 	
+	public void decodeAttributeInvalidValue () throws EXIException
+	{
+		decodeAttributeStructure ( );
+		
+		try
+		{
+			//	decode attribute value as string
+			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException( e );
+		}
+	}
+	
 	public void decodeAttributeGeneric( ) throws EXIException
 	{
 		try
 		{
 			decodeAttributeGenericStructure ( );
 					
-			//	decode attribute value
+			//	decode attribute value as string
 			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
 		}
 		catch ( IOException e )

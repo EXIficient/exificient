@@ -33,6 +33,7 @@ import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.DecoderBlock;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 
@@ -42,7 +43,7 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080922
+ * @version 0.1.20081009
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXIDecoder
@@ -124,6 +125,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			else
 			{
 				nextEventType = getCurrentRule ( ).get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
+				
+				if ( nextEventType == EventType.ATTRIBUTE_INVALID_VALUE )
+				{
+					updateInvalidValueAttribute();
+				}
 			}
 		}
 		else
@@ -131,6 +137,24 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
 			nextEventType = nextEvent.getEventType ( );
 		}
+	}
+	
+	protected void updateInvalidValueAttribute() throws EXIException
+	{
+		SchemaInformedRule sir = (SchemaInformedRule)getCurrentRule ( );
+		
+		int ec3AT;
+		try
+		{
+			ec3AT = block.readEventCode ( sir.getNumberOfSchemaDeviatedAttributes ( ) );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException( e );
+		}
+		
+		ec = ec3AT + sir.getLeastAttributeEventCode ( );
+		nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
 	}
 
 	protected int decode1stLevelEventCode () throws EXIException

@@ -168,9 +168,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			// encode EventCode
 			encode1stLevelEventCode ( ec );
 
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
-
 			// value content
 			block.writeTypeValidValue ( uri, localName );
 		}
@@ -178,6 +175,32 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		{
 			throw new EXIException ( e );
 		}
+	}
+	
+	protected void encodeTypeInvalidValueAttribute ( int atEventCode, String uri, String localName, String value  ) throws EXIException
+	{
+		int ecATdeviated = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE,
+				exiFactory.getFidelityOptions ( ) );
+		
+		// encode 2nd level event-code
+		encode2ndLevelEventCode ( ecATdeviated );
+		
+		//	calculate 3rd level event-code
+		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule)getCurrentRule ( );
+		int ec3 = atEventCode - schemaCurrentRule.getLeastAttributeEventCode ( );
+		
+		try
+		{
+			// encode 3rd level event-code
+			block.writeEventCode ( ec3, schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) );
+			
+			// encode content as string
+			block.writeValueAsString ( uri, localName, value );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException ( e );
+		}	
 	}
 
 	protected void encodeGenericValue ( int ec, String uri, String localName, String value ) throws EXIException
@@ -400,6 +423,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 				// encode schema-valid content plus moves on in grammar
 				encodeTypeValidValue ( ecCH, getScopeURI ( ), getScopeLocalName ( ) );
+				
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ecCH ) );
 
 				// try the EE event once again
 				ec = getCurrentRule ( ).get1stLevelEventCode ( eventEE, getFidelityOptions ( ) );
@@ -675,9 +701,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			}
 			else
 			{
-				// schema-invalid value AT
-				throw new IllegalArgumentException ( "expected AT with deviated content!" );
+				// encode schema-invalid value AT
+				encodeTypeInvalidValueAttribute( ec, uri, localName, value );	
 			}
+			
+			// step forward in current rule (replace rule at the top)
+			replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 		}
 	}
 
@@ -742,6 +771,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				// --> encode EventCode, schema-valid content plus grammar moves
 				// on
 				encodeTypeValidValue ( ec, getScopeURI ( ), getScopeLocalName ( ) );
+				
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 			}
 		}
 		catch ( IOException e )
