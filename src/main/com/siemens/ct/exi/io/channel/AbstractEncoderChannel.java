@@ -40,7 +40,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 public abstract class AbstractEncoderChannel implements EncoderChannel
@@ -130,7 +130,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 		else
 		{
 			encodeBoolean ( false );
-			encodeUnsignedInteger ( Math.abs ( n ) );
+			encodeUnsignedInteger ( n );
 		}
 	}
 
@@ -189,6 +189,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 	 */
 	public void encodeUnsignedInteger ( int n ) throws IOException
 	{
+            //  TODO direct byte write...
+            
 		if ( n < 0 )
 		{
 			throw new UnsupportedOperationException ( );
