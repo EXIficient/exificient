@@ -41,7 +41,6 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
  * TODO Description
@@ -53,7 +52,6 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public class SAXDecoder implements XMLReader
-// , ErrorHandler
 {
 
 	private EXIDecoder			decoder;
@@ -77,8 +75,6 @@ public class SAXDecoder implements XMLReader
 	public SAXDecoder ( EXIFactory exiFactory )
 	{
 		this.decoder = exiFactory.createEXIDecoder ( );
-
-		// this.setErrorHandler( this );
 	}
 
 	private void init ()
@@ -104,18 +100,10 @@ public class SAXDecoder implements XMLReader
 		{
 			nsPrefixes.createPrefix ( uri );
 			pfx = this.nsPrefixes.getPrefix ( uri );
-
-			//this.addNamespaceDeclarationToAttributes ( uri, pfx );
 		}
 
 		return ( pfx.length ( ) == 0 ? localName : ( pfx + COLON + localName ) );
 	}
-
-//	private void addNamespaceDeclarationToAttributes ( String uri, String pfx )
-//	{
-//		String nsSQName = pfx.equals ( "" ) ? XMLConstants.XMLNS_ATTRIBUTE : XMLConstants.XMLNS_ATTRIBUTE + COLON + pfx;
-//		attributes.addAttribute ( "", "", nsSQName, ATTRIBUTE_TYPE, uri );
-//	}
 
 	private void checkDeferredStartElement () throws SAXException
 	{
@@ -125,8 +113,8 @@ public class SAXDecoder implements XMLReader
 			String qName = getQName ( deferredStartElementUri, deferredStartElementLocalName );
 
 			// prefix mapping
-			startPrefixMappings();
-			
+			startPrefixMappings ( );
+
 			contentHandler.startElement ( deferredStartElementUri, deferredStartElementLocalName, qName, attributes );
 			// clear information
 			deferredStartElementUri = null;
@@ -134,8 +122,8 @@ public class SAXDecoder implements XMLReader
 			attributes.clear ( );
 		}
 	}
-	
-	private void startPrefixMappings() throws SAXException
+
+	private void startPrefixMappings () throws SAXException
 	{
 		PrefixMapping pfxMap = nsPrefixes.getCurrentMapping ( );
 
@@ -144,12 +132,10 @@ public class SAXDecoder implements XMLReader
 			String uri = namespace.next ( );
 			String prefix = pfxMap.mapping.get ( uri );
 			contentHandler.startPrefixMapping ( prefix, uri );
-			// System.out.println ( "startPrefixMapping: " + prefix + " --> "+  uri );
 		}
 	}
-	
 
-	private void endPrefixMappings() throws SAXException
+	private void endPrefixMappings () throws SAXException
 	{
 		PrefixMapping pfxMap = nsPrefixes.getCurrentMapping ( );
 
@@ -158,7 +144,6 @@ public class SAXDecoder implements XMLReader
 			String uri = namespace.next ( );
 			String prefix = pfxMap.mapping.get ( uri );
 			contentHandler.endPrefixMapping ( prefix );
-			// System.out.println ( "endPrefixMapping: " + prefix + " --> "+  uri );
 		}
 	}
 
@@ -180,7 +165,7 @@ public class SAXDecoder implements XMLReader
 		decoder.inspectEvent ( );
 
 		while ( decoder.hasNextEvent ( ) )
-		{	
+		{
 			switch ( decoder.getNextEventType ( ) )
 			{
 				case START_DOCUMENT:
@@ -189,118 +174,65 @@ public class SAXDecoder implements XMLReader
 					break;
 				case START_ELEMENT:
 					decoder.decodeStartElement ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// set new deferred start element
-					deferredStartElementUri = decoder.getElementURI ( );
-					deferredStartElementLocalName = decoder.getElementLocalName ( );
-					nsPrefixes.addLevel ( );
+					handleStartElement ( );
 					break;
 				case START_ELEMENT_GENERIC:
 					decoder.decodeStartElementGeneric ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// set new deferred start element
-					deferredStartElementUri = decoder.getElementURI ( );
-					deferredStartElementLocalName = decoder.getElementLocalName ( );
-					nsPrefixes.addLevel ( );
+					handleStartElement ( );
 					break;
 				case START_ELEMENT_GENERIC_UNDECLARED:
 					decoder.decodeStartElementGenericUndeclared ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// set new deferred start element
-					deferredStartElementUri = decoder.getElementURI ( );
-					deferredStartElementLocalName = decoder.getElementLocalName ( );
-					nsPrefixes.addLevel ( );
+					handleStartElement ( );
 					break;
 				case NAMESPACE_DECLARATION:
 					decoder.decodeNamespaceDeclaration ( );
 					nsPrefixes.addPrefix ( decoder.getNSUri ( ), decoder.getNSPrefix ( ) );
-					// addNamespaceDeclarationToAttributes ( decoder.getNSUri ( ), decoder.getNSPrefix ( ) );
 					break;
 				case ATTRIBUTE:
 					decoder.decodeAttribute ( );
-					String atQName = this.getQName ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ) );
-					attributes.addAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), atQName,
-							ATTRIBUTE_TYPE, decoder.getAttributeValue ( ) );
+					handleAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), decoder
+							.getAttributeValue ( ) );
+					break;
+				case ATTRIBUTE_INVALID_VALUE:
+					decoder.decodeAttributeInvalidValue ( );
+					handleAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), decoder
+							.getAttributeValue ( ) );
 					break;
 				case ATTRIBUTE_GENERIC:
+					decoder.decodeAttributeGeneric ( );
+					handleAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), decoder
+							.getAttributeValue ( ) );
+					break;
 				case ATTRIBUTE_GENERIC_UNDECLARED:
-					if ( decoder.getNextEventType ( ) ==  EventType.ATTRIBUTE_GENERIC )
-					{
-						decoder.decodeAttributeGeneric ( );
-					}
-					else if ( decoder.getNextEventType ( ) ==  EventType.ATTRIBUTE_GENERIC_UNDECLARED )
-					{
-						decoder.decodeAttributeGenericUndeclared ( );
-					}
-
-					atQName = this.getQName ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ) );
-
-					attributes.addAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), atQName,
-							ATTRIBUTE_TYPE, decoder.getAttributeValue ( ) );
+					decoder.decodeAttributeGenericUndeclared ( );
+					handleAttribute ( decoder.getAttributeURI ( ), decoder.getAttributeLocalName ( ), decoder
+							.getAttributeValue ( ) );
 					break;
 				case ATTRIBUTE_XSI_TYPE:
 					decoder.decodeXsiType ( );
-
-					String xsiTypeValue = getQName ( decoder.getXsiTypeUri ( ), decoder.getXsiTypeName ( ) );
-
-					atQName = this.getQName ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE );
-
-					attributes.addAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE, atQName,
-							ATTRIBUTE_TYPE, xsiTypeValue );
+					handleAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE, getQName (
+							decoder.getXsiTypeUri ( ), decoder.getXsiTypeName ( ) ) );
 					break;
 				case ATTRIBUTE_XSI_NIL:
 					decoder.decodeXsiNil ( );
-
-					String xsiNilValue = decoder.getXsiNil ( ) ? Constants.DECODED_BOOLEAN_TRUE
-							: Constants.DECODED_BOOLEAN_FALSE;
-					atQName = this.getQName ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL );
-
-					attributes.addAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, atQName,
-							ATTRIBUTE_TYPE, xsiNilValue );
+					handleAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, decoder
+							.getXsiNil ( ) ? Constants.DECODED_BOOLEAN_TRUE : Constants.DECODED_BOOLEAN_FALSE );
 					break;
 				case CHARACTERS:
 					decoder.decodeCharacters ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// start sax characters event
-					contentHandler.characters ( decoder.getCharacters ( ).toCharArray ( ), 0, decoder.getCharacters ( )
-							.length ( ) );
+					handleCharacters ( decoder.getCharacters ( ) );
 					break;
 				case CHARACTERS_GENERIC:
 					decoder.decodeCharactersGeneric ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// start sax characters event
-					contentHandler.characters ( decoder.getCharacters ( ).toCharArray ( ), 0, decoder.getCharacters ( )
-							.length ( ) );
+					handleCharacters ( decoder.getCharacters ( ) );
 					break;
 				case CHARACTERS_GENERIC_UNDECLARED:
 					decoder.decodeCharactersGenericUndeclared ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// start sax characters event
-					contentHandler.characters ( decoder.getCharacters ( ).toCharArray ( ), 0, decoder.getCharacters ( )
-							.length ( ) );
+					handleCharacters ( decoder.getCharacters ( ) );
 					break;
 				case END_ELEMENT:
 				case END_ELEMENT_UNDECLARED:
-					// fetch scope before popping rule etc.?
-					String eeUri = decoder.getScopeURI ( );
-					String eeLocalName = decoder.getScopeLocalName ( );
-					// decode
-					decoder.decodeEndElement ( );
-					// check whether a preceding start element is still deferred
-					checkDeferredStartElement ( );
-					// start sax end element
-					String endQName = getQName ( eeUri, eeLocalName );
-					contentHandler.endElement ( eeUri, eeLocalName, endQName );
-					
-					//	prefix mapping
-					endPrefixMappings();
-					nsPrefixes.removeLevel ( );
+					handleEndElement ( );
 					break;
 				// case END_DOCUMENT:
 				// Note: done outside
@@ -328,7 +260,51 @@ public class SAXDecoder implements XMLReader
 		// case END_DOCUMENT
 		decoder.decodeEndDocument ( );
 		contentHandler.endDocument ( );
+	}
 
+	protected void handleStartElement () throws SAXException
+	{
+		// check whether a preceding start element is still deferred
+		checkDeferredStartElement ( );
+
+		// set new deferred start element
+		deferredStartElementUri = decoder.getElementURI ( );
+		deferredStartElementLocalName = decoder.getElementLocalName ( );
+		nsPrefixes.addLevel ( );
+	}
+
+	protected void handleEndElement () throws EXIException, SAXException
+	{
+		// fetch scope before popping rule etc.?
+		String eeUri = decoder.getScopeURI ( );
+		String eeLocalName = decoder.getScopeLocalName ( );
+
+		// decode
+		decoder.decodeEndElement ( );
+
+		// check whether a preceding start element is still deferred
+		checkDeferredStartElement ( );
+
+		// start sax end element
+		contentHandler.endElement ( eeUri, eeLocalName, getQName ( eeUri, eeLocalName ) );
+
+		// prefix mapping
+		endPrefixMappings ( );
+		nsPrefixes.removeLevel ( );
+	}
+
+	protected void handleAttribute ( final String uri, final String localName, final String value )
+	{
+		attributes.addAttribute ( uri, localName, getQName ( uri, localName ), ATTRIBUTE_TYPE, value );
+	}
+
+	protected void handleCharacters ( final String chars ) throws SAXException
+	{
+		// check whether a preceding start element is still deferred
+		checkDeferredStartElement ( );
+
+		// start sax characters event
+		contentHandler.characters ( chars.toCharArray ( ), 0, chars.length ( ) );
 	}
 
 	/*
@@ -384,8 +360,7 @@ public class SAXDecoder implements XMLReader
 		}
 		catch ( RuntimeException e )
 		{
-			// e.printStackTrace ( );
-			// TODO elaborate a way of supporting meaningful EXI exceptions
+			// TODO elaborate a way to support meaningful EXI exceptions
 			throw new SAXException ( "[EXI] Error while parsing an EXI document", e );
 		}
 		catch ( EXIException e )
@@ -416,34 +391,9 @@ public class SAXDecoder implements XMLReader
 
 	public void setFeature ( String name, boolean value ) throws SAXNotRecognizedException, SAXNotSupportedException
 	{
-
 	}
 
 	public void setProperty ( String name, Object value ) throws SAXNotRecognizedException, SAXNotSupportedException
 	{
-
 	}
-
-	//	
-	// /*
-	// * ErrorHandler
-	// *
-	// */
-	// public void warning( SAXParseException e ) {
-	// if ( CompileConfiguration.LOGGING_ON ) {
-	// Log.log(Level.WARNING, "[SAX Warning] " + e.getMessage());
-	// //this.errorHandler.warning( e );
-	// }
-	// }
-	// public void error( SAXParseException e ) {
-	// if ( CompileConfiguration.LOGGING_ON ) {
-	// Log.log(Level.WARNING, "[SAX Error] " + e.getMessage());
-	// }
-	// }
-	// public void fatalError( SAXParseException e ) {
-	// if ( CompileConfiguration.LOGGING_ON ) {
-	// Log.log(Level.WARNING, "[SAX FatalError] " + e.getMessage());
-	// }
-	// }
-
 }
