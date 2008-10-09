@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 public interface EXIDecoder
@@ -118,6 +118,13 @@ public interface EXIDecoder
 	 * @throws EXIException
 	 */
 	public void decodeAttribute () throws EXIException;
+	
+	/**
+	 * Parses expected attribute with schema-invalid value
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeAttributeInvalidValue () throws EXIException;
 
 	/**
 	 * Parses expected generic attribute.
