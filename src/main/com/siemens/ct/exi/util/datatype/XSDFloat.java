@@ -26,7 +26,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081009
  */
 
 public class XSDFloat
@@ -50,7 +50,7 @@ public class XSDFloat
 
 	public void parse ( String s ) throws XMLParsingException
 	{
-		s = s.trim ( );
+		// s = s.trim ( );
 
 		if ( s.equals ( "INF" ) )
 		{

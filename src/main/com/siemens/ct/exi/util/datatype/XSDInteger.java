@@ -60,6 +60,8 @@ public class XSDInteger
 		// TODO trim integer string if necessary!
 		//s.trim ( );
 
+		//	TODO check string-length and step forward directly to long etc.
+		
 		// integer value ?
 		try
 		{
