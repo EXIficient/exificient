@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081010
  */
 
 public class BitOutputStream extends OutputStream
@@ -158,19 +158,35 @@ public class BitOutputStream extends OutputStream
 	 */
 	public void writeBits ( int b, int n ) throws IOException
 	{
-		// assert(n <= 8)
-
-		// TODO do more checks
-		if ( n == BITS_IN_BYTE && isByteAligned ( ) )
+		if ( n <= capacity )
 		{
-			this.writeDirectByte ( b );
+			// all bits fit into the current buffer
+			buffer = ( buffer << n ) | ( b & ( 0xff >> ( BITS_IN_BYTE - n ) ) );
+			capacity -= n;
+			if ( capacity == 0 )
+			{
+				ostream.write ( buffer );
+				capacity = BITS_IN_BYTE;
+			}
 		}
 		else
 		{
-			while ( n-- > 0 )
+			// fill as many bits into buffer as possible
+			buffer = ( buffer << capacity ) | ( ( b >>> ( n - capacity ) ) & ( 0xff >> ( BITS_IN_BYTE - capacity ) ) );
+			n -= capacity;
+			ostream.write ( buffer );
+
+			// possibly write whole bytes
+			while ( n >= 8 )
 			{
-				writeBit ( b >>> n );
+				n -= 8;
+				ostream.write ( b >>> n );
 			}
+
+			// put the rest of bits into the buffer
+			buffer = b; // Note: the high bits will be shifted out during
+						// further filling
+			capacity = BITS_IN_BYTE - n;
 		}
 	}
 
