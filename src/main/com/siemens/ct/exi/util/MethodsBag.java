@@ -24,16 +24,19 @@ package com.siemens.ct.exi.util;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080908
+ * @version 0.1.20081010
  */
 
 public class MethodsBag
 {
+	static final int[]	smallLengths	= new int[] { 0, 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4 };
+
 	/**
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
 	 * int <param>n</param>. Returns 1 if <param>n</param> is 0.
 	 * 
-	 * @param n integer value
+	 * @param n
+	 *            integer value
 	 * 
 	 */
 	public static int numberOf7BitBlocksToRepresent ( final int n )
@@ -72,7 +75,8 @@ public class MethodsBag
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
 	 * long <param>l</param>. Returns 1 if <param>l</param> is 0.
 	 * 
-	 * @param l long value
+	 * @param l
+	 *            long value
 	 * 
 	 */
 	public static int numberOf7BitBlocksToRepresent ( final long l )
@@ -114,35 +118,13 @@ public class MethodsBag
 		}
 	}
 
-	
 	static final public int getCodingLength ( final int characteristics )
 	{
 		assert ( characteristics > 0 );
 
-		if ( characteristics < 2 )
+		if ( characteristics < 17 )
 		{
-			// 1
-			return 0;
-		}
-		else if ( characteristics < 3 )
-		{
-			// 2
-			return 1;
-		}
-		else if ( characteristics < 5 )
-		{
-			// 3 .. 4
-			return 2;
-		}
-		else if ( characteristics < 9 )
-		{
-			// 5 .. 8
-			return 3;
-		}
-		else if ( characteristics < 17 )
-		{
-			// 9 .. 16
-			return 4;
+			return smallLengths[characteristics];
 		}
 		else if ( characteristics < 33 )
 		{
