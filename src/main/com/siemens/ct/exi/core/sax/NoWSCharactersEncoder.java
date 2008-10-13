@@ -28,7 +28,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080908
+ * @version 0.1.20081013
  */
 
 public class NoWSCharactersEncoder extends CharactersEncoder
@@ -49,8 +49,8 @@ public class NoWSCharactersEncoder extends CharactersEncoder
 		if ( chars.length ( ) > 0 && ( trimmed = chars.toString ( ).trim ( ) ).length ( ) > 0 )
 		{
 			encoder.encodeCharacters ( trimmed );
-			chars.setLength ( 0 );
 		}
+		chars.setLength ( 0 );
 	}
 
 }
