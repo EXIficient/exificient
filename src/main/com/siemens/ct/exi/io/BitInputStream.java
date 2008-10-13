@@ -28,7 +28,7 @@ import java.io.InputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081013
  */
 
 final public class BitInputStream
@@ -96,7 +96,6 @@ final public class BitInputStream
 		}
 	}
 
-
 	/**
 	 * Return next bit from underlying stream.
 	 */
@@ -114,18 +113,45 @@ final public class BitInputStream
 	 */
 	public int readBits ( int n ) throws IOException
 	{
-		// assert(1 <= n && n <= 32);
-
-		int result = 0;
-
-		for ( int i = ( n - 1 ); i >= 0; i-- )
+		if ( n == 0 )
 		{
-			result = result | ( readBit ( ) << i );
+			return 0;
 		}
 
-		return result;
-	}
+		readBuffer ( );
+		if ( n <= capacity )
+		{
+			// buffer already holds all necessary bits
+			capacity -= n;
+			return ( buffer >>> capacity ) & ( 0xff >> ( BUFFER_CAPACITY - n ) );
+		}
+		else
+		{
+			// get as many bits from buffer as possible
+			int result = buffer & ( 0xff >> ( BUFFER_CAPACITY - capacity ) );
+			n -= capacity;
+			capacity = 0;
 
+			// possibly read whole bytes
+			while ( n >= 8 )
+			{
+				readBuffer ( );
+				result = ( result << BUFFER_CAPACITY ) | buffer;
+				n -= BUFFER_CAPACITY;
+				capacity = 0;
+			}
+
+			// read the rest of the bits
+			if ( n > 0 )
+			{
+				readBuffer ( );
+				result = ( result << n ) | ( buffer >>> ( BUFFER_CAPACITY - n ) );
+				capacity = BUFFER_CAPACITY - n;
+			}
+
+			return result;
+		}
+	}
 
 	/**
 	 * Read and return the next byte without discarding current buffer.
