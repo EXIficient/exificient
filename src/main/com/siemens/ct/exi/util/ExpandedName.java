@@ -29,13 +29,13 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081010
  */
 
 public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameComparable
 {
-	public final String	namespaceURI;
-	public final String	localName;
+	public String	namespaceURI;
+	public String	localName;
 
 	public ExpandedName ( String namespaceURI, String localName )
 	{
@@ -49,6 +49,26 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 			throw new IllegalArgumentException ( "ExpandedNames localName is not allowed to be null!" );
 		}
 
+		this.localName = localName;
+	}
+
+	public String getNamespaceURI ()
+	{
+		return namespaceURI;
+	}
+
+	public void setNamespaceURI ( String namespaceURI )
+	{
+		this.namespaceURI = namespaceURI;
+	}
+
+	public String getLocalName ()
+	{
+		return localName;
+	}
+
+	public void setLocalName ( String localName )
+	{
 		this.localName = localName;
 	}
 
@@ -95,5 +115,4 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 	{
 		return ( "{" + namespaceURI + "}" + localName );
 	}
-
 }
