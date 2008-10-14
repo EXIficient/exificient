@@ -36,7 +36,6 @@ import com.siemens.ct.exi.io.BitInputStream;
 
 public class BitDecoderChannel extends AbstractDecoderChannel implements DecoderChannel
 {
-
 	/**
 	 * Underlying bit input stream from which bits and bytes are read.
 	 */
@@ -47,7 +46,6 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements Decoder
 	 */
 	public BitDecoderChannel ( InputStream is )
 	{
-		// this( new BitInputStream( is ) );
 		this.istream = new BitInputStream ( is );
 	}
 
