@@ -26,70 +26,77 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public class XSDDecimal
 {
-	private boolean	sign;
-	private XSDInteger 	integral = XSDInteger.newInstance ( );
-	private XSDInteger revFractional = XSDInteger.newInstance ( );
-	
+	private boolean		sign;
+	private XSDInteger	integral		= XSDInteger.newInstance ( );
+	private XSDInteger	revFractional	= XSDInteger.newInstance ( );
+
 	private XSDDecimal ()
 	{
 	}
-	
+
 	public static XSDDecimal newInstance ()
 	{
 		return new XSDDecimal ( );
 	}
-	
-	public boolean getSign()
+
+	public boolean getSign ()
 	{
 		return sign;
 	}
-	
-	public XSDInteger getIntegral()
+
+	public XSDInteger getIntegral ()
 	{
 		return integral;
 	}
-	
-	public XSDInteger getReverseFractional()
+
+	public XSDInteger getReverseFractional ()
 	{
 		return revFractional;
 	}
-	
+
 	public void parse ( String decimal ) throws XMLParsingException
 	{
-		//	decimal = decimal.trim ( );
-		
-		//	--- handle sign
-		sign = false;	//	default
-		
-		if ( decimal.charAt ( 0 )  == '-' )
+		try
 		{
-			sign = true;
-			decimal = decimal.substring ( 1 );
+			// --- handle sign
+			sign = false; // default
+
+			if ( decimal.charAt ( 0 ) == '-' )
+			{
+				sign = true;
+				decimal = decimal.substring ( 1 );
+			}
+			else if ( decimal.charAt ( 0 ) == '+' )
+			{
+				// sign = false;
+				decimal = decimal.substring ( 1 );
+			}
 		}
-		else if ( decimal.charAt ( 0 )  == '+' )
+		catch ( StringIndexOutOfBoundsException e )
 		{
-			//	sign = false;
-			decimal = decimal.substring ( 1 );
+			throw new XMLParsingException ( e.getMessage ( ) );
 		}
-		
-		//	--- handle decimal point
+
+		// --- handle decimal point
 		final int decPoint = decimal.indexOf ( '.' );
 
 		if ( decPoint == -1 )
 		{
-			//	no decimal point at all
-			integral.parse( decimal );
+			// no decimal point at all
+			integral.parse ( decimal );
 			revFractional.setToIntegerZero ( );
 		}
 		else
 		{
 			integral.parse ( decimal.substring ( 0, decPoint ) );
-			revFractional.parse ( new StringBuffer ( decimal.substring ( decPoint + 1, decimal.length ( ) ) ).reverse ( ).toString ( ) );
+			revFractional.parse ( new StringBuffer ( decimal.substring ( decPoint + 1, decimal.length ( ) ) )
+					.reverse ( ).toString ( ) );
 		}
+
 	}
 }

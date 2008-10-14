@@ -28,7 +28,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public class XSDDatetime
@@ -139,7 +139,7 @@ public class XSDDatetime
 
 	public static void checkCharacter ( StringBuffer sb, char c ) throws XMLParsingException
 	{
-		if ( sb.charAt ( 0 ) == c )
+		if ( sb.length ( ) > 0 && sb.charAt ( 0 ) == c )
 		{
 			sb.delete ( 0, 1 );
 		}

@@ -26,7 +26,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081014
  */
 
 public class XSDFloat
@@ -71,46 +71,53 @@ public class XSDFloat
 		{
 			StringBuffer sb = new StringBuffer ( s );
 
-			int additionalExponent = 0;
-			int possibleIndexOfE = sb.indexOf ( "E" );
-			if ( possibleIndexOfE < 0 )
+			try
 			{
-				possibleIndexOfE = sb.indexOf ( "e" );
-			}
-
-			if ( possibleIndexOfE >= 0 )
-			{
-				additionalExponent = Integer.parseInt ( sb.substring ( possibleIndexOfE + 1, sb
-						.length ( ) ) );
-				sb.delete ( possibleIndexOfE, sb.length ( ) );
-			}
-
-			int decimalPointLoc = sb.indexOf ( "." );
-			if ( decimalPointLoc < 0 )
-			{
-				// eg. "12"
-				// encode mantissa and exponent
-				iMantissa = Long.parseLong ( sb.toString ( ) );
-				iExponent = 0;
-			}
-			else
-			{
-				// remove trailing zeros (evtl. decimal point)
-				int index = sb.length ( ) - 1;
-				while ( sb.length ( ) > 1 && sb.charAt ( index ) == '0' )
-				{ // stop latest at '.'
-					sb.deleteCharAt ( index );
-					index--;
+				int additionalExponent = 0;
+				int possibleIndexOfE = sb.indexOf ( "E" );
+				if ( possibleIndexOfE < 0 )
+				{
+					possibleIndexOfE = sb.indexOf ( "e" );
 				}
 
-				// exponent
-				int decimalDigits = sb.length ( ) - ( decimalPointLoc + 1 );
-				iExponent = ( -1 ) * decimalDigits + additionalExponent;
+				if ( possibleIndexOfE >= 0 )
+				{
+					additionalExponent = Integer.parseInt ( sb.substring ( possibleIndexOfE + 1, sb
+							.length ( ) ) );
+					sb.delete ( possibleIndexOfE, sb.length ( ) );
+				}
 
-				// mantissa
-				String sBeforeDP = sb.substring ( 0, decimalPointLoc );
-				String sAfterDP = sb.substring ( decimalPointLoc + 1, sb.length ( ) );
-				iMantissa = Long.parseLong ( sBeforeDP + sAfterDP );
+				int decimalPointLoc = sb.indexOf ( "." );
+				if ( decimalPointLoc < 0 )
+				{
+					// eg. "12"
+					// encode mantissa and exponent
+					iMantissa = Long.parseLong ( sb.toString ( ) );
+					iExponent = 0;
+				}
+				else
+				{
+					// remove trailing zeros (evtl. decimal point)
+					int index = sb.length ( ) - 1;
+					while ( sb.length ( ) > 1 && sb.charAt ( index ) == '0' )
+					{ // stop latest at '.'
+						sb.deleteCharAt ( index );
+						index--;
+					}
+
+					// exponent
+					int decimalDigits = sb.length ( ) - ( decimalPointLoc + 1 );
+					iExponent = ( -1 ) * decimalDigits + additionalExponent;
+
+					// mantissa
+					String sBeforeDP = sb.substring ( 0, decimalPointLoc );
+					String sAfterDP = sb.substring ( decimalPointLoc + 1, sb.length ( ) );
+					iMantissa = Long.parseLong ( sBeforeDP + sAfterDP );
+				}
+			}
+			catch ( NumberFormatException e )
+			{
+				throw new XMLParsingException( e.getMessage ( ) );
 			}
 		}
 	}
