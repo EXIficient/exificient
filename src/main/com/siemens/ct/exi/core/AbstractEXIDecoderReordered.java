@@ -168,8 +168,7 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 
 			while ( stillInitializing )
 			{
-				// System.out.println( "NextEvent: " + nextEvent + " --> " +
-				// nextEventType );
+				// System.out.println( "NextEvent: " + nextEvent + " --> " + nextEventType );
 
 				events.add ( nextEvent ); // add event to array list
 				eventTypes.add ( nextEventType );
@@ -196,8 +195,10 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 						decodeAttributeInternal ( );
 						break;
 					case ATTRIBUTE_GENERIC:
-					case ATTRIBUTE_GENERIC_UNDECLARED:
 						decodeAttributeGenericInternal ( );
+						break;
+					case ATTRIBUTE_GENERIC_UNDECLARED:
+						decodeAttributeGenericUndeclaredInternal ( );
 						break;
 					case ATTRIBUTE_XSI_TYPE:
 						decodeAttributeXsiTypeInternal ( );
@@ -414,6 +415,16 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 	}
 
 	protected void decodeAttributeGenericInternal () throws EXIException
+	{
+		decodeAttributeGenericStructure ( );
+
+		ExpandedName n = new ExpandedName ( attributeURI, attributeLocalName );
+		genericAttributes.add ( n );
+
+		incrementValues ( n, BuiltIn.DEFAULT_DATATYPE );
+	}
+	
+	protected void decodeAttributeGenericUndeclaredInternal () throws EXIException
 	{
 		decodeAttributeGenericUndeclaredStructure ( );
 
