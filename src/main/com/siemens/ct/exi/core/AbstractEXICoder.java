@@ -49,47 +49,47 @@ import com.siemens.ct.exi.util.UnsynchronizedStack;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081003
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractEXICoder
 {
 	// cached events
-	protected final EndDocument						eventED;
-	protected final StartElement					eventSE;
-	protected final StartElementGeneric				eventSEg;
-	protected final EndElement						eventEE;
-	protected final Attribute						eventAT;
-	protected final AttributeGeneric				eventATg;
-	protected final Characters						eventCH;
-	protected final CharactersGeneric				eventCHg;
+	protected final EndDocument					eventED;
+	protected final StartElement				eventSE;
+	protected final StartElementGeneric			eventSEg;
+	protected final EndElement					eventEE;
+	protected final Attribute					eventAT;
+	protected final AttributeGeneric			eventATg;
+	protected final Characters					eventCH;
+	protected final CharactersGeneric			eventCHg;
 
 	// factory
-	protected EXIFactory							exiFactory;
-	protected Grammar								grammar;
+	protected EXIFactory						exiFactory;
+	protected Grammar							grammar;
 
 	// error handler
-	protected ErrorHandler							errorHandler;
+	protected ErrorHandler						errorHandler;
 
 	// rules learned while coding ( uri -> localName -> rule)
-	protected Map<String, HashMap<String, Rule>>	runtimeDispatcher;
+	protected Map<String, Map<String, Rule>>	runtimeDispatcher;
 
 	// saves scope for character StringTable & Channels as well as for
 	// content-dispatcher
-	protected UnsynchronizedStack<String>			scopeURI;
-	protected UnsynchronizedStack<String>			scopeLocalName;
+	protected UnsynchronizedStack<String>		scopeURI;
+	protected UnsynchronizedStack<String>		scopeLocalName;
 
-	protected UnsynchronizedStack<String>			scopeTypeURI;
-	protected UnsynchronizedStack<String>			scopeTypeLocalName;
+	protected UnsynchronizedStack<String>		scopeTypeURI;
+	protected UnsynchronizedStack<String>		scopeTypeLocalName;
 
 	// stack when traversing the EXI document
-	protected UnsynchronizedStack<Rule>				openRules;
+	protected UnsynchronizedStack<Rule>			openRules;
 
 	// keys for fetching new rule
-	private ElementKey								ruleKey;
-	private ExpandedName							ruleName;
-	private ExpandedName							ruleScope;
-	private ExpandedName							ruleScopeType;
+	private ElementKey							ruleKey;
+	private ExpandedName						ruleName;
+	private ExpandedName						ruleScope;
+	private ExpandedName						ruleScopeType;
 
 	public AbstractEXICoder ( EXIFactory exiFactory )
 	{
@@ -127,7 +127,7 @@ public abstract class AbstractEXICoder
 	protected void initOnce ()
 	{
 		// runtime lists
-		runtimeDispatcher = new HashMap<String, HashMap<String, Rule>> ( );
+		runtimeDispatcher = new HashMap<String, Map<String, Rule>> ( );
 		openRules = new UnsynchronizedStack<Rule> ( );
 
 		// scope
@@ -300,25 +300,28 @@ public abstract class AbstractEXICoder
 
 	private Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
 	{
-		// TODO replace containsKey replace with get & check against null
-
+		Map<String, Rule> mapNS;
+		Rule r;
+		
 		// runtime-grammar
-		if ( runtimeDispatcher.containsKey ( namespaceURI ) )
+		if ( ( mapNS = runtimeDispatcher.get ( namespaceURI ) ) == null )
 		{
-			if ( !runtimeDispatcher.get ( namespaceURI ).containsKey ( localName ) )
-			{
-				// URI known, localName unknown
-				runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag ( ) );
-			}
+			// URI & localName unknown
+			mapNS = new HashMap<String, Rule> ( );
+			runtimeDispatcher.put ( namespaceURI, mapNS );
+			r = new SchemaLessRuleStartTag ( );
+			mapNS.put ( localName, r );
 		}
 		else
 		{
-			// URI & localName unknown
-			runtimeDispatcher.put ( namespaceURI, new HashMap<String, Rule> ( ) );
-			runtimeDispatcher.get ( namespaceURI ).put ( localName, new SchemaLessRuleStartTag ( ) );
+			if ( ( r = mapNS.get ( localName ) ) == null )
+			{
+				// URI known, localName unknown
+				r = new SchemaLessRuleStartTag ( );
+				mapNS.put ( localName, r );
+			}
 		}
 
-		return runtimeDispatcher.get ( namespaceURI ).get ( localName );
+		return r;
 	}
-
 }
