@@ -18,8 +18,12 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.Vector;
 
 import javax.xml.XMLConstants;
 
@@ -38,13 +42,15 @@ public class NamespacePrefixLevels
 {
 	private static final String NAMESPACE_PFX 	= "ns";
 	
-	protected UnsynchronizedStack<PrefixMapping> prefixLevels;
+	//protected UnsynchronizedStack<PrefixMapping> prefixLevels;
+	protected Stack<PrefixMapping> prefixLevels;
 	
 	int pfxCount = 0;
 	
 	public NamespacePrefixLevels()
 	{
-		prefixLevels = new UnsynchronizedStack<PrefixMapping>();
+		//prefixLevels = new UnsynchronizedStack<PrefixMapping>();
+		prefixLevels = new Stack<PrefixMapping>();
 		
 		//	default pefixes
 		this.addLevel ( );
@@ -61,7 +67,7 @@ public class NamespacePrefixLevels
 	
 	public void removeLevel()
 	{
-		prefixLevels.pop ( );
+		prefixLevels.pop( );
 	}
 	
 	public PrefixMapping getCurrentMapping()
@@ -72,7 +78,7 @@ public class NamespacePrefixLevels
 	//	given prefix
 	public void addPrefix( final String uri, final String pfx )
 	{
-		assert( prefixLevels != null && ! prefixLevels.empty ( ) );
+		assert( prefixLevels != null && ! prefixLevels.isEmpty ( ) );
 		
 		prefixLevels.peek ( ).addPrefix ( uri, pfx );
 		

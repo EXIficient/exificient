@@ -18,9 +18,7 @@
 
 package com.siemens.ct.exi.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
@@ -43,6 +41,7 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessRuleStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.UnsynchronizedStack;
 
 /**
  * Shared functionality between EXI Encoder and Decoder.
@@ -77,14 +76,20 @@ public abstract class AbstractEXICoder
 
 	// saves scope for character StringTable & Channels as well as for
 	// content-dispatcher
-	protected List<String>							scopeURI;
-	protected List<String>							scopeLocalName;
+	protected UnsynchronizedStack<String>			scopeURI;
+	protected UnsynchronizedStack<String>			scopeLocalName;
 
-	protected List<String>							scopeTypeURI;
-	protected List<String>							scopeTypeLocalName;
+	protected UnsynchronizedStack<String>			scopeTypeURI;
+	protected UnsynchronizedStack<String>			scopeTypeLocalName;
 
 	// stack when traversing the EXI document
-	protected List<Rule>							openRules;
+	protected UnsynchronizedStack<Rule>				openRules;
+
+	// keys for fetching new rule
+	private ElementKey								ruleKey;
+	private ExpandedName							ruleName;
+	private ExpandedName							ruleScope;
+	private ExpandedName							ruleScopeType;
 
 	public AbstractEXICoder ( EXIFactory exiFactory )
 	{
@@ -100,6 +105,12 @@ public abstract class AbstractEXICoder
 		eventATg = new AttributeGeneric ( );
 		eventCH = new Characters ( null, null );
 		eventCHg = new CharactersGeneric ( );
+
+		// allocate expanded names for keys
+		ruleKey = new ElementKey ( null );
+		ruleName = new ExpandedName ( null, "" );
+		ruleScope = new ExpandedName ( null, "" );
+		ruleScopeType = new ExpandedName ( null, "" );
 
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler ( );
@@ -117,14 +128,14 @@ public abstract class AbstractEXICoder
 	{
 		// runtime lists
 		runtimeDispatcher = new HashMap<String, HashMap<String, Rule>> ( );
-		openRules = new ArrayList<Rule> ( );
+		openRules = new UnsynchronizedStack<Rule> ( );
 
 		// scope
-		scopeURI = new ArrayList<String> ( );
-		scopeLocalName = new ArrayList<String> ( );
+		scopeURI = new UnsynchronizedStack<String> ( );
+		scopeLocalName = new UnsynchronizedStack<String> ( );
 		// scopeType
-		scopeTypeURI = new ArrayList<String> ( );
-		scopeTypeLocalName = new ArrayList<String> ( );
+		scopeTypeURI = new UnsynchronizedStack<String> ( );
+		scopeTypeLocalName = new UnsynchronizedStack<String> ( );
 	}
 
 	// re-init (rule stack etc)
@@ -146,20 +157,20 @@ public abstract class AbstractEXICoder
 
 	protected final void pushScope ( String uri, String localName )
 	{
-		scopeURI.add ( uri );
-		scopeLocalName.add ( localName );
+		scopeURI.addLast ( uri );
+		scopeLocalName.addLast ( localName );
 	}
 
 	protected final void pushScopeType ( String uri, String localName )
 	{
-		scopeTypeURI.add ( uri );
-		scopeTypeLocalName.add ( localName );
+		scopeTypeURI.addLast ( uri );
+		scopeTypeLocalName.addLast ( localName );
 	}
 
 	protected final void popScope ()
 	{
-		scopeURI.remove ( scopeURI.size ( ) - 1 );
-		scopeLocalName.remove ( scopeLocalName.size ( ) - 1 );
+		scopeURI.removeLast ( );
+		scopeLocalName.removeLast ( );
 
 		// TODO pop scope xsi:type environment as well
 		// mhhh, needs xsi:type and element matching
@@ -167,51 +178,51 @@ public abstract class AbstractEXICoder
 
 	public final String getScopeURI ()
 	{
-		return scopeURI.get ( scopeURI.size ( ) - 1 );
+		return scopeURI.peekLast ( );
 	}
 
 	public final String getScopeLocalName ()
 	{
-		return scopeLocalName.get ( scopeLocalName.size ( ) - 1 );
+		return scopeLocalName.peekLast ( );
 	}
 
 	protected final String getScopeTypeURI ()
 	{
-		return scopeTypeURI.get ( scopeTypeURI.size ( ) - 1 );
+		return scopeTypeURI.peekLast ( );
 	}
 
 	protected final String getScopeTypeLocalName ()
 	{
-		return scopeTypeLocalName.get ( scopeTypeLocalName.size ( ) - 1 );
+		return scopeTypeLocalName.peekLast ( );
 	}
 
 	protected final Rule getCurrentRule ()
 	{
 		assert ( !openRules.isEmpty ( ) );
 
-		return openRules.get ( openRules.size ( ) - 1 );
+		return openRules.peekLast ( );
 	}
 
-	protected final Rule replaceRuleAtTheTop ( Rule top )
+	protected final void replaceRuleAtTheTop ( Rule top )
 	{
 		assert ( !openRules.isEmpty ( ) );
-		assert( top != null );
+		assert ( top != null );
 
-		return openRules.set ( openRules.size ( ) - 1, top );
+		openRules.replaceLast ( top );
 	}
 
 	protected final void pushRule ( Rule r )
 	{
-		assert( r != null );
-		
-		openRules.add ( r );
+		assert ( r != null );
+
+		openRules.addLast ( r );
 	}
 
 	protected final void popRule ()
 	{
 		assert ( !openRules.isEmpty ( ) );
 
-		openRules.remove ( openRules.size ( ) - 1 );
+		openRules.removeLast ( );
 	}
 
 	protected final FidelityOptions getFidelityOptions ()
@@ -247,30 +258,40 @@ public abstract class AbstractEXICoder
 	{
 		Rule ruleSchema = null;
 
-		// 1st step
-		ExpandedName name = new ExpandedName ( namespaceURI, localName );
-		ElementKey key = new ElementKey ( name );
-		ruleSchema = grammar.getRule ( key );
+		// 1st step (name only)
+		ruleName.setLocalName ( localName );
+		ruleName.setNamespaceURI ( namespaceURI );
+		ruleKey.setName ( ruleName );
+		ruleKey.setScope ( null );
+		ruleKey.setScopeType ( null );
+
+		ruleSchema = grammar.getRule ( ruleKey );
 
 		if ( ruleSchema == null )
 		{
 			// 2nd step, including scope
-			ExpandedName scope = null;
 			if ( getScopeLocalName ( ) != null )
 			{
-				scope = new ExpandedName ( getScopeURI ( ), getScopeLocalName ( ) );
+				ruleScope.setLocalName ( getScopeLocalName ( ) );
+				ruleScope.setNamespaceURI ( getScopeURI ( ) );
+				ruleKey.setScope ( ruleScope );
 			}
-			key.setScope ( scope );
-			ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
+			else
+			{
+				ruleKey.setScope ( null );
+			}
+
+			ruleSchema = exiFactory.getGrammar ( ).getRule ( ruleKey );
 
 			if ( ruleSchema == null && getScopeTypeLocalName ( ) != null )
 			{
 				// include type
-				key.setScope ( null );
-				ExpandedName scopeType = new ExpandedName ( getScopeTypeURI ( ), getScopeTypeLocalName ( ) );
-				key.setScopeType ( scopeType );
+				ruleKey.setScope ( null );
+				ruleScopeType.setLocalName ( getScopeTypeLocalName ( ) );
+				ruleScopeType.setNamespaceURI ( getScopeTypeURI ( ) );
+				ruleKey.setScopeType ( ruleScopeType );
 
-				ruleSchema = exiFactory.getGrammar ( ).getRule ( key );
+				ruleSchema = exiFactory.getGrammar ( ).getRule ( ruleKey );
 			}
 		}
 
@@ -279,8 +300,8 @@ public abstract class AbstractEXICoder
 
 	private Rule getRuntimeRuleForElement ( String namespaceURI, String localName )
 	{
-		//	TODO replace containsKey replace with get & check against null
-		
+		// TODO replace containsKey replace with get & check against null
+
 		// runtime-grammar
 		if ( runtimeDispatcher.containsKey ( namespaceURI ) )
 		{

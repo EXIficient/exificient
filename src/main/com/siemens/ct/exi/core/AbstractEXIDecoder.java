@@ -408,8 +408,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected void decodeEndDocumentStructure () throws EXIException
 	{
 		popRule ( );
-
-		assert ( openRules.size ( ) == 0 );
 	}
 
 	protected void decodeCommentStructure () throws EXIException

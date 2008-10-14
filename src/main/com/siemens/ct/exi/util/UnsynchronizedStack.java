@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.util;
 
-import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 /**
  * TODO Description
@@ -26,108 +26,117 @@ import java.util.ArrayList;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
-public class UnsynchronizedStack<E> extends ArrayList<E>
+public class UnsynchronizedStack<E>
 {
-    private static final long serialVersionUID = 1224463164541339165L;
-    
-    /**
-     * Creates an empty Stack.
-     */
-    public UnsynchronizedStack()
-    {
-    	super();
-    }
+	private transient E[]	elements;
+	private transient int	size;
 
-    /**
-     * Pushes an item onto the top of this stack. This has exactly
-     * the same effect as:
-     * <blockquote><pre>
-     * add(item)</pre></blockquote>
-     *
-     * @param   item   the item to be pushed onto this stack.
-     * @return  the <code>item</code> argument.
-     * @see     java.util.ArrayList#add
-     */
-    public E push(E item)
-    {
-    	
-    	this.add ( item );
+	/**
+	 * Constructs an empty stack with an initial capacity sufficient to hold 16
+	 * elements.
+	 */
+	@SuppressWarnings("unchecked")
+	public UnsynchronizedStack ()
+	{
+		elements = (E[]) new Object[16];
+	}
 
-    	return item;
-    }
+	/**
+	 * Inserts the specified element at the top of this stack.
+	 * 
+	 * @param e
+	 *            the element to add
+	 */
+	public void addLast ( E e )
+	{
+		elements[size++] = e;
+		if ( size >= elements.length )
+			doubleCapacity ( );
+	}
 
-    /**
-     * Removes the object at the top of this stack and returns that
-     * object as the value of this function.
-     *
-     * @return     The object at the top of this stack (the last item
-     *             of the <tt>ArrayList</tt> object).
-     * @exception  IndexOutOfBoundsException  if this stack is empty.
-     */
-    public E pop()
-    {
-		E obj = peek();
-		remove( size() - 1);
-	
-		return obj;
-    }
+	/**
+	 * Returns the element at the top of this stack.
+	 * 
+	 * @return The object at the top of this stack (the last item).
+	 * 
+	 * @exception NoSuchElementException
+	 *                if this stack is empty.
+	 */
+	public E peekLast ()
+	{
+		if ( size == 0 )
+			throw new NoSuchElementException ( );
+		return elements[size - 1];
+	}
 
-    /**
-     * Looks at the object at the top of this stack without removing it
-     * from the stack.
-     *
-     * @return     the object at the top of this stack (the last item
-     *             of the <tt>ArrayList</tt> object).
-     * @exception  IndexOutOfBoundsException  if this stack is empty.
-     */
-    public E peek()
-    {
-		int	len = size();
-	
-		if (len == 0)
-		{
-			throw new IndexOutOfBoundsException();
-		}
-		
-		return get ( len - 1 );
-    }
+	/**
+	 * Removes the object at the top of this stack and returns that object as
+	 * the value of this function.
+	 * 
+	 * @return The object at the top of this stack (the last item).
+	 * 
+	 * @throws NoSuchElementException
+	 *             if this stack is empty.
+	 */
+	public E removeLast ()
+	{
+		if ( size == 0 )
+			throw new NoSuchElementException ( );
+		E x = elements[size - 1];
+		elements[--size] = null;
+		return x;
+	}
 
-    /**
-     * Tests if this stack is empty.
-     *
-     * @return  <code>true</code> if and only if this stack contains
-     *          no items; <code>false</code> otherwise.
-     */
-    public boolean empty()
-    {
-    	return size() == 0;
-    }
+	/**
+	 * Replaces the object at the top of this stack and returns that object as
+	 * the value of this function.
+	 * 
+	 * @return The object at the top of this stack (the last item).
+	 * 
+	 * @throws NoSuchElementException
+	 *             if this stack is empty.
+	 */
+	public E replaceLast ( E x )
+	{
+		if ( size == 0 )
+			throw new NoSuchElementException ( );
+		E y = elements[size - 1];
+		elements[size - 1] = x;
+		return y;
+	}
 
-    /**
-     * Returns the 1-based position where an object is on this stack.
-     * If the object <tt>o</tt> occurs as an item in this stack, this
-     * method returns the distance from the top of the stack of the
-     * occurrence nearest the top of the stack; the topmost item on the
-     * stack is considered to be at distance <tt>1</tt>. The <tt>equals</tt>
-     * method is used to compare <tt>o</tt> to the
-     * items in this stack.
-     *
-     * @param   o   the desired object.
-     * @return  the 1-based position from the top of the stack where
-     *          the object is located; the return value <code>-1</code>
-     *          indicates that the object is not on the stack.
-     */
-    public int search(Object o)
-    {
-    	int i = lastIndexOf(o);
+	/**
+	 * Tests if this stack is empty.
+	 * 
+	 * @return <code>true</code> if and only if this stack contains no items;
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isEmpty ()
+	{
+		return size == 0;
+	}
 
-		if (i >= 0) {
-		    return size() - i;
-		}
-		return -1;
-    }	
+	public void clear ()
+	{
+		for ( int i = 0; i < size; i++ )
+			elements[i] = null;
+
+		size = 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void doubleCapacity ()
+	{
+		int n = elements.length;
+		int newCapacity = n << 1;
+		if ( newCapacity < 0 )
+			throw new IllegalStateException ( "Sorry, stack too big" );
+		Object[] a = new Object[newCapacity];
+		System.arraycopy ( elements, 0, a, 0, n );
+		elements = (E[]) a;
+	}
 
 }
