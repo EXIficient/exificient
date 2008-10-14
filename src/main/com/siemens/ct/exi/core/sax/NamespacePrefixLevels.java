@@ -30,7 +30,7 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public class NamespacePrefixLevels
@@ -53,6 +53,13 @@ public class NamespacePrefixLevels
 		//	special prefixes, etc "http://www.w3.org/XML/1998/namespace" --> xml
 		addPrefix( XMLConstants.XML_NS_URI , XMLConstants.XML_NS_PREFIX );
 		addPrefix( XMLConstants.NULL_NS_URI , XMLConstants.DEFAULT_NS_PREFIX );
+	}
+	
+	public void clear()
+	{
+		assert( prefixLevels != null );
+		
+		prefixLevels.clear ( );
 	}
 	
 	public void addLevel()

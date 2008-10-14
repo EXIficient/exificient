@@ -48,7 +48,7 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080915
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXIEncoder
@@ -78,6 +78,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 	{
 		super.initForEachRun ( );
 
+		//	re-set prefixes
+		nsPrefixes.clear ( );
+		
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock ( os );
 	}
