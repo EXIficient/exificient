@@ -106,7 +106,7 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 				
 				if ( occurrences.get ( qname ) <= CompileConfiguration.MAX_NUMBER_OF_VALUES )
 				{
-//					System.out.println ( qname + " <100: " + occurrences.get ( qname ) );
+					// System.out.println ( qname + " <100: " + occurrences.get ( qname ) );
 					
 					//PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel( decoder, bdcLess100, qname, dataTypes.get ( qname ), occurrences.get ( qname )  );
 					PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel( typeDecoder, bdcLess100, qname, dataTypes.get ( qname ), occurrences.get ( qname )  );
@@ -124,8 +124,8 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 				
 				if ( occurrences.get ( qname ) > CompileConfiguration.MAX_NUMBER_OF_VALUES )
 				{
-//					System.out.println ( qname + ">100: " + occurrences.get ( qname ) );
-
+					// System.out.println ( qname + ">100: " + occurrences.get ( qname ) );
+					
 					//PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel( decoder, getNextChannel( ), qname, dataTypes.get ( qname ), occurrences.get ( qname )  );
 					PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel( typeDecoder, getNextChannel( ), qname, dataTypes.get ( qname ), occurrences.get ( qname )  );
 

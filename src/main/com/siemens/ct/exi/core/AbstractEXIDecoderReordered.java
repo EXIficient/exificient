@@ -191,8 +191,10 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 						decodeNamespaceDeclarationInternal ( );
 						break;
 					case ATTRIBUTE:
-					case ATTRIBUTE_INVALID_VALUE:
 						decodeAttributeInternal ( );
+						break;
+					case ATTRIBUTE_INVALID_VALUE:
+						decodeAttributeInvalidValueInternal ( );
 						break;
 					case ATTRIBUTE_GENERIC:
 						decodeAttributeGenericInternal ( );
@@ -378,6 +380,13 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		Attribute at = decodeAttributeStructure ( );
 
 		incrementValues ( new ExpandedName ( at.getNamespaceURI ( ), at.getLocalPart ( ) ), at.getDatatype ( ) );
+	}
+	
+	protected void decodeAttributeInvalidValueInternal () throws EXIException
+	{
+		Attribute at = decodeAttributeStructure ( );
+
+		incrementValues ( new ExpandedName ( at.getNamespaceURI ( ), at.getLocalPart ( ) ), BuiltIn.DEFAULT_DATATYPE );
 	}
 
 	public void decodeAttribute () throws EXIException

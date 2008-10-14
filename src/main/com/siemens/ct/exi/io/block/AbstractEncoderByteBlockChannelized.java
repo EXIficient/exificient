@@ -179,7 +179,7 @@ public abstract class AbstractEncoderByteBlockChannelized extends AbstractEncode
 					lessEq100Stream.write ( channelLEQ100.toByteArray ( ) );
 					wasThereLess100 = true;
 					
-//					System.out.println( "LEQ " +  orderValueChannelLocalName.get ( i ) + " --> " +channelLEQ100.getNumberOfChannelValues ( ) );
+					// System.out.println( "LEQ " +  orderValueChannelLocalName.get ( i ) + " --> " +channelLEQ100.getNumberOfChannelValues ( ) );
 				}
 			}
 			// to avoid writing (deflate) header for no data
@@ -200,8 +200,7 @@ public abstract class AbstractEncoderByteBlockChannelized extends AbstractEncode
 					great100Stream.write ( channelGre100.toByteArray ( ) );
 					finalizeStream ( );
 					
-//					System.out.println( "GRE " +  orderValueChannelLocalName.get ( i ) + " --> " +channelGre100.getNumberOfChannelValues ( ) );
-					
+					// System.out.println( "GRE " +  orderValueChannelLocalName.get ( i ) + " --> " +channelGre100.getNumberOfChannelValues ( ) );
 				}
 			}
 		}
