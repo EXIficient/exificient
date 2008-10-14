@@ -46,7 +46,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
@@ -330,8 +330,8 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 
 		// update element content
 		ExpandedName qname = genericElements.get ( currentGenericElementsIndex++ );
-		this.elementURI = qname.namespaceURI;
-		this.elementLocalName = qname.localName;
+		this.elementURI = qname.getNamespaceURI ( );
+		this.elementLocalName = qname.getLocalName ( );
 
 		pushScope ( elementURI, elementLocalName );
 	}
@@ -349,8 +349,8 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 
 		// update element content
 		ExpandedName qname = genericElements.get ( currentGenericElementsIndex++ );
-		this.elementURI = qname.namespaceURI;
-		this.elementLocalName = qname.localName;
+		this.elementURI = qname.getNamespaceURI ( );
+		this.elementLocalName = qname.getLocalName ( );
 
 		pushScope ( elementURI, elementLocalName );
 	}
@@ -430,8 +430,8 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 			stepToNextEvent ( );
 
 			ExpandedName n = genericAttributes.get ( currentGenericAttributesIndex++ );
-			this.attributeURI = n.namespaceURI;
-			this.attributeLocalName = n.localName;
+			this.attributeURI = n.getNamespaceURI ( );
+			this.attributeLocalName = n.getLocalName ( );
 
 			// decode attribute value
 			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );

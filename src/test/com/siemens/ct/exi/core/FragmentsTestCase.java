@@ -76,15 +76,15 @@ public class FragmentsTestCase extends TestCase
         	
         	encoder.encodeStartDocument ( );
         	
-        	encoder.encodeStartElement ( s1.namespaceURI, s1.localName );
-        		encoder.encodeStartElement ( s2.namespaceURI, s2.localName );
-        			encoder.encodeAttribute ( at1.namespaceURI, at1.localName, atCh1 );
+        	encoder.encodeStartElement ( s1.getNamespaceURI ( ), s1.getLocalName ( ) );
+        		encoder.encodeStartElement ( s2.getNamespaceURI ( ), s2.getLocalName ( ) );
+        			encoder.encodeAttribute ( at1.getNamespaceURI ( ), at1.getLocalName ( ), atCh1 );
         		encoder.encodeEndElement ( );
         	encoder.encodeEndElement ( );
-        	encoder.encodeStartElement ( s1.namespaceURI, s1.localName );
-	    		encoder.encodeStartElement ( s2.namespaceURI, s2.localName );
-	    			encoder.encodeAttribute ( at1.namespaceURI, at1.localName, atCh2 );
-	    			encoder.encodeAttribute ( at2.namespaceURI, at2.localName, atCh3 );
+        	encoder.encodeStartElement ( s1.getNamespaceURI ( ), s1.getLocalName ( ) );
+	    		encoder.encodeStartElement ( s2.getNamespaceURI ( ), s2.getLocalName ( ) );
+	    			encoder.encodeAttribute ( at1.getNamespaceURI ( ), at1.getLocalName ( ), atCh2 );
+	    			encoder.encodeAttribute ( at2.getNamespaceURI ( ), at2.getLocalName ( ), atCh3 );
 	    		encoder.encodeEndElement ( );
 	    	encoder.encodeEndElement ( );
 	    	
@@ -102,20 +102,20 @@ public class FragmentsTestCase extends TestCase
 	    	decoder.inspectEvent ( );
         	assertTrue ( decoder.getNextEventType ( ) == EventType.START_ELEMENT_GENERIC );
         	decoder.decodeStartElementGeneric ( );
-        	assertTrue ( decoder.getElementURI ( ).equals ( s1.namespaceURI ) );
-        	assertTrue ( decoder.getElementLocalName ( ).equals ( s1.localName ) );
+        	assertTrue ( decoder.getElementURI ( ).equals ( s1.getNamespaceURI ( ) ) );
+        	assertTrue ( decoder.getElementLocalName ( ).equals ( s1.getLocalName ( ) ) );
 
         		decoder.inspectEvent ( );
 	        	assertTrue ( decoder.getNextEventType ( ) == EventType.START_ELEMENT_GENERIC_UNDECLARED );
 	        	decoder.decodeStartElementGenericUndeclared ( );
-	        	assertTrue ( decoder.getElementURI ( ).equals ( s2.namespaceURI ) );
-	        	assertTrue ( decoder.getElementLocalName ( ).equals ( s2.localName ) );
+	        	assertTrue ( decoder.getElementURI ( ).equals ( s2.getNamespaceURI ( ) ) );
+	        	assertTrue ( decoder.getElementLocalName ( ).equals ( s2.getLocalName ( ) ) );
 	        	
 	        	decoder.inspectEvent ( );
 		    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE_GENERIC_UNDECLARED );
 		    	decoder.decodeAttributeGenericUndeclared ( );
-	        	assertTrue ( decoder.getAttributeURI ( ).equals ( at1.namespaceURI ) );
-	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at1.localName ) );
+	        	assertTrue ( decoder.getAttributeURI ( ).equals ( at1.getNamespaceURI ( ) ) );
+	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at1.getLocalName ( ) ) );
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh1 ) );
 
 		    	decoder.inspectEvent ( );
@@ -129,27 +129,27 @@ public class FragmentsTestCase extends TestCase
         	decoder.inspectEvent ( );
         	assertTrue ( decoder.getNextEventType ( ) == EventType.START_ELEMENT );
         	decoder.decodeStartElement ( );
-        	assertTrue ( decoder.getElementURI ( ).equals ( s1.namespaceURI ) );
-        	assertTrue ( decoder.getElementLocalName ( ).equals ( s1.localName ) );
+        	assertTrue ( decoder.getElementURI ( ).equals ( s1.getNamespaceURI ( ) ) );
+        	assertTrue ( decoder.getElementLocalName ( ).equals ( s1.getLocalName ( ) ) );
 
         		decoder.inspectEvent ( );
 	        	assertTrue ( decoder.getNextEventType ( ) == EventType.START_ELEMENT );
 	        	decoder.decodeStartElement ( );
-	        	assertTrue ( decoder.getElementURI ( ).equals ( s2.namespaceURI ) );
-	        	assertTrue ( decoder.getElementLocalName ( ).equals ( s2.localName ) );
+	        	assertTrue ( decoder.getElementURI ( ).equals ( s2.getNamespaceURI ( ) ) );
+	        	assertTrue ( decoder.getElementLocalName ( ).equals ( s2.getLocalName ( ) ) );
 	        	
 	        	decoder.inspectEvent ( );
 		    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE );
 		    	decoder.decodeAttribute ( );
-		    	assertTrue ( decoder.getAttributeURI ( ).equals ( at1.namespaceURI ) );
-	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at1.localName ) );
+		    	assertTrue ( decoder.getAttributeURI ( ).equals ( at1.getNamespaceURI ( ) ) );
+	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at1.getLocalName ( ) ) );
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh2 ) );
 		    	
 		    	decoder.inspectEvent ( );
 		    	assertTrue ( decoder.getNextEventType ( ) == EventType.ATTRIBUTE_GENERIC_UNDECLARED );
 		    	decoder.decodeAttributeGenericUndeclared ( );
-		    	assertTrue ( decoder.getAttributeURI ( ).equals ( at2.namespaceURI ) );
-	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at2.localName ) );
+		    	assertTrue ( decoder.getAttributeURI ( ).equals ( at2.getNamespaceURI ( ) ) );
+	        	assertTrue ( decoder.getAttributeLocalName( ).equals ( at2.getLocalName ( ) ) );
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh3 ) );
 
 		    	decoder.inspectEvent ( );

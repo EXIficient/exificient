@@ -57,17 +57,17 @@ public class StringTableValueTest
 //		DatatypeEvent dtEvent = new Attribute( qn, null, BuiltIn.DEFAULT_DATATYPE );
 		
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val2 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName  );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName  );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName  );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn.namespaceURI, qn.localName  );
+		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( )  );
 		
 		bec.flush ( );
 		baos.flush ( );
@@ -78,12 +78,12 @@ public class StringTableValueTest
 		TypeDecoderLexical ddl = new TypeDecoderLexical( false );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.namespaceURI, qn.localName ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
 	}
 
 	@Test
@@ -108,17 +108,17 @@ public class StringTableValueTest
 //		DatatypeEvent dtEvent = new Characters( null, BuiltIn.DEFAULT_DATATYPE );
 		
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
-		del.writeTypeValidValue ( bec, qn1.namespaceURI, qn1.localName  );
+		del.writeTypeValidValue ( bec, qn1.getNamespaceURI ( ), qn1.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val2 );
-		del.writeTypeValidValue ( bec, qn3.namespaceURI, qn3.localName  );
+		del.writeTypeValidValue ( bec, qn3.getNamespaceURI ( ), qn3.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
-		del.writeTypeValidValue ( bec, qn2.namespaceURI, qn2.localName );
+		del.writeTypeValidValue ( bec, qn2.getNamespaceURI ( ), qn2.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn3.namespaceURI, qn3.localName );
+		del.writeTypeValidValue ( bec, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn1.namespaceURI, qn1.localName );
+		del.writeTypeValidValue ( bec, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val3 );
-		del.writeTypeValidValue ( bec, qn3.namespaceURI, qn3.localName );
+		del.writeTypeValidValue ( bec, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) );
 		
 		bec.flush ( );
 		baos.flush ( );
@@ -129,12 +129,12 @@ public class StringTableValueTest
 		TypeDecoderLexical ddl = new TypeDecoderLexical( true );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.namespaceURI, qn1.localName ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.namespaceURI, qn3.localName ).equals (  val2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn2.namespaceURI, qn2.localName ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.namespaceURI, qn3.localName ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.namespaceURI, qn1.localName ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.namespaceURI, qn3.localName ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn2.getNamespaceURI ( ), qn2.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
 	}
 
 	@Test
@@ -167,25 +167,25 @@ public class StringTableValueTest
 //		DatatypeEvent dtEvent = new Characters( null );
 		
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, atCh1 );
-		del.writeTypeValidValue ( bec, at1.namespaceURI, at1.localName  );
+		del.writeTypeValidValue ( bec, at1.getNamespaceURI ( ), at1.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch1 );
-		del.writeTypeValidValue ( bec, elxx1.namespaceURI, elxx1.localName  );
+		del.writeTypeValidValue ( bec, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch2 );
-		del.writeTypeValidValue ( bec, elxx2.namespaceURI, elxx2.localName );
+		del.writeTypeValidValue ( bec, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch2 );
-		del.writeTypeValidValue ( bec, elx2.namespaceURI, elx2.localName );
+		del.writeTypeValidValue ( bec, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch3 );
-		del.writeTypeValidValue ( bec, elx3.namespaceURI, elx3.localName );
+		del.writeTypeValidValue ( bec, elx3.getNamespaceURI ( ), elx3.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, atCh2 );
-		del.writeTypeValidValue ( bec, at1.namespaceURI, at1.localName );
+		del.writeTypeValidValue ( bec, at1.getNamespaceURI ( ), at1.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch1 );
-		del.writeTypeValidValue ( bec, elxx1.namespaceURI, elxx1.localName );
+		del.writeTypeValidValue ( bec, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch2 );
-		del.writeTypeValidValue ( bec, elxx2.namespaceURI, elxx2.localName );
+		del.writeTypeValidValue ( bec, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch2 );
-		del.writeTypeValidValue ( bec, elx2.namespaceURI, elx2.localName );
+		del.writeTypeValidValue ( bec, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch3 );
-		del.writeTypeValidValue ( bec, elx2.namespaceURI, elx2.localName );
+		del.writeTypeValidValue ( bec, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) );
 		
 		bec.flush ( );
 		baos.flush ( );
@@ -196,16 +196,16 @@ public class StringTableValueTest
 		TypeDecoderLexical ddl = new TypeDecoderLexical( false);
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.namespaceURI, at1.localName ).equals (  atCh1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.namespaceURI, elxx1.localName ).equals (  ch1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.namespaceURI, elxx2.localName ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.namespaceURI, elx2.localName ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx3.namespaceURI, elx3.localName ).equals (  ch3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.namespaceURI, at1.localName ).equals (  atCh2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.namespaceURI, elxx1.localName ).equals (  ch1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.namespaceURI, elxx2.localName ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.namespaceURI, elx2.localName ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.namespaceURI, elx2.localName ).equals (  ch3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx3.getNamespaceURI ( ), elx3.getLocalName ( ) ).equals (  ch3 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch3 )  );
 	}
 
 

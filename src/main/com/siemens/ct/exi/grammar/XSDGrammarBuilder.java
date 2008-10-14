@@ -81,7 +81,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081014
  */
 
 /*
@@ -349,7 +349,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 		 * declared in the schema, partitioned by namespace URI and sorted
 		 * lexicographically.
 		 */
-		if ( isNamespacesOfInterest ( expName.namespaceURI ) )
+		if ( isNamespacesOfInterest ( expName.getNamespaceURI ( ) ) )
 		{
 			if ( !sortedLocalNames.contains ( expName ) )
 			{
@@ -585,7 +585,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler
 			qNameType = new ExpandedName ( attrTypeDefinition.getNamespace ( ), attrTypeDefinition.getName ( ) );
 		}
 
-		return new Attribute ( atName.namespaceURI, atName.localName, qNameType, BuiltIn
+		return new Attribute ( atName.getNamespaceURI ( ), atName.getLocalName ( ), qNameType, BuiltIn
 				.getDatatype ( attrTypeDefinition ) );
 	}
 

@@ -36,12 +36,12 @@ public class GeneralTestCase extends AbstractTestCase
 	{
 		// GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
-		GeneralTestCase.setConfigurationPersonal ( );
+		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypes ( );
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
-		// GeneralTestCase.setConfigurationRandj ( );
+		GeneralTestCase.setConfigurationRandj ( );
 		// GeneralTestCase.setConfigurationPurchaseOrder ( );
 		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest2 ( );

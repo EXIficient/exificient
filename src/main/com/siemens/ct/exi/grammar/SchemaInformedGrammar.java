@@ -45,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081003
+ * @version 0.1.20081014
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar
@@ -53,63 +53,63 @@ public class SchemaInformedGrammar extends AbstractGrammar
 	protected Map<ElementKey, Rule>				elementDispatcher;
 
 	protected Map<ExpandedName, TypeGrammar>	grammarTypes;
-	
-	protected final TypeGrammar urType;
+
+	protected final TypeGrammar					urType;
 
 	protected SchemaInformedGrammar ( ExpandedName[] globalElements )
 	{
 		super ( true );
-		
-		//	init document
+
+		// init document
 		initDocumentGrammar ( globalElements );
 
 		// allocate memory
 		elementDispatcher = new HashMap<ElementKey, Rule> ( );
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar> ( );
-		
-		//	ur-type
+
+		// ur-type
 		urType = SchemaInformedGrammar.getUrTypeRule ( );
 	}
-	
-	public static TypeGrammar getUrTypeRule()
+
+	public static TypeGrammar getUrTypeRule ()
 	{
-		//	ur-Type
-		SchemaInformedRule  urType1 = new SchemaInformedRuleElement();
-		urType1.addRule ( new StartElementGeneric(), urType1 );
-		urType1.addTerminalRule ( new EndElement() );
-		urType1.addRule ( new CharactersGeneric(), urType1 );
-		
-		SchemaInformedRule urType0 = new SchemaInformedRuleStartTag( urType1 );
-		urType0.addRule ( new AttributeGeneric(), urType0 );
-		urType0.addRule ( new StartElementGeneric(), urType1 );
-		urType0.addTerminalRule ( new EndElement() );
-		urType0.addRule ( new CharactersGeneric(), urType1 );
+		// ur-Type
+		SchemaInformedRule urType1 = new SchemaInformedRuleElement ( );
+		urType1.addRule ( new StartElementGeneric ( ), urType1 );
+		urType1.addTerminalRule ( new EndElement ( ) );
+		urType1.addRule ( new CharactersGeneric ( ), urType1 );
+
+		SchemaInformedRule urType0 = new SchemaInformedRuleStartTag ( urType1 );
+		urType0.addRule ( new AttributeGeneric ( ), urType0 );
+		urType0.addRule ( new StartElementGeneric ( ), urType1 );
+		urType0.addTerminalRule ( new EndElement ( ) );
+		urType0.addRule ( new CharactersGeneric ( ), urType1 );
 		urType0.setHasNamedSubtypes ( true );
 		urType0.setFirstElementRule ( );
-		
-		//	empty ur-Type
-		SchemaInformedRule emptyUrType0 = new SchemaInformedRuleElement();
-		emptyUrType0.addRule ( new AttributeGeneric(), emptyUrType0 );
-		emptyUrType0.addTerminalRule ( new EndElement() );
+
+		// empty ur-Type
+		SchemaInformedRule emptyUrType0 = new SchemaInformedRuleElement ( );
+		emptyUrType0.addRule ( new AttributeGeneric ( ), emptyUrType0 );
+		emptyUrType0.addTerminalRule ( new EndElement ( ) );
 		emptyUrType0.setFirstElementRule ( );
-		
-		//	nillable ?
+
+		// nillable ?
 		urType0.setNillable ( false, emptyUrType0 );
-		
-		return new TypeGrammar( urType0, emptyUrType0 );
+
+		return new TypeGrammar ( urType0, emptyUrType0 );
 	}
-	
-	protected void setUriEntries( String[] uris )
+
+	protected void setUriEntries ( String[] uris )
 	{
 		this.uris = uris;
 	}
-	
-	protected void setLocalNamesEntries( ExpandedName[] localNames )
+
+	protected void setLocalNamesEntries ( ExpandedName[] localNames )
 	{
 		this.localNames = localNames;
 	}
-	
-	protected void addElementRule( ElementKey elementKey, Rule r )
+
+	protected void addElementRule ( ElementKey elementKey, Rule r )
 	{
 		elementDispatcher.put ( elementKey, r );
 	}
@@ -118,8 +118,8 @@ public class SchemaInformedGrammar extends AbstractGrammar
 	{
 		return elementDispatcher.get ( elementKey );
 	}
-	
-	protected void addTypeGrammar( ExpandedName typeName, TypeGrammar typeGrammar )
+
+	protected void addTypeGrammar ( ExpandedName typeName, TypeGrammar typeGrammar )
 	{
 		grammarTypes.put ( typeName, typeGrammar );
 	}
@@ -129,13 +129,13 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		ExpandedName en = new ExpandedName ( namespaceURI, name );
 		return grammarTypes.get ( en );
 	}
-	
-	public TypeGrammar getUrType( )
+
+	public TypeGrammar getUrType ()
 	{
 		return urType;
 	}
 
-	private void initDocumentGrammar( ExpandedName[] globalElements )
+	private void initDocumentGrammar ( ExpandedName[] globalElements )
 	{
 		/*
 		 * rule (DocEnd)
@@ -153,7 +153,7 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		 */
 		for ( ExpandedName globalElement : globalElements )
 		{
-			StartElement se = new StartElement ( globalElement.namespaceURI, globalElement.localName );
+			StartElement se = new StartElement ( globalElement.getNamespaceURI ( ), globalElement.getLocalName ( ) );
 			builtInDocContentGrammar.addRule ( se, builtInDocEndGrammar );
 		}
 
@@ -180,7 +180,7 @@ public class SchemaInformedGrammar extends AbstractGrammar
 		for ( ElementKey elKey : elementDispatcher.keySet ( ) )
 		{
 			ExpandedName name = elKey.getName ( );
-			StartElement se = new StartElement ( name.namespaceURI, name.localName );
+			StartElement se = new StartElement ( name.getNamespaceURI ( ), name.getLocalName ( ) );
 			builtInFragmentContentGrammar.addRule ( se, builtInFragmentContentGrammar );
 		}
 

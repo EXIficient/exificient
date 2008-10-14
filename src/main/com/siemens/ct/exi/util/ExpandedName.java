@@ -29,13 +29,13 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081010
+ * @version 0.1.20081014
  */
 
 public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameComparable
 {
-	public String	namespaceURI;
-	public String	localName;
+	protected String	namespaceURI;
+	protected String	localName;
 
 	public ExpandedName ( String namespaceURI, String localName )
 	{

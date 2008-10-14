@@ -38,7 +38,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecoderBlock
@@ -87,7 +87,7 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 					new PreReadByteDecoderChannel( typeDecoder, structureChannel, qname, dataTypes.get ( qname ), occurrences.get ( qname )  );
 				
 				//valueChannels.put ( qname, preDC );
-				addDecoderChannel( preDC, qname.namespaceURI, qname.localName );
+				addDecoderChannel( preDC, qname.getNamespaceURI ( ), qname.getLocalName ( ) );
 			}
 		}
 		else
@@ -113,7 +113,7 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 					
 					
 					//valueChannels.put ( qname, preDC );
-					addDecoderChannel( preDC, qname.namespaceURI, qname.localName );
+					addDecoderChannel( preDC, qname.getNamespaceURI ( ), qname.getLocalName ( ) );
 				}
 			}
 			
@@ -131,7 +131,7 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 
 					
 					//valueChannels.put ( qname, preDC );
-					addDecoderChannel( preDC, qname.namespaceURI, qname.localName );
+					addDecoderChannel( preDC, qname.getNamespaceURI ( ), qname.getLocalName ( ) );
 				}
 			}
 		}

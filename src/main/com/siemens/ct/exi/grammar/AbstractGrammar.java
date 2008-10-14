@@ -28,7 +28,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractGrammar implements Grammar
@@ -86,7 +86,7 @@ public abstract class AbstractGrammar implements Grammar
 		 */
 		for ( int i=0; i<localNames.length; i++  )
 		{
-			stringTable.addLocalName ( localNames[ i].namespaceURI, localNames[ i].localName );
+			stringTable.addLocalName ( localNames[ i].getNamespaceURI ( ), localNames[ i].getLocalName ( ) );
 		}
 		
 	}	

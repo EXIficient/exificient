@@ -18,16 +18,11 @@
 
 package com.siemens.ct.exi.core.sax;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Vector;
 
 import javax.xml.XMLConstants;
-
-import com.siemens.ct.exi.util.UnsynchronizedStack;
 
 /**
  * TODO Description
