@@ -31,7 +31,7 @@ import com.siemens.ct.exi.io.BitInputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081014
  */
 
 public class BitDecoderChannel extends AbstractDecoderChannel implements DecoderChannel
@@ -65,7 +65,15 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements Decoder
 	public int decodeNBitUnsignedInteger ( int n ) throws IOException
 	{
 		assert ( n >= 0 );
-		return istream.readBits ( n );
+		
+		if ( n == 0 )
+		{
+			return 0;
+		}
+		else
+		{
+			return istream.readBits ( n );
+		}
 	}
 
 	/**

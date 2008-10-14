@@ -28,7 +28,7 @@ import java.io.InputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081013
+ * @version 0.1.20081014
  */
 
 final public class BitInputStream
@@ -113,10 +113,7 @@ final public class BitInputStream
 	 */
 	public int readBits ( int n ) throws IOException
 	{
-		if ( n == 0 )
-		{
-			return 0;
-		}
+		assert( n > 0 );
 
 		readBuffer ( );
 		if ( n <= capacity )
