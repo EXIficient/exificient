@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,7 +44,7 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081014
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXIDecoder
@@ -98,6 +99,13 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		this.is = is;
 
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered
+		if ( ! ( is instanceof BufferedInputStream ) )
+		{
+			this.is = new BufferedInputStream ( is );
+		}
+
 		// parse header (bit-wise BUT byte padded!)
 		BitDecoderChannel headerChannel = new BitDecoderChannel ( is );
 		EXIHeader.parse ( headerChannel );
@@ -125,10 +133,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			else
 			{
 				nextEventType = getCurrentRule ( ).get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
-				
+
 				if ( nextEventType == EventType.ATTRIBUTE_INVALID_VALUE )
 				{
-					updateInvalidValueAttribute();
+					updateInvalidValueAttribute ( );
 				}
 			}
 		}
@@ -138,11 +146,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			nextEventType = nextEvent.getEventType ( );
 		}
 	}
-	
-	protected void updateInvalidValueAttribute() throws EXIException
+
+	protected void updateInvalidValueAttribute () throws EXIException
 	{
-		SchemaInformedRule sir = (SchemaInformedRule)getCurrentRule ( );
-		
+		SchemaInformedRule sir = (SchemaInformedRule) getCurrentRule ( );
+
 		int ec3AT;
 		try
 		{
@@ -150,9 +158,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		}
 		catch ( IOException e )
 		{
-			throw new EXIException( e );
+			throw new EXIException ( e );
 		}
-		
+
 		ec = ec3AT + sir.getLeastAttributeEventCode ( );
 		nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
 	}
@@ -317,13 +325,13 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 
 	protected void decodeAttributeGenericStructure () throws EXIException
 	{
-		//	decode structure
-		decodeAttributeGenericUndeclaredStructure ();
-		
+		// decode structure
+		decodeAttributeGenericUndeclaredStructure ( );
+
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 	}
-	
+
 	protected void decodeAttributeGenericUndeclaredStructure () throws EXIException
 	{
 		try
@@ -333,14 +341,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			this.attributeLocalName = block.readLocalName ( attributeURI );
 
 			if ( attributeURI.equals ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI )
-					&& ( attributeLocalName.equals ( Constants.XSI_NIL ) || attributeLocalName.equals ( Constants.XSI_TYPE ) ) )
+					&& ( attributeLocalName.equals ( Constants.XSI_NIL ) || attributeLocalName
+							.equals ( Constants.XSI_TYPE ) ) )
 			{
-				//	no learning for xsi:type or xsi:nil
+				// no learning for xsi:type or xsi:nil
 			}
 			else
 			{
 				// update grammar
-				getCurrentRule ( ).learnAttribute ( attributeURI, attributeLocalName );				
+				getCurrentRule ( ).learnAttribute ( attributeURI, attributeLocalName );
 			}
 		}
 		catch ( IOException e )
