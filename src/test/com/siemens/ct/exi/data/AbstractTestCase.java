@@ -70,25 +70,34 @@ public abstract class AbstractTestCase extends XMLTestCase
 		//	XML input stream
 		InputStream xmlInput = new FileInputStream( QuickTestConfiguration.getXmlLocation ( ) );
 		//	EXI output stream
+		// File tmpEXI = File.createTempFile ( "exificient-enc", ".exi" );
+		// OutputStream encodedOutput = new FileOutputStream( tmpEXI );
 		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
 		
 		//	-> encode
 		testEncoder.encodeTo ( ef, xmlInput, encodedOutput );
+		encodedOutput.flush ( );
 		
 		//	EXI input stream
 		ByteArrayInputStream exiDocument =  new ByteArrayInputStream( encodedOutput.toByteArray ( ) );
+		// InputStream exiDocument =  new FileInputStream( tmpEXI );
+		
 		//	decoded XML
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+		// File tmpXML = File.createTempFile ( "exificient-dec", ".exi.xml" );
+		// OutputStream xmlOutput = new FileOutputStream( tmpXML );
 		
 		//	<-- decode
 		TestDecoder testDecoder = new TestDecoder();
 		testDecoder.decodeTo ( ef, exiDocument, xmlOutput );
-
+		xmlOutput.flush ( );
+		
 		//	check XML validity
 		if ( tco.isXmlEqual ( ) )
 		{
 			InputStream control = new FileInputStream( QuickTestConfiguration.getXmlLocation ( ) );
 			InputStream test = new ByteArrayInputStream( xmlOutput.toByteArray ( ) );
+			// InputStream test = new FileInputStream( tmpXML );
 			
 			if ( ef.isFragment ( ) )
 			{

@@ -39,7 +39,9 @@ public class DeviationsTestCase extends AbstractTestCase
 		// DeviationsTestCase.setConfigurationDeviationEl1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype2 ( );
-		DeviationsTestCase.setConfigurationDeviationDatatype3 ( );
+		// DeviationsTestCase.setConfigurationDeviationDatatype3 ( );
+		// DeviationsTestCase.setConfigurationDeviationXsiType( );
+		DeviationsTestCase.setConfigurationDeviationXsiNil ( );
 	}
 
 	protected void setUp ()
@@ -152,6 +154,42 @@ public class DeviationsTestCase extends AbstractTestCase
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/order.xsd" );
 		QuickTestConfiguration.setXmlLocation( "./data/deviations/orderDevDatatype3.xml" );
 		QuickTestConfiguration.setExiLocation( "./out/deviations/orderDevDatatype3.exi" );
+	}
+	
+	@Test
+	public void testDeviationXsiType () throws Exception
+	{
+		// set up configuration
+		setConfigurationDeviationXsiType ( );
+
+		//	execute test
+		_test( );
+	}
+
+	@SuppressWarnings("unused")
+	public static void setConfigurationDeviationXsiType ()
+	{
+		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
+		QuickTestConfiguration.setXmlLocation( "./data/deviations/XMLSampleDevXsiType.xml" );
+		QuickTestConfiguration.setExiLocation( "./out/deviations/XMLSampleDevXsiType.xml.exi" );
+	}
+	
+	@Test
+	public void testDeviationXsiNil () throws Exception
+	{
+		// set up configuration
+		setConfigurationDeviationXsiNil ( );
+
+		//	execute test
+		_test( );
+	}
+
+	@SuppressWarnings("unused")
+	public static void setConfigurationDeviationXsiNil ()
+	{
+		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
+		QuickTestConfiguration.setXmlLocation( "./data/deviations/XMLSampleDevXsiNil.xml" );
+		QuickTestConfiguration.setExiLocation( "./out/deviations/XMLSampleDevXsiNil.xml.exi" );
 	}
 
 }
