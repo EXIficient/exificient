@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081015
  */
 
 /*
@@ -56,15 +56,10 @@ public class SchemaLessRuleFragmentContent extends AbstractSchemaLessRule
 		addTerminalRule ( new EndDocument ( ) );
 	}
 
-//	public Rule getElementContentRule ()
-//	{
-//		return this;
-//	}
-
 	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions )
 	{
-		// SE (*), ED
-		int ch1 = 2;
+		// SE (*), ED, [+ learned]
+		int ch1 = this.events.size ( );
 
 		// has second or third level (CM, PI) ?
 		if ( hasSecondOrThirdLevel ( fidelityOptions ) )
