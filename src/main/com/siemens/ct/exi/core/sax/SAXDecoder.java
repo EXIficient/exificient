@@ -48,7 +48,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081016
  */
 
 public class SAXDecoder implements XMLReader
@@ -91,12 +91,8 @@ public class SAXDecoder implements XMLReader
 	{
 		String pfx;
 
-		// check whether prefix exists
-		if ( nsPrefixes.hasPrefixForURI ( uri ) )
-		{
-			pfx = this.nsPrefixes.getPrefix ( uri );
-		}
-		else
+		// checks whether prefix already exists
+		if ( ( pfx = this.nsPrefixes.getPrefix ( uri ) ) == null )
 		{
 			nsPrefixes.createPrefix ( uri );
 			pfx = this.nsPrefixes.getPrefix ( uri );
