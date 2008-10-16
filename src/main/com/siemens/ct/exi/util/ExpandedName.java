@@ -29,7 +29,7 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081016
  */
 
 public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameComparable
@@ -76,7 +76,9 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 	{
 		if ( o instanceof ExpandedName )
 		{
-			return ( compareTo ( (ExpandedName) o ) == 0 );
+			ExpandedName other = (ExpandedName)o;
+			return ( getLocalName ( ).equals ( other.getLocalName ( ) ) &&
+					getNamespaceURI ( ).equals ( other.getNamespaceURI ( ) ) );
 		}
 		return false;
 	}
