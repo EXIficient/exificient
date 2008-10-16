@@ -36,9 +36,8 @@ import com.siemens.ct.exi.core.CompileConfiguration;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080924
+ * @version 0.1.20081016
  */
-
 
 /*
  * Namespace (NS) and attribute (AT) events are encoded in a specific order
@@ -69,21 +68,20 @@ public abstract class AbstractAttributeList implements AttributeList
 	protected List<String>	namespacePrefix;
 	private List<String>	nsURIs;
 	private List<String>	nsPrefixes;
-	
+
 	// attributes
 	protected List<String>	attributeURI;
 	protected List<String>	attributeLocalName;
 	protected List<String>	attributeValue;
 	protected List<String>	attributePrefix;
 
-
 	public AbstractAttributeList ()
 	{
 		// namespace declarations
 		namespaceURI = new ArrayList<String> ( );
 		namespacePrefix = new ArrayList<String> ( );
-		nsURIs		= new ArrayList<String> ( );
-		nsPrefixes	= new ArrayList<String> ( );
+		nsURIs = new ArrayList<String> ( );
+		nsPrefixes = new ArrayList<String> ( );
 
 		// attributes
 		attributeURI = new ArrayList<String> ( );
@@ -166,7 +164,6 @@ public abstract class AbstractAttributeList implements AttributeList
 		return namespacePrefix.get ( index );
 	}
 
-
 	/*
 	 * Attributes
 	 */
@@ -194,7 +191,7 @@ public abstract class AbstractAttributeList implements AttributeList
 	{
 		return attributePrefix.get ( index );
 	}
-	
+
 	/*
 	 * 
 	 */
@@ -246,8 +243,19 @@ public abstract class AbstractAttributeList implements AttributeList
 			}
 			else
 			{
-				throw new IllegalArgumentException ( "[ERROR] No URI mapping from xsi:type prefix '" + xsiTypePrefix
-						+ "' found! \nConsider preserving namespaces and prefixes!" );
+				/*
+				 * If there is no namespace in scope for the specified qname
+				 * prefix, the QName uri is set to empty ("") and the QName
+				 * localName is set to the full lexical value of the QName,
+				 * including the prefix.
+				 */
+				xsiTypeURI = null;
+				xsiTypeURI = null;
+
+				// throw new IllegalArgumentException ( "[ERROR] No URI mapping
+				// from xsi:type prefix '" + xsiTypePrefix
+				// + "' found! \nConsider preserving namespaces and prefixes!"
+				// );
 			}
 		}
 	}
@@ -293,8 +301,8 @@ public abstract class AbstractAttributeList implements AttributeList
 				}
 				else
 				{
-					insertAttribute ( atts.getURI ( i ), atts.getLocalName ( i ), getPrefixOf ( atts, i ),
-							atts.getValue ( i ) );
+					insertAttribute ( atts.getURI ( i ), atts.getLocalName ( i ), getPrefixOf ( atts, i ), atts
+							.getValue ( i ) );
 				}
 			}
 			// == Attribute (AT)
@@ -302,8 +310,8 @@ public abstract class AbstractAttributeList implements AttributeList
 			// sorted first by qname localName then by qname uri.
 			else
 			{
-				insertAttribute ( atts.getURI ( i ), atts.getLocalName ( i ), getPrefixOf ( atts, i ),
-						atts.getValue ( i ) );
+				insertAttribute ( atts.getURI ( i ), atts.getLocalName ( i ), getPrefixOf ( atts, i ), atts
+						.getValue ( i ) );
 			}
 		}
 
@@ -348,18 +356,17 @@ public abstract class AbstractAttributeList implements AttributeList
 				}
 				else
 				{
-					insertAttribute ( at.getNamespaceURI ( ) == null ? XMLConstants.NULL_NS_URI : at
-							.getNamespaceURI ( ), at.getLocalName ( ),
-							at.getPrefix ( ) == null ? XMLConstants.DEFAULT_NS_PREFIX : at.getPrefix ( ), at
-									.getNodeValue ( ) );
+					insertAttribute (
+							at.getNamespaceURI ( ) == null ? XMLConstants.NULL_NS_URI : at.getNamespaceURI ( ), at
+									.getLocalName ( ), at.getPrefix ( ) == null ? XMLConstants.DEFAULT_NS_PREFIX : at
+									.getPrefix ( ), at.getNodeValue ( ) );
 				}
 			}
 			else
 			{
-				insertAttribute ( at.getNamespaceURI ( ) == null ? XMLConstants.NULL_NS_URI : at
-						.getNamespaceURI ( ), at.getLocalName ( ),
-						at.getPrefix ( ) == null ? XMLConstants.DEFAULT_NS_PREFIX : at.getPrefix ( ), at
-								.getNodeValue ( ) );
+				insertAttribute ( at.getNamespaceURI ( ) == null ? XMLConstants.NULL_NS_URI : at.getNamespaceURI ( ),
+						at.getLocalName ( ), at.getPrefix ( ) == null ? XMLConstants.DEFAULT_NS_PREFIX : at
+								.getPrefix ( ), at.getNodeValue ( ) );
 			}
 		}
 
@@ -374,7 +381,7 @@ public abstract class AbstractAttributeList implements AttributeList
 		int lengthDifference = qname.length ( ) - localName.length ( );
 		return ( lengthDifference == 0 ? XMLConstants.DEFAULT_NS_PREFIX : qname.substring ( 0, lengthDifference - 1 ) );
 	}
-	
+
 	abstract protected void insertAttribute ( String uri, String localName, String pfx, String value );
-	
+
 }

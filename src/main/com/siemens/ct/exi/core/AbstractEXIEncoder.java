@@ -39,7 +39,6 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.EncoderBlock;
-import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
 /**
@@ -78,9 +77,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 	{
 		super.initForEachRun ( );
 
-		//	re-set prefixes
+		// re-set prefixes
 		nsPrefixes.clear ( );
-		
+
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock ( os );
 	}
@@ -179,32 +178,65 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			throw new EXIException ( e );
 		}
 	}
-	
-	protected void encodeTypeInvalidValueAttribute ( int atEventCode, String uri, String localName, String value  ) throws EXIException
+
+	protected void encodeTypeInvalidValueAttribute ( int atEventCode, String uri, String localName, String value )
+			throws EXIException
 	{
-		int ecATdeviated = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE,
-				exiFactory.getFidelityOptions ( ) );
-		
 		// encode 2nd level event-code
-		encode2ndLevelEventCode ( ecATdeviated );
-		
-		//	calculate 3rd level event-code
-		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule)getCurrentRule ( );
+		encodeTypeInvalidAttributeSecondLevel ( );
+
+		// calculate 3rd level event-code
+		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) getCurrentRule ( );
 		int ec3 = atEventCode - schemaCurrentRule.getLeastAttributeEventCode ( );
-		
+
 		try
 		{
 			// encode 3rd level event-code
 			block.writeEventCode ( ec3, schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) );
-			
+
 			// encode content as string
 			block.writeValueAsString ( uri, localName, value );
 		}
 		catch ( IOException e )
 		{
 			throw new EXIException ( e );
-		}	
+		}
 	}
+	
+	protected void encodeTypeInvalidAttributeSecondLevel ( )
+	throws EXIException
+	{
+		int ec2ATdeviated = getCurrentRule ( ).get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE,
+				exiFactory.getFidelityOptions ( ) );
+
+		// encode 2nd level event-code
+		encode2ndLevelEventCode ( ec2ATdeviated );
+	}
+	
+	protected void encodeTypeInvalidXsiAttribute ( String value )
+	throws EXIException
+	{
+		// encode 2nd level event-code
+		encodeTypeInvalidAttributeSecondLevel ( );
+		
+		// calculate 3rd level event-code
+		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) getCurrentRule ( );
+		int ec3nil = schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) - 1;
+		
+		try
+		{
+			// encode 3rd level event-code
+			block.writeEventCode ( ec3nil, schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) );
+
+			// encode content as string
+			block.writeString ( value );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException ( e );
+		}
+	}
+	
 
 	protected void encodeGenericValue ( int ec, String uri, String localName, String value ) throws EXIException
 	{
@@ -426,7 +458,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 				// encode schema-valid content plus moves on in grammar
 				encodeTypeValidValue ( ecCH, getScopeURI ( ), getScopeLocalName ( ) );
-				
+
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ecCH ) );
 
@@ -526,10 +558,22 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				Grammar g = exiFactory.getGrammar ( );
 				TypeGrammar tg = ( (SchemaInformedGrammar) g ).getTypeGrammar ( uri, localName );
 
+				/*
+				 * The value of each AT (xsi:type) event is represented as a
+				 * QName (see 7.1.7 QName). If there is no namespace in scope
+				 * for the specified qname prefix, the QName uri is set to empty
+				 * ("") and the QName localName is set to the full lexical value
+				 * of the QName, including the prefix.
+				 */
+
 				if ( tg == null )
 				{
-					// type unknown --> for know throw error
-					throw new EXIException ( "EXI, no type grammar found for " + new ExpandedName ( uri, localName ) );
+					// TODO type unknown --> what to do ?
+					
+					// encode event-code
+					encode2ndLevelEventCode ( ec2 );
+					// type as qname
+					encodeQName ( Constants.EMPTY_STRING, raw );
 				}
 				else
 				{
@@ -587,7 +631,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 			if ( ec2 == Constants.NOT_FOUND )
 			{
-				System.err.println ( "xsi:nil schema deviation not handled yet!" );
+				// Warn encoder that the attribute is simply skipped
+				String msg = "Skip AT xsi:nil=" + rawNil;
+				errorHandler.warning ( new EXIException ( msg ) );
 			}
 			else
 			{
@@ -618,6 +664,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 					// TODO If the value is not a schema-valid Boolean, the AT
 					// (xsi:nil) event is represented by the AT(*)
 					// [schema-invalid value] terminal
+					encodeTypeInvalidXsiAttribute( rawNil );
 				}
 			}
 		}
@@ -705,9 +752,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			else
 			{
 				// encode schema-invalid value AT
-				encodeTypeInvalidValueAttribute( ec, uri, localName, value );	
+				encodeTypeInvalidValueAttribute ( ec, uri, localName, value );
 			}
-			
+
 			// step forward in current rule (replace rule at the top)
 			replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 		}
@@ -774,7 +821,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				// --> encode EventCode, schema-valid content plus grammar moves
 				// on
 				encodeTypeValidValue ( ec, getScopeURI ( ), getScopeLocalName ( ) );
-				
+
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
 			}

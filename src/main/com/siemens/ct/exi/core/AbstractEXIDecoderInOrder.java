@@ -160,10 +160,15 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		//	update grammar according to given xsi:type
 		Grammar g = exiFactory.getGrammar ( );
 		TypeGrammar tg = ((SchemaInformedGrammar)g).getTypeGrammar ( this.xsiTypeUri, this.xsiTypeName );
-		this.replaceRuleAtTheTop ( tg.getType ( ) );
 		
-		//
-		this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );
+		//	type known ?
+		if ( tg != null )
+		{
+			this.replaceRuleAtTheTop ( tg.getType ( ) );
+			
+			//
+			this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );	
+		}
 	}
 	
 	public void decodeXsiNil( ) throws EXIException
@@ -182,6 +187,11 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 				throw new EXIException( "EXI, no typeEmpty for xsi:nil");
 			}
 		}
+	}
+	
+	public void decodeXsiNilDeviation( ) throws EXIException
+	{
+		decodeAttributeXsiNilDeviation ( );
 	}
 	
 	public void decodeCharacters( ) throws EXIException

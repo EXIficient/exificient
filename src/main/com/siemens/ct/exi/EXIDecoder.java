@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081016
  */
 
 public interface EXIDecoder
@@ -160,6 +160,8 @@ public interface EXIDecoder
 	 * @throws EXIException
 	 */
 	public void decodeXsiNil () throws EXIException;
+	
+	public void decodeXsiNilDeviation () throws EXIException;
 
 	/**
 	 * Decodes expected characters.
@@ -275,6 +277,7 @@ public interface EXIDecoder
 	 */
 	public boolean getXsiNil ();
 
+	public String getXsiNilDeviation ();
 
 	/**
 	 * Provides characters as well as significant/insignificant whitespace characters

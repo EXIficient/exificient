@@ -45,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081016
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar
@@ -126,8 +126,15 @@ public class SchemaInformedGrammar extends AbstractGrammar
 
 	public TypeGrammar getTypeGrammar ( String namespaceURI, String name )
 	{
-		ExpandedName en = new ExpandedName ( namespaceURI, name );
-		return grammarTypes.get ( en );
+		if ( namespaceURI == null || name == null)
+		{
+			return null;
+		}
+		else
+		{
+			ExpandedName en = new ExpandedName ( namespaceURI, name );
+			return grammarTypes.get ( en );			
+		}
 	}
 
 	public TypeGrammar getUrType ()

@@ -68,6 +68,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected String		xsiTypeUri;
 	protected String		xsiTypeName;
 	protected boolean		xsiNil;
+	protected String		xsiNilDeviation;
 	protected String		characters;
 	protected String		comment;
 	protected String		nsURI;
@@ -160,9 +161,21 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		{
 			throw new EXIException ( e );
 		}
-
-		ec = ec3AT + sir.getLeastAttributeEventCode ( );
-		nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
+		
+		if ( ec3AT < ( sir.getNumberOfSchemaDeviatedAttributes ( ) - 1 ) )
+		{
+			//	deviated attribute
+			ec = ec3AT + sir.getLeastAttributeEventCode ( );
+			nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
+		}
+		else if ( ec3AT == ( sir.getNumberOfSchemaDeviatedAttributes ( ) - 1 ) )
+		{
+			//	deviated xsi:nil
+			nextEventType = EventType.ATTRIBUTE_XSI_NIL_DEVIATION;
+		} else
+		{
+			throw new EXIException ( "Error occured while decoding deviated attribute" );
+		}
 	}
 
 	protected int decode1stLevelEventCode () throws EXIException
@@ -384,6 +397,19 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			throw new EXIException ( e );
 		}
 	}
+	
+	protected void decodeAttributeXsiNilDeviation () throws EXIException
+	{
+		try
+		{
+			// decode nil as string
+			this.xsiNilDeviation = block.readString ( );
+		}
+		catch ( IOException e )
+		{
+			throw new EXIException ( e );
+		}
+	}
 
 	protected Characters decodeCharactersStructure () throws IOException
 	{
@@ -490,6 +516,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	public boolean getXsiNil ()
 	{
 		return xsiNil;
+	}
+	
+	public String getXsiNilDeviation ()
+	{
+		return xsiNilDeviation;
 	}
 
 	public String getCharacters ()

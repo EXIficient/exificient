@@ -218,6 +218,10 @@ public class SAXDecoder implements XMLReader
 					handleAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, decoder
 							.getXsiNil ( ) ? Constants.DECODED_BOOLEAN_TRUE : Constants.DECODED_BOOLEAN_FALSE );
 					break;
+				case ATTRIBUTE_XSI_NIL_DEVIATION:
+					decoder.decodeXsiNilDeviation ( );
+					handleAttribute ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, decoder.getXsiNilDeviation ( ) );
+					break;
 				case CHARACTERS:
 					decoder.decodeCharacters ( );
 					handleCharacters ( decoder.getCharacters ( ) );

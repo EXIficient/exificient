@@ -46,7 +46,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081016
  */
 
 public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
@@ -69,6 +69,9 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 
 	protected List<Boolean>						xsiNils;
 	protected int								currentXsiNilsIndex;
+	
+	protected List<String>					xsiNilsDeviation;
+	protected int								currentXsiNilsDeviationIndex;
 
 	protected List<String>						comments;
 	protected int								currentCommentsIndex;
@@ -104,6 +107,7 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		xsiTypeUris = new ArrayList<String> ( );
 		xsiTypeNames = new ArrayList<String> ( );
 		xsiNils = new ArrayList<Boolean> ( );
+		xsiNilsDeviation = new ArrayList<String> ( );
 		comments = new ArrayList<String> ( );
 		uris = new ArrayList<String> ( );
 		prefixes = new ArrayList<String> ( );
@@ -138,6 +142,8 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		currentGenericAttributesIndex = 0;
 		xsiNils.clear ( );
 		currentXsiNilsIndex = 0;
+		xsiNilsDeviation.clear ( );
+		currentXsiNilsDeviationIndex = 0;
 		comments.clear ( );
 		currentCommentsIndex = 0;
 
@@ -207,6 +213,9 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 						break;
 					case ATTRIBUTE_XSI_NIL:
 						decodeAttributeXsiNilInternal ( );
+						break;
+					case ATTRIBUTE_XSI_NIL_DEVIATION:
+						decodeAttributeXsiNilDeviationInternal ( );
 						break;
 					case CHARACTERS:
 						decodeCharactersInternal ( );
@@ -474,10 +483,15 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		// update grammar according to given xsi:type
 		Grammar g = exiFactory.getGrammar ( );
 		TypeGrammar tg = ( (SchemaInformedGrammar) g ).getTypeGrammar ( this.xsiTypeUri, this.xsiTypeName );
-		this.replaceRuleAtTheTop ( tg.getType ( ) );
+		
+		//	type known ?
+		if ( tg != null )
+		{
+			this.replaceRuleAtTheTop ( tg.getType ( ) );
 
-		//
-		this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );
+			//
+			this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );			
+		}
 
 		// xsiType
 		xsiTypeUris.add ( xsiTypeUri );
@@ -517,6 +531,21 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		stepToNextEvent ( );
 
 		xsiNil = xsiNils.get ( currentXsiNilsIndex++ );
+	}
+	
+	protected void decodeAttributeXsiNilDeviationInternal () throws EXIException
+	{
+		decodeAttributeXsiNilDeviation ( );
+
+		// deviated xsiNil
+		xsiNilsDeviation.add ( xsiNilDeviation );
+	}
+	
+	public void decodeXsiNilDeviation () throws EXIException
+	{
+		stepToNextEvent ( );
+
+		xsiNilDeviation = xsiNilsDeviation.get ( currentXsiNilsDeviationIndex++ );
 	}
 
 	protected void decodeCharactersInternal () throws EXIException
