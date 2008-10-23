@@ -29,7 +29,7 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081016
+ * @version 0.1.20081023
  */
 
 public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameComparable
@@ -50,6 +50,10 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 		}
 
 		this.localName = localName;
+
+		// // internalize ?
+		// this.namespaceURI = this.namespaceURI.intern ( );
+		// this.localName = this.localName.intern ( );
 	}
 
 	public String getNamespaceURI ()
@@ -60,6 +64,7 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 	public void setNamespaceURI ( String namespaceURI )
 	{
 		this.namespaceURI = namespaceURI;
+		// this.namespaceURI = namespaceURI.intern ( );
 	}
 
 	public String getLocalName ()
@@ -70,6 +75,7 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 	public void setLocalName ( String localName )
 	{
 		this.localName = localName;
+		// this.localName = localName.intern ( );
 	}
 
 	public boolean equals ( Object o )
@@ -77,8 +83,8 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 		if ( o instanceof ExpandedName )
 		{
 			ExpandedName other = (ExpandedName)o;
-			return ( getLocalName ( ).equals ( other.getLocalName ( ) ) &&
-					getNamespaceURI ( ).equals ( other.getNamespaceURI ( ) ) );
+			return ( localName.equals ( other.localName ) &&
+					namespaceURI.equals ( other.namespaceURI ) );
 		}
 		return false;
 	}
