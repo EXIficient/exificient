@@ -205,9 +205,12 @@ public abstract class AbstractEXICoder
 	{
 		assert ( !openRules.isEmpty ( ) );
 		assert ( top != null );
-
-		openRules.replaceLast ( top );
-		currentRule = top;
+		
+		if ( top != currentRule )
+		{
+			openRules.replaceLast ( top );
+			currentRule = top;			
+		}
 	}
 
 	protected final void pushRule ( Rule r )
