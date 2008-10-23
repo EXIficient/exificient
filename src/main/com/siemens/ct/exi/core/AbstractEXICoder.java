@@ -67,6 +67,7 @@ public abstract class AbstractEXICoder
 	// factory
 	protected EXIFactory						exiFactory;
 	protected Grammar							grammar;
+	protected FidelityOptions					fidelityOptions;
 
 	// error handler
 	protected ErrorHandler						errorHandler;
@@ -96,6 +97,7 @@ public abstract class AbstractEXICoder
 	{
 		this.exiFactory = exiFactory;
 		this.grammar = exiFactory.getGrammar ( );
+		this.fidelityOptions = exiFactory.getFidelityOptions ( );
 
 		// setup final events
 		eventED = new EndDocument ( );
@@ -199,13 +201,6 @@ public abstract class AbstractEXICoder
 		return scopeTypeLocalName.peekLast ( );
 	}
 
-	// protected final Rule getCurrentRule ()
-	// {
-	// assert ( !openRules.isEmpty ( ) );
-	//
-	// return openRules.peekLast ( );
-	// }
-
 	protected final void replaceRuleAtTheTop ( Rule top )
 	{
 		assert ( !openRules.isEmpty ( ) );
@@ -229,11 +224,6 @@ public abstract class AbstractEXICoder
 
 		openRules.removeLast ( );
 		currentRule = openRules.peekLast ( );
-	}
-
-	protected final FidelityOptions getFidelityOptions ()
-	{
-		return exiFactory.getFidelityOptions ( );
 	}
 
 	protected void pushRule ( final String namespaceURI, final String localName )
@@ -287,7 +277,7 @@ public abstract class AbstractEXICoder
 				ruleKey.setScope ( null );
 			}
 
-			ruleSchema = exiFactory.getGrammar ( ).getRule ( ruleKey );
+			ruleSchema = grammar.getRule ( ruleKey );
 
 			if ( ruleSchema == null && getScopeTypeLocalName ( ) != null )
 			{
@@ -297,7 +287,7 @@ public abstract class AbstractEXICoder
 				ruleScopeType.setNamespaceURI ( getScopeTypeURI ( ) );
 				ruleKey.setScopeType ( ruleScopeType );
 
-				ruleSchema = exiFactory.getGrammar ( ).getRule ( ruleKey );
+				ruleSchema = grammar.getRule ( ruleKey );
 			}
 		}
 

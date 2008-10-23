@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -158,8 +157,7 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		decodeAttributeXsiType ( );
 		
 		//	update grammar according to given xsi:type
-		Grammar g = exiFactory.getGrammar ( );
-		TypeGrammar tg = ((SchemaInformedGrammar)g).getTypeGrammar ( this.xsiTypeUri, this.xsiTypeName );
+		TypeGrammar tg = ((SchemaInformedGrammar)grammar).getTypeGrammar ( this.xsiTypeUri, this.xsiTypeName );
 		
 		//	type known ?
 		if ( tg != null )

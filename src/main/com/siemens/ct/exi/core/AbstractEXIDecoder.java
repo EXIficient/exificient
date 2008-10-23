@@ -129,11 +129,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			{
 				// 3rd level
 				int ec3 = decode3rdLevelEventCode ( );
-				nextEventType = currentRule.get3rdLevelEvent ( ec3, getFidelityOptions ( ) );
+				nextEventType = currentRule.get3rdLevelEvent ( ec3, fidelityOptions );
 			}
 			else
 			{
-				nextEventType = currentRule.get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
+				nextEventType = currentRule.get2ndLevelEvent ( ec2, fidelityOptions );
 
 				if ( nextEventType == EventType.ATTRIBUTE_INVALID_VALUE )
 				{
@@ -161,18 +161,19 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		{
 			throw new EXIException ( e );
 		}
-		
+
 		if ( ec3AT < ( sir.getNumberOfSchemaDeviatedAttributes ( ) - 1 ) )
 		{
-			//	deviated attribute
+			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode ( );
 			nextEvent = currentRule.get1stLevelEvent ( ec );
 		}
 		else if ( ec3AT == ( sir.getNumberOfSchemaDeviatedAttributes ( ) - 1 ) )
 		{
-			//	deviated xsi:nil
+			// deviated xsi:nil
 			nextEventType = EventType.ATTRIBUTE_XSI_NIL_DEVIATION;
-		} else
+		}
+		else
 		{
 			throw new EXIException ( "Error occured while decoding deviated attribute" );
 		}
@@ -182,10 +183,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch1 = currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
 			int level1 = block.readEventCode ( ch1 );
 
-			if ( currentRule.hasSecondOrThirdLevel ( exiFactory.getFidelityOptions ( ) ) )
+			if ( currentRule.hasSecondOrThirdLevel ( fidelityOptions ) )
 			{
 				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
 			}
@@ -204,10 +205,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch2 = currentRule.get2ndLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
 			int level2 = block.readEventCode ( ch2 );
 
-			if ( currentRule.get3rdLevelCharacteristics ( getFidelityOptions ( ) ) > 0 )
+			if ( currentRule.get3rdLevelCharacteristics ( fidelityOptions ) > 0 )
 			{
 				return ( level2 < ( ch2 - 1 ) ? level2 : Constants.NOT_FOUND );
 			}
@@ -226,7 +227,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch3 = currentRule.get3rdLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch3 = currentRule.get3rdLevelCharacteristics ( fidelityOptions );
 			return block.readEventCode ( ch3 );
 		}
 		catch ( IOException e )
@@ -397,7 +398,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			throw new EXIException ( e );
 		}
 	}
-	
+
 	protected void decodeAttributeXsiNilDeviation () throws EXIException
 	{
 		try
@@ -517,7 +518,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		return xsiNil;
 	}
-	
+
 	public String getXsiNilDeviation ()
 	{
 		return xsiNilDeviation;

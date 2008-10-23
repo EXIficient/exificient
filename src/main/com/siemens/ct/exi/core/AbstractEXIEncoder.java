@@ -31,7 +31,6 @@ import com.siemens.ct.exi.core.sax.NamespacePrefixLevels;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
-import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.DatatypeEvent;
@@ -94,11 +93,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	protected void encode1stLevelEventCode ( int pos ) throws EXIException
 	{
-		assert ( pos < currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) ) );
+		assert ( pos < currentRule.get1stLevelCharacteristics ( fidelityOptions ) );
 
 		try
 		{
-			block.writeEventCode ( pos, currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) ) );
+			block.writeEventCode ( pos, currentRule.get1stLevelCharacteristics ( fidelityOptions ) );
 		}
 		catch ( IOException e )
 		{
@@ -111,11 +110,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// 1st level
-			int ch1 = currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
 			block.writeEventCode ( ch1 - 1, ch1 );
 
 			// 2nd level
-			int ch2 = currentRule.get2ndLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
 			assert ( pos < ch2 );
 
 			block.writeEventCode ( pos, ch2 );
@@ -131,15 +130,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// 1st level
-			int ch1 = currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
 			block.writeEventCode ( ch1 - 1, ch1 );
 
 			// 2nd level
-			int ch2 = currentRule.get2ndLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
 			block.writeEventCode ( ch2 - 1, ch2 );
 
 			// 3rd level
-			int ch3 = currentRule.get3rdLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch3 = currentRule.get3rdLevelCharacteristics ( fidelityOptions );
 			assert ( pos < ch3 );
 			block.writeEventCode ( pos, ch3 );
 		}
@@ -202,27 +201,24 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			throw new EXIException ( e );
 		}
 	}
-	
-	protected void encodeTypeInvalidAttributeSecondLevel ( )
-	throws EXIException
+
+	protected void encodeTypeInvalidAttributeSecondLevel () throws EXIException
 	{
-		int ec2ATdeviated = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE,
-				exiFactory.getFidelityOptions ( ) );
+		int ec2ATdeviated = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions );
 
 		// encode 2nd level event-code
 		encode2ndLevelEventCode ( ec2ATdeviated );
 	}
-	
-	protected void encodeTypeInvalidXsiAttribute ( String value )
-	throws EXIException
+
+	protected void encodeTypeInvalidXsiAttribute ( String value ) throws EXIException
 	{
 		// encode 2nd level event-code
 		encodeTypeInvalidAttributeSecondLevel ( );
-		
+
 		// calculate 3rd level event-code
 		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) currentRule;
 		int ec3nil = schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) - 1;
-		
+
 		try
 		{
 			// encode 3rd level event-code
@@ -236,7 +232,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			throw new EXIException ( e );
 		}
 	}
-	
 
 	protected void encodeGenericValue ( int ec, String uri, String localName, String value ) throws EXIException
 	{
@@ -310,7 +305,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeEndDocument () throws EXIException
 	{
-		int ec = currentRule.get1stLevelEventCode ( eventED, getFidelityOptions ( ) );
+		int ec = currentRule.get1stLevelEventCode ( eventED, fidelityOptions );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
@@ -340,18 +335,18 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		eventSE.setNamespaceURI ( uri );
 		eventSE.setLocalPart ( localName );
 
-		int ec = currentRule.get1stLevelEventCode ( eventSE, getFidelityOptions ( ) );
+		int ec = currentRule.get1stLevelEventCode ( eventSE, fidelityOptions );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
 			// generic SE (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode ( eventSEg, getFidelityOptions ( ) );
+			int ecGeneric = currentRule.get1stLevelEventCode ( eventSEg, fidelityOptions );
 
 			if ( ecGeneric == Constants.NOT_FOUND )
 			{
 				// Undeclared SE(*) can be found on 2nd level
-				int ecSEundeclared = currentRule.get2ndLevelEventCode (
-						EventType.START_ELEMENT_GENERIC_UNDECLARED, exiFactory.getFidelityOptions ( ) );
+				int ecSEundeclared = currentRule.get2ndLevelEventCode ( EventType.START_ELEMENT_GENERIC_UNDECLARED,
+						fidelityOptions );
 
 				if ( ecSEundeclared == Constants.NOT_FOUND )
 				{
@@ -442,13 +437,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeEndElement () throws EXIException
 	{
-		int ec = currentRule.get1stLevelEventCode ( eventEE, getFidelityOptions ( ) );
+		int ec = currentRule.get1stLevelEventCode ( eventEE, fidelityOptions );
 
 		// Special case: SAX does not inform about empty ("") CH events
 		// --> if EE is not found check whether an empty CH event *helps*
 		if ( ec == Constants.NOT_FOUND )
 		{
-			int ecCH = currentRule.get1stLevelEventCode ( eventCH, getFidelityOptions ( ) );
+			int ecCH = currentRule.get1stLevelEventCode ( eventCH, fidelityOptions );
 
 			if ( ecCH != Constants.NOT_FOUND
 					&& block.isTypeValid ( getDatatypeOfEvent ( ecCH ), Constants.EMPTY_STRING ) )
@@ -463,15 +458,14 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ecCH ) );
 
 				// try the EE event once again
-				ec = currentRule.get1stLevelEventCode ( eventEE, getFidelityOptions ( ) );
+				ec = currentRule.get1stLevelEventCode ( eventEE, fidelityOptions );
 			}
 		}
 
 		if ( ec == Constants.NOT_FOUND )
 		{
 			// Undeclared EE can be found on 2nd level
-			int ecEEundeclared = currentRule.get2ndLevelEventCode ( EventType.END_ELEMENT_UNDECLARED,
-					exiFactory.getFidelityOptions ( ) );
+			int ecEEundeclared = currentRule.get2ndLevelEventCode ( EventType.END_ELEMENT_UNDECLARED, fidelityOptions );
 
 			if ( ecEEundeclared == Constants.NOT_FOUND )
 			{
@@ -504,13 +498,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeNamespaceDeclaration ( String uri, String prefix ) throws EXIException
 	{
-		if ( getFidelityOptions ( ).isFidelityEnabled ( FidelityOptions.FEATURE_PREFIX ) )
+		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PREFIX ) )
 		{
 			try
 			{
 				// event code
-				int ec2 = currentRule.get2ndLevelEventCode ( EventType.NAMESPACE_DECLARATION,
-						getFidelityOptions ( ) );
+				int ec2 = currentRule.get2ndLevelEventCode ( EventType.NAMESPACE_DECLARATION, fidelityOptions );
 				encode2ndLevelEventCode ( ec2 );
 
 				// prefix mapping
@@ -541,13 +534,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 	{
 		if ( currentRule.isSchemaRule ( ) )
 		{
-			int ec2 = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_TYPE,
-					exiFactory.getFidelityOptions ( ) );
+			int ec2 = currentRule
+					.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions );
 
 			if ( ec2 == Constants.NOT_FOUND )
 			{
 				// schema deviation in strict mode ONLY
-				assert ( getFidelityOptions ( ).isStrict ( ) );
+				assert ( fidelityOptions.isStrict ( ) );
 
 				String msg = "Skip unexpected type-cast, xsi:type ({" + uri + "}" + localName;
 				errorHandler.warning ( new EXIException ( msg ) );
@@ -555,8 +548,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			else
 			{
 				// lookup type-grammar
-				Grammar g = exiFactory.getGrammar ( );
-				TypeGrammar tg = ( (SchemaInformedGrammar) g ).getTypeGrammar ( uri, localName );
+				TypeGrammar tg = ( (SchemaInformedGrammar) grammar ).getTypeGrammar ( uri, localName );
 
 				/*
 				 * The value of each AT (xsi:type) event is represented as a
@@ -569,7 +561,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				if ( tg == null )
 				{
 					// TODO type unknown --> what to do ?
-					
+
 					// encode event-code
 					encode2ndLevelEventCode ( ec2 );
 					// type as qname
@@ -594,8 +586,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			// schema-less mode
 
 			// AT(*) can be found on 2nd level
-			int ecATundeclared = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-					exiFactory.getFidelityOptions ( ) );
+			int ecATundeclared = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions );
 
 			if ( ecATundeclared == Constants.NOT_FOUND )
 			{
@@ -626,8 +617,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		if ( currentRule.isSchemaRule ( ) )
 		{
 			// nillable ?
-			int ec2 = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_NIL,
-					exiFactory.getFidelityOptions ( ) );
+			int ec2 = currentRule
+					.get2ndLevelEventCode ( EventType.ATTRIBUTE_XSI_NIL, fidelityOptions );
 
 			if ( ec2 == Constants.NOT_FOUND )
 			{
@@ -664,7 +655,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 					// TODO If the value is not a schema-valid Boolean, the AT
 					// (xsi:nil) event is represented by the AT(*)
 					// [schema-invalid value] terminal
-					encodeTypeInvalidXsiAttribute( rawNil );
+					encodeTypeInvalidXsiAttribute ( rawNil );
 				}
 			}
 		}
@@ -673,8 +664,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 			// schema-less mode
 
 			// AT(*) can be found on 2nd level
-			int ecATundeclared = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-					exiFactory.getFidelityOptions ( ) );
+			int ecATundeclared = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions );
 
 			if ( ecATundeclared == Constants.NOT_FOUND )
 			{
@@ -697,26 +687,26 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		eventAT.setNamespaceURI ( uri );
 		eventAT.setLocalPart ( localName );
 
-		int ec = currentRule.get1stLevelEventCode ( eventAT, getFidelityOptions ( ) );
+		int ec = currentRule.get1stLevelEventCode ( eventAT, fidelityOptions );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
 			// generic AT (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode ( eventATg, getFidelityOptions ( ) );
+			int ecGeneric = currentRule.get1stLevelEventCode ( eventATg, fidelityOptions );
 
 			if ( ecGeneric == Constants.NOT_FOUND )
 			{
 				// Undeclared AT(*) can be found on 2nd level
 				int ecATundeclared = currentRule.get2ndLevelEventCode ( EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-						exiFactory.getFidelityOptions ( ) );
+						fidelityOptions );
 
 				if ( ecATundeclared == Constants.NOT_FOUND )
 				{
 					// Warn encoder that the attribute is simply skipped
 					// Note: should never happen except in strict mode
-					assert ( getFidelityOptions ( ).isStrict ( ) );
+					assert ( fidelityOptions.isStrict ( ) );
 					String msg = "Skip AT " + uri + ":" + localName + " = " + value + " (StrictMode="
-							+ getFidelityOptions ( ).isStrict ( ) + ")";
+							+ fidelityOptions.isStrict ( ) + ")";
 					errorHandler.warning ( new EXIException ( msg ) );
 				}
 				else
@@ -767,19 +757,19 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ec = currentRule.get1stLevelEventCode ( eventCH, getFidelityOptions ( ) );
+			int ec = currentRule.get1stLevelEventCode ( eventCH, fidelityOptions );
 
 			// valid value and valid event-code ?
 			if ( ec == Constants.NOT_FOUND || !block.isTypeValid ( getDatatypeOfEvent ( ec ), chars ) )
 			{
 				// generic CH (on first level)
-				int ecGeneric = currentRule.get1stLevelEventCode ( eventCHg, getFidelityOptions ( ) );
+				int ecGeneric = currentRule.get1stLevelEventCode ( eventCHg, fidelityOptions );
 
 				if ( ecGeneric == Constants.NOT_FOUND )
 				{
 					// Undeclared CH can be found on 2nd level
-					int ecCHundeclared = currentRule.get2ndLevelEventCode (
-							EventType.CHARACTERS_GENERIC_UNDECLARED, exiFactory.getFidelityOptions ( ) );
+					int ecCHundeclared = currentRule.get2ndLevelEventCode ( EventType.CHARACTERS_GENERIC_UNDECLARED,
+							fidelityOptions );
 
 					if ( ecCHundeclared == Constants.NOT_FOUND )
 					{
@@ -840,12 +830,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeComment ( char[] ch, int start, int length ) throws EXIException
 	{
-		if ( getFidelityOptions ( ).isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) )
+		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) )
 		{
 			try
 			{
 				// comments can be found on 3rd level
-				int ec3 = currentRule.get3rdLevelEventCode ( EventType.COMMENT, getFidelityOptions ( ) );
+				int ec3 = currentRule.get3rdLevelEventCode ( EventType.COMMENT, fidelityOptions );
 				encode3rdLevelEventCode ( ec3 );
 
 				// encode CM content
@@ -863,13 +853,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeProcessingInstruction ( String target, String data ) throws EXIException
 	{
-		if ( getFidelityOptions ( ).isFidelityEnabled ( FidelityOptions.FEATURE_PI ) )
+		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PI ) )
 		{
 			try
 			{
 				// processing instructions can be found on 3rd level
-				int ec3 = currentRule.get3rdLevelEventCode ( EventType.PROCESSING_INSTRUCTION,
-						getFidelityOptions ( ) );
+				int ec3 = currentRule.get3rdLevelEventCode ( EventType.PROCESSING_INSTRUCTION, fidelityOptions );
 				encode3rdLevelEventCode ( ec3 );
 
 				// encode PI content

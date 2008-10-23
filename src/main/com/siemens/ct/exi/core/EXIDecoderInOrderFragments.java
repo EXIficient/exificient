@@ -27,7 +27,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081023
  */
 
 public class EXIDecoderInOrderFragments extends AbstractEXIDecoderInOrder
@@ -43,6 +43,6 @@ public class EXIDecoderInOrderFragments extends AbstractEXIDecoderInOrder
 		super.initForEachRun( );
 		
 		//	push stack with fragment grammar (possible root elements etc)
-		pushRule ( exiFactory.getGrammar ( ).getBuiltInFragmentGrammar ( ) );
+		pushRule ( grammar.getBuiltInFragmentGrammar ( ) );
 	}	
 }
