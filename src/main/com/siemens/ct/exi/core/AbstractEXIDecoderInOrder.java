@@ -35,7 +35,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081023
  */
 
 public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
@@ -178,9 +178,9 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		if ( this.xsiNil )
 		{
 			//	jump to typeEmpty
-			if ( getCurrentRule ( ) instanceof SchemaInformedRule )
+			if ( currentRule instanceof SchemaInformedRule )
 			{
-				replaceRuleAtTheTop ( ((SchemaInformedRule)getCurrentRule ( )).getTypeEmpty ( ) );
+				replaceRuleAtTheTop ( ((SchemaInformedRule)currentRule ).getTypeEmpty ( ) );
 			}
 			else
 			{

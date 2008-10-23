@@ -44,7 +44,7 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081023
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXIDecoder
@@ -129,11 +129,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			{
 				// 3rd level
 				int ec3 = decode3rdLevelEventCode ( );
-				nextEventType = getCurrentRule ( ).get3rdLevelEvent ( ec3, getFidelityOptions ( ) );
+				nextEventType = currentRule.get3rdLevelEvent ( ec3, getFidelityOptions ( ) );
 			}
 			else
 			{
-				nextEventType = getCurrentRule ( ).get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
+				nextEventType = currentRule.get2ndLevelEvent ( ec2, getFidelityOptions ( ) );
 
 				if ( nextEventType == EventType.ATTRIBUTE_INVALID_VALUE )
 				{
@@ -143,14 +143,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		}
 		else
 		{
-			nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
+			nextEvent = currentRule.get1stLevelEvent ( ec );
 			nextEventType = nextEvent.getEventType ( );
 		}
 	}
 
 	protected void updateInvalidValueAttribute () throws EXIException
 	{
-		SchemaInformedRule sir = (SchemaInformedRule) getCurrentRule ( );
+		SchemaInformedRule sir = (SchemaInformedRule) currentRule;
 
 		int ec3AT;
 		try
@@ -166,7 +166,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		{
 			//	deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode ( );
-			nextEvent = getCurrentRule ( ).get1stLevelEvent ( ec );
+			nextEvent = currentRule.get1stLevelEvent ( ec );
 		}
 		else if ( ec3AT == ( sir.getNumberOfSchemaDeviatedAttributes ( ) - 1 ) )
 		{
@@ -182,10 +182,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch1 = getCurrentRule ( ).get1stLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch1 = currentRule.get1stLevelCharacteristics ( getFidelityOptions ( ) );
 			int level1 = block.readEventCode ( ch1 );
 
-			if ( getCurrentRule ( ).hasSecondOrThirdLevel ( exiFactory.getFidelityOptions ( ) ) )
+			if ( currentRule.hasSecondOrThirdLevel ( exiFactory.getFidelityOptions ( ) ) )
 			{
 				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
 			}
@@ -204,10 +204,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch2 = getCurrentRule ( ).get2ndLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch2 = currentRule.get2ndLevelCharacteristics ( getFidelityOptions ( ) );
 			int level2 = block.readEventCode ( ch2 );
 
-			if ( getCurrentRule ( ).get3rdLevelCharacteristics ( getFidelityOptions ( ) ) > 0 )
+			if ( currentRule.get3rdLevelCharacteristics ( getFidelityOptions ( ) ) > 0 )
 			{
 				return ( level2 < ( ch2 - 1 ) ? level2 : Constants.NOT_FOUND );
 			}
@@ -226,7 +226,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch3 = getCurrentRule ( ).get3rdLevelCharacteristics ( getFidelityOptions ( ) );
+			int ch3 = currentRule.get3rdLevelCharacteristics ( getFidelityOptions ( ) );
 			return block.readEventCode ( ch3 );
 		}
 		catch ( IOException e )
@@ -238,7 +238,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected void decodeStartDocumentStructure () throws EXIException
 	{
 		// step forward
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 	}
 
 	protected void decodeStartElementStructure () throws EXIException
@@ -248,7 +248,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		this.elementLocalName = ( (StartElement) nextEvent ).getLocalPart ( );
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 
 		// update grammars etc.
 		pushRule ( elementURI, elementLocalName );
@@ -260,10 +260,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		// decode uri & local-name
 		decodeStartElementExpandedName ( );
 
-		Rule tmpStorage = getCurrentRule ( );
+		Rule tmpStorage = currentRule;
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 
 		// learn start-element ?
 		tmpStorage.learnStartElement ( elementURI, elementLocalName );
@@ -279,10 +279,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		decodeStartElementExpandedName ( );
 
 		// learn start-element ?
-		getCurrentRule ( ).learnStartElement ( elementURI, elementLocalName );
+		currentRule.learnStartElement ( elementURI, elementLocalName );
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRuleForUndeclaredSE ( ) );
+		replaceRuleAtTheTop ( currentRule.getElementContentRuleForUndeclaredSE ( ) );
 
 		// update grammars etc.
 		pushRule ( elementURI, elementLocalName );
@@ -331,7 +331,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		this.attributeLocalName = at.getLocalPart ( );
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 
 		return at;
 	}
@@ -342,7 +342,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		decodeAttributeGenericUndeclaredStructure ( );
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 	}
 
 	protected void decodeAttributeGenericUndeclaredStructure () throws EXIException
@@ -362,7 +362,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			else
 			{
 				// update grammar
-				getCurrentRule ( ).learnAttribute ( attributeURI, attributeLocalName );
+				currentRule.learnAttribute ( attributeURI, attributeLocalName );
 			}
 		}
 		catch ( IOException e )
@@ -414,23 +414,23 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	protected Characters decodeCharactersStructure () throws IOException
 	{
 		// step forward
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 
 		return (Characters) nextEvent;
 	}
 
 	protected void decodeCharactersGenericStructure ()
 	{
-		replaceRuleAtTheTop ( getCurrentRule ( ).get1stLevelRule ( ec ) );
+		replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ec ) );
 	}
 
 	protected void decodeCharactersUndeclaredStructure ()
 	{
 		// learn character event ?
-		getCurrentRule ( ).learnCharacters ( );
+		currentRule.learnCharacters ( );
 
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
+		replaceRuleAtTheTop ( currentRule.getElementContentRule ( ) );
 	}
 
 	protected void decodeEndElementStructure ()
@@ -452,7 +452,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			comment = block.readString ( );
 
 			// step forward
-			replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
+			replaceRuleAtTheTop ( currentRule.getElementContentRule ( ) );
 		}
 		catch ( IOException e )
 		{
@@ -470,7 +470,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			piData = block.readString ( );
 
 			// step forward
-			replaceRuleAtTheTop ( getCurrentRule ( ).getElementContentRule ( ) );
+			replaceRuleAtTheTop ( currentRule.getElementContentRule ( ) );
 		}
 		catch ( IOException e )
 		{

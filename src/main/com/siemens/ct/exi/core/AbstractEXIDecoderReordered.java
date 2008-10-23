@@ -46,7 +46,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081016
+ * @version 0.1.20081023
  */
 
 public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
@@ -512,9 +512,9 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 
 		if ( xsiNil )
 		{
-			if ( getCurrentRule ( ) instanceof SchemaInformedRule )
+			if ( currentRule instanceof SchemaInformedRule )
 			{
-				replaceRuleAtTheTop ( ( (SchemaInformedRule) getCurrentRule ( ) ).getTypeEmpty ( ) );
+				replaceRuleAtTheTop ( ( (SchemaInformedRule) currentRule ).getTypeEmpty ( ) );
 			}
 			else
 			{

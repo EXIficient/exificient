@@ -49,7 +49,7 @@ import com.siemens.ct.exi.util.UnsynchronizedStack;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081023
  */
 
 public abstract class AbstractEXICoder
@@ -82,8 +82,9 @@ public abstract class AbstractEXICoder
 	protected UnsynchronizedStack<String>		scopeTypeURI;
 	protected UnsynchronizedStack<String>		scopeTypeLocalName;
 
-	// stack when traversing the EXI document
+	// currentRule and rule stack when traversing the EXI document
 	protected UnsynchronizedStack<Rule>			openRules;
+	protected Rule								currentRule;
 
 	// keys for fetching new rule
 	private ElementKey							ruleKey;
@@ -145,6 +146,8 @@ public abstract class AbstractEXICoder
 		runtimeDispatcher.clear ( );
 		// stack when traversing the EXI document
 		openRules.clear ( );
+		currentRule = null;
+		pushRule ( null );
 		// reset scope root element (unknown)
 		scopeURI.clear ( );
 		scopeLocalName.clear ( );
@@ -196,12 +199,12 @@ public abstract class AbstractEXICoder
 		return scopeTypeLocalName.peekLast ( );
 	}
 
-	protected final Rule getCurrentRule ()
-	{
-		assert ( !openRules.isEmpty ( ) );
-
-		return openRules.peekLast ( );
-	}
+	// protected final Rule getCurrentRule ()
+	// {
+	// assert ( !openRules.isEmpty ( ) );
+	//
+	// return openRules.peekLast ( );
+	// }
 
 	protected final void replaceRuleAtTheTop ( Rule top )
 	{
@@ -209,13 +212,15 @@ public abstract class AbstractEXICoder
 		assert ( top != null );
 
 		openRules.replaceLast ( top );
+		currentRule = top;
 	}
 
 	protected final void pushRule ( Rule r )
 	{
-		assert ( r != null );
+		// assert ( r != null );
 
 		openRules.addLast ( r );
+		currentRule = r;
 	}
 
 	protected final void popRule ()
@@ -223,6 +228,7 @@ public abstract class AbstractEXICoder
 		assert ( !openRules.isEmpty ( ) );
 
 		openRules.removeLast ( );
+		currentRule = openRules.peekLast ( );
 	}
 
 	protected final FidelityOptions getFidelityOptions ()
@@ -302,7 +308,7 @@ public abstract class AbstractEXICoder
 	{
 		Map<String, Rule> mapNS;
 		Rule r;
-		
+
 		// runtime-grammar
 		if ( ( mapNS = runtimeDispatcher.get ( namespaceURI ) ) == null )
 		{
