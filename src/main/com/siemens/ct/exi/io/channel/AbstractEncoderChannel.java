@@ -40,7 +40,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081010
+ * @version 0.1.20081031
  */
 
 public abstract class AbstractEncoderChannel implements EncoderChannel
@@ -193,20 +193,21 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 		{
 			throw new UnsupportedOperationException ( );
 		}
-		else if ( n < 128 )
+
+		if ( n < 128 )
 		{
-			//	write byte as is
-			encode ( n );	
+			// write byte as is
+			encode ( n );
 		}
 		else
 		{
 			final int n7BitBlocks = MethodsBag.numberOf7BitBlocksToRepresent ( n );
-			
+
 			switch ( n7BitBlocks )
 			{
 				case 5:
 					encode ( 128 | n );
-					n = n >>> 7;				
+					n = n >>> 7;
 				case 4:
 					encode ( 128 | n );
 					n = n >>> 7;
@@ -218,8 +219,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 					n = n >>> 7;
 				case 1:
 					// 0 .. 7 (last byte)
-					encode ( 0 | n );			
-			}			
+					encode ( 0 | n );
+			}
 		}
 	}
 
@@ -230,41 +231,17 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 			throw new UnsupportedOperationException ( );
 		}
 
-		final int n7BitBlocks = MethodsBag.numberOf7BitBlocksToRepresent ( l );
-		
-		switch ( n7BitBlocks )
+		int lastEncode = (int) l;
+		l >>>= 7;
+
+		while ( l != 0 )
 		{
-			case 10:
-				encode ( 128 | (int)l );
-				l = l >>> 7;	
-			case 9:
-				encode ( 128 | (int)l );
-				l = l >>> 7;	
-			case 8:
-				encode ( 128 | (int)l );
-				l = l >>> 7;	
-			case 7:
-				encode ( 128 | (int)l );
-				l = l >>> 7;	
-			case 6:
-				encode ( 128 | (int)l );
-				l = l >>> 7;	
-			case 5:
-				encode ( 128 | (int)l );
-				l = l >>> 7;				
-			case 4:
-				encode ( 128 | (int)l );
-				l = l >>> 7;
-			case 3:
-				encode ( 128 | (int)l );
-				l = l >>> 7;
-			case 2:
-				encode ( 128 | (int)l );
-				l = l >>> 7;
-			case 1:
-				// 0 .. 7 (last byte)
-				encode ( 0 | (int)l );			
+			encode ( lastEncode | 128 );
+			lastEncode = (int) l;
+			l >>>= 7;
 		}
+
+		encode ( lastEncode );
 	}
 
 	protected void encodeUnsignedInteger ( BigInteger bi ) throws IOException
@@ -410,7 +387,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 		encodeInteger ( fl.iExponent );
 	}
 
-
 	/**
 	 * Encode Date-Time as a sequence of values representing the individual
 	 * components of the Date-Time.
@@ -489,7 +465,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 				throw new UnsupportedOperationException ( );
 		}
 	}
-
 
 	private void encodeDateTimeTimezone ( int tzMinutes ) throws IOException
 	{
