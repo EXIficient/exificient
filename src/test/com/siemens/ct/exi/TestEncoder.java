@@ -54,11 +54,15 @@ public class TestEncoder extends AbstractTestCoder
 		// create xml reader
 		XMLReader xmlReader;
 		
-		if ( false )
+		if ( true )
 		{
-			SAXParserFactory spf = SAXParserFactory.newInstance ( );
-			// spf.setNamespaceAware ( true );
-			xmlReader = spf.newSAXParser ( ).getXMLReader ( );
+//			SAXParserFactory spf = SAXParserFactory.newInstance ( );
+//			// spf.setNamespaceAware ( true );
+//			xmlReader = spf.newSAXParser ( ).getXMLReader ( );
+			
+			xmlReader = XMLReaderFactory.createXMLReader( "org.apache.xerces.parsers.SAXParser" );
+			xmlReader.setFeature( "http://xml.org/sax/features/namespaces", true );
+			xmlReader.setFeature( "http://xml.org/sax/features/namespace-prefixes", false );
 		}
 		else
 		{

@@ -103,10 +103,10 @@ public class QuickTestConfiguration
 	static
 	{
 		// SchemaTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest ( );
+		GeneralTestCase.setupQuickTest ( );
 		// W3CTestCase.setupQuickTest ( );
 		// FragmentTestCase.setupQuickTest ( );
-		DeviationsTestCase.setupQuickTest();
+		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}
 

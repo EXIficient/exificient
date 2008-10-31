@@ -24,9 +24,10 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
+ * @author Martin.Winter@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081030
  */
 
 public class XSDFloat
@@ -36,23 +37,25 @@ public class XSDFloat
 	public static final long	MANTISSA_MINUS_INFINITY	= -1;
 	public static final long	MANTISSA_NOT_A_NUMBER	= 0;
 
-	public long	iMantissa;
-	public long	iExponent;
-	
-	private XSDFloat ( )
+	public long					iMantissa;
+	public long					iExponent;
+
+	private XSDFloat ()
 	{
 	}
-	
-	public static XSDFloat newInstance()
+
+	public static XSDFloat newInstance ()
 	{
-		return new XSDFloat();
+		return new XSDFloat ( );
 	}
 
 	public void parse ( String s ) throws XMLParsingException
 	{
-		// s = s.trim ( );
-
-		if ( s.equals ( "INF" ) )
+		if ( s.length ( ) == 0 )
+		{
+			throw new XMLParsingException ( "Empty string while parsing float" );
+		}
+		else if ( s.equals ( "INF" ) )
 		{
 			iMantissa = MANTISSA_INFINITY;
 			iExponent = FLOAT_SPECIAL_VALUES;
@@ -69,55 +72,125 @@ public class XSDFloat
 		}
 		else
 		{
-			StringBuffer sb = new StringBuffer ( s );
+			int decimalDigits = 0;
+			int len = s.length ( );
+			int pos = 0;
+			iMantissa = 0;
+			iExponent = 0;
+			char c;
+			boolean negative = false;
+			boolean negativeExponent = false;
 
-			try
+			if ( len == 0 )
 			{
-				int additionalExponent = 0;
-				int possibleIndexOfE = sb.indexOf ( "E" );
-				if ( possibleIndexOfE < 0 )
-				{
-					possibleIndexOfE = sb.indexOf ( "e" );
-				}
+				throw new XMLParsingException ( "Empty string while parsing float" );
+			}
 
-				if ( possibleIndexOfE >= 0 )
-				{
-					additionalExponent = Integer.parseInt ( sb.substring ( possibleIndexOfE + 1, sb
-							.length ( ) ) );
-					sb.delete ( possibleIndexOfE, sb.length ( ) );
-				}
+			// status: detecting sign
+			if ( ( c = s.charAt ( pos ) ) == '+' )
+			{
+				pos++;
+			}
+			else if ( c == '-' )
+			{
+				negative = true;
+				pos++;
+			}
 
-				int decimalPointLoc = sb.indexOf ( "." );
-				if ( decimalPointLoc < 0 )
+			// status: parsing mantissa before decimal point
+			while ( pos < len && ( c = s.charAt ( pos++ ) ) != '.' && c != 'e' && c != 'E' )
+			{
+				if ( c == '0' )
 				{
-					// eg. "12"
-					// encode mantissa and exponent
-					iMantissa = Long.parseLong ( sb.toString ( ) );
-					iExponent = 0;
+					iMantissa = 10 * iMantissa;
+				}
+				else if ( c > '0' && c <= '9' )
+				{
+					iMantissa = 10 * iMantissa + ( c - '0' );
 				}
 				else
 				{
-					// remove trailing zeros (evtl. decimal point)
-					int index = sb.length ( ) - 1;
-					while ( sb.length ( ) > 1 && sb.charAt ( index ) == '0' )
-					{ // stop latest at '.'
-						sb.deleteCharAt ( index );
-						index--;
-					}
-
-					// exponent
-					int decimalDigits = sb.length ( ) - ( decimalPointLoc + 1 );
-					iExponent = ( -1 ) * decimalDigits + additionalExponent;
-
-					// mantissa
-					String sBeforeDP = sb.substring ( 0, decimalPointLoc );
-					String sAfterDP = sb.substring ( decimalPointLoc + 1, sb.length ( ) );
-					iMantissa = Long.parseLong ( sBeforeDP + sAfterDP );
+					throw new XMLParsingException ( "Illegal character while parsing float: " + c + " at pos "
+							+ ( pos - 1 ) );
 				}
 			}
-			catch ( NumberFormatException e )
+
+			// status: parsing mantissa after decimal point
+			if ( c == '.' )
 			{
-				throw new XMLParsingException( e.getMessage ( ) );
+				while ( pos < len && ( c = s.charAt ( pos++ ) ) != 'e' && c != 'E' )
+				{
+					if ( c == '0' )
+					{
+						iMantissa = 10 * iMantissa;
+						decimalDigits++;
+					}
+					else if ( c > '0' && c <= '9' )
+					{
+						iMantissa = 10 * iMantissa + ( c - '0' );
+						decimalDigits++;
+					}
+					else
+					{
+						throw new XMLParsingException ( "Illegal character while parsing float: " + c + " at pos "
+								+ ( pos - 1 ) );
+					}
+				}
+			}
+
+			// status: parsing exponent after e or E
+			if ( c == 'e' || c == 'E' )
+			{
+				// status: checking sign of exponent
+				if ( ( c = s.charAt ( pos ) ) == '-' )
+				{
+					negativeExponent = true;
+					pos++;
+				}
+				else if ( c == '+' )
+				{
+					pos++;
+				}
+
+				while ( pos < len )
+				{
+					c = s.charAt ( pos++ );
+
+					if ( c >= '0' && c <= '9' )
+					{
+						iExponent = 10 * iExponent + ( c - '0' );
+					}
+					else
+					{
+						throw new XMLParsingException ( "Illegal character while parsing float: " + c + " at pos "
+								+ ( pos - 1 ) );
+					}
+				}
+
+				if ( negativeExponent )
+				{
+					iExponent = -iExponent;
+				}
+			}
+
+			// check whether whole string is parsed successfully
+			if ( pos != len )
+			{
+				throw new XMLParsingException ( "Illegal character while parsing float: " + c + " at pos " + ( pos - 1 ) );
+			}
+
+			// adjust exponent and mantissa
+			iExponent -= decimalDigits;
+
+			if ( negative )
+			{
+				iMantissa = -iMantissa;
+			}
+
+			// always encode zero as 0E0
+			if ( iMantissa == 0 )
+			{
+				iExponent = 0;
 			}
 		}
 	}
