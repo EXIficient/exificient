@@ -120,7 +120,7 @@ public class FragmentsTestCase extends TestCase
 
 		    	decoder.inspectEvent ( );
 	        	assertTrue ( decoder.getNextEventType ( ) == EventType.END_ELEMENT_UNDECLARED );
-	        	decoder.decodeEndElement ( );
+	        	decoder.decodeEndElementUndeclared ( );
 		    	
 	        decoder.inspectEvent ( );
         	assertTrue ( decoder.getNextEventType ( ) == EventType.END_ELEMENT );
@@ -153,7 +153,7 @@ public class FragmentsTestCase extends TestCase
 		    	assertTrue ( decoder.getAttributeValue ( ).equals ( atCh3 ) );
 
 		    	decoder.inspectEvent ( );
-	        	assertTrue ( decoder.getNextEventType ( ) == EventType.END_ELEMENT_UNDECLARED );
+	        	assertTrue ( decoder.getNextEventType ( ) == EventType.END_ELEMENT );
 	        	decoder.decodeEndElement ( );
 		    	
 	        decoder.inspectEvent ( );

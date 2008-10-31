@@ -25,6 +25,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Characters;
+import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 
@@ -137,6 +138,12 @@ public class SchemaLessRuleStartTag extends SchemaLessRuleContent
 	public void learnStartElement ( String uri, String localName )
 	{
 		addRule ( new StartElement ( uri, localName ), getElementContentRule ( ) );
+	}
+	
+	@Override
+	public void learnEndElement ( )
+	{
+		addTerminalRule ( new EndElement( ) );
 	}
 
 	@Override

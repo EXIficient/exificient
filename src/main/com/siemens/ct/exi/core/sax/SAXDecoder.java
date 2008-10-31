@@ -48,7 +48,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081016
+ * @version 0.1.20081031
  */
 
 public class SAXDecoder implements XMLReader
@@ -231,8 +231,18 @@ public class SAXDecoder implements XMLReader
 					handleCharacters ( decoder.getCharacters ( ) );
 					break;
 				case END_ELEMENT:
+					// fetch scope before popping rule etc.
+					String eeUri = decoder.getScopeURI ( );
+					String eeLocalName = decoder.getScopeLocalName ( );
+					decoder.decodeEndElement ( );
+					handleEndElement ( eeUri, eeLocalName );
+					break;
 				case END_ELEMENT_UNDECLARED:
-					handleEndElement ( );
+					// fetch scope before popping rule etc.
+					eeUri = decoder.getScopeURI ( );
+					eeLocalName = decoder.getScopeLocalName ( );
+					decoder.decodeEndElementUndeclared ( );
+					handleEndElement ( eeUri, eeLocalName );
 					break;
 				// case END_DOCUMENT:
 				// Note: done outside
@@ -273,15 +283,8 @@ public class SAXDecoder implements XMLReader
 		nsPrefixes.addLevel ( );
 	}
 
-	protected void handleEndElement () throws EXIException, SAXException
+	protected void handleEndElement ( String eeUri, String eeLocalName ) throws EXIException, SAXException
 	{
-		// fetch scope before popping rule etc.?
-		String eeUri = decoder.getScopeURI ( );
-		String eeLocalName = decoder.getScopeLocalName ( );
-
-		// decode
-		decoder.decodeEndElement ( );
-
 		// check whether a preceding start element is still deferred
 		checkDeferredStartElement ( );
 

@@ -236,6 +236,11 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
 		decodeEndElementStructure ( );
 	}
 	
+	public void decodeEndElementUndeclared( ) throws EXIException
+	{
+		decodeEndElementUndeclaredStructure ( );
+	}
+	
 	public void decodeEndDocument( ) throws EXIException
 	{
 		decodeEndDocumentStructure ( );

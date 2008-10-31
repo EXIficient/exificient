@@ -473,9 +473,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				throw new IllegalArgumentException ( "EE " + getScopeURI ( ) + ":" + getScopeLocalName ( ) );
 			}
 			else
-			{
+			{	
 				// encode [undeclared] event-code
 				encode2ndLevelEventCode ( ecEEundeclared );
+				
+				// learn end-element event ?
+				currentRule.learnEndElement ( );
 			}
 		}
 		else

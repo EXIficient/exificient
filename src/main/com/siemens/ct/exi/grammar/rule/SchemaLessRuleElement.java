@@ -83,17 +83,16 @@ public class SchemaLessRuleElement extends SchemaLessRuleContent
 		return ch2;
 	}
 
-//	public Rule getElementContentRule ()
-//	{
-//		//	this is already an *ElementContent* Rule
-//		return this;
-//	}
-
 	@Override
 	public void learnStartElement ( String uri, String localName )
 	{
 		addRule ( new StartElement ( uri, localName ), this );
 	}
+	
+	/*
+	 * 	Note: learnEndElement ( ) not necessary since EE is already present on
+	 * first level for element-content-rules
+	 */
 
 	@Override
 	public void learnAttribute ( String uri, String localName )

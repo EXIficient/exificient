@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081016
+ * @version 0.1.20081031
  */
 
 public interface EXIDecoder
@@ -111,6 +111,13 @@ public interface EXIDecoder
 	 * @throws EXIException
 	 */
 	public void decodeEndElement () throws EXIException;
+	
+	/**
+	 * Reads unexpected EXI end element.
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeEndElementUndeclared () throws EXIException;
 
 	/**
 	 * Parses expected attribute.

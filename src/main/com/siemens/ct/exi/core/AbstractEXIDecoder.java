@@ -440,6 +440,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		popRule ( );
 		popScope ( );
 	}
+	
+	protected void decodeEndElementUndeclaredStructure ()
+	{
+		// learn end-element event ?
+		currentRule.learnEndElement ( );
+		
+		// pop stack items
+		decodeEndElementStructure ( );
+	}
 
 	protected void decodeEndDocumentStructure () throws EXIException
 	{

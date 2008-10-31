@@ -226,8 +226,10 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 						decodeCharactersUndeclaredInternal ( );
 						break;
 					case END_ELEMENT:
-					case END_ELEMENT_UNDECLARED:
 						decodeEndElementInternal ( );
+						break;
+					case END_ELEMENT_UNDECLARED:
+						decodeEndElementUndeclaredInternal ( );
 						break;
 					case END_DOCUMENT:
 						decodeEndDocumentInternal ( );
@@ -633,6 +635,16 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder
 		popScope ( );
 
 		// assert ( ev.isEventType( EventType.END_ELEMENT ) );
+	}
+	
+	protected void decodeEndElementUndeclaredInternal () throws EXIException
+	{
+		decodeEndElementUndeclaredStructure ( );
+	}
+	
+	public void decodeEndElementUndeclared () throws EXIException
+	{
+		decodeEndElement ();
 	}
 
 	protected void decodeEndDocumentInternal () throws EXIException

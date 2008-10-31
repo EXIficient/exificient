@@ -28,7 +28,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080919
+ * @version 0.1.20081031
  */
 
 public interface Rule
@@ -89,6 +89,7 @@ public interface Rule
 	 * learning grammar
 	 */
 	public void learnStartElement ( String uri, String localName );
+	public void learnEndElement ( );
 	public void learnAttribute ( String uri, String localName );
 	public void learnCharacters ();
 	

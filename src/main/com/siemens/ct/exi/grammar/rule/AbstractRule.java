@@ -24,7 +24,7 @@ package com.siemens.ct.exi.grammar.rule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081031
  */
 
 import java.util.List;
@@ -73,6 +73,9 @@ public abstract class AbstractRule implements Rule
 	 * @see com.siemens.exi.grammar.rule.Rule#learnStartElement(javax.xml.namespace.QName)
 	 */
 	public void learnStartElement( String uri, String localName ) 
+	{
+	}
+	public void learnEndElement( ) 
 	{
 	}
 	public void learnAttribute( String uri, String localName ) 
