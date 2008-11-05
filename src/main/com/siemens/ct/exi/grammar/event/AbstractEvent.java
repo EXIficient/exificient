@@ -52,7 +52,7 @@ public abstract class AbstractEvent implements Event
 	{
 		return grammarNotation;
 	}
-	
+
 	@Override
 	public int hashCode ()
 	{
@@ -83,12 +83,15 @@ public abstract class AbstractEvent implements Event
 			switch ( o.getEventType ( ) )
 			{
 				case START_ELEMENT:
-					return +1;	//	first is smaller (important for schema order)
-//					return ( ( (StartElement) this ).compareTo ( ( (StartElement) o ).getNamespaceURI ( ),
-//							( (StartElement) o ).getLocalPart ( ) ) );
+					// CASE 1: first is smallest etc. (schema order)
+					return +1;
+
+//					// CASE 2: lexical order
+//					StartElement otherSE = (StartElement) o;
+//					return ( ( (StartElement) this ).compareTo ( otherSE.getNamespaceURI ( ), otherSE.getLocalPart ( ) ) );
 				case ATTRIBUTE:
-					return ( ( (Attribute) this ).compareTo ( ( (Attribute) o ).getNamespaceURI ( ),
-							( (Attribute) o ).getLocalPart ( ) ) );
+					Attribute otherAT = (Attribute) o;
+					return ( ( (Attribute) this ).compareTo ( otherAT.getNamespaceURI ( ), otherAT.getLocalPart ( ) ) );
 				default:
 					// default for all other events
 					return 0;

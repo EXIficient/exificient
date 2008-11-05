@@ -31,26 +31,26 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081103
  */
 
 public class Attribute extends AbstractDatatypeEvent implements ExpandedNameComparable
 {
 	private String	namespaceURI;
 	private String	localPart;
-	
+
 	public Attribute ( String uri, String localName, ExpandedName valueType, Datatype datatype )
 	{
 		super ( "AT", valueType, datatype );
 		eventType = EventType.ATTRIBUTE;
-		
+
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 		this.localPart = localName;
 	}
-	
+
 	public Attribute ( String uri, String localName )
 	{
-		this( uri, localName, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE  );
+		this ( uri, localName, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE );
 	}
 
 	public String getNamespaceURI ()
@@ -67,7 +67,7 @@ public class Attribute extends AbstractDatatypeEvent implements ExpandedNameComp
 	{
 		return localPart;
 	}
-	
+
 	public void setLocalPart ( String localPart )
 	{
 		this.localPart = localPart;
@@ -77,11 +77,10 @@ public class Attribute extends AbstractDatatypeEvent implements ExpandedNameComp
 	{
 		return "AT({" + namespaceURI + "}" + localPart + ")";
 	}
-	
+
 	@Override
 	public int hashCode ()
 	{
-		//return ( super.hashCode ( ) ^ namespaceURI.hashCode ( ) ^ localPart.hashCode ( ) );
 		return ( eventType.ordinal ( ) ^ namespaceURI.hashCode ( ) ^ localPart.hashCode ( ) );
 	}
 
@@ -89,8 +88,9 @@ public class Attribute extends AbstractDatatypeEvent implements ExpandedNameComp
 	{
 		if ( obj instanceof Attribute )
 		{
-			return ( 0 == compareTo ( ( (Attribute) obj ).getNamespaceURI ( ), ( (Attribute) obj ).getLocalPart ( ) ) );
-			}
+			Attribute otherAT = (Attribute) obj;
+			return ( localPart.equals ( otherAT.localPart ) && namespaceURI.equals ( otherAT.namespaceURI ) );
+		}
 		else
 		{
 			return false;

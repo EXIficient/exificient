@@ -28,7 +28,7 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.1.20081103
  */
 
 public class StartElement extends AbstractEvent implements ExpandedNameComparable
@@ -82,8 +82,7 @@ public class StartElement extends AbstractEvent implements ExpandedNameComparabl
 		if ( obj instanceof StartElement )
 		{
 			StartElement otherSE = (StartElement) obj;
-			return ( getLocalPart ( ).equals ( otherSE.getLocalPart ( ) ) && getNamespaceURI ( ).equals (
-					otherSE.getNamespaceURI ( ) ) );
+			return ( localPart.equals ( otherSE.localPart ) && namespaceURI.equals ( otherSE.namespaceURI ) );
 		}
 		else
 		{

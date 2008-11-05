@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -33,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081031
+ * @version 0.1.20081104
  */
 
 public abstract class SchemaLessRuleContent extends AbstractSchemaLessRule
