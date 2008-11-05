@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype.decoder; 
+package com.siemens.ct.exi.datatype.decoder;
 
 import java.io.IOException;
 
@@ -24,7 +24,6 @@ import com.siemens.ct.exi.datatype.AbstractTypeCoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoderImpl;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.io.channel.PreReadByteDecoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -33,24 +32,24 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081105
  */
 
-public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements TypeDecoder 
+public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements TypeDecoder
 {
-	//	EXI string table(s)
-	protected StringTableDecoder stringTable;
-	
+	// EXI string table(s)
+	protected StringTableDecoder	stringTable;
+
+	public AbstractTypeDecoder ( boolean isSchemaInformed )
+	{
+		stringTable = new StringTableDecoderImpl ( isSchemaInformed );
+	}
+
 	public StringTableDecoder getStringTable ()
 	{
 		return stringTable;
 	}
-	
-	public AbstractTypeDecoder( boolean isSchemaInformed  )
-	{
-		stringTable = new StringTableDecoderImpl( isSchemaInformed );
-	}
-	
+
 	public String decodeUri ( DecoderChannel dc ) throws IOException
 	{
 		String uri;
@@ -106,7 +105,6 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements T
 
 	public String decodeLocalName ( DecoderChannel dc, String uri ) throws IOException
 	{
-
 		String localName;
 		int length = dc.decodeUnsignedInteger ( );
 
@@ -143,58 +141,48 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements T
 	{
 		String value;
 
-		//	TODO modify (better way!??!)
-		if ( dc instanceof PreReadByteDecoderChannel )
+		int i = dc.decodeUnsignedInteger ( );
+
+		if ( i == 0 )
 		{
-			//	values already decoded (just fetch them again!)
-			value = ((PreReadByteDecoderChannel)dc).getNextValue ( );
+			// found in local value partition
+			// ==> string value is represented as zero (0) encoded as an
+			// Unsigned Integer
+			// followed by the compact identifier of the string value in the
+			// "local" value partition
+			int n = MethodsBag.getCodingLength ( stringTable.getLocalValueTableSize ( namespaceURI, localName ) );
+			int localID = dc.decodeNBitUnsignedInteger ( n );
+
+			value = stringTable.getLocalValue ( namespaceURI, localName, localID );
+		}
+		else if ( i == 1 )
+		{
+			// found in global value partition
+			// TODO text in format spec is NOT clear!!
+			// ==> When a string value is not found in the global value
+			// partition,
+			// but not in the "local" value partition, the String value is
+			// represented as one (1) encoded as an Unsigned Integer
+			// followed by the compact identifier of the String value in the
+			// global value partition.
+			int globalID;
+			int n = MethodsBag.getCodingLength ( stringTable.getGlobalValueTableSize ( ) );
+			globalID = dc.decodeNBitUnsignedInteger ( n );
+
+			value = stringTable.getGlobalValue ( globalID );
 		}
 		else
 		{
-			int i = dc.decodeUnsignedInteger ( );
-			
-			if ( i == 0 )
-			{
-				// found in local value partition
-				// ==> string value is represented as zero (0) encoded as an
-				// Unsigned Integer
-				// followed by the compact identifier of the string value in the
-				// "local" value partition		
-				int n = MethodsBag.getCodingLength ( stringTable
-						.getLocalValueTableSize ( namespaceURI, localName ) );
-				int localID = dc.decodeNBitUnsignedInteger ( n );
-				
-				value = stringTable.getLocalValue ( namespaceURI, localName, localID );
-			}
-			else if ( i == 1 )
-			{
-				// found in global value partition
-				// TODO text in format spec is NOT clear!!
-				// ==> When a string value is not found in the global value
-				// partition,
-				// but not in the "local" value partition, the String value is
-				// represented as one (1) encoded as an Unsigned Integer
-				// followed by the compact identifier of the String value in the
-				// global value partition.
-				int globalID;
-				int n = MethodsBag.getCodingLength ( stringTable.getGlobalValueTableSize ( ) );
-				globalID = dc.decodeNBitUnsignedInteger ( n );
-				
-				value = stringTable.getGlobalValue ( globalID );
-			}
-			else
-			{
-				// not found in global value (and local value) partition
-				// ==> string literal is encoded as a String with the length
-				// incremented by two.
-				value = dc.decodeStringOnly ( i - 2 );
-				// After encoding the string value, it is added to both the
-				// associated
-				// "local" value string table partition and the global value string
-				// table partition.
-				stringTable.addLocalValue ( namespaceURI, localName, value );
-				stringTable.addGlobalValue ( value );
-			}			
+			// not found in global value (and local value) partition
+			// ==> string literal is encoded as a String with the length
+			// incremented by two.
+			value = dc.decodeStringOnly ( i - 2 );
+			// After encoding the string value, it is added to both the
+			// associated
+			// "local" value string table partition and the global value string
+			// table partition.
+			stringTable.addLocalValue ( namespaceURI, localName, value );
+			stringTable.addGlobalValue ( value );
 		}
 
 		assert ( value != null );

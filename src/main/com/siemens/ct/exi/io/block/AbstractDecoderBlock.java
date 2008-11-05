@@ -33,13 +33,11 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081105
  */
 
 public abstract class AbstractDecoderBlock implements DecoderBlock
-{
-	private int				values	= 0;
-	
+{	
 	protected InputStream inputStream;
 	
 	protected TypeDecoder typeDecoder;
@@ -172,20 +170,13 @@ public abstract class AbstractDecoderBlock implements DecoderBlock
 		return getStructureChannel ( ).decodeBoolean();
 	}
 	
-	
-	
-	
-	
-	
 	public String readTypedValidValue ( Datatype datatype, final String namespaceURI, final String localName ) throws IOException
 	{
-		values++;
 		return typeDecoder.decodeValue ( datatype, getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
 	}
 	
 	public String readValueAsString ( String namespaceURI, String localName ) throws IOException
 	{
-		values++;
 		return typeDecoder.decodeValueAsString ( getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
 	}
 	

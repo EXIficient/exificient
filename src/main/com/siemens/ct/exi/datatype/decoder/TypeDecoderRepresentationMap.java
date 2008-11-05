@@ -18,10 +18,7 @@
 
 package com.siemens.ct.exi.datatype.decoder;
 
-import java.io.IOException;
-
-import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 
 /**
  * TODO Description
@@ -32,16 +29,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081105
  */
 
-public class TypeDecoderLexical extends AbstractTypeDecoder
+public interface TypeDecoderRepresentationMap extends TypeDecoder
 {
-	public TypeDecoderLexical ( boolean isSchemaInformed )
-	{
-		super ( isSchemaInformed );
-	}
-
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
-			throws IOException
-	{
-		return decodeValueAsString ( dc, namespaceURI, localName );
-	}
+	public void registerDatatypeRepresentation ( DatatypeRepresentation datatypeRepresentation );
 }

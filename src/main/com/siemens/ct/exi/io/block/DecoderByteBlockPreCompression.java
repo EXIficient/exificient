@@ -30,7 +30,7 @@ import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081105
  */
 
 public class DecoderByteBlockPreCompression extends AbstractDecoderByteBlockChannelized
@@ -43,7 +43,6 @@ public class DecoderByteBlockPreCompression extends AbstractDecoderByteBlockChan
 	
 	protected void init( ) throws IOException
 	{
-		//structureChannel = getNextChannel ( );
 		structureChannel = new ByteDecoderChannel ( getStream () );
 	}
 
@@ -54,7 +53,6 @@ public class DecoderByteBlockPreCompression extends AbstractDecoderByteBlockChan
 	
 	protected ByteDecoderChannel getNextChannel( ) throws IOException
 	{
-		//return new ByteDecoderChannel ( getStream () );
 		return structureChannel;
 	}
 

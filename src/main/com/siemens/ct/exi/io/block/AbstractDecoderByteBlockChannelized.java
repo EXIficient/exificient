@@ -38,7 +38,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081105
  */
 
 public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecoderBlock
@@ -158,5 +158,18 @@ public abstract class AbstractDecoderByteBlockChannelized extends AbstractDecode
 	public DecoderChannel getValueChannel ( String namespaceURI, String localName  ) throws IOException
 	{
 		return valueChannels.get ( namespaceURI ).get ( localName );
+	}
+	
+	@Override
+	public String readTypedValidValue ( Datatype datatype, final String namespaceURI, final String localName ) throws IOException
+	{
+		//	channelized block already pre-read data -> simply return string value
+		return getValueChannel ( namespaceURI, localName ).decodeString ( );}
+	
+	@Override
+	public String readValueAsString ( String namespaceURI, String localName ) throws IOException
+	{
+		//	channelized block already pre-read data -> simply return string value
+		return getValueChannel ( namespaceURI, localName ).decodeString ( );
 	}
 }

@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.helpers;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,6 +44,7 @@ import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderTyped;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderDatatypeRespresentationMap;
@@ -269,7 +269,7 @@ public class DefaultEXIFactory implements EXIFactory
 		{
 			if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
 			{
-				TypeDecoderDatatypeRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap (
+				TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap (
 						isSchemaInformed ( ) );
 
 				for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )

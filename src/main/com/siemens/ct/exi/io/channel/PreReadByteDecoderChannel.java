@@ -55,7 +55,7 @@ public class PreReadByteDecoderChannel implements DecoderChannel
 		}
 	}
 	
-	public String getNextValue( )
+	protected String getNextValue( )
 	{
 		return decodedValues[ currentValueIndex++ ];
 	}

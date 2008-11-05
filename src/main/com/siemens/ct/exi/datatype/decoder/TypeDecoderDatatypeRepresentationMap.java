@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.io.channel.PreReadByteDecoderChannel;
 
 /**
  * TODO Description
@@ -35,53 +34,42 @@ import com.siemens.ct.exi.io.channel.PreReadByteDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081105
  */
 
-public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder
+public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder implements
+		TypeDecoderRepresentationMap
 {
-	//	fallback type decoder
-	private TypeDecoderTyped defaultDecoder; 
-	
-	private Map<QName, DatatypeDecoder> userDefinedDatatypeRepresentations;
-	
+	// fallback type decoder
+	private TypeDecoderTyped		defaultDecoder;
+
+	private Map<QName, DatatypeDecoder>	userDefinedDatatypeRepresentations;
+
 	public TypeDecoderDatatypeRepresentationMap ( boolean isSchemaInformed )
 	{
 		super ( isSchemaInformed );
-		
-		defaultDecoder = new TypeDecoderTyped( isSchemaInformed );
-		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder>();
+
+		defaultDecoder = new TypeDecoderTyped ( isSchemaInformed );
+		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder> ( );
 	}
-	public void registerDatatypeRepresentation( DatatypeRepresentation datatypeRepresentation )
+
+	public void registerDatatypeRepresentation ( DatatypeRepresentation datatypeRepresentation )
 	{
-		//pluggableCodecs.put ( datatypeIdentifier, datatypeDecoder );
 		userDefinedDatatypeRepresentations.put ( datatypeRepresentation.getQName ( ), datatypeRepresentation );
 	}
 
-	public String decodeValue ( Datatype datatype, DecoderChannel dc,  final String namespaceURI, final String localName  )
+	public String decodeValue ( Datatype datatype, DecoderChannel dc, final String namespaceURI, final String localName )
 			throws IOException
 	{
-		//System.out.println ( datatype.getDatatypeIdentifier ( ) );
-		
 		if ( userDefinedDatatypeRepresentations.containsKey ( datatype.getDatatypeIdentifier ( ) ) )
 		{
-			if ( dc instanceof PreReadByteDecoderChannel )
-			{
-				//	values decoded already (just return them)
-				return ((PreReadByteDecoderChannel)dc).getNextValue ( );
-			}
-			else
-			{
-				// System.out.println ( "[DEC] Pluggable Codec in use!" );
-				
-				DatatypeDecoder dec = userDefinedDatatypeRepresentations.get ( datatype.getDatatypeIdentifier ( ) );
-				return dec.decodeValue ( this, datatype, dc,  namespaceURI, localName  );				
-			}
-
+			// System.out.println ( "[DEC] Pluggable Codec in use!" );
+			DatatypeDecoder dec = userDefinedDatatypeRepresentations.get ( datatype.getDatatypeIdentifier ( ) );
+			return dec.decodeValue ( this, datatype, dc, namespaceURI, localName );
 		}
 		else
 		{
-			return defaultDecoder.decodeValue ( datatype, dc, namespaceURI, localName  );
+			return defaultDecoder.decodeValue ( datatype, dc, namespaceURI, localName );
 		}
 	}
 
