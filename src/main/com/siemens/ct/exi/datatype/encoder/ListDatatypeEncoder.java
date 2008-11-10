@@ -35,7 +35,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081110
  */
 
 public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
@@ -132,6 +132,9 @@ public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements Data
 				break;
 			case BUILTIN_BOOLEAN:
 				datatypeEncoder = new BooleanDatatypeEncoder ( typeEncoder );
+				break;
+			case BUILTIN_BOOLEAN_PATTERN:
+				datatypeEncoder = new BooleanPatternDatatypeEncoder ( typeEncoder );
 				break;
 			case BUILTIN_DECIMAL:
 				datatypeEncoder = new DecimalDatatypeEncoder ( typeEncoder );

@@ -32,7 +32,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081110
  */
 
 public class ListDatatypeDecoder extends AbstractDatatypeDecoder
@@ -76,6 +76,9 @@ public class ListDatatypeDecoder extends AbstractDatatypeDecoder
 				break;
 			case BUILTIN_BOOLEAN:
 				datatypeDecoder = new BooleanDatatypeDecoder ( );
+				break;
+			case BUILTIN_BOOLEAN_PATTERN:
+				datatypeDecoder = new BooleanPatternDatatypeDecoder ( );
 				break;
 			case BUILTIN_DECIMAL:
 				datatypeDecoder = new DecimalDatatypeDecoder ( );

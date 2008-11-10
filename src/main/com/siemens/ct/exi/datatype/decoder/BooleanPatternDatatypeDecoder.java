@@ -16,7 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.decoder;
+
+import java.io.IOException;
+
+import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
  * TODO Description
@@ -24,25 +30,28 @@ package com.siemens.ct.exi.datatype;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081010
+ * @version 0.1.20081110
  */
 
-public enum BuiltInType
+public class BooleanPatternDatatypeDecoder extends AbstractDatatypeDecoder
 {
-	BUILTIN_BINARY,
-	BUILTIN_BOOLEAN,
-	BUILTIN_BOOLEAN_PATTERN,
-	BUILTIN_DECIMAL,
-	BUILTIN_FLOAT,
-	BUILTIN_INTEGER,
-	BUILTIN_UNSIGNED_INTEGER,
-	BUILTIN_QNAME,
-	/* Datetime */
-	BUILTIN_DATETIME,
-	/* String */
-	BUILTIN_STRING,
-	/* Enumeration */
-	BUILTIN_ENUMERATION,
-	/* List */
-	BUILTIN_LIST;
+
+	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI,
+			String localName ) throws IOException
+	{
+		int booleanID = dc.decodeNBitUnsignedInteger ( 2 );
+		switch ( booleanID )
+		{
+			case 0:
+				return Constants.XSD_BOOLEAN_FALSE;
+			case 1:
+				return Constants.XSD_BOOLEAN_0;
+			case 2:
+				return Constants.XSD_BOOLEAN_TRUE;
+			case 3:
+				return Constants.XSD_BOOLEAN_1;
+		}
+
+		throw new RuntimeException ( "Error while decoding boolean pattern facet" );
+	}
 }

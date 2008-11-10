@@ -31,7 +31,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081110
  */
 
 public class TypeEncoderTyped extends AbstractTypeEncoder
@@ -40,6 +40,7 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 
 	private BinaryDatatypeEncoder			binaryDTE;
 	private BooleanDatatypeEncoder			booleanDTE;
+	private BooleanPatternDatatypeEncoder	booleanPatternDTE;
 	private DecimalDatatypeEncoder			decimalDTE;
 	private FloatDatatypeEncoder			floatDTE;
 	private IntegerDatatypeEncoder			integerDTE;
@@ -48,32 +49,33 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 	private EnumerationDatatypeEncoder		enumerationDTE;
 	private ListDatatypeEncoder				listDTE;
 	private StringDatatypeEncoder			stringDTE;
-	
-	//public TypeEncoderTyped( boolean isSchemaInformed )
-	public TypeEncoderTyped( EXIFactory exiFactory )
+
+	// public TypeEncoderTyped( boolean isSchemaInformed )
+	public TypeEncoderTyped ( EXIFactory exiFactory )
 	{
-		super( exiFactory );
-		
-		binaryDTE			= new BinaryDatatypeEncoder ( this );
-		booleanDTE			= new BooleanDatatypeEncoder ( this );
-		decimalDTE			= new DecimalDatatypeEncoder ( this );
-		floatDTE			= new FloatDatatypeEncoder ( this );
-		integerDTE			= new IntegerDatatypeEncoder ( this );
-		unsignedIntegerDTE	= new UnsignedIntegerDatatypeEncoder ( this );
-		datetimeDTE			= new DatetimeDatatypeEncoder ( this );
-		enumerationDTE		= new EnumerationDatatypeEncoder ( this );
-		listDTE				= new ListDatatypeEncoder ( this );
-		stringDTE			= new StringDatatypeEncoder ( this );
+		super ( exiFactory );
+
+		binaryDTE = new BinaryDatatypeEncoder ( this );
+		booleanDTE = new BooleanDatatypeEncoder ( this );
+		booleanPatternDTE = new BooleanPatternDatatypeEncoder ( this );
+		decimalDTE = new DecimalDatatypeEncoder ( this );
+		floatDTE = new FloatDatatypeEncoder ( this );
+		integerDTE = new IntegerDatatypeEncoder ( this );
+		unsignedIntegerDTE = new UnsignedIntegerDatatypeEncoder ( this );
+		datetimeDTE = new DatetimeDatatypeEncoder ( this );
+		enumerationDTE = new EnumerationDatatypeEncoder ( this );
+		listDTE = new ListDatatypeEncoder ( this );
+		stringDTE = new StringDatatypeEncoder ( this );
 	}
-	
-	public TypeEncoderTyped( EXIFactory exiFactory, StringTableEncoder stringTable )
+
+	public TypeEncoderTyped ( EXIFactory exiFactory, StringTableEncoder stringTable )
 	{
-		//	typed encoder needs to be schemaInformed
-		this( exiFactory );
-		
+		// typed encoder needs to be schemaInformed
+		this ( exiFactory );
+
 		this.stringTable = stringTable;
 	}
-	
+
 	public boolean isTypeValid ( Datatype datatype, String value )
 	{
 		switch ( datatype.getDefaultBuiltInType ( ) )
@@ -83,6 +85,9 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 				break;
 			case BUILTIN_BOOLEAN:
 				lastDatatypeEncoder = booleanDTE;
+				break;
+			case BUILTIN_BOOLEAN_PATTERN:
+				lastDatatypeEncoder = booleanPatternDTE;
 				break;
 			case BUILTIN_DECIMAL:
 				lastDatatypeEncoder = decimalDTE;
@@ -106,22 +111,19 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 				lastDatatypeEncoder = listDTE;
 				break;
 			case BUILTIN_STRING:
-				 lastDatatypeEncoder = stringDTE;
+				lastDatatypeEncoder = stringDTE;
 				break;
 			default:
 				throw new RuntimeException ( "Unknown BuiltIn Type" );
 		}
-		
-		return lastDatatypeEncoder.isValid ( datatype, value );	
-	}
 
-	
+		return lastDatatypeEncoder.isValid ( datatype, value );
+	}
 
 	// first isValueTypeValid has to be called
 	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
 	{
 		lastDatatypeEncoder.writeValue ( valueChannel, uri, localName );
 	}
-
 
 }

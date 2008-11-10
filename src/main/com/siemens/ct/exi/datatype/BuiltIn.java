@@ -41,7 +41,7 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080924
+ * @version 0.1.20081110
  */
 
 public class BuiltIn
@@ -221,6 +221,10 @@ public class BuiltIn
 				throw new RuntimeException ( );
 			}
 		}
+		else if ( primitive.equals ( XSD_BOOLEAN ) && std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_PATTERN ) )
+		{
+			builtIn = BuiltInType.BUILTIN_BOOLEAN_PATTERN;
+		}
 		else
 		{
 			builtIn = getBuiltInOfPrimitiveMapping ( primitive );
@@ -294,6 +298,9 @@ public class BuiltIn
 				break;
 			case BUILTIN_BOOLEAN:
 				datatype = new DatatypeBoolean ( datatypeIdentifier );
+				break;
+			case BUILTIN_BOOLEAN_PATTERN:
+				datatype = new DatatypeBooleanPattern ( datatypeIdentifier );
 				break;
 			case BUILTIN_DATETIME:
 				if ( XSD_DATETIME.equals ( primitive ) )

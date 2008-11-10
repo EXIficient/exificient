@@ -29,13 +29,14 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081105
+ * @version 0.1.20081110
  */
 
 public class TypeDecoderTyped extends AbstractTypeDecoder
 {
 	protected BinaryDatatypeDecoder				binaryDTD;
 	protected BooleanDatatypeDecoder			booleanDTD;
+	protected BooleanPatternDatatypeDecoder		booleanPatternDTD;
 	protected DecimalDatatypeDecoder			decimalDTD;
 	protected FloatDatatypeDecoder				floatDTD;
 	protected IntegerDatatypeDecoder			integerDTD;
@@ -51,6 +52,7 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 
 		binaryDTD = new BinaryDatatypeDecoder ( );
 		booleanDTD = new BooleanDatatypeDecoder ( );
+		booleanPatternDTD = new BooleanPatternDatatypeDecoder ( );
 		decimalDTD = new DecimalDatatypeDecoder ( );
 		floatDTD = new FloatDatatypeDecoder ( );
 		integerDTD = new IntegerDatatypeDecoder ( );
@@ -70,6 +72,8 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 				return binaryDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_BOOLEAN:
 				return booleanDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
+			case BUILTIN_BOOLEAN_PATTERN:
+				return booleanPatternDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_DECIMAL:
 				return decimalDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_FLOAT:
