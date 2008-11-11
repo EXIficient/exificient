@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,15 +26,16 @@ import javax.xml.XMLConstants;
 
 import org.apache.xerces.xs.StringList;
 import org.apache.xerces.xs.XSConstants;
-import org.apache.xerces.xs.XSFacet;
 import org.apache.xerces.xs.XSMultiValueFacet;
 import org.apache.xerces.xs.XSObject;
 import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
+import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -41,7 +43,7 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081110
+ * @version 0.1.20081111
  */
 
 public class BuiltIn
@@ -80,7 +82,7 @@ public class BuiltIn
 	public static final Datatype					BOOLEAN_DATATYPE;
 
 	// built-In mapping
-	private static Map<ExpandedName, BuiltInType>	datatypeMapping;
+	private static Map<ExpandedName, ExpandedName>	datatypeMapping;
 
 	static
 	{
@@ -122,38 +124,37 @@ public class BuiltIn
 		/*
 		 * Datatype mappings
 		 */
-		datatypeMapping = new HashMap<ExpandedName, BuiltInType> ( );
+		datatypeMapping = new HashMap<ExpandedName, ExpandedName> ( );
 		// Binary
-		datatypeMapping.put ( XSD_BASE64BINARY, BuiltInType.BUILTIN_BINARY );
-		datatypeMapping.put ( XSD_HEXBINARY, BuiltInType.BUILTIN_BINARY );
+		datatypeMapping.put ( XSD_BASE64BINARY, XSD_BASE64BINARY );
+		datatypeMapping.put ( XSD_HEXBINARY, XSD_HEXBINARY );
 		// Boolean
-		datatypeMapping.put ( XSD_BOOLEAN, BuiltInType.BUILTIN_BOOLEAN );
+		datatypeMapping.put ( XSD_BOOLEAN, XSD_BOOLEAN );
 		// Date-Time
-		datatypeMapping.put ( XSD_DATETIME, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_TIME, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_DATE, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_GYEARMONTH, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_GYEAR, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_GMONTHDAY, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_GDAY, BuiltInType.BUILTIN_DATETIME );
-		datatypeMapping.put ( XSD_GMONTH, BuiltInType.BUILTIN_DATETIME );
+		datatypeMapping.put ( XSD_DATETIME, XSD_DATETIME );
+		datatypeMapping.put ( XSD_TIME, XSD_DATETIME );
+		datatypeMapping.put ( XSD_DATE, XSD_DATETIME );
+		datatypeMapping.put ( XSD_GYEARMONTH, XSD_DATETIME );
+		datatypeMapping.put ( XSD_GYEAR, XSD_DATETIME );
+		datatypeMapping.put ( XSD_GMONTHDAY, XSD_DATETIME );
+		datatypeMapping.put ( XSD_GDAY, XSD_DATETIME );
+		datatypeMapping.put ( XSD_GMONTH, XSD_DATETIME );
 		// Decimal
-		datatypeMapping.put ( XSD_DECIMAL, BuiltInType.BUILTIN_DECIMAL );
+		datatypeMapping.put ( XSD_DECIMAL, XSD_DECIMAL );
 		// Double/Float
-		datatypeMapping.put ( XSD_FLOAT, BuiltInType.BUILTIN_FLOAT );
-		datatypeMapping.put ( XSD_DOUBLE, BuiltInType.BUILTIN_FLOAT );
+		datatypeMapping.put ( XSD_FLOAT, XSD_DOUBLE );
+		datatypeMapping.put ( XSD_DOUBLE, XSD_DOUBLE );
 		// Integer
-		datatypeMapping.put ( XSD_INTEGER, BuiltInType.BUILTIN_INTEGER );
-		datatypeMapping.put ( XSD_NON_NEGATIVE_INTEGER, BuiltInType.BUILTIN_UNSIGNED_INTEGER );
+		datatypeMapping.put ( XSD_INTEGER, XSD_INTEGER );
 		// String
-		datatypeMapping.put ( XSD_STRING, DEFAULT_BUILTIN );
+		datatypeMapping.put ( XSD_STRING, XSD_STRING );
 		// unknown
-		datatypeMapping.put ( XSD_ANY_SIMPLE_TYPE, DEFAULT_BUILTIN );
+		datatypeMapping.put ( XSD_ANY_SIMPLE_TYPE, XSD_STRING );
 	}
 
 	public static Datatype getDatatype ( XSSimpleTypeDefinition std )
 	{
-		Datatype datatype;
+		Datatype datatype = null;
 
 		// is list ?
 		if ( std.getVariety ( ) == XSSimpleTypeDefinition.VARIETY_LIST )
@@ -162,25 +163,44 @@ public class BuiltIn
 
 			Datatype dtList = getDatatype ( listSTD );
 
-			datatype = new DatatypeList ( dtList, getDatatypeIdentifier ( listSTD ) );
+			datatype = new DatatypeList ( dtList );
 		}
 		// is enumeration ?
 		else if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_ENUMERATION ) )
 		{
-			datatype = getEnumerationDatatype ( std );
+			// datatype = getDatatypeOfEnumeration ( std );
+			XSObjectList facetList = std.getMultiValueFacets ( );
+			for ( int i = 0; i < facetList.getLength ( ); i++ )
+			{
+				XSObject facet = facetList.item ( i );
+				if ( facet.getType ( ) == XSConstants.MULTIVALUE_FACET )
+				{
+					XSMultiValueFacet enumer = (XSMultiValueFacet) facet;
+					if ( enumer.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_ENUMERATION )
+					{
+						StringList enumList = enumer.getLexicalFacetValues ( );
+						// // TODO enumeration not type-castable !?
+						// ExpandedName datatypeIdentifier = null;
+						// BuiltInType enumDatatype = null;
+						datatype = new DatatypeEnumeration ( enumList );
+					}
+				}
+			}
 		}
 		else
 		{
-			datatype = getPrimitiveDatatype ( std );
+			datatype = getDatatypeOfType ( std );
 		}
 
 		return datatype;
 	}
 
-	private static BuiltInType getBuiltInDatatype ( XSSimpleTypeDefinition std, ExpandedName primitive )
+	private static ExpandedName XXgetEXIDatatypeID ( XSSimpleTypeDefinition std )
 	{
-		// built-in type
-		BuiltInType builtIn;
+		// primitive
+		ExpandedName primitive = getPrimitive ( std );
+
+		ExpandedName exiDatatypeID;
 
 		if ( primitive.equals ( XSD_DECIMAL ) )
 		{
@@ -197,80 +217,137 @@ public class BuiltIn
 
 			if ( xmlSchemaType == null )
 			{
-				builtIn = BuiltInType.BUILTIN_DECIMAL;
-			}
-			else if ( XSD_INTEGER.equals ( getName ( xmlSchemaType ) ) )
-			{
-				// facets ? (integer with minInclusive or minExclusive facet
-				// value of 0 or above)
-				if ( isUnsignedIntegerFacet ( std ) )
-				{
-					builtIn = BuiltInType.BUILTIN_UNSIGNED_INTEGER;
-				}
-				else
-				{
-					builtIn = BuiltInType.BUILTIN_INTEGER;
-				}
-			}
-			else if ( XSD_NON_NEGATIVE_INTEGER.equals ( getName ( xmlSchemaType ) ) )
-			{
-				builtIn = BuiltInType.BUILTIN_UNSIGNED_INTEGER;
+				// xsd:decimal
+				exiDatatypeID = XSD_DECIMAL;
 			}
 			else
 			{
-				throw new RuntimeException ( );
+				// xsd:integer
+				exiDatatypeID = XSD_INTEGER;
 			}
-		}
-		else if ( primitive.equals ( XSD_BOOLEAN ) && std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_PATTERN ) )
-		{
-			builtIn = BuiltInType.BUILTIN_BOOLEAN_PATTERN;
 		}
 		else
 		{
-			builtIn = getBuiltInOfPrimitiveMapping ( primitive );
+			exiDatatypeID = getBuiltInOfPrimitiveMapping ( primitive );
 		}
 
-		return builtIn;
+		return exiDatatypeID;
 	}
 
-	private static boolean isUnsignedIntegerFacet ( XSSimpleTypeDefinition std )
+	private static Datatype getIntegerDatatype ( XSSimpleTypeDefinition std, ExpandedName exiDatatypeID )
 	{
-		boolean isUnsigned = false;
+		BigInteger min = BigInteger.valueOf ( Long.MIN_VALUE );
+		BigInteger max = BigInteger.valueOf ( Long.MAX_VALUE );
 
-		// facets ? (integer with minInclusive or minExclusive facet value of 0
-		// or above)
-		if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MININCLUSIVE )
-				|| std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MINEXCLUSIVE ) )
+		//	identify lower & upper bound
+		try
 		{
-			XSObjectList facets = std.getFacets ( );
-
-			for ( int i = 0; i < facets.getLength ( ); i++ )
+			// minimum
+			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MININCLUSIVE ) )
 			{
-				XSFacet facet = (XSFacet) facets.item ( i );
+				String sMinInclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MININCLUSIVE );
+				min = min.max ( new BigInteger ( sMinInclusive ) );
+			}
+			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MINEXCLUSIVE ) )
+			{
+				String sMinExclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MINEXCLUSIVE );
+				min = min.max ( ( new BigInteger ( sMinExclusive ) ).add ( BigInteger.ONE ) );
+			}
+			// maximum
+			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MAXINCLUSIVE ) )
+			{
+				String sMaxInclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MAXINCLUSIVE );
+				max = max.min ( new BigInteger ( sMaxInclusive ) );
+			}
+			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE ) )
+			{
+				String sMaxExclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE );
+				max = max.min ( ( new BigInteger ( sMaxExclusive ) ).subtract ( BigInteger.ONE ) );
+			}
+		}
+		catch ( NumberFormatException e )
+		{
+			// TODO what to do if schema is not valid !??!
+			throw new RuntimeException ( "SimpleTypeDefinition invalid: " + std );
+		}
 
-				if ( facet.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_MININCLUSIVE )
-				{
-					String sValueIncl = facet.getLexicalFacetValue ( );
-					// if ( Integer.parseInt ( sValueIncl ) >= 0 )
-					if ( Long.parseLong ( sValueIncl ) >= 0 )
-					{
-						isUnsigned = true;
-					}
-				}
-				if ( facet.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_MINEXCLUSIVE )
-				{
-					String sValueExcl = facet.getLexicalFacetValue ( );
-					// if ( Integer.parseInt ( sValueExcl ) >= 0 )
-					if ( Long.parseLong ( sValueExcl ) >= 0 )
-					{
-						isUnsigned = true;
-					}
-					// System.out.println ( sValue );
-				}
+		// ( max < min)
+		if ( max.compareTo ( min ) == -1 )
+		{
+			throw new RuntimeException ( "max=" + max + " and min=" + min );
+		}
+
+		// calculate bounded range;
+		BigInteger boundedRange;
+
+		// max < 0
+		if ( max.compareTo ( BigInteger.ZERO ) == -1 )
+		{
+			// max & min negative
+			boundedRange = min.abs ( ).subtract ( max.abs ( ) ).add ( BigInteger.ONE );
+		}
+		else
+		{
+			// max positive
+			if ( min.compareTo ( BigInteger.ZERO ) == -1 )
+			{
+				// min negative
+				boundedRange = max.add ( min.abs ( ) );
+			}
+			else
+			{
+				// min positive
+				boundedRange = max.abs ( ).subtract ( min ).add ( BigInteger.ONE );
 			}
 		}
 
-		return isUnsigned;
+		Datatype datatype;
+		
+		// boundedRange < 4096
+		if ( boundedRange.compareTo ( BigInteger.valueOf ( 4096 ) ) == -1 )
+		{
+			/*
+			 * When the bounded range of integer is 4095 or smaller as
+			 * determined by the values of minInclusiveXS2, minExclusiveXS2,
+			 * maxInclusiveXS2 and maxExclusiveXS2 facets, use n-bit Unsigned
+			 * Integer representation.
+			 */
+			try
+			{
+				XSDInteger lowerBound = XSDInteger.newInstance ( );
+				lowerBound.parse ( min.toString ( ) );
+				XSDInteger upperBound = XSDInteger.newInstance ( );
+				upperBound.parse ( max.toString ( ) );
+				datatype = new DatatypeNBitInteger ( exiDatatypeID, lowerBound, upperBound, boundedRange.intValue ( ) );
+			}
+			catch ( XMLParsingException e )
+			{
+				throw new RuntimeException( "Error occured while identifying XML Schema bounds", e );
+			}
+		}
+		// min >= 0
+		else if ( min.signum ( ) >= 0 )
+		{
+			/*
+			 * Otherwise, when the integer satisfies one of the followings, use
+			 * Unsigned Integer representation.
+			 * 
+			 * + It is nonNegativeInteger. + Either minInclusiveXS2 facet is
+			 * specified with a value equal to or greater than 0, or
+			 * minExclusiveXS2 facet is specified with a value equal to or
+			 * greater than -1.
+			 */
+			datatype = new DatatypeUnsignedInteger ( exiDatatypeID );
+		}
+		else
+		{
+			/*
+			 * Otherwise, use Integer representation.
+			 */
+			datatype = new DatatypeInteger ( exiDatatypeID );
+		}
+		
+		return datatype;
 	}
 
 	private static ExpandedName getName ( XSTypeDefinition type )
@@ -278,142 +355,92 @@ public class BuiltIn
 		return new ExpandedName ( type.getNamespace ( ), type.getName ( ) );
 	}
 
-	private static Datatype getPrimitiveDatatype ( XSSimpleTypeDefinition std )
+	private static Datatype getDatatypeOfType ( XSSimpleTypeDefinition std )
 	{
-		// primitive
-		ExpandedName primitive = getPrimitive ( std );
-
-		// builtIn type
-		BuiltInType builtIn = getBuiltInDatatype ( std, primitive );
-
-		// datatype identifier
-		ExpandedName datatypeIdentifier = getDatatypeIdentifier ( std );
-
 		Datatype datatype;
 
-		switch ( builtIn )
+		ExpandedName exiDatatypeID = XXgetEXIDatatypeID ( std );
+
+		if ( XSD_BASE64BINARY.equals ( exiDatatypeID ) )
 		{
-			case BUILTIN_BINARY:
-				datatype = new DatatypeBinary ( datatypeIdentifier );
-				break;
-			case BUILTIN_BOOLEAN:
-				datatype = new DatatypeBoolean ( datatypeIdentifier );
-				break;
-			case BUILTIN_BOOLEAN_PATTERN:
-				datatype = new DatatypeBooleanPattern ( datatypeIdentifier );
-				break;
-			case BUILTIN_DATETIME:
-				if ( XSD_DATETIME.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.dateTime, datatypeIdentifier );
-				}
-				else if ( XSD_TIME.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.time, datatypeIdentifier );
-				}
-				else if ( XSD_DATE.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.date, datatypeIdentifier );
-				}
-				else if ( XSD_GYEARMONTH.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.gYearMonth, datatypeIdentifier );
-				}
-				else if ( XSD_GYEAR.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.gYear, datatypeIdentifier );
-				}
-				else if ( XSD_GMONTHDAY.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.gMonthDay, datatypeIdentifier );
-				}
-				else if ( XSD_GDAY.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.gDay, datatypeIdentifier );
-				}
-				else if ( XSD_GMONTH.equals ( primitive ) )
-				{
-					datatype = new DatatypeDatetime ( DatetimeType.gMonth, datatypeIdentifier );
-				}
-				else
-				{
-					throw new RuntimeException ( );
-				}
-				break;
-			case BUILTIN_DECIMAL:
-				datatype = new DatatypeDecimal ( datatypeIdentifier );
-				break;
-			case BUILTIN_FLOAT:
-				datatype = new DatatypeFloat ( datatypeIdentifier );
-				break;
-			case BUILTIN_INTEGER:
-				datatype = new DatatypeInteger ( datatypeIdentifier );
-				break;
-			case BUILTIN_UNSIGNED_INTEGER:
-				datatype = new DatatypeUnsignedInteger ( datatypeIdentifier );
-				break;
-			case BUILTIN_STRING:
-				datatype = new DatatypeString ( datatypeIdentifier );
-				break;
-			default:
-				throw new RuntimeException ( );
+			datatype = new DatatypeBinary ( exiDatatypeID );
 		}
-
-		return datatype;
-	}
-
-	private static Datatype getEnumerationDatatype ( XSSimpleTypeDefinition std )
-	{
-		// primitive
-		ExpandedName primitive = BuiltIn.getPrimitive ( std );
-
-		// enum datatype
-		BuiltInType enumDatatype = BuiltIn.getBuiltInDatatype ( std, primitive );
-
-		// Enumeration Value List
-		StringList enumList = null;
-		if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_ENUMERATION ) )
+		else if ( XSD_HEXBINARY.equals ( exiDatatypeID ) )
 		{
-			XSObjectList facetList = std.getMultiValueFacets ( );
-			for ( int i = 0; i < facetList.getLength ( ); i++ )
+			datatype = new DatatypeBinary ( exiDatatypeID );
+		}
+		else if ( XSD_BOOLEAN.equals ( exiDatatypeID ) )
+		{
+			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_PATTERN ) )
 			{
-				XSObject facet = facetList.item ( i );
-				if ( facet.getType ( ) == XSConstants.MULTIVALUE_FACET )
-				{
-					XSMultiValueFacet enumer = (XSMultiValueFacet) facet;
-					if ( enumer.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_ENUMERATION )
-					{
-						enumList = enumer.getLexicalFacetValues ( );
-					}
-				}
+				datatype = new DatatypeBooleanPattern ( exiDatatypeID );
+			}
+			else
+			{
+				datatype = new DatatypeBoolean ( exiDatatypeID );
 			}
 		}
-
-		if ( enumList == null )
+		else if ( XSD_DATETIME.equals ( exiDatatypeID ) )
 		{
-			throw new RuntimeException ( "Enumeration value list problem for " + std );
+			ExpandedName primitive = BuiltIn.getPrimitive ( std );
+
+			if ( XSD_DATETIME.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.dateTime, exiDatatypeID );
+			}
+			else if ( XSD_TIME.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.time, exiDatatypeID );
+			}
+			else if ( XSD_DATE.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.date, exiDatatypeID );
+			}
+			else if ( XSD_GYEARMONTH.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.gYearMonth, exiDatatypeID );
+			}
+			else if ( XSD_GYEAR.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.gYear, exiDatatypeID );
+			}
+			else if ( XSD_GMONTHDAY.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.gMonthDay, exiDatatypeID );
+			}
+			else if ( XSD_GDAY.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.gDay, exiDatatypeID );
+			}
+			else if ( XSD_GMONTH.equals ( primitive ) )
+			{
+				datatype = new DatatypeDatetime ( DatetimeType.gMonth, exiDatatypeID );
+			}
+			else
+			{
+				throw new RuntimeException ( );
+			}
 		}
-
-		// datatype identifier
-		ExpandedName datatypeIdentifier = getDatatypeIdentifier ( std );
-
-		return new DatatypeEnumeration ( enumDatatype, enumList, datatypeIdentifier );
-	}
-
-	private static ExpandedName getDatatypeIdentifier ( XSSimpleTypeDefinition std )
-	{
-		if ( std.getAnonymous ( ) )
+		else if ( XSD_DECIMAL.equals ( exiDatatypeID ) )
 		{
-			// null,#AnonType_bla
-			String s = std.toString ( );
-			String localName = s.substring ( s.indexOf ( ',' ) + 1 );
-			return new ExpandedName ( std.getNamespace ( ), localName );
+			datatype = new DatatypeDecimal ( exiDatatypeID );
+		}
+		else if ( XSD_DOUBLE.equals ( exiDatatypeID ) )
+		{
+			datatype = new DatatypeFloat ( exiDatatypeID );
+		}
+		else if ( XSD_INTEGER.equals ( exiDatatypeID ) )
+		{
+			// returns integer type (nbit, unsigned, int) according to facets
+			datatype = BuiltIn.getIntegerDatatype ( std, exiDatatypeID );
 		}
 		else
 		{
-			return new ExpandedName ( std.getNamespace ( ), std.getName ( ) );
+			// ( XSD_STRING.equals ( exiDatatypeID ) )
+			datatype = new DatatypeString ( exiDatatypeID );
 		}
 
+		return datatype;
 	}
 
 	private static ExpandedName getPrimitive ( XSSimpleTypeDefinition std )
@@ -434,7 +461,7 @@ public class BuiltIn
 		return primitiveQName;
 	}
 
-	private static BuiltInType getBuiltInOfPrimitiveMapping ( ExpandedName qnamePrimitive )
+	private static ExpandedName getBuiltInOfPrimitiveMapping ( ExpandedName qnamePrimitive )
 	{
 		if ( datatypeMapping.containsKey ( qnamePrimitive ) )
 		{
@@ -442,7 +469,7 @@ public class BuiltIn
 		}
 		else
 		{
-			return BuiltIn.DEFAULT_BUILTIN;
+			return DEFAULT_VALUE_NAME;
 		}
 	}
 }

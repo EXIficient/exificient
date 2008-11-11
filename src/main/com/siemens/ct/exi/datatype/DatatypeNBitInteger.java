@@ -19,6 +19,8 @@
 package com.siemens.ct.exi.datatype;
 
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -26,13 +28,39 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
-public class DatatypeInteger extends AbstractDatatype
+public class DatatypeNBitInteger extends AbstractDatatype
 {
-	public DatatypeInteger( ExpandedName datatypeIdentifier )
+	protected final XSDInteger lowerBound;
+	protected final XSDInteger upperBound;
+	protected final int numberOfBits4Range;
+
+	public DatatypeNBitInteger( ExpandedName datatypeIdentifier, XSDInteger lowerBound, XSDInteger upperBound, int boundedRange )
 	{
-		super( BuiltInType.BUILTIN_INTEGER, datatypeIdentifier );
+		super( BuiltInType.BUILTIN_NBIT_INTEGER, datatypeIdentifier );
+		
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
+		
+		//	calculate number of bits to represent range
+		numberOfBits4Range = MethodsBag.getCodingLength ( boundedRange );
 	}
+	
+	public XSDInteger getLowerBound ()
+	{
+		return lowerBound;
+	}
+
+	public XSDInteger getUpperBound ()
+	{
+		return upperBound;
+	}
+	
+	public int getNumberOfBits ()
+	{
+		return numberOfBits4Range;
+	}
+
 }

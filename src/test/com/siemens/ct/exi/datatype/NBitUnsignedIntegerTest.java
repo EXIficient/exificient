@@ -20,6 +20,9 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.datatype.decoder.NBitIntegerDatatypeDecoder;
+import com.siemens.ct.exi.datatype.encoder.NBitIntegerDatatypeEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
@@ -216,6 +219,65 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase
 		} catch (RuntimeException e) {
 			// ok
 		}
+    }
+    
+    public void testNBitUnsignedIntegerFacet1() throws IOException, EXIException
+    {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>" +
+		"  <xs:simpleType name='NBit'>" +
+		"    <xs:restriction base='xs:integer'>" + 
+		"      <xs:minInclusive value='2' />" + 
+		"      <xs:maxExclusive value='10'/>" + 
+		"    </xs:restriction>" +
+		"  </xs:simpleType>" +
+		"</xs:schema>";
+		
+    	Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor ( schemaAsString, "NBit", "" );
+		
+    	NBitIntegerDatatypeEncoder enc = new NBitIntegerDatatypeEncoder( null );
+    
+    	//	try to validate 
+    	assertFalse ( enc.isValid ( datatype, "12" ) );
+    }
+    
+    
+    public void testNBitUnsignedIntegerFacet2() throws IOException, EXIException
+    {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>" +
+		"  <xs:simpleType name='NBit'>" +
+		"    <xs:restriction base='xs:integer'>" + 
+		"      <xs:minInclusive value='-200' />" + 
+		"      <xs:maxExclusive value='-10'/>" + 
+		"    </xs:restriction>" +
+		"  </xs:simpleType>" +
+		"</xs:schema>";
+		
+		String sValue = "-12";
+		
+    	Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor ( schemaAsString, "NBit", "" );
+		
+    	String namespaceURI = "";
+    	String localName = "";
+    	
+    	//	write (bit & byte )
+    	NBitIntegerDatatypeEncoder enc = new NBitIntegerDatatypeEncoder( null );
+    	assertTrue ( enc.isValid ( datatype, sValue ) );
+    	//	bit
+    	EncoderChannel bitEC = getBitEncoder( );
+    	enc.writeValue ( bitEC, namespaceURI, localName );
+    	bitEC.flush();
+    	//	byte 
+    	enc.writeValue ( getByteEncoder(), namespaceURI, localName );
+    	
+    	//	read
+    	NBitIntegerDatatypeDecoder dec = new NBitIntegerDatatypeDecoder( );
+    	String sDecoded;
+    	//	bit
+    	sDecoded = dec.decodeValue ( null, datatype, getBitDecoder(), namespaceURI, localName );
+    	assertTrue( sValue + " != " + sDecoded, sValue.equals ( sDecoded ));
+    	//	byte
+    	sDecoded = dec.decodeValue ( null, datatype, getByteDecoder(), namespaceURI, localName );
+    	assertTrue( sValue + " != " + sDecoded, sValue.equals ( sDecoded  ));
     }
     
     public void testNBitUnsignedIntegerSequence() throws IOException 

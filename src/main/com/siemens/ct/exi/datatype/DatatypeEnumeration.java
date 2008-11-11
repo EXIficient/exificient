@@ -20,41 +20,26 @@ package com.siemens.ct.exi.datatype;
 
 import org.apache.xerces.xs.StringList;
 
-import com.siemens.ct.exi.util.ExpandedName;
-
 /**
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
 public class DatatypeEnumeration extends AbstractDatatype
 {
-	private BuiltInType	enumDatatype;
 	private StringList	enumValues;
 
-	public DatatypeEnumeration ( BuiltInType enumDatatype, StringList enumValues, ExpandedName datatypeIdentifier  )
+	public DatatypeEnumeration ( StringList enumValues )
 	{
-		super( BuiltInType.BUILTIN_ENUMERATION, datatypeIdentifier );
-		
-		if ( enumDatatype == BuiltInType.BUILTIN_ENUMERATION )
-		{
-			throw new IllegalArgumentException (
-					"Enumerations datatype can't be an enumeration again!" );
-		}
-		
-		this.enumDatatype = enumDatatype;
+		super( BuiltInType.BUILTIN_ENUMERATION, null );
+
 		this.enumValues = enumValues;
 	}
 	
-	public BuiltInType getEnumDatatype( )
-	{
-		return enumDatatype;
-	}
-
 	public StringList getEnumerationValues( )
 	{
 		return enumValues;

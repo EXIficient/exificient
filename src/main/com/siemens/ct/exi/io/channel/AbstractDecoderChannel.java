@@ -36,7 +36,7 @@ import com.siemens.ct.exi.util.datatype.XSDDatetime;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
 public abstract class AbstractDecoderChannel implements DecoderChannel
@@ -312,6 +312,15 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 //        return addOne ? bResult.add ( BigInteger.ONE ).toString ( ) :  bResult.toString ( );
     }
     
+    
+
+	/**
+	 * Decodes and returns an n-bit unsigned integer as string.
+	 */
+	public String decodeNBitUnsignedIntegerAsString ( int n ) throws IOException
+	{
+		return decodeNBitUnsignedInteger( n ) + "";
+	}
     
     /**
      * Decode a decimal represented as a Boolean sign followed by two Unsigned

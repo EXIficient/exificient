@@ -26,7 +26,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081111
  */
 
 public class XSDDecimal
@@ -89,7 +89,7 @@ public class XSDDecimal
 		{
 			// no decimal point at all
 			integral.parse ( decimal );
-			revFractional.setToIntegerZero ( );
+			revFractional.setToIntegerValue ( 0 );
 		}
 		else
 		{

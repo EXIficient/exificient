@@ -26,7 +26,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
 public abstract class AbstractDatatype implements Datatype
@@ -45,11 +45,6 @@ public abstract class AbstractDatatype implements Datatype
 	public BuiltInType getDefaultBuiltInType ()
 	{
 		return defaultbuiltInType;
-	}
-
-	public boolean isDefaultBuiltInType ( BuiltInType type )
-	{
-		return ( defaultbuiltInType == type );
 	}
 	
 	public ExpandedName getDatatypeIdentifier() 

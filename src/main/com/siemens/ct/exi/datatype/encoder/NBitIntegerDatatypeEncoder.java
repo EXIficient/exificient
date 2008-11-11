@@ -21,6 +21,7 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.DatatypeNBitInteger;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDInteger;
@@ -34,22 +35,41 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
+public class NBitIntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
 {
-	private XSDInteger lastInteger = XSDInteger.newInstance ( );
-	
-	public IntegerDatatypeEncoder( TypeEncoder typeEncoder )
+	private XSDInteger	lastNBitInteger	= XSDInteger.newInstance ( );
+	private int			valueToEncode;
+	private int			numberOfBits;
+
+	public NBitIntegerDatatypeEncoder ( TypeEncoder typeEncoder )
 	{
-		super( typeEncoder );
+		super ( typeEncoder );
 	}
-	
+
 	public boolean isValid ( Datatype datatype, String value )
 	{
 		try
 		{
-			lastInteger.parse ( value );
-			
-			return true;
+			lastNBitInteger.parse ( value );
+
+			assert ( datatype instanceof DatatypeNBitInteger );
+			DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
+
+			// check lower & upper bound
+			if ( lastNBitInteger.compareTo ( nBitDT.getLowerBound ( ) ) >= 0
+					&& lastNBitInteger.compareTo ( nBitDT.getUpperBound ( ) ) <= 0 )
+			{
+				//	calculate offset & update value
+				//	Note: integer cast is possible since bounded range of integer is 4095 or smaller
+				valueToEncode = lastNBitInteger.subtract ( nBitDT.getLowerBound ( ) ).getIntInteger ( );
+				numberOfBits = nBitDT.getNumberOfBits ( );
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		catch ( XMLParsingException e )
 		{
@@ -57,9 +77,8 @@ public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements D
 		}
 	}
 
-
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
 	{
-		valueChannel.encodeInteger ( lastInteger );
+		valueChannel.encodeNBitUnsignedInteger ( valueToEncode, numberOfBits );
 	}
 }

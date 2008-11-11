@@ -34,7 +34,7 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081111
  */
 
 public class PreReadByteDecoderChannel implements DecoderChannel
@@ -142,6 +142,14 @@ public class PreReadByteDecoderChannel implements DecoderChannel
 	{
 		// TODO
 		throw new RuntimeException( );
+	}
+	
+	/**
+	 * Decodes and returns an n-bit unsigned integer as string.
+	 */
+	public String decodeNBitUnsignedIntegerAsString ( int n ) throws IOException
+	{
+		return getNextValue( );
 	}
 
 	public String decodeString () throws IOException

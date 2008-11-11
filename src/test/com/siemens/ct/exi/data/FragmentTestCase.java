@@ -96,7 +96,6 @@ public class FragmentTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationFragment1 ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/fragment/fragment.xsd" );
@@ -113,7 +112,6 @@ public class FragmentTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationFragment2 ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/fragment/fragment.xsd" );

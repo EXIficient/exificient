@@ -97,7 +97,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationEXIOptionsHeaderStrict ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/EXIOptionsHeader/EXIOptionsHeader.xsd" );
@@ -115,7 +114,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationEXIOptionsHeaderCommon ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/EXIOptionsHeader/EXIOptionsHeader.xsd" );
@@ -133,7 +131,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationEXIOptionsHeaderLessCommon ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/EXIOptionsHeader/EXIOptionsHeader.xsd" );

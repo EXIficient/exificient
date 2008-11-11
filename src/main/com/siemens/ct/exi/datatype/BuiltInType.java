@@ -24,7 +24,7 @@ package com.siemens.ct.exi.datatype;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081010
+ * @version 0.1.20081110
  */
 
 public enum BuiltInType
@@ -34,8 +34,9 @@ public enum BuiltInType
 	BUILTIN_BOOLEAN_PATTERN,
 	BUILTIN_DECIMAL,
 	BUILTIN_FLOAT,
-	BUILTIN_INTEGER,
+	BUILTIN_NBIT_INTEGER,
 	BUILTIN_UNSIGNED_INTEGER,
+	BUILTIN_INTEGER,
 	BUILTIN_QNAME,
 	/* Datetime */
 	BUILTIN_DATETIME,

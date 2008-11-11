@@ -16,13 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype.encoder;
+package com.siemens.ct.exi.datatype.decoder;
 
 import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.datatype.DatatypeNBitInteger;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
@@ -34,32 +34,20 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
+public class NBitIntegerDatatypeDecoder extends AbstractDatatypeDecoder
 {
-	private XSDInteger lastInteger = XSDInteger.newInstance ( );
-	
-	public IntegerDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
-	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastInteger.parse ( value );
-			
-			return true;
-		}
-		catch ( XMLParsingException e )
-		{
-			return false;
-		}
-	}
+	private XSDInteger	decodedValue	= XSDInteger.newInstance ( );
 
-
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
+	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI,
+			String localName ) throws IOException
 	{
-		valueChannel.encodeInteger ( lastInteger );
+		assert ( datatype instanceof DatatypeNBitInteger );
+		DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
+
+		// inverse decoded value
+		decodedValue.setToIntegerValue ( ( -1 ) * dc.decodeNBitUnsignedInteger ( nBitDT.getNumberOfBits ( ) ) );
+
+		// add offset again (lower bound)
+		return nBitDT.getLowerBound ( ).subtract ( decodedValue ).toString ( );
 	}
 }

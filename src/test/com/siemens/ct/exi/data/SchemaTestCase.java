@@ -120,7 +120,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaChoice1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
@@ -137,7 +136,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaChoice2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
@@ -154,7 +152,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaChoice3 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
@@ -172,7 +169,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaChoiceN1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/choiceN.xsd" );
@@ -190,7 +186,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaSequence1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/sequence.xsd" );
@@ -208,7 +203,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaSequence2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/sequence.xsd" );
@@ -226,7 +220,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaOccurrences1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/occurrences1.xsd" );
@@ -244,7 +237,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaOccurrences2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/occurrences2.xsd" );
@@ -263,7 +255,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaAll ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/all.xsd" );
@@ -281,7 +272,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaAll2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/all2.xsd" );
@@ -299,7 +289,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaEnumeration ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/enumeration.xsd" );
@@ -317,7 +306,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaList ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/list.xsd" );
@@ -335,7 +323,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaUnsignedInteger ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/unsignedInteger.xsd" );
@@ -353,7 +340,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaMixed ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/mixed.xsd" );
@@ -371,7 +357,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaWildcard ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/wildcard.xsd" );
@@ -389,7 +374,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaNillable1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/nillable.xsd" );
@@ -407,7 +391,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaNillable2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/nillable.xsd" );
@@ -425,7 +408,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaXsiType ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type.xsd" );
@@ -443,7 +425,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaXsiType2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type2.xsd" );
@@ -462,7 +443,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaXsiType3 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type.xsd" );
@@ -482,7 +462,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaXsiType4 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type4.xsd" );
@@ -501,7 +480,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaVehicle ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/vehicle.xsd" );
@@ -519,7 +497,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaAnyAttributes ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/anyAttributes.xsd" );
@@ -537,7 +514,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaAny0 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/any.xsd" );
@@ -555,7 +531,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationAttributeSpace ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/attributeSpace.xsd" );
@@ -575,7 +550,6 @@ public class SchemaTestCase extends AbstractTestCase
 	}
 	
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaIdenticalQName2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName2.xsd" );
@@ -595,7 +569,6 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSchemaIdenticalQName ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName.xsd" );
@@ -613,12 +586,10 @@ public class SchemaTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationBooleanPattern ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/schema/booleanPattern.xsd" );
 		QuickTestConfiguration.setXmlLocation( "./data/schema/booleanPattern.xml" );
 		QuickTestConfiguration.setExiLocation( "./out/schema/booleanPattern.xml.exi" );
-	}
-	
+	}	
 }

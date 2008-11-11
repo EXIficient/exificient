@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype;
 
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -33,9 +32,9 @@ public class DatatypeList extends AbstractDatatype
 {
 	private Datatype	listDatatype;
 
-	public DatatypeList ( Datatype listDatatype,  ExpandedName datatypeIdentifier  )
+	public DatatypeList ( Datatype listDatatype )
 	{
-		super( BuiltInType.BUILTIN_LIST, datatypeIdentifier );
+		super( BuiltInType.BUILTIN_LIST, null );
 	
 		if ( listDatatype.getDefaultBuiltInType ( ) == BuiltInType.BUILTIN_LIST )
 		{

@@ -45,6 +45,7 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 	private FloatDatatypeEncoder			floatDTE;
 	private IntegerDatatypeEncoder			integerDTE;
 	private UnsignedIntegerDatatypeEncoder	unsignedIntegerDTE;
+	private NBitIntegerDatatypeEncoder		nBitIntegerDTE;
 	private DatetimeDatatypeEncoder			datetimeDTE;
 	private EnumerationDatatypeEncoder		enumerationDTE;
 	private ListDatatypeEncoder				listDTE;
@@ -62,6 +63,7 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 		floatDTE = new FloatDatatypeEncoder ( this );
 		integerDTE = new IntegerDatatypeEncoder ( this );
 		unsignedIntegerDTE = new UnsignedIntegerDatatypeEncoder ( this );
+		nBitIntegerDTE = new NBitIntegerDatatypeEncoder ( this );
 		datetimeDTE = new DatetimeDatatypeEncoder ( this );
 		enumerationDTE = new EnumerationDatatypeEncoder ( this );
 		listDTE = new ListDatatypeEncoder ( this );
@@ -100,6 +102,9 @@ public class TypeEncoderTyped extends AbstractTypeEncoder
 				break;
 			case BUILTIN_UNSIGNED_INTEGER:
 				lastDatatypeEncoder = unsignedIntegerDTE;
+				break;
+			case BUILTIN_NBIT_INTEGER:
+				lastDatatypeEncoder = nBitIntegerDTE;
 				break;
 			case BUILTIN_DATETIME:
 				lastDatatypeEncoder = datetimeDTE;

@@ -31,7 +31,7 @@ import com.siemens.ct.exi.io.BitInputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081014
+ * @version 0.1.20081111
  */
 
 public class BitDecoderChannel extends AbstractDecoderChannel implements DecoderChannel
@@ -75,6 +75,7 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements Decoder
 			return istream.readBits ( n );
 		}
 	}
+
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit

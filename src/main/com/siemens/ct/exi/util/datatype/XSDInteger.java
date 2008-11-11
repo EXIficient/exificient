@@ -28,40 +28,38 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
-public class XSDInteger
-{	
+public class XSDInteger implements Comparable<XSDInteger>
+{
 	private int			iInt;
 	private long		lInt;
 	private BigInteger	bInt;
 
 	private IntegerType	type;
 
-	private XSDInteger ( )
+	private XSDInteger	subtractValue;
+
+	private XSDInteger ()
 	{
 	}
-	
+
 	public static XSDInteger newInstance ()
 	{
 		return new XSDInteger ( );
 	}
 	
-	public void setToIntegerZero( )
+	public void setToIntegerValue ( int val )
 	{
-		iInt = 0;
+		iInt = val;
 		type = IntegerType.INT_INTEGER;
 	}
-	
-	
+
 	public void parse ( String s ) throws XMLParsingException
 	{
-		// TODO trim integer string if necessary!
-		//s.trim ( );
+		// TODO check string-length and step forward directly to long etc.
 
-		//	TODO check string-length and step forward directly to long etc.
-		
 		// integer value ?
 		try
 		{
@@ -87,24 +85,24 @@ public class XSDInteger
 				catch ( NumberFormatException eb )
 				{
 					// OK, seems to be a deviation
-					throw new XMLParsingException( "'" + s + "' cannot be parsed as Integer");
+					throw new XMLParsingException ( "'" + s + "' cannot be parsed as Integer" );
 				}
-			}	
+			}
 		}
 	}
-	
-	public boolean isNegative()
+
+	public boolean isNegative ()
 	{
-		switch( getIntegerType ( ) )
+		switch ( type )
 		{
 			case INT_INTEGER:
-				return( iInt < 0 );
+				return ( iInt < 0 );
 			case LONG_INTEGER:
-				return( lInt < 0 );
+				return ( lInt < 0 );
 			case BIG_INTEGER:
-				return( bInt.signum ( ) < 0 );
+				return ( bInt.signum ( ) < 0 );
 			default:
-				throw new RuntimeException();
+				throw new RuntimeException ( );
 		}
 	}
 
@@ -126,5 +124,96 @@ public class XSDInteger
 	public IntegerType getIntegerType ()
 	{
 		return type;
+	}
+
+	public XSDInteger subtract ( XSDInteger val )
+	{
+		if ( subtractValue == null )
+		{
+			subtractValue = XSDInteger.newInstance ( );
+		}
+
+		// same types
+		if ( this.type == IntegerType.INT_INTEGER && val.type == IntegerType.INT_INTEGER )
+		{
+			subtractValue.iInt = this.iInt - val.iInt;
+			subtractValue.type = IntegerType.INT_INTEGER;
+
+			return subtractValue;
+		}
+		else if ( this.type == IntegerType.LONG_INTEGER && val.type == IntegerType.LONG_INTEGER )
+		{
+			subtractValue.lInt = this.lInt - val.lInt;
+			subtractValue.type = IntegerType.LONG_INTEGER;
+
+			return subtractValue;
+		}
+		else if ( this.type == IntegerType.BIG_INTEGER && val.type == IntegerType.BIG_INTEGER )
+		{
+			subtractValue.bInt = this.bInt.subtract ( val.bInt );
+			subtractValue.type = IntegerType.BIG_INTEGER;
+
+			return subtractValue;
+		}
+		// different types
+		else
+		{
+			// rare case --> map to big integers
+			BigInteger thiss = new BigInteger( this.toString ( ) );
+			BigInteger vall = new BigInteger( val.toString ( ) );
+			
+			subtractValue.bInt = thiss.subtract ( vall );
+			subtractValue.type = IntegerType.BIG_INTEGER;
+		}
+		
+		return subtractValue;
+	}
+
+	public int compareTo ( XSDInteger other )
+	{
+		// same types
+		if ( this.type == IntegerType.INT_INTEGER && other.type == IntegerType.INT_INTEGER )
+		{
+			return ( this.iInt < other.iInt ? -1 : ( this.iInt == other.iInt ? 0 : 1 ) );
+		}
+		else if ( this.type == IntegerType.LONG_INTEGER && other.type == IntegerType.LONG_INTEGER )
+		{
+			return ( this.lInt < other.lInt ? -1 : ( this.lInt == other.lInt ? 0 : 1 ) );
+		}
+		else if ( this.type == IntegerType.BIG_INTEGER && other.type == IntegerType.BIG_INTEGER )
+		{
+			return this.bInt.compareTo ( other.bInt );
+		}
+		// different types
+		else if ( this.type == IntegerType.INT_INTEGER
+				&& ( other.type == IntegerType.LONG_INTEGER || other.type == IntegerType.BIG_INTEGER ) )
+		{
+			return -1;
+		}
+		else if ( this.type == IntegerType.LONG_INTEGER )
+		{
+			return ( other.type == IntegerType.INT_INTEGER ? 1 : 0 );
+		}
+		else
+		{
+			// this.type == IntegerType.BIG_INTEGER
+			return 1;
+		}
+	}
+
+	public String toString ()
+	{
+		if ( type == IntegerType.INT_INTEGER )
+		{
+			return this.iInt + "";
+		}
+		else if ( type == IntegerType.LONG_INTEGER )
+		{
+			return this.lInt + "";
+		}
+		else
+		{
+			return this.bInt.toString ( );
+		}
 	}
 }

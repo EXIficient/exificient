@@ -30,7 +30,7 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
 public interface DecoderChannel
@@ -48,6 +48,8 @@ public interface DecoderChannel
 	 * Decodes and returns an n-bit unsigned integer.
 	 */
 	public int decodeNBitUnsignedInteger ( int n ) throws IOException;
+	
+	public String decodeNBitUnsignedIntegerAsString ( int n ) throws IOException;
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit

@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXResult;
 
 import org.xml.sax.EntityResolver;

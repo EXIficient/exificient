@@ -34,8 +34,6 @@ public interface Datatype
 	// if no codec map is used
 	public BuiltInType getDefaultBuiltInType( );
 	
-	public boolean isDefaultBuiltInType( BuiltInType builtInType );
-	
 	//	used for codec map
 	public ExpandedName getDatatypeIdentifier();
 }

@@ -102,7 +102,6 @@ public class W3CTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationW3CXMLSample ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/W3C/XMLSample/XMLSample.xsd" );
@@ -122,7 +121,6 @@ public class W3CTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationW3CXMLSample_Pfx ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/W3C/XMLSample/XMLSample.xsd" );
@@ -140,7 +138,6 @@ public class W3CTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationW3CEXIbyExample ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/W3C/EXIbyExample/XMLSample.xsd" );
@@ -158,7 +155,6 @@ public class W3CTestCase extends AbstractTestCase
 		_test ( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationW3CPrimerNotebook ()
 	{
 		QuickTestConfiguration.setXsdLocation ( "./data/W3C/PrimerNotebook/notebook.xsd" );

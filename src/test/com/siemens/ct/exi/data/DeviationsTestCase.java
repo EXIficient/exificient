@@ -76,7 +76,7 @@ public class DeviationsTestCase extends AbstractTestCase
 		
 	}
 
-	@SuppressWarnings("unused")
+	
 	public static void setConfigurationDeviationAt1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
@@ -94,7 +94,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationEl1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
@@ -112,7 +111,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationDatatype1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
@@ -130,7 +128,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationDatatype2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
@@ -148,7 +145,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationDatatype3 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/order.xsd" );
@@ -166,7 +162,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationXsiType ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );
@@ -184,7 +179,6 @@ public class DeviationsTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDeviationXsiNil ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/deviations/XMLSample.xsd" );

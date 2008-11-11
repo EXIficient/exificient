@@ -34,11 +34,11 @@ public class GeneralTestCase extends AbstractTestCase
 	
 	public static void setupQuickTest ()
 	{
-		GeneralTestCase.setConfigurationPerson ( );
+		// GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
-		// GeneralTestCase.setConfigurationDatatypes ( );
+		GeneralTestCase.setConfigurationDatatypes ( );
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj ( );
@@ -114,7 +114,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationPerson ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/person.xsd" );
@@ -133,7 +132,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationPersonAdjusted ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/person.xsd" );
@@ -151,7 +149,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationPersonal ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/personal.xsd" );
@@ -169,7 +166,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationUnbounded ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/unbounded.xsd" );
@@ -187,7 +183,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDatatypes ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/datatypes.xsd" );
@@ -205,7 +200,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDatatypes2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/datatypes2.xsd" );
@@ -223,7 +217,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationOrder ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/order.xsd" );
@@ -241,7 +234,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationComplexStructure ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/complex-structure.xsd" );
@@ -260,7 +252,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationSimpleContent ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/simpleContent.xsd" );
@@ -278,7 +269,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationEmptyContent ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/emptyContent.xsd" );
@@ -296,7 +286,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationAttributes ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/attributes.xsd" );
@@ -314,7 +303,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationRandj ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/randj.xsd" );
@@ -332,7 +320,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationPurchaseOrder ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/po.xsd" );
@@ -350,7 +337,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationTest1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/test1.xsd" ); 
@@ -368,7 +354,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationTest2 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/test2.xsd" );
@@ -386,7 +371,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationTest3 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/test3.xsd" );
@@ -404,7 +388,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationTest4 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/test4.xsd" );
@@ -423,7 +406,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationTest5 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/test5.xsd" );
@@ -442,7 +424,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationPI1 ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/pi1.xsd" );
@@ -460,7 +441,6 @@ public class GeneralTestCase extends AbstractTestCase
 		_test( );
 	}
 
-	@SuppressWarnings("unused")
 	public static void setConfigurationDocType ()
 	{
 		QuickTestConfiguration.setXsdLocation( "./data/general/empty.xsd" );

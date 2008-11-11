@@ -29,7 +29,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081110
+ * @version 0.1.20081111
  */
 
 public class TypeDecoderTyped extends AbstractTypeDecoder
@@ -41,6 +41,7 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 	protected FloatDatatypeDecoder				floatDTD;
 	protected IntegerDatatypeDecoder			integerDTD;
 	protected UnsignedIntegerDatatypeDecoder	unsignedIntegerDTD;
+	protected NBitIntegerDatatypeDecoder		nBitIntegerDTD;
 	protected DatetimeDatatypeDecoder			datetimeDTD;
 	protected EnumerationDatatypeDecoder		enumerationDTD;
 	protected ListDatatypeDecoder				listDTD;
@@ -57,6 +58,7 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 		floatDTD = new FloatDatatypeDecoder ( );
 		integerDTD = new IntegerDatatypeDecoder ( );
 		unsignedIntegerDTD = new UnsignedIntegerDatatypeDecoder ( );
+		nBitIntegerDTD = new NBitIntegerDatatypeDecoder ( );
 		datetimeDTD = new DatetimeDatatypeDecoder ( );
 		enumerationDTD = new EnumerationDatatypeDecoder ( );
 		listDTD = new ListDatatypeDecoder ( );
@@ -82,6 +84,8 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 				return integerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_UNSIGNED_INTEGER:
 				return unsignedIntegerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
+			case BUILTIN_NBIT_INTEGER:
+				return nBitIntegerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_DATETIME:
 				return datetimeDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
 			case BUILTIN_ENUMERATION:
