@@ -26,9 +26,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.siemens.ct.exi.datatype.BuiltIn;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderLexical;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -47,14 +47,13 @@ public class StringTableValueTest
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance ( );
+		
 		/*
 		 * Encode
 		 */
-		//TypeEncoderLexical del = new TypeEncoderLexical( false );
-		TypeEncoderLexical del = new TypeEncoderLexical( DefaultEXIFactory.newInstance ( ) );
+		TypeEncoderString del = new TypeEncoderString( exiFactory );
 		BitEncoderChannel bec = new BitEncoderChannel( baos );
-		
-//		DatatypeEvent dtEvent = new Attribute( qn, null, BuiltIn.DEFAULT_DATATYPE );
 		
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
 		del.writeTypeValidValue ( bec, qn.getNamespaceURI ( ), qn.getLocalName ( ) );
@@ -75,7 +74,7 @@ public class StringTableValueTest
 		/*
 		 * Decode
 		 */
-		TypeDecoderLexical ddl = new TypeDecoderLexical( false );
+		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
 		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
@@ -97,15 +96,14 @@ public class StringTableValueTest
 		String val3 = "val3";
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance ( );
 		
 		/*
 		 * Encode
 		 */
-		//TypeEncoderLexical del = new TypeEncoderLexical( true );
-		TypeEncoderLexical del = new TypeEncoderLexical( DefaultEXIFactory.newInstance ( ) );
+		TypeEncoderString del = new TypeEncoderString( exiFactory );
 		BitEncoderChannel bec = new BitEncoderChannel( baos );
-		
-//		DatatypeEvent dtEvent = new Characters( null, BuiltIn.DEFAULT_DATATYPE );
 		
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, val1 );
 		del.writeTypeValidValue ( bec, qn1.getNamespaceURI ( ), qn1.getLocalName ( )  );
@@ -126,7 +124,7 @@ public class StringTableValueTest
 		/*
 		 * Decode
 		 */
-		TypeDecoderLexical ddl = new TypeDecoderLexical( true );
+		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
 		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val1 )  );
@@ -155,17 +153,15 @@ public class StringTableValueTest
 		String ch3 = "ch3";
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance ( );
 		
 		/*
 		 * Encode
 		 */
-		//TypeEncoderLexical del = new TypeEncoderLexical( false );
-		TypeEncoderLexical del = new TypeEncoderLexical( DefaultEXIFactory.newInstance ( ) );
+		TypeEncoderString del = new TypeEncoderString( exiFactory );
 		BitEncoderChannel bec = new BitEncoderChannel( baos );
-		
-
-//		DatatypeEvent dtEvent = new Characters( null );
-		
+				
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, atCh1 );
 		del.writeTypeValidValue ( bec, at1.getNamespaceURI ( ), at1.getLocalName ( )  );
 		del.isTypeValid ( BuiltIn.DEFAULT_DATATYPE, ch1 );
@@ -193,7 +189,7 @@ public class StringTableValueTest
 		/*
 		 * Decode
 		 */
-		TypeDecoderLexical ddl = new TypeDecoderLexical( false);
+		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
 		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh1 )  );

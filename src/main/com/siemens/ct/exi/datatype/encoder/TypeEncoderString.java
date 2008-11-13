@@ -16,9 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.encoder;
 
-import com.siemens.ct.exi.util.ExpandedName;
+import java.io.IOException;
+
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * TODO Description
@@ -29,15 +33,26 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20081112
  */
 
-public class DatatypeBinary extends AbstractDatatype
+public class TypeEncoderString extends AbstractTypeEncoder
 {
-	public DatatypeBinary ( ExpandedName datatypeIdentifier, BuiltInType binaryType )
+	private final static boolean VALID_RESULT = true;
+	String lastValidValue;
+	
+	public TypeEncoderString ( EXIFactory exiFactory )
 	{
-		super ( binaryType, datatypeIdentifier );
-
-		if ( ! ( binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX ) )
-		{
-			throw new RuntimeException ( "Illegal type '" + binaryType + "' for DatatypeBinary" );
-		}
+		super ( exiFactory );
 	}
+	
+	public boolean isTypeValid ( Datatype datatype, final String value )
+	{
+		lastValidValue = value;
+		return VALID_RESULT;
+	}
+	
+	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
+	{
+		writeValueAsString ( valueChannel, uri, localName, lastValidValue );	
+	}
+
+
 }

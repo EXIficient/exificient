@@ -29,7 +29,8 @@ package com.siemens.ct.exi.datatype;
 
 public enum BuiltInType
 {
-	BUILTIN_BINARY,
+	BUILTIN_BINARY_BASE64,
+	BUILTIN_BINARY_HEX,
 	BUILTIN_BOOLEAN,
 	BUILTIN_BOOLEAN_PATTERN,
 	BUILTIN_DECIMAL,

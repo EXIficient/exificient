@@ -20,11 +20,11 @@ package com.siemens.ct.exi.datatype.decoder;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.DatatypeList;
+import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
+import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -32,45 +32,42 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081112
+ * @version 0.1.20080718
  */
 
-public class ListDatatypeDecoder extends AbstractDatatypeDecoder
+public class RestrictedCharacterSetDatatypeDecoder extends AbstractDatatypeDecoder
 {
-	protected EXIFactory	exiFactory;
-	protected TypeDecoder	listTypeDecoder	= null;
+	protected RestrictedCharacterSet rcs;
 	
-	protected StringBuffer sResult = new StringBuffer();
-
-	public ListDatatypeDecoder( EXIFactory exiFactory )
+	public RestrictedCharacterSetDatatypeDecoder( RestrictedCharacterSet rcs )
 	{
 		super();
 		
-		this.exiFactory = exiFactory;
+		this.rcs = rcs;
 	}
-	
 	
 	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
 	{
-		// setup (list)typeEncoder if not already
-		if ( listTypeDecoder == null )
+		int numberOfTuples = dc.decodeUnsignedInteger ( );
+		
+		//	TODO calculate number of bits statically
+		int numberOfBits =  MethodsBag.getCodingLength ( rcs.size ( ) );
+		
+		StringBuilder sb = new StringBuilder();
+		
+		try
 		{
-			// Note: initialization in constructor causes never ending calls!
-			listTypeDecoder = exiFactory.createTypeDecoder ( );
+			for ( int i=0; i<numberOfTuples; i++ )
+			{
+				int code = dc.decodeNBitUnsignedInteger ( numberOfBits );
+				sb.append ( rcs.getCharacter ( code ) );
+			}
+		}
+		catch ( UnknownElementException e )
+		{
+			throw new IOException( e );
 		}
 		
-		Datatype listDatatype = ( (DatatypeList) datatype ).getListDatatype ( );
-
-		int len = dc.decodeUnsignedInteger ( );
-		
-		sResult.setLength ( 0 );
-		
-		for ( int i=0; i<len; i++  )
-		{
-			sResult.append ( listTypeDecoder.decodeValue ( listDatatype, dc, namespaceURI, localName ) );
-			sResult.append( Constants.XSD_LIST_DELIM );
-		}
-		
-		return sResult.toString ( );
+		return sb.toString ( );
 	}
 }

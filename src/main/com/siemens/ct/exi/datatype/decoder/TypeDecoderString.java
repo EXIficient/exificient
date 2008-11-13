@@ -16,9 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.decoder;
 
-import com.siemens.ct.exi.util.ExpandedName;
+import java.io.IOException;
+
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
  * TODO Description
@@ -26,18 +30,19 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081112
+ * @version 0.1.20081105
  */
 
-public class DatatypeBinary extends AbstractDatatype
+public class TypeDecoderString extends AbstractTypeDecoder
 {
-	public DatatypeBinary ( ExpandedName datatypeIdentifier, BuiltInType binaryType )
+	public TypeDecoderString ( EXIFactory exiFactory )
 	{
-		super ( binaryType, datatypeIdentifier );
+		super ( exiFactory );
+	}
 
-		if ( ! ( binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX ) )
-		{
-			throw new RuntimeException ( "Illegal type '" + binaryType + "' for DatatypeBinary" );
-		}
+	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
+			throws IOException
+	{
+		return decodeValueAsString ( dc, namespaceURI, localName );
 	}
 }

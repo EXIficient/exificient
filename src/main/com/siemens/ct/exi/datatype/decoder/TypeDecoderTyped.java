@@ -18,10 +18,7 @@
 
 package com.siemens.ct.exi.datatype.decoder;
 
-import java.io.IOException;
-
-import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.EXIFactory;
 
 /**
  * TODO Description
@@ -29,29 +26,17 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.1.20081112
  */
 
-public class TypeDecoderTyped extends AbstractTypeDecoder
+public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed
 {
-	protected BinaryDatatypeDecoder				binaryDTD;
-	protected BooleanDatatypeDecoder			booleanDTD;
-	protected BooleanPatternDatatypeDecoder		booleanPatternDTD;
-	protected DecimalDatatypeDecoder			decimalDTD;
-	protected FloatDatatypeDecoder				floatDTD;
-	protected IntegerDatatypeDecoder			integerDTD;
-	protected UnsignedIntegerDatatypeDecoder	unsignedIntegerDTD;
-	protected NBitIntegerDatatypeDecoder		nBitIntegerDTD;
-	protected DatetimeDatatypeDecoder			datetimeDTD;
-	protected EnumerationDatatypeDecoder		enumerationDTD;
-	protected ListDatatypeDecoder				listDTD;
-	protected StringDatatypeDecoder				stringDTD;
-
-	public TypeDecoderTyped ( boolean isSchemaInformed )
+	public TypeDecoderTyped ( EXIFactory exiFactory )
 	{
-		super ( isSchemaInformed );
+		super ( exiFactory );
 
-		binaryDTD = new BinaryDatatypeDecoder ( );
+		binaryBase64DTD = new BinaryDatatypeDecoder ( );
+		binaryHexDTD = binaryBase64DTD;
 		booleanDTD = new BooleanDatatypeDecoder ( );
 		booleanPatternDTD = new BooleanPatternDatatypeDecoder ( );
 		decimalDTD = new DecimalDatatypeDecoder ( );
@@ -61,42 +46,7 @@ public class TypeDecoderTyped extends AbstractTypeDecoder
 		nBitIntegerDTD = new NBitIntegerDatatypeDecoder ( );
 		datetimeDTD = new DatetimeDatatypeDecoder ( );
 		enumerationDTD = new EnumerationDatatypeDecoder ( );
-		listDTD = new ListDatatypeDecoder ( );
+		listDTD = new ListDatatypeDecoder ( exiFactory );
 		stringDTD = new StringDatatypeDecoder ( );
-	}
-
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
-			throws IOException
-	{
-		switch ( datatype.getDefaultBuiltInType ( ) )
-		{
-			case BUILTIN_BINARY:
-				return binaryDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_BOOLEAN:
-				return booleanDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_BOOLEAN_PATTERN:
-				return booleanPatternDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_DECIMAL:
-				return decimalDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_FLOAT:
-				return floatDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_INTEGER:
-				return integerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_UNSIGNED_INTEGER:
-				return unsignedIntegerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_NBIT_INTEGER:
-				return nBitIntegerDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_DATETIME:
-				return datetimeDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_ENUMERATION:
-				return enumerationDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_LIST:
-				return listDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-			case BUILTIN_STRING:
-				return stringDTD.decodeValue ( this, datatype, dc, namespaceURI, localName );
-				// return decodeValueAsString ( dc, localName );
-			default:
-				throw new RuntimeException ( "Unknown BuiltIn Type" );
-		}
 	}
 }

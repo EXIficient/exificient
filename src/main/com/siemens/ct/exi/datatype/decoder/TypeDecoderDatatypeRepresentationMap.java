@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -45,11 +46,11 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder im
 
 	private Map<QName, DatatypeDecoder>	userDefinedDatatypeRepresentations;
 
-	public TypeDecoderDatatypeRepresentationMap ( boolean isSchemaInformed )
+	public TypeDecoderDatatypeRepresentationMap ( EXIFactory exiFactory )
 	{
-		super ( isSchemaInformed );
+		super ( exiFactory );
 
-		defaultDecoder = new TypeDecoderTyped ( isSchemaInformed );
+		defaultDecoder = new TypeDecoderTyped ( exiFactory );
 		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder> ( );
 	}
 

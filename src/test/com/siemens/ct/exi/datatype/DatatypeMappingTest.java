@@ -61,8 +61,23 @@ public class DatatypeMappingTest extends AbstractTestCase
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor ( schemaAsString, "Binary", "" );
 
-		assertTrue ( BuiltInType.BUILTIN_BINARY == dt.getDefaultBuiltInType ( ) );
+		assertTrue ( BuiltInType.BUILTIN_BINARY_BASE64 == dt.getDefaultBuiltInType ( ) );
 		assertTrue ( BuiltIn.XSD_BASE64BINARY == dt.getDatatypeIdentifier ( ));
+	}
+	
+	public void testBinary2 () throws Exception
+	{
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>" +
+		"  <xs:simpleType name='Binary'>" +
+		"    <xs:restriction base='xs:hexBinary'>" +
+		"    </xs:restriction>" + 
+		"  </xs:simpleType>" +
+		"</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor ( schemaAsString, "Binary", "" );
+
+		assertTrue ( BuiltInType.BUILTIN_BINARY_HEX == dt.getDefaultBuiltInType ( ) );
+		assertTrue ( BuiltIn.XSD_HEXBINARY == dt.getDatatypeIdentifier ( ));
 	}
 	
 	

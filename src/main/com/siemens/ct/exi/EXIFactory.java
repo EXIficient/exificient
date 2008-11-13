@@ -27,6 +27,8 @@ import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.block.DecoderBlock;
 import com.siemens.ct.exi.io.block.EncoderBlock;
@@ -38,7 +40,7 @@ import com.siemens.ct.exi.io.block.EncoderBlock;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081112
  */
 
 public interface EXIFactory
@@ -169,5 +171,24 @@ public interface EXIFactory
 	 * @see DecoderBlock
 	 */
 	public DecoderBlock createDecoderBlock ( InputStream inputStream ) throws IOException;
+	
 
+	/**
+	 * Returns an EXI <code>TypeEncoder</code> according coding options such as 
+	 * schema-informed or schema-less grammar and options like Preserve.LexicalValues
+	 * 
+	 * @return type encoder according given EXI options
+	 * @see TypeEncoder
+	 */
+	public TypeEncoder createTypeEncoder ();
+	
+
+	/**
+	 * Returns an EXI <code>TypeDecoder</code> according coding options such as 
+	 * schema-informed or schema-less grammar and options like Preserve.LexicalValues
+	 * 
+	 * @return type decoder according given EXI options
+	 * @see TypeDecoder
+	 */
+	public TypeDecoder createTypeDecoder ();
 }

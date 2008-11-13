@@ -43,7 +43,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.1.20081112
  */
 
 public class BuiltIn
@@ -363,11 +363,11 @@ public class BuiltIn
 
 		if ( XSD_BASE64BINARY.equals ( exiDatatypeID ) )
 		{
-			datatype = new DatatypeBinary ( exiDatatypeID );
+			datatype = new DatatypeBinary ( exiDatatypeID, BuiltInType.BUILTIN_BINARY_BASE64 );
 		}
 		else if ( XSD_HEXBINARY.equals ( exiDatatypeID ) )
 		{
-			datatype = new DatatypeBinary ( exiDatatypeID );
+			datatype = new DatatypeBinary ( exiDatatypeID, BuiltInType.BUILTIN_BINARY_HEX );
 		}
 		else if ( XSD_BOOLEAN.equals ( exiDatatypeID ) )
 		{

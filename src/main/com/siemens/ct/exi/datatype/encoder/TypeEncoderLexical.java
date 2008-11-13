@@ -18,11 +18,8 @@
 
 package com.siemens.ct.exi.datatype.encoder;
 
-import java.io.IOException;
-
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.helpers.BuiltInRestrictedCharacterSets;
 
 /**
  * TODO Description
@@ -30,29 +27,34 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081112
  */
 
-public class TypeEncoderLexical extends AbstractTypeEncoder
+public class TypeEncoderLexical extends AbstractTypeEncoderSchemaInformed
 {
-	private final static boolean validResult = true;
-	String lastValidValue;
-	
 	public TypeEncoderLexical ( EXIFactory exiFactory )
 	{
 		super ( exiFactory );
-	}
-	
-	public boolean isTypeValid ( Datatype datatype, final String value )
-	{
-		lastValidValue = value;
-		return validResult;
-	}
-	
-	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		writeValueAsString ( valueChannel, uri, localName, lastValidValue );	
-	}
 
-
+		binaryBase64DTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDBase64BinaryInstance ( ) );
+		binaryHexDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDHexBinaryInstance ( ) );
+		booleanDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDBooleanInstance ( ) );
+		booleanPatternDTE = booleanDTE;
+		decimalDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDDecimalInstance ( ) );
+		floatDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDDoubleInstance ( ) );
+		integerDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDIntegerInstance ( ) );
+		unsignedIntegerDTE = integerDTE;
+		nBitIntegerDTE = integerDTE;
+		datetimeDTE = new RestrictedCharacterSetDatatypeEncoder ( this, BuiltInRestrictedCharacterSets
+				.newXSDDateTimeInstance ( ) );
+		enumerationDTE = new EnumerationDatatypeEncoder ( this );
+		listDTE = new ListDatatypeEncoder ( this, exiFactory );
+		stringDTE = new StringDatatypeEncoder ( this );
+	}
 }

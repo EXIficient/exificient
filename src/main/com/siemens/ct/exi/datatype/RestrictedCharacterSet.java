@@ -18,26 +18,35 @@
 
 package com.siemens.ct.exi.datatype;
 
-import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.exceptions.UnknownElementException;
 
-/**
- * TODO Description
- * 
- * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
- * 
- * @version 0.1.20081112
- */
 
-public class DatatypeBinary extends AbstractDatatype
+public interface RestrictedCharacterSet
 {
-	public DatatypeBinary ( ExpandedName datatypeIdentifier, BuiltInType binaryType )
-	{
-		super ( binaryType, datatypeIdentifier );
+	/**
+	 * Retrieves the character with given code(-point).
+	 * 
+	 * @param code
+	 * @return char or
+	 * @throws UnknownElementException code unknown
+	 */
 
-		if ( ! ( binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX ) )
-		{
-			throw new RuntimeException ( "Illegal type '" + binaryType + "' for DatatypeBinary" );
-		}
-	}
+	public char getCharacter ( int code ) throws UnknownElementException;
+
+	/**
+	 * Returns code for given character or <code>NOT_FOUND</code> == -1 for
+	 * invalid char.
+	 * 
+	 * @param c character of interest
+	 * @return code(-point)
+	 */
+	public int getCode ( char c );
+
+	/**
+	 * Returns the number of entries for the set.
+	 * 
+	 * @return number of entries
+	 */
+	public int size ();
+
 }

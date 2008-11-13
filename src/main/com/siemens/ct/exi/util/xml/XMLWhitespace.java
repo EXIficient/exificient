@@ -24,15 +24,15 @@ package com.siemens.ct.exi.util.xml;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081111
  */
 
 public class XMLWhitespace
 {
-	private static final char	WS_SPACE	= ' ';
-	private static final char	WS_NL		= '\n';
-	private static final char	WS_CR		= '\r';
-	private static final char	WS_TAB		= '\t';
+	public static final char	WS_SPACE	= ' ';
+	public static final char	WS_NL		= '\n';
+	public static final char	WS_CR		= '\r';
+	public static final char	WS_TAB		= '\t';
 
 	
 	public static int getLeadingWhitespaces( final char[] ch, int start, final int length )

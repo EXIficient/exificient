@@ -43,11 +43,13 @@ import com.siemens.ct.exi.core.sax.NoPrefixSAXEncoder;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderTyped;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderDatatypeRespresentationMap;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderLexical;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderTyped;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -71,7 +73,7 @@ import com.siemens.ct.exi.io.block.EncoderByteBlockPreCompression;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081112
  */
 
 public class DefaultEXIFactory implements EXIFactory
@@ -222,80 +224,97 @@ public class DefaultEXIFactory implements EXIFactory
 		return new SAXDecoder ( this );
 	}
 
-	protected TypeEncoder createTypeEncoder ()
+	public TypeEncoder createTypeEncoder ()
 	{
 		TypeEncoder typeEncoder;
 
 		// create new type encoder
-		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) || ( !isSchemaInformed ( ) ) )
+		if ( isSchemaInformed ( ) )
 		{
-			typeEncoder = new TypeEncoderLexical ( this );
-		}
-		else
-		{
-			if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
+			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) )
 			{
-				TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap ( this );
-
-				for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
-				{
-					enc.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
-				}
-
-				typeEncoder = enc;
+				// use restricted characters sets
+				typeEncoder = new TypeEncoderLexical ( this );
 			}
 			else
 			{
-				typeEncoder = new TypeEncoderTyped ( this );
-			}
-		}
+				if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
+				{
+					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap ( this );
 
-		// populate type-encoder string table
-		getGrammar ( ).populateStringTable ( typeEncoder.getStringTable ( ) );
+					for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
+					{
+						enc.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
+					}
+
+					typeEncoder = enc;
+				}
+				else
+				{
+					//	use default type encoders
+					typeEncoder = new TypeEncoderTyped ( this );
+				}
+			}
+
+		}
+		else
+		{
+			// use string only
+			typeEncoder = new TypeEncoderString ( this );
+		}
 
 		return typeEncoder;
 	}
-
-	protected TypeDecoder createTypeDecoder ()
+	
+	public TypeDecoder createTypeDecoder ()
 	{
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
-		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) || ( !isSchemaInformed ( ) ) )
+		if ( isSchemaInformed ( )  )
 		{
-			typeDecoder = new TypeDecoderLexical ( isSchemaInformed ( ) );
-		}
-		else
-		{
-			if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
+			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) ) 
 			{
-				TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap (
-						isSchemaInformed ( ) );
-
-				for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
-				{
-					dec.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
-				}
-
-				typeDecoder = dec;
+				typeDecoder = new TypeDecoderLexical ( this );
 			}
 			else
 			{
-				typeDecoder = new TypeDecoderTyped ( isSchemaInformed ( ) );
+				if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
+				{
+					TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap ( this );
+
+					for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
+					{
+						dec.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
+					}
+
+					typeDecoder = dec;
+				}
+				else
+				{
+					//	use default type decoders
+					typeDecoder = new TypeDecoderTyped ( this );
+				}
 			}
 		}
-
-		// populate type-encoder string table
-		getGrammar ( ).populateStringTable ( typeDecoder.getStringTable ( ) );
+		else
+		{
+			//	strings only
+			typeDecoder = new TypeDecoderString ( this );
+		}
 
 		return typeDecoder;
 	}
+
 
 	public EncoderBlock createEncoderBlock ( OutputStream outputStream )
 	{
 		EncoderBlock encBlock;
 
 		TypeEncoder typeEncoder = this.createTypeEncoder ( );
+		
+		// populate type-encoder string table
+		getGrammar ( ).populateStringTable ( typeEncoder.getStringTable ( ) );
 
 		switch ( codingMode )
 		{
@@ -323,6 +342,9 @@ public class DefaultEXIFactory implements EXIFactory
 		DecoderBlock decBlock;
 
 		TypeDecoder typeDecoder = this.createTypeDecoder ( );
+
+		// populate type-encoder string table
+		getGrammar ( ).populateStringTable ( typeDecoder.getStringTable ( ) );
 
 		switch ( codingMode )
 		{

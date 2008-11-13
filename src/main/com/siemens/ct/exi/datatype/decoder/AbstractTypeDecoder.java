@@ -20,6 +20,7 @@ package com.siemens.ct.exi.datatype.decoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.AbstractTypeCoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoderImpl;
@@ -40,9 +41,9 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements T
 	// EXI string table(s)
 	protected StringTableDecoder	stringTable;
 
-	public AbstractTypeDecoder ( boolean isSchemaInformed )
+	public AbstractTypeDecoder ( EXIFactory exiFactory )
 	{
-		stringTable = new StringTableDecoderImpl ( isSchemaInformed );
+		stringTable = new StringTableDecoderImpl ( exiFactory.getGrammar ( ).isSchemaInformed ( ) );
 	}
 
 	public StringTableDecoder getStringTable ()

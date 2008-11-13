@@ -16,9 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
-
-import com.siemens.ct.exi.util.ExpandedName;
+package com.siemens.ct.exi.exceptions;
 
 /**
  * TODO Description
@@ -26,18 +24,19 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081112
+ * @version 0.1.20081113
  */
 
-public class DatatypeBinary extends AbstractDatatype
+public class UnknownElementException extends EXIException
 {
-	public DatatypeBinary ( ExpandedName datatypeIdentifier, BuiltInType binaryType )
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= -8859158367056532581L;
+	
+	public UnknownElementException( String msg )
 	{
-		super ( binaryType, datatypeIdentifier );
-
-		if ( ! ( binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX ) )
-		{
-			throw new RuntimeException ( "Illegal type '" + binaryType + "' for DatatypeBinary" );
-		}
+		super( msg );
 	}
+
 }

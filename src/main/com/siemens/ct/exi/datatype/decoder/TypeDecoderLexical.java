@@ -18,10 +18,8 @@
 
 package com.siemens.ct.exi.datatype.decoder;
 
-import java.io.IOException;
-
-import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.helpers.BuiltInRestrictedCharacterSets;
 
 /**
  * TODO Description
@@ -32,16 +30,31 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081105
  */
 
-public class TypeDecoderLexical extends AbstractTypeDecoder
+public class TypeDecoderLexical extends TypeDecoderTypedSchemaInformed
 {
-	public TypeDecoderLexical ( boolean isSchemaInformed )
+	public TypeDecoderLexical ( EXIFactory exiFactory )
 	{
-		super ( isSchemaInformed );
-	}
+		super ( exiFactory );
 
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
-			throws IOException
-	{
-		return decodeValueAsString ( dc, namespaceURI, localName );
+		binaryBase64DTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDBase64BinaryInstance ( ) );
+		binaryHexDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDHexBinaryInstance ( ) );
+		booleanDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDBooleanInstance ( ) );
+		booleanPatternDTD = booleanDTD;
+		decimalDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDDecimalInstance ( ) );
+		floatDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDDoubleInstance ( ) );
+		integerDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDIntegerInstance ( ) );
+		unsignedIntegerDTD = integerDTD;
+		nBitIntegerDTD = integerDTD;
+		datetimeDTD = new RestrictedCharacterSetDatatypeDecoder ( BuiltInRestrictedCharacterSets
+				.newXSDDateTimeInstance ( ) );
+		enumerationDTD = new EnumerationDatatypeDecoder ( );
+		listDTD = new ListDatatypeDecoder ( exiFactory );
+		stringDTD = new StringDatatypeDecoder ( );
 	}
 }

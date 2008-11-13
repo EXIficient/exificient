@@ -19,12 +19,10 @@
 package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.datatype.BuiltInType;
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeList;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -40,128 +38,66 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
 {
-	HashMap<Integer, DatatypeEncoder>	hmEncoders				= new HashMap<Integer, DatatypeEncoder> ( );
-	HashMap<Integer, String>			hmToken					= new HashMap<Integer, String> ( );				;
+	protected Datatype		listDatatype;
+	protected TypeEncoder	listTypeEncoder	= null;
+	protected EXIFactory	exiFactory;
+	protected int			numberOfEnumeratedTypes;
+	protected String		lastValidValue;
 
-	private ArrayList<DatatypeEncoder>	lastDatatypeEncoders	= new ArrayList<DatatypeEncoder> ( );
-	private ArrayList<String>			lastTokens				= new ArrayList<String> ( );
-	private BuiltInType					lastBuiltInTypeList;
-	private Datatype					datatypeList;
-
-	private boolean						lastValidTokens;
-
-	
-	public ListDatatypeEncoder( TypeEncoder typeEncoder )
+	public ListDatatypeEncoder ( TypeEncoder typeEncoder, EXIFactory exiFactory )
 	{
-		super( typeEncoder );
+		super ( typeEncoder );
+
+		this.exiFactory = exiFactory;
 	}
-	
-	
+
 	public boolean isValid ( Datatype datatype, String value )
 	{
-		try
+		// setup (list)typeEncoder if not already
+		if ( listTypeEncoder == null )
 		{
-			datatypeList = ( (DatatypeList) datatype ).getListDatatype ( );
-			lastBuiltInTypeList = datatypeList.getDefaultBuiltInType ( );
+			// Note: initialization in constructor causes never ending calls!
+			listTypeEncoder = exiFactory.createTypeEncoder ( );
+		}
 
-			// setup new array lists for encoders and tokens
-			lastDatatypeEncoders.clear ( );
-			lastTokens.clear ( );
+		// check first (no cache for writeValue used)
+		listDatatype = ( (DatatypeList) datatype ).getListDatatype ( );
 
-			StringTokenizer st = new StringTokenizer ( value, Constants.XSD_LIST_DELIM );
-//			if ( CompileConfiguration.LOGGING_ON )
-//			{
-//				System.out.println ( "TokenSize: " + st.countTokens ( ) );
-//			}
-			lastValidTokens = true;
+		// iterate over all tokens
+		StringTokenizer st = new StringTokenizer ( value, Constants.XSD_LIST_DELIM );
+		numberOfEnumeratedTypes = 0;
 
-			while ( lastValidTokens && st.hasMoreTokens ( ) )
+		while ( st.hasMoreTokens ( ) )
+		{
+			if ( !listTypeEncoder.isTypeValid ( listDatatype, st.nextToken ( ) ) )
 			{
-				String token = st.nextToken ( );
-
-				lastTokens.add ( token );
-//				if ( CompileConfiguration.LOGGING_ON )
-//				{
-//					System.out.println ( "Token: " + token );
-//				}
-
-				DatatypeEncoder de = getDatatypeEncoder ( lastBuiltInTypeList );
-				lastDatatypeEncoders.add ( de );
-
-				lastValidTokens = de.isValid ( datatypeList, token );
-
+				// invalid --> abort process
+				return false;
 			}
+			numberOfEnumeratedTypes++;
+		}
 
-			return lastValidTokens;
-		}
-		catch ( RuntimeException e )
-		{
-			return false;
-		}
+		lastValidValue = value;
+		return true;
 	}
-
-//	public boolean isValid ( Datatype datatype, char[] ch, int start, int length )
-//	{
-//		return isValid ( datatype, new String ( ch, start, length ) );
-//	}
 
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
-		assert ( lastDatatypeEncoders.size ( ) == lastTokens.size ( ) );
+		/*
+		 * check AGAIN & write to stream
+		 */
 
 		// length prefixed sequence of values
-		valueChannel.encodeUnsignedInteger ( lastDatatypeEncoders.size ( ) );
+		valueChannel.encodeUnsignedInteger ( numberOfEnumeratedTypes );
 
-		for ( int i = 0; i < lastDatatypeEncoders.size ( ); i++ )
+		// iterate over all tokens
+		StringTokenizer st = new StringTokenizer ( lastValidValue, Constants.XSD_LIST_DELIM );
+
+		while ( st.hasMoreTokens ( ) )
 		{
-			lastDatatypeEncoders.get ( i ).writeValue ( valueChannel, uri, localName );
-			//lastDatatypeEncoders.get ( i ).writeValue ( valueChannel );
+			// Note: assumption that is valid (was already checked!)
+			listTypeEncoder.isTypeValid ( listDatatype, st.nextToken ( ) );
+			listTypeEncoder.writeTypeValidValue ( valueChannel, uri, localName );
 		}
-
 	}
-
-	private DatatypeEncoder getDatatypeEncoder ( BuiltInType builtInTypeList )
-	{
-		DatatypeEncoder datatypeEncoder;
-
-		switch ( builtInTypeList )
-		{
-			case BUILTIN_BINARY:
-				datatypeEncoder = new BinaryDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_BOOLEAN:
-				datatypeEncoder = new BooleanDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_BOOLEAN_PATTERN:
-				datatypeEncoder = new BooleanPatternDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_DECIMAL:
-				datatypeEncoder = new DecimalDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_FLOAT:
-				datatypeEncoder = new FloatDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_INTEGER:
-				datatypeEncoder = new IntegerDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_UNSIGNED_INTEGER:
-				datatypeEncoder = new UnsignedIntegerDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_DATETIME:
-				datatypeEncoder = new DatetimeDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_ENUMERATION:
-				datatypeEncoder = new EnumerationDatatypeEncoder ( typeEncoder );
-				break;
-			case BUILTIN_STRING:
-				datatypeEncoder = new StringDatatypeEncoder ( typeEncoder );
-				break;
-			default:
-				throw new RuntimeException ( "Unknown BuiltIn Type" );
-		}
-
-		return datatypeEncoder;
-	}
-
 }
