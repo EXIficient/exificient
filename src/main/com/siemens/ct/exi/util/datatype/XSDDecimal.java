@@ -94,7 +94,7 @@ public class XSDDecimal
 		else
 		{
 			integral.parse ( decimal.substring ( 0, decPoint ) );
-			revFractional.parse ( new StringBuffer ( decimal.substring ( decPoint + 1, decimal.length ( ) ) )
+			revFractional.parse ( new StringBuilder ( decimal.substring ( decPoint + 1, decimal.length ( ) ) )
 					.reverse ( ).toString ( ) );
 		}
 

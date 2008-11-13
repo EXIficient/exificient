@@ -40,13 +40,14 @@ public class ListDatatypeDecoder extends AbstractDatatypeDecoder
 	protected EXIFactory	exiFactory;
 	protected TypeDecoder	listTypeDecoder	= null;
 	
-	protected StringBuffer sResult = new StringBuffer();
+	protected StringBuilder sResult;
 
 	public ListDatatypeDecoder( EXIFactory exiFactory )
 	{
 		super();
-		
 		this.exiFactory = exiFactory;
+		
+		sResult = new StringBuilder();
 	}
 	
 	

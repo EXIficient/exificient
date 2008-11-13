@@ -315,7 +315,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 		// fractional portion (reverse order)
 		BigDecimal fractional = integral.signum ( ) < 0 ? decimal.add ( integral ) : decimal.subtract ( integral );
 		fractional = fractional.movePointRight ( decimal.scale ( ) );
-		StringBuffer sb = new StringBuffer ( fractional.toBigInteger ( ).toString ( ) );
+		StringBuilder sb = new StringBuilder ( fractional.toBigInteger ( ).toString ( ) );
 		sb = sb.reverse ( );
 		int length = sb.length ( );
 		for ( int i = 0; i < ( decimal.scale ( ) - length ); i++ )

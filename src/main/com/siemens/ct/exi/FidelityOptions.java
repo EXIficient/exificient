@@ -59,6 +59,9 @@ public class FidelityOptions
 
 	/* contains options set to TRUE */
 	protected Set<String>	options;
+	
+	/* special strict handling */
+	protected boolean isStrict = false;
 
 	protected FidelityOptions ()
 	{
@@ -88,6 +91,7 @@ public class FidelityOptions
 		FidelityOptions fo = new FidelityOptions ( );
 
 		fo.options.add ( FEATURE_STRICT );
+		fo.isStrict = true;
 
 		return fo;
 	}
@@ -134,11 +138,13 @@ public class FidelityOptions
 				options.clear ( );
 
 				options.add ( key  );
+				isStrict = true;
 			}
 			else
 			{
 				// remove strict (if present)
 				options.remove ( key );
+				isStrict = false;
 			}
 		}
 		else if ( key.equals ( FEATURE_COMMENT ) || key.equals ( FEATURE_PI ) || key.equals ( FEATURE_DTD )
@@ -188,7 +194,8 @@ public class FidelityOptions
 	 */
 	public boolean isStrict ()
 	{
-		return options.contains ( FEATURE_STRICT );
+		return isStrict;
+		// return options.contains ( FEATURE_STRICT );
 	}
 
 	@Override

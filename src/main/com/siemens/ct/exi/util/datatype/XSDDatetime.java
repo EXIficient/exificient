@@ -46,6 +46,8 @@ public class XSDDatetime
 	protected static final int MONTH_MULTIPLICATOR = 32;
 	
 	private DatetimeType type;
+	
+	private StringBuilder sbCal;
 
 	public int				iYear;
 	public int				iMonthDay;
@@ -55,6 +57,7 @@ public class XSDDatetime
 	
 	private XSDDatetime ( )
 	{
+		sbCal = new StringBuilder ( );
 	}
 	
 	public static XSDDatetime newInstance ()
@@ -72,7 +75,8 @@ public class XSDDatetime
 		this.type = type;
 		
 		//StringBuffer sbCal = new StringBuffer ( cal.trim ( ) );
-		StringBuffer sbCal = new StringBuffer ( cal );
+		sbCal.setLength ( 0 );
+		sbCal.append ( cal );
 		
 		try
 		{
@@ -137,7 +141,7 @@ public class XSDDatetime
 		}
 	}
 
-	public static void checkCharacter ( StringBuffer sb, char c ) throws XMLParsingException
+	public static void checkCharacter ( StringBuilder sb, char c ) throws XMLParsingException
 	{
 		if ( sb.length ( ) > 0 && sb.charAt ( 0 ) == c )
 		{
@@ -149,7 +153,7 @@ public class XSDDatetime
 		}
 	}
 
-	public static int parseYear ( StringBuffer sb )
+	public static int parseYear ( StringBuilder sb )
 	{
 		String sYear;
 		int len;
@@ -171,7 +175,7 @@ public class XSDDatetime
 		return year;
 	}
 
-	public static int parseMonth ( StringBuffer sb )
+	public static int parseMonth ( StringBuilder sb )
 	{
 		int month = Integer.parseInt ( sb.substring ( 0, 2 ) );
 
@@ -181,7 +185,7 @@ public class XSDDatetime
 		return month;
 	}
 
-	public static int parseDay ( StringBuffer sb )
+	public static int parseDay ( StringBuilder sb )
 	{
 		String sDay = sb.substring ( 0, 2 );
 		int day = Integer.parseInt ( sDay );
@@ -192,7 +196,7 @@ public class XSDDatetime
 		return day;
 	}
 
-	public static int parseMonthDay ( StringBuffer sb ) throws XMLParsingException
+	public static int parseMonthDay ( StringBuilder sb ) throws XMLParsingException
 	{
 		int month = parseMonth ( sb ); // month
 		checkCharacter ( sb, '-' ); // hyphen
@@ -202,7 +206,7 @@ public class XSDDatetime
 	}
 
 	// Time ((Hour * 60) + Minutes) * 60 + seconds
-	public static int parseTime ( StringBuffer sb ) throws XMLParsingException
+	public static int parseTime ( StringBuilder sb ) throws XMLParsingException
 	{
 		// hour
 		int hour = Integer.parseInt ( sb.substring ( 0, 2 ) );
@@ -232,7 +236,7 @@ public class XSDDatetime
 	// * '-' indicates a nonpositive duration.
 	//
 	// TimeZone TZHours * 60 + TZSeconds (offset by 840)
-	public static int parseTimezoneInMinutesOffset ( StringBuffer sb )
+	public static int parseTimezoneInMinutesOffset ( StringBuilder sb )
 			throws XMLParsingException
 	{
 
@@ -272,7 +276,7 @@ public class XSDDatetime
 		return ( multiplicator ) * ( hours * 60 + minutes ) + TIMEZONE_OFFSET_IN_MINUTES;
 	}
 
-	public static int parseFractionalSecondsReverse ( StringBuffer sb )
+	public static int parseFractionalSecondsReverse ( StringBuilder sb )
 			throws StringIndexOutOfBoundsException
 	{
 		if ( sb.length ( ) > 0 && sb.charAt ( 0 ) == '.' )
@@ -280,7 +284,7 @@ public class XSDDatetime
 			sb.deleteCharAt ( 0 ); // can't remove it immediately, because
 									// fracSec is option (could be timezone)
 			int digits = countDigits ( sb );
-			int revFracSecs = Integer.parseInt ( new StringBuffer ( sb.substring ( 0, digits ) )
+			int revFracSecs = Integer.parseInt ( new StringBuilder ( sb.substring ( 0, digits ) )
 					.reverse ( ).toString ( ) );
 
 			// adjust buffer
@@ -292,7 +296,7 @@ public class XSDDatetime
 		return 0;
 	}
 
-	private static int countDigits ( StringBuffer sb )
+	private static int countDigits ( StringBuilder sb )
 	{
 		int length = sb.length ( );
 		int index = 0;
@@ -412,24 +416,24 @@ public class XSDDatetime
 		}
 		else if ( millisec < 10 )
 		{
-			revFracSecs = Integer.parseInt ( new StringBuffer ( "00" + millisec ).reverse ( )
+			revFracSecs = Integer.parseInt ( new StringBuilder ( "00" + millisec ).reverse ( )
 					.toString ( ) );
 		}
 		else if ( millisec < 100 )
 		{
-			revFracSecs = Integer.parseInt ( new StringBuffer ( "0" + millisec ).reverse ( )
+			revFracSecs = Integer.parseInt ( new StringBuilder ( "0" + millisec ).reverse ( )
 					.toString ( ) );
 		}
 		else
 		{
 			revFracSecs = Integer
-					.parseInt ( new StringBuffer ( millisec ).reverse ( ).toString ( ) );
+					.parseInt ( new StringBuilder ( millisec ).reverse ( ).toString ( ) );
 		}
 
 		return revFracSecs;
 	}
 
-	public static void appendYear ( StringBuffer sb, int year )
+	public static void appendYear ( StringBuilder sb, int year )
 	{
 		if ( year < 0 )
 		{
@@ -458,7 +462,7 @@ public class XSDDatetime
 		}
 	}
 
-	public static void appendMonth ( StringBuffer sb, int monthDay )
+	public static void appendMonth ( StringBuilder sb, int monthDay )
 	{
 		int month = monthDay / MONTH_MULTIPLICATOR;
 		assert ( ( monthDay - month * MONTH_MULTIPLICATOR ) == 0 );
@@ -466,14 +470,14 @@ public class XSDDatetime
 		appendHyphen2Digits ( sb, month );
 	}
 
-	public static void appendDay ( StringBuffer sb, int day )
+	public static void appendDay ( StringBuilder sb, int day )
 	{
 		assert ( day < 31 ); // day range 0-30
 
 		appendHyphen2Digits ( sb, day );
 	}
 
-	private static void appendHyphen2Digits ( StringBuffer sb, int n )
+	private static void appendHyphen2Digits ( StringBuilder sb, int n )
 	{
 		if ( n > 9 )
 		{
@@ -485,7 +489,7 @@ public class XSDDatetime
 		}
 	}
 
-	public static void appendMonthDay ( StringBuffer sb, int monthDay )
+	public static void appendMonthDay ( StringBuilder sb, int monthDay )
 	{
 		// monthDay: Month * 32 + Day
 
@@ -496,7 +500,7 @@ public class XSDDatetime
 		appendHyphen2Digits ( sb, monthDay - ( month * MONTH_MULTIPLICATOR ) );
 	}
 
-	public static void appendTime ( StringBuffer sb, int time )
+	public static void appendTime ( StringBuilder sb, int time )
 	{
 		// time = ( ( hour * 60) + minutes ) * 60 + seconds ;
 		final int secHour = 60 * 60;
@@ -514,17 +518,17 @@ public class XSDDatetime
 		sb.append ( seconds < 10 ? "0" + seconds : seconds );
 	}
 
-	public static void appendFractionalSeconds ( StringBuffer sb, int fracSecs )
+	public static void appendFractionalSeconds ( StringBuilder sb, int fracSecs )
 	{
 		if ( fracSecs > 0 )
 		{
 			// append after reversing fracSecs
 			sb.append ( '.' );
-			sb.append ( new StringBuffer ( fracSecs + "" ).reverse ( ) );
+			sb.append ( new StringBuilder ( fracSecs + "" ).reverse ( ) );
 		}
 	}
 
-	public static void appendTimezone ( StringBuffer sb, int tz )
+	public static void appendTimezone ( StringBuilder sb, int tz )
 	{
 
 		if ( tz == 0 )

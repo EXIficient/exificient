@@ -49,7 +49,7 @@ public class RestrictedCharacterSetDatatypeDecoder extends AbstractDatatypeDecod
 	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
 	{
 		int numberOfTuples = dc.decodeUnsignedInteger ( );
-		
+
 		//	TODO calculate number of bits statically
 		int numberOfBits =  MethodsBag.getCodingLength ( rcs.size ( ) );
 		
