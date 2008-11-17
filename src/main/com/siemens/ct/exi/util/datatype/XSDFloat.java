@@ -27,7 +27,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Martin.Winter@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081030
+ * @version 0.1.20081117
  */
 
 public class XSDFloat
@@ -72,8 +72,10 @@ public class XSDFloat
 		}
 		else
 		{
+			char[] chars = s.toCharArray ( );
+			
 			int decimalDigits = 0;
-			int len = s.length ( );
+			int len = chars.length;
 			int pos = 0;
 			iMantissa = 0;
 			iExponent = 0;
@@ -81,13 +83,9 @@ public class XSDFloat
 			boolean negative = false;
 			boolean negativeExponent = false;
 
-			if ( len == 0 )
-			{
-				throw new XMLParsingException ( "Empty string while parsing float" );
-			}
 
 			// status: detecting sign
-			if ( ( c = s.charAt ( pos ) ) == '+' )
+			if ( ( c = chars[ pos ] ) == '+' )
 			{
 				pos++;
 			}
@@ -98,7 +96,7 @@ public class XSDFloat
 			}
 
 			// status: parsing mantissa before decimal point
-			while ( pos < len && ( c = s.charAt ( pos++ ) ) != '.' && c != 'e' && c != 'E' )
+			while ( pos < len && ( c = chars[ pos++ ] ) != '.' && c != 'e' && c != 'E' )
 			{
 				if ( c == '0' )
 				{
@@ -118,7 +116,7 @@ public class XSDFloat
 			// status: parsing mantissa after decimal point
 			if ( c == '.' )
 			{
-				while ( pos < len && ( c = s.charAt ( pos++ ) ) != 'e' && c != 'E' )
+				while ( pos < len && ( c = chars[ pos++ ] ) != 'e' && c != 'E' )
 				{
 					if ( c == '0' )
 					{
@@ -142,7 +140,7 @@ public class XSDFloat
 			if ( c == 'e' || c == 'E' )
 			{
 				// status: checking sign of exponent
-				if ( ( c = s.charAt ( pos ) ) == '-' )
+				if ( ( c = chars[ pos ] ) == '-' )
 				{
 					negativeExponent = true;
 					pos++;
@@ -154,7 +152,8 @@ public class XSDFloat
 
 				while ( pos < len )
 				{
-					c = s.charAt ( pos++ );
+					// c = s.charAt ( pos++ );
+					c = chars[ pos++ ];
 
 					if ( c >= '0' && c <= '9' )
 					{
