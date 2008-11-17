@@ -104,9 +104,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel
 			}
 			else
 			{
-				// encodeUnsignedInteger ( s.charAt ( i ) );
 				encodeUnsignedInteger ( ch );
-				// encode ( ch );
 			}
 		}
 	}

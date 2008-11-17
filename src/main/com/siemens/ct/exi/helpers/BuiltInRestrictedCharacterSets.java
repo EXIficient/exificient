@@ -24,6 +24,7 @@ import java.util.Map;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
 import com.siemens.ct.exi.exceptions.UnknownElementException;
+import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class BuiltInRestrictedCharacterSets implements RestrictedCharacterSet
@@ -35,6 +36,9 @@ public class BuiltInRestrictedCharacterSets implements RestrictedCharacterSet
 
 	protected Map<Character, Integer>	codeSet;
 	protected Map<Integer, Character>	characterSet;
+	
+	protected int size;
+	protected int codingLength;
 
 	protected BuiltInRestrictedCharacterSets ()
 	{
@@ -273,15 +277,23 @@ public class BuiltInRestrictedCharacterSets implements RestrictedCharacterSet
 
 	public int size ()
 	{
-		assert ( codeSet.size ( ) == characterSet.size ( ) );
-
-		return codeSet.size ( );
+		return size;
+	}
+	
+	public int getCodingLength ()
+	{
+		 return codingLength;
 	}
 
 	protected void addValue ( char c )
 	{
 		codeSet.put ( c, codeSet.size ( ) );
 		characterSet.put ( characterSet.size ( ), c );
+		
+		//	adjust size / codingLength
+		assert ( codeSet.size ( ) == characterSet.size ( ) );
+		size = codeSet.size ( );
+		codingLength = MethodsBag.getCodingLength ( size + 1 );
 	}
 
 	/*

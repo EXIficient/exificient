@@ -20,7 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import com.siemens.ct.exi.exceptions.UnknownElementException;
 
-
 public interface RestrictedCharacterSet
 {
 	/**
@@ -28,7 +27,8 @@ public interface RestrictedCharacterSet
 	 * 
 	 * @param code
 	 * @return char or
-	 * @throws UnknownElementException code unknown
+	 * @throws UnknownElementException
+	 *             code unknown
 	 */
 
 	public char getCharacter ( int code ) throws UnknownElementException;
@@ -37,7 +37,8 @@ public interface RestrictedCharacterSet
 	 * Returns code for given character or <code>NOT_FOUND</code> == -1 for
 	 * invalid char.
 	 * 
-	 * @param c character of interest
+	 * @param c
+	 *            character of interest
 	 * @return code(-point)
 	 */
 	public int getCode ( char c );
@@ -48,5 +49,17 @@ public interface RestrictedCharacterSet
 	 * @return number of entries
 	 */
 	public int size ();
+
+	/**
+	 * Returns the number of bits to encode codes for the set.
+	 * <p>
+	 * codingLength = ceil( log2(N + 1) ) and N is the number of characters in
+	 * the restricted character set.
+	 * </p>
+	 * 
+	 * @see size
+	 * @return number of entries
+	 */
+	public int getCodingLength ();
 
 }

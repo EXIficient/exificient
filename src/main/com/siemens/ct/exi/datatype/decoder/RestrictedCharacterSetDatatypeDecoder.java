@@ -24,7 +24,6 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
 import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -50,17 +49,27 @@ public class RestrictedCharacterSetDatatypeDecoder extends AbstractDatatypeDecod
 	{
 		int numberOfTuples = dc.decodeUnsignedInteger ( );
 
-		//	TODO calculate number of bits statically
-		int numberOfBits =  MethodsBag.getCodingLength ( rcs.size ( ) );
+		//	number of bits
+		int numberOfBits =  rcs.getCodingLength ( );
+		int size = rcs.size ( );
 		
 		StringBuilder sb = new StringBuilder();
+		int code;
 		
 		try
 		{
 			for ( int i=0; i<numberOfTuples; i++ )
 			{
-				int code = dc.decodeNBitUnsignedInteger ( numberOfBits );
-				sb.append ( rcs.getCharacter ( code ) );
+				if ( ( code = dc.decodeNBitUnsignedInteger ( numberOfBits ) ) == size )
+				{
+					// UCS code point of the character
+					// TODO UTF-16 surrogate pair?
+					sb.append ( (char) dc.decodeUnsignedInteger ( ) );
+				}
+				else
+				{
+					sb.append ( rcs.getCharacter ( code ) );
+				}
 			}
 		}
 		catch ( UnknownElementException e )

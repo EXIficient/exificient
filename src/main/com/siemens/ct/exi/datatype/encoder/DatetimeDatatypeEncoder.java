@@ -58,7 +58,6 @@ public class DatetimeDatatypeEncoder extends AbstractDatatypeEncoder implements 
 	}
 	
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
 		valueChannel.encodeDateTime ( lastValidDatetime );
 	}

@@ -24,7 +24,6 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -33,7 +32,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081112
+ * @version 0.1.20081117
  */
 
 public class RestrictedCharacterSetDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
@@ -50,35 +49,39 @@ public class RestrictedCharacterSetDatatypeEncoder extends AbstractDatatypeEncod
 
 	public boolean isValid ( Datatype datatype, String value )
 	{
-		int i = 0;
-		int code = 0;
-
-		while ( code != Constants.NOT_FOUND && i < value.length ( ) )
-		{
-			char c = value.charAt ( i );
-			code = rcs.getCode ( c );
-			i++;
-		}
-
+		// Note: no validity check needed since any char-sequence can be encoded
+		// due to fallback mechanism
 		lastValidValue = value;
-		return ( code == Constants.NOT_FOUND ? false : true );
+		return true;
 	}
 
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
 	{
-		//	TODO check whether storing the result or doing it once again is better
-		//	Note: Currently we check validity again
-		
 		int numberOfTuples = lastValidValue.length ( );
-		
+
 		valueChannel.encodeUnsignedInteger ( numberOfTuples );
-		
-		//	TODO number of bits done statically
-		int numberOfBits =  MethodsBag.getCodingLength ( rcs.size ( ) );
-		
-		for ( int i=0; i<numberOfTuples; i++ )
+
+		// number of bits
+		int numberOfBits = rcs.getCodingLength ( );
+		int code;
+		char ch;
+
+		for ( int i = 0; i < numberOfTuples; i++ )
 		{
-			valueChannel.encodeNBitUnsignedInteger ( rcs.getCode ( lastValidValue.charAt ( i ) ), numberOfBits );	
+			ch = lastValidValue.charAt ( i );
+			if ( ( code = rcs.getCode ( ch ) ) == Constants.NOT_FOUND )
+			{
+				// indicate deviation
+				valueChannel.encodeNBitUnsignedInteger ( rcs.size ( ), numberOfBits );
+
+				// UCS code point of the character
+				// TODO UTF-16 surrogate pair?
+				valueChannel.encodeUnsignedInteger ( ch );
+			}
+			else
+			{
+				valueChannel.encodeNBitUnsignedInteger ( code, numberOfBits );
+			}
 		}
 	}
 }
