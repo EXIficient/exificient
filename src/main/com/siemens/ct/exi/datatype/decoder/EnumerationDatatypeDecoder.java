@@ -23,7 +23,6 @@ import java.io.IOException;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeEnumeration;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -31,7 +30,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081117
  */
 
 public class EnumerationDatatypeDecoder extends AbstractDatatypeDecoder
@@ -40,8 +39,7 @@ public class EnumerationDatatypeDecoder extends AbstractDatatypeDecoder
 	{
 		DatatypeEnumeration enumer = (DatatypeEnumeration)datatype;
 		
-		int n = MethodsBag.getCodingLength ( enumer.getEnumerationValues ( ).getLength ( ) );
-		int index = dc.decodeNBitUnsignedInteger ( n );
+		int index = dc.decodeNBitUnsignedInteger ( enumer.getCodingLength ( ) );
 		
 		return enumer.getEnumerationValues ( ).item ( index );
 	}
