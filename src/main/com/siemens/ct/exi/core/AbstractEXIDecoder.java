@@ -186,13 +186,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
 			int level1 = block.readEventCode ( ch1 );
 
-			if ( currentRule.hasSecondOrThirdLevel ( fidelityOptions ) )
+			if ( currentRule.getNumberOfEvents ( ) == ch1 )
 			{
-				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
+				//	strict (in the sense of 2nd event-code level)
+				return ( level1 < ch1 ? level1 : Constants.NOT_FOUND );
 			}
 			else
 			{
-				return ( level1 < ch1 ? level1 : Constants.NOT_FOUND );
+				//	not strict
+				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
 			}
 		}
 		catch ( IOException e )
