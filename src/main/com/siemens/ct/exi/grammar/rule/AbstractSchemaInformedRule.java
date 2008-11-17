@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventRule;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -42,6 +41,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements SchemaInformedRule
 {
 	protected List<EventRule>			eventRules;
+	protected int numberOfEvents;
 
 	protected boolean					lambdasResolved				= false;
 
@@ -85,7 +85,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return true;
 	}
 
-	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
+	public int get1stLevelEventCode ( Event event )
 	{
 		int ec = 0;
 		for ( EventRule er : eventRules )
@@ -293,6 +293,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		 */ 
 		eventRules.clear ( );
 		eventRules.addAll ( sorted );
+		numberOfEvents = eventRules.size ( );
 
 		/*
 		 * reset least-attribute & number of deviated attributes

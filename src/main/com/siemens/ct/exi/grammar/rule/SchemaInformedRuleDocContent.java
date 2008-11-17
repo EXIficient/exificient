@@ -68,19 +68,6 @@ public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 	}
 	
 	@Override
-	public int get1stLevelEventCode ( Event event, FidelityOptions fidelityOptions )
-	{
-		if ( fidelityOptions.isStrict ( ) && event.isEventType ( EventType.START_ELEMENT_GENERIC ) )
-		{
-			return getNumberOfEvents ( );
-		}
-		else
-		{
-			return super.get1stLevelEventCode ( event, fidelityOptions );
-		}
-	}
-	
-	@Override
 	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
 	{
 		if ( ec == getNumberOfEvents ( ) )

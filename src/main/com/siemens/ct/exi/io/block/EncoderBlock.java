@@ -44,7 +44,7 @@ public interface EncoderBlock
 	public void writeUri ( String uri ) throws IOException;
 	public void writeLocalName ( String localName, String uri ) throws IOException;
 	public void writePrefix ( String prefix, String uri ) throws IOException;
-	//	xsi:nil
+	//	xsi:nil, local-element-ns
 	public void writeBoolean ( boolean b ) throws IOException;
 
 

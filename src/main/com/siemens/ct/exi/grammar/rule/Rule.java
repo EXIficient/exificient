@@ -51,7 +51,7 @@ public interface Rule
 	/*
 	 * fetch event-code
 	 */
-	public int get1stLevelEventCode( Event event, FidelityOptions fidelityOptions );
+	public int get1stLevelEventCode( Event events );
 	public int get2ndLevelEventCode( EventType eventType, FidelityOptions fidelityOptions );
 	public int get3rdLevelEventCode( EventType eventType, FidelityOptions fidelityOptions );
 	

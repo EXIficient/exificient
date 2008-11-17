@@ -103,39 +103,39 @@ public class EventCodeTest extends TestCase
 		
 		// AT( atA )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "atA" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		// AT( atB )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "atB" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	SE( f )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "f" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	SE( e )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "e" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	SE( d )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "d" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	SE( c )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "c" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	SE( b )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "b" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	EE
 		ev = new EndElement( );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == eventCode++ );
+		assertTrue( r.get1stLevelEventCode ( ev ) == eventCode++ );
 		
 		//	Unknown
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "unknown" );
-		assertTrue( r.get1stLevelEventCode ( ev, fo ) == Constants.NOT_FOUND );
+		assertTrue( r.get1stLevelEventCode ( ev ) == Constants.NOT_FOUND );
 		
 	}
 	
@@ -182,10 +182,10 @@ public class EventCodeTest extends TestCase
 		assertTrue ( Use_color_0.get1stLevelCharacteristics ( fo ) == 3 );
 		// AT( color )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "color" );
-		assertTrue( Use_color_0.get1stLevelEventCode ( ev, fo ) == 0 );
+		assertTrue( Use_color_0.get1stLevelEventCode ( ev ) == 0 );
 		// AT( sku )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "sku" );
-		assertTrue( Use_color_0.get1stLevelEventCode ( ev, fo ) == 1 );
+		assertTrue( Use_color_0.get1stLevelEventCode ( ev ) == 1 );
 		//	2nd level
 		assertTrue ( Use_color_0.get2ndLevelCharacteristics ( fo ) == 7 );
 		//	EE  	2.0
@@ -214,7 +214,7 @@ public class EventCodeTest extends TestCase
 		assertTrue ( Use_color_1.get1stLevelCharacteristics ( fo ) == 2 );
 		// AT( sku )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "sku" );
-		assertTrue( Use_color_1.get1stLevelEventCode ( ev, fo ) == 0 );
+		assertTrue( Use_color_1.get1stLevelEventCode ( ev ) == 0 );
 		
 		
 		//	### Use_sku_1 ###
@@ -223,10 +223,10 @@ public class EventCodeTest extends TestCase
 		assertTrue ( Use_sku_1.get1stLevelCharacteristics ( fo ) == 3 );
 		// SE( description )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "description" );
-		assertTrue( Use_sku_1.get1stLevelEventCode ( ev, fo ) == 0 );
+		assertTrue( Use_sku_1.get1stLevelEventCode ( ev ) == 0 );
 		// SE( quantity )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "quantity" );
-		assertTrue( Use_sku_1.get1stLevelEventCode ( ev, fo ) == 1 );	
+		assertTrue( Use_sku_1.get1stLevelEventCode ( ev ) == 1 );	
 		
 		
 		//	### Term_description0_1 ###

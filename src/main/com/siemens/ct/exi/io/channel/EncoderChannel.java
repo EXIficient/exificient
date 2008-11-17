@@ -63,7 +63,7 @@ public interface EncoderChannel
 	 */
 	public void encodeBoolean ( boolean b ) throws IOException;
 
-	public void encodeBoolean ( XSDBoolean b ) throws IOException, IllegalArgumentException;
+	public void encodeBoolean ( XSDBoolean b ) throws IOException;
 
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.

@@ -25,7 +25,6 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
 import com.siemens.ct.exi.util.datatype.XSDBase64;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;

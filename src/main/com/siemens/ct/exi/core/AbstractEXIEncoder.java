@@ -305,7 +305,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeEndDocument () throws EXIException
 	{
-		int ec = currentRule.get1stLevelEventCode ( eventED, fidelityOptions );
+		int ec = currentRule.get1stLevelEventCode ( eventED );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
@@ -335,12 +335,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		eventSE.setNamespaceURI ( uri );
 		eventSE.setLocalPart ( localName );
 
-		int ec = currentRule.get1stLevelEventCode ( eventSE, fidelityOptions );
+		int ec = currentRule.get1stLevelEventCode ( eventSE );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
 			// generic SE (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode ( eventSEg, fidelityOptions );
+			int ecGeneric = currentRule.get1stLevelEventCode ( eventSEg );
 
 			if ( ecGeneric == Constants.NOT_FOUND )
 			{
@@ -437,13 +437,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	public void encodeEndElement () throws EXIException
 	{
-		int ec = currentRule.get1stLevelEventCode ( eventEE, fidelityOptions );
+		int ec = currentRule.get1stLevelEventCode ( eventEE );
 
 		// Special case: SAX does not inform about empty ("") CH events
 		// --> if EE is not found check whether an empty CH event *helps*
 		if ( ec == Constants.NOT_FOUND )
 		{
-			int ecCH = currentRule.get1stLevelEventCode ( eventCH, fidelityOptions );
+			int ecCH = currentRule.get1stLevelEventCode ( eventCH );
 
 			if ( ecCH != Constants.NOT_FOUND
 					&& block.isTypeValid ( getDatatypeOfEvent ( ecCH ), Constants.EMPTY_STRING ) )
@@ -458,7 +458,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 				replaceRuleAtTheTop ( currentRule.get1stLevelRule ( ecCH ) );
 
 				// try the EE event once again
-				ec = currentRule.get1stLevelEventCode ( eventEE, fidelityOptions );
+				ec = currentRule.get1stLevelEventCode ( eventEE );
 			}
 		}
 
@@ -690,12 +690,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		eventAT.setNamespaceURI ( uri );
 		eventAT.setLocalPart ( localName );
 
-		int ec = currentRule.get1stLevelEventCode ( eventAT, fidelityOptions );
+		int ec = currentRule.get1stLevelEventCode ( eventAT );
 
 		if ( ec == Constants.NOT_FOUND )
 		{
 			// generic AT (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode ( eventATg, fidelityOptions );
+			int ecGeneric = currentRule.get1stLevelEventCode ( eventATg );
 
 			if ( ecGeneric == Constants.NOT_FOUND )
 			{
@@ -760,13 +760,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ec = currentRule.get1stLevelEventCode ( eventCH, fidelityOptions );
+			int ec = currentRule.get1stLevelEventCode ( eventCH );
 
 			// valid value and valid event-code ?
 			if ( ec == Constants.NOT_FOUND || !block.isTypeValid ( getDatatypeOfEvent ( ec ), chars ) )
 			{
 				// generic CH (on first level)
-				int ecGeneric = currentRule.get1stLevelEventCode ( eventCHg, fidelityOptions );
+				int ecGeneric = currentRule.get1stLevelEventCode ( eventCHg );
 
 				if ( ecGeneric == Constants.NOT_FOUND )
 				{
