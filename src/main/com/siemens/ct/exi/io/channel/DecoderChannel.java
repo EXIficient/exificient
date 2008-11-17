@@ -30,7 +30,7 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.1.20081117
  */
 
 public interface DecoderChannel
@@ -41,8 +41,6 @@ public interface DecoderChannel
 	 * @throws IOException
 	 */
 	public int decode () throws IOException;
-
-	public int decodeEventCode ( int characteristics ) throws IOException;
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer.
