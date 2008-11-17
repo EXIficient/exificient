@@ -25,7 +25,6 @@ import org.apache.xerces.xs.StringList;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeEnumeration;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -33,49 +32,42 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081117
  */
 
 public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
 {
-	private StringList	lastEnumValues;
-	private int			lastOrdinalPosition;
+	private DatatypeEnumeration	lastDatatypeEnumeration;
+	private StringList			lastEnumValues;
+	private int					lastOrdinalPosition;
 
-	
-	public EnumerationDatatypeEncoder( TypeEncoder typeEncoder )
+	public EnumerationDatatypeEncoder ( TypeEncoder typeEncoder )
 	{
-		super( typeEncoder );
+		super ( typeEncoder );
 	}
-	
+
 	public boolean isValid ( Datatype datatype, String value )
 	{
-		try
-		{
-			lastEnumValues = ( (DatatypeEnumeration) datatype ).getEnumerationValues ( );
+		lastDatatypeEnumeration = ( (DatatypeEnumeration) datatype );
+		lastEnumValues = lastDatatypeEnumeration.getEnumerationValues ( );
 
-			lastOrdinalPosition = -1;
-			int index = 0;
-			while ( index < lastEnumValues.getLength ( ) )
-			{
-				if ( lastEnumValues.item ( index ).equals ( value ) )
-				{
-					lastOrdinalPosition = index;
-					return true;
-				}
-				index++;
-			}
-		}
-		catch ( RuntimeException e )
+		lastOrdinalPosition = -1;
+		int index = 0;
+		while ( index < lastEnumValues.getLength ( ) )
 		{
+			if ( lastEnumValues.item ( index ).equals ( value ) )
+			{
+				lastOrdinalPosition = index;
+				return true;
+			}
+			index++;
 		}
+
 		return false;
 	}
 
-
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
-		valueChannel.encodeNBitUnsignedInteger ( lastOrdinalPosition, MethodsBag
-				.getCodingLength ( lastEnumValues.getLength ( ) ) );
+		valueChannel.encodeNBitUnsignedInteger ( lastOrdinalPosition, lastDatatypeEnumeration.getCodingLength ( ) );
 	}
 }

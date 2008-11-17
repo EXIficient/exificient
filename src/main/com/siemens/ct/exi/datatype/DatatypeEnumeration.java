@@ -20,28 +20,37 @@ package com.siemens.ct.exi.datatype;
 
 import org.apache.xerces.xs.StringList;
 
+import com.siemens.ct.exi.util.MethodsBag;
+
 /**
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.1.20081117
  */
 
 public class DatatypeEnumeration extends AbstractDatatype
 {
 	private StringList	enumValues;
+	private int			codingLength;
 
 	public DatatypeEnumeration ( StringList enumValues )
 	{
-		super( BuiltInType.BUILTIN_ENUMERATION, null );
+		super ( BuiltInType.BUILTIN_ENUMERATION, null );
 
 		this.enumValues = enumValues;
+		this.codingLength = MethodsBag.getCodingLength ( enumValues.getLength ( ) );
 	}
-	
-	public StringList getEnumerationValues( )
+
+	public StringList getEnumerationValues ()
 	{
 		return enumValues;
+	}
+
+	public int getCodingLength()
+	{
+		return codingLength;
 	}
 }
