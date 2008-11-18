@@ -40,9 +40,9 @@ public class TypeDecoderString extends AbstractTypeDecoder
 		super ( exiFactory );
 	}
 
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
+	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
 			throws IOException
 	{
-		return decodeValueAsString ( dc, namespaceURI, localName );
+		return readValueAsString ( dc, namespaceURI, localName );
 	}
 }

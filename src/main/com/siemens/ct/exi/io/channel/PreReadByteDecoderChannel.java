@@ -51,7 +51,7 @@ public class PreReadByteDecoderChannel implements DecoderChannel
 		
 		for ( int i = 0; i < occurrences; i++ )
 		{
-			decodedValues[ i ] =  ( decoder.decodeValue ( datatypes.get ( i ), bdc, qname.getNamespaceURI ( ), qname.getLocalName ( ) ) );
+			decodedValues[ i ] =  ( decoder.readTypeValidValue ( datatypes.get ( i ), bdc, qname.getNamespaceURI ( ), qname.getLocalName ( ) ) );
 		}
 	}
 	

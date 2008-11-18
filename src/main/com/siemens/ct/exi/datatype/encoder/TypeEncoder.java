@@ -37,7 +37,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 public interface TypeEncoder extends TypeCoder
 {
 	public StringTableEncoder getStringTable ();
-	
+
 	/*
 	 * Value Channel
 	 */
@@ -45,7 +45,16 @@ public interface TypeEncoder extends TypeCoder
 
 	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException;
 
-	public void writeValueAsString ( EncoderChannel valueChannel, String uri, String localName, String invalidValue ) throws IOException;
+	public void writeValueAsString ( EncoderChannel valueChannel, String uri, String localName, String invalidValue )
+			throws IOException;
+
+	public boolean writeStringAsLocalHit ( EncoderChannel valueChannel, String uri, String localName, final String value )
+			throws IOException;
+
+	public boolean writeStringAsGlobalHit ( EncoderChannel valueChannel, String value ) throws IOException;
+
+	public void writeStringAsMiss ( EncoderChannel valueChannel, String uri, String localName, String value )
+			throws IOException;
 
 	/*
 	 * Flush

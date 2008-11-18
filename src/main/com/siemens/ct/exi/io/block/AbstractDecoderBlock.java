@@ -172,12 +172,12 @@ public abstract class AbstractDecoderBlock implements DecoderBlock
 	
 	public String readTypedValidValue ( Datatype datatype, final String namespaceURI, final String localName ) throws IOException
 	{
-		return typeDecoder.decodeValue ( datatype, getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
+		return typeDecoder.readTypeValidValue ( datatype, getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
 	}
 	
 	public String readValueAsString ( String namespaceURI, String localName ) throws IOException
 	{
-		return typeDecoder.decodeValueAsString ( getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
+		return typeDecoder.readValueAsString ( getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
 	}
 	
 	

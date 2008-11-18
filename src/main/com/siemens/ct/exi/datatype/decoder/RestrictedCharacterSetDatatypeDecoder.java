@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
@@ -47,36 +48,65 @@ public class RestrictedCharacterSetDatatypeDecoder extends AbstractDatatypeDecod
 	
 	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
 	{
-		int numberOfTuples = dc.decodeUnsignedInteger ( );
-
-		//	number of bits
-		int numberOfBits =  rcs.getCodingLength ( );
-		int size = rcs.size ( );
+		String value;
 		
-		StringBuilder sb = new StringBuilder();
-		int code;
+		int i = dc.decodeUnsignedInteger ( );
 		
-		try
+		if ( i == 0 )
 		{
-			for ( int i=0; i<numberOfTuples; i++ )
+			// local value partition
+			value = decoder.readStringAsLocalHit ( dc, namespaceURI, localName );
+		}
+		else if ( i == 1 )
+		{
+			// found in global value partition
+			value = decoder.readStringAsGlobalHit ( dc );
+		}
+		else
+		{
+			// not found in global value (and local value) partition
+			// ==> restricted character string literal is encoded as a String with the length
+			// incremented by two.
+			int slen = i - 2;
+
+			//	number of bits
+			int numberOfBits =  rcs.getCodingLength ( );
+			int size = rcs.size ( );
+			
+			StringBuilder sb = new StringBuilder();
+			int code;
+			
+			try
 			{
-				if ( ( code = dc.decodeNBitUnsignedInteger ( numberOfBits ) ) == size )
+				for ( int k=0; k<slen; k++ )
 				{
-					// UCS code point of the character
-					// TODO UTF-16 surrogate pair?
-					sb.append ( (char) dc.decodeUnsignedInteger ( ) );
-				}
-				else
-				{
-					sb.append ( rcs.getCharacter ( code ) );
+					if ( ( code = dc.decodeNBitUnsignedInteger ( numberOfBits ) ) == size )
+					{
+						// UCS code point of the character
+						// TODO UTF-16 surrogate pair?
+						sb.append ( (char) dc.decodeUnsignedInteger ( ) );
+					}
+					else
+					{
+						sb.append ( rcs.getCharacter ( code ) );
+					}
 				}
 			}
-		}
-		catch ( UnknownElementException e )
-		{
-			throw new IOException( e );
+			catch ( UnknownElementException e )
+			{
+				throw new IOException( e );
+			}
+			
+			value = sb.toString ( );
+			
+			// After encoding the string value, it is added to both the
+			// associated "local" value string table partition and the global value
+			// string table partition.
+			StringTableDecoder stringTable = decoder.getStringTable ( );
+			stringTable.addLocalValue ( namespaceURI, localName, value );
+			stringTable.addGlobalValue ( value );
 		}
 		
-		return sb.toString ( );
+		return value;
 	}
 }

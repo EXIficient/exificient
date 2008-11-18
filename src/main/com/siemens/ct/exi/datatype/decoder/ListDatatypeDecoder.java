@@ -68,7 +68,7 @@ public class ListDatatypeDecoder extends AbstractDatatypeDecoder
 		
 		for ( int i=0; i<len; i++  )
 		{
-			sResult.append ( listTypeDecoder.decodeValue ( listDatatype, dc, namespaceURI, localName ) );
+			sResult.append ( listTypeDecoder.readTypeValidValue ( listDatatype, dc, namespaceURI, localName ) );
 			sResult.append( Constants.XSD_LIST_DELIM );
 		}
 		

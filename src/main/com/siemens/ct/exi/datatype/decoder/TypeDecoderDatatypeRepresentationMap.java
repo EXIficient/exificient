@@ -59,7 +59,7 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder im
 		userDefinedDatatypeRepresentations.put ( datatypeRepresentation.getQName ( ), datatypeRepresentation );
 	}
 
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, final String namespaceURI, final String localName )
+	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, final String namespaceURI, final String localName )
 			throws IOException
 	{
 		if ( userDefinedDatatypeRepresentations.containsKey ( datatype.getDatatypeIdentifier ( ) ) )
@@ -70,7 +70,7 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder im
 		}
 		else
 		{
-			return defaultDecoder.decodeValue ( datatype, dc, namespaceURI, localName );
+			return defaultDecoder.readTypeValidValue ( datatype, dc, namespaceURI, localName );
 		}
 	}
 

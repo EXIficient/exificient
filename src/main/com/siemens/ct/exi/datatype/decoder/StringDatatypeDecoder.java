@@ -36,6 +36,6 @@ public class StringDatatypeDecoder extends AbstractDatatypeDecoder
 {
 	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
 	{
-		return decoder.decodeValueAsString ( dc, namespaceURI, localName  );
+		return decoder.readValueAsString ( dc, namespaceURI, localName  );
 	}
 }

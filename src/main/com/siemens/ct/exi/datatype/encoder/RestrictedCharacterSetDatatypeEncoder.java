@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
@@ -57,30 +58,46 @@ public class RestrictedCharacterSetDatatypeEncoder extends AbstractDatatypeEncod
 
 	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
 	{
-		int numberOfTuples = lastValidValue.length ( );
-
-		valueChannel.encodeUnsignedInteger ( numberOfTuples );
-
-		// number of bits
-		int numberOfBits = rcs.getCodingLength ( );
-		int code;
-		char ch;
-
-		for ( int i = 0; i < numberOfTuples; i++ )
+		if ( !typeEncoder.writeStringAsLocalHit ( valueChannel, uri, localName, lastValidValue ) )
 		{
-			ch = lastValidValue.charAt ( i );
-			if ( ( code = rcs.getCode ( ch ) ) == Constants.NOT_FOUND )
+			// global-value hit ?
+			if ( !typeEncoder.writeStringAsGlobalHit ( valueChannel, lastValidValue ) )
 			{
-				// indicate deviation
-				valueChannel.encodeNBitUnsignedInteger ( rcs.size ( ), numberOfBits );
+				// mhh, it is a string-table miss ==> restricted character
+				// string literal is encoded as a String with the length
+				// incremented by two.
+				int numberOfTuples = lastValidValue.length ( );
 
-				// UCS code point of the character
-				// TODO UTF-16 surrogate pair?
-				valueChannel.encodeUnsignedInteger ( ch );
-			}
-			else
-			{
-				valueChannel.encodeNBitUnsignedInteger ( code, numberOfBits );
+				valueChannel.encodeUnsignedInteger ( numberOfTuples + 2 );
+
+				// number of bits
+				int numberOfBits = rcs.getCodingLength ( );
+
+				for ( int i = 0; i < numberOfTuples; i++ )
+				{
+					int code;
+					char ch = lastValidValue.charAt ( i );
+					if ( ( code = rcs.getCode ( ch ) ) == Constants.NOT_FOUND )
+					{
+						// indicate deviation
+						valueChannel.encodeNBitUnsignedInteger ( rcs.size ( ), numberOfBits );
+
+						// UCS code point of the character
+						// TODO UTF-16 surrogate pair?
+						valueChannel.encodeUnsignedInteger ( ch );
+					}
+					else
+					{
+						valueChannel.encodeNBitUnsignedInteger ( code, numberOfBits );
+					}
+				}
+
+				// After encoding the string value, it is added to both the
+				// associated "local" value string table partition and the
+				// global value string table partition.
+				StringTableEncoder stringTable = typeEncoder.getStringTable ( );
+				stringTable.addLocalValue ( uri, localName, lastValidValue );
+				stringTable.addGlobalValue ( lastValidValue );
 			}
 		}
 	}

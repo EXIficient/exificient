@@ -89,7 +89,7 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements T
 		}
 	}
 	
-	protected boolean writeStringAsLocalHit ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
+	public boolean writeStringAsLocalHit ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
 	throws IOException
 	{
 		int localID = stringTable.getLocalValueID ( uri, localName, value );
@@ -113,7 +113,7 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements T
 		}
 	}
 	
-	protected boolean writeStringAsGlobalHit ( final EncoderChannel valueChannel, final String value )
+	public boolean writeStringAsGlobalHit ( final EncoderChannel valueChannel, final String value )
 	throws IOException
 	{
 		int globalID = stringTable.getGlobalValueID ( value );
@@ -138,7 +138,7 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements T
 		}		
 	}
 	
-	protected void writeStringAsMiss ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
+	public void writeStringAsMiss ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
 	throws IOException
 	{
 		// not found in global value (and local value) partition

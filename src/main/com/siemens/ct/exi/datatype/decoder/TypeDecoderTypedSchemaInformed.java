@@ -54,7 +54,7 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder
 		super ( exiFactory );
 	}
 
-	public String decodeValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
+	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
 			throws IOException
 	{
 		switch ( datatype.getDefaultBuiltInType ( ) )
