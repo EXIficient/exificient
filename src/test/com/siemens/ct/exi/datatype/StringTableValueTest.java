@@ -77,12 +77,12 @@ public class StringTableValueTest
 		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn.getNamespaceURI ( ), qn.getLocalName ( ) ).equals (  val3 )  );
 	}
 
 	@Test
@@ -127,12 +127,12 @@ public class StringTableValueTest
 		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn2.getNamespaceURI ( ), qn2.getLocalName ( ) ).equals (  val1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn2.getNamespaceURI ( ), qn2.getLocalName ( ) ).equals (  val1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn1.getNamespaceURI ( ), qn1.getLocalName ( ) ).equals (  val3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, qn3.getNamespaceURI ( ), qn3.getLocalName ( ) ).equals (  val3 )  );
 	}
 
 	@Test
@@ -192,16 +192,16 @@ public class StringTableValueTest
 		TypeDecoderString ddl = new TypeDecoderString( exiFactory );
 		BitDecoderChannel bdc = new BitDecoderChannel( new ByteArrayInputStream( baos.toByteArray ( ) ) );
 		
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx3.getNamespaceURI ( ), elx3.getLocalName ( ) ).equals (  ch3 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
-		assertTrue ( ddl.decodeValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx3.getNamespaceURI ( ), elx3.getLocalName ( ) ).equals (  ch3 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, at1.getNamespaceURI ( ), at1.getLocalName ( ) ).equals (  atCh2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx1.getNamespaceURI ( ), elxx1.getLocalName ( ) ).equals (  ch1 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elxx2.getNamespaceURI ( ), elxx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch2 )  );
+		assertTrue ( ddl.readTypeValidValue ( BuiltIn.DEFAULT_DATATYPE, bdc, elx2.getNamespaceURI ( ), elx2.getLocalName ( ) ).equals (  ch3 )  );
 	}
 
 
