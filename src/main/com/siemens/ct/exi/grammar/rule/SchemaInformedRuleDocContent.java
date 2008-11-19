@@ -120,13 +120,6 @@ public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 		return null;
 	}
 	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	DocContent contains in any case (even in strict mode) SE(*)
-		return getNumberOfEvents ( ) + 1;
-	}
-	
-	
 	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
 	{
 		int ch2 = 1;	// SE(*), in any case e.g. type-cast possible
@@ -138,12 +131,12 @@ public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
 	}
 	
 	
-//	@Override
-//	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-//	{
-//		//	DocContent contains in any case SE(*) (even in strict mode) 
-//		return true;
-//	}
+	@Override
+	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
+	{
+		//	DocContent contains in any case SE(*) (even in strict mode) 
+		return true;
+	}
 	
 	public Rule getElementContentRuleForUndeclaredSE()
 	{

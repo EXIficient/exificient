@@ -68,6 +68,8 @@ public interface Rule
 	 */
 	public Rule get1stLevelRule ( int eventCode ) throws IndexOutOfBoundsException;
 	
+	// public int get1stLevelEventCodeLength ( FidelityOptions fidelityOptions );
+	
 	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions );
 
 	public int get2ndLevelCharacteristics ( FidelityOptions fidelityOptions );

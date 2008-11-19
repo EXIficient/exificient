@@ -44,12 +44,6 @@ public class RuleDocument extends AbstractSchemaInformedRule
 		super( label );
 		this.docContent = docContent;
 	}
-
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	SD
-		return 1;
-	}
 	
 	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
 	{

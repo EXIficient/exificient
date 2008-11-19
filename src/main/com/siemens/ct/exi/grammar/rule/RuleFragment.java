@@ -44,14 +44,6 @@ public class RuleFragment extends AbstractSchemaInformedRule
 		super( label );
 		this.fragmentContent = fragmentContent;
 	}
-
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	SD
-		return 1;
-	}
-	
-
 	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
 	{
 		return Constants.NOT_FOUND;

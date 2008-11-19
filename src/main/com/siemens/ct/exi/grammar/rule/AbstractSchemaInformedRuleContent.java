@@ -78,12 +78,6 @@ public abstract class AbstractSchemaInformedRuleContent extends AbstractSchemaIn
 	}
 	
 	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		// return getNumberOfEvents ( ) + ( hasSecondOrThirdLevel( fidelityOptions ) ? 1 : 0 );
-		return ( hasSecondOrThirdLevel( fidelityOptions ) ? numberOfEvents + 1 : numberOfEvents  );
-	}
-	
 	@Override
 	public String toString()
 	{

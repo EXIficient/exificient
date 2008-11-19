@@ -58,27 +58,6 @@ public class SchemaLessRuleDocContent extends AbstractSchemaLessRule
 		this.setLabel ( label );
 	}
 	
-//	public Rule getElementContentRule()
-//	{
-//		return this;
-////		return docEnd;
-//	}
-	
-	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	SE (*) --> DocEnd
-		int ch1 = 1;
-		
-		//	has second or third level (DT, CM, PI) ?
-		if ( hasSecondOrThirdLevel( fidelityOptions ) )
-		{
-			ch1++;
-		}	
-		
-		return ch1;
-	}
-	
 	@Override
 	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
 	{

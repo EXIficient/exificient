@@ -56,20 +56,6 @@ public class SchemaLessRuleFragmentContent extends AbstractSchemaLessRule
 		addTerminalRule ( new EndDocument ( ) );
 	}
 
-	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions )
-	{
-		// SE (*), ED, [+ learned]
-		int ch1 = this.events.size ( );
-
-		// has second or third level (CM, PI) ?
-		if ( hasSecondOrThirdLevel ( fidelityOptions ) )
-		{
-			ch1++;
-		}
-
-		return ch1;
-	}
-
 	@Override
 	public boolean hasSecondOrThirdLevel ( FidelityOptions fidelityOptions )
 	{

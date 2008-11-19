@@ -57,13 +57,12 @@ public class SchemaInformedRuleFragmentContent extends AbstractSchemaInformedRul
 		addTerminalRule ( new EndDocument( ) ) ;
 	}
 	
-	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
+	@Override
+	protected boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
 	{
 		//	FragmentContent contains in any case (even in strict mode) SE(*) event on 2nd level
-		return getNumberOfEvents ( ) + 1;
+		return true;
 	}
-	
 	
 	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
 	{
@@ -97,13 +96,5 @@ public class SchemaInformedRuleFragmentContent extends AbstractSchemaInformedRul
 
 		return ch2;
 	}
-
-//
-//	
-//	public Rule stepForward( boolean isStartTag, EventType eventType )
-//	{
-//		return this;
-//	}
-
 
 }

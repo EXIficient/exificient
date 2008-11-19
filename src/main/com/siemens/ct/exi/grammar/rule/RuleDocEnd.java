@@ -50,19 +50,6 @@ public class RuleDocEnd extends AbstractSchemaInformedRule
 		super( label );
 	}
 	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	ED
-		int ch1 = 1;
-		
-		if ( hasSecondOrThirdLevel( fidelityOptions ) )
-		{
-			ch1++;
-		}
-			
-		return ch1;
-	}
-	
 	@Override
 	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions )
 	{

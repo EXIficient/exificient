@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.Event;
 
 /**
@@ -63,6 +64,12 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 	protected int getEventCode ( int internalIndex )
 	{
 		return ( getNumberOfEvents ( ) - 1 - internalIndex );
+	}
+	
+	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions )
+	{
+		// return getNumberOfEvents ( ) + ( hasSecondOrThirdLevel ( fidelityOptions ) ? 1 : 0 );
+		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? events.size ( ) + 1 : events.size ( ) );
 	}
 
 	public int get1stLevelEventCode ( Event event )
@@ -127,15 +134,11 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 	 */
 	public String toString ()
 	{
-
-		// String s = "";
 		String s = this.getLabel ( ) + "//" + "\t";
 
 		if ( this.isTerminalRule ( ) )
 		{
-
 			s += "<END_RULE>";
-
 		}
 		else
 		{
@@ -145,16 +148,6 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 			{
 				s += "," + this.get1stLevelEvent ( ec );
 			}
-
-			// for ( int i=0; i<eventRules.size(); i++ )
-			// {
-			//				
-			//				
-			// EventRule er = getEventRules().get(i);
-			// s += er.getEvent();
-			// s += er.isEndRule() ? "" : "+";
-			// s = i<(eventRules.size()-1) ? s + "," : s;
-			// }
 
 			s += "]";
 		}

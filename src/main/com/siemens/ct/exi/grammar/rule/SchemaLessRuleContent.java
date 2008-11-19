@@ -46,10 +46,6 @@ public abstract class SchemaLessRuleContent extends AbstractSchemaLessRule
 		optionsChildContent = new HashMap<FidelityOptions, List<EventType>> ( );
 	}
 
-	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions )
-	{
-		return getNumberOfEvents ( ) + ( hasSecondOrThirdLevel ( fidelityOptions ) ? 1 : 0 );
-	}
 
 	protected static List<EventType> get2ndLevelEventsStartTagItems ( FidelityOptions fidelityOptions )
 	{

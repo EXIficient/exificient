@@ -188,7 +188,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 
 			if ( currentRule.getNumberOfEvents ( ) == ch1 )
 			{
-				//	strict (in the sense of 2nd event-code level)
+				//	strict (in the sense of no 2nd event-code level)
 				return ( level1 < ch1 ? level1 : Constants.NOT_FOUND );
 			}
 			else
