@@ -18,22 +18,18 @@
 
 package com.siemens.ct.exi.data;
 
-
 import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 
-public class SchemaTestCase extends AbstractTestCase
-{
-	public SchemaTestCase ()
-	{
-		super ( "Schema Test Cases" );
+public class SchemaTestCase extends AbstractTestCase {
+	public SchemaTestCase() {
+		super("Schema Test Cases");
 	}
 
-	public static void setupQuickTest ()
-	{
+	public static void setupQuickTest() {
 		// SchemaTestCase.setConfigurationSchemaChoice1 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice2 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice3 ( );
@@ -60,536 +56,498 @@ public class SchemaTestCase extends AbstractTestCase
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
 		// SchemaTestCase.setConfigurationAttributeSpace ( );
-		SchemaTestCase.setConfigurationBooleanPattern ( );
+		SchemaTestCase.setConfigurationBooleanPattern();
 	}
 
-	protected void setUp ()
-	{	
-		//	#1 (default)
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createDefault() );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		
-		//	#2
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createDefault() );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		
-		//	#3 (all)
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( true );
-		
-		//	#4
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll() );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( true );
-		
-		//	#5 (strict)
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createStrict ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		testCaseOptions.lastElement ( ).setSchemaInformedOnly ( true );
-		
-		//	#6
-		testCaseOptions.add ( new TestCaseOption() );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createStrict ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( false );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		testCaseOptions.lastElement ( ).setSchemaInformedOnly ( true );
-	}
+	protected void setUp() {
+		// #1 (default)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
 
-	@Test
-	public void testSchemaChoice1 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaChoice1 ( );
+		// #2
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
 
-		//	execute test
-		_test( );
-	}
+		// #3 (all)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(true);
 
-	public static void setConfigurationSchemaChoice1 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/choice1.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/choice1.exi" );
-	}
+		// #4
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(true);
 
-	public void testSchemaChoice2 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaChoice2 ( );
+		// #5 (strict)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaChoice2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/choice2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/choice2.exi" );
-	}
-
-	public void testSchemaChoice3 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaChoice3 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaChoice3 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/choice.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/choice3.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/choice3.exi" );
+		// #6
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 	}
 
 	@Test
-	public void testSchemaChoiceN1 () throws Exception
-	{
+	public void testSchemaChoice1() throws Exception {
 		// set up configuration
-		setConfigurationSchemaChoiceN1 ( );
+		setConfigurationSchemaChoice1();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaChoiceN1 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/choiceN.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/choiceN1.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/choiceN1.exi" );
+	public static void setConfigurationSchemaChoice1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/choice.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/choice1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/choice1.exi");
+	}
+
+	public void testSchemaChoice2() throws Exception {
+		// set up configuration
+		setConfigurationSchemaChoice2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaChoice2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/choice.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/choice2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/choice2.exi");
+	}
+
+	public void testSchemaChoice3() throws Exception {
+		// set up configuration
+		setConfigurationSchemaChoice3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaChoice3() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/choice.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/choice3.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/choice3.exi");
 	}
 
 	@Test
-	public void testSchemaSequence1 () throws Exception
-	{
+	public void testSchemaChoiceN1() throws Exception {
 		// set up configuration
-		setConfigurationSchemaSequence1 ( );
+		setConfigurationSchemaChoiceN1();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaSequence1 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/sequence.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/sequence1.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/sequence1.exi" );
+	public static void setConfigurationSchemaChoiceN1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/choiceN.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/choiceN1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/choiceN1.exi");
 	}
 
 	@Test
-	public void testSchemaSequence2 () throws Exception
-	{
+	public void testSchemaSequence1() throws Exception {
 		// set up configuration
-		setConfigurationSchemaSequence2 ( );
+		setConfigurationSchemaSequence1();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaSequence2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/sequence.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/sequence2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/sequence2.exi" );
-	}
-	
-	@Test
-	public void testSchemaOccurrences1 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaOccurrences1 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaOccurrences1 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/occurrences1.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/occurrences1.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/occurrences1.xml.exi" );
-	}
-	
-	@Test
-	public void testSchemaOccurrences2 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaOccurrences2 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaOccurrences2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/occurrences2.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/occurrences2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/occurrences2.xml.exi" );
-	}
-	
-
-	@Test
-	public void testSchemaAll () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaAll ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaAll ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/all.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/all.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/all.exi" );
+	public static void setConfigurationSchemaSequence1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/sequence.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/sequence1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/sequence1.exi");
 	}
 
 	@Test
-	public void testSchemaAll2 () throws Exception
-	{
+	public void testSchemaSequence2() throws Exception {
 		// set up configuration
-		setConfigurationSchemaAll2 ( );
+		setConfigurationSchemaSequence2();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaAll2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/all2.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/all2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/all2.exi" );
+	public static void setConfigurationSchemaSequence2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/sequence.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/sequence2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/sequence2.exi");
 	}
 
 	@Test
-	public void testSchemaEnumeration () throws Exception
-	{
+	public void testSchemaOccurrences1() throws Exception {
 		// set up configuration
-		setConfigurationSchemaEnumeration ( );
+		setConfigurationSchemaOccurrences1();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaEnumeration ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/enumeration.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/enumeration.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/enumeration.xml.exi" );
+	public static void setConfigurationSchemaOccurrences1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/occurrences1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/occurrences1.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/occurrences1.xml.exi");
 	}
 
 	@Test
-	public void testSchemaList () throws Exception
-	{
+	public void testSchemaOccurrences2() throws Exception {
 		// set up configuration
-		setConfigurationSchemaList ( );
+		setConfigurationSchemaOccurrences2();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaList ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/list.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/list.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/list.xml.exi" );
+	public static void setConfigurationSchemaOccurrences2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/occurrences2.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/occurrences2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/occurrences2.xml.exi");
 	}
 
 	@Test
-	public void testSchemaUnsignedInteger () throws Exception
-	{
+	public void testSchemaAll() throws Exception {
 		// set up configuration
-		setConfigurationSchemaUnsignedInteger ( );
+		setConfigurationSchemaAll();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaUnsignedInteger ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/unsignedInteger.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/unsignedInteger.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/unsignedInteger.xml.exi" );
+	public static void setConfigurationSchemaAll() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/all.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/all.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/all.exi");
 	}
 
 	@Test
-	public void testSchemaMixed () throws Exception
-	{
+	public void testSchemaAll2() throws Exception {
 		// set up configuration
-		setConfigurationSchemaMixed ( );
+		setConfigurationSchemaAll2();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaMixed ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/mixed.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/mixed.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/mixed.exi" );
+	public static void setConfigurationSchemaAll2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/all2.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/all2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/all2.exi");
 	}
 
 	@Test
-	public void testSchemaWildcard () throws Exception
-	{
+	public void testSchemaEnumeration() throws Exception {
 		// set up configuration
-		setConfigurationSchemaWildcard ( );
+		setConfigurationSchemaEnumeration();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaWildcard ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/wildcard.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/wildcard.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/wildcard.exi" );
+	public static void setConfigurationSchemaEnumeration() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/enumeration.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/enumeration.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/enumeration.xml.exi");
 	}
 
 	@Test
-	public void testSchemaNillable1 () throws Exception
-	{
+	public void testSchemaList() throws Exception {
 		// set up configuration
-		setConfigurationSchemaNillable1 ( );
+		setConfigurationSchemaList();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaNillable1 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/nillable.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/nillable1.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/nillable1.exi" );
+	public static void setConfigurationSchemaList() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/list.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/list.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/list.xml.exi");
 	}
 
 	@Test
-	public void testSchemaNillable2 () throws Exception
-	{
+	public void testSchemaUnsignedInteger() throws Exception {
 		// set up configuration
-		setConfigurationSchemaNillable2 ( );
+		setConfigurationSchemaUnsignedInteger();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaNillable2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/nillable.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/nillable2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/nillable2.exi" );
+	public static void setConfigurationSchemaUnsignedInteger() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/unsignedInteger.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/unsignedInteger.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/unsignedInteger.xml.exi");
 	}
 
 	@Test
-	public void testSchemaXsiType () throws Exception
-	{
+	public void testSchemaMixed() throws Exception {
 		// set up configuration
-		setConfigurationSchemaXsiType ( );
+		setConfigurationSchemaMixed();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaXsiType ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/xsi-type.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/xsi-type.exi" );
-	}
-	
-	@Test
-	public void testSchemaXsiType2 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaXsiType2 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaXsiType2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type2.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/xsi-type2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/xsi-type2.exi" );
-	}
-	
-	
-	@Test
-	public void testSchemaXsiType3 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaXsiType3 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaXsiType3 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/xsi-type3.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/xsi-type3.exi" );
-	}
-
-	
-	
-	@Test
-	public void testSchemaXsiType4 () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaXsiType4 ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaXsiType4 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/xsi-type4.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/xsi-type4.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/xsi-type4.exi" );
-	}
-	
-	
-	@Test
-	public void testSchemaVehicle () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaVehicle ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaVehicle ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/vehicle.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/vehicle.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/vehicle.xml.exi" );
-	}
-	
-	@Test
-	public void testSchemaAnyAttributes () throws Exception
-	{
-		// set up configuration
-		setConfigurationSchemaAnyAttributes ( );
-
-		//	execute test
-		_test( );
-	}
-
-	public static void setConfigurationSchemaAnyAttributes ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/anyAttributes.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/anyAttributes.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/anyAttributes.exi" );
+	public static void setConfigurationSchemaMixed() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/mixed.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/mixed.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/mixed.exi");
 	}
 
 	@Test
-	public void testSchemaAny () throws Exception
-	{
+	public void testSchemaWildcard() throws Exception {
 		// set up configuration
-		setConfigurationSchemaAny0 ( );
+		setConfigurationSchemaWildcard();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaAny0 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/any.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/any0.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/any0.exi" );
+	public static void setConfigurationSchemaWildcard() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/wildcard.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/wildcard.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/wildcard.exi");
 	}
 
 	@Test
-	public void testAttributeSpace () throws Exception
-	{
+	public void testSchemaNillable1() throws Exception {
 		// set up configuration
-		setConfigurationAttributeSpace ( );
+		setConfigurationSchemaNillable1();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationAttributeSpace ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/attributeSpace.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/attributeSpace.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/attributeSpace.exi" );
+	public static void setConfigurationSchemaNillable1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/nillable.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/nillable1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/nillable1.exi");
 	}
 
-	
 	@Test
-	public void testSchemaIdenticalQName2 () throws Exception
-	{
+	public void testSchemaNillable2() throws Exception {
 		// set up configuration
-		setConfigurationSchemaIdenticalQName2 ( );
+		setConfigurationSchemaNillable2();
 
-		//	execute test
-		_test( );
-	}
-	
-
-	public static void setConfigurationSchemaIdenticalQName2 ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName2.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/identicalQName2.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/identicalQName2.xml.exi" );
+		// execute test
+		_test();
 	}
 
+	public static void setConfigurationSchemaNillable2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/nillable.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/nillable2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/nillable2.exi");
+	}
 
-	//	TODO solve dependency  between identicalQName 1 & 2 which causes trouble !?
 	@Test
-	public void testSchemaIdenticalQName () throws Exception
-	{
+	public void testSchemaXsiType() throws Exception {
 		// set up configuration
-		setConfigurationSchemaIdenticalQName ( );
+		setConfigurationSchemaXsiType();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationSchemaIdenticalQName ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/identicalQName.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/identicalQName.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/identicalQName.xml.exi" );
+	public static void setConfigurationSchemaXsiType() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/xsi-type.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type.exi");
 	}
-	
+
 	@Test
-	public void testBooleanPattern () throws Exception
-	{
+	public void testSchemaXsiType2() throws Exception {
 		// set up configuration
-		setConfigurationBooleanPattern ( );
+		setConfigurationSchemaXsiType2();
 
-		//	execute test
-		_test( );
+		// execute test
+		_test();
 	}
 
-	public static void setConfigurationBooleanPattern ()
-	{
-		QuickTestConfiguration.setXsdLocation( "./data/schema/booleanPattern.xsd" );
-		QuickTestConfiguration.setXmlLocation( "./data/schema/booleanPattern.xml" );
-		QuickTestConfiguration.setExiLocation( "./out/schema/booleanPattern.xml.exi" );
-	}	
+	public static void setConfigurationSchemaXsiType2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/xsi-type2.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type2.exi");
+	}
+
+	@Test
+	public void testSchemaXsiType3() throws Exception {
+		// set up configuration
+		setConfigurationSchemaXsiType3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaXsiType3() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/xsi-type.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type3.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type3.exi");
+	}
+
+	@Test
+	public void testSchemaXsiType4() throws Exception {
+		// set up configuration
+		setConfigurationSchemaXsiType4();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaXsiType4() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/xsi-type4.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type4.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type4.exi");
+	}
+
+	@Test
+	public void testSchemaVehicle() throws Exception {
+		// set up configuration
+		setConfigurationSchemaVehicle();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaVehicle() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/vehicle.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/vehicle.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/vehicle.xml.exi");
+	}
+
+	@Test
+	public void testSchemaAnyAttributes() throws Exception {
+		// set up configuration
+		setConfigurationSchemaAnyAttributes();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaAnyAttributes() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/anyAttributes.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/anyAttributes.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/anyAttributes.exi");
+	}
+
+	@Test
+	public void testSchemaAny() throws Exception {
+		// set up configuration
+		setConfigurationSchemaAny0();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaAny0() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/any.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/any0.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/any0.exi");
+	}
+
+	@Test
+	public void testAttributeSpace() throws Exception {
+		// set up configuration
+		setConfigurationAttributeSpace();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationAttributeSpace() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/attributeSpace.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/attributeSpace.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/attributeSpace.exi");
+	}
+
+	@Test
+	public void testSchemaIdenticalQName2() throws Exception {
+		// set up configuration
+		setConfigurationSchemaIdenticalQName2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaIdenticalQName2() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/identicalQName2.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/identicalQName2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/identicalQName2.xml.exi");
+	}
+
+	// TODO solve dependency between identicalQName 1 & 2 which causes trouble
+	// !?
+	@Test
+	public void testSchemaIdenticalQName() throws Exception {
+		// set up configuration
+		setConfigurationSchemaIdenticalQName();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaIdenticalQName() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/identicalQName.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/identicalQName.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/identicalQName.xml.exi");
+	}
+
+	@Test
+	public void testBooleanPattern() throws Exception {
+		// set up configuration
+		setConfigurationBooleanPattern();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationBooleanPattern() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/booleanPattern.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/booleanPattern.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/booleanPattern.xml.exi");
+	}
 }

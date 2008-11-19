@@ -34,97 +34,93 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.grammar.Grammar;
 
-
-public class SchemaProperties extends AbstractProperties
-{
+public class SchemaProperties extends AbstractProperties {
 	String schema;
-	
-	private Grammar getGrammarFromSchemaAsString( String schemaAsString ) throws Exception
-	{
-		ByteArrayInputStream bais = new ByteArrayInputStream( schemaAsString.getBytes ( ) );	
-		GrammarFactory grammarFactory = GrammarFactory.newInstance ( );
-		Grammar grammar = grammarFactory.createGrammar ( bais );
-		
+
+	private Grammar getGrammarFromSchemaAsString(String schemaAsString)
+			throws Exception {
+		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
+				.getBytes());
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammar grammar = grammarFactory.createGrammar(bais);
+
 		return grammar;
 	}
-	
-	private boolean isValidXML( String xmlAsString, String schemaAsString ) throws SAXException
-	{
-		InputSource is = new InputSource( new StringReader( xmlAsString ) );
+
+	private boolean isValidXML(String xmlAsString, String schemaAsString)
+			throws SAXException {
+		InputSource is = new InputSource(new StringReader(xmlAsString));
 		Validator v = new Validator(is);
 		v.useXMLSchema(true);
-		//v.setJAXP12SchemaSource(new File(myXmlSchemaFile));
-		// v.setJAXP12SchemaSource( new StringReader( schemaAsString ) );		//	 reader does NOT work
-		v.setJAXP12SchemaSource ( new ByteArrayInputStream( schemaAsString.getBytes ( ) ) );
-		
+		// v.setJAXP12SchemaSource(new File(myXmlSchemaFile));
+		// v.setJAXP12SchemaSource( new StringReader( schemaAsString ) ); //
+		// reader does NOT work
+		v.setJAXP12SchemaSource(new ByteArrayInputStream(schemaAsString
+				.getBytes()));
+
 		boolean isValid = v.isValid();
-		
+
 		return isValid;
 	}
-	
-	private void encodeSchemaInformedToEXI( OutputStream osEXI, boolean isXmlSchemaValid ) throws Exception
-	{		
-		if ( isXmlSchemaValid )
-		{
-			assertTrue( "No valid XML or Schema given!", isValidXML( xml, schema ) );	
+
+	private void encodeSchemaInformedToEXI(OutputStream osEXI,
+			boolean isXmlSchemaValid) throws Exception {
+		if (isXmlSchemaValid) {
+			assertTrue("No valid XML or Schema given!", isValidXML(xml, schema));
 		}
-		
-		//	set grammar
-		factory.setGrammar ( getGrammarFromSchemaAsString ( schema ) );
-		
-		//	start encoding process
+
+		// set grammar
+		factory.setGrammar(getGrammarFromSchemaAsString(schema));
+
+		// start encoding process
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		
-		SAXResult saxResult = new EXIResult( osEXI, factory );
-		xmlReader.setContentHandler( saxResult.getHandler ( ) );
-		
-		xmlReader.parse( new InputSource( new StringReader( xml ) ) );
-	}
-	
-	private void startTest( boolean isXmlSchemaValid, boolean isXMLEqual ) throws Exception
-	{
-		//	encode
-		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
-		encodeSchemaInformedToEXI ( osEXI, isXmlSchemaValid );
-		
-		//	reverse streams
-		ByteArrayInputStream isEXI = new ByteArrayInputStream( osEXI.toByteArray ( ) );
-		
-		//	decode
-		String sXMLDecoded = decodeEXIToXML ( isEXI );
-		
-		//	equal ?
-		if ( isXMLEqual )
-		{
-			isXMLEqual( sXMLDecoded );
-		}
-		
+
+		SAXResult saxResult = new EXIResult(osEXI, factory);
+		xmlReader.setContentHandler(saxResult.getHandler());
+
+		xmlReader.parse(new InputSource(new StringReader(xml)));
 	}
 
-	
-	public void testSimple1() throws Exception
-	{
+	private void startTest(boolean isXmlSchemaValid, boolean isXMLEqual)
+			throws Exception {
+		// encode
+		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
+		encodeSchemaInformedToEXI(osEXI, isXmlSchemaValid);
+
+		// reverse streams
+		ByteArrayInputStream isEXI = new ByteArrayInputStream(osEXI
+				.toByteArray());
+
+		// decode
+		String sXMLDecoded = decodeEXIToXML(isEXI);
+
+		// equal ?
+		if (isXMLEqual) {
+			isXMLEqual(sXMLDecoded);
+		}
+
+	}
+
+	public void testSimple1() throws Exception {
 		schema = SIMPLE_XSD;
 		xml = SIMPLE_XML;
-		
-		startTest( true, true );
+
+		startTest(true, true);
 	}
-	
-	public void testUnexpectedRoot() throws Exception
-	{
+
+	public void testUnexpectedRoot() throws Exception {
 		schema = UNEXPECTED_ROOT_XSD;
 		xml = UNEXPECTED_ROOT_XML;
-		
-		startTest( false, true );
+
+		startTest(false, true);
 	}
-	
-	public void testXsiType() throws Exception
-	{
+
+	public void testXsiType() throws Exception {
 		schema = XSI_TYPE_XSD;
-		xml= XSI_TYPE_XML;
-		
+		xml = XSI_TYPE_XML;
+
 		// isXMLEqual == false : xsi:type prefixes are not preserved
-		startTest( true, false );
+		startTest(true, false);
 	}
 
 }

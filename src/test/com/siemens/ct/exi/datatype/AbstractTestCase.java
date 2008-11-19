@@ -40,68 +40,58 @@ import com.siemens.ct.exi.io.channel.EncoderChannelChannelized;
 /**
  * @author MCH07690
  */
-public abstract class AbstractTestCase extends TestCase
-{
+public abstract class AbstractTestCase extends TestCase {
 
-	private ByteArrayOutputStream		bitBaos;
-	private EncoderChannelChannelized	bec;
+	private ByteArrayOutputStream bitBaos;
+	private EncoderChannelChannelized bec;
 
-	public AbstractTestCase ()
-	{
+	public AbstractTestCase() {
 	}
 
-	public AbstractTestCase ( String name )
-	{
-		super ( name );
+	public AbstractTestCase(String name) {
+		super(name);
 	}
 
 	/*
 	 * Bit - Mode
 	 */
-	protected OutputStream getBitOutputStream ()
-	{
-		bitBaos = new ByteArrayOutputStream ( );
+	protected OutputStream getBitOutputStream() {
+		bitBaos = new ByteArrayOutputStream();
 		return bitBaos;
 	}
 
-	protected InputStream getBitInputStream () throws IOException
-	{
-		bitBaos.flush ( );
-		return new ByteArrayInputStream ( bitBaos.toByteArray ( ) );
+	protected InputStream getBitInputStream() throws IOException {
+		bitBaos.flush();
+		return new ByteArrayInputStream(bitBaos.toByteArray());
 	}
 
-	protected EncoderBlock getBitBlock ()
-	{
-		return new EncoderBitBlock ( getBitOutputStream ( ), null );
+	protected EncoderBlock getBitBlock() {
+		return new EncoderBitBlock(getBitOutputStream(), null);
 	}
 
-	protected EncoderChannel getBitEncoder ()
-	{
-		return new BitEncoderChannel ( getBitOutputStream ( ) );
+	protected EncoderChannel getBitEncoder() {
+		return new BitEncoderChannel(getBitOutputStream());
 	}
 
-	protected DecoderChannel getBitDecoder () throws IOException
-	{
-		return new BitDecoderChannel ( getBitInputStream ( ) );
+	protected DecoderChannel getBitDecoder() throws IOException {
+		return new BitDecoderChannel(getBitInputStream());
 	}
 
 	/*
 	 * Byte - Mode
 	 */
-	protected EncoderChannelChannelized getByteEncoder ()
-	{
-		bec = new ByteEncoderChannelChannelized ( );
+	protected EncoderChannelChannelized getByteEncoder() {
+		bec = new ByteEncoderChannelChannelized();
 		return bec;
 	}
 
-	protected EncoderBlock getByteBlock ()
-	{
-		return new EncoderByteBlock ( getBitOutputStream ( ), null );
+	protected EncoderBlock getByteBlock() {
+		return new EncoderByteBlock(getBitOutputStream(), null);
 	}
 
-	protected DecoderChannel getByteDecoder () throws IOException
-	{
-		return new ByteDecoderChannel ( new ByteArrayInputStream ( bec.toByteArray ( ) ) );
+	protected DecoderChannel getByteDecoder() throws IOException {
+		return new ByteDecoderChannel(new ByteArrayInputStream(bec
+				.toByteArray()));
 	}
 
 }

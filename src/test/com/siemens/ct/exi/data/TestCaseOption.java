@@ -18,88 +18,80 @@
 
 package com.siemens.ct.exi.data;
 
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
 
-public class TestCaseOption
-{
+public class TestCaseOption {
 	private CodingMode codingMode;
 	private FidelityOptions fidelityOptions;
 	private boolean fragments;
 	private String schemaLocation;
 	private boolean xmlEqual;
 	private boolean schemaInformedOnly;
-	
-	public CodingMode getCodingMode ()
-	{
+
+	public CodingMode getCodingMode() {
 		return codingMode;
 	}
-	public void setCodingMode ( CodingMode codingMode )
-	{
+
+	public void setCodingMode(CodingMode codingMode) {
 		this.codingMode = codingMode;
 	}
-	public FidelityOptions getFidelityOptions ()
-	{
+
+	public FidelityOptions getFidelityOptions() {
 		return fidelityOptions;
 	}
-	public void setFidelityOptions ( FidelityOptions fidelityOptions )
-	{
+
+	public void setFidelityOptions(FidelityOptions fidelityOptions) {
 		this.fidelityOptions = fidelityOptions;
 	}
-	
-	public boolean isFragments ()
-	{
+
+	public boolean isFragments() {
 		return fragments;
 	}
-	public void setFragments ( boolean fragments )
-	{
+
+	public void setFragments(boolean fragments) {
 		this.fragments = fragments;
 	}
-	public String getSchemaLocation ()
-	{
+
+	public String getSchemaLocation() {
 		return schemaLocation;
 	}
-	public void setSchemaLocation ( String schemaLocation )
-	{
+
+	public void setSchemaLocation(String schemaLocation) {
 		this.schemaLocation = schemaLocation;
 	}
-	public boolean isXmlEqual ()
-	{
+
+	public boolean isXmlEqual() {
 		return xmlEqual;
 	}
-	public void setXmlEqual ( boolean xmlEqual )
-	{
+
+	public void setXmlEqual(boolean xmlEqual) {
 		this.xmlEqual = xmlEqual;
 	}
-	public boolean isSchemaInformedOnly ()
-	{
+
+	public boolean isSchemaInformedOnly() {
 		return schemaInformedOnly;
 	}
-	public void setSchemaInformedOnly ( boolean schemaInformedOnly )
-	{
+
+	public void setSchemaInformedOnly(boolean schemaInformedOnly) {
 		this.schemaInformedOnly = schemaInformedOnly;
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		String s = new String();
-		//	schemaLocation ?
-		if ( schemaLocation == null )
-		{
+		// schemaLocation ?
+		if (schemaLocation == null) {
 			s += "noSchema, ";
+		} else {
+			s += "schema=" + schemaLocation + ", ";
 		}
-		else
-		{
-			s += "schema=" + schemaLocation +", ";
-		}
-		//	coding mode
-		s += "codingMode=" + codingMode +", ";
-		//	fidelityOptions
-		s += "fidelityOptions=" + getFidelityOptions ( ).toString ( );
+		// coding mode
+		s += "codingMode=" + codingMode + ", ";
+		// fidelityOptions
+		s += "fidelityOptions=" + getFidelityOptions().toString();
 
 		return s;
 	}
-	
+
 }

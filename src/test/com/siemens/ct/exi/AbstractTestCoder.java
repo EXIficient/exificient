@@ -22,47 +22,38 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
-public abstract class AbstractTestCoder
-{
-	protected GrammarFactory	grammarFactory;
-	
-	public AbstractTestCoder()
-	{
-		grammarFactory	= GrammarFactory.newInstance ( );
+public abstract class AbstractTestCoder {
+	protected GrammarFactory grammarFactory;
+
+	public AbstractTestCoder() {
+		grammarFactory = GrammarFactory.newInstance();
 	}
-	
-	protected EXIFactory getQuickTestEXIactory () throws Exception
-	{
-		if ( QuickTestConfiguration.USE_SCHEMA )
-		{
-			return getFactorySchema ( );
-		}
-		else
-		{
-			return getFactoryNoSchema ( );
+
+	protected EXIFactory getQuickTestEXIactory() throws Exception {
+		if (QuickTestConfiguration.USE_SCHEMA) {
+			return getFactorySchema();
+		} else {
+			return getFactoryNoSchema();
 		}
 	}
 
-	protected EXIFactory getFactoryNoSchema ()
-	{
-		EXIFactory ef = DefaultEXIFactory.newInstance ( );
-		ef.setCodingMode ( QuickTestConfiguration.CODING_MODE );
-		ef.setFidelityOptions ( QuickTestConfiguration.fidelityOptions );
-		ef.setFragment ( QuickTestConfiguration.FRAGMENTS );
+	protected EXIFactory getFactoryNoSchema() {
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
+		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
+		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 
 		return ef;
 	}
 
-	protected EXIFactory getFactorySchema () throws EXIException
-	{
-		EXIFactory ef = getFactoryNoSchema ( );
-		ef.setGrammar ( getGrammar ( QuickTestConfiguration.getXsdLocation ( ) ) );
+	protected EXIFactory getFactorySchema() throws EXIException {
+		EXIFactory ef = getFactoryNoSchema();
+		ef.setGrammar(getGrammar(QuickTestConfiguration.getXsdLocation()));
 
 		return ef;
 	}
 
-	public Grammar getGrammar ( String xsdLocation ) throws EXIException
-	{
-		return grammarFactory.createGrammar ( xsdLocation );
+	public Grammar getGrammar(String xsdLocation) throws EXIException {
+		return grammarFactory.createGrammar(xsdLocation);
 	}
 }

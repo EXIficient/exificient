@@ -31,51 +31,51 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
 
-public class TestDecoder extends AbstractTestCoder
-{
+public class TestDecoder extends AbstractTestCoder {
 	protected TransformerFactory tf;
 
-	public TestDecoder()
-	{
+	public TestDecoder() {
 		super();
-		
+
 		tf = TransformerFactory.newInstance();
 	}
-	
-	public void decodeTo ( EXIFactory ef, InputStream exiDocument, OutputStream xmlOutput ) throws Exception
-	{
-		Transformer transformer = tf.newTransformer();
-		
-		if ( ef.isFragment ( ) )
-		{
-			transformer.setOutputProperty ( OutputKeys.OMIT_XML_DECLARATION , "yes" );
-		}
-		
-		SAXSource exiSource = new SAXSource( new InputSource ( exiDocument ) );
-		exiSource.setXMLReader ( ef.createEXIReader ( ) );
 
-		transformer.transform( exiSource, new StreamResult ( xmlOutput )  );
+	public void decodeTo(EXIFactory ef, InputStream exiDocument,
+			OutputStream xmlOutput) throws Exception {
+		Transformer transformer = tf.newTransformer();
+
+		if (ef.isFragment()) {
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+		}
+
+		SAXSource exiSource = new SAXSource(new InputSource(exiDocument));
+		exiSource.setXMLReader(ef.createEXIReader());
+
+		transformer.transform(exiSource, new StreamResult(xmlOutput));
 	}
 
-	public static void main ( String[] args ) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		// create test-decoder
-		TestDecoder testDecoder = new TestDecoder ( );
+		TestDecoder testDecoder = new TestDecoder();
 
 		// get factory
-		EXIFactory ef = testDecoder.getQuickTestEXIactory ( );
+		EXIFactory ef = testDecoder.getQuickTestEXIactory();
 
 		// exi document
-		InputStream exiDocument = new FileInputStream ( QuickTestConfiguration.getExiLocation ( ) );
+		InputStream exiDocument = new FileInputStream(QuickTestConfiguration
+				.getExiLocation());
 
 		// decoded xml output
-		String decodedXMLLocation = QuickTestConfiguration.getExiLocation ( ) + ".xml";
-		OutputStream xmlOutput = new FileOutputStream ( decodedXMLLocation );
+		String decodedXMLLocation = QuickTestConfiguration.getExiLocation()
+				+ ".xml";
+		OutputStream xmlOutput = new FileOutputStream(decodedXMLLocation);
 
 		// decode EXI to XML
-		testDecoder.decodeTo ( ef, exiDocument, xmlOutput );
+		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 
-		System.out.println ( "[DEC] " + QuickTestConfiguration.getExiLocation ( ) + " --> " + decodedXMLLocation );
+		System.out.println("[DEC] " + QuickTestConfiguration.getExiLocation()
+				+ " --> " + decodedXMLLocation);
 	}
 
 }

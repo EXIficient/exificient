@@ -29,57 +29,50 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+public class SchemaLessProperties extends AbstractProperties {
 
-public class SchemaLessProperties extends AbstractProperties
-{
-	
-	private void encodeSchemaLessToEXI( OutputStream osEXI ) throws Exception
-	{
-		//	start encoding process
+	private void encodeSchemaLessToEXI(OutputStream osEXI) throws Exception {
+		// start encoding process
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		
-		SAXResult saxResult = new EXIResult( osEXI, factory );
-		xmlReader.setContentHandler( saxResult.getHandler ( ) );
-		
-		xmlReader.parse( new InputSource( new StringReader( xml ) ) );
+
+		SAXResult saxResult = new EXIResult(osEXI, factory);
+		xmlReader.setContentHandler(saxResult.getHandler());
+
+		xmlReader.parse(new InputSource(new StringReader(xml)));
 	}
 
-	
-	private void startTest( ) throws Exception
-	{
-		//	encode
+	private void startTest() throws Exception {
+		// encode
 		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
-		encodeSchemaLessToEXI ( osEXI );
-		
-		//	reverse streams
-		ByteArrayInputStream isEXI = new ByteArrayInputStream( osEXI.toByteArray ( ) );
-		
-		//	decode
-		String sXMLDecoded = decodeEXIToXML ( isEXI );
-		
-		//	equal ?
-		isXMLEqual( sXMLDecoded );
+		encodeSchemaLessToEXI(osEXI);
+
+		// reverse streams
+		ByteArrayInputStream isEXI = new ByteArrayInputStream(osEXI
+				.toByteArray());
+
+		// decode
+		String sXMLDecoded = decodeEXIToXML(isEXI);
+
+		// equal ?
+		isXMLEqual(sXMLDecoded);
 	}
-	
-	public void testSimple1() throws Exception
-	{
+
+	public void testSimple1() throws Exception {
 		xml = SIMPLE_XML;
-		
-		startTest( );
+
+		startTest();
 	}
-	
-	public void testUnexpectedRoot() throws Exception
-	{
+
+	public void testUnexpectedRoot() throws Exception {
 		xml = UNEXPECTED_ROOT_XML;
-		
-		startTest( );
+
+		startTest();
 	}
-	
-	public void testXsiType() throws Exception
-	{
-		xml= XSI_TYPE_XML;
-		
-		startTest(  );
+
+	public void testXsiType() throws Exception {
+		xml = XSI_TYPE_XML;
+
+		startTest();
 	}
 
 }

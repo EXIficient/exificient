@@ -24,98 +24,100 @@ import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 
-public class FragmentTestCase extends AbstractTestCase
-{
-	public FragmentTestCase ()
-	{
-		super ( "Fragment Test Cases" );
+public class FragmentTestCase extends AbstractTestCase {
+	public FragmentTestCase() {
+		super("Fragment Test Cases");
 	}
 
-	public static void setupQuickTest ()
-	{
+	public static void setupQuickTest() {
 		QuickTestConfiguration.FRAGMENTS = true;
-		
+
 		// FragmentTestCase.setConfigurationFragment1 ( );
-		FragmentTestCase.setConfigurationFragment2 ( );
+		FragmentTestCase.setConfigurationFragment2();
 	}
 
-	protected void setUp ()
-	{
+	protected void setUp() {
 		// #1 (default)
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createDefault ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(false);
 
 		// #2
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createDefault ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(false);
 
 		// #3 (all)
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( true );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(true);
 
 		// #4
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createAll ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( true );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(true);
 
 		// #5 (strict)
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.BIT_PACKED );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createStrict ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		testCaseOptions.lastElement ( ).setSchemaInformedOnly ( true );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #6
-		testCaseOptions.add ( new TestCaseOption ( ) );
-		testCaseOptions.lastElement ( ).setCodingMode ( CodingMode.COMPRESSION );
-		testCaseOptions.lastElement ( ).setFidelityOptions ( FidelityOptions.createStrict ( ) );
-		testCaseOptions.lastElement ( ).setFragments ( true );
-		testCaseOptions.lastElement ( ).setXmlEqual ( false );
-		testCaseOptions.lastElement ( ).setSchemaInformedOnly ( true );
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().setFragments(true);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 	}
 
 	@Test
-	public void testFragment1 () throws Exception
-	{
+	public void testFragment1() throws Exception {
 		// set up configuration
-		setConfigurationFragment1 ( );
+		setConfigurationFragment1();
 
 		// execute test
-		_test ( );
+		_test();
 	}
 
-	public static void setConfigurationFragment1 ()
-	{
-		QuickTestConfiguration.setXsdLocation ( "./data/fragment/fragment.xsd" );
-		QuickTestConfiguration.setXmlLocation ( "./data/fragment/fragment1.xml.frag" );
-		QuickTestConfiguration.setExiLocation ( "./out/fragment/fragment1.xml.frag.exi" );
+	public static void setConfigurationFragment1() {
+		QuickTestConfiguration.setXsdLocation("./data/fragment/fragment.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/fragment/fragment1.xml.frag");
+		QuickTestConfiguration
+				.setExiLocation("./out/fragment/fragment1.xml.frag.exi");
 	}
 
-	public void testFragment2 () throws Exception
-	{
+	public void testFragment2() throws Exception {
 		// set up configuration
-		setConfigurationFragment2 ( );
+		setConfigurationFragment2();
 
 		// execute test
-		_test ( );
+		_test();
 	}
 
-	public static void setConfigurationFragment2 ()
-	{
-		QuickTestConfiguration.setXsdLocation ( "./data/fragment/fragment.xsd" );
-		QuickTestConfiguration.setXmlLocation ( "./data/fragment/fragment2.xml.frag" );
-		QuickTestConfiguration.setExiLocation ( "./out/fragment/fragment2.xml.frag.exi" );
+	public static void setConfigurationFragment2() {
+		QuickTestConfiguration.setXsdLocation("./data/fragment/fragment.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/fragment/fragment2.xml.frag");
+		QuickTestConfiguration
+				.setExiLocation("./out/fragment/fragment2.xml.frag.exi");
 	}
 }

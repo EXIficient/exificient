@@ -18,67 +18,58 @@
 
 package com.siemens.ct.exi;
 
-
 import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 @SuppressWarnings("unused")
-public class QuickTestConfiguration
-{	
+public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean				USE_SCHEMA	= true;
+	public static final boolean USE_SCHEMA = true;
 
 	// fragments
-	public static boolean					FRAGMENTS	= false;
+	public static boolean FRAGMENTS = false;
 
 	// coding mode
-	public static CodingMode				CODING_MODE;
+	public static CodingMode CODING_MODE;
 
 	// input / output files
-	static String							XSD_FILE_LOCATION;
-	static String							XML_FILE_LOCATION;
-	static String							EXI_FILE_LOCATION;
+	static String XSD_FILE_LOCATION;
+	static String XML_FILE_LOCATION;
+	static String EXI_FILE_LOCATION;
 
 	// Options
-	public static FidelityOptions			fidelityOptions;
-	public static DatatypeRepresentation[]	datatypeRepresentations;
+	public static FidelityOptions fidelityOptions;
+	public static DatatypeRepresentation[] datatypeRepresentations;
 
-	public static void setXsdLocation ( String xsdLocation )
-	{
+	public static void setXsdLocation(String xsdLocation) {
 		XSD_FILE_LOCATION = xsdLocation;
 	}
 
-	public static String getXsdLocation ()
-	{
+	public static String getXsdLocation() {
 		return XSD_FILE_LOCATION;
 	}
 
-	public static void setXmlLocation ( String xmlLocation )
-	{
+	public static void setXmlLocation(String xmlLocation) {
 		XML_FILE_LOCATION = xmlLocation;
 	}
 
-	public static String getXmlLocation ()
-	{
+	public static String getXmlLocation() {
 		return XML_FILE_LOCATION;
 	}
 
-	public static void setExiLocation ( String exiLocation )
-	{
+	public static void setExiLocation(String exiLocation) {
 		EXI_FILE_LOCATION = exiLocation;
 	}
 
-	public static String getExiLocation ()
-	{
+	public static String getExiLocation() {
 		return EXI_FILE_LOCATION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// CODING MODE
-	static
-	{
+	static {
 		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
@@ -87,20 +78,18 @@ public class QuickTestConfiguration
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
-	static
-	{
-		fidelityOptions = FidelityOptions.createDefault ( );
+	static {
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict ( );
 		// fidelityOptions = FidelityOptions.createAll ( );
 	}
 
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
-	static
-	{
+	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest ( );
-		W3CTestCase.setupQuickTest ( );
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

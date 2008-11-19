@@ -41,125 +41,120 @@ import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.util.FragmentUtilities;
 import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
-public class TestEncoder extends AbstractTestCoder
-{
-	public TestEncoder ()
-	{
-		super ( );
+public class TestEncoder extends AbstractTestCoder {
+	public TestEncoder() {
+		super();
 	}
 
-	protected XMLReader getXMLReader () throws Exception
-	{
+	protected XMLReader getXMLReader() throws Exception {
 		// create xml reader
 		XMLReader xmlReader;
-		
-		if ( true )
-		{
-//			SAXParserFactory spf = SAXParserFactory.newInstance ( );
-//			// spf.setNamespaceAware ( true );
-//			xmlReader = spf.newSAXParser ( ).getXMLReader ( );
-			
-			xmlReader = XMLReaderFactory.createXMLReader( "org.apache.xerces.parsers.SAXParser" );
-			xmlReader.setFeature( "http://xml.org/sax/features/namespaces", true );
-			xmlReader.setFeature( "http://xml.org/sax/features/namespace-prefixes", false );
-		}
-		else
-		{
-			xmlReader = XMLReaderFactory.createXMLReader ( );
-		}
-		
-		// *skip* resolving entities like DTDs
-		xmlReader.setEntityResolver ( new MyEntityResolver ( ) );
 
-		// xmlReader.setFeature ( "http://xml.org/sax/features/namespaces", true);
-		// xmlReader.setFeature ( "http://xml.org/sax/features/namespace-prefixes", false );
-		
+		if (true) {
+			// SAXParserFactory spf = SAXParserFactory.newInstance ( );
+			// // spf.setNamespaceAware ( true );
+			// xmlReader = spf.newSAXParser ( ).getXMLReader ( );
+
+			xmlReader = XMLReaderFactory
+					.createXMLReader("org.apache.xerces.parsers.SAXParser");
+			xmlReader
+					.setFeature("http://xml.org/sax/features/namespaces", true);
+			xmlReader.setFeature(
+					"http://xml.org/sax/features/namespace-prefixes", false);
+		} else {
+			xmlReader = XMLReaderFactory.createXMLReader();
+		}
+
+		// *skip* resolving entities like DTDs
+		xmlReader.setEntityResolver(new MyEntityResolver());
+
+		// xmlReader.setFeature ( "http://xml.org/sax/features/namespaces",
+		// true);
+		// xmlReader.setFeature (
+		// "http://xml.org/sax/features/namespace-prefixes", false );
+
 		return xmlReader;
 	}
 
-	protected XMLReader updateXMLReaderToFragment ( XMLReader xmlReader ) throws IOException
-	{
+	protected XMLReader updateXMLReaderToFragment(XMLReader xmlReader)
+			throws IOException {
 		// skip root element when passing infoset to EXI encoder
-		return new SkipRootElementXMLReader ( xmlReader );
+		return new SkipRootElementXMLReader(xmlReader);
 	}
 
-	protected InputStream updateInputStreamToFragment ( InputStream xmlInput ) throws IOException
-	{
+	protected InputStream updateInputStreamToFragment(InputStream xmlInput)
+			throws IOException {
 		// surround fragment section with *root* element
 		// (necessary for xml reader to avoid messages like "root element must
 		// be well-formed")
-		return FragmentUtilities.getSurroundingRootInputStream ( xmlInput );
+		return FragmentUtilities.getSurroundingRootInputStream(xmlInput);
 	}
 
-	public void encodeTo ( EXIFactory ef, InputStream xmlInput, OutputStream exiOuput ) throws Exception
-	{
+	public void encodeTo(EXIFactory ef, InputStream xmlInput,
+			OutputStream exiOuput) throws Exception {
 		// XML reader
-		XMLReader xmlReader = getXMLReader ( );
+		XMLReader xmlReader = getXMLReader();
 
 		// set EXI as content & lexical handler
-		SAXResult saxResult = new EXIResult ( exiOuput, ef );
-		xmlReader.setContentHandler ( saxResult.getHandler ( ) );
+		SAXResult saxResult = new EXIResult(exiOuput, ef);
+		xmlReader.setContentHandler(saxResult.getHandler());
 
-		try
-		{
+		try {
 			// set LexicalHandler
-			xmlReader.setProperty ( "http://xml.org/sax/properties/lexical-handler", saxResult.getLexicalHandler ( ) );
-		}
-		catch ( SAXNotRecognizedException e )
-		{
-		}
-
-		if ( ef.isFragment ( ) )
-		{
-			xmlInput = updateInputStreamToFragment ( xmlInput );
-			xmlReader = updateXMLReaderToFragment ( xmlReader );
+			xmlReader.setProperty(
+					"http://xml.org/sax/properties/lexical-handler", saxResult
+							.getLexicalHandler());
+		} catch (SAXNotRecognizedException e) {
 		}
 
-		xmlReader.parse ( new InputSource ( xmlInput ) );
+		if (ef.isFragment()) {
+			xmlInput = updateInputStreamToFragment(xmlInput);
+			xmlReader = updateXMLReaderToFragment(xmlReader);
+		}
+
+		xmlReader.parse(new InputSource(xmlInput));
 	}
 
-	protected static OutputStream getOutputStream ( String exiLocation ) throws FileNotFoundException
-	{
-		File fileEXI = new File ( exiLocation );
+	protected static OutputStream getOutputStream(String exiLocation)
+			throws FileNotFoundException {
+		File fileEXI = new File(exiLocation);
 
-		File path = fileEXI.getParentFile ( );
-		if ( !path.exists ( ) )
-		{
-			path.mkdirs ( );
+		File path = fileEXI.getParentFile();
+		if (!path.exists()) {
+			path.mkdirs();
 		}
 
-		return new BufferedOutputStream ( new FileOutputStream ( fileEXI ) );
+		return new BufferedOutputStream(new FileOutputStream(fileEXI));
 	}
 
-	public static void main ( String[] args ) throws Exception
-	{
+	public static void main(String[] args) throws Exception {
 		// create test-encoder
-		TestEncoder testEncoder = new TestEncoder ( );
+		TestEncoder testEncoder = new TestEncoder();
 
 		// get factory
-		EXIFactory ef = testEncoder.getQuickTestEXIactory ( );
+		EXIFactory ef = testEncoder.getQuickTestEXIactory();
 
 		// XML input stream
-		InputStream xmlInput = new BufferedInputStream (
-				new FileInputStream ( QuickTestConfiguration.getXmlLocation ( ) ) );
+		InputStream xmlInput = new BufferedInputStream(new FileInputStream(
+				QuickTestConfiguration.getXmlLocation()));
 
 		// EXI output stream
-		OutputStream encodedOutput = getOutputStream ( QuickTestConfiguration.getExiLocation ( ) );
+		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
+				.getExiLocation());
 
 		// encode to EXI
-		testEncoder.encodeTo ( ef, xmlInput, encodedOutput );
+		testEncoder.encodeTo(ef, xmlInput, encodedOutput);
 
-		encodedOutput.flush ( );
+		encodedOutput.flush();
 
-		System.out.println ( "[ENC] " + QuickTestConfiguration.getXmlLocation ( ) + " --> "
-				+ QuickTestConfiguration.getExiLocation ( ) );
+		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()
+				+ " --> " + QuickTestConfiguration.getExiLocation());
 	}
 }
 
-class MyEntityResolver implements EntityResolver
-{
-	public InputSource resolveEntity ( String publicId, String systemId )
-	{
-		return new InputSource ( new ByteArrayInputStream ( "<?xml version='1.0' encoding='UTF-8'?>".getBytes ( ) ) );
+class MyEntityResolver implements EntityResolver {
+	public InputSource resolveEntity(String publicId, String systemId) {
+		return new InputSource(new ByteArrayInputStream(
+				"<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
 	}
 }

@@ -26,48 +26,49 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class TestEncoderN extends TestEncoder
-{
-	public static final int	N_RUNS	= 300;
-	
-	protected static void test( String xmlLocation, String exiLocation ) throws Exception
-	{
-		//	create test-encoder
+public class TestEncoderN extends TestEncoder {
+	public static final int N_RUNS = 300;
+
+	protected static void test(String xmlLocation, String exiLocation)
+			throws Exception {
+		// create test-encoder
 		TestEncoderN testEncoderN = new TestEncoderN();
-		
-		long startTime = System.currentTimeMillis ( );
+
+		long startTime = System.currentTimeMillis();
 
 		// get factory
-		EXIFactory ef = testEncoderN.getQuickTestEXIactory ( );
-		
+		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
+
 		// EXI output stream
-		File f = new File ( exiLocation );
-		
-		File path = f.getParentFile ( );
-		if ( !path.exists ( ) )
-		{
-			path.mkdirs ( );
+		File f = new File(exiLocation);
+
+		File path = f.getParentFile();
+		if (!path.exists()) {
+			path.mkdirs();
 		}
 
-		OutputStream encodedOutput = new BufferedOutputStream ( new FileOutputStream ( f ) );
+		OutputStream encodedOutput = new BufferedOutputStream(
+				new FileOutputStream(f));
 
-		for ( int i = 0; i < N_RUNS; i++ )
-		{
+		for (int i = 0; i < N_RUNS; i++) {
 			// XML input stream
-			InputStream xmlInput = new BufferedInputStream ( new FileInputStream ( xmlLocation ) );
+			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
+					xmlLocation));
 
-			testEncoderN.encodeTo ( ef, xmlInput, encodedOutput );
+			testEncoderN.encodeTo(ef, xmlInput, encodedOutput);
 		}
 
-		System.out.println ( "[ENC] " + QuickTestConfiguration.getXmlLocation ( ) + " --> " + exiLocation );
-		long duration = System.currentTimeMillis ( ) - startTime;
-		System.out.println ( "Runtime: " + duration + " msecs for " + N_RUNS + " runs." );
+		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()
+				+ " --> " + exiLocation);
+		long duration = System.currentTimeMillis() - startTime;
+		System.out.println("Runtime: " + duration + " msecs for " + N_RUNS
+				+ " runs.");
 	}
 
-	public static void main ( String[] args ) throws Exception
-	{
-		String xmlLocation = QuickTestConfiguration.getXmlLocation ( );
-		String exiLocation = QuickTestConfiguration.getExiLocation ( ) + "_" + N_RUNS;
-		test( xmlLocation, exiLocation );
+	public static void main(String[] args) throws Exception {
+		String xmlLocation = QuickTestConfiguration.getXmlLocation();
+		String exiLocation = QuickTestConfiguration.getExiLocation() + "_"
+				+ N_RUNS;
+		test(xmlLocation, exiLocation);
 	}
 }

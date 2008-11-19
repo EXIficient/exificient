@@ -23,23 +23,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FragmentUtilities
-{
-	public static InputStream getSurroundingRootInputStream( InputStream is ) throws IOException
-	{
+public class FragmentUtilities {
+	public static InputStream getSurroundingRootInputStream(InputStream is)
+			throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-		baos.write ( "<root>".getBytes ( ) );
-		
+
+		baos.write("<root>".getBytes());
+
 		int b;
-		while ( ( b = is.read ( ) ) != -1 )
-		{
-			baos.write ( b );
+		while ((b = is.read()) != -1) {
+			baos.write(b);
 		}
-		
-		baos.write ( "</root>".getBytes ( ) );
-		baos.flush ( );
-		
-		return new ByteArrayInputStream( baos.toByteArray ( ) ); 	
+
+		baos.write("</root>".getBytes());
+		baos.flush();
+
+		return new ByteArrayInputStream(baos.toByteArray());
 	}
 }
