@@ -27,11 +27,9 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.1.20080718
  */
 
-public class Comment extends AbstractEvent
-{
-	public Comment() 
-	{
-		super( "CM" );
+public class Comment extends AbstractEvent {
+	public Comment() {
+		super("CM");
 		eventType = EventType.COMMENT;
 	}
 }

@@ -38,39 +38,38 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081105
  */
 
-public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder implements
-		TypeDecoderRepresentationMap
-{
+public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder
+		implements TypeDecoderRepresentationMap {
 	// fallback type decoder
-	private TypeDecoderTyped		defaultDecoder;
+	private TypeDecoderTyped defaultDecoder;
 
-	private Map<QName, DatatypeDecoder>	userDefinedDatatypeRepresentations;
+	private Map<QName, DatatypeDecoder> userDefinedDatatypeRepresentations;
 
-	public TypeDecoderDatatypeRepresentationMap ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+	public TypeDecoderDatatypeRepresentationMap(EXIFactory exiFactory) {
+		super(exiFactory);
 
-		defaultDecoder = new TypeDecoderTyped ( exiFactory );
-		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder> ( );
+		defaultDecoder = new TypeDecoderTyped(exiFactory);
+		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder>();
 	}
 
-	public void registerDatatypeRepresentation ( DatatypeRepresentation datatypeRepresentation )
-	{
-		userDefinedDatatypeRepresentations.put ( datatypeRepresentation.getQName ( ), datatypeRepresentation );
+	public void registerDatatypeRepresentation(
+			DatatypeRepresentation datatypeRepresentation) {
+		userDefinedDatatypeRepresentations.put(datatypeRepresentation
+				.getQName(), datatypeRepresentation);
 	}
 
-	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, final String namespaceURI, final String localName )
-			throws IOException
-	{
-		if ( userDefinedDatatypeRepresentations.containsKey ( datatype.getDatatypeIdentifier ( ) ) )
-		{
+	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+			final String namespaceURI, final String localName)
+			throws IOException {
+		if (userDefinedDatatypeRepresentations.containsKey(datatype
+				.getDatatypeIdentifier())) {
 			// System.out.println ( "[DEC] Pluggable Codec in use!" );
-			DatatypeDecoder dec = userDefinedDatatypeRepresentations.get ( datatype.getDatatypeIdentifier ( ) );
-			return dec.decodeValue ( this, datatype, dc, namespaceURI, localName );
-		}
-		else
-		{
-			return defaultDecoder.readTypeValidValue ( datatype, dc, namespaceURI, localName );
+			DatatypeDecoder dec = userDefinedDatatypeRepresentations
+					.get(datatype.getDatatypeIdentifier());
+			return dec.decodeValue(this, datatype, dc, namespaceURI, localName);
+		} else {
+			return defaultDecoder.readTypeValidValue(datatype, dc,
+					namespaceURI, localName);
 		}
 	}
 

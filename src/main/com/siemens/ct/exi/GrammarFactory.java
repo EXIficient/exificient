@@ -34,38 +34,30 @@ import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
  * @version 0.1.20080718
  */
 
-public class GrammarFactory
-{
-	private static XSDGrammarBuilder grammarBuilder = XSDGrammarBuilder.newInstance ( );
-	
-	protected GrammarFactory()
-	{
+public class GrammarFactory {
+	private static XSDGrammarBuilder grammarBuilder = XSDGrammarBuilder
+			.newInstance();
+
+	protected GrammarFactory() {
 	}
-	
-	public static GrammarFactory newInstance()
-	{
+
+	public static GrammarFactory newInstance() {
 		return new GrammarFactory();
 	}
-	
-	public Grammar createGrammar( String xsdLocation ) throws EXIException
-	{
-		if ( xsdLocation == null || xsdLocation.equals ( "" ) )
-		{
-			throw new EXIException( "SchemaLocation not specified correctly!" );
-		}
-		else
-		{
-			return grammarBuilder.build ( xsdLocation );
+
+	public Grammar createGrammar(String xsdLocation) throws EXIException {
+		if (xsdLocation == null || xsdLocation.equals("")) {
+			throw new EXIException("SchemaLocation not specified correctly!");
+		} else {
+			return grammarBuilder.build(xsdLocation);
 		}
 	}
-	
-	public Grammar createGrammar( InputStream is  ) throws EXIException
-	{
-		return grammarBuilder.build ( is );
+
+	public Grammar createGrammar(InputStream is) throws EXIException {
+		return grammarBuilder.build(is);
 	}
-	
-	public Grammar createSchemaLessGrammar( ) 
-	{
-		return new SchemaLessGrammar ( );
+
+	public Grammar createSchemaLessGrammar() {
+		return new SchemaLessGrammar();
 	}
 }

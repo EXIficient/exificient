@@ -32,39 +32,36 @@ import com.siemens.ct.exi.Constants;
  * @version 0.1.20080718
  */
 
-public class StringTablePartitionEncoderImpl implements StringTablePartitionEncoder
-{
+public class StringTablePartitionEncoderImpl implements
+		StringTablePartitionEncoder {
 	/**
 	 * The contents of the table.
 	 */
-	protected Map<String, Integer>	hmIndex;
+	protected Map<String, Integer> hmIndex;
 
 	/**
 	 * Create a new string table.
 	 */
-	public StringTablePartitionEncoderImpl ()
-	{
-		hmIndex = new HashMap<String, Integer> ( );
+	public StringTablePartitionEncoderImpl() {
+		hmIndex = new HashMap<String, Integer>();
 	}
 
 	/**
 	 * Add a record to the table
 	 * 
-	 * @param value -
-	 *            value to insert.
+	 * @param value
+	 *            - value to insert.
 	 */
-	public void add ( String value )
-	{
+	public void add(String value) {
 		// TODO autoboxing slows down ?
-		hmIndex.put ( value, hmIndex.size ( ) );
+		hmIndex.put(value, hmIndex.size());
 	}
 
 	/**
 	 * Get the current size (number of strings) in the table.
 	 */
-	public int getSize ()
-	{
-		return hmIndex.size ( );
+	public int getSize() {
+		return hmIndex.size();
 	}
 
 	/**
@@ -72,10 +69,10 @@ public class StringTablePartitionEncoderImpl implements StringTablePartitionEnco
 	 * 
 	 * @return Index of string in the array or -1 if not found.
 	 */
-	public int getIndex ( final String value )
-	{
+	public int getIndex(final String value) {
 		Integer index;
-		return ( ( index = hmIndex.get ( value ) ) == null ? Constants.NOT_FOUND : index );
+		return ((index = hmIndex.get(value)) == null ? Constants.NOT_FOUND
+				: index);
 	}
 
 }

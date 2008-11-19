@@ -35,91 +35,77 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20080919
  */
 
-public abstract class AbstractSchemaLessRule extends AbstractRule implements SchemaLessRule
-{
-	protected List<Event>	events;
-	protected List<Rule>	rules;
+public abstract class AbstractSchemaLessRule extends AbstractRule implements
+		SchemaLessRule {
+	protected List<Event> events;
+	protected List<Rule> rules;
 
-	public AbstractSchemaLessRule ()
-	{
-		super ( );
-		init ( );
+	public AbstractSchemaLessRule() {
+		super();
+		init();
 	}
 
-	private void init ()
-	{
-		events = new ArrayList<Event> ( );
-		rules = new ArrayList<Rule> ( );
+	private void init() {
+		events = new ArrayList<Event>();
+		rules = new ArrayList<Rule>();
 	}
-	
-	public final boolean isSchemaRule ()
-	{
+
+	public final boolean isSchemaRule() {
 		return false;
 	}
 
-	protected int getInternalIndex ( int eventCode )
-	{
-		return ( getNumberOfEvents ( ) - 1 - eventCode );
+	protected int getInternalIndex(int eventCode) {
+		return (getNumberOfEvents() - 1 - eventCode);
 	}
 
-	protected int getEventCode ( int internalIndex )
-	{
-		return ( getNumberOfEvents ( ) - 1 - internalIndex );
-	}
-	
-	public int get1stLevelEventCodeLength ( FidelityOptions fidelityOptions )
-	{
-		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? MethodsBag.getCodingLength ( events.size ( ) + 1 ) : MethodsBag.getCodingLength ( events.size ( ) ) );
+	protected int getEventCode(int internalIndex) {
+		return (getNumberOfEvents() - 1 - internalIndex);
 	}
 
-	public int get1stLevelEventCode ( Event event )
-	{
-		for ( int i = 0; i < events.size ( ); i++ )
-		{
-			if ( events.get ( i ).equals ( event ) )
-			{
-				return ( getEventCode ( i ) );
+	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
+				.getCodingLength(events.size() + 1) : MethodsBag
+				.getCodingLength(events.size()));
+	}
+
+	public int get1stLevelEventCode(Event event) {
+		for (int i = 0; i < events.size(); i++) {
+			if (events.get(i).equals(event)) {
+				return (getEventCode(i));
 			}
 		}
 
 		return Constants.NOT_FOUND;
 	}
 
-	public Event get1stLevelEvent ( int eventCode )
-	{
-		return ( events.get ( getInternalIndex ( eventCode ) ) );
+	public Event get1stLevelEvent(int eventCode) {
+		return (events.get(getInternalIndex(eventCode)));
 	}
 
-	public int getNumberOfEvents ()
-	{
-		assert ( events.size ( ) == rules.size ( ) );
+	public int getNumberOfEvents() {
+		assert (events.size() == rules.size());
 
-		return events.size ( );
+		return events.size();
 	}
 
 	/*
 	 * a leading rule for performance reason is added to the tail
 	 */
-	public void addRule ( Event event, Rule rule )
-	{
-		assert ( !isTerminalRule ( ) );
-		assert ( !this.contains ( event ) );
+	public void addRule(Event event, Rule rule) {
+		assert (!isTerminalRule());
+		assert (!this.contains(event));
 
-		events.add ( event );
-		rules.add ( rule );
+		events.add(event);
+		rules.add(rule);
 	}
 
-	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
-	{
-		return rules.get ( getInternalIndex ( ec ) );
+	public Rule get1stLevelRule(int ec) throws IndexOutOfBoundsException {
+		return rules.get(getInternalIndex(ec));
 	}
 
-	protected boolean contains ( Event event )
-	{
-		for ( int i = 0; i < events.size ( ); i++ )
-		{
-			if ( events.get ( i ).equals ( event ) )
-			{
+	protected boolean contains(Event event) {
+		for (int i = 0; i < events.size(); i++) {
+			if (events.get(i).equals(event)) {
 				return true;
 			}
 		}
@@ -132,21 +118,16 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString ()
-	{
-		String s = this.getLabel ( ) + "//" + "\t";
+	public String toString() {
+		String s = this.getLabel() + "//" + "\t";
 
-		if ( this.isTerminalRule ( ) )
-		{
+		if (this.isTerminalRule()) {
 			s += "<END_RULE>";
-		}
-		else
-		{
+		} else {
 			s += "[";
 
-			for ( int ec = 0; ec < this.getNumberOfEvents ( ); ec++ )
-			{
-				s += "," + this.get1stLevelEvent ( ec );
+			for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
+				s += "," + this.get1stLevelEvent(ec);
 			}
 
 			s += "]";

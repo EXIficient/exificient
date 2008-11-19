@@ -35,78 +35,68 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20080718
  */
 
-public class RestrictedCharacterSetDatatypeDecoder extends AbstractDatatypeDecoder
-{
+public class RestrictedCharacterSetDatatypeDecoder extends
+		AbstractDatatypeDecoder {
 	protected RestrictedCharacterSet rcs;
-	
-	public RestrictedCharacterSetDatatypeDecoder( RestrictedCharacterSet rcs )
-	{
+
+	public RestrictedCharacterSetDatatypeDecoder(RestrictedCharacterSet rcs) {
 		super();
-		
+
 		this.rcs = rcs;
 	}
-	
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
-	{
+
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
 		String value;
-		
-		int i = dc.decodeUnsignedInteger ( );
-		
-		if ( i == 0 )
-		{
+
+		int i = dc.decodeUnsignedInteger();
+
+		if (i == 0) {
 			// local value partition
-			value = decoder.readStringAsLocalHit ( dc, namespaceURI, localName );
-		}
-		else if ( i == 1 )
-		{
+			value = decoder.readStringAsLocalHit(dc, namespaceURI, localName);
+		} else if (i == 1) {
 			// found in global value partition
-			value = decoder.readStringAsGlobalHit ( dc );
-		}
-		else
-		{
+			value = decoder.readStringAsGlobalHit(dc);
+		} else {
 			// not found in global value (and local value) partition
-			// ==> restricted character string literal is encoded as a String with the length
+			// ==> restricted character string literal is encoded as a String
+			// with the length
 			// incremented by two.
 			int slen = i - 2;
 
-			//	number of bits
-			int numberOfBits =  rcs.getCodingLength ( );
-			int size = rcs.size ( );
-			
+			// number of bits
+			int numberOfBits = rcs.getCodingLength();
+			int size = rcs.size();
+
 			StringBuilder sb = new StringBuilder();
 			int code;
-			
-			try
-			{
-				for ( int k=0; k<slen; k++ )
-				{
-					if ( ( code = dc.decodeNBitUnsignedInteger ( numberOfBits ) ) == size )
-					{
+
+			try {
+				for (int k = 0; k < slen; k++) {
+					if ((code = dc.decodeNBitUnsignedInteger(numberOfBits)) == size) {
 						// UCS code point of the character
 						// TODO UTF-16 surrogate pair?
-						sb.append ( (char) dc.decodeUnsignedInteger ( ) );
-					}
-					else
-					{
-						sb.append ( rcs.getCharacter ( code ) );
+						sb.append((char) dc.decodeUnsignedInteger());
+					} else {
+						sb.append(rcs.getCharacter(code));
 					}
 				}
+			} catch (UnknownElementException e) {
+				throw new IOException(e);
 			}
-			catch ( UnknownElementException e )
-			{
-				throw new IOException( e );
-			}
-			
-			value = sb.toString ( );
-			
+
+			value = sb.toString();
+
 			// After encoding the string value, it is added to both the
-			// associated "local" value string table partition and the global value
+			// associated "local" value string table partition and the global
+			// value
 			// string table partition.
-			StringTableDecoder stringTable = decoder.getStringTable ( );
-			stringTable.addLocalValue ( namespaceURI, localName, value );
-			stringTable.addGlobalValue ( value );
+			StringTableDecoder stringTable = decoder.getStringTable();
+			stringTable.addLocalValue(namespaceURI, localName, value);
+			stringTable.addGlobalValue(value);
 		}
-		
+
 		return value;
 	}
 }

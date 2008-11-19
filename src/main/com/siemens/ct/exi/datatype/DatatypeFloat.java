@@ -29,10 +29,8 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DatatypeFloat extends AbstractDatatype
-{
-	public DatatypeFloat( ExpandedName datatypeIdentifier )
-	{
-		super( BuiltInType.BUILTIN_FLOAT, datatypeIdentifier );
+public class DatatypeFloat extends AbstractDatatype {
+	public DatatypeFloat(ExpandedName datatypeIdentifier) {
+		super(BuiltInType.BUILTIN_FLOAT, datatypeIdentifier);
 	}
 }

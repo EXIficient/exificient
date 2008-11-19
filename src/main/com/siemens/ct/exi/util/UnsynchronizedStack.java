@@ -29,18 +29,16 @@ import java.util.NoSuchElementException;
  * @version 0.1.20081014
  */
 
-public class UnsynchronizedStack<E>
-{
-	private transient E[]	elements;
-	private transient int	size;
+public class UnsynchronizedStack<E> {
+	private transient E[] elements;
+	private transient int size;
 
 	/**
 	 * Constructs an empty stack with an initial capacity sufficient to hold 16
 	 * elements.
 	 */
 	@SuppressWarnings("unchecked")
-	public UnsynchronizedStack ()
-	{
+	public UnsynchronizedStack() {
 		elements = (E[]) new Object[16];
 	}
 
@@ -50,11 +48,10 @@ public class UnsynchronizedStack<E>
 	 * @param e
 	 *            the element to add
 	 */
-	public void addLast ( E e )
-	{
+	public void addLast(E e) {
 		elements[size++] = e;
-		if ( size >= elements.length )
-			doubleCapacity ( );
+		if (size >= elements.length)
+			doubleCapacity();
 	}
 
 	/**
@@ -65,10 +62,9 @@ public class UnsynchronizedStack<E>
 	 * @exception NoSuchElementException
 	 *                if this stack is empty.
 	 */
-	public E peekLast ()
-	{
-		if ( size == 0 )
-			throw new NoSuchElementException ( );
+	public E peekLast() {
+		if (size == 0)
+			throw new NoSuchElementException();
 		return elements[size - 1];
 	}
 
@@ -81,10 +77,9 @@ public class UnsynchronizedStack<E>
 	 * @throws NoSuchElementException
 	 *             if this stack is empty.
 	 */
-	public E removeLast ()
-	{
-		if ( size == 0 )
-			throw new NoSuchElementException ( );
+	public E removeLast() {
+		if (size == 0)
+			throw new NoSuchElementException();
 		E x = elements[size - 1];
 		elements[--size] = null;
 		return x;
@@ -99,10 +94,9 @@ public class UnsynchronizedStack<E>
 	 * @throws NoSuchElementException
 	 *             if this stack is empty.
 	 */
-	public E replaceLast ( E x )
-	{
-		if ( size == 0 )
-			throw new NoSuchElementException ( );
+	public E replaceLast(E x) {
+		if (size == 0)
+			throw new NoSuchElementException();
 		E y = elements[size - 1];
 		elements[size - 1] = x;
 		return y;
@@ -114,28 +108,25 @@ public class UnsynchronizedStack<E>
 	 * @return <code>true</code> if and only if this stack contains no items;
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isEmpty ()
-	{
+	public boolean isEmpty() {
 		return size == 0;
 	}
 
-	public void clear ()
-	{
-		for ( int i = 0; i < size; i++ )
+	public void clear() {
+		for (int i = 0; i < size; i++)
 			elements[i] = null;
 
 		size = 0;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void doubleCapacity ()
-	{
+	private void doubleCapacity() {
 		int n = elements.length;
 		int newCapacity = n << 1;
-		if ( newCapacity < 0 )
-			throw new IllegalStateException ( "Sorry, stack too big" );
+		if (newCapacity < 0)
+			throw new IllegalStateException("Sorry, stack too big");
 		Object[] a = new Object[newCapacity];
-		System.arraycopy ( elements, 0, a, 0, n );
+		System.arraycopy(elements, 0, a, 0, n);
 		elements = (E[]) a;
 	}
 

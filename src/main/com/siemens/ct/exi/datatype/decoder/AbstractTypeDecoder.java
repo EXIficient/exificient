@@ -36,77 +36,72 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20081117
  */
 
-public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements TypeDecoder
-{
+public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
+		TypeDecoder {
 	// EXI string table(s)
-	protected StringTableDecoder	stringTable;
+	protected StringTableDecoder stringTable;
 
-	public AbstractTypeDecoder ( EXIFactory exiFactory )
-	{
-		stringTable = new StringTableDecoderImpl ( exiFactory.getGrammar ( ).isSchemaInformed ( ) );
+	public AbstractTypeDecoder(EXIFactory exiFactory) {
+		stringTable = new StringTableDecoderImpl(exiFactory.getGrammar()
+				.isSchemaInformed());
 	}
 
-	public StringTableDecoder getStringTable ()
-	{
+	public StringTableDecoder getStringTable() {
 		return stringTable;
 	}
 
-	public String readValueAsString ( DecoderChannel dc, final String namespaceURI, final String localName )
-			throws IOException
-	{
+	public String readValueAsString(DecoderChannel dc,
+			final String namespaceURI, final String localName)
+			throws IOException {
 		String value;
 
-		int i = dc.decodeUnsignedInteger ( );
+		int i = dc.decodeUnsignedInteger();
 
-		if ( i == 0 )
-		{
+		if (i == 0) {
 			// local value partition
-			value = readStringAsLocalHit ( dc, namespaceURI, localName );
-		}
-		else if ( i == 1 )
-		{
+			value = readStringAsLocalHit(dc, namespaceURI, localName);
+		} else if (i == 1) {
 			// found in global value partition
-			value = readStringAsGlobalHit ( dc );
-		}
-		else
-		{
+			value = readStringAsGlobalHit(dc);
+		} else {
 			// not found in global value (and local value) partition
 			// ==> string literal is encoded as a String with the length
 			// incremented by two.
-			value = this.readStringAsMiss ( dc, namespaceURI, localName, i - 2 );
+			value = this.readStringAsMiss(dc, namespaceURI, localName, i - 2);
 		}
 
-		assert ( value != null );
+		assert (value != null);
 
 		return value;
 	}
 
-	public String readStringAsLocalHit ( DecoderChannel dc, final String namespaceURI, final String localName )
-			throws IOException
-	{
-		int n = MethodsBag.getCodingLength ( stringTable.getLocalValueTableSize ( namespaceURI, localName ) );
-		int localID = dc.decodeNBitUnsignedInteger ( n );
+	public String readStringAsLocalHit(DecoderChannel dc,
+			final String namespaceURI, final String localName)
+			throws IOException {
+		int n = MethodsBag.getCodingLength(stringTable.getLocalValueTableSize(
+				namespaceURI, localName));
+		int localID = dc.decodeNBitUnsignedInteger(n);
 
-		return stringTable.getLocalValue ( namespaceURI, localName, localID );
+		return stringTable.getLocalValue(namespaceURI, localName, localID);
 	}
 
-	public String readStringAsGlobalHit ( DecoderChannel dc ) throws IOException
-	{
-		int n = MethodsBag.getCodingLength ( stringTable.getGlobalValueTableSize ( ) );
-		int globalID = dc.decodeNBitUnsignedInteger ( n );
+	public String readStringAsGlobalHit(DecoderChannel dc) throws IOException {
+		int n = MethodsBag.getCodingLength(stringTable
+				.getGlobalValueTableSize());
+		int globalID = dc.decodeNBitUnsignedInteger(n);
 
-		return stringTable.getGlobalValue ( globalID );
+		return stringTable.getGlobalValue(globalID);
 	}
 
-	public String readStringAsMiss ( DecoderChannel dc, final String namespaceURI, final String localName,
-			final int slen ) throws IOException
-	{
-		String value = dc.decodeStringOnly ( slen );
+	public String readStringAsMiss(DecoderChannel dc,
+			final String namespaceURI, final String localName, final int slen)
+			throws IOException {
+		String value = dc.decodeStringOnly(slen);
 		// After encoding the string value, it is added to both the
 		// associated "local" value string table partition and the global value
 		// string table partition.
-		stringTable.addLocalValue ( namespaceURI, localName, value );
-		stringTable.addGlobalValue ( value );
+		stringTable.addLocalValue(namespaceURI, localName, value);
+		stringTable.addGlobalValue(value);
 
 		return value;
 	}

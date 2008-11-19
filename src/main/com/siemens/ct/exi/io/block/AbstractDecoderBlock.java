@@ -36,86 +36,76 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20081105
  */
 
-public abstract class AbstractDecoderBlock implements DecoderBlock
-{	
+public abstract class AbstractDecoderBlock implements DecoderBlock {
 	protected InputStream inputStream;
-	
+
 	protected TypeDecoder typeDecoder;
-	
-	public AbstractDecoderBlock( InputStream is, TypeDecoder typeDecoder ) throws IOException
-	{
+
+	public AbstractDecoderBlock(InputStream is, TypeDecoder typeDecoder)
+			throws IOException {
 		inputStream = is;
 		this.typeDecoder = typeDecoder;
-		
+
 		init();
 	}
-	
-	protected abstract void init( ) throws IOException;
-	
-	protected abstract DecoderChannel getStructureChannel ();
 
-	protected abstract DecoderChannel getValueChannel ( String namespaceURI, String localName ) throws IOException;
-	
-	public int readEventCode ( int codeLength ) throws IOException
-	{
-		return getStructureChannel ( ).decodeNBitUnsignedInteger ( codeLength );
+	protected abstract void init() throws IOException;
+
+	protected abstract DecoderChannel getStructureChannel();
+
+	protected abstract DecoderChannel getValueChannel(String namespaceURI,
+			String localName) throws IOException;
+
+	public int readEventCode(int codeLength) throws IOException {
+		return getStructureChannel().decodeNBitUnsignedInteger(codeLength);
 	}
-	
-	public String readString ( ) throws IOException
-	{
-		return getStructureChannel ( ).decodeString ( );
+
+	public String readString() throws IOException {
+		return getStructureChannel().decodeString();
 	}
-	
-	public String readUri ( ) throws IOException
-	{
-		DecoderChannel structure = getStructureChannel ( );
-		StringTableDecoder stringTable = typeDecoder.getStringTable ( );
-		
+
+	public String readUri() throws IOException {
+		DecoderChannel structure = getStructureChannel();
+		StringTableDecoder stringTable = typeDecoder.getStringTable();
+
 		String uri;
-		
-		int mUri = stringTable.getURITableSize ( ); // number of entries
-		int nUri = MethodsBag.getCodingLength ( mUri + 1 ); // n-bit
-		int uriID = structure.decodeNBitUnsignedInteger ( nUri );
-		if ( uriID == 0 )
-		{
+
+		int mUri = stringTable.getURITableSize(); // number of entries
+		int nUri = MethodsBag.getCodingLength(mUri + 1); // n-bit
+		int uriID = structure.decodeNBitUnsignedInteger(nUri);
+		if (uriID == 0) {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by uri encoded as string
-			uri = structure.decodeString ( );
+			uri = structure.decodeString();
 			// after encoding string value is added to table
-			stringTable.addURI ( uri );
-		}
-		else
-		{
+			stringTable.addURI(uri);
+		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			uri = stringTable.getURIValue ( uriID - 1 );
+			uri = stringTable.getURIValue(uriID - 1);
 		}
 
 		return uri;
 	}
-	
-	public String readLocalName ( String uri ) throws IOException
-	{
-		DecoderChannel structure = getStructureChannel ( );
-		StringTableDecoder stringTable = typeDecoder.getStringTable ( );
-		
-		String localName;
-		int length = structure.decodeUnsignedInteger ( );
 
-		if ( length > 0 )
-		{
+	public String readLocalName(String uri) throws IOException {
+		DecoderChannel structure = getStructureChannel();
+		StringTableDecoder stringTable = typeDecoder.getStringTable();
+
+		String localName;
+		int length = structure.decodeUnsignedInteger();
+
+		if (length > 0) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
 			// with the length of the string incremented by one
 			length--;
-			localName = structure.decodeStringOnly ( length );
+			localName = structure.decodeStringOnly(length);
 			// After encoding the string value, it is added to the string table
 			// partition and assigned the next available compact identifier.
-			stringTable.addLocalName ( uri, localName );
-		}
-		else
-		{
+			stringTable.addLocalName(uri, localName);
+		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
 			// Unsigned Integer
@@ -123,58 +113,55 @@ public abstract class AbstractDecoderBlock implements DecoderBlock
 			// n-bit unsigned integer
 			// n is log2 m and m is the number of entries in the string table
 			// partition
-			int n = MethodsBag.getCodingLength ( stringTable.getLocalNameTableSize ( uri ) );
-			int localNameID = structure.decodeNBitUnsignedInteger ( n );
-			localName = stringTable.getLocalNameValue ( uri, localNameID );
+			int n = MethodsBag.getCodingLength(stringTable
+					.getLocalNameTableSize(uri));
+			int localNameID = structure.decodeNBitUnsignedInteger(n);
+			localName = stringTable.getLocalNameValue(uri, localNameID);
 		}
 
 		return localName;
 	}
-	
-	public String readPrefix ( String uri ) throws IOException
-	{
-		DecoderChannel structure = getStructureChannel ( );
-		StringTableDecoder stringTable = typeDecoder.getStringTable ( );
-		
+
+	public String readPrefix(String uri) throws IOException {
+		DecoderChannel structure = getStructureChannel();
+		StringTableDecoder stringTable = typeDecoder.getStringTable();
+
 		String prefix;
 
-		int mPfx = stringTable.getPrefixTableSize ( uri ); // number of entries
-		int nPfx = MethodsBag.getCodingLength ( mPfx + 1 ); // n-bit
-		int pfxID = structure.decodeNBitUnsignedInteger ( nPfx );
-		if ( pfxID == 0 )
-		{
+		int mPfx = stringTable.getPrefixTableSize(uri); // number of entries
+		int nPfx = MethodsBag.getCodingLength(mPfx + 1); // n-bit
+		int pfxID = structure.decodeNBitUnsignedInteger(nPfx);
+		if (pfxID == 0) {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by pfx encoded as string
-			prefix = structure.decodeString ( );
+			prefix = structure.decodeString();
 			// after decoding pfx value is added to table
-			stringTable.addPrefix ( uri, prefix );
-		}
-		else
-		{
+			stringTable.addPrefix(uri, prefix);
+		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			prefix = stringTable.getPrefixValue ( uri, pfxID - 1 );
+			prefix = stringTable.getPrefixValue(uri, pfxID - 1);
 		}
 
 		return prefix;
 	}
-	
-	public boolean readBoolean ( ) throws IOException
-	{
-		return getStructureChannel ( ).decodeBoolean();
+
+	public boolean readBoolean() throws IOException {
+		return getStructureChannel().decodeBoolean();
 	}
-	
-	public String readTypedValidValue ( Datatype datatype, final String namespaceURI, final String localName ) throws IOException
-	{
-		return typeDecoder.readTypeValidValue ( datatype, getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
+
+	public String readTypedValidValue(Datatype datatype,
+			final String namespaceURI, final String localName)
+			throws IOException {
+		return typeDecoder.readTypeValidValue(datatype, getValueChannel(
+				namespaceURI, localName), namespaceURI, localName);
 	}
-	
-	public String readValueAsString ( String namespaceURI, String localName ) throws IOException
-	{
-		return typeDecoder.readValueAsString ( getValueChannel ( namespaceURI, localName ), namespaceURI, localName );
+
+	public String readValueAsString(String namespaceURI, String localName)
+			throws IOException {
+		return typeDecoder.readValueAsString(getValueChannel(namespaceURI,
+				localName), namespaceURI, localName);
 	}
-	
-	
-	
+
 }

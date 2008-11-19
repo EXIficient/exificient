@@ -27,7 +27,6 @@ package com.siemens.ct.exi.datatype.stringtable;
  * @version 0.1.20080718
  */
 
-public interface StringTablePartitionDecoder extends StringTablePartition 
-{
-	public String getValue ( int index );
+public interface StringTablePartitionDecoder extends StringTablePartition {
+	public String getValue(int index);
 }

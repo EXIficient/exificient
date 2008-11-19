@@ -27,35 +27,33 @@ package com.siemens.ct.exi.util.xml;
  * @version 0.1.20080718
  */
 
-public class QNameUtilities
-{
-	  /**
-	   * Returns the local part of the given raw qname.
-	   *
-	   * @param qname raw qname input
-	   *
-	   * @return Local part of the name if prefixed, or the given name if not
-	   */
-	  public static String getLocalPart( String qname )
-	  {
-	    int index = qname.indexOf( ':' );
+public class QNameUtilities {
+	/**
+	 * Returns the local part of the given raw qname.
+	 * 
+	 * @param qname
+	 *            raw qname input
+	 * 
+	 * @return Local part of the name if prefixed, or the given name if not
+	 */
+	public static String getLocalPart(String qname) {
+		int index = qname.indexOf(':');
 
-	    return (index < 0) ? qname : qname.substring(index + 1);
-	  }
+		return (index < 0) ? qname : qname.substring(index + 1);
+	}
 
-	  /**
-	   * Returns the prefix part of the given raw qname.
-	   * 
-	   * @param qname raw qname input 
-	   *
-	   * @return Prefix of name or empty string if none there   
-	   */
-	  public static String getPrefixPart(String qname)
-	  {
-	    int index = qname.indexOf(':');
+	/**
+	 * Returns the prefix part of the given raw qname.
+	 * 
+	 * @param qname
+	 *            raw qname input
+	 * 
+	 * @return Prefix of name or empty string if none there
+	 */
+	public static String getPrefixPart(String qname) {
+		int index = qname.indexOf(':');
 
-	    return ( index >= 0 ) ? qname.substring(0, index) : "";
-	  }
-	  
-	  
+		return (index >= 0) ? qname.substring(0, index) : "";
+	}
+
 }

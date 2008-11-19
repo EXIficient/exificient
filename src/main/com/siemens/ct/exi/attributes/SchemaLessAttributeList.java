@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.attributes;
 
-
 /**
  * TODO Description
  * 
@@ -28,15 +27,14 @@ package com.siemens.ct.exi.attributes;
  * @version 0.1.20080924
  */
 
-public class SchemaLessAttributeList extends AbstractAttributeList
-{
+public class SchemaLessAttributeList extends AbstractAttributeList {
 	@Override
-	protected void insertAttribute ( String uri, String localName, String pfx, String value )
-	{
-		attributeURI.add ( uri );
-		attributeLocalName.add ( localName );
-		attributePrefix.add ( pfx );
-		attributeValue.add ( value );
+	protected void insertAttribute(String uri, String localName, String pfx,
+			String value) {
+		attributeURI.add(uri);
+		attributeLocalName.add(localName);
+		attributePrefix.add(pfx);
+		attributeValue.add(value);
 	}
 
 }

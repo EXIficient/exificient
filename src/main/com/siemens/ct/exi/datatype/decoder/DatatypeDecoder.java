@@ -32,8 +32,9 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20080718
  */
 
-public interface DatatypeDecoder
-{
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException;
+public interface DatatypeDecoder {
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException;
 
 }

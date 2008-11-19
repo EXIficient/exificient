@@ -32,25 +32,24 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  * @version 0.1.20080818
  */
 
-public interface EXIEncoder
-{
-	public void setOutput ( OutputStream os ) throws EXIException;
+public interface EXIEncoder {
+	public void setOutput(OutputStream os) throws EXIException;
 
-	public void setErrorHandler ( ErrorHandler errorHandler );
+	public void setErrorHandler(ErrorHandler errorHandler);
 
 	/**
 	 * Reports the beginning of a set of XML events
 	 * 
 	 * @throws EXIException
 	 */
-	public void encodeStartDocument () throws EXIException;
+	public void encodeStartDocument() throws EXIException;
 
 	/**
 	 * Reports the end of a set of XML events.
 	 * 
 	 * @throws EXIException
 	 */
-	public void encodeEndDocument () throws EXIException;
+	public void encodeEndDocument() throws EXIException;
 
 	/**
 	 * Supplies the start of an element.
@@ -63,7 +62,8 @@ public interface EXIEncoder
 	 * @param localName
 	 * @throws EXIException
 	 */
-	public void encodeStartElement ( String uri, String localName ) throws EXIException;
+	public void encodeStartElement(String uri, String localName)
+			throws EXIException;
 
 	/**
 	 * Supplies the start of an element.
@@ -78,14 +78,15 @@ public interface EXIEncoder
 	 * @param prefix
 	 * @throws EXIException
 	 */
-	public void encodeStartElement ( String uri, String localName, String prefix ) throws EXIException;
+	public void encodeStartElement(String uri, String localName, String prefix)
+			throws EXIException;
 
 	/**
 	 * Supplies the end tag of an element.
 	 * 
 	 * @throws EXIException
 	 */
-	public void encodeEndElement () throws EXIException;
+	public void encodeEndElement() throws EXIException;
 
 	/**
 	 * Supplies an attribute.
@@ -100,7 +101,8 @@ public interface EXIEncoder
 	 * @param value
 	 * @throws EXIException
 	 */
-	public void encodeAttribute ( String uri, String localName, String value ) throws EXIException;
+	public void encodeAttribute(String uri, String localName, String value)
+			throws EXIException;
 
 	/**
 	 * Supplies an attribute.
@@ -116,7 +118,8 @@ public interface EXIEncoder
 	 * @param value
 	 * @throws EXIException
 	 */
-	public void encodeAttribute ( String uri, String localName, String prefix, String value ) throws EXIException;
+	public void encodeAttribute(String uri, String localName, String prefix,
+			String value) throws EXIException;
 
 	/**
 	 * Namespaces are reported as a discrete Namespace event.
@@ -125,7 +128,8 @@ public interface EXIEncoder
 	 * @param prefix
 	 * @throws EXIException
 	 */
-	public void encodeNamespaceDeclaration ( String uri, String prefix ) throws EXIException;
+	public void encodeNamespaceDeclaration(String uri, String prefix)
+			throws EXIException;
 
 	/**
 	 * Supplies an xsi:nil attribute.
@@ -133,7 +137,7 @@ public interface EXIEncoder
 	 * @param nil
 	 * @throws EXIException
 	 */
-	public void encodeXsiNil ( String nil ) throws EXIException;
+	public void encodeXsiNil(String nil) throws EXIException;
 
 	/**
 	 * Supplies an xsi:type case.
@@ -143,7 +147,8 @@ public interface EXIEncoder
 	 * @param raw
 	 * @throws EXIException
 	 */
-	public void encodeXsiType ( String uri, String localName, String raw ) throws EXIException;
+	public void encodeXsiType(String uri, String localName, String raw)
+			throws EXIException;
 
 	/**
 	 * Supplies a comment as corresponding characters.
@@ -156,7 +161,7 @@ public interface EXIEncoder
 	 * @param chars
 	 * @throws EXIException
 	 */
-	public void encodeCharacters ( String chars ) throws EXIException;
+	public void encodeCharacters(String chars) throws EXIException;
 
 	/**
 	 * Supplies the text of a comment.
@@ -166,7 +171,8 @@ public interface EXIEncoder
 	 * @param length
 	 * @throws EXIException
 	 */
-	public void encodeComment ( char[] ch, int start, int length ) throws EXIException;
+	public void encodeComment(char[] ch, int start, int length)
+			throws EXIException;
 
 	/**
 	 * Supplies the target and data for an underlying processing instruction.
@@ -175,5 +181,6 @@ public interface EXIEncoder
 	 * @param data
 	 * @throws EXIException
 	 */
-	public void encodeProcessingInstruction ( String target, String data ) throws EXIException;
+	public void encodeProcessingInstruction(String target, String data)
+			throws EXIException;
 }

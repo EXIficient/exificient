@@ -27,16 +27,14 @@ package com.siemens.ct.exi.exceptions;
  * @version 0.1.20081113
  */
 
-public class UnknownElementException extends EXIException
-{
+public class UnknownElementException extends EXIException {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -8859158367056532581L;
-	
-	public UnknownElementException( String msg )
-	{
-		super( msg );
+	private static final long serialVersionUID = -8859158367056532581L;
+
+	public UnknownElementException(String msg) {
+		super(msg);
 	}
 
 }

@@ -27,8 +27,6 @@ package com.siemens.ct.exi.grammar.rule;
  * @version 0.1.20080718
  */
 
-public interface SchemaLessRule extends Rule
-{
-
+public interface SchemaLessRule extends Rule {
 
 }

@@ -37,62 +37,61 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessRuleFragmentContent;
  * @version 0.1.20080718
  */
 
-public class SchemaLessGrammar extends AbstractGrammar
-{
-	public SchemaLessGrammar()
-	{
-		super( false );
-		
-		init( );
+public class SchemaLessGrammar extends AbstractGrammar {
+	public SchemaLessGrammar() {
+		super(false);
+
+		init();
 	}
-	
-	private void init()
-	{
-		/*	
+
+	private void init() {
+		/*
 		 * rule (DocEnd)
-		 */	
-		builtInDocEndGrammar = new RuleDocEnd( "DocEnd" );
-		builtInDocEndGrammar.addTerminalRule( new EndDocument( ) );
-		
+		 */
+		builtInDocEndGrammar = new RuleDocEnd("DocEnd");
+		builtInDocEndGrammar.addTerminalRule(new EndDocument());
+
 		/*
 		 * rule (DocContent)
-		 */	
-		builtInDocContentGrammar = new SchemaLessRuleDocContent( builtInDocEndGrammar, "DocContent" );
-		
-		//	rule (DocContent), not schema informed --> level one
-		builtInDocContentGrammar.addRule( new StartElementGeneric( ), builtInDocEndGrammar );
-		
+		 */
+		builtInDocContentGrammar = new SchemaLessRuleDocContent(
+				builtInDocEndGrammar, "DocContent");
+
+		// rule (DocContent), not schema informed --> level one
+		builtInDocContentGrammar.addRule(new StartElementGeneric(),
+				builtInDocEndGrammar);
 
 		/*
 		 * rule (Document)
 		 */
-		builtInDocumentGrammar = new RuleDocument( builtInDocContentGrammar, "Document");
-		builtInDocumentGrammar.addRule( new StartDocument( ), builtInDocContentGrammar );
+		builtInDocumentGrammar = new RuleDocument(builtInDocContentGrammar,
+				"Document");
+		builtInDocumentGrammar.addRule(new StartDocument(),
+				builtInDocContentGrammar);
 	}
-	
-	public Rule getRule( ElementKey es )
-	{
+
+	public Rule getRule(ElementKey es) {
 		return null;
 	}
 
+	public Rule getBuiltInFragmentGrammar() {
+		// Note: create new instance since fragment content grammar may change
+		// over time
 
-	public Rule getBuiltInFragmentGrammar ()
-	{
-		//	Note: create new instance since fragment content grammar may change over time
-		
 		/*
 		 * Fragment Content
 		 */
-		Rule builtInFragmentContentGrammar = new SchemaLessRuleFragmentContent( );
+		Rule builtInFragmentContentGrammar = new SchemaLessRuleFragmentContent();
 
-		
 		/*
 		 * Fragment
 		 */
-		Rule builtInFragmentGrammar = new RuleFragment( builtInFragmentContentGrammar, "Fragment" );
-		builtInFragmentGrammar.addRule( new StartDocument( ), builtInFragmentContentGrammar );	
-		
+		Rule builtInFragmentGrammar = new RuleFragment(
+				builtInFragmentContentGrammar, "Fragment");
+		builtInFragmentGrammar.addRule(new StartDocument(),
+				builtInFragmentContentGrammar);
+
 		return builtInFragmentGrammar;
 	}
-	
+
 }

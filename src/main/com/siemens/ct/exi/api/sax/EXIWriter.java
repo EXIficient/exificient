@@ -26,8 +26,9 @@ import org.xml.sax.ext.LexicalHandler;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
- * Class conforms to the <code>ContentHandler</code> and <code>LexicalHandler</code>
- * interface by giving the possibility to specify an output stream.
+ * Class conforms to the <code>ContentHandler</code> and
+ * <code>LexicalHandler</code> interface by giving the possibility to specify an
+ * output stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -35,7 +36,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20080718
  */
 
-public interface EXIWriter extends ContentHandler, LexicalHandler
-{
-	public void setOutput( OutputStream os ) throws EXIException;
+public interface EXIWriter extends ContentHandler, LexicalHandler {
+	public void setOutput(OutputStream os) throws EXIException;
 }

@@ -32,27 +32,28 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20080718
  */
 
-public class StringDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
+public class StringDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
 	private String lastValid;
-	
-	public StringDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+
+	public StringDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, final String value )
-	{
+
+	public boolean isValid(Datatype datatype, final String value) {
 		lastValid = value;
 		return true;
 	}
 
-	// public void writeValue ( TypeEncoder encoder, EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
+	// public void writeValue ( TypeEncoder encoder, EncoderChannel
+	// valueChannel, String uri, String localName ) throws IOException
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException
 	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
+	// public void writeValue ( EncoderChannel valueChannel, String uri, String
+	// localName ) throws IOException
 	{
-		typeEncoder.writeValueAsString ( valueChannel, uri, localName, lastValid );
+		typeEncoder.writeValueAsString(valueChannel, uri, localName, lastValid);
 	}
-	
+
 }

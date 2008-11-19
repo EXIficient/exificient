@@ -27,7 +27,6 @@ package com.siemens.ct.exi.datatype;
  * @version 0.1.20080718
  */
 
-public interface TypeCoder
-{
-	
+public interface TypeCoder {
+
 }

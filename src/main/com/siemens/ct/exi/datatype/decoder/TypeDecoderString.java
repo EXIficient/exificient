@@ -33,16 +33,13 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081105
  */
 
-public class TypeDecoderString extends AbstractTypeDecoder
-{
-	public TypeDecoderString ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+public class TypeDecoderString extends AbstractTypeDecoder {
+	public TypeDecoderString(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
 
-	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
-			throws IOException
-	{
-		return readValueAsString ( dc, namespaceURI, localName );
+	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+			String namespaceURI, String localName) throws IOException {
+		return readValueAsString(dc, namespaceURI, localName);
 	}
 }

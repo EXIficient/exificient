@@ -38,44 +38,33 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20081110
  */
 
-public class BooleanPatternDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private int	lastValidBooleanID;
+public class BooleanPatternDatatypeEncoder extends AbstractDatatypeEncoder
+		implements DatatypeEncoder {
+	private int lastValidBooleanID;
 
-	public BooleanPatternDatatypeEncoder ( TypeEncoder typeEncoder )
-	{
-		super ( typeEncoder );
+	public BooleanPatternDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
 
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		if ( value.equals ( Constants.XSD_BOOLEAN_FALSE ) )
-		{
+	public boolean isValid(Datatype datatype, String value) {
+		if (value.equals(Constants.XSD_BOOLEAN_FALSE)) {
 			lastValidBooleanID = 0;
-		}
-		else if ( value.equals ( Constants.XSD_BOOLEAN_0 ) )
-		{
+		} else if (value.equals(Constants.XSD_BOOLEAN_0)) {
 			lastValidBooleanID = 1;
-		}
-		else if ( value.equals ( Constants.XSD_BOOLEAN_TRUE ) )
-		{
+		} else if (value.equals(Constants.XSD_BOOLEAN_TRUE)) {
 			lastValidBooleanID = 2;
-		}
-		else if ( value.equals ( Constants.XSD_BOOLEAN_1 ) )
-		{
+		} else if (value.equals(Constants.XSD_BOOLEAN_1)) {
 			lastValidBooleanID = 3;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 
 		return true;
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeNBitUnsignedInteger ( lastValidBooleanID, 2 );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
 }

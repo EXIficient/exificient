@@ -22,10 +22,9 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
  * Given an XML Schema type definition T i , two type grammars are created,
- * which are denoted by Type i and TypeEmpty i . Type i is a grammar that
- * fully reflects the type definition of T i , whereas TypeEmpty i is a
- * grammar that accepts only the attribute uses and attribute wildcards of T
- * i , if any.
+ * which are denoted by Type i and TypeEmpty i . Type i is a grammar that fully
+ * reflects the type definition of T i , whereas TypeEmpty i is a grammar that
+ * accepts only the attribute uses and attribute wildcards of T i , if any.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -33,24 +32,20 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.1.20080822
  */
 
-public class TypeGrammar
-{
+public class TypeGrammar {
 	final SchemaInformedRule type;
 	final SchemaInformedRule typeEmpty;
-	
-	public TypeGrammar( SchemaInformedRule type, SchemaInformedRule typeEmpty )
-	{
+
+	public TypeGrammar(SchemaInformedRule type, SchemaInformedRule typeEmpty) {
 		this.type = type;
 		this.typeEmpty = typeEmpty;
 	}
-	
-	public SchemaInformedRule getType()
-	{
+
+	public SchemaInformedRule getType() {
 		return type;
 	}
-	
-	public SchemaInformedRule getTypeEmpty()
-	{
+
+	public SchemaInformedRule getTypeEmpty() {
 		return typeEmpty;
 	}
 }

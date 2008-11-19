@@ -38,46 +38,40 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DecoderByteBlock extends AbstractDecoderBlock
-{
-//	private BufferedInputStream bis;
-//	Inflater inflater = new Inflater();
+public class DecoderByteBlock extends AbstractDecoderBlock {
+	// private BufferedInputStream bis;
+	// Inflater inflater = new Inflater();
 
-	private ByteDecoderChannel	structureChannel;
+	private ByteDecoderChannel structureChannel;
 
-	public DecoderByteBlock ( InputStream is, TypeDecoder typeDecoder  ) throws IOException
-	{
-		super( is, typeDecoder );
-	}
-	
-	protected void init( ) throws IOException
-	{
-//		bis = new BufferedInputStream( inputStream );
-		structureChannel = this.getNextChannel ( );
+	public DecoderByteBlock(InputStream is, TypeDecoder typeDecoder)
+			throws IOException {
+		super(is, typeDecoder);
 	}
 
-	protected ByteDecoderChannel getNextChannel () throws IOException
-	{
-		return new ByteDecoderChannel ( this.inputStream );
+	protected void init() throws IOException {
+		// bis = new BufferedInputStream( inputStream );
+		structureChannel = this.getNextChannel();
 	}
 
+	protected ByteDecoderChannel getNextChannel() throws IOException {
+		return new ByteDecoderChannel(this.inputStream);
+	}
 
-	public DecoderChannel getStructureChannel ()
-	{
+	public DecoderChannel getStructureChannel() {
 		return structureChannel;
 	}
 
-	public DecoderChannel getValueChannel ( String namespaceURI, String localName  ) throws IOException
-	{
+	public DecoderChannel getValueChannel(String namespaceURI, String localName)
+			throws IOException {
 		return structureChannel;
 	}
 
-	//@Override
-	public void reconstructChannels ( int values,
-			List<ExpandedName> valueQNames, Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences ) throws IOException
-	{
+	// @Override
+	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
+			Map<ExpandedName, List<Datatype>> dataTypes,
+			Map<ExpandedName, Integer> occurrences) throws IOException {
 		throw new UnsupportedOperationException();
-		
+
 	}
 }

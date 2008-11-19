@@ -31,31 +31,29 @@ import java.io.InputStream;
  * @version 0.1.20081014
  */
 
-final public class BitInputStream
-{
-	public static final int	BUFFER_CAPACITY	= 8;
+final public class BitInputStream {
+	public static final int BUFFER_CAPACITY = 8;
 
 	/**
 	 * Used buffer capacity in bits.
 	 */
-	private int				capacity		= 0;
+	private int capacity = 0;
 
 	/**
 	 * Internal buffer represented as an int. Only the least significant byte is
 	 * used. An int is used instead of a byte int-to-byte conversions in the VM.
 	 */
-	private int				buffer			= 0;
+	private int buffer = 0;
 
 	/**
 	 * Underlying input stream.
 	 */
-	private InputStream		istream;
+	private InputStream istream;
 
 	/**
 	 * Construct an instance of this class from an input stream.
 	 */
-	public BitInputStream ( InputStream istream )
-	{
+	public BitInputStream(InputStream istream) {
 		this.istream = istream;
 	}
 
@@ -64,8 +62,7 @@ final public class BitInputStream
 	 * allows instances of this class to be re-used. The resulting state after
 	 * calling this method is identical to that of a newly created instance.
 	 */
-	public void setInputStream ( InputStream istream )
-	{
+	public void setInputStream(InputStream istream) {
 		this.istream = istream;
 		buffer = capacity = 0;
 	}
@@ -73,13 +70,11 @@ final public class BitInputStream
 	/**
 	 * If buffer is empty, read byte from underlying stream.
 	 */
-	private void readBuffer () throws IOException
-	{
-		if ( capacity == 0 )
-		{
-			if ( ( buffer = istream.read ( ) ) == -1 )
-			{
-				throw new EOFException ( "Premature EOS found while reading data." );
+	private void readBuffer() throws IOException {
+		if (capacity == 0) {
+			if ((buffer = istream.read()) == -1) {
+				throw new EOFException(
+						"Premature EOS found while reading data.");
 			}
 			capacity = BUFFER_CAPACITY;
 		}
@@ -88,10 +83,8 @@ final public class BitInputStream
 	/**
 	 * Discard any bits currently in the buffer to byte-align stream
 	 */
-	public void align () throws IOException
-	{
-		if ( capacity != 0 )
-		{
+	public void align() throws IOException {
+		if (capacity != 0) {
 			capacity = 0;
 		}
 	}
@@ -99,10 +92,9 @@ final public class BitInputStream
 	/**
 	 * Return next bit from underlying stream.
 	 */
-	public int readBit () throws IOException
-	{
-		readBuffer ( );
-		return ( buffer >>> --capacity ) & 0x1;
+	public int readBit() throws IOException {
+		readBuffer();
+		return (buffer >>> --capacity) & 0x1;
 	}
 
 	/**
@@ -111,38 +103,32 @@ final public class BitInputStream
 	 * @param n
 	 *            The number of bits in the range [1,32].
 	 */
-	public int readBits ( int n ) throws IOException
-	{
-		assert( n > 0 );
+	public int readBits(int n) throws IOException {
+		assert (n > 0);
 
-		readBuffer ( );
-		if ( n <= capacity )
-		{
+		readBuffer();
+		if (n <= capacity) {
 			// buffer already holds all necessary bits
 			capacity -= n;
-			return ( buffer >>> capacity ) & ( 0xff >> ( BUFFER_CAPACITY - n ) );
-		}
-		else
-		{
+			return (buffer >>> capacity) & (0xff >> (BUFFER_CAPACITY - n));
+		} else {
 			// get as many bits from buffer as possible
-			int result = buffer & ( 0xff >> ( BUFFER_CAPACITY - capacity ) );
+			int result = buffer & (0xff >> (BUFFER_CAPACITY - capacity));
 			n -= capacity;
 			capacity = 0;
 
 			// possibly read whole bytes
-			while ( n >= 8 )
-			{
-				readBuffer ( );
-				result = ( result << BUFFER_CAPACITY ) | buffer;
+			while (n >= 8) {
+				readBuffer();
+				result = (result << BUFFER_CAPACITY) | buffer;
 				n -= BUFFER_CAPACITY;
 				capacity = 0;
 			}
 
 			// read the rest of the bits
-			if ( n > 0 )
-			{
-				readBuffer ( );
-				result = ( result << n ) | ( buffer >>> ( BUFFER_CAPACITY - n ) );
+			if (n > 0) {
+				readBuffer();
+				result = (result << n) | (buffer >>> (BUFFER_CAPACITY - n));
 				capacity = BUFFER_CAPACITY - n;
 			}
 
@@ -153,9 +139,8 @@ final public class BitInputStream
 	/**
 	 * Read and return the next byte without discarding current buffer.
 	 */
-	public int readDirectByte () throws IOException
-	{
-		return istream.read ( );
+	public int readDirectByte() throws IOException {
+		return istream.read();
 	}
 
 }

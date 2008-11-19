@@ -27,7 +27,6 @@ package com.siemens.ct.exi.util.datatype;
  * @version 0.1.20080718
  */
 
-public enum DatetimeType
-{
+public enum DatetimeType {
 	gYear, gYearMonth, date, dateTime, gMonth, gMonthDay, gDay, time;
 }

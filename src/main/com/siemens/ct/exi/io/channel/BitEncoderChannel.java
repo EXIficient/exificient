@@ -31,45 +31,39 @@ import com.siemens.ct.exi.io.BitOutputStream;
  * 
  * @version 0.1.20080718
  */
-public class BitEncoderChannel extends AbstractEncoderChannel implements EncoderChannel
-{
+public class BitEncoderChannel extends AbstractEncoderChannel implements
+		EncoderChannel {
 	/**
 	 * Underlying bit output stream to which bits and bytes are written.
 	 */
-	protected BitOutputStream	ostream;
+	protected BitOutputStream ostream;
 
 	/**
 	 * Construct an encoder from output stream.
 	 */
-	public BitEncoderChannel ( OutputStream ostream )
-	{
-		this.ostream = new BitOutputStream ( ostream );
+	public BitEncoderChannel(OutputStream ostream) {
+		this.ostream = new BitOutputStream(ostream);
 	}
 
-	public OutputStream getOutputStream ()
-	{
+	public OutputStream getOutputStream() {
 		return ostream;
 	}
 
 	/**
 	 * Flush underlying bit output stream.
 	 */
-	public void flush () throws IOException
-	{
-		ostream.flush ( );
+	public void flush() throws IOException {
+		ostream.flush();
 	}
 
-	public void encode ( int b ) throws IOException
-	{
-		ostream.writeBits ( b, 8 );
+	public void encode(int b) throws IOException {
+		ostream.writeBits(b, 8);
 	}
 
-	public void encode ( byte b[], int off, int len ) throws IOException
-	{
+	public void encode(byte b[], int off, int len) throws IOException {
 		// TODO write whole bytes (if possible)
-		for ( int i = off; i < ( off + len ); i++ )
-		{
-			ostream.writeBits ( b[i], 8 );
+		for (int i = off; i < (off + len); i++) {
+			ostream.writeBits(b[i], 8);
 		}
 	}
 
@@ -77,31 +71,26 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements Encoder
 	 * Encode n-bit unsigned integer. The n least significant bits of parameter
 	 * b starting with the most significant, i.e. from left to right.
 	 */
-	public void encodeNBitUnsignedInteger ( int b, int n ) throws IOException
-	{
-		if ( b < 0 || n < 0 )
-		{
-			throw new IllegalArgumentException ( "Encode negative value as unsigned integer is invalid!" );
+	public void encodeNBitUnsignedInteger(int b, int n) throws IOException {
+		if (b < 0 || n < 0) {
+			throw new IllegalArgumentException(
+					"Encode negative value as unsigned integer is invalid!");
 		}
-		assert ( b >= 0 );
-		assert ( n >= 0 );
+		assert (b >= 0);
+		assert (n >= 0);
 
-		ostream.writeBits ( b, n );
+		ostream.writeBits(b, n);
 	}
 
 	/**
 	 * Encode a single boolean value. A false value is encoded as bit 0 and true
 	 * value is encode as bit 1.
 	 */
-	public void encodeBoolean ( boolean b ) throws IOException
-	{
-		if ( b )
-		{
-			ostream.writeBit1 ( );
-		}
-		else
-		{
-			ostream.writeBit0 ( );
+	public void encodeBoolean(boolean b) throws IOException {
+		if (b) {
+			ostream.writeBit1();
+		} else {
+			ostream.writeBit0();
 		}
 
 		// ostream.writeBit(b ? 1 : 0);

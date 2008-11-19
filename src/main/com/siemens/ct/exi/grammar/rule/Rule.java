@@ -31,75 +31,83 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.1.20081117
  */
 
-public interface Rule
-{
+public interface Rule {
 	/*
 	 * end-rule
 	 */
-	public boolean isTerminalRule ();
-	
+	public boolean isTerminalRule();
+
 	/*
 	 * rule created according to schema information
 	 */
-	public boolean isSchemaRule ();
-	
+	public boolean isSchemaRule();
+
 	/*
 	 * number of events
 	 */
-	public int getNumberOfEvents( );
-	
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions );
-	
+	public int getNumberOfEvents();
+
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions);
+
 	/*
 	 * fetch event-code
 	 */
-	public int get1stLevelEventCode( Event events );
-	public int get2ndLevelEventCode( EventType eventType, FidelityOptions fidelityOptions );
-	public int get3rdLevelEventCode( EventType eventType, FidelityOptions fidelityOptions );
-	
-	
+	public int get1stLevelEventCode(Event events);
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions);
+
+	public int get3rdLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions);
+
 	/*
 	 * events
 	 */
-	public Event get1stLevelEvent( int eventCode );
-	public EventType get2ndLevelEvent( int eventCode, FidelityOptions fidelityOptions );
-	public EventType get3rdLevelEvent( int eventCode, FidelityOptions fidelityOptions );
-	
+	public Event get1stLevelEvent(int eventCode);
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions);
+
+	public EventType get3rdLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions);
+
 	/*
 	 * rule
 	 */
-	public Rule get1stLevelRule ( int eventCode ) throws IndexOutOfBoundsException;
-	
-	public int get1stLevelEventCodeLength ( FidelityOptions fidelityOptions );
-	
-	// public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions );
+	public Rule get1stLevelRule(int eventCode) throws IndexOutOfBoundsException;
 
-	public int get2ndLevelCharacteristics ( FidelityOptions fidelityOptions );
+	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
 
-	public int get3rdLevelCharacteristics ( FidelityOptions fidelityOptions );
+	// public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions
+	// );
 
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions);
+
+	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	/*
 	 * 
 	 */
-	public void addRule ( Event event, Rule rule );
-	
-	public void addTerminalRule ( Event event  );
+	public void addRule(Event event, Rule rule);
+
+	public void addTerminalRule(Event event);
 
 	/*
 	 * learning grammar
 	 */
-	public void learnStartElement ( String uri, String localName );
-	public void learnEndElement ( );
-	public void learnAttribute ( String uri, String localName );
-	public void learnCharacters ();
-	
-	
+	public void learnStartElement(String uri, String localName);
+
+	public void learnEndElement();
+
+	public void learnAttribute(String uri, String localName);
+
+	public void learnCharacters();
+
 	/*
 	 * For moving to element grammar
 	 */
 	public Rule getElementContentRule();
-	
+
 	public Rule getElementContentRuleForUndeclaredSE();
 
 }

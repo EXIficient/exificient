@@ -34,20 +34,20 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class NBitIntegerDatatypeDecoder extends AbstractDatatypeDecoder
-{
-	private XSDInteger	decodedValue	= XSDInteger.newInstance ( );
+public class NBitIntegerDatatypeDecoder extends AbstractDatatypeDecoder {
+	private XSDInteger decodedValue = XSDInteger.newInstance();
 
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI,
-			String localName ) throws IOException
-	{
-		assert ( datatype instanceof DatatypeNBitInteger );
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		assert (datatype instanceof DatatypeNBitInteger);
 		DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
 
 		// inverse decoded value
-		decodedValue.setToIntegerValue ( ( -1 ) * dc.decodeNBitUnsignedInteger ( nBitDT.getNumberOfBits ( ) ) );
+		decodedValue.setToIntegerValue((-1)
+				* dc.decodeNBitUnsignedInteger(nBitDT.getNumberOfBits()));
 
 		// add offset again (lower bound)
-		return nBitDT.getLowerBound ( ).subtract ( decodedValue ).toString ( );
+		return nBitDT.getLowerBound().subtract(decodedValue).toString();
 	}
 }

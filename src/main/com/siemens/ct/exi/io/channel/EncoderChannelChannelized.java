@@ -29,7 +29,6 @@ import java.io.IOException;
  * @version 0.1.20080718
  */
 
-public interface EncoderChannelChannelized extends EncoderChannel
-{
-    public byte[] toByteArray( ) throws IOException;
+public interface EncoderChannelChannelized extends EncoderChannel {
+	public byte[] toByteArray() throws IOException;
 }

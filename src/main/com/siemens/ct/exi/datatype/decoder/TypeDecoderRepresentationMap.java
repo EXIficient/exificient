@@ -29,7 +29,7 @@ import com.siemens.ct.exi.datatype.DatatypeRepresentation;
  * @version 0.1.20081105
  */
 
-public interface TypeDecoderRepresentationMap extends TypeDecoder
-{
-	public void registerDatatypeRepresentation ( DatatypeRepresentation datatypeRepresentation );
+public interface TypeDecoderRepresentationMap extends TypeDecoder {
+	public void registerDatatypeRepresentation(
+			DatatypeRepresentation datatypeRepresentation);
 }

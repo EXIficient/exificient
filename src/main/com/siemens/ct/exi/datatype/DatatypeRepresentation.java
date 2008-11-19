@@ -34,9 +34,9 @@ import com.siemens.ct.exi.datatype.encoder.DatatypeEncoder;
  * @version 0.1.20080718
  */
 
-public interface DatatypeRepresentation extends DatatypeEncoder, DatatypeDecoder
-{
+public interface DatatypeRepresentation extends DatatypeEncoder,
+		DatatypeDecoder {
 	public QName getQName();
-	
+
 	public void finish() throws IOException;
 }

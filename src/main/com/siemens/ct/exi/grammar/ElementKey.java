@@ -30,137 +30,120 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class ElementKey
-//implements HierarchicalKey<ExpandedName>
+// implements HierarchicalKey<ExpandedName>
 {
 	protected ExpandedName name;
 	protected ExpandedName scope;
 	protected ExpandedName scopeType;
 
-	public ElementKey( ExpandedName name )
-	{
+	public ElementKey(ExpandedName name) {
 		this.name = name;
 	}
-	
-	public ElementKey( ExpandedName name, ExpandedName scope, ExpandedName scopeType )
-	{
-		this( name );
+
+	public ElementKey(ExpandedName name, ExpandedName scope,
+			ExpandedName scopeType) {
+		this(name);
 		this.scope = scope;
 		this.scopeType = scopeType;
 	}
-	
-	public ExpandedName getName ()
-	{
+
+	public ExpandedName getName() {
 		return name;
 	}
 
-	public void setName ( ExpandedName name )
-	{
+	public void setName(ExpandedName name) {
 		this.name = name;
 	}
 
-	public ExpandedName getScope ()
-	{
+	public ExpandedName getScope() {
 		return scope;
 	}
 
-	public void setScope ( ExpandedName scope )
-	{
+	public void setScope(ExpandedName scope) {
 		this.scope = scope;
 	}
 
-	public ExpandedName getScopeType ()
-	{
+	public ExpandedName getScopeType() {
 		return scopeType;
 	}
 
-	public void setScopeType ( ExpandedName type )
-	{
+	public void setScopeType(ExpandedName type) {
 		this.scopeType = type;
 	}
-	
-	public String toString()
-	{
+
+	public String toString() {
 		String s = name.toString();
-		
-		if ( scope != null )
-		{
+
+		if (scope != null) {
 			s += "[" + scope + "]";
 		}
-		if ( scopeType != null )
-		{
+		if (scopeType != null) {
 			s += "{" + scopeType + "}";
 		}
-		
+
 		return s;
 	}
-	
-	public final int hashCode ()
-	{
-		//	simple hashCode
+
+	public final int hashCode() {
+		// simple hashCode
 		return name.hashCode();
 	}
-	
-	public boolean equals ( Object o )
-	{
-		if ( o instanceof ElementKey )
-		{
-			ElementKey otherES = ( (ElementKey) o );
-			
-			//	name 
-			if ( name.equals( otherES.getName( ) ) )
-			{
-				if ( scope == null && scopeType == null )
-				{
-					return ( otherES.getScope( ) == null && otherES.getScopeType( ) == null );
-				}
-				else if ( scope == null )
-				{
-					return ( scopeType.equals ( otherES.getScopeType( ) ) );
-				}
-				else
-				{
-					//	scopeType == null
-					return ( scope.equals ( otherES.getScope( ) ) );
+
+	public boolean equals(Object o) {
+		if (o instanceof ElementKey) {
+			ElementKey otherES = ((ElementKey) o);
+
+			// name
+			if (name.equals(otherES.getName())) {
+				if (scope == null && scopeType == null) {
+					return (otherES.getScope() == null && otherES
+							.getScopeType() == null);
+				} else if (scope == null) {
+					return (scopeType.equals(otherES.getScopeType()));
+				} else {
+					// scopeType == null
+					return (scope.equals(otherES.getScope()));
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
-//	/*
-//	 * (non-Javadoc)
-//	 * @see com.siemens.ct.exi.grammar.rule.container2.HierarchicalListEntry#getHierarchyIdentifier(int)
-//	 */
-//	public ExpandedName getKey ( int hierarchyLevel )
-//	{
-//		switch( hierarchyLevel )
-//		{
-//			case 0:
-//				return name;
-//			case 1:
-//				return scope;
-//			case 2:
-//				return scopeType;
-//			default:
-//				return null;
-//		}
-//	}
-//
-//	public int getHierarchyLevels ()
-//	{
-//		int levels = 1;	//	name
-//		
-//		if ( scope != null )
-//		{
-//			levels++;
-//			
-//			if ( scopeType != null )
-//			{
-//				levels++;
-//			}
-//		}
-//		
-//		return levels;
-//	}
+	// /*
+	// * (non-Javadoc)
+	// * @see
+	// com.siemens.ct.exi.grammar.rule.container2.HierarchicalListEntry#getHierarchyIdentifier(int)
+	// */
+	// public ExpandedName getKey ( int hierarchyLevel )
+	// {
+	// switch( hierarchyLevel )
+	// {
+	// case 0:
+	// return name;
+	// case 1:
+	// return scope;
+	// case 2:
+	// return scopeType;
+	// default:
+	// return null;
+	// }
+	// }
+	//
+	// public int getHierarchyLevels ()
+	// {
+	// int levels = 1; // name
+	//		
+	// if ( scope != null )
+	// {
+	// levels++;
+	//			
+	// if ( scopeType != null )
+	// {
+	// levels++;
+	// }
+	// }
+	//		
+	// return levels;
+	// }
 }

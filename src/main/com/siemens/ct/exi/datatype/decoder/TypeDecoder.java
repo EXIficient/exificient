@@ -34,20 +34,21 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081117
  */
 
-public interface TypeDecoder extends TypeCoder
-{
-	public StringTableDecoder getStringTable ();
+public interface TypeDecoder extends TypeCoder {
+	public StringTableDecoder getStringTable();
 
-	public String readTypeValidValue ( Datatype datatype, DecoderChannel dc, String namespaceURI, String localName )
-			throws IOException;
+	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+			String namespaceURI, String localName) throws IOException;
 
-	public String readValueAsString ( DecoderChannel dc, String namespaceURI, String localName ) throws IOException;
+	public String readValueAsString(DecoderChannel dc, String namespaceURI,
+			String localName) throws IOException;
 
-	public String readStringAsLocalHit ( DecoderChannel dc, String namespaceURI, String localName ) throws IOException;
+	public String readStringAsLocalHit(DecoderChannel dc, String namespaceURI,
+			String localName) throws IOException;
 
-	public String readStringAsGlobalHit ( DecoderChannel dc ) throws IOException;
+	public String readStringAsGlobalHit(DecoderChannel dc) throws IOException;
 
-	public String readStringAsMiss ( DecoderChannel dc, String namespaceURI, String localName, int slen )
-			throws IOException;
+	public String readStringAsMiss(DecoderChannel dc, String namespaceURI,
+			String localName, int slen) throws IOException;
 
 }

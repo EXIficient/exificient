@@ -34,65 +34,59 @@ import com.siemens.ct.exi.grammar.event.EventType;
 /*
  * <Built-in Document Grammar>
  * 
- * DocContent :
- * 		SE (*) DocEnd	0
- * 		DT DocContent	1.0
- * 		CM DocContent	1.1.0
- * 		PI DocContent	1.1.1
- * 
+ * DocContent : SE () DocEnd 0 DT DocContent 1.0 CM DocContent 1.1.0 PI
+ * DocContent 1.1.1
  */
 
-public class SchemaLessRuleDocContent extends AbstractSchemaLessRule
-{
+public class SchemaLessRuleDocContent extends AbstractSchemaLessRule {
 	protected Rule docEnd;
-	
-	public SchemaLessRuleDocContent( Rule docEnd )
-	{
+
+	public SchemaLessRuleDocContent(Rule docEnd) {
 		super();
 		this.docEnd = docEnd;
 	}
 
-	public SchemaLessRuleDocContent( Rule docEnd, String label )
-	{
-		this( docEnd );
-		this.setLabel ( label );
+	public SchemaLessRuleDocContent(Rule docEnd, String label) {
+		this(docEnd);
+		this.setLabel(label);
 	}
-	
+
 	@Override
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-	{
-		return ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) ||
-				fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) ||
-				fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PI )
-				);
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
-		if ( eventType == EventType.DOC_TYPE && fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-		{
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		if (eventType == EventType.DOC_TYPE
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return 0;
 		}
-		
+
 		return Constants.NOT_FOUND;
 	}
-	
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
-		if ( eventCode == 0 && fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-		{
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
+		if (eventCode == 0
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return EventType.DOC_TYPE;
 		}
-		
+
 		return null;
 	}
-	
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		int ch2 = get3rdLevelCharacteristics ( fidelityOptions ) > 0 ? 1 : 0;
-		ch2 += fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) ? 1 : 0;
-		
+
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		int ch2 = get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
+		ch2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
+				: 0;
+
 		return ch2;
 	}
-	
+
 }

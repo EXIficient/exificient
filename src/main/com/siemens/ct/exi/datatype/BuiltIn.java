@@ -46,288 +46,275 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081112
  */
 
-public class BuiltIn
-{
+public class BuiltIn {
 	// Binary
-	protected static final ExpandedName				XSD_BASE64BINARY;
-	protected static final ExpandedName				XSD_HEXBINARY;
+	protected static final ExpandedName XSD_BASE64BINARY;
+	protected static final ExpandedName XSD_HEXBINARY;
 	// Boolean
-	public static final ExpandedName				XSD_BOOLEAN;
+	public static final ExpandedName XSD_BOOLEAN;
 	// Date-Time
-	protected static final ExpandedName				XSD_DATETIME;
-	protected static final ExpandedName				XSD_TIME;
-	protected static final ExpandedName				XSD_DATE;
-	protected static final ExpandedName				XSD_GYEARMONTH;
-	protected static final ExpandedName				XSD_GYEAR;
-	protected static final ExpandedName				XSD_GMONTHDAY;
-	protected static final ExpandedName				XSD_GDAY;
-	protected static final ExpandedName				XSD_GMONTH;
+	protected static final ExpandedName XSD_DATETIME;
+	protected static final ExpandedName XSD_TIME;
+	protected static final ExpandedName XSD_DATE;
+	protected static final ExpandedName XSD_GYEARMONTH;
+	protected static final ExpandedName XSD_GYEAR;
+	protected static final ExpandedName XSD_GMONTHDAY;
+	protected static final ExpandedName XSD_GDAY;
+	protected static final ExpandedName XSD_GMONTH;
 	// Decimal
-	protected static final ExpandedName				XSD_DECIMAL;
+	protected static final ExpandedName XSD_DECIMAL;
 	// Float
-	protected static final ExpandedName				XSD_FLOAT;
-	protected static final ExpandedName				XSD_DOUBLE;
+	protected static final ExpandedName XSD_FLOAT;
+	protected static final ExpandedName XSD_DOUBLE;
 	// Integer
-	protected static final ExpandedName				XSD_INTEGER;
-	protected static final ExpandedName				XSD_NON_NEGATIVE_INTEGER;
+	protected static final ExpandedName XSD_INTEGER;
+	protected static final ExpandedName XSD_NON_NEGATIVE_INTEGER;
 	// String
-	protected static final ExpandedName				XSD_STRING;
+	protected static final ExpandedName XSD_STRING;
 	//	
-	protected static final ExpandedName				XSD_ANY_SIMPLE_TYPE;
+	protected static final ExpandedName XSD_ANY_SIMPLE_TYPE;
 
 	// default QName / BuiltInType / Datatype
-	public static final ExpandedName				DEFAULT_VALUE_NAME;
-	public static final BuiltInType					DEFAULT_BUILTIN;
-	public static final Datatype					DEFAULT_DATATYPE;
-	public static final Datatype					BOOLEAN_DATATYPE;
+	public static final ExpandedName DEFAULT_VALUE_NAME;
+	public static final BuiltInType DEFAULT_BUILTIN;
+	public static final Datatype DEFAULT_DATATYPE;
+	public static final Datatype BOOLEAN_DATATYPE;
 
 	// built-In mapping
-	private static Map<ExpandedName, ExpandedName>	datatypeMapping;
+	private static Map<ExpandedName, ExpandedName> datatypeMapping;
 
-	static
-	{
+	static {
 		/*
 		 * Datatype names
 		 */
 		// Binary
-		XSD_BASE64BINARY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "base64Binary" );
-		XSD_HEXBINARY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "hexBinary" );
+		XSD_BASE64BINARY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"base64Binary");
+		XSD_HEXBINARY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"hexBinary");
 		// Boolean
-		XSD_BOOLEAN = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean" );
+		XSD_BOOLEAN = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"boolean");
 		// Date-Time
-		XSD_DATETIME = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime" );
-		XSD_TIME = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "time" );
-		XSD_DATE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "date" );
-		XSD_GYEARMONTH = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYearMonth" );
-		XSD_GYEAR = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear" );
-		XSD_GMONTHDAY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonthDay" );
-		XSD_GDAY = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay" );
-		XSD_GMONTH = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth" );
+		XSD_DATETIME = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"dateTime");
+		XSD_TIME = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "time");
+		XSD_DATE = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "date");
+		XSD_GYEARMONTH = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"gYearMonth");
+		XSD_GYEAR = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"gYear");
+		XSD_GMONTHDAY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"gMonthDay");
+		XSD_GDAY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay");
+		XSD_GMONTH = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"gMonth");
 		// Decimal
-		XSD_DECIMAL = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal" );
+		XSD_DECIMAL = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"decimal");
 		// Float
-		XSD_FLOAT = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "float" );
-		XSD_DOUBLE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "double" );
+		XSD_FLOAT = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"float");
+		XSD_DOUBLE = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"double");
 		// Integer
-		XSD_INTEGER = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer" );
-		XSD_NON_NEGATIVE_INTEGER = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger" );
+		XSD_INTEGER = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"integer");
+		XSD_NON_NEGATIVE_INTEGER = new ExpandedName(
+				XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger");
 		// String
-		XSD_STRING = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "string" );
+		XSD_STRING = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"string");
 		//	
-		XSD_ANY_SIMPLE_TYPE = new ExpandedName ( XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType" );
+		XSD_ANY_SIMPLE_TYPE = new ExpandedName(
+				XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
 		// default
 		DEFAULT_VALUE_NAME = XSD_STRING;
 		DEFAULT_BUILTIN = BuiltInType.BUILTIN_STRING;
-		DEFAULT_DATATYPE = new DatatypeString ( DEFAULT_VALUE_NAME );
-		BOOLEAN_DATATYPE = new DatatypeString ( XSD_BOOLEAN );
+		DEFAULT_DATATYPE = new DatatypeString(DEFAULT_VALUE_NAME);
+		BOOLEAN_DATATYPE = new DatatypeString(XSD_BOOLEAN);
 
 		/*
 		 * Datatype mappings
 		 */
-		datatypeMapping = new HashMap<ExpandedName, ExpandedName> ( );
+		datatypeMapping = new HashMap<ExpandedName, ExpandedName>();
 		// Binary
-		datatypeMapping.put ( XSD_BASE64BINARY, XSD_BASE64BINARY );
-		datatypeMapping.put ( XSD_HEXBINARY, XSD_HEXBINARY );
+		datatypeMapping.put(XSD_BASE64BINARY, XSD_BASE64BINARY);
+		datatypeMapping.put(XSD_HEXBINARY, XSD_HEXBINARY);
 		// Boolean
-		datatypeMapping.put ( XSD_BOOLEAN, XSD_BOOLEAN );
+		datatypeMapping.put(XSD_BOOLEAN, XSD_BOOLEAN);
 		// Date-Time
-		datatypeMapping.put ( XSD_DATETIME, XSD_DATETIME );
-		datatypeMapping.put ( XSD_TIME, XSD_DATETIME );
-		datatypeMapping.put ( XSD_DATE, XSD_DATETIME );
-		datatypeMapping.put ( XSD_GYEARMONTH, XSD_DATETIME );
-		datatypeMapping.put ( XSD_GYEAR, XSD_DATETIME );
-		datatypeMapping.put ( XSD_GMONTHDAY, XSD_DATETIME );
-		datatypeMapping.put ( XSD_GDAY, XSD_DATETIME );
-		datatypeMapping.put ( XSD_GMONTH, XSD_DATETIME );
+		datatypeMapping.put(XSD_DATETIME, XSD_DATETIME);
+		datatypeMapping.put(XSD_TIME, XSD_DATETIME);
+		datatypeMapping.put(XSD_DATE, XSD_DATETIME);
+		datatypeMapping.put(XSD_GYEARMONTH, XSD_DATETIME);
+		datatypeMapping.put(XSD_GYEAR, XSD_DATETIME);
+		datatypeMapping.put(XSD_GMONTHDAY, XSD_DATETIME);
+		datatypeMapping.put(XSD_GDAY, XSD_DATETIME);
+		datatypeMapping.put(XSD_GMONTH, XSD_DATETIME);
 		// Decimal
-		datatypeMapping.put ( XSD_DECIMAL, XSD_DECIMAL );
+		datatypeMapping.put(XSD_DECIMAL, XSD_DECIMAL);
 		// Double/Float
-		datatypeMapping.put ( XSD_FLOAT, XSD_DOUBLE );
-		datatypeMapping.put ( XSD_DOUBLE, XSD_DOUBLE );
+		datatypeMapping.put(XSD_FLOAT, XSD_DOUBLE);
+		datatypeMapping.put(XSD_DOUBLE, XSD_DOUBLE);
 		// Integer
-		datatypeMapping.put ( XSD_INTEGER, XSD_INTEGER );
+		datatypeMapping.put(XSD_INTEGER, XSD_INTEGER);
 		// String
-		datatypeMapping.put ( XSD_STRING, XSD_STRING );
+		datatypeMapping.put(XSD_STRING, XSD_STRING);
 		// unknown
-		datatypeMapping.put ( XSD_ANY_SIMPLE_TYPE, XSD_STRING );
+		datatypeMapping.put(XSD_ANY_SIMPLE_TYPE, XSD_STRING);
 	}
 
-	public static Datatype getDatatype ( XSSimpleTypeDefinition std )
-	{
+	public static Datatype getDatatype(XSSimpleTypeDefinition std) {
 		Datatype datatype = null;
 
 		// is list ?
-		if ( std.getVariety ( ) == XSSimpleTypeDefinition.VARIETY_LIST )
-		{
-			XSSimpleTypeDefinition listSTD = std.getItemType ( );
+		if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
+			XSSimpleTypeDefinition listSTD = std.getItemType();
 
-			Datatype dtList = getDatatype ( listSTD );
+			Datatype dtList = getDatatype(listSTD);
 
-			datatype = new DatatypeList ( dtList );
+			datatype = new DatatypeList(dtList);
 		}
 		// is enumeration ?
-		else if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_ENUMERATION ) )
-		{
+		else if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
 			// datatype = getDatatypeOfEnumeration ( std );
-			XSObjectList facetList = std.getMultiValueFacets ( );
-			for ( int i = 0; i < facetList.getLength ( ); i++ )
-			{
-				XSObject facet = facetList.item ( i );
-				if ( facet.getType ( ) == XSConstants.MULTIVALUE_FACET )
-				{
+			XSObjectList facetList = std.getMultiValueFacets();
+			for (int i = 0; i < facetList.getLength(); i++) {
+				XSObject facet = facetList.item(i);
+				if (facet.getType() == XSConstants.MULTIVALUE_FACET) {
 					XSMultiValueFacet enumer = (XSMultiValueFacet) facet;
-					if ( enumer.getFacetKind ( ) == XSSimpleTypeDefinition.FACET_ENUMERATION )
-					{
-						StringList enumList = enumer.getLexicalFacetValues ( );
+					if (enumer.getFacetKind() == XSSimpleTypeDefinition.FACET_ENUMERATION) {
+						StringList enumList = enumer.getLexicalFacetValues();
 						// // TODO enumeration not type-castable !?
 						// ExpandedName datatypeIdentifier = null;
 						// BuiltInType enumDatatype = null;
-						datatype = new DatatypeEnumeration ( enumList );
+						datatype = new DatatypeEnumeration(enumList);
 					}
 				}
 			}
-		}
-		else
-		{
-			datatype = getDatatypeOfType ( std );
+		} else {
+			datatype = getDatatypeOfType(std);
 		}
 
 		return datatype;
 	}
 
-	private static ExpandedName XXgetEXIDatatypeID ( XSSimpleTypeDefinition std )
-	{
+	private static ExpandedName XXgetEXIDatatypeID(XSSimpleTypeDefinition std) {
 		// primitive
-		ExpandedName primitive = getPrimitive ( std );
+		ExpandedName primitive = getPrimitive(std);
 
 		ExpandedName exiDatatypeID;
 
-		if ( primitive.equals ( XSD_DECIMAL ) )
-		{
+		if (primitive.equals(XSD_DECIMAL)) {
 			// check whether on the "way up" (nonNegative) integer appears -->
 			// (Unsigned)Integer
 			XSTypeDefinition xmlSchemaType = std;
 
-			while ( xmlSchemaType != null
-					&& ! ( xmlSchemaType.getName ( ) != null && ( XSD_INTEGER.equals ( getName ( xmlSchemaType ) ) || XSD_NON_NEGATIVE_INTEGER
-							.equals ( getName ( xmlSchemaType ) ) ) ) )
-			{
-				xmlSchemaType = xmlSchemaType.getBaseType ( );
+			while (xmlSchemaType != null
+					&& !(xmlSchemaType.getName() != null && (XSD_INTEGER
+							.equals(getName(xmlSchemaType)) || XSD_NON_NEGATIVE_INTEGER
+							.equals(getName(xmlSchemaType))))) {
+				xmlSchemaType = xmlSchemaType.getBaseType();
 			}
 
-			if ( xmlSchemaType == null )
-			{
+			if (xmlSchemaType == null) {
 				// xsd:decimal
 				exiDatatypeID = XSD_DECIMAL;
-			}
-			else
-			{
+			} else {
 				// xsd:integer
 				exiDatatypeID = XSD_INTEGER;
 			}
-		}
-		else
-		{
-			exiDatatypeID = getBuiltInOfPrimitiveMapping ( primitive );
+		} else {
+			exiDatatypeID = getBuiltInOfPrimitiveMapping(primitive);
 		}
 
 		return exiDatatypeID;
 	}
 
-	private static Datatype getIntegerDatatype ( XSSimpleTypeDefinition std, ExpandedName exiDatatypeID )
-	{
-		BigInteger min = BigInteger.valueOf ( Long.MIN_VALUE );
-		BigInteger max = BigInteger.valueOf ( Long.MAX_VALUE );
+	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
+			ExpandedName exiDatatypeID) {
+		BigInteger min = BigInteger.valueOf(Long.MIN_VALUE);
+		BigInteger max = BigInteger.valueOf(Long.MAX_VALUE);
 
-		//	identify lower & upper bound
-		try
-		{
+		// identify lower & upper bound
+		try {
 			// minimum
-			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MININCLUSIVE ) )
-			{
-				String sMinInclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MININCLUSIVE );
-				min = min.max ( new BigInteger ( sMinInclusive ) );
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MININCLUSIVE)) {
+				String sMinInclusive = std
+						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MININCLUSIVE);
+				min = min.max(new BigInteger(sMinInclusive));
 			}
-			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MINEXCLUSIVE ) )
-			{
-				String sMinExclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MINEXCLUSIVE );
-				min = min.max ( ( new BigInteger ( sMinExclusive ) ).add ( BigInteger.ONE ) );
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE)) {
+				String sMinExclusive = std
+						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE);
+				min = min.max((new BigInteger(sMinExclusive))
+						.add(BigInteger.ONE));
 			}
 			// maximum
-			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MAXINCLUSIVE ) )
-			{
-				String sMaxInclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MAXINCLUSIVE );
-				max = max.min ( new BigInteger ( sMaxInclusive ) );
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE)) {
+				String sMaxInclusive = std
+						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE);
+				max = max.min(new BigInteger(sMaxInclusive));
 			}
-			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE ) )
-			{
-				String sMaxExclusive = std.getLexicalFacetValue ( XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE );
-				max = max.min ( ( new BigInteger ( sMaxExclusive ) ).subtract ( BigInteger.ONE ) );
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE)) {
+				String sMaxExclusive = std
+						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE);
+				max = max.min((new BigInteger(sMaxExclusive))
+						.subtract(BigInteger.ONE));
 			}
-		}
-		catch ( NumberFormatException e )
-		{
+		} catch (NumberFormatException e) {
 			// TODO what to do if schema is not valid !??!
-			throw new RuntimeException ( "SimpleTypeDefinition invalid: " + std );
+			throw new RuntimeException("SimpleTypeDefinition invalid: " + std);
 		}
 
 		// ( max < min)
-		if ( max.compareTo ( min ) == -1 )
-		{
-			throw new RuntimeException ( "max=" + max + " and min=" + min );
+		if (max.compareTo(min) == -1) {
+			throw new RuntimeException("max=" + max + " and min=" + min);
 		}
 
 		// calculate bounded range;
 		BigInteger boundedRange;
 
 		// max < 0
-		if ( max.compareTo ( BigInteger.ZERO ) == -1 )
-		{
+		if (max.compareTo(BigInteger.ZERO) == -1) {
 			// max & min negative
-			boundedRange = min.abs ( ).subtract ( max.abs ( ) ).add ( BigInteger.ONE );
-		}
-		else
-		{
+			boundedRange = min.abs().subtract(max.abs()).add(BigInteger.ONE);
+		} else {
 			// max positive
-			if ( min.compareTo ( BigInteger.ZERO ) == -1 )
-			{
+			if (min.compareTo(BigInteger.ZERO) == -1) {
 				// min negative
-				boundedRange = max.add ( min.abs ( ) );
-			}
-			else
-			{
+				boundedRange = max.add(min.abs());
+			} else {
 				// min positive
-				boundedRange = max.abs ( ).subtract ( min ).add ( BigInteger.ONE );
+				boundedRange = max.abs().subtract(min).add(BigInteger.ONE);
 			}
 		}
 
 		Datatype datatype;
-		
+
 		// boundedRange < 4096
-		if ( boundedRange.compareTo ( BigInteger.valueOf ( 4096 ) ) == -1 )
-		{
+		if (boundedRange.compareTo(BigInteger.valueOf(4096)) == -1) {
 			/*
 			 * When the bounded range of integer is 4095 or smaller as
 			 * determined by the values of minInclusiveXS2, minExclusiveXS2,
 			 * maxInclusiveXS2 and maxExclusiveXS2 facets, use n-bit Unsigned
 			 * Integer representation.
 			 */
-			try
-			{
-				XSDInteger lowerBound = XSDInteger.newInstance ( );
-				lowerBound.parse ( min.toString ( ) );
-				XSDInteger upperBound = XSDInteger.newInstance ( );
-				upperBound.parse ( max.toString ( ) );
-				datatype = new DatatypeNBitInteger ( exiDatatypeID, lowerBound, upperBound, boundedRange.intValue ( ) );
-			}
-			catch ( XMLParsingException e )
-			{
-				throw new RuntimeException( "Error occured while identifying XML Schema bounds", e );
+			try {
+				XSDInteger lowerBound = XSDInteger.newInstance();
+				lowerBound.parse(min.toString());
+				XSDInteger upperBound = XSDInteger.newInstance();
+				upperBound.parse(max.toString());
+				datatype = new DatatypeNBitInteger(exiDatatypeID, lowerBound,
+						upperBound, boundedRange.intValue());
+			} catch (XMLParsingException e) {
+				throw new RuntimeException(
+						"Error occured while identifying XML Schema bounds", e);
 			}
 		}
 		// min >= 0
-		else if ( min.signum ( ) >= 0 )
-		{
+		else if (min.signum() >= 0) {
 			/*
 			 * Otherwise, when the integer satisfies one of the followings, use
 			 * Unsigned Integer representation.
@@ -337,138 +324,103 @@ public class BuiltIn
 			 * minExclusiveXS2 facet is specified with a value equal to or
 			 * greater than -1.
 			 */
-			datatype = new DatatypeUnsignedInteger ( exiDatatypeID );
-		}
-		else
-		{
+			datatype = new DatatypeUnsignedInteger(exiDatatypeID);
+		} else {
 			/*
 			 * Otherwise, use Integer representation.
 			 */
-			datatype = new DatatypeInteger ( exiDatatypeID );
+			datatype = new DatatypeInteger(exiDatatypeID);
 		}
-		
+
 		return datatype;
 	}
 
-	private static ExpandedName getName ( XSTypeDefinition type )
-	{
-		return new ExpandedName ( type.getNamespace ( ), type.getName ( ) );
+	private static ExpandedName getName(XSTypeDefinition type) {
+		return new ExpandedName(type.getNamespace(), type.getName());
 	}
 
-	private static Datatype getDatatypeOfType ( XSSimpleTypeDefinition std )
-	{
+	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std) {
 		Datatype datatype;
 
-		ExpandedName exiDatatypeID = XXgetEXIDatatypeID ( std );
+		ExpandedName exiDatatypeID = XXgetEXIDatatypeID(std);
 
-		if ( XSD_BASE64BINARY.equals ( exiDatatypeID ) )
-		{
-			datatype = new DatatypeBinary ( exiDatatypeID, BuiltInType.BUILTIN_BINARY_BASE64 );
-		}
-		else if ( XSD_HEXBINARY.equals ( exiDatatypeID ) )
-		{
-			datatype = new DatatypeBinary ( exiDatatypeID, BuiltInType.BUILTIN_BINARY_HEX );
-		}
-		else if ( XSD_BOOLEAN.equals ( exiDatatypeID ) )
-		{
-			if ( std.isDefinedFacet ( XSSimpleTypeDefinition.FACET_PATTERN ) )
-			{
-				datatype = new DatatypeBooleanPattern ( exiDatatypeID );
+		if (XSD_BASE64BINARY.equals(exiDatatypeID)) {
+			datatype = new DatatypeBinary(exiDatatypeID,
+					BuiltInType.BUILTIN_BINARY_BASE64);
+		} else if (XSD_HEXBINARY.equals(exiDatatypeID)) {
+			datatype = new DatatypeBinary(exiDatatypeID,
+					BuiltInType.BUILTIN_BINARY_HEX);
+		} else if (XSD_BOOLEAN.equals(exiDatatypeID)) {
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
+				datatype = new DatatypeBooleanPattern(exiDatatypeID);
+			} else {
+				datatype = new DatatypeBoolean(exiDatatypeID);
 			}
-			else
-			{
-				datatype = new DatatypeBoolean ( exiDatatypeID );
-			}
-		}
-		else if ( XSD_DATETIME.equals ( exiDatatypeID ) )
-		{
-			ExpandedName primitive = BuiltIn.getPrimitive ( std );
+		} else if (XSD_DATETIME.equals(exiDatatypeID)) {
+			ExpandedName primitive = BuiltIn.getPrimitive(std);
 
-			if ( XSD_DATETIME.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.dateTime, exiDatatypeID );
+			if (XSD_DATETIME.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.dateTime,
+						exiDatatypeID);
+			} else if (XSD_TIME.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.time,
+						exiDatatypeID);
+			} else if (XSD_DATE.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.date,
+						exiDatatypeID);
+			} else if (XSD_GYEARMONTH.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.gYearMonth,
+						exiDatatypeID);
+			} else if (XSD_GYEAR.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.gYear,
+						exiDatatypeID);
+			} else if (XSD_GMONTHDAY.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.gMonthDay,
+						exiDatatypeID);
+			} else if (XSD_GDAY.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.gDay,
+						exiDatatypeID);
+			} else if (XSD_GMONTH.equals(primitive)) {
+				datatype = new DatatypeDatetime(DatetimeType.gMonth,
+						exiDatatypeID);
+			} else {
+				throw new RuntimeException();
 			}
-			else if ( XSD_TIME.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.time, exiDatatypeID );
-			}
-			else if ( XSD_DATE.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.date, exiDatatypeID );
-			}
-			else if ( XSD_GYEARMONTH.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.gYearMonth, exiDatatypeID );
-			}
-			else if ( XSD_GYEAR.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.gYear, exiDatatypeID );
-			}
-			else if ( XSD_GMONTHDAY.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.gMonthDay, exiDatatypeID );
-			}
-			else if ( XSD_GDAY.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.gDay, exiDatatypeID );
-			}
-			else if ( XSD_GMONTH.equals ( primitive ) )
-			{
-				datatype = new DatatypeDatetime ( DatetimeType.gMonth, exiDatatypeID );
-			}
-			else
-			{
-				throw new RuntimeException ( );
-			}
-		}
-		else if ( XSD_DECIMAL.equals ( exiDatatypeID ) )
-		{
-			datatype = new DatatypeDecimal ( exiDatatypeID );
-		}
-		else if ( XSD_DOUBLE.equals ( exiDatatypeID ) )
-		{
-			datatype = new DatatypeFloat ( exiDatatypeID );
-		}
-		else if ( XSD_INTEGER.equals ( exiDatatypeID ) )
-		{
+		} else if (XSD_DECIMAL.equals(exiDatatypeID)) {
+			datatype = new DatatypeDecimal(exiDatatypeID);
+		} else if (XSD_DOUBLE.equals(exiDatatypeID)) {
+			datatype = new DatatypeFloat(exiDatatypeID);
+		} else if (XSD_INTEGER.equals(exiDatatypeID)) {
 			// returns integer type (nbit, unsigned, int) according to facets
-			datatype = BuiltIn.getIntegerDatatype ( std, exiDatatypeID );
-		}
-		else
-		{
+			datatype = BuiltIn.getIntegerDatatype(std, exiDatatypeID);
+		} else {
 			// ( XSD_STRING.equals ( exiDatatypeID ) )
-			datatype = new DatatypeString ( exiDatatypeID );
+			datatype = new DatatypeString(exiDatatypeID);
 		}
 
 		return datatype;
 	}
 
-	private static ExpandedName getPrimitive ( XSSimpleTypeDefinition std )
-	{
+	private static ExpandedName getPrimitive(XSSimpleTypeDefinition std) {
 		ExpandedName primitiveQName;
-		XSSimpleTypeDefinition primitiveType = std.getPrimitiveType ( );
+		XSSimpleTypeDefinition primitiveType = std.getPrimitiveType();
 
-		if ( primitiveType == null )
-		{
+		if (primitiveType == null) {
 			// TODO correct ?
 			primitiveQName = XSD_ANY_SIMPLE_TYPE;
-		}
-		else
-		{
-			primitiveQName = new ExpandedName ( primitiveType.getNamespace ( ), primitiveType.getName ( ) );
+		} else {
+			primitiveQName = new ExpandedName(primitiveType.getNamespace(),
+					primitiveType.getName());
 		}
 
 		return primitiveQName;
 	}
 
-	private static ExpandedName getBuiltInOfPrimitiveMapping ( ExpandedName qnamePrimitive )
-	{
-		if ( datatypeMapping.containsKey ( qnamePrimitive ) )
-		{
-			return datatypeMapping.get ( qnamePrimitive );
-		}
-		else
-		{
+	private static ExpandedName getBuiltInOfPrimitiveMapping(
+			ExpandedName qnamePrimitive) {
+		if (datatypeMapping.containsKey(qnamePrimitive)) {
+			return datatypeMapping.get(qnamePrimitive);
+		} else {
 			return DEFAULT_VALUE_NAME;
 		}
 	}

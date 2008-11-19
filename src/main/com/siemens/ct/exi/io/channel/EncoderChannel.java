@@ -41,50 +41,49 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20080718
  */
 
-public interface EncoderChannel
-{
-	public OutputStream getOutputStream ();
+public interface EncoderChannel {
+	public OutputStream getOutputStream();
 
-	public void incrementValues ();
+	public void incrementValues();
 
-	public int getNumberOfChannelValues ();
+	public int getNumberOfChannelValues();
 
-	public void flush () throws IOException;
+	public void flush() throws IOException;
 
-	public void encode ( int b ) throws IOException;
+	public void encode(int b) throws IOException;
 
-	public void encode ( byte b[], int off, int len ) throws IOException;
+	public void encode(byte b[], int off, int len) throws IOException;
 
-	public void encodeNBitUnsignedInteger ( int b, int n ) throws IOException;
+	public void encodeNBitUnsignedInteger(int b, int n) throws IOException;
 
 	/**
 	 * Encode a single boolean value. A false value is encoded as bit (byte) 0
 	 * and true value is encode as bit (byte) 1.
 	 */
-	public void encodeBoolean ( boolean b ) throws IOException;
+	public void encodeBoolean(boolean b) throws IOException;
 
-	public void encodeBoolean ( XSDBoolean b ) throws IOException;
+	public void encodeBoolean(XSDBoolean b) throws IOException;
 
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.
 	 */
-	public void encodeBinary ( byte[] b ) throws IOException;
+	public void encodeBinary(byte[] b) throws IOException;
 
-	public void encodeBinary ( XSDBase64 b ) throws IOException;
+	public void encodeBinary(XSDBase64 b) throws IOException;
 
 	/**
 	 * Encode a string as a length-prefixed sequence of UCS codepoints, each of
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
-	public void encodeString ( String s ) throws IOException;
+	public void encodeString(String s) throws IOException;
 
 	/**
 	 * Encode a string as a sequence of UCS codepoints, each of which is encoded
 	 * as an integer. Look for codepoints of more than 16 bits that are
 	 * represented as UTF-16 surrogate pairs in Java.
 	 */
-	public void encodeStringOnly ( String s ) throws IOException;
+	public void encodeStringOnly(String s) throws IOException;
 
 	/**
 	 * Encode an arbitrary precision non negative integer using a sequence of
@@ -92,9 +91,9 @@ public interface EncoderChannel
 	 * indicate sequence termination. Only seven bits per octet are used to
 	 * store the integer's value.
 	 */
-	public void encodeUnsignedInteger ( int n ) throws IOException;
+	public void encodeUnsignedInteger(int n) throws IOException;
 
-	public void encodeUnsignedInteger ( XSDInteger i ) throws IOException;
+	public void encodeUnsignedInteger(XSDInteger i) throws IOException;
 
 	/**
 	 * Encode an arbitrary precision integer using a sign bit followed by a
@@ -102,13 +101,13 @@ public interface EncoderChannel
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
 	 */
-	public void encodeInteger ( int n ) throws IOException;
+	public void encodeInteger(int n) throws IOException;
 
-	public void encodeInteger ( long l ) throws IOException;
+	public void encodeInteger(long l) throws IOException;
 
-	public void encodeInteger ( BigInteger bi ) throws IOException;
+	public void encodeInteger(BigInteger bi) throws IOException;
 
-	public void encodeInteger ( XSDInteger xmlInteger ) throws IOException;
+	public void encodeInteger(XSDInteger xmlInteger) throws IOException;
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -118,11 +117,11 @@ public interface EncoderChannel
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public void encodeDecimal ( BigDecimal decimal ) throws IOException;
+	public void encodeDecimal(BigDecimal decimal) throws IOException;
 
-	public void encodeDecimal ( XSDDecimal decimal ) throws IOException;
+	public void encodeDecimal(XSDDecimal decimal) throws IOException;
 
-//	public void encodeDecimal ( String decimal ) throws IOException;
+	// public void encodeDecimal ( String decimal ) throws IOException;
 
 	/**
 	 * Encode a Double represented as two consecutive Integers. The first
@@ -130,12 +129,13 @@ public interface EncoderChannel
 	 * second Integer represents the 10-based exponent of the floating point
 	 * number
 	 */
-	public void encodeFloat ( float f ) throws IOException;
+	public void encodeFloat(float f) throws IOException;
 
-	public void encodeFloat ( XSDFloat f ) throws IOException;
+	public void encodeFloat(XSDFloat f) throws IOException;
 
-	public void encodeDateTime ( Calendar cal, DatetimeType type ) throws IOException;
+	public void encodeDateTime(Calendar cal, DatetimeType type)
+			throws IOException;
 
-	public void encodeDateTime ( XSDDatetime cal ) throws IOException;
+	public void encodeDateTime(XSDDatetime cal) throws IOException;
 
 }

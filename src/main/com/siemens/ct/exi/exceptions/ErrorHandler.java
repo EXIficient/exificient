@@ -18,13 +18,13 @@
 
 package com.siemens.ct.exi.exceptions;
 
-
 /**
  * Basic interface for EXI error handlers.
  * 
- * <p>If a EXI application needs to implement customized error
- * handling, it must implement this interface and then register an
- * instance.</p>
+ * <p>
+ * If a EXI application needs to implement customized error handling, it must
+ * implement this interface and then register an instance.
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -32,26 +32,25 @@ package com.siemens.ct.exi.exceptions;
  * @version 0.1.20080818
  */
 
-public interface ErrorHandler
-{
-    /**
-     * Receive notification of a warning.
-     *
-     * <p>Parsers will use this method to report conditions that
-     * are not errors.</p>
-     *
-     *
-     * @param exception The warning information encapsulated in a
-     *                  EXI exception.
-     */
-    public void warning ( EXIException exception);
-    
-    /**
-     * Receive notification of a recoverable error.
-     *
-     * @param exception The error information encapsulated in a
-     *                  EXI exception.
+public interface ErrorHandler {
+	/**
+	 * Receive notification of a warning.
+	 * 
+	 * <p>
+	 * Parsers will use this method to report conditions that are not errors.
+	 * </p>
+	 * 
+	 * 
+	 * @param exception
+	 *            The warning information encapsulated in a EXI exception.
+	 */
+	public void warning(EXIException exception);
 
-     */
-    public void error ( EXIException exception);
+	/**
+	 * Receive notification of a recoverable error.
+	 * 
+	 * @param exception
+	 *            The error information encapsulated in a EXI exception.
+	 */
+	public void error(EXIException exception);
 }

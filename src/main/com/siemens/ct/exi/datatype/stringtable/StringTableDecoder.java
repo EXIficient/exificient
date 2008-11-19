@@ -27,47 +27,57 @@ package com.siemens.ct.exi.datatype.stringtable;
  * @version 0.1.20080718
  */
 
-public interface StringTableDecoder extends StringTableCommon
-{
+public interface StringTableDecoder extends StringTableCommon {
 	/**
 	 * Get the URI string value using the ID as the key.
-	 * @param id - Identifier of URI in table.
+	 * 
+	 * @param id
+	 *            - Identifier of URI in table.
 	 * @return URI string value or null if URI not found.
 	 */
-	public String getURIValue ( int id );
-	
+	public String getURIValue(int id);
+
 	/**
 	 * Get string value of prefix given URI and prefix ID.
-	 * @param uri - Namespace URI.
-	 * @param id - Namespace identifier (table index).
+	 * 
+	 * @param uri
+	 *            - Namespace URI.
+	 * @param id
+	 *            - Namespace identifier (table index).
 	 * @return - Prefix value or null if not found.
 	 */
-	public String getPrefixValue ( String uri, int id );
-	
-	
+	public String getPrefixValue(String uri, int id);
+
 	/**
 	 * Get string value of local name given URI and ID.
-	 * @param uri - Namespace URI.
-	 * @param id - Identifier (table index) of local name.
+	 * 
+	 * @param uri
+	 *            - Namespace URI.
+	 * @param id
+	 *            - Identifier (table index) of local name.
 	 * @return - Local name or null if not found.
 	 */
-	public String getLocalNameValue ( String uri, int id );
-	
-	
+	public String getLocalNameValue(String uri, int id);
+
 	/**
 	 * Get string value of local value given QName and ID.
-	 * @param uri - namespace URI
-	 * @param local - local-name
-	 * @param id - Identifier (table index) of local name.
+	 * 
+	 * @param uri
+	 *            - namespace URI
+	 * @param local
+	 *            - local-name
+	 * @param id
+	 *            - Identifier (table index) of local name.
 	 * @return - Local value or null if not found.
 	 */
-	public String getLocalValue ( String uri, String local, int id );
-	
-	
+	public String getLocalValue(String uri, String local, int id);
+
 	/**
 	 * Get global value using the ID as the key.
-	 * @param id - Identifier of global value in table.
+	 * 
+	 * @param id
+	 *            - Identifier of global value in table.
 	 * @return String value or null if not found.
 	 */
-	public String getGlobalValue ( int id );
+	public String getGlobalValue(int id);
 }

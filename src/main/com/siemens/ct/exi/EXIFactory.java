@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,8 +42,7 @@ import com.siemens.ct.exi.io.block.EncoderBlock;
  * @version 0.1.20081112
  */
 
-public interface EXIFactory
-{
+public interface EXIFactory {
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
 	 * comments or DTDs).
@@ -53,7 +51,7 @@ public interface EXIFactory
 	 *            new fidelity options
 	 * @see FidelityOptions
 	 */
-	public void setFidelityOptions ( FidelityOptions fidelityOptions );
+	public void setFidelityOptions(FidelityOptions fidelityOptions);
 
 	/**
 	 * Returns the fidelity options used by the EXI factory (e.g. preserving XML
@@ -62,25 +60,25 @@ public interface EXIFactory
 	 * @return fidelity options currently used by the factory
 	 * @see FidelityOptions
 	 */
-	public FidelityOptions getFidelityOptions ();
+	public FidelityOptions getFidelityOptions();
 
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
 	 * an XML document
 	 */
-	public void setFragment ( boolean isFragment );
+	public void setFragment(boolean isFragment);
 
 	/**
 	 * Returns whether we deal with a fragment
 	 * 
 	 * @return is fragment
 	 */
-	public boolean isFragment ();
+	public boolean isFragment();
 
 	/**
 	 * Sets the EXI <code>Grammar</code> used for coding.
 	 */
-	public void setGrammar ( Grammar grammar );
+	public void setGrammar(Grammar grammar);
 
 	/**
 	 * Returns the currently used EXI <code>Grammar</code>. By default a
@@ -88,22 +86,22 @@ public interface EXIFactory
 	 * 
 	 * @return grammar used by the factory
 	 */
-	public Grammar getGrammar ();
+	public Grammar getGrammar();
 
 	/**
 	 * Re-sets the coding mode used by the factory.
 	 * 
 	 * @param codingMode
 	 */
-	public void setCodingMode ( CodingMode codingMode );
+	public void setCodingMode(CodingMode codingMode);
 
 	/**
-	 * Returns the currently used <code>CodingMode</code>. By default
-	 * BIT_PACKED is used.
+	 * Returns the currently used <code>CodingMode</code>. By default BIT_PACKED
+	 * is used.
 	 * 
 	 * @return coding-mode used by the factory
 	 */
-	public CodingMode getCodingMode ();
+	public CodingMode getCodingMode();
 
 	/**
 	 * By default, each typed value in an EXI stream is represented by the
@@ -113,16 +111,16 @@ public interface EXIFactory
 	 * specific schema datatypes. This capability is called Datatype
 	 * Representation Map.
 	 */
-	public void setDatatypeRepresentationMap ( DatatypeRepresentation[] pluggableCodecs );
-	
-	
+	public void setDatatypeRepresentationMap(
+			DatatypeRepresentation[] pluggableCodecs);
+
 	/**
 	 * Returns an <code>EXIEncoder</code>
 	 * 
 	 * @return encoder using the previously set coding options.
 	 * 
 	 */
-	public EXIEncoder createEXIEncoder ();
+	public EXIEncoder createEXIEncoder();
 
 	/**
 	 * Returns an <code>EXIWriter</code>
@@ -130,7 +128,7 @@ public interface EXIFactory
 	 * @return writer using the previously set coding options.
 	 * 
 	 */
-	public EXIWriter createEXIWriter ();
+	public EXIWriter createEXIWriter();
 
 	/**
 	 * Returns an <code>EXIDecoder</code>
@@ -138,7 +136,7 @@ public interface EXIFactory
 	 * @return decoder using the previously set coding options.
 	 * 
 	 */
-	public EXIDecoder createEXIDecoder ();
+	public EXIDecoder createEXIDecoder();
 
 	/**
 	 * Returns an <code>EXIReader</code>
@@ -146,49 +144,50 @@ public interface EXIFactory
 	 * @return reader using the previously set coding options.
 	 * 
 	 */
-	public XMLReader createEXIReader ();
+	public XMLReader createEXIReader();
 
-	
-	//	TODO offer functionality to set CodingBlock
-	//	e.g. setCodingBlockFactory
-	//	# CodingBlockFactory
-	//	  . getEncoderBlock
-	//    . getDecoderBlock
-	
+	// TODO offer functionality to set CodingBlock
+	// e.g. setCodingBlockFactory
+	// # CodingBlockFactory
+	// . getEncoderBlock
+	// . getDecoderBlock
 
 	/**
-	 * Returns an EXI <code>EncoderBlock</code> according coding options like CodingMode etc.
+	 * Returns an EXI <code>EncoderBlock</code> according coding options like
+	 * CodingMode etc.
 	 * 
 	 * @return encoder block according given EXI options
 	 * @see EncoderBlock
 	 */
-	public EncoderBlock createEncoderBlock ( OutputStream outputStream );
+	public EncoderBlock createEncoderBlock(OutputStream outputStream);
 
 	/**
-	 * Returns an EXI <code>DecoderBlock</code> according coding options like CodingMode etc.
+	 * Returns an EXI <code>DecoderBlock</code> according coding options like
+	 * CodingMode etc.
 	 * 
 	 * @return decoder block according given EXI options
 	 * @see DecoderBlock
 	 */
-	public DecoderBlock createDecoderBlock ( InputStream inputStream ) throws IOException;
-	
+	public DecoderBlock createDecoderBlock(InputStream inputStream)
+			throws IOException;
 
 	/**
-	 * Returns an EXI <code>TypeEncoder</code> according coding options such as 
-	 * schema-informed or schema-less grammar and options like Preserve.LexicalValues
+	 * Returns an EXI <code>TypeEncoder</code> according coding options such as
+	 * schema-informed or schema-less grammar and options like
+	 * Preserve.LexicalValues
 	 * 
 	 * @return type encoder according given EXI options
 	 * @see TypeEncoder
 	 */
-	public TypeEncoder createTypeEncoder ();
-	
+	public TypeEncoder createTypeEncoder();
 
 	/**
-	 * Returns an EXI <code>TypeDecoder</code> according coding options such as 
-	 * schema-informed or schema-less grammar and options like Preserve.LexicalValues
+	 * Returns an EXI <code>TypeDecoder</code> according coding options such as
+	 * schema-informed or schema-less grammar and options like
+	 * Preserve.LexicalValues
 	 * 
 	 * @return type decoder according given EXI options
 	 * @see TypeDecoder
 	 */
-	public TypeDecoder createTypeDecoder ();
+	public TypeDecoder createTypeDecoder();
 }

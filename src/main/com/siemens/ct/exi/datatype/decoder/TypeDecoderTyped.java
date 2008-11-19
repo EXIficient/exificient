@@ -29,24 +29,22 @@ import com.siemens.ct.exi.EXIFactory;
  * @version 0.1.20081112
  */
 
-public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed
-{
-	public TypeDecoderTyped ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed {
+	public TypeDecoderTyped(EXIFactory exiFactory) {
+		super(exiFactory);
 
-		binaryBase64DTD = new BinaryDatatypeDecoder ( );
+		binaryBase64DTD = new BinaryDatatypeDecoder();
 		binaryHexDTD = binaryBase64DTD;
-		booleanDTD = new BooleanDatatypeDecoder ( );
-		booleanPatternDTD = new BooleanPatternDatatypeDecoder ( );
-		decimalDTD = new DecimalDatatypeDecoder ( );
-		floatDTD = new FloatDatatypeDecoder ( );
-		integerDTD = new IntegerDatatypeDecoder ( );
-		unsignedIntegerDTD = new UnsignedIntegerDatatypeDecoder ( );
-		nBitIntegerDTD = new NBitIntegerDatatypeDecoder ( );
-		datetimeDTD = new DatetimeDatatypeDecoder ( );
-		enumerationDTD = new EnumerationDatatypeDecoder ( );
-		listDTD = new ListDatatypeDecoder ( exiFactory );
-		stringDTD = new StringDatatypeDecoder ( );
+		booleanDTD = new BooleanDatatypeDecoder();
+		booleanPatternDTD = new BooleanPatternDatatypeDecoder();
+		decimalDTD = new DecimalDatatypeDecoder();
+		floatDTD = new FloatDatatypeDecoder();
+		integerDTD = new IntegerDatatypeDecoder();
+		unsignedIntegerDTD = new UnsignedIntegerDatatypeDecoder();
+		nBitIntegerDTD = new NBitIntegerDatatypeDecoder();
+		datetimeDTD = new DatetimeDatatypeDecoder();
+		enumerationDTD = new EnumerationDatatypeDecoder();
+		listDTD = new ListDatatypeDecoder(exiFactory);
+		stringDTD = new StringDatatypeDecoder();
 	}
 }

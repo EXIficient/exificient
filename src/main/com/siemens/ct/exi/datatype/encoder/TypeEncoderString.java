@@ -33,26 +33,22 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20081112
  */
 
-public class TypeEncoderString extends AbstractTypeEncoder
-{
+public class TypeEncoderString extends AbstractTypeEncoder {
 	private final static boolean VALID_RESULT = true;
 	String lastValidValue;
-	
-	public TypeEncoderString ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+
+	public TypeEncoderString(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
-	
-	public boolean isTypeValid ( Datatype datatype, final String value )
-	{
+
+	public boolean isTypeValid(Datatype datatype, final String value) {
 		lastValidValue = value;
 		return VALID_RESULT;
 	}
-	
-	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		writeValueAsString ( valueChannel, uri, localName, lastValidValue );	
-	}
 
+	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		writeValueAsString(valueChannel, uri, localName, lastValidValue);
+	}
 
 }

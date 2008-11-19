@@ -33,27 +33,23 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractEncoderBitByteBlock extends AbstractEncoderBlock
-{
+public abstract class AbstractEncoderBitByteBlock extends AbstractEncoderBlock {
 	protected EncoderChannel channel;
-	
-	public AbstractEncoderBitByteBlock( OutputStream outputStream, TypeEncoder typeEncoder )
-	{
-		super( outputStream, typeEncoder );
+
+	public AbstractEncoderBitByteBlock(OutputStream outputStream,
+			TypeEncoder typeEncoder) {
+		super(outputStream, typeEncoder);
 	}
-	
-	protected EncoderChannel getStructureChannel()
-	{
+
+	protected EncoderChannel getStructureChannel() {
 		return channel;
 	}
-	
-	protected EncoderChannel getValueChannel( String uri, String localName )
-	{
+
+	protected EncoderChannel getValueChannel(String uri, String localName) {
 		return channel;
 	}
-	
-	public void flush() throws IOException
-	{
+
+	public void flush() throws IOException {
 		channel.flush();
 	}
 }

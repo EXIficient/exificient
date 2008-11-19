@@ -34,32 +34,26 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDInteger lastInteger = XSDInteger.newInstance ( );
-	
-	public IntegerDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	private XSDInteger lastInteger = XSDInteger.newInstance();
+
+	public IntegerDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastInteger.parse ( value );
-			
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastInteger.parse(value);
+
 			return true;
-		}
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeInteger ( lastInteger );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeInteger(lastInteger);
 	}
 }

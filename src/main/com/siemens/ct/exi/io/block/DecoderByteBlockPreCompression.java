@@ -33,26 +33,23 @@ import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
  * @version 0.1.20081105
  */
 
-public class DecoderByteBlockPreCompression extends AbstractDecoderByteBlockChannelized
-{	
-	
-	public DecoderByteBlockPreCompression ( InputStream is, TypeDecoder typeDecoder ) throws IOException
-	{
-		super( is, typeDecoder );		
-	}
-	
-	protected void init( ) throws IOException
-	{
-		structureChannel = new ByteDecoderChannel ( getStream () );
+public class DecoderByteBlockPreCompression extends
+		AbstractDecoderByteBlockChannelized {
+
+	public DecoderByteBlockPreCompression(InputStream is,
+			TypeDecoder typeDecoder) throws IOException {
+		super(is, typeDecoder);
 	}
 
-	protected InputStream getStream () throws IOException
-	{
+	protected void init() throws IOException {
+		structureChannel = new ByteDecoderChannel(getStream());
+	}
+
+	protected InputStream getStream() throws IOException {
 		return this.inputStream;
 	}
-	
-	protected ByteDecoderChannel getNextChannel( ) throws IOException
-	{
+
+	protected ByteDecoderChannel getNextChannel() throws IOException {
 		return structureChannel;
 	}
 

@@ -27,16 +27,14 @@ package com.siemens.ct.exi.exceptions;
  * @version 0.1.20080718
  */
 
-public class UnsupportedOption extends EXIException
-{
+public class UnsupportedOption extends EXIException {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -8859158367056532581L;
-	
-	public UnsupportedOption( String msg )
-	{
-		super( msg );
+	private static final long serialVersionUID = -8859158367056532581L;
+
+	public UnsupportedOption(String msg) {
+		super(msg);
 	}
 
 }

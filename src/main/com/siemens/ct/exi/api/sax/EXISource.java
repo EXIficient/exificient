@@ -34,30 +34,26 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @version 0.1.20080718
  */
 
-public class EXISource extends SAXSource
-{
+public class EXISource extends SAXSource {
 	EXIFactory exiFactory;
-	
-	public EXISource( )
-	{
-		//	use default exi-factory
-		this( DefaultEXIFactory.newInstance ( ) );
+
+	public EXISource() {
+		// use default exi-factory
+		this(DefaultEXIFactory.newInstance());
 	}
-	
-	public EXISource( EXIFactory exiFactory )
-	{
+
+	public EXISource(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
-		
-		init( );
+
+		init();
 	}
-	
-	protected void init()
-	{
-		//	create sax decoder
-		XMLReader xmlReader = exiFactory.createEXIReader ( );
-		
-		//	set internal state
-		this.setXMLReader ( xmlReader );
+
+	protected void init() {
+		// create sax decoder
+		XMLReader xmlReader = exiFactory.createEXIReader();
+
+		// set internal state
+		this.setXMLReader(xmlReader);
 	}
 
 }

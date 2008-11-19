@@ -32,44 +32,37 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 /*
- * Document :
- * 	SD DocContent	0
+ * Document : SD DocContent 0
  */
-public class RuleDocument extends AbstractSchemaInformedRule
-{
+public class RuleDocument extends AbstractSchemaInformedRule {
 	Rule docContent;
-	
-	public RuleDocument( Rule docContent, String label )
-	{
-		super( label );
+
+	public RuleDocument(Rule docContent, String label) {
+		super(label);
 		this.docContent = docContent;
 	}
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;
 	}
-	
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
 		return null;
 	}
-	
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
+
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
 		return 0;
 	}
-	
-	public int get3rdLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
+
+	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions) {
 		return 0;
 	}
-	
+
 	@Override
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-	{
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return false;
 	}
-	
 
 }

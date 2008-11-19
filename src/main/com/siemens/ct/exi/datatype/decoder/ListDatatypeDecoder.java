@@ -35,43 +35,40 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081112
  */
 
-public class ListDatatypeDecoder extends AbstractDatatypeDecoder
-{
-	protected EXIFactory	exiFactory;
-	protected TypeDecoder	listTypeDecoder	= null;
-	
+public class ListDatatypeDecoder extends AbstractDatatypeDecoder {
+	protected EXIFactory exiFactory;
+	protected TypeDecoder listTypeDecoder = null;
+
 	protected StringBuilder sResult;
 
-	public ListDatatypeDecoder( EXIFactory exiFactory )
-	{
+	public ListDatatypeDecoder(EXIFactory exiFactory) {
 		super();
 		this.exiFactory = exiFactory;
-		
+
 		sResult = new StringBuilder();
 	}
-	
-	
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
-	{
-		// setup (list)typeEncoder if not already
-		if ( listTypeDecoder == null )
-		{
-			// Note: initialization in constructor causes never ending calls!
-			listTypeDecoder = exiFactory.createTypeDecoder ( );
-		}
-		
-		Datatype listDatatype = ( (DatatypeList) datatype ).getListDatatype ( );
 
-		int len = dc.decodeUnsignedInteger ( );
-		
-		sResult.setLength ( 0 );
-		
-		for ( int i=0; i<len; i++  )
-		{
-			sResult.append ( listTypeDecoder.readTypeValidValue ( listDatatype, dc, namespaceURI, localName ) );
-			sResult.append( Constants.XSD_LIST_DELIM );
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		// setup (list)typeEncoder if not already
+		if (listTypeDecoder == null) {
+			// Note: initialization in constructor causes never ending calls!
+			listTypeDecoder = exiFactory.createTypeDecoder();
 		}
-		
-		return sResult.toString ( );
+
+		Datatype listDatatype = ((DatatypeList) datatype).getListDatatype();
+
+		int len = dc.decodeUnsignedInteger();
+
+		sResult.setLength(0);
+
+		for (int i = 0; i < len; i++) {
+			sResult.append(listTypeDecoder.readTypeValidValue(listDatatype, dc,
+					namespaceURI, localName));
+			sResult.append(Constants.XSD_LIST_DELIM);
+		}
+
+		return sResult.toString();
 	}
 }

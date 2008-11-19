@@ -35,31 +35,27 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
 
-public class DatetimeDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDDatetime		lastValidDatetime = XSDDatetime.newInstance ( );
+public class DatetimeDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	private XSDDatetime lastValidDatetime = XSDDatetime.newInstance();
 
-	public DatetimeDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+	public DatetimeDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastValidDatetime.parseEXIDatetime ( value, ((DatatypeDatetime)datatype).getDatetimeType ( ) );
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastValidDatetime.parseEXIDatetime(value,
+					((DatatypeDatetime) datatype).getDatetimeType());
 			return true;
-		}
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
-	
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeDateTime ( lastValidDatetime );
+
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeDateTime(lastValidDatetime);
 	}
-	
+
 }

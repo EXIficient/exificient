@@ -35,37 +35,36 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.1.20081031
  */
 
-public interface EXIDecoder
-{
-	public void setInputStream ( InputStream is ) throws EXIException;
+public interface EXIDecoder {
+	public void setInputStream(InputStream is) throws EXIException;
 
 	/**
 	 * Reports whether an additional EXI event is available.
 	 * 
 	 * @return <tt>true</tt> if the stream has more events.
 	 */
-	public boolean hasNextEvent ();
+	public boolean hasNextEvent();
 
 	/**
 	 * Reports the next available EXI event-type
 	 * 
 	 * @return <code>EventType</code> for next EXI event
 	 */
-	public EventType getNextEventType ();
+	public EventType getNextEventType();
 
 	/**
 	 * Sniffs EXI stream for reporting next event.
 	 * 
 	 * @throws EXIException
 	 */
-	public void inspectEvent () throws EXIException;
+	public void inspectEvent() throws EXIException;
 
 	/**
 	 * Initializes the beginning of a set of XML events
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeStartDocument () throws EXIException;
+	public void decodeStartDocument() throws EXIException;
 
 	/**
 	 * Finalizes the end of a set of XML events
@@ -73,7 +72,7 @@ public interface EXIDecoder
 	 * @throws SAXException
 	 * @throws EXIException
 	 */
-	public void decodeEndDocument () throws EXIException;
+	public void decodeEndDocument() throws EXIException;
 
 	/**
 	 * Reads EXI start element.
@@ -85,7 +84,7 @@ public interface EXIDecoder
 	 * @throws SAXException
 	 * @throws EXIException
 	 */
-	public void decodeStartElement () throws SAXException, EXIException;
+	public void decodeStartElement() throws SAXException, EXIException;
 
 	/**
 	 * Reads generic start element.
@@ -96,130 +95,129 @@ public interface EXIDecoder
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeStartElementGeneric () throws EXIException;
+	public void decodeStartElementGeneric() throws EXIException;
 
 	/**
 	 * Parses unexpected start element.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeStartElementGenericUndeclared () throws EXIException;
+	public void decodeStartElementGenericUndeclared() throws EXIException;
 
 	/**
 	 * Reads EXI end element.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeEndElement () throws EXIException;
-	
+	public void decodeEndElement() throws EXIException;
+
 	/**
 	 * Reads unexpected EXI end element.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeEndElementUndeclared () throws EXIException;
+	public void decodeEndElementUndeclared() throws EXIException;
 
 	/**
 	 * Parses expected attribute.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeAttribute () throws EXIException;
-	
+	public void decodeAttribute() throws EXIException;
+
 	/**
 	 * Parses expected attribute with schema-invalid value
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeAttributeInvalidValue () throws EXIException;
+	public void decodeAttributeInvalidValue() throws EXIException;
 
 	/**
 	 * Parses expected generic attribute.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeAttributeGeneric () throws EXIException;
+	public void decodeAttributeGeneric() throws EXIException;
 
 	/**
 	 * Parses unexpected attribute.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeAttributeGenericUndeclared () throws EXIException;
-	
+	public void decodeAttributeGenericUndeclared() throws EXIException;
+
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeNamespaceDeclaration () throws EXIException;
+	public void decodeNamespaceDeclaration() throws EXIException;
 
 	/**
 	 * Reads xsi:type from EXI stream.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeXsiType () throws EXIException;
+	public void decodeXsiType() throws EXIException;
 
 	/**
 	 * Reads xsi:nil from EXI stream.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeXsiNil () throws EXIException;
-	
-	public void decodeXsiNilDeviation () throws EXIException;
+	public void decodeXsiNil() throws EXIException;
+
+	public void decodeXsiNilDeviation() throws EXIException;
 
 	/**
 	 * Decodes expected characters.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeCharacters () throws EXIException;
+	public void decodeCharacters() throws EXIException;
 
 	/**
 	 * Decodes generic characters.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeCharactersGeneric () throws EXIException;
+	public void decodeCharactersGeneric() throws EXIException;
 
 	/**
 	 * Decodes unexpected (generic) characters.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeCharactersGenericUndeclared () throws EXIException;
+	public void decodeCharactersGenericUndeclared() throws EXIException;
 
 	/**
 	 * Parses comment with associated characters.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeComment () throws EXIException;
+	public void decodeComment() throws EXIException;
 
 	/**
 	 * Parses processing instruction with associated target and data.
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeProcessingInstruction () throws EXIException;
+	public void decodeProcessingInstruction() throws EXIException;
 
 	/**
 	 * Provides current scope URI.
 	 * 
 	 * @return <code>String</code> for URI
 	 */
-	public String getScopeURI ();
+	public String getScopeURI();
 
 	/**
 	 * Provides current scope local-name.
 	 * 
 	 * @return <code>String</code> for name
 	 */
-	public String getScopeLocalName ();
+	public String getScopeLocalName();
 
-	
 	// ////////////////////////////////////////////////////////////////
 	//
 	// fetching values
@@ -231,103 +229,100 @@ public interface EXIDecoder
 	 * 
 	 * @return <code>String</code> for element URI
 	 */
-	public String getElementURI ();
+	public String getElementURI();
 
 	/**
 	 * Provides (last) element local-name
 	 * 
 	 * @return <code>String</code> for element name
 	 */
-	public String getElementLocalName ();
+	public String getElementLocalName();
 
 	/**
 	 * Provides (last) attribute namespace
 	 * 
 	 * @return <code>String</code> for attribute URI
 	 */
-	public String getAttributeURI ();
+	public String getAttributeURI();
 
 	/**
 	 * Provides (last) attribute local-name
 	 * 
 	 * @return <code>String</code> for attribute name
 	 */
-	public String getAttributeLocalName ();
+	public String getAttributeLocalName();
 
-	
 	/**
 	 * Provides attribute value
 	 * 
 	 * @return <code>String</code> for attribute value
 	 */
-	public String getAttributeValue ();
+	public String getAttributeValue();
 
-	
 	/**
 	 * Provides xsi:ytpe namespace
 	 * 
 	 * @return <code>String</code> for type URI
 	 */
-	public String getXsiTypeUri ();
+	public String getXsiTypeUri();
 
 	/**
 	 * Provides xsi:type name
 	 * 
 	 * @return <code>String</code> for type name
 	 */
-	public String getXsiTypeName ();
+	public String getXsiTypeName();
 
 	/**
 	 * Provides xsi:nil value
 	 * 
 	 * @return <tt>true</tt> for xsi nil
 	 */
-	public boolean getXsiNil ();
+	public boolean getXsiNil();
 
-	public String getXsiNilDeviation ();
+	public String getXsiNilDeviation();
 
 	/**
-	 * Provides characters as well as significant/insignificant whitespace characters
+	 * Provides characters as well as significant/insignificant whitespace
+	 * characters
 	 * 
 	 * @return <code>String</code> for characters
 	 */
-	public String getCharacters ();
+	public String getCharacters();
 
 	/**
 	 * Provides comment text.
 	 * 
 	 * @return <code>String</code> for comment text
 	 */
-	public String getComment ();
+	public String getComment();
 
-	
 	/**
 	 * Provides URI of namespace declaration.
 	 * 
 	 * @return <code>String</code> for NS uri
 	 */
-	public String getNSUri ();
+	public String getNSUri();
 
 	/**
 	 * Provides prefix of namespace declaration.
 	 * 
 	 * @return <code>String</code> for NS prefix
 	 */
-	public String getNSPrefix ();
+	public String getNSPrefix();
 
-	
 	/**
 	 * Provides processing instructions target.
 	 * 
 	 * @return <code>String</code> for PI target
 	 */
-	public String getPITarget ();
+	public String getPITarget();
 
 	/**
 	 * Provides processing instructions data.
 	 * 
 	 * @return <code>String</code> for PI data
 	 */
-	public String getPIData ();
+	public String getPIData();
 
 }

@@ -39,91 +39,77 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements TypeEncoder
-{
-	//	EXI string table(s)
+public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
+		TypeEncoder {
+	// EXI string table(s)
 	protected StringTableEncoder stringTable;
-	
-	public StringTableEncoder getStringTable ()
-	{
+
+	public StringTableEncoder getStringTable() {
 		return stringTable;
 	}
-	
-	//public AbstractTypeEncoder ( boolean isSchemaInformed )
-	public AbstractTypeEncoder ( EXIFactory exiFactory )
-	{
-		if ( exiFactory.getCodingMode ( ).usesRechanneling ( ) )
-		{
-			stringTable = new StringTableEncoderImplNoGlobalValues ( exiFactory.getGrammar ( ).isSchemaInformed ( ) );
-		}
-		else
-		{
-			stringTable = new StringTableEncoderImpl ( exiFactory.getGrammar ( ).isSchemaInformed ( ) );
-		}
-		
-		//stringTable = exiFactory.getStringTableEncoder ( exiFactory.getGrammar ( ).isSchemaInformed( ) );
-	}
-	
 
-	public void writeValueAsString ( final EncoderChannel valueChannel, final String uri, final String localName, String value )
-			throws IOException
-	{
-		if ( CompileConfiguration.NOT_USE_STRING_TABLE )
-		{
-			writeStringAsMiss ( valueChannel, uri, localName, value );
+	// public AbstractTypeEncoder ( boolean isSchemaInformed )
+	public AbstractTypeEncoder(EXIFactory exiFactory) {
+		if (exiFactory.getCodingMode().usesRechanneling()) {
+			stringTable = new StringTableEncoderImplNoGlobalValues(exiFactory
+					.getGrammar().isSchemaInformed());
+		} else {
+			stringTable = new StringTableEncoderImpl(exiFactory.getGrammar()
+					.isSchemaInformed());
 		}
-		else
-		{
-			//	default behaviour
-			
-			//	local-value hit ?
-			if ( ! writeStringAsLocalHit ( valueChannel, uri, localName, value ) )
-			{
-				//	global-value hit ?
-				if ( ! writeStringAsGlobalHit ( valueChannel, value ) )
-				{
-					//	mhh, it is a string-table miss
-					writeStringAsMiss ( valueChannel, uri, localName, value );
+
+		// stringTable = exiFactory.getStringTableEncoder (
+		// exiFactory.getGrammar ( ).isSchemaInformed( ) );
+	}
+
+	public void writeValueAsString(final EncoderChannel valueChannel,
+			final String uri, final String localName, String value)
+			throws IOException {
+		if (CompileConfiguration.NOT_USE_STRING_TABLE) {
+			writeStringAsMiss(valueChannel, uri, localName, value);
+		} else {
+			// default behaviour
+
+			// local-value hit ?
+			if (!writeStringAsLocalHit(valueChannel, uri, localName, value)) {
+				// global-value hit ?
+				if (!writeStringAsGlobalHit(valueChannel, value)) {
+					// mhh, it is a string-table miss
+					writeStringAsMiss(valueChannel, uri, localName, value);
 				}
 			}
 		}
 	}
-	
-	public boolean writeStringAsLocalHit ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
-	throws IOException
-	{
-		int localID = stringTable.getLocalValueID ( uri, localName, value );
-		
-		if ( localID == Constants.NOT_FOUND )
-		{
+
+	public boolean writeStringAsLocalHit(final EncoderChannel valueChannel,
+			final String uri, final String localName, final String value)
+			throws IOException {
+		int localID = stringTable.getLocalValueID(uri, localName, value);
+
+		if (localID == Constants.NOT_FOUND) {
 			return false;
-		}
-		else
-		{
+		} else {
 			// found in local value partition
 			// ==> string value is represented as zero (0) encoded as an
 			// Unsigned Integer
 			// followed by the compact identifier of the string value in the
 			// "local" value partition
-			valueChannel.encodeUnsignedInteger ( 0 );
-			int n = MethodsBag.getCodingLength ( stringTable.getLocalValueTableSize ( uri, localName ) );
-			valueChannel.encodeNBitUnsignedInteger ( localID, n );
-			
+			valueChannel.encodeUnsignedInteger(0);
+			int n = MethodsBag.getCodingLength(stringTable
+					.getLocalValueTableSize(uri, localName));
+			valueChannel.encodeNBitUnsignedInteger(localID, n);
+
 			return true;
 		}
 	}
-	
-	public boolean writeStringAsGlobalHit ( final EncoderChannel valueChannel, final String value )
-	throws IOException
-	{
-		int globalID = stringTable.getGlobalValueID ( value );
-		
-		if ( globalID == Constants.NOT_FOUND )
-		{
+
+	public boolean writeStringAsGlobalHit(final EncoderChannel valueChannel,
+			final String value) throws IOException {
+		int globalID = stringTable.getGlobalValueID(value);
+
+		if (globalID == Constants.NOT_FOUND) {
 			return false;
-		}
-		else
-		{
+		} else {
 			// found in global value partition
 			// ==> When a string value is not found in the global value
 			// partition,
@@ -131,29 +117,29 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements T
 			// represented as one (1) encoded as an Unsigned Integer
 			// followed by the compact identifier of the String value in the
 			// global value partition.
-			valueChannel.encodeUnsignedInteger ( 1 );
-			valueChannel.encodeNBitUnsignedInteger ( globalID, MethodsBag.getCodingLength ( stringTable.getGlobalValueTableSize ( ) ) );
-			
+			valueChannel.encodeUnsignedInteger(1);
+			valueChannel.encodeNBitUnsignedInteger(globalID, MethodsBag
+					.getCodingLength(stringTable.getGlobalValueTableSize()));
+
 			return true;
-		}		
+		}
 	}
-	
-	public void writeStringAsMiss ( final EncoderChannel valueChannel, final String uri, final String localName, final String value )
-	throws IOException
-	{
+
+	public void writeStringAsMiss(final EncoderChannel valueChannel,
+			final String uri, final String localName, final String value)
+			throws IOException {
 		// not found in global value (and local value) partition
 		// ==> string literal is encoded as a String with the length
 		// incremented by two.
-		valueChannel.encodeUnsignedInteger ( value.length ( ) + 2 );
-		valueChannel.encodeStringOnly ( value );
+		valueChannel.encodeUnsignedInteger(value.length() + 2);
+		valueChannel.encodeStringOnly(value);
 		// After encoding the string value, it is added to both the
 		// associated "local" value string table partition and the
 		// global value string table partition.
-		stringTable.addLocalValue ( uri, localName, value );
-		stringTable.addGlobalValue ( value );
+		stringTable.addLocalValue(uri, localName, value);
+		stringTable.addGlobalValue(value);
 	}
 
-	public void finish () throws IOException
-	{
+	public void finish() throws IOException {
 	}
 }

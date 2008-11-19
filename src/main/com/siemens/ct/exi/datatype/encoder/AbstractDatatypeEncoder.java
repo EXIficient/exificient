@@ -27,12 +27,10 @@ package com.siemens.ct.exi.datatype.encoder;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractDatatypeEncoder implements DatatypeEncoder
-{
+public abstract class AbstractDatatypeEncoder implements DatatypeEncoder {
 	protected TypeEncoder typeEncoder;
-	
-	public AbstractDatatypeEncoder( TypeEncoder typeEncoder )
-	{
+
+	public AbstractDatatypeEncoder(TypeEncoder typeEncoder) {
 		this.typeEncoder = typeEncoder;
 	}
 }

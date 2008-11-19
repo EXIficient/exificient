@@ -29,10 +29,8 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DatatypeUnsignedInteger extends AbstractDatatype
-{
-	public DatatypeUnsignedInteger( ExpandedName datatypeIdentifier )
-	{
-		super( BuiltInType.BUILTIN_UNSIGNED_INTEGER, datatypeIdentifier );
-	}	
+public class DatatypeUnsignedInteger extends AbstractDatatype {
+	public DatatypeUnsignedInteger(ExpandedName datatypeIdentifier) {
+		super(BuiltInType.BUILTIN_UNSIGNED_INTEGER, datatypeIdentifier);
+	}
 }

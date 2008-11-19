@@ -30,37 +30,31 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  * @version 0.1.20081003
  */
 
-public class EventRule implements Comparable<EventRule>
-{
-	private final Event	event;
-	private final Rule	rule;
+public class EventRule implements Comparable<EventRule> {
+	private final Event event;
+	private final Rule rule;
 
-	public EventRule ( Event event, Rule rule )
-	{
-		assert ( event != null );
-		assert ( rule != null );
+	public EventRule(Event event, Rule rule) {
+		assert (event != null);
+		assert (rule != null);
 
 		this.event = event;
 		this.rule = rule;
 	}
 
-	public final Event getEvent ()
-	{
+	public final Event getEvent() {
 		return this.event;
 	}
 
-	public final Rule getRule ()
-	{
+	public final Rule getRule() {
 		return this.rule;
 	}
 
-	public boolean isEndRule ()
-	{
-		return this.rule.isTerminalRule ( );
+	public boolean isEndRule() {
+		return this.rule.isTerminalRule();
 	}
 
-	public String toString ()
-	{
+	public String toString() {
 		String s = "";
 
 		s += event + " -> " + rule;
@@ -69,20 +63,18 @@ public class EventRule implements Comparable<EventRule>
 	}
 
 	@Override
-	public boolean equals( Object obj )
-	{
-		if ( obj instanceof EventRule )
-		{
-			EventRule er = (EventRule)obj;
-			return ( this.event.equals ( er.getEvent ( ) ) && this.rule.equals ( er.getRule ( ) ) );
+	public boolean equals(Object obj) {
+		if (obj instanceof EventRule) {
+			EventRule er = (EventRule) obj;
+			return (this.event.equals(er.getEvent()) && this.rule.equals(er
+					.getRule()));
 		}
-		
+
 		return false;
 	}
-	
-	public int compareTo ( EventRule o )
-	{
-		//	compare event only
-		return ( getEvent ( ).compareTo ( o.getEvent ( ) ) );
+
+	public int compareTo(EventRule o) {
+		// compare event only
+		return (getEvent().compareTo(o.getEvent()));
 	}
 }

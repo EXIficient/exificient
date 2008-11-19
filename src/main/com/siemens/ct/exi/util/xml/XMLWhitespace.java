@@ -27,74 +27,64 @@ package com.siemens.ct.exi.util.xml;
  * @version 0.1.20081111
  */
 
-public class XMLWhitespace
-{
-	public static final char	WS_SPACE	= ' ';
-	public static final char	WS_NL		= '\n';
-	public static final char	WS_CR		= '\r';
-	public static final char	WS_TAB		= '\t';
+public class XMLWhitespace {
+	public static final char WS_SPACE = ' ';
+	public static final char WS_NL = '\n';
+	public static final char WS_CR = '\r';
+	public static final char WS_TAB = '\t';
 
-	
-	public static int getLeadingWhitespaces( final char[] ch, int start, final int length )
-	{
+	public static int getLeadingWhitespaces(final char[] ch, int start,
+			final int length) {
 		final int end = start + length;
 		int leadingWS = 0;
-		
-		while ( start < end && isWhiteSpace ( ch[start] ) )
-		{
+
+		while (start < end && isWhiteSpace(ch[start])) {
 			start++;
 			leadingWS++;
 		}
-		
+
 		return leadingWS;
 	}
-	
-	
-	public static int getTrailingWhitespaces( final char[] ch, final int start, final int length )
-	{
+
+	public static int getTrailingWhitespaces(final char[] ch, final int start,
+			final int length) {
 		int pos = start + length - 1;
 		int trailingWS = 0;
-		
-		while ( pos >= start && isWhiteSpace ( ch[pos] ) )
-		{
+
+		while (pos >= start && isWhiteSpace(ch[pos])) {
 			pos--;
 			trailingWS++;
 		}
-		
+
 		return trailingWS;
 	}
-	
-	public static boolean isWhiteSpaceOnly ( final char[] ch, int start, final int length )
-	{
-		if ( !isWhiteSpace ( ch[start] ) )
+
+	public static boolean isWhiteSpaceOnly(final char[] ch, int start,
+			final int length) {
+		if (!isWhiteSpace(ch[start]))
 			return false;
 
 		final int end = start + length;
-		while ( ++start < end && isWhiteSpace ( ch[start] ) )
-		{
+		while (++start < end && isWhiteSpace(ch[start])) {
 		}
 
 		return start == end;
 	}
 
-	public static boolean isWhiteSpaceOnly ( String chars )
-	{
-		if ( !isWhiteSpace ( chars.charAt ( 0 ) ) )
-		{
+	public static boolean isWhiteSpaceOnly(String chars) {
+		if (!isWhiteSpace(chars.charAt(0))) {
 			return false;
 		}
 
-		final int end = chars.length ( );
+		final int end = chars.length();
 		int start = 1;
-		while ( start < end && isWhiteSpace ( chars.charAt ( start++ ) ) )
-		{
+		while (start < end && isWhiteSpace(chars.charAt(start++))) {
 		}
 
 		return start == end;
 	}
 
-	public static boolean isWhiteSpace ( char c )
-	{
-		return ( c == WS_SPACE || c == WS_NL || c == WS_CR || c == WS_TAB );
+	public static boolean isWhiteSpace(char c) {
+		return (c == WS_SPACE || c == WS_NL || c == WS_CR || c == WS_TAB);
 	}
 }

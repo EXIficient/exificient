@@ -31,69 +31,59 @@ import java.io.InputStream;
  * @version 0.1.20081014
  */
 
-public class ByteDecoderChannel extends AbstractDecoderChannel implements DecoderChannel 
-{
+public class ByteDecoderChannel extends AbstractDecoderChannel implements
+		DecoderChannel {
 	protected InputStream is;
-	
-    public ByteDecoderChannel( InputStream istream )
-    {
-    	is = new BufferedInputStream ( istream );
-    }
 
-    public InputStream getInputStream( ) 
-    {
-    	return is;
-    }
-    
-    public int decode() throws IOException
-    {
-    	return is.read ( );
-    }
-    
-    
-    /**
-     * Decode a single boolean value. The value false is represented by the byte
-     * 0, and the value true is represented by the byte 1.
-     */
-    public boolean decodeBoolean() throws IOException
-    {
-        return ( is.read() == 0 ? false : true );
-    }
-    
+	public ByteDecoderChannel(InputStream istream) {
+		is = new BufferedInputStream(istream);
+	}
 
-    /**
-     * Decode a binary value as a length-prefixed sequence of octets.
-     */
-    public byte[] decodeBinary() throws IOException
-    {
-        final int length = decodeUnsignedInteger();
-        byte[] result = new byte[length];
+	public InputStream getInputStream() {
+		return is;
+	}
 
-        for (int i = 0; i < length; i++)
-        {
-        	result[i] = (byte)is.read();
-        }
-        return result;
-    }
+	public int decode() throws IOException {
+		return is.read();
+	}
 
-    /**
-     * Decodes and returns an n-bit unsigned integer using the minimum number of
-     * bytes required for n bits.
-     */
-    public int decodeNBitUnsignedInteger( int n ) throws IOException
-    {
-    	assert( n >= 0);
-    	
-        int bitsRead = 0;
-        int result = 0;
-        
-        while ( bitsRead < n )
-        {
-        	// result = (result << 8) | is.read();
-        	result += ( is.read ( ) << bitsRead );
-            bitsRead += 8;
-        }
-        return result;
-    }
+	/**
+	 * Decode a single boolean value. The value false is represented by the byte
+	 * 0, and the value true is represented by the byte 1.
+	 */
+	public boolean decodeBoolean() throws IOException {
+		return (is.read() == 0 ? false : true);
+	}
+
+	/**
+	 * Decode a binary value as a length-prefixed sequence of octets.
+	 */
+	public byte[] decodeBinary() throws IOException {
+		final int length = decodeUnsignedInteger();
+		byte[] result = new byte[length];
+
+		for (int i = 0; i < length; i++) {
+			result[i] = (byte) is.read();
+		}
+		return result;
+	}
+
+	/**
+	 * Decodes and returns an n-bit unsigned integer using the minimum number of
+	 * bytes required for n bits.
+	 */
+	public int decodeNBitUnsignedInteger(int n) throws IOException {
+		assert (n >= 0);
+
+		int bitsRead = 0;
+		int result = 0;
+
+		while (bitsRead < n) {
+			// result = (result << 8) | is.read();
+			result += (is.read() << bitsRead);
+			bitsRead += 8;
+		}
+		return result;
+	}
 
 }

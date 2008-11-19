@@ -27,48 +27,42 @@ package com.siemens.ct.exi.attributes;
  * @version 0.1.20080924
  */
 
-public class SchemaInformedAttributeList extends AbstractAttributeList
-{
-	public SchemaInformedAttributeList ()
-	{
-		super ( );
+public class SchemaInformedAttributeList extends AbstractAttributeList {
+	public SchemaInformedAttributeList() {
+		super();
 	}
 
 	/*
-	 * *Inserting an item into a sorted list*
+	 * Inserting an item into a sorted list
 	 * http://www.brpreiss.com/books/opus5/html/page192.html
 	 */
 	@Override
-	protected void insertAttribute ( String uri, String localName, String pfx, String value )
-	{
+	protected void insertAttribute(String uri, String localName, String pfx,
+			String value) {
 		// int i = numberOfAttributes;
-		int i = this.getNumberOfAttributes ( );
+		int i = this.getNumberOfAttributes();
 
 		// greater ?
-		while ( i > 0 && isGreaterAttribute ( i - 1, uri, localName ) )
-		{
+		while (i > 0 && isGreaterAttribute(i - 1, uri, localName)) {
 			// move right
 			i--;
 		}
 
 		// update position i
-		attributeURI.add ( i, uri );
-		attributeLocalName.add ( i, localName );
-		attributePrefix.add ( i, pfx );
-		attributeValue.add ( i, value );
+		attributeURI.add(i, uri);
+		attributeLocalName.add(i, localName);
+		attributePrefix.add(i, pfx);
+		attributeValue.add(i, value);
 	}
 
-	protected boolean isGreaterAttribute ( int attributeIndex, String uri, String localName )
-	{
+	protected boolean isGreaterAttribute(int attributeIndex, String uri,
+			String localName) {
 
-		if ( getAttributeLocalName ( attributeIndex ).compareTo ( localName ) > 0 )
-		{
+		if (getAttributeLocalName(attributeIndex).compareTo(localName) > 0) {
 			return true;
-		}
-		else
-		{
+		} else {
 
-			return ( getAttributeURI ( attributeIndex ).compareTo ( uri ) > 0 );
+			return (getAttributeURI(attributeIndex).compareTo(uri) > 0);
 		}
 	}
 

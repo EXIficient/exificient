@@ -31,70 +31,60 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @version 0.1.20081103
  */
 
-public class StartElement extends AbstractEvent implements ExpandedNameComparable
-{
-	private String	namespaceURI;
+public class StartElement extends AbstractEvent implements
+		ExpandedNameComparable {
+	private String namespaceURI;
 
-	private String	localPart;
+	private String localPart;
 
-	public StartElement ( String uri, String localName )
-	{
-		super ( "SE" );
+	public StartElement(String uri, String localName) {
+		super("SE");
 		eventType = EventType.START_ELEMENT;
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 		this.localPart = localName;
 	}
 
-	public String getNamespaceURI ()
-	{
+	public String getNamespaceURI() {
 		return namespaceURI;
 	}
 
-	public void setNamespaceURI ( String namespaceURI )
-	{
+	public void setNamespaceURI(String namespaceURI) {
 		this.namespaceURI = namespaceURI;
 	}
 
-	public String getLocalPart ()
-	{
+	public String getLocalPart() {
 		return localPart;
 	}
 
-	public void setLocalPart ( String localPart )
-	{
+	public void setLocalPart(String localPart) {
 		this.localPart = localPart;
 	}
 
-	public String toString ()
-	{
+	public String toString() {
 		return "SE(" + namespaceURI + ":" + localPart + ")";
 	}
 
 	@Override
-	public int hashCode ()
-	{
-		return ( eventType.ordinal ( ) ^ namespaceURI.hashCode ( ) ^ localPart.hashCode ( ) );
+	public int hashCode() {
+		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localPart
+				.hashCode());
 	}
 
-	public boolean equals ( Object obj )
-	{
-		if ( obj instanceof StartElement )
-		{
+	public boolean equals(Object obj) {
+		if (obj instanceof StartElement) {
 			StartElement otherSE = (StartElement) obj;
-			return ( localPart.equals ( otherSE.localPart ) && namespaceURI.equals ( otherSE.namespaceURI ) );
-		}
-		else
-		{
+			return (localPart.equals(otherSE.localPart) && namespaceURI
+					.equals(otherSE.namespaceURI));
+		} else {
 			return false;
 		}
 	}
 
-	public int compareTo ( String namespace, String localName )
-	{
+	public int compareTo(String namespace, String localName) {
 		// first local-part and then uri
-		final int c1 = localPart.compareTo ( localName );
-		return ( c1 == 0 ? namespaceURI.compareTo ( namespace ) : c1 );
+		final int c1 = localPart.compareTo(localName);
+		return (c1 == 0 ? namespaceURI.compareTo(namespace) : c1);
 	}
 
 }

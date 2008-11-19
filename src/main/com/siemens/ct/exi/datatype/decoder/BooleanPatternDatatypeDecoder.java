@@ -33,25 +33,23 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081110
  */
 
-public class BooleanPatternDatatypeDecoder extends AbstractDatatypeDecoder
-{
+public class BooleanPatternDatatypeDecoder extends AbstractDatatypeDecoder {
 
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI,
-			String localName ) throws IOException
-	{
-		int booleanID = dc.decodeNBitUnsignedInteger ( 2 );
-		switch ( booleanID )
-		{
-			case 0:
-				return Constants.XSD_BOOLEAN_FALSE;
-			case 1:
-				return Constants.XSD_BOOLEAN_0;
-			case 2:
-				return Constants.XSD_BOOLEAN_TRUE;
-			case 3:
-				return Constants.XSD_BOOLEAN_1;
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		int booleanID = dc.decodeNBitUnsignedInteger(2);
+		switch (booleanID) {
+		case 0:
+			return Constants.XSD_BOOLEAN_FALSE;
+		case 1:
+			return Constants.XSD_BOOLEAN_0;
+		case 2:
+			return Constants.XSD_BOOLEAN_TRUE;
+		case 3:
+			return Constants.XSD_BOOLEAN_1;
 		}
 
-		throw new RuntimeException ( "Error while decoding boolean pattern facet" );
+		throw new RuntimeException("Error while decoding boolean pattern facet");
 	}
 }

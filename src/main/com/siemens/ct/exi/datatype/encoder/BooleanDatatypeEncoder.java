@@ -34,31 +34,26 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @version 0.1.20080718
  */
 
-public class BooleanDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDBoolean	lastValidBoolean = XSDBoolean.newInstance ( );
+public class BooleanDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	private XSDBoolean lastValidBoolean = XSDBoolean.newInstance();
 
-	public BooleanDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+	public BooleanDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastValidBoolean.parse ( value );
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastValidBoolean.parse(value);
 			return true;
-		}
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeBoolean ( lastValidBoolean );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeBoolean(lastValidBoolean);
 	}
 
 }

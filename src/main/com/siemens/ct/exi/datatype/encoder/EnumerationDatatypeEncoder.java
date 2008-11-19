@@ -35,28 +35,24 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20081117
  */
 
-public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private DatatypeEnumeration	lastDatatypeEnumeration;
-	private StringList			lastEnumValues;
-	private int					lastOrdinalPosition;
+public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder
+		implements DatatypeEncoder {
+	private DatatypeEnumeration lastDatatypeEnumeration;
+	private StringList lastEnumValues;
+	private int lastOrdinalPosition;
 
-	public EnumerationDatatypeEncoder ( TypeEncoder typeEncoder )
-	{
-		super ( typeEncoder );
+	public EnumerationDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
 
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		lastDatatypeEnumeration = ( (DatatypeEnumeration) datatype );
-		lastEnumValues = lastDatatypeEnumeration.getEnumerationValues ( );
+	public boolean isValid(Datatype datatype, String value) {
+		lastDatatypeEnumeration = ((DatatypeEnumeration) datatype);
+		lastEnumValues = lastDatatypeEnumeration.getEnumerationValues();
 
 		lastOrdinalPosition = -1;
 		int index = 0;
-		while ( index < lastEnumValues.getLength ( ) )
-		{
-			if ( lastEnumValues.item ( index ).equals ( value ) )
-			{
+		while (index < lastEnumValues.getLength()) {
+			if (lastEnumValues.item(index).equals(value)) {
 				lastOrdinalPosition = index;
 				return true;
 			}
@@ -66,8 +62,9 @@ public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder implemen
 		return false;
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeNBitUnsignedInteger ( lastOrdinalPosition, lastDatatypeEnumeration.getCodingLength ( ) );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition,
+				lastDatatypeEnumeration.getCodingLength());
 	}
 }

@@ -30,32 +30,29 @@ import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
  * @version 0.1.20081112
  */
 
-public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed
-{
-	public TypeEncoderTyped ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed {
+	public TypeEncoderTyped(EXIFactory exiFactory) {
+		super(exiFactory);
 
-		binaryBase64DTE = new BinaryDatatypeEncoder ( this );
+		binaryBase64DTE = new BinaryDatatypeEncoder(this);
 		binaryHexDTE = binaryBase64DTE;
-		booleanDTE = new BooleanDatatypeEncoder ( this );
-		booleanPatternDTE = new BooleanPatternDatatypeEncoder ( this );
-		decimalDTE = new DecimalDatatypeEncoder ( this );
-		floatDTE = new FloatDatatypeEncoder ( this );
-		integerDTE = new IntegerDatatypeEncoder ( this );
-		unsignedIntegerDTE = new UnsignedIntegerDatatypeEncoder ( this );
-		nBitIntegerDTE = new NBitIntegerDatatypeEncoder ( this );
-		datetimeDTE = new DatetimeDatatypeEncoder ( this );
-		enumerationDTE = new EnumerationDatatypeEncoder ( this );
-		listDTE = new ListDatatypeEncoder ( this, exiFactory );
-		stringDTE = new StringDatatypeEncoder ( this );
+		booleanDTE = new BooleanDatatypeEncoder(this);
+		booleanPatternDTE = new BooleanPatternDatatypeEncoder(this);
+		decimalDTE = new DecimalDatatypeEncoder(this);
+		floatDTE = new FloatDatatypeEncoder(this);
+		integerDTE = new IntegerDatatypeEncoder(this);
+		unsignedIntegerDTE = new UnsignedIntegerDatatypeEncoder(this);
+		nBitIntegerDTE = new NBitIntegerDatatypeEncoder(this);
+		datetimeDTE = new DatetimeDatatypeEncoder(this);
+		enumerationDTE = new EnumerationDatatypeEncoder(this);
+		listDTE = new ListDatatypeEncoder(this, exiFactory);
+		stringDTE = new StringDatatypeEncoder(this);
 	}
-	
 
-	public TypeEncoderTyped ( EXIFactory exiFactory, StringTableEncoder stringTable )
-	{
+	public TypeEncoderTyped(EXIFactory exiFactory,
+			StringTableEncoder stringTable) {
 		// typed encoder needs to be schemaInformed
-		this ( exiFactory );
+		this(exiFactory);
 
 		this.stringTable = stringTable;
 	}

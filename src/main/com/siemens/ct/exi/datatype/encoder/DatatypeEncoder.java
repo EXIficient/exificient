@@ -32,10 +32,10 @@ import java.io.IOException;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
-public interface DatatypeEncoder
-{
-	public boolean isValid ( Datatype datatype, String value );
+public interface DatatypeEncoder {
+	public boolean isValid(Datatype datatype, String value);
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName  ) throws IOException;
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException;
 
 }

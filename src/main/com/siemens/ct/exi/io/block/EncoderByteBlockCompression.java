@@ -34,29 +34,30 @@ import com.siemens.ct.exi.util.CompressionUtilities;
  * @version 0.1.20080718
  */
 
-public class EncoderByteBlockCompression extends AbstractEncoderByteBlockChannelized
-{
+public class EncoderByteBlockCompression extends
+		AbstractEncoderByteBlockChannelized {
 	private DeflaterOutputStream lastStream;
-	
-	public EncoderByteBlockCompression( OutputStream outputStream, TypeEncoder typeEncoder )
-	{
-		super( outputStream, typeEncoder );
+
+	public EncoderByteBlockCompression(OutputStream outputStream,
+			TypeEncoder typeEncoder) {
+		super(outputStream, typeEncoder);
 	}
-	
+
 	@Override
-	protected OutputStream getStream( ) throws IOException
-	{
-		
-		//lastStream =  new DeflaterOutputStream( outputStream, new Deflater( Configuration.COMPRESSION_LEVEL ) );
-		//return ( lastStream = BlockFactory.createDeflaterOutputStream ( outputStream ) );
-		return ( lastStream = CompressionUtilities.createDeflaterOutputStream ( outputStream ) );
+	protected OutputStream getStream() throws IOException {
+
+		// lastStream = new DeflaterOutputStream( outputStream, new Deflater(
+		// Configuration.COMPRESSION_LEVEL ) );
+		// return ( lastStream = BlockFactory.createDeflaterOutputStream (
+		// outputStream ) );
+		return (lastStream = CompressionUtilities
+				.createDeflaterOutputStream(outputStream));
 	}
-	
+
 	@Override
-	protected void finalizeStream( ) throws IOException
-	{
-		lastStream.finish ( );
-		lastStream.flush ( );
+	protected void finalizeStream() throws IOException {
+		lastStream.finish();
+		lastStream.flush();
 	}
 
 }

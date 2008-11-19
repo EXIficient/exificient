@@ -31,67 +31,56 @@ import java.io.OutputStream;
  * @version 0.1.20080718
  */
 
-final public class ByteEncoderChannelChannelized extends AbstractEncoderChannel implements EncoderChannelChannelized
-{
+final public class ByteEncoderChannelChannelized extends AbstractEncoderChannel
+		implements EncoderChannelChannelized {
 	private final ByteArrayOutputStream baos;
 	protected final ByteEncoderChannel bec;
-	
-    /**
-     * Construct a byte aligned encoder from output stream.
-     */
-    public ByteEncoderChannelChannelized( )
-    {
-    	baos = new ByteArrayOutputStream();
-    	bec = new ByteEncoderChannel( baos );
-    }
-    
-    public void flush() throws IOException {
-        bec.flush();
-    }
-    
-    public void encode( int b ) throws IOException
-    {
-    	bec.encode ( b );
-    }
-    
-    public void encode ( byte b[], int off, int len ) throws IOException 
-    {
-    	bec.encode ( b, off, len );
-    }
-    
-    /**
-     * Encode a single boolean value. A false value is encoded as byte 0 and
-     * true value is encode as byte 1.
-     */
-    public void encodeBoolean( boolean b ) throws IOException, IllegalArgumentException
-    {
-    	bec.encodeBoolean( b );
-    }
-    
-    /**
-     * Encode n-bit unsigned integer using the minimum number of bytes required
-     * to store n bits. The n least significant bits of parameter b starting
-     * with the most significant, i.e. from left to right.
-     */
-    public void encodeNBitUnsignedInteger( int b, int n ) throws IOException
-    {
-    	bec.encodeNBitUnsignedInteger( b, n );
-    }
 
-    
-    public byte[] toByteArray( ) throws IOException 
-    {
-    	flush();
-    	return baos.toByteArray();
-    }
-
-	public OutputStream getOutputStream ()
-	{
-		return baos;
+	/**
+	 * Construct a byte aligned encoder from output stream.
+	 */
+	public ByteEncoderChannelChannelized() {
+		baos = new ByteArrayOutputStream();
+		bec = new ByteEncoderChannel(baos);
 	}
 
+	public void flush() throws IOException {
+		bec.flush();
+	}
 
+	public void encode(int b) throws IOException {
+		bec.encode(b);
+	}
 
-    
+	public void encode(byte b[], int off, int len) throws IOException {
+		bec.encode(b, off, len);
+	}
+
+	/**
+	 * Encode a single boolean value. A false value is encoded as byte 0 and
+	 * true value is encode as byte 1.
+	 */
+	public void encodeBoolean(boolean b) throws IOException,
+			IllegalArgumentException {
+		bec.encodeBoolean(b);
+	}
+
+	/**
+	 * Encode n-bit unsigned integer using the minimum number of bytes required
+	 * to store n bits. The n least significant bits of parameter b starting
+	 * with the most significant, i.e. from left to right.
+	 */
+	public void encodeNBitUnsignedInteger(int b, int n) throws IOException {
+		bec.encodeNBitUnsignedInteger(b, n);
+	}
+
+	public byte[] toByteArray() throws IOException {
+		flush();
+		return baos.toByteArray();
+	}
+
+	public OutputStream getOutputStream() {
+		return baos;
+	}
 
 }

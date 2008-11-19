@@ -41,120 +41,101 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 /*
  * <Built-in Element Grammar>
  * 
- * StartTagContent :
- * 		EE						0.0
- * 		AT (*) 	StartTagContent	0.1
- * 		NS 		StartTagContent	0.2
- * 		ChildContentItems 		(0.3)
+ * StartTagContent : EE 0.0 AT () StartTagContent 0.1 NS StartTagContent 0.2
+ * ChildContentItems (0.3)
  * 
- * ChildContentItems (n.m) :
- * 		SE (*) 	ElementContent	n. m
- * 		CH 		ElementContent	n.(m+1)
- * 		ER 		ElementContent	n.(m+2)
- * 		CM 		ElementContent	n.(m+3).0
- * 		PI	 	ElementContent	n.(m+3).1
- * 
+ * ChildContentItems (n.m) : SE () ElementContent n. m CH ElementContent n.(m+1)
+ * ER ElementContent n.(m+2) CM ElementContent n.(m+3).0 PI ElementContent
+ * n.(m+3).1
  */
 
-public class SchemaLessRuleStartTag extends SchemaLessRuleContent
-{
+public class SchemaLessRuleStartTag extends SchemaLessRuleContent {
 	protected SchemaLessRuleElement elementContent;
-	
-	public SchemaLessRuleStartTag(  )
-	{
-		super( );
-		
-		//	initialize elementContent
+
+	public SchemaLessRuleStartTag() {
+		super();
+
+		// initialize elementContent
 		elementContent = new SchemaLessRuleElement();
 	}
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
-		List<EventType> startTagContent = get2ndLevelEventsStartTagItems ( fidelityOptions );
-		int ec = getEventCode( eventType, startTagContent );
-		
-		if ( ec == Constants.NOT_FOUND )
-		{
-			ec = getEventCode( eventType, get2ndLevelEventsChildContentItems ( fidelityOptions ) );
-			
-			if ( ec != Constants.NOT_FOUND )
-			{
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		List<EventType> startTagContent = get2ndLevelEventsStartTagItems(fidelityOptions);
+		int ec = getEventCode(eventType, startTagContent);
+
+		if (ec == Constants.NOT_FOUND) {
+			ec = getEventCode(eventType,
+					get2ndLevelEventsChildContentItems(fidelityOptions));
+
+			if (ec != Constants.NOT_FOUND) {
 				ec += startTagContent.size();
 			}
 		}
-		
+
 		return ec;
 	}
-	
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
 		EventType eventType = null;
-		
-		List<EventType> startTagContent = get2ndLevelEventsStartTagItems ( fidelityOptions );
-		
-		if ( eventCode < startTagContent.size() )
-		{
-			//	in startTag events
-			eventType = startTagContent.get( eventCode );
+
+		List<EventType> startTagContent = get2ndLevelEventsStartTagItems(fidelityOptions);
+
+		if (eventCode < startTagContent.size()) {
+			// in startTag events
+			eventType = startTagContent.get(eventCode);
+		} else {
+			// childContent events
+			eventType = get2ndLevelEventsChildContentItems(fidelityOptions)
+					.get(eventCode - startTagContent.size());
 		}
-		else
-		{
-			//	childContent events
-			eventType = get2ndLevelEventsChildContentItems ( fidelityOptions ).get( eventCode - startTagContent.size() );	
-		}
-		
+
 		return eventType;
 	}
 
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	startTagContent 
-		int ch2 = get2ndLevelEventsStartTagItems( fidelityOptions ).size( );
-		//	+  childContentItems
-		ch2 += get2ndLevelEventsChildContentItems ( fidelityOptions ).size( );
-		//	3rd level ?
-		if ( get3rdLevelCharacteristics ( fidelityOptions ) > 0 )
-		{
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		// startTagContent
+		int ch2 = get2ndLevelEventsStartTagItems(fidelityOptions).size();
+		// + childContentItems
+		ch2 += get2ndLevelEventsChildContentItems(fidelityOptions).size();
+		// 3rd level ?
+		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
 			ch2++;
 		}
-		
+
 		return ch2;
 	}
 
 	@Override
-	public Rule getElementContentRule ()
-	{
-		//	this is a *StartTag* Rule --> return element content rule
+	public Rule getElementContentRule() {
+		// this is a *StartTag* Rule --> return element content rule
 		return elementContent;
 	}
-	
+
 	@Override
-	public Rule getElementContentRuleForUndeclaredSE()
-	{
-		return getElementContentRule( );
+	public Rule getElementContentRuleForUndeclaredSE() {
+		return getElementContentRule();
 	}
 
 	@Override
-	public void learnStartElement ( String uri, String localName )
-	{
-		addRule ( new StartElement ( uri, localName ), getElementContentRule ( ) );
-	}
-	
-	@Override
-	public void learnEndElement ( )
-	{
-		addTerminalRule ( new EndElement( ) );
+	public void learnStartElement(String uri, String localName) {
+		addRule(new StartElement(uri, localName), getElementContentRule());
 	}
 
 	@Override
-	public void learnAttribute ( String uri, String localName )
-	{
-		addRule ( new Attribute ( uri, localName ), this );
+	public void learnEndElement() {
+		addTerminalRule(new EndElement());
 	}
 
 	@Override
-	public void learnCharacters ()
-	{
-		addRule ( new Characters ( BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE ), getElementContentRule ( ) );
+	public void learnAttribute(String uri, String localName) {
+		addRule(new Attribute(uri, localName), this);
+	}
+
+	@Override
+	public void learnCharacters() {
+		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
+				BuiltIn.DEFAULT_DATATYPE), getElementContentRule());
 	}
 }

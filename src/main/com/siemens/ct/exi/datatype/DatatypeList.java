@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype;
 
-
 /**
  * TODO Description
  * 
@@ -28,24 +27,20 @@ package com.siemens.ct.exi.datatype;
  * @version 0.1.20080718
  */
 
-public class DatatypeList extends AbstractDatatype
-{
-	private Datatype	listDatatype;
+public class DatatypeList extends AbstractDatatype {
+	private Datatype listDatatype;
 
-	public DatatypeList ( Datatype listDatatype )
-	{
-		super( BuiltInType.BUILTIN_LIST, null );
-	
-		if ( listDatatype.getDefaultBuiltInType ( ) == BuiltInType.BUILTIN_LIST )
-		{
+	public DatatypeList(Datatype listDatatype) {
+		super(BuiltInType.BUILTIN_LIST, null);
+
+		if (listDatatype.getDefaultBuiltInType() == BuiltInType.BUILTIN_LIST) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		this.listDatatype = listDatatype;
 	}
-	
-	public Datatype getListDatatype( )
-	{
+
+	public Datatype getListDatatype() {
 		return listDatatype;
 	}
 }

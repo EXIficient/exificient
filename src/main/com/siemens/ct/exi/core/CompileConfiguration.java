@@ -29,28 +29,27 @@ import java.util.zip.Deflater;
  * @version 0.1.20080718
  */
 
-public class CompileConfiguration
-{
+public class CompileConfiguration {
 	public static final boolean PRESERVE_XSI_SCHEMA_LOCATION = false;
-	
+
 	/*
 	 * TESTS (default all "false")
-	 */	
+	 */
 	public static final boolean NOT_USE_STRING_TABLE = false;
 
 	/*
 	 * Block / Channel settings
 	 */
-	//	Maximal Number of Values (per Block / Channel)
+	// Maximal Number of Values (per Block / Channel)
 	public static final int MAX_NUMBER_OF_VALUES = 100;
-	
+
 	/*
 	 * Compression settings, level & nowrap
-	 */	
+	 */
 	public static final int COMPRESSION_LEVEL = Deflater.DEFAULT_COMPRESSION;
 	// public static final int COMPRESSION_LEVEL = Deflater.BEST_SPEED;
 	// public static final int COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
-	
+
 	public static final boolean DEFLATE_NOWRAP = true;
-	
+
 }

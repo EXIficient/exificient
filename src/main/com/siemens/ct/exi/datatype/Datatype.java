@@ -29,11 +29,10 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public interface Datatype
-{
+public interface Datatype {
 	// if no codec map is used
-	public BuiltInType getDefaultBuiltInType( );
-	
-	//	used for codec map
+	public BuiltInType getDefaultBuiltInType();
+
+	// used for codec map
 	public ExpandedName getDatatypeIdentifier();
 }

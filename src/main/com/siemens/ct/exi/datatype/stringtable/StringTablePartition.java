@@ -27,9 +27,8 @@ package com.siemens.ct.exi.datatype.stringtable;
  * @version 0.1.20080718
  */
 
-public interface StringTablePartition
-{
-	public void add ( String value );
-	
-	public int getSize ( );
+public interface StringTablePartition {
+	public void add(String value);
+
+	public int getSize();
 }

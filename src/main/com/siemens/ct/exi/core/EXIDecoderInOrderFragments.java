@@ -30,19 +30,16 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20081023
  */
 
-public class EXIDecoderInOrderFragments extends AbstractEXIDecoderInOrder
-{
-	public EXIDecoderInOrderFragments( EXIFactory exiFactory )
-	{
-		super( exiFactory );
+public class EXIDecoderInOrderFragments extends AbstractEXIDecoderInOrder {
+	public EXIDecoderInOrderFragments(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
-	
+
 	@Override
-	protected void initForEachRun() throws EXIException
-	{	
-		super.initForEachRun( );
-		
-		//	push stack with fragment grammar (possible root elements etc)
-		pushRule ( grammar.getBuiltInFragmentGrammar ( ) );
-	}	
+	protected void initForEachRun() throws EXIException {
+		super.initForEachRun();
+
+		// push stack with fragment grammar (possible root elements etc)
+		pushRule(grammar.getBuiltInFragmentGrammar());
+	}
 }

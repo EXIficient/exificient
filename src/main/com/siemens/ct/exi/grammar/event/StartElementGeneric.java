@@ -27,12 +27,10 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.1.20080718
  */
 
-public class StartElementGeneric extends AbstractEvent
-{
-	public StartElementGeneric( )
-	{
-		super( "SE(*)" );
+public class StartElementGeneric extends AbstractEvent {
+	public StartElementGeneric() {
+		super("SE(*)");
 		eventType = EventType.START_ELEMENT_GENERIC;
 	}
-	
+
 }

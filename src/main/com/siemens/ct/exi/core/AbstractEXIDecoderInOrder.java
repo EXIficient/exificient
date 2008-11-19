@@ -37,224 +37,180 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.1.20081023
  */
 
-public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder
-{	
-	public AbstractEXIDecoderInOrder( EXIFactory exiFactory )
-	{
-		super( exiFactory );
+public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
+	public AbstractEXIDecoderInOrder(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
-	
+
 	@Override
-	protected void initForEachRun() throws EXIException
-	{
-		super.initForEachRun( );
-		
-		nextEvent = new StartDocument( );
+	protected void initForEachRun() throws EXIException {
+		super.initForEachRun();
+
+		nextEvent = new StartDocument();
 		nextEventType = EventType.START_DOCUMENT;
 	}
-	
-	public void inspectEvent( ) throws EXIException
-	{
-		decodeEventCode ( );
+
+	public void inspectEvent() throws EXIException {
+		decodeEventCode();
 	}
-	
-	public boolean hasNextEvent( )
-	{
+
+	public boolean hasNextEvent() {
 		return nextEventType != EventType.END_DOCUMENT;
 	}
-	
-	public EventType getNextEventType( ) 
-	{
+
+	public EventType getNextEventType() {
 		return nextEventType;
 	}
-	
-	
-	public void decodeStartDocument( ) throws EXIException
-	{
-		decodeStartDocumentStructure ( );
-	}
-	
-	public void decodeStartElement( ) throws EXIException
-	{	
-		decodeStartElementStructure ( );
-	}
-	
-	public void decodeStartElementGeneric( ) throws EXIException
-	{
-		decodeStartElementGenericStructure ( );
+
+	public void decodeStartDocument() throws EXIException {
+		decodeStartDocumentStructure();
 	}
 
-	public void decodeStartElementGenericUndeclared( ) throws EXIException
-	{
-		decodeStartElementGenericUndeclaredStructure ( );
+	public void decodeStartElement() throws EXIException {
+		decodeStartElementStructure();
 	}
-	
-	public void decodeNamespaceDeclaration( ) throws EXIException
-	{
-		decodeNamespaceDeclarationStructure ( );
+
+	public void decodeStartElementGeneric() throws EXIException {
+		decodeStartElementGenericStructure();
 	}
-	
-	public void decodeAttribute( ) throws EXIException
-	{
-		try
-		{
-			//	decode attribute value
-			attributeValue = block.readTypedValidValue ( decodeAttributeStructure ( ).getDatatype ( ), attributeURI, attributeLocalName );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException( e );
-		}
+
+	public void decodeStartElementGenericUndeclared() throws EXIException {
+		decodeStartElementGenericUndeclaredStructure();
 	}
-	
-	public void decodeAttributeInvalidValue () throws EXIException
-	{
-		decodeAttributeStructure ( );
-		
-		try
-		{
-			//	decode attribute value as string
-			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException( e );
+
+	public void decodeNamespaceDeclaration() throws EXIException {
+		decodeNamespaceDeclarationStructure();
+	}
+
+	public void decodeAttribute() throws EXIException {
+		try {
+			// decode attribute value
+			attributeValue = block.readTypedValidValue(
+					decodeAttributeStructure().getDatatype(), attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 	}
-	
-	public void decodeAttributeGeneric( ) throws EXIException
-	{
-		try
-		{
-			decodeAttributeGenericStructure ( );
-					
-			//	decode attribute value as string
-			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException( e );
+
+	public void decodeAttributeInvalidValue() throws EXIException {
+		decodeAttributeStructure();
+
+		try {
+			// decode attribute value as string
+			attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 	}
-	
-	public void decodeAttributeGenericUndeclared( ) throws EXIException
-	{
-		try
-		{
-			decodeAttributeGenericUndeclaredStructure ( );
-					
-			//	decode attribute value
-			attributeValue = block.readValueAsString ( attributeURI, attributeLocalName );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException( e );
+
+	public void decodeAttributeGeneric() throws EXIException {
+		try {
+			decodeAttributeGenericStructure();
+
+			// decode attribute value as string
+			attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 	}
-	
-	public void decodeXsiType( ) throws EXIException
-	{
-		decodeAttributeXsiType ( );
-		
-		//	update grammar according to given xsi:type
-		TypeGrammar tg = ((SchemaInformedGrammar)grammar).getTypeGrammar ( this.xsiTypeUri, this.xsiTypeName );
-		
-		//	type known ?
-		if ( tg != null )
-		{
-			this.replaceRuleAtTheTop ( tg.getType ( ) );
-			
+
+	public void decodeAttributeGenericUndeclared() throws EXIException {
+		try {
+			decodeAttributeGenericUndeclaredStructure();
+
+			// decode attribute value
+			attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	public void decodeXsiType() throws EXIException {
+		decodeAttributeXsiType();
+
+		// update grammar according to given xsi:type
+		TypeGrammar tg = ((SchemaInformedGrammar) grammar).getTypeGrammar(
+				this.xsiTypeUri, this.xsiTypeName);
+
+		// type known ?
+		if (tg != null) {
+			this.replaceRuleAtTheTop(tg.getType());
+
 			//
-			this.pushScopeType ( this.xsiTypeUri, this.xsiTypeName );	
+			this.pushScopeType(this.xsiTypeUri, this.xsiTypeName);
 		}
-	}
-	
-	public void decodeXsiNil( ) throws EXIException
-	{
-		decodeAttributeXsiNil ( );
-		
-		if ( this.xsiNil )
-		{
-			//	jump to typeEmpty
-			if ( currentRule instanceof SchemaInformedRule )
-			{
-				replaceRuleAtTheTop ( ((SchemaInformedRule)currentRule ).getTypeEmpty ( ) );
-			}
-			else
-			{
-				throw new EXIException( "EXI, no typeEmpty for xsi:nil");
-			}
-		}
-	}
-	
-	public void decodeXsiNilDeviation( ) throws EXIException
-	{
-		decodeAttributeXsiNilDeviation ( );
-	}
-	
-	public void decodeCharacters( ) throws EXIException
-	{	
-		try
-		{
-			characters = block.readTypedValidValue ( decodeCharactersStructure ( ).getDatatype ( ), getScopeURI ( ), getScopeLocalName ( ) );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException( e );
-		}
-	}
-	
-	protected void decodeCharactersGenericValue() throws EXIException
-	{
-		try
-		{
-			characters = block.readValueAsString ( getScopeURI ( ), getScopeLocalName ( ) );
-		}
-		catch ( IOException e )
-		{
-			throw new EXIException ( e );
-		}
-	}
-	
-	public void decodeCharactersGeneric( ) throws EXIException
-	{	
-		decodeCharactersGenericStructure ( );
-		
-		decodeCharactersGenericValue();
-	}
-	
-	public void decodeCharactersGenericUndeclared( ) throws EXIException
-	{	
-		decodeCharactersUndeclaredStructure ( );
-		
-		decodeCharactersGenericValue();
-	}
-	
-	
-	public void decodeEndElement( ) throws EXIException
-	{
-		decodeEndElementStructure ( );
-	}
-	
-	public void decodeEndElementUndeclared( ) throws EXIException
-	{
-		decodeEndElementUndeclaredStructure ( );
-	}
-	
-	public void decodeEndDocument( ) throws EXIException
-	{
-		decodeEndDocumentStructure ( );
-	}
-	
-	public void decodeComment( ) throws EXIException
-	{
-		decodeCommentStructure ( );
 	}
 
-	
-	public void decodeProcessingInstruction( ) throws EXIException
-	{
-		decodeProcessingInstructionStructure ( );
+	public void decodeXsiNil() throws EXIException {
+		decodeAttributeXsiNil();
+
+		if (this.xsiNil) {
+			// jump to typeEmpty
+			if (currentRule instanceof SchemaInformedRule) {
+				replaceRuleAtTheTop(((SchemaInformedRule) currentRule)
+						.getTypeEmpty());
+			} else {
+				throw new EXIException("EXI, no typeEmpty for xsi:nil");
+			}
+		}
 	}
-	
+
+	public void decodeXsiNilDeviation() throws EXIException {
+		decodeAttributeXsiNilDeviation();
+	}
+
+	public void decodeCharacters() throws EXIException {
+		try {
+			characters = block.readTypedValidValue(decodeCharactersStructure()
+					.getDatatype(), getScopeURI(), getScopeLocalName());
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	protected void decodeCharactersGenericValue() throws EXIException {
+		try {
+			characters = block.readValueAsString(getScopeURI(),
+					getScopeLocalName());
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	public void decodeCharactersGeneric() throws EXIException {
+		decodeCharactersGenericStructure();
+
+		decodeCharactersGenericValue();
+	}
+
+	public void decodeCharactersGenericUndeclared() throws EXIException {
+		decodeCharactersUndeclaredStructure();
+
+		decodeCharactersGenericValue();
+	}
+
+	public void decodeEndElement() throws EXIException {
+		decodeEndElementStructure();
+	}
+
+	public void decodeEndElementUndeclared() throws EXIException {
+		decodeEndElementUndeclaredStructure();
+	}
+
+	public void decodeEndDocument() throws EXIException {
+		decodeEndDocumentStructure();
+	}
+
+	public void decodeComment() throws EXIException {
+		decodeCommentStructure();
+	}
+
+	public void decodeProcessingInstruction() throws EXIException {
+		decodeProcessingInstructionStructure();
+	}
+
 }

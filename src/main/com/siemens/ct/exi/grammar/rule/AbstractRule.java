@@ -35,213 +35,174 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 
-public abstract class AbstractRule implements Rule
-{
-	protected static final SchemaInformedRule	END_RULE	= new RuleDocEnd ( );
-	
+public abstract class AbstractRule implements Rule {
+	protected static final SchemaInformedRule END_RULE = new RuleDocEnd();
+
 	protected static final EndElement END_ELEMENT_EVENT = new EndElement();
-	
+
 	private String label = null;
-	
-	public AbstractRule( )
-	{
+
+	public AbstractRule() {
 	}
-	
-	public AbstractRule( String label )
-	{
+
+	public AbstractRule(String label) {
 		this();
 		this.label = label;
 	}
-	
-	
-	public void addTerminalRule ( Event event  )
-	{
-		assert( event.isEventType ( EventType.END_ELEMENT ) || event.isEventType ( EventType.END_DOCUMENT ) );
-		
-		addRule ( event, END_RULE );
-	}
-	
-	public boolean isTerminalRule()
-	{
-		return ( this == END_RULE );
-	}
-	
-	
-	/*
-	 * Do NOT learn per default
-	 * (non-Javadoc)
-	 * @see com.siemens.exi.grammar.rule.Rule#learnStartElement(javax.xml.namespace.QName)
-	 */
-	public void learnStartElement( String uri, String localName ) 
-	{
-	}
-	public void learnEndElement( ) 
-	{
-	}
-	public void learnAttribute( String uri, String localName ) 
-	{
-	}
-	public void learnCharacters( ) 
-	{
+
+	public void addTerminalRule(Event event) {
+		assert (event.isEventType(EventType.END_ELEMENT) || event
+				.isEventType(EventType.END_DOCUMENT));
+
+		addRule(event, END_RULE);
 	}
 
-	
-	public void setLabel(String label)
-	{
+	public boolean isTerminalRule() {
+		return (this == END_RULE);
+	}
+
+	/*
+	 * Do NOT learn per default (non-Javadoc)
+	 * 
+	 * @see
+	 * com.siemens.exi.grammar.rule.Rule#learnStartElement(javax.xml.namespace
+	 * .QName)
+	 */
+	public void learnStartElement(String uri, String localName) {
+	}
+
+	public void learnEndElement() {
+	}
+
+	public void learnAttribute(String uri, String localName) {
+	}
+
+	public void learnCharacters() {
+	}
+
+	public void setLabel(String label) {
 		this.label = label;
 	}
-	
-	public String getLabel()
-	{
-		if ( this.label != null && ! this.label.equals("") ) {
+
+	public String getLabel() {
+		if (this.label != null && !this.label.equals("")) {
 			return this.label;
 		} else {
-			//return this.getClass().getName() + "[" + this.hashCode() + "]";
-			return this.getClass().getSimpleName() + "[" + this.hashCode() + "]";
+			// return this.getClass().getName() + "[" + this.hashCode() + "]";
+			return this.getClass().getSimpleName() + "[" + this.hashCode()
+					+ "]";
 		}
 	}
 
-	
-	
-	public int get3rdLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
+	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions) {
 		int ch3 = 0;
-		
-		if ( ! fidelityOptions.isStrict( ) )
-		{
+
+		if (!fidelityOptions.isStrict()) {
 			// CM
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) )
-			{
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
 				ch3++;
 			}
 			// PI
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PI ) )
-			{
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
 				ch3++;
 			}
 		}
-		
+
 		return ch3;
 	}
-	
-	public int get3rdLevelEventCode( EventType eventType, FidelityOptions fidelityOptions )
-	{
+
+	public int get3rdLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
 		int ec3 = Constants.NOT_FOUND;
-		
-		if ( ! fidelityOptions.isStrict( ) )
-		{
+
+		if (!fidelityOptions.isStrict()) {
 			// CM
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) )
-			{
-				if ( EventType.COMMENT == eventType)
-				{
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
+				if (EventType.COMMENT == eventType) {
 					ec3 = 0;
-				}
-				else if ( EventType.PROCESSING_INSTRUCTION == eventType)
-				{
+				} else if (EventType.PROCESSING_INSTRUCTION == eventType) {
 					ec3 = 1;
 				}
-			} else if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PI ) )
-			{
-				if ( EventType.PROCESSING_INSTRUCTION == eventType)
-				{
+			} else if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
+				if (EventType.PROCESSING_INSTRUCTION == eventType) {
 					ec3 = 0;
 				}
 			}
 		}
-		
+
 		return ec3;
 	}
-	
-	public EventType get3rdLevelEvent( int eventCode, FidelityOptions fidelityOptions )
-	{
-		if ( eventCode == 0 )
-		{
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) )
-			{
+
+	public EventType get3rdLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
+		if (eventCode == 0) {
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
 				return EventType.COMMENT;
-			}
-			else
-			{
+			} else {
 				return EventType.PROCESSING_INSTRUCTION;
 			}
-		}
-		else
-		{
+		} else {
 			return EventType.PROCESSING_INSTRUCTION;
 		}
 	}
 
-
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-	{
-		return ( ! fidelityOptions.isStrict ( ) );
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return (!fidelityOptions.isStrict());
 	}
-	
 
-	protected static int getEventCode ( EventType eventType, List<EventType> events )
-	{
-		for ( int i = 0; i < events.size ( ); i++ )
-		{
-			if ( events.get ( i ).equals ( eventType ) )
-			{
+	protected static int getEventCode(EventType eventType,
+			List<EventType> events) {
+		for (int i = 0; i < events.size(); i++) {
+			if (events.get(i).equals(eventType)) {
 				return i;
 			}
 		}
 
 		return Constants.NOT_FOUND;
 	}
-	
-	public Rule getElementContentRule()
-	{
-		return this;
-	}
-	
-	public Rule getElementContentRuleForUndeclaredSE()
-	{
+
+	public Rule getElementContentRule() {
 		return this;
 	}
 
-	
+	public Rule getElementContentRuleForUndeclaredSE() {
+		return this;
+	}
+
 	@Override
-	public boolean equals ( Object obj )
-	{
-		if ( this == obj )
-		{
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
-		}
-		else if ( obj instanceof Rule )
-		{
-			Rule r = (Rule)obj;
-			
-			int numberOfEvents = r.getNumberOfEvents ( );
-			
-			if ( this.getNumberOfEvents ( ) == numberOfEvents )
-			{
-				for ( int i=0; i<numberOfEvents; i++ )
-				{
-					//EventRule er = r.getEventRuleAt( i );
-					Event ev = r.get1stLevelEvent ( i );
-					
-					//	shallow check
-					//if ( ! er.equals ( this.getEventRuleAt ( i ) ) )
-					if ( ! ev.equals ( this.get1stLevelEvent ( i )  ) )
-					{
+		} else if (obj instanceof Rule) {
+			Rule r = (Rule) obj;
+
+			int numberOfEvents = r.getNumberOfEvents();
+
+			if (this.getNumberOfEvents() == numberOfEvents) {
+				for (int i = 0; i < numberOfEvents; i++) {
+					// EventRule er = r.getEventRuleAt( i );
+					Event ev = r.get1stLevelEvent(i);
+
+					// shallow check
+					// if ( ! er.equals ( this.getEventRuleAt ( i ) ) )
+					if (!ev.equals(this.get1stLevelEvent(i))) {
 						return false;
 					}
 				}
-				
+
 				return true;
 			}
-			
+
 			return false;
 
 		}
-		
+
 		return false;
-		
+
 	}
-	
-	
-	
+
 }

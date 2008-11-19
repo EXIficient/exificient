@@ -76,292 +76,247 @@ import com.siemens.ct.exi.io.block.EncoderByteBlockPreCompression;
  * @version 0.1.20081112
  */
 
-public class DefaultEXIFactory implements EXIFactory
-{
+public class DefaultEXIFactory implements EXIFactory {
 
-	protected Grammar					grammar;
-	protected boolean					isFragment;
-	protected CodingMode				codingMode;
+	protected Grammar grammar;
+	protected boolean isFragment;
+	protected CodingMode codingMode;
 
-	protected FidelityOptions			fidelityOptions;
+	protected FidelityOptions fidelityOptions;
 
-	protected DatatypeRepresentation[]	userDefinedDatatypeRepresentations;
+	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
 
-	protected DefaultEXIFactory ()
-	{
+	protected DefaultEXIFactory() {
 	}
 
-	protected static void setDefaultValues ( EXIFactory factory )
-	{
-		factory.setFidelityOptions ( FidelityOptions.createDefault ( ) );
-		factory.setCodingMode ( CodingMode.BIT_PACKED );
-		factory.setFragment ( false );
-		factory.setGrammar ( GrammarFactory.newInstance ( ).createSchemaLessGrammar ( ) );
+	protected static void setDefaultValues(EXIFactory factory) {
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.setFragment(false);
+		factory.setGrammar(GrammarFactory.newInstance()
+				.createSchemaLessGrammar());
 	}
 
-	public static EXIFactory newInstance ()
-	{
-		EXIFactory factory = new DefaultEXIFactory ( );
+	public static EXIFactory newInstance() {
+		EXIFactory factory = new DefaultEXIFactory();
 
 		// set default values
-		setDefaultValues ( factory );
+		setDefaultValues(factory);
 
 		return factory;
 	}
 
-	public void setFidelityOptions ( FidelityOptions fidelityOptions )
-	{
+	public void setFidelityOptions(FidelityOptions fidelityOptions) {
 		this.fidelityOptions = fidelityOptions;
 	}
 
-	public FidelityOptions getFidelityOptions ()
-	{
+	public FidelityOptions getFidelityOptions() {
 		return fidelityOptions;
 	}
 
-	public void setDatatypeRepresentationMap ( DatatypeRepresentation[] pluggableCodecs )
-	{
+	public void setDatatypeRepresentationMap(
+			DatatypeRepresentation[] pluggableCodecs) {
 		this.userDefinedDatatypeRepresentations = pluggableCodecs;
 	}
 
-	public void setGrammar ( Grammar grammar )
-	{
-		assert ( grammar != null );
+	public void setGrammar(Grammar grammar) {
+		assert (grammar != null);
 
 		this.grammar = grammar;
 	}
 
-	public Grammar getGrammar ()
-	{
+	public Grammar getGrammar() {
 		return this.grammar;
 	}
 
-	protected boolean isSchemaInformed ()
-	{
-		return grammar.isSchemaInformed ( );
+	protected boolean isSchemaInformed() {
+		return grammar.isSchemaInformed();
 	}
 
-	public void setFragment ( boolean isFragment )
-	{
+	public void setFragment(boolean isFragment) {
 		this.isFragment = isFragment;
 	}
 
-	public boolean isFragment ()
-	{
+	public boolean isFragment() {
 		return isFragment;
 	}
 
-	public void setCodingMode ( CodingMode codingMode )
-	{
+	public void setCodingMode(CodingMode codingMode) {
 		this.codingMode = codingMode;
 	}
 
-	public CodingMode getCodingMode ()
-	{
+	public CodingMode getCodingMode() {
 		return this.codingMode;
 	}
 
-	public EXIEncoder createEXIEncoder ()
-	{
+	public EXIEncoder createEXIEncoder() {
 		EXIEncoder encoder;
 
-		if ( isFragment )
-		{
-			encoder = new EXIEncoderFragments ( this );
-		}
-		else
-		{
-			encoder = new EXIEncoderDocument ( this );
+		if (isFragment) {
+			encoder = new EXIEncoderFragments(this);
+		} else {
+			encoder = new EXIEncoderDocument(this);
 		}
 
 		return encoder;
 	}
 
-	public EXIWriter createEXIWriter ()
-	{
-		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PREFIX ) )
-		{
-			return new PrefixSAXEncoder ( this );
-		}
-		else
-		{
-			return new NoPrefixSAXEncoder ( this );
+	public EXIWriter createEXIWriter() {
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+			return new PrefixSAXEncoder(this);
+		} else {
+			return new NoPrefixSAXEncoder(this);
 		}
 	}
 
-	public EXIDecoder createEXIDecoder ()
-	{
+	public EXIDecoder createEXIDecoder() {
 		EXIDecoder decoder;
 
-		if ( isFragment )
-		{
-			if ( codingMode == CodingMode.COMPRESSION || codingMode == CodingMode.PRE_COMPRESSION )
-			{
-				decoder = new EXIDecoderReorderedFragments ( this );
+		if (isFragment) {
+			if (codingMode == CodingMode.COMPRESSION
+					|| codingMode == CodingMode.PRE_COMPRESSION) {
+				decoder = new EXIDecoderReorderedFragments(this);
+			} else {
+				decoder = new EXIDecoderInOrderFragments(this);
 			}
-			else
-			{
-				decoder = new EXIDecoderInOrderFragments ( this );
-			}
-		}
-		else
-		{
-			if ( codingMode.usesRechanneling ( ) )
-			{
-				decoder = new EXIDecoderReorderedDocument ( this );
-			}
-			else
-			{
-				decoder = new EXIDecoderInOrderDocument ( this );
+		} else {
+			if (codingMode.usesRechanneling()) {
+				decoder = new EXIDecoderReorderedDocument(this);
+			} else {
+				decoder = new EXIDecoderInOrderDocument(this);
 			}
 		}
 
 		return decoder;
 	}
 
-	public XMLReader createEXIReader ()
-	{
-		return new SAXDecoder ( this );
+	public XMLReader createEXIReader() {
+		return new SAXDecoder(this);
 	}
 
-	public TypeEncoder createTypeEncoder ()
-	{
+	public TypeEncoder createTypeEncoder() {
 		TypeEncoder typeEncoder;
 
 		// create new type encoder
-		if ( isSchemaInformed ( ) )
-		{
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) )
-			{
+		if (isSchemaInformed()) {
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				// use restricted characters sets
-				typeEncoder = new TypeEncoderLexical ( this );
-			}
-			else
-			{
-				if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
-				{
-					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap ( this );
+				typeEncoder = new TypeEncoderLexical(this);
+			} else {
+				if (userDefinedDatatypeRepresentations != null
+						&& userDefinedDatatypeRepresentations.length > 0) {
+					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap(
+							this);
 
-					for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
-					{
-						enc.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
+					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
+						enc
+								.registerDatatypeRepresentation(userDefinedDatatypeRepresentations[i]);
 					}
 
 					typeEncoder = enc;
-				}
-				else
-				{
-					//	use default type encoders
-					typeEncoder = new TypeEncoderTyped ( this );
+				} else {
+					// use default type encoders
+					typeEncoder = new TypeEncoderTyped(this);
 				}
 			}
 
-		}
-		else
-		{
+		} else {
 			// use string only
-			typeEncoder = new TypeEncoderString ( this );
+			typeEncoder = new TypeEncoderString(this);
 		}
 
 		return typeEncoder;
 	}
-	
-	public TypeDecoder createTypeDecoder ()
-	{
+
+	public TypeDecoder createTypeDecoder() {
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
-		if ( isSchemaInformed ( )  )
-		{
-			if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_LEXICAL_VALUE ) ) 
-			{
-				typeDecoder = new TypeDecoderLexical ( this );
-			}
-			else
-			{
-				if ( userDefinedDatatypeRepresentations != null && userDefinedDatatypeRepresentations.length > 0 )
-				{
-					TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap ( this );
+		if (isSchemaInformed()) {
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+				typeDecoder = new TypeDecoderLexical(this);
+			} else {
+				if (userDefinedDatatypeRepresentations != null
+						&& userDefinedDatatypeRepresentations.length > 0) {
+					TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap(
+							this);
 
-					for ( int i = 0; i < userDefinedDatatypeRepresentations.length; i++ )
-					{
-						dec.registerDatatypeRepresentation ( userDefinedDatatypeRepresentations[i] );
+					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
+						dec
+								.registerDatatypeRepresentation(userDefinedDatatypeRepresentations[i]);
 					}
 
 					typeDecoder = dec;
-				}
-				else
-				{
-					//	use default type decoders
-					typeDecoder = new TypeDecoderTyped ( this );
+				} else {
+					// use default type decoders
+					typeDecoder = new TypeDecoderTyped(this);
 				}
 			}
-		}
-		else
-		{
-			//	strings only
-			typeDecoder = new TypeDecoderString ( this );
+		} else {
+			// strings only
+			typeDecoder = new TypeDecoderString(this);
 		}
 
 		return typeDecoder;
 	}
 
-
-	public EncoderBlock createEncoderBlock ( OutputStream outputStream )
-	{
+	public EncoderBlock createEncoderBlock(OutputStream outputStream) {
 		EncoderBlock encBlock;
 
-		TypeEncoder typeEncoder = this.createTypeEncoder ( );
-		
-		// populate type-encoder string table
-		getGrammar ( ).populateStringTable ( typeEncoder.getStringTable ( ) );
+		TypeEncoder typeEncoder = this.createTypeEncoder();
 
-		switch ( codingMode )
-		{
-			case BIT_PACKED:
-				encBlock = new EncoderBitBlock ( outputStream, typeEncoder );
-				break;
-			case BYTE_PACKED:
-				encBlock = new EncoderByteBlock ( outputStream, typeEncoder );
-				break;
-			case PRE_COMPRESSION:
-				encBlock = new EncoderByteBlockPreCompression ( outputStream, typeEncoder );
-				break;
-			case COMPRESSION:
-				encBlock = new EncoderByteBlockCompression ( outputStream, typeEncoder );
-				break;
-			default:
-				throw new IllegalArgumentException ( "Unknown CodingMode!" );
+		// populate type-encoder string table
+		getGrammar().populateStringTable(typeEncoder.getStringTable());
+
+		switch (codingMode) {
+		case BIT_PACKED:
+			encBlock = new EncoderBitBlock(outputStream, typeEncoder);
+			break;
+		case BYTE_PACKED:
+			encBlock = new EncoderByteBlock(outputStream, typeEncoder);
+			break;
+		case PRE_COMPRESSION:
+			encBlock = new EncoderByteBlockPreCompression(outputStream,
+					typeEncoder);
+			break;
+		case COMPRESSION:
+			encBlock = new EncoderByteBlockCompression(outputStream,
+					typeEncoder);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown CodingMode!");
 		}
 
 		return encBlock;
 	}
 
-	public DecoderBlock createDecoderBlock ( InputStream inputStream ) throws IOException
-	{
+	public DecoderBlock createDecoderBlock(InputStream inputStream)
+			throws IOException {
 		DecoderBlock decBlock;
 
-		TypeDecoder typeDecoder = this.createTypeDecoder ( );
+		TypeDecoder typeDecoder = this.createTypeDecoder();
 
 		// populate type-encoder string table
-		getGrammar ( ).populateStringTable ( typeDecoder.getStringTable ( ) );
+		getGrammar().populateStringTable(typeDecoder.getStringTable());
 
-		switch ( codingMode )
-		{
-			case BIT_PACKED:
-				decBlock = new DecoderBitBlock ( inputStream, typeDecoder );
-				break;
-			case BYTE_PACKED:
-				decBlock = new DecoderByteBlock ( inputStream, typeDecoder );
-				break;
-			case PRE_COMPRESSION:
-				decBlock = new DecoderByteBlockPreCompression ( inputStream, typeDecoder );
-				break;
-			case COMPRESSION:
-				decBlock = new DecoderByteBlockCompression ( inputStream, typeDecoder );
-				break;
-			default:
-				throw new IllegalArgumentException ( "Unknown CodingMode!" );
+		switch (codingMode) {
+		case BIT_PACKED:
+			decBlock = new DecoderBitBlock(inputStream, typeDecoder);
+			break;
+		case BYTE_PACKED:
+			decBlock = new DecoderByteBlock(inputStream, typeDecoder);
+			break;
+		case PRE_COMPRESSION:
+			decBlock = new DecoderByteBlockPreCompression(inputStream,
+					typeDecoder);
+			break;
+		case COMPRESSION:
+			decBlock = new DecoderByteBlockCompression(inputStream, typeDecoder);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown CodingMode!");
 		}
 
 		return decBlock;

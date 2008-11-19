@@ -32,10 +32,10 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20080718
  */
 
-public class StringDatatypeDecoder extends AbstractDatatypeDecoder
-{
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
-	{
-		return decoder.readValueAsString ( dc, namespaceURI, localName  );
+public class StringDatatypeDecoder extends AbstractDatatypeDecoder {
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		return decoder.readValueAsString(dc, namespaceURI, localName);
 	}
 }

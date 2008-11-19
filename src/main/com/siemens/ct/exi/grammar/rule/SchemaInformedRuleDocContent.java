@@ -33,114 +33,91 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
  * @version 0.1.20080718
  */
 
-/* 
+/*
  * <Built-in Document Grammar>
  * 
- * DocContent :
- * 		SE (G 0) DocEnd	0
- * 		SE (G 1) DocEnd	1
- * 		...
- * 		SE (G n-1) DocEnd	n-1
- * 		SE (*) DocEnd	n.0
- * 		DT DocContent	n.1
- * 		CM DocContent	n.2.0
- * 		PI DocContent	n.2.1
+ * DocContent : SE (G 0) DocEnd 0 SE (G 1) DocEnd 1 ... SE (G n-1) DocEnd n-1 SE
+ * () DocEnd n.0 DT DocContent n.1 CM DocContent n.2.0 PI DocContent n.2.1
  */
 
-public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule
-{
+public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule {
 	protected Rule docEnd;
-	
+
 	protected final Event seGeneric;
-	
-	public SchemaInformedRuleDocContent ( Rule docEnd, String label )
-	{
-		super( label );
-		
+
+	public SchemaInformedRuleDocContent(Rule docEnd, String label) {
+		super(label);
+
 		this.docEnd = docEnd;
 		this.seGeneric = new StartElementGeneric();
 	}
-	
-	public SchemaInformedRuleDocContent( Rule docEnd )
-	{
+
+	public SchemaInformedRuleDocContent(Rule docEnd) {
 		this.docEnd = docEnd;
 		this.seGeneric = new StartElementGeneric();
 	}
-	
+
 	@Override
-	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
-	{
-		if ( ec == getNumberOfEvents ( ) )
-		{
+	public Rule get1stLevelRule(int ec) throws IndexOutOfBoundsException {
+		if (ec == getNumberOfEvents()) {
 			return docEnd;
-		}
-		else
-		{
-			return super.get1stLevelRule ( ec );
+		} else {
+			return super.get1stLevelRule(ec);
 		}
 	}
-	
-	public Event get1stLevelEvent ( int eventCode )
-	{
-		if ( eventCode == getNumberOfEvents ( ) )
-		{
+
+	public Event get1stLevelEvent(int eventCode) {
+		if (eventCode == getNumberOfEvents()) {
 			return seGeneric;
-		}
-		else
-		{
-			return super.get1stLevelEvent ( eventCode );
+		} else {
+			return super.get1stLevelEvent(eventCode);
 		}
 	}
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
-		if ( eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED )
-		{
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		if (eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED) {
 			return 0;
-		}
-		else if ( eventType == EventType.DOC_TYPE && fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-		{
+		} else if (eventType == EventType.DOC_TYPE
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return 1;
 		}
-		
+
 		return Constants.NOT_FOUND;
 	}
-	
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
-		if ( eventCode == 0 )
-		{
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
+		if (eventCode == 0) {
 			return EventType.START_ELEMENT_GENERIC_UNDECLARED;
-		}
-		else if ( eventCode == 1 && fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-		{
+		} else if (eventCode == 1
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return EventType.DOC_TYPE;
 		}
-		
+
 		return null;
 	}
-	
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		int ch2 = 1;	// SE(*), in any case e.g. type-cast possible
-		ch2 += fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) ? 1 : 0;
-		
-		ch2 += get3rdLevelCharacteristics ( fidelityOptions ) > 0 ? 1 : 0;
-		
+
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		int ch2 = 1; // SE(*), in any case e.g. type-cast possible
+		ch2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
+				: 0;
+
+		ch2 += get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
+
 		return ch2;
 	}
-	
-	
+
 	@Override
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
-	{
-		//	DocContent contains in any case SE(*) (even in strict mode) 
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		// DocContent contains in any case SE(*) (even in strict mode)
 		return true;
 	}
-	
-	public Rule getElementContentRuleForUndeclaredSE()
-	{
+
+	public Rule getElementContentRuleForUndeclaredSE() {
 		return this.docEnd;
 	}
-	
+
 }

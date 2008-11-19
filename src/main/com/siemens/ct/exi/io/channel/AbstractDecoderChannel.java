@@ -38,27 +38,24 @@ import com.siemens.ct.exi.util.datatype.XSDDatetime;
  * @version 0.1.20081117
  */
 
-public abstract class AbstractDecoderChannel implements DecoderChannel
-{
-	final static int	FLOAT_SPECIAL_VALUES	= -16384;	// -(2^14)
+public abstract class AbstractDecoderChannel implements DecoderChannel {
+	final static int FLOAT_SPECIAL_VALUES = -16384; // -(2^14)
 
-	final StringBuilder	sb;
+	final StringBuilder sb;
 
-	public AbstractDecoderChannel ()
-	{
-		sb = new StringBuilder ( );
+	public AbstractDecoderChannel() {
+		sb = new StringBuilder();
 	}
 
-	public String decodeBinaryAsString () throws IOException
-	{
-		final byte[] b = decodeBinary ( );
+	public String decodeBinaryAsString() throws IOException {
+		final byte[] b = decodeBinary();
 
-		return new String ( XSDBase64.encode ( b ) );
+		return new String(XSDBase64.encode(b));
 	}
 
-	public String decodeBooleanAsString () throws IOException
-	{
-		return ( decodeBoolean ( ) ? Constants.DECODED_BOOLEAN_TRUE : Constants.DECODED_BOOLEAN_FALSE );
+	public String decodeBooleanAsString() throws IOException {
+		return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE
+				: Constants.DECODED_BOOLEAN_FALSE);
 	}
 
 	/**
@@ -66,27 +63,22 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
-	public String decodeString () throws IOException
-	{
-		final int length = decodeUnsignedInteger ( );
-		
+	public String decodeString() throws IOException {
+		final int length = decodeUnsignedInteger();
+
 		// StringBuilder result = new StringBuilder ( length );
-		sb.setLength ( 0 );
+		sb.setLength(0);
 
-		for ( int i = 0; i < length; i++ )
-		{
-			int ch = decodeUnsignedInteger ( );
+		for (int i = 0; i < length; i++) {
+			int ch = decodeUnsignedInteger();
 
-			if ( Character.isSupplementaryCodePoint ( ch ) )
-			{
-				sb.append ( Character.toChars ( ch ) );
-			}
-			else
-			{
-				sb.append ( (char) ch );
+			if (Character.isSupplementaryCodePoint(ch)) {
+				sb.append(Character.toChars(ch));
+			} else {
+				sb.append((char) ch);
 			}
 		}
-		return sb.toString ( );
+		return sb.toString();
 	}
 
 	/**
@@ -98,25 +90,20 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 *            Length of the character sequence to read.
 	 * @return The character sequence as a string.
 	 */
-	public String decodeStringOnly ( int length ) throws IOException
-	{
+	public String decodeStringOnly(int length) throws IOException {
 		// StringBuffer result = new StringBuffer ( length );
-		sb.setLength ( 0 );
+		sb.setLength(0);
 
-		for ( int i = 0; i < length; i++ )
-		{
-			int ch = decodeUnsignedInteger ( );
+		for (int i = 0; i < length; i++) {
+			int ch = decodeUnsignedInteger();
 
-			if ( Character.isSupplementaryCodePoint ( ch ) )
-			{
-				sb.append ( Character.toChars ( ch ) );
-			}
-			else
-			{
-				sb.append ( (char) ch );
+			if (Character.isSupplementaryCodePoint(ch)) {
+				sb.append(Character.toChars(ch));
+			} else {
+				sb.append((char) ch);
 			}
 		}
-		return sb.toString ( );
+		return sb.toString();
 	}
 
 	/**
@@ -125,64 +112,49 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
 	 */
-	public int decodeInteger () throws IOException
-	{
+	public int decodeInteger() throws IOException {
 		// negative integer
-		if ( decodeBoolean ( ) )
-		{
+		if (decodeBoolean()) {
 			// negative
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
-			return ( ( decodeUnsignedInteger ( ) + 1 ) * ( -1 ) );
-		}
-		else
-		{
+			return ((decodeUnsignedInteger() + 1) * (-1));
+		} else {
 			// positive
-			return decodeUnsignedInteger ( );
+			return decodeUnsignedInteger();
 		}
 	}
 
-	public long decodeIntegerAsLong () throws IOException
-	{
+	public long decodeIntegerAsLong() throws IOException {
 		// negative integer
-		if ( decodeBoolean ( ) )
-		{
+		if (decodeBoolean()) {
 			// negative
-			return ( ( decodeUnsignedIntegerAsLong ( ) + 1 ) * ( -1 ) );
-		}
-		else
-		{
+			return ((decodeUnsignedIntegerAsLong() + 1) * (-1));
+		} else {
 			// positive
-			return decodeUnsignedIntegerAsLong ( );
+			return decodeUnsignedIntegerAsLong();
 		}
 	}
 
-	public BigInteger decodeIntegerAsBigInteger () throws IOException
-	{
+	public BigInteger decodeIntegerAsBigInteger() throws IOException {
 		// negative integer
-		if ( decodeBoolean ( ) )
-		{
-			return decodeUnsignedIntegerAsBigInteger ( ).add ( BigInteger.ONE ).negate ( );
-		}
-		else
-		{
-			return decodeUnsignedIntegerAsBigInteger ( );
+		if (decodeBoolean()) {
+			return decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
+					.negate();
+		} else {
+			return decodeUnsignedIntegerAsBigInteger();
 		}
 	}
 
-	public String decodeIntegerAsString () throws IOException
-	{
-		if ( decodeBoolean ( ) )
-		{
+	public String decodeIntegerAsString() throws IOException {
+		if (decodeBoolean()) {
 			// return ( "-" + decodeUnsignedIntegerAsStringPlusOne ( true ) );
-			sb.setLength ( 0 );
-			sb.append ( '-' );
-			sb.append ( decodeUnsignedIntegerAsStringPlusOne ( true ) );
-			return sb.toString ( );
-		}
-		else
-		{
-			return decodeUnsignedIntegerAsString ( );
+			sb.setLength(0);
+			sb.append('-');
+			sb.append(decodeUnsignedIntegerAsStringPlusOne(true));
+			return sb.toString();
+		} else {
+			return decodeUnsignedIntegerAsString();
 		}
 	}
 
@@ -192,106 +164,99 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * indicate sequence termination. Only seven bits per octet are used to
 	 * store the integer's value.
 	 */
-	public int decodeUnsignedInteger () throws IOException
-	{
+	public int decodeUnsignedInteger() throws IOException {
 		int result = 0;
 
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
 		int multiplier = 1;
 		int b;
 
-		do
-		{
+		do {
 			// 1. Read the next octet
-			b = decode ( );
+			b = decode();
 			// 2. Multiply the value of the unsigned number represented by the 7
 			// least significant
 			// bits of the octet by the current multiplier and add the result to
 			// the current value.
-			result += multiplier * ( b & 127 );
+			result += multiplier * (b & 127);
 			// 3. Multiply the multiplier by 128
 			multiplier = multiplier << 7;
 			// 4. If the most significant bit of the octet was 1, go back to
 			// step 1
-		} while ( ( b >>> 7 ) == 1 );
+		} while ((b >>> 7) == 1);
 
 		return result;
 	}
 
-	public long decodeUnsignedIntegerAsLong () throws IOException
-	{
+	public long decodeUnsignedIntegerAsLong() throws IOException {
 		long result = 0;
 
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
 		long multiplier = 1;
 		int b;
 
-		do
-		{
+		do {
 			// 1. Read the next octet
-			b = decode ( );
+			b = decode();
 			// 2. Multiply the value of the unsigned number represented by the 7
 			// least significant
 			// bits of the octet by the current multiplier and add the result to
 			// the current value.
-			result += multiplier * ( b & 127 );
+			result += multiplier * (b & 127);
 			// 3. Multiply the multiplier by 128
 			multiplier = multiplier << 7;
 			// 4. If the most significant bit of the octet was 1, go back to
 			// step 1
-		} while ( ( b >>> 7 ) == 1 );
+		} while ((b >>> 7) == 1);
 
 		return result;
 	}
 
-	public BigInteger decodeUnsignedIntegerAsBigInteger () throws IOException
-	{
+	public BigInteger decodeUnsignedIntegerAsBigInteger() throws IOException {
 		BigInteger result = BigInteger.ZERO;
 
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
 		BigInteger multiplier = BigInteger.ONE;
 		int b;
 
-		do
-		{
+		do {
 			// 1. Read the next octet
-			b = decode ( );
+			b = decode();
 			// 2. Multiply the value of the unsigned number represented by the 7
 			// least significant
 			// bits of the octet by the current multiplier and add the result to
 			// the current value.
-			result = result.add ( multiplier.multiply ( BigInteger.valueOf ( b & 127 ) ) );
+			result = result.add(multiplier
+					.multiply(BigInteger.valueOf(b & 127)));
 			// 3. Multiply the multiplier by 128
-			multiplier = multiplier.shiftLeft ( 7 );
+			multiplier = multiplier.shiftLeft(7);
 			// 4. If the most significant bit of the octet was 1, go back to
 			// step 1
-		} while ( ( b >>> 7 ) == 1 );
+		} while ((b >>> 7) == 1);
 
 		return result;
 	}
 
-	public String decodeUnsignedIntegerAsString () throws IOException
-	{
-		return decodeUnsignedIntegerAsStringPlusOne ( false );
+	public String decodeUnsignedIntegerAsString() throws IOException {
+		return decodeUnsignedIntegerAsStringPlusOne(false);
 	}
 
-	protected String decodeUnsignedIntegerAsStringPlusOne ( boolean addOne ) throws IOException
-	{
+	protected String decodeUnsignedIntegerAsStringPlusOne(boolean addOne)
+			throws IOException {
 		// TODO a better way needed!!
 
-		return addOne ? decodeUnsignedIntegerAsBigInteger ( ).add ( BigInteger.ONE ).toString ( )
-				: decodeUnsignedIntegerAsBigInteger ( ).toString ( );
+		return addOne ? decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
+				.toString() : decodeUnsignedIntegerAsBigInteger().toString();
 	}
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer as string.
 	 */
-	public String decodeNBitUnsignedIntegerAsString ( int n ) throws IOException
-	{
+	public String decodeNBitUnsignedIntegerAsString(int n) throws IOException {
 		// return decodeNBitUnsignedInteger ( n ) + "";
-		sb.setLength ( 0 );
-		sb.append ( decodeNBitUnsignedInteger ( n ) );
-		return sb.toString ( );
+		sb.setLength(0);
+		sb.append(decodeNBitUnsignedInteger(n));
+		return sb.toString();
 	}
 
 	/**
@@ -302,38 +267,38 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public BigDecimal decodeDecimal () throws IOException
-	{
-		boolean negative = decodeBoolean ( );
+	public BigDecimal decodeDecimal() throws IOException {
+		boolean negative = decodeBoolean();
 
-		BigInteger integral = decodeUnsignedIntegerAsBigInteger ( );
-		String sFractional = new StringBuilder ( decodeUnsignedIntegerAsBigInteger ( ).toString ( ) ).reverse ( )
-				.toString ( );
+		BigInteger integral = decodeUnsignedIntegerAsBigInteger();
+		String sFractional = new StringBuilder(
+				decodeUnsignedIntegerAsBigInteger().toString()).reverse()
+				.toString();
 
-		return new BigDecimal ( negative ? "-" + integral + "." + sFractional : integral + "." + sFractional );
+		return new BigDecimal(negative ? "-" + integral + "." + sFractional
+				: integral + "." + sFractional);
 	}
 
-	public String decodeDecimalAsString () throws IOException
-	{
-		boolean negative = decodeBoolean ( );
-		String integral = decodeUnsignedIntegerAsString ( );
-		String sFractional = new StringBuilder ( decodeUnsignedIntegerAsString ( ) ).reverse ( ).toString ( );
+	public String decodeDecimalAsString() throws IOException {
+		boolean negative = decodeBoolean();
+		String integral = decodeUnsignedIntegerAsString();
+		String sFractional = new StringBuilder(decodeUnsignedIntegerAsString())
+				.reverse().toString();
 
 		// return ( negative ? "-" + integral + "." + sFractional : integral +
 		// "." + sFractional );
-		sb.setLength ( 0 );
-		if ( negative )
-		{
+		sb.setLength(0);
+		if (negative) {
 			// "-"
-			sb.append ( '-' );
+			sb.append('-');
 
 		}
 		// integral + "." + sFractional
-		sb.append ( integral );
-		sb.append ( '.' );
-		sb.append ( sFractional );
+		sb.append(integral);
+		sb.append('.');
+		sb.append(sFractional);
 
-		return sb.toString ( );
+		return sb.toString();
 	}
 
 	/**
@@ -341,60 +306,42 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public float decodeFloat () throws IOException
-	{
-		int iMantissa = decodeInteger ( );
-		int iExponent = decodeInteger ( );
+	public float decodeFloat() throws IOException {
+		int iMantissa = decodeInteger();
+		int iExponent = decodeInteger();
 
-		if ( iExponent == FLOAT_SPECIAL_VALUES )
-		{
-			if ( iMantissa == -1 )
-			{
+		if (iExponent == FLOAT_SPECIAL_VALUES) {
+			if (iMantissa == -1) {
 				return Float.NEGATIVE_INFINITY;
-			}
-			else if ( iMantissa == 1 )
-			{
+			} else if (iMantissa == 1) {
 				return Float.POSITIVE_INFINITY;
-			}
-			else
-			{
+			} else {
 				return Float.NaN;
 			}
-		}
-		else
-		{
-			return Float.parseFloat ( iMantissa + "E" + iExponent );
+		} else {
+			return Float.parseFloat(iMantissa + "E" + iExponent);
 		}
 	}
 
-	public String decodeFloatAsString () throws IOException
-	{
-		long iMantissa = decodeIntegerAsLong ( );
-		long iExponent = decodeIntegerAsLong ( );
+	public String decodeFloatAsString() throws IOException {
+		long iMantissa = decodeIntegerAsLong();
+		long iExponent = decodeIntegerAsLong();
 
-		if ( iExponent == FLOAT_SPECIAL_VALUES )
-		{
-			if ( iMantissa == -1 )
-			{
+		if (iExponent == FLOAT_SPECIAL_VALUES) {
+			if (iMantissa == -1) {
 				return "-INF";
-			}
-			else if ( iMantissa == 1 )
-			{
+			} else if (iMantissa == 1) {
 				return "INF";
-			}
-			else
-			{
+			} else {
 				return "NaN";
 			}
-		}
-		else
-		{
+		} else {
 			// return iMantissa + "E" + iExponent;
-			sb.setLength ( 0 );
-			sb.append ( iMantissa );
-			sb.append ( 'E' );
-			sb.append ( iExponent );
-			return sb.toString ( );
+			sb.setLength(0);
+			sb.append(iMantissa);
+			sb.append('E');
+			sb.append(iExponent);
+			return sb.toString();
 		}
 	}
 
@@ -402,139 +349,170 @@ public abstract class AbstractDecoderChannel implements DecoderChannel
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public Calendar decodeDateTime ( DatetimeType type ) throws IOException
-	{
-		Calendar cal = Calendar.getInstance ( );
-		cal.clear ( );
+	public Calendar decodeDateTime(DatetimeType type) throws IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
 
-		switch ( type )
-		{
-			case gYear: // gYear Year, [Time-Zone]
-				cal.set ( Calendar.YEAR, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				decodeDateTimeTimezone ( cal );
-				break;
-			case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-			case date: // date Year, MonthDay, [TimeZone]
-				cal.set ( Calendar.YEAR, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				XSDDatetime.setMonthDay ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ), cal );
-				decodeDateTimeTimezone ( cal );
-				break;
-			case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
-				// [TimeZone]
-				cal.set ( Calendar.YEAR, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				XSDDatetime.setMonthDay ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ), cal );
-				XSDDatetime.setTime ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIME ), cal );
-				decodeDateTimeFractionalSecs ( cal );
-				decodeDateTimeTimezone ( cal );
-				break;
-			case gMonth: // gMonth MonthDay, [TimeZone]
-			case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-			case gDay: // gDay MonthDay, [TimeZone]
-				XSDDatetime.setMonthDay ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ), cal );
-				decodeDateTimeTimezone ( cal );
-				break;
-			case time: // time Time, [FractionalSecs], [TimeZone]
-				XSDDatetime.setTime ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIME ), cal );
-				decodeDateTimeFractionalSecs ( cal );
-				decodeDateTimeTimezone ( cal );
-				break;
-			default:
-				throw new UnsupportedOperationException ( );
+		switch (type) {
+		case gYear: // gYear Year, [Time-Zone]
+			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
+			decodeDateTimeTimezone(cal);
+			break;
+		case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
+		case date: // date Year, MonthDay, [TimeZone]
+			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
+			XSDDatetime
+					.setMonthDay(
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
+							cal);
+			decodeDateTimeTimezone(cal);
+			break;
+		case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
+			// [TimeZone]
+			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
+			XSDDatetime
+					.setMonthDay(
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
+							cal);
+			XSDDatetime.setTime(
+					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME),
+					cal);
+			decodeDateTimeFractionalSecs(cal);
+			decodeDateTimeTimezone(cal);
+			break;
+		case gMonth: // gMonth MonthDay, [TimeZone]
+		case gMonthDay: // gMonthDay MonthDay, [TimeZone]
+		case gDay: // gDay MonthDay, [TimeZone]
+			XSDDatetime
+					.setMonthDay(
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
+							cal);
+			decodeDateTimeTimezone(cal);
+			break;
+		case time: // time Time, [FractionalSecs], [TimeZone]
+			XSDDatetime.setTime(
+					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME),
+					cal);
+			decodeDateTimeFractionalSecs(cal);
+			decodeDateTimeTimezone(cal);
+			break;
+		default:
+			throw new UnsupportedOperationException();
 		}
 
 		return cal;
 	}
 
-	public String decodeDateTimeAsString ( DatetimeType type ) throws IOException
-	{
+	public String decodeDateTimeAsString(DatetimeType type) throws IOException {
 		// StringBuilder sbCal = new StringBuilder ( );
-		sb.setLength ( 0 );
-		
-		switch ( type )
-		{
-			case gYear: // gYear Year, [Time-Zone]
-				XSDDatetime.appendYear ( sb, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-				XSDDatetime.appendYear ( sb, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				XSDDatetime.appendMonth ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case date: // date Year, MonthDay, [TimeZone]
-				XSDDatetime.appendYear ( sb, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				XSDDatetime.appendMonthDay ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
-				// [TimeZone]
-				XSDDatetime.appendYear ( sb, decodeInteger ( ) + XSDDatetime.YEAR_OFFSET );
-				XSDDatetime.appendMonthDay ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				sb.append ( 'T' );
-				XSDDatetime.appendTime ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIME ) );
-				decodeDateTimeFractionalSecs ( sb );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case gMonth: // gMonth MonthDay, [TimeZone]
-				sb.append ( '-' );
-				XSDDatetime.appendMonth ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-				sb.append ( '-' );
-				XSDDatetime.appendMonthDay ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case gDay: // gDay MonthDay, [TimeZone]
-				sb.append ( '-' );
-				sb.append ( '-' );
-				XSDDatetime.appendDay ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_MONTHDAY ) );
-				decodeDateTimeTimezone ( sb );
-				break;
-			case time: // time Time, [FractionalSecs], [TimeZone]
-				XSDDatetime.appendTime ( sb, decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIME ) );
-				decodeDateTimeFractionalSecs ( sb );
-				decodeDateTimeTimezone ( sb );
-				break;
-			default:
-				throw new UnsupportedOperationException ( );
+		sb.setLength(0);
+
+		switch (type) {
+		case gYear: // gYear Year, [Time-Zone]
+			XSDDatetime.appendYear(sb, decodeInteger()
+					+ XSDDatetime.YEAR_OFFSET);
+			decodeDateTimeTimezone(sb);
+			break;
+		case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
+			XSDDatetime.appendYear(sb, decodeInteger()
+					+ XSDDatetime.YEAR_OFFSET);
+			XSDDatetime
+					.appendMonth(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			decodeDateTimeTimezone(sb);
+			break;
+		case date: // date Year, MonthDay, [TimeZone]
+			XSDDatetime.appendYear(sb, decodeInteger()
+					+ XSDDatetime.YEAR_OFFSET);
+			XSDDatetime
+					.appendMonthDay(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			decodeDateTimeTimezone(sb);
+			break;
+		case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
+			// [TimeZone]
+			XSDDatetime.appendYear(sb, decodeInteger()
+					+ XSDDatetime.YEAR_OFFSET);
+			XSDDatetime
+					.appendMonthDay(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			sb.append('T');
+			XSDDatetime.appendTime(sb,
+					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME));
+			decodeDateTimeFractionalSecs(sb);
+			decodeDateTimeTimezone(sb);
+			break;
+		case gMonth: // gMonth MonthDay, [TimeZone]
+			sb.append('-');
+			XSDDatetime
+					.appendMonth(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			decodeDateTimeTimezone(sb);
+			break;
+		case gMonthDay: // gMonthDay MonthDay, [TimeZone]
+			sb.append('-');
+			XSDDatetime
+					.appendMonthDay(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			decodeDateTimeTimezone(sb);
+			break;
+		case gDay: // gDay MonthDay, [TimeZone]
+			sb.append('-');
+			sb.append('-');
+			XSDDatetime
+					.appendDay(
+							sb,
+							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY));
+			decodeDateTimeTimezone(sb);
+			break;
+		case time: // time Time, [FractionalSecs], [TimeZone]
+			XSDDatetime.appendTime(sb,
+					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME));
+			decodeDateTimeFractionalSecs(sb);
+			decodeDateTimeTimezone(sb);
+			break;
+		default:
+			throw new UnsupportedOperationException();
 		}
 
-		return sb.toString ( );
+		return sb.toString();
 	}
 
-	private void decodeDateTimeTimezone ( Calendar cal ) throws IOException
-	{
+	private void decodeDateTimeTimezone(Calendar cal) throws IOException {
 		int tz = 0;
 
-		if ( decodeBoolean ( ) )
-		{
-			tz = XSDDatetime.getTimeZoneInMillisecs ( decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIMEZONE )
-					- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES );
+		if (decodeBoolean()) {
+			tz = XSDDatetime
+					.getTimeZoneInMillisecs(decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIMEZONE)
+							- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES);
 		}
 
-		TimeZone tzO = TimeZone.getTimeZone ( "GMT+00:00" );
-		tzO.setRawOffset ( tz );
-		cal.setTimeZone ( tzO );
+		TimeZone tzO = TimeZone.getTimeZone("GMT+00:00");
+		tzO.setRawOffset(tz);
+		cal.setTimeZone(tzO);
 	}
 
-	private void decodeDateTimeTimezone ( StringBuilder sbCal ) throws IOException
-	{
-		if ( decodeBoolean ( ) )
-		{
-			int tz = decodeNBitUnsignedInteger ( XSDDatetime.NUMBER_BITS_TIMEZONE )
+	private void decodeDateTimeTimezone(StringBuilder sbCal) throws IOException {
+		if (decodeBoolean()) {
+			int tz = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIMEZONE)
 					- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES;
-			XSDDatetime.appendTimezone ( sbCal, tz );
+			XSDDatetime.appendTimezone(sbCal, tz);
 		}
 	}
 
-	private void decodeDateTimeFractionalSecs ( Calendar cal ) throws IOException
-	{
-		cal.set ( Calendar.MILLISECOND, decodeBoolean ( ) ? decodeUnsignedInteger ( ) : 0 );
+	private void decodeDateTimeFractionalSecs(Calendar cal) throws IOException {
+		cal.set(Calendar.MILLISECOND, decodeBoolean() ? decodeUnsignedInteger()
+				: 0);
 	}
 
-	private void decodeDateTimeFractionalSecs ( StringBuilder sbCal ) throws IOException
-	{
-		XSDDatetime.appendFractionalSeconds ( sbCal, decodeBoolean ( ) ? decodeUnsignedInteger ( ) : 0 );
+	private void decodeDateTimeFractionalSecs(StringBuilder sbCal)
+			throws IOException {
+		XSDDatetime.appendFractionalSeconds(sbCal,
+				decodeBoolean() ? decodeUnsignedInteger() : 0);
 	}
 }

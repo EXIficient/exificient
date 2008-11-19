@@ -36,15 +36,17 @@ import com.siemens.ct.exi.core.CompileConfiguration;
  * @version 0.1.20080718
  */
 
-public class CompressionUtilities
-{
-	public static DeflaterOutputStream createDeflaterOutputStream( OutputStream outputStream )
-	{
-		return new DeflaterOutputStream( outputStream, new Deflater( CompileConfiguration.COMPRESSION_LEVEL, CompileConfiguration.DEFLATE_NOWRAP ) );
+public class CompressionUtilities {
+	public static DeflaterOutputStream createDeflaterOutputStream(
+			OutputStream outputStream) {
+		return new DeflaterOutputStream(outputStream, new Deflater(
+				CompileConfiguration.COMPRESSION_LEVEL,
+				CompileConfiguration.DEFLATE_NOWRAP));
 	}
-	
-	public static InflaterInputStream createInflaterInputStream( InputStream inputStream )
-	{
-		return new InflaterInputStream( inputStream, new Inflater( CompileConfiguration.DEFLATE_NOWRAP ) );
+
+	public static InflaterInputStream createInflaterInputStream(
+			InputStream inputStream) {
+		return new InflaterInputStream(inputStream, new Inflater(
+				CompileConfiguration.DEFLATE_NOWRAP));
 	}
 }

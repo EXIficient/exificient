@@ -27,31 +27,26 @@ package com.siemens.ct.exi.exceptions;
  * @version 0.1.20080718
  */
 
-public class EXIException extends Exception
-{
+public class EXIException extends Exception {
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -8954797101782288026L;
+	private static final long serialVersionUID = -8954797101782288026L;
 
-	public EXIException ( )
-	{
-		super( );
-	}
-	
-	public EXIException ( String message )
-	{
-		super ( message );
+	public EXIException() {
+		super();
 	}
 
-	public EXIException ( String message, Throwable cause )
-	{
-		super ( message, cause );
+	public EXIException(String message) {
+		super(message);
 	}
 
-	public EXIException ( Throwable cause )
-	{
-		super ( cause );
+	public EXIException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public EXIException(Throwable cause) {
+		super(cause);
 	}
 
 }

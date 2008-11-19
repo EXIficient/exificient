@@ -29,11 +29,9 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DatatypeBoolean extends AbstractDatatype
-{
-	public DatatypeBoolean( ExpandedName datatypeIdentifier )
-	{
-		super( BuiltInType.BUILTIN_BOOLEAN, datatypeIdentifier );
+public class DatatypeBoolean extends AbstractDatatype {
+	public DatatypeBoolean(ExpandedName datatypeIdentifier) {
+		super(BuiltInType.BUILTIN_BOOLEAN, datatypeIdentifier);
 	}
 
 }

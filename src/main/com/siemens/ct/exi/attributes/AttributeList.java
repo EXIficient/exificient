@@ -32,47 +32,54 @@ import org.xml.sax.Attributes;
  * @version 0.1.20080919
  */
 
-public interface AttributeList
-{
+public interface AttributeList {
 	/*
 	 * Initialization Method
 	 */
-	//	SAX
-	public void parse ( Attributes attributes, Map<String, String> prefixMapping );
-	//	DOM
-	public void parse( NamedNodeMap attributes );
+	// SAX
+	public void parse(Attributes attributes, Map<String, String> prefixMapping);
 
+	// DOM
+	public void parse(NamedNodeMap attributes);
 
 	/*
 	 * XSI-Type
 	 */
-	public boolean hasXsiType ();
-	public String getXsiTypeURI ();
-	public String getXsiTypeLocalName ();
-	public String getXsiTypeRaw ();
+	public boolean hasXsiType();
+
+	public String getXsiTypeURI();
+
+	public String getXsiTypeLocalName();
+
+	public String getXsiTypeRaw();
 
 	/*
 	 * XSI-Nil
 	 */
-	public boolean hasXsiNil ();
-	public String getXsiNil ();
+	public boolean hasXsiNil();
+
+	public String getXsiNil();
 
 	/*
 	 * Namespace Declarations
 	 */
-	public int getNumberOfNamespaceDeclarations ();
-	public String getNamespaceDeclarationURI ( int index );
-	public String getNamespaceDeclarationPrefix ( int index );
+	public int getNumberOfNamespaceDeclarations();
 
-	
+	public String getNamespaceDeclarationURI(int index);
+
+	public String getNamespaceDeclarationPrefix(int index);
+
 	/*
 	 * Attributes
 	 */
-	public int getNumberOfAttributes ();
-	public String getAttributeURI ( int index );
-	public String getAttributeLocalName ( int index );
-	public String getAttributeValue ( int index );
-	public String getAttributePrefix ( int index );
+	public int getNumberOfAttributes();
 
+	public String getAttributeURI(int index);
+
+	public String getAttributeLocalName(int index);
+
+	public String getAttributeValue(int index);
+
+	public String getAttributePrefix(int index);
 
 }

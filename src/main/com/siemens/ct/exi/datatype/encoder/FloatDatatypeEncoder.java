@@ -34,33 +34,27 @@ import com.siemens.ct.exi.util.datatype.XSDFloat;
  * @version 0.1.20080718
  */
 
-public class FloatDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDFloat	lastValidFloat = XSDFloat.newInstance ( );
+public class FloatDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	private XSDFloat lastValidFloat = XSDFloat.newInstance();
 
-	
-	public FloatDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+	public FloatDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastValidFloat.parse ( value );
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastValidFloat.parse(value);
 
 			return true;
-		}
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeFloat ( lastValidFloat );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeFloat(lastValidFloat);
 	}
 
 }

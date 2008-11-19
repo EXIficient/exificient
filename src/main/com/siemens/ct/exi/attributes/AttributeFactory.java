@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.attributes;
 
-
 /**
  * TODO Description
  * 
@@ -28,25 +27,18 @@ package com.siemens.ct.exi.attributes;
  * @version 0.1.20080924
  */
 
-public class AttributeFactory
-{
-	protected AttributeFactory()
-	{
+public class AttributeFactory {
+	protected AttributeFactory() {
 	}
-	
-	public static AttributeFactory newInstance ()
-	{
-		return new AttributeFactory ( );
+
+	public static AttributeFactory newInstance() {
+		return new AttributeFactory();
 	}
-	
-	public AttributeList createAttributeListInstance( boolean schemaInformed )
-	{
-		if ( schemaInformed )
-		{
+
+	public AttributeList createAttributeListInstance(boolean schemaInformed) {
+		if (schemaInformed) {
 			return new SchemaInformedAttributeList();
-		}
-		else
-		{
+		} else {
 			return new SchemaLessAttributeList();
 		}
 	}

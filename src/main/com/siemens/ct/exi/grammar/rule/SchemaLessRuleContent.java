@@ -35,72 +35,65 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.1.20081104
  */
 
-public abstract class SchemaLessRuleContent extends AbstractSchemaLessRule
-{
-	protected static Map<FidelityOptions, List<EventType>>	optionsStartTag;
-	protected static Map<FidelityOptions, List<EventType>>	optionsChildContent;
+public abstract class SchemaLessRuleContent extends AbstractSchemaLessRule {
+	protected static Map<FidelityOptions, List<EventType>> optionsStartTag;
+	protected static Map<FidelityOptions, List<EventType>> optionsChildContent;
 
-	static
-	{
-		optionsStartTag = new HashMap<FidelityOptions, List<EventType>> ( );
-		optionsChildContent = new HashMap<FidelityOptions, List<EventType>> ( );
+	static {
+		optionsStartTag = new HashMap<FidelityOptions, List<EventType>>();
+		optionsChildContent = new HashMap<FidelityOptions, List<EventType>>();
 	}
 
+	protected static List<EventType> get2ndLevelEventsStartTagItems(
+			FidelityOptions fidelityOptions) {
+		if (!optionsStartTag.containsKey(fidelityOptions)) {
+			List<EventType> events = new ArrayList<EventType>();
 
-	protected static List<EventType> get2ndLevelEventsStartTagItems ( FidelityOptions fidelityOptions )
-	{
-		if ( !optionsStartTag.containsKey ( fidelityOptions ) )
-		{
-			List<EventType> events = new ArrayList<EventType> ( );
-
-			if ( !fidelityOptions.isStrict ( ) )
-			{
+			if (!fidelityOptions.isStrict()) {
 				// extensibility: EE, AT(*)
-				events.add ( EventType.END_ELEMENT_UNDECLARED );
-				events.add ( EventType.ATTRIBUTE_GENERIC_UNDECLARED );
+				events.add(EventType.END_ELEMENT_UNDECLARED);
+				events.add(EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 
 				// NS
-				if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PREFIX ) )
-				{
-					events.add ( EventType.NAMESPACE_DECLARATION );
+				if (fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+					events.add(EventType.NAMESPACE_DECLARATION);
 				}
 				// SC
-				if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_SC ) )
-				{
-					events.add ( EventType.SELF_CONTAINED );
+				if (fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+					events.add(EventType.SELF_CONTAINED);
 				}
 			}
 
-			optionsStartTag.put ( fidelityOptions, events );
+			optionsStartTag.put(fidelityOptions, events);
 		}
 
-		return optionsStartTag.get ( fidelityOptions );
+		return optionsStartTag.get(fidelityOptions);
 	}
 
-	protected static List<EventType> get2ndLevelEventsChildContentItems ( FidelityOptions fidelityOptions )
-	{
-		if ( !optionsChildContent.containsKey ( fidelityOptions ) )
-		{
-			List<EventType> events = new ArrayList<EventType> ( );
+	protected static List<EventType> get2ndLevelEventsChildContentItems(
+			FidelityOptions fidelityOptions) {
+		if (!optionsChildContent.containsKey(fidelityOptions)) {
+			List<EventType> events = new ArrayList<EventType>();
 
-			if ( !fidelityOptions.isStrict ( ) )
-			{
+			if (!fidelityOptions.isStrict()) {
 				// extensibility: SE(*), CH
-				events.add ( EventType.START_ELEMENT_GENERIC_UNDECLARED );
-				events.add ( EventType.CHARACTERS_GENERIC_UNDECLARED );
+				events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
 
 				// ER
-				if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-				{
-					events.add ( EventType.ENTITY_REFERENCE );
+				if (fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+					events.add(EventType.ENTITY_REFERENCE);
 				}
 
 			}
 
-			optionsChildContent.put ( fidelityOptions, events );
+			optionsChildContent.put(fidelityOptions, events);
 		}
 
-		return optionsChildContent.get ( fidelityOptions );
+		return optionsChildContent.get(fidelityOptions);
 	}
 
 }

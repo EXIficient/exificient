@@ -45,80 +45,71 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20080718
  */
 
-public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
-{
-	protected EXIEncoder			encoder;
+public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
+	protected EXIEncoder encoder;
 
 	// buffers the characters of the characters() callback
-	protected StringBuilder			sbChars;
+	protected StringBuilder sbChars;
 
 	// encodes collected char callbacks
-	protected CharactersEncoder		charEncoder;
+	protected CharactersEncoder charEncoder;
 
-	protected Map<String, String>	globalPrefixMapping;
+	protected Map<String, String> globalPrefixMapping;
 
 	// attributes
-	private AttributeList			exiAttributes;
+	private AttributeList exiAttributes;
 
-	public NoPrefixSAXEncoder ( EXIFactory factory )
-	{
-		this.encoder = factory.createEXIEncoder ( );
+	public NoPrefixSAXEncoder(EXIFactory factory) {
+		this.encoder = factory.createEXIEncoder();
 
 		// initialize
-		sbChars = new StringBuilder ( );
-		globalPrefixMapping = new HashMap<String, String> ( );
+		sbChars = new StringBuilder();
+		globalPrefixMapping = new HashMap<String, String>();
 
 		// whitespace characters required ?
-		if ( factory.getFidelityOptions ( ).isFidelityEnabled ( FidelityOptions.FEATURE_WS ) )
-		{
-			charEncoder = new WSCharactersEncoder ( encoder, sbChars );
-		}
-		else
-		{
-			charEncoder = new NoWSCharactersEncoder ( encoder, sbChars );
+		if (factory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_WS)) {
+			charEncoder = new WSCharactersEncoder(encoder, sbChars);
+		} else {
+			charEncoder = new NoWSCharactersEncoder(encoder, sbChars);
 		}
 
 		// attribute list
-		boolean isSchemaInformed = factory.getGrammar ( ).isSchemaInformed ( );
-		AttributeFactory attFactory = AttributeFactory.newInstance ( );
-		exiAttributes = attFactory.createAttributeListInstance ( isSchemaInformed );
+		boolean isSchemaInformed = factory.getGrammar().isSchemaInformed();
+		AttributeFactory attFactory = AttributeFactory.newInstance();
+		exiAttributes = attFactory
+				.createAttributeListInstance(isSchemaInformed);
 	}
 
-	public void setOutput ( OutputStream os ) throws EXIException
-	{
-		encoder.setOutput ( os );
-	}
-
-	@Override
-	public void startPrefixMapping ( String prefix, String uri ) throws SAXException
-	{
-		globalPrefixMapping.put ( prefix, uri );
+	public void setOutput(OutputStream os) throws EXIException {
+		encoder.setOutput(os);
 	}
 
 	@Override
-	public void endPrefixMapping ( String prefix ) throws SAXException
-	{
-		globalPrefixMapping.remove ( prefix );
+	public void startPrefixMapping(String prefix, String uri)
+			throws SAXException {
+		globalPrefixMapping.put(prefix, uri);
 	}
 
-	public void startElement ( String uri, String local, String raw, Attributes attributes ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	@Override
+	public void endPrefixMapping(String prefix) throws SAXException {
+		globalPrefixMapping.remove(prefix);
+	}
+
+	public void startElement(String uri, String local, String raw,
+			Attributes attributes) throws SAXException {
+		try {
+			checkPendingCharacters();
 
 			// no prefix mapping
-			encoder.encodeStartElement ( uri, local );
+			encoder.encodeStartElement(uri, local);
 
 			// attributes
-			if ( attributes != null && attributes.getLength ( ) > 0 )
-			{
-				handleAttributes ( attributes );
+			if (attributes != null && attributes.getLength() > 0) {
+				handleAttributes(attributes);
 			}
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "startElement: " + raw, e );
+		} catch (EXIException e) {
+			throw new SAXException("startElement: " + raw, e);
 		}
 
 	}
@@ -136,11 +127,9 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 	 * grammars are used, attribute events can occur in any order. Namespace
 	 * (NS) events can occur in any order regardless of the grammars used for
 	 * processing the associated element.
-	 * 
 	 */
-	protected void handleAttributes ( Attributes attributes ) throws EXIException
-	{
-		exiAttributes.parse ( attributes, this.globalPrefixMapping );
+	protected void handleAttributes(Attributes attributes) throws EXIException {
+		exiAttributes.parse(attributes, this.globalPrefixMapping);
 
 		// TODO remove NS event & use start/end PrefixMapping only
 		// 1. Namespace Declarations
@@ -153,179 +142,140 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter
 		// }
 
 		// 2. XSI-Type
-		if ( exiAttributes.hasXsiType ( ) )
-		{
-			encoder.encodeXsiType ( exiAttributes.getXsiTypeURI ( ), exiAttributes.getXsiTypeLocalName ( ),
-					exiAttributes.getXsiTypeRaw ( ) );
+		if (exiAttributes.hasXsiType()) {
+			encoder.encodeXsiType(exiAttributes.getXsiTypeURI(), exiAttributes
+					.getXsiTypeLocalName(), exiAttributes.getXsiTypeRaw());
 		}
 
 		// 3. XSI-Nil
-		if ( exiAttributes.hasXsiNil ( ) )
-		{
-			encoder.encodeXsiNil ( exiAttributes.getXsiNil ( ) );
+		if (exiAttributes.hasXsiNil()) {
+			encoder.encodeXsiNil(exiAttributes.getXsiNil());
 		}
 
 		// 4. Remaining Attributes
 		// TODO AT prefix encoding
-		for ( int i = 0; i < exiAttributes.getNumberOfAttributes ( ); i++ )
-		{
-			encoder.encodeAttribute ( exiAttributes.getAttributeURI ( i ), exiAttributes.getAttributeLocalName ( i ),
-					exiAttributes.getAttributeValue ( i ) );
+		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
+			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
+					exiAttributes.getAttributeLocalName(i), exiAttributes
+							.getAttributeValue(i));
 		}
 	}
 
 	/* Interface DefaultHandler */
-	public void setDocumentLocator ( Locator loc )
-	{
+	public void setDocumentLocator(Locator loc) {
 	}
 
-	public void startDocument () throws SAXException
-	{
-		try
-		{
-			encoder.encodeStartDocument ( );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "startDocument", e );
+	public void startDocument() throws SAXException {
+		try {
+			encoder.encodeStartDocument();
+		} catch (EXIException e) {
+			throw new SAXException("startDocument", e);
 		}
 	}
 
-	public void endDocument () throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void endDocument() throws SAXException {
+		try {
+			checkPendingCharacters();
 
-			encoder.encodeEndDocument ( );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "endDocument", e );
+			encoder.encodeEndDocument();
+		} catch (EXIException e) {
+			throw new SAXException("endDocument", e);
 		}
 	}
 
-	public void processingInstruction ( String target, String data ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void processingInstruction(String target, String data)
+			throws SAXException {
+		try {
+			checkPendingCharacters();
 
-			encoder.encodeProcessingInstruction ( target, data );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "processingInstruction", e );
+			encoder.encodeProcessingInstruction(target, data);
+		} catch (EXIException e) {
+			throw new SAXException("processingInstruction", e);
 		}
 	}
 
-	public void endElement ( String uri, String local, String raw ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void endElement(String uri, String local, String raw)
+			throws SAXException {
+		try {
+			checkPendingCharacters();
 
-			encoder.encodeEndElement ( );
-		}
-		catch ( EXIException e )
-		{
+			encoder.encodeEndElement();
+		} catch (EXIException e) {
 
-			throw new SAXException ( "endElement=" + raw, e );
+			throw new SAXException("endElement=" + raw, e);
 		}
 	}
 
 	@Override
-	public void characters ( char[] ch, int start, int length ) throws SAXException
-	{
-		sbChars.append ( ch, start, length );
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
+		sbChars.append(ch, start, length);
 	}
 
-	protected void checkPendingCharacters () throws EXIException
-	{
-		charEncoder.checkPendingChars ( );
+	protected void checkPendingCharacters() throws EXIException {
+		charEncoder.checkPendingChars();
 	}
 
-	public void ignorableWhitespace ( char[] ch, int start, int length ) throws SAXException
-	{
+	public void ignorableWhitespace(char[] ch, int start, int length)
+			throws SAXException {
 		// SAX is very clear that ignorableWhitespace is only called for
 		// "element-content-whitespace"s, which is defined in the context of
 		// DTD." +"
 		// [http://mail-archives.apache.org/mod_mbox/xerces-j-dev/200402.mbox/%3C20040202160336.9569.qmail@nagoya.betaversion.org%3E]
 	}
 
-	public void warning ( SAXParseException e )
-	{
+	public void warning(SAXParseException e) {
 		// TODO Logging of warnings anyway ?
 	}
 
 	/* Interface LexicalHandler */
-	public void comment ( char[] ch, int start, int length ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void comment(char[] ch, int start, int length) throws SAXException {
+		try {
+			checkPendingCharacters();
 
-			encoder.encodeComment ( ch, start, length );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "comment", e );
+			encoder.encodeComment(ch, start, length);
+		} catch (EXIException e) {
+			throw new SAXException("comment", e);
 		}
 	}
 
-	public void startCDATA () throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "startCDATA", e );
+	public void startCDATA() throws SAXException {
+		try {
+			checkPendingCharacters();
+		} catch (EXIException e) {
+			throw new SAXException("startCDATA", e);
 		}
 	}
 
-	public void endCDATA () throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void endCDATA() throws SAXException {
+		try {
+			checkPendingCharacters();
 
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "endCDATA", e );
+		} catch (EXIException e) {
+			throw new SAXException("endCDATA", e);
 		}
 	}
 
-	public void startDTD ( String name, String publicId, String systemId ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
-		}
-		catch ( EXIException e )
-		{
-			throw new SAXException ( "startDTD", e );
+	public void startDTD(String name, String publicId, String systemId)
+			throws SAXException {
+		try {
+			checkPendingCharacters();
+		} catch (EXIException e) {
+			throw new SAXException("startDTD", e);
 		}
 	}
 
-	public void endDTD () throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
-		}
-		catch ( Exception e )
-		{
-			throw new SAXException ( "endDTD", e );
+	public void endDTD() throws SAXException {
+		try {
+			checkPendingCharacters();
+		} catch (Exception e) {
+			throw new SAXException("endDTD", e);
 		}
 
 	}
 
 	/* Interface ErrorHandler */
-	public void error ( SAXParseException ex )
-	{
+	public void error(SAXParseException ex) {
 		// TODO Should error logging be done anyway ?
 	}
 

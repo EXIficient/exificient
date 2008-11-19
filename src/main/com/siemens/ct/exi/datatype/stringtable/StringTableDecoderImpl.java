@@ -34,168 +34,163 @@ import com.siemens.ct.exi.Constants;
  * @version 0.1.20080915
  */
 
-public class StringTableDecoderImpl extends AbstractStringTable implements StringTableDecoder
-{
-	protected StringTablePartitionDecoder								uriPartition;
-	protected Map<String, StringTablePartitionDecoder>					prefixPartitions;
-	protected Map<String, StringTablePartitionDecoder>					localNamePartitions;
+public class StringTableDecoderImpl extends AbstractStringTable implements
+		StringTableDecoder {
+	protected StringTablePartitionDecoder uriPartition;
+	protected Map<String, StringTablePartitionDecoder> prefixPartitions;
+	protected Map<String, StringTablePartitionDecoder> localNamePartitions;
 
-	protected Map<String, HashMap<String, StringTablePartitionDecoder>>	localValuePartitions;
-	protected StringTablePartitionDecoder								globalValuePartition;
+	protected Map<String, HashMap<String, StringTablePartitionDecoder>> localValuePartitions;
+	protected StringTablePartitionDecoder globalValuePartition;
 
 	/**
 	 * The constructor will set all tables to their initial states. This
 	 * includes loading the tables with inital values.
 	 */
-	public StringTableDecoderImpl ( boolean isSchemaInformed )
-	{
-		uriPartition = getNewPartition ( );
-		prefixPartitions = new HashMap<String, StringTablePartitionDecoder> ( );
-		localNamePartitions = new HashMap<String, StringTablePartitionDecoder> ( );
-		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionDecoder>> ( );
-		globalValuePartition = getNewPartition ( );
+	public StringTableDecoderImpl(boolean isSchemaInformed) {
+		uriPartition = getNewPartition();
+		prefixPartitions = new HashMap<String, StringTablePartitionDecoder>();
+		localNamePartitions = new HashMap<String, StringTablePartitionDecoder>();
+		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionDecoder>>();
+		globalValuePartition = getNewPartition();
 
 		// URI
-		initURI ( uriPartition, isSchemaInformed );
+		initURI(uriPartition, isSchemaInformed);
 
 		// Prefix: "", xml, xsi
-		prefixPartitions.put ( Constants.EMPTY_STRING, getNewPartition ( ) );
-		prefixPartitions.put ( XMLConstants.XML_NS_URI, getNewPartition ( ) );
-		prefixPartitions.put ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, getNewPartition ( ) );
-		initPrefixEmpty ( prefixPartitions.get ( Constants.EMPTY_STRING ) );
-		initPrefixXML ( prefixPartitions.get ( XMLConstants.XML_NS_URI ) );
-		initPrefixXSI ( prefixPartitions.get ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI ) );
+		prefixPartitions.put(Constants.EMPTY_STRING, getNewPartition());
+		prefixPartitions.put(XMLConstants.XML_NS_URI, getNewPartition());
+		prefixPartitions.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+				getNewPartition());
+		initPrefixEmpty(prefixPartitions.get(Constants.EMPTY_STRING));
+		initPrefixXML(prefixPartitions.get(XMLConstants.XML_NS_URI));
+		initPrefixXSI(prefixPartitions
+				.get(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 
 		// LocalName: xml, xsi, xsd
-		localNamePartitions.put ( XMLConstants.XML_NS_URI, getNewPartition ( ) );
-		localNamePartitions.put ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, getNewPartition ( ) );
-		localNamePartitions.put ( XMLConstants.W3C_XML_SCHEMA_NS_URI, getNewPartition ( ) );
-		initLocalNameXML ( localNamePartitions.get ( XMLConstants.XML_NS_URI ) );
-		initLocalNameXSI ( localNamePartitions.get ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI ) );
-		initLocalNameXSD ( localNamePartitions.get ( XMLConstants.W3C_XML_SCHEMA_NS_URI ) );
+		localNamePartitions.put(XMLConstants.XML_NS_URI, getNewPartition());
+		localNamePartitions.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+				getNewPartition());
+		localNamePartitions.put(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				getNewPartition());
+		initLocalNameXML(localNamePartitions.get(XMLConstants.XML_NS_URI));
+		initLocalNameXSI(localNamePartitions
+				.get(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+		initLocalNameXSD(localNamePartitions
+				.get(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 	}
 
-	protected StringTablePartitionDecoder getNewPartition ()
-	{
-		return new StringTablePartitionDecoderImpl ( );
+	protected StringTablePartitionDecoder getNewPartition() {
+		return new StringTablePartitionDecoderImpl();
 	}
 
-	protected int getID ( StringTablePartitionEncoder partition, String key )
-	{
-		return ( partition == null ) ? Constants.NOT_FOUND : partition.getIndex ( key );
+	protected int getID(StringTablePartitionEncoder partition, String key) {
+		return (partition == null) ? Constants.NOT_FOUND : partition
+				.getIndex(key);
 	}
 
-	protected StringTablePartitionDecoder getPartition ( Map<String, StringTablePartitionDecoder> partitions, String key )
-	{
-		StringTablePartitionDecoder partition = partitions.get ( key );
+	protected StringTablePartitionDecoder getPartition(
+			Map<String, StringTablePartitionDecoder> partitions, String key) {
+		StringTablePartitionDecoder partition = partitions.get(key);
 
-		if ( partition == null )
-		{
-			partitions.put ( key, ( partition = getNewPartition ( ) ) );
+		if (partition == null) {
+			partitions.put(key, (partition = getNewPartition()));
 		}
 
 		return partition;
 	}
 
 	/*
-	 * ##############################################################################
-	 * #### StringTableDecoder Interface
-	 * ##############################################################################
+	 * ##########################################################################
+	 * #### #### StringTableDecoder Interface
+	 * ###################################
+	 * ###########################################
 	 */
 
-	public String getURIValue ( int id )
-	{
-		return uriPartition.getValue ( id );
+	public String getURIValue(int id) {
+		return uriPartition.getValue(id);
 	}
 
-	public String getPrefixValue ( String uri, int id )
-	{
-		return prefixPartitions.get ( uri ).getValue ( id );
+	public String getPrefixValue(String uri, int id) {
+		return prefixPartitions.get(uri).getValue(id);
 	}
 
-	public String getLocalNameValue ( String uri, int id )
-	{
-		return localNamePartitions.get ( uri ).getValue ( id );
+	public String getLocalNameValue(String uri, int id) {
+		return localNamePartitions.get(uri).getValue(id);
 	}
 
-	public String getLocalValue ( String uri, String localName, int id )
-	{
-		assert ( localValuePartitions.get ( uri ).size ( ) > 0 );
-		assert ( localValuePartitions.get ( uri ).get ( localName ).getSize ( ) > 0 );
+	public String getLocalValue(String uri, String localName, int id) {
+		assert (localValuePartitions.get(uri).size() > 0);
+		assert (localValuePartitions.get(uri).get(localName).getSize() > 0);
 
-		return localValuePartitions.get ( uri ).get ( localName ).getValue ( id );
+		return localValuePartitions.get(uri).get(localName).getValue(id);
 	}
 
-	public String getGlobalValue ( int id )
-	{
-		return globalValuePartition.getValue ( id );
+	public String getGlobalValue(int id) {
+		return globalValuePartition.getValue(id);
 	}
 
 	/*
-	 * ##############################################################################
-	 * #### StringTable Interface
-	 * ##############################################################################
+	 * ##########################################################################
+	 * #### #### StringTable Interface
+	 * ##########################################
+	 * ####################################
 	 */
 
-	public void addURI ( String uri )
-	{
-		uriPartition.add ( uri );
+	public void addURI(String uri) {
+		uriPartition.add(uri);
 	}
 
-	public int getURITableSize ()
-	{
-		return uriPartition.getSize ( );
+	public int getURITableSize() {
+		return uriPartition.getSize();
 	}
 
-	public void addPrefix ( String uri, String prefix )
-	{
-		getPartition ( prefixPartitions, uri ).add ( prefix );
+	public void addPrefix(String uri, String prefix) {
+		getPartition(prefixPartitions, uri).add(prefix);
 	}
 
-	public int getPrefixTableSize ( String uri )
-	{
-		return getPartition ( prefixPartitions, uri ).getSize ( );
+	public int getPrefixTableSize(String uri) {
+		return getPartition(prefixPartitions, uri).getSize();
 	}
 
-	public void addLocalName ( String uri, String name )
-	{
-		getPartition ( localNamePartitions, uri ).add ( name );
+	public void addLocalName(String uri, String name) {
+		getPartition(localNamePartitions, uri).add(name);
 	}
 
-	public int getLocalNameTableSize ( String uri )
-	{
-		return getPartition ( localNamePartitions, uri ).getSize ( );
+	public int getLocalNameTableSize(String uri) {
+		return getPartition(localNamePartitions, uri).getSize();
 	}
 
-	public void addLocalValue ( String uri, String localName, String value )
-	{
+	public void addLocalValue(String uri, String localName, String value) {
 		// check URI section first
-		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions.get ( uri );
+		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions
+				.get(uri);
 
-		if ( uriSection == null )
-		{
-			localValuePartitions.put ( uri, ( uriSection = new HashMap<String, StringTablePartitionDecoder> ( ) ) );
+		if (uriSection == null) {
+			localValuePartitions
+					.put(
+							uri,
+							(uriSection = new HashMap<String, StringTablePartitionDecoder>()));
 		}
 
-		getPartition ( uriSection, localName ).add ( value );
+		getPartition(uriSection, localName).add(value);
 	}
 
-	public int getLocalValueTableSize ( String uri, String localName )
-	{
+	public int getLocalValueTableSize(String uri, String localName) {
 		// check URI section first
-		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions.get ( uri );
+		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions
+				.get(uri);
 
-		return ( uriSection == null ? 0 : getPartition ( uriSection, localName ).getSize ( ) );
+		return (uriSection == null ? 0 : getPartition(uriSection, localName)
+				.getSize());
 	}
 
-	public void addGlobalValue ( String value )
-	{
-		globalValuePartition.add ( value );
+	public void addGlobalValue(String value) {
+		globalValuePartition.add(value);
 	}
 
-	public int getGlobalValueTableSize ()
-	{
-		return globalValuePartition.getSize ( );
+	public int getGlobalValueTableSize() {
+		return globalValuePartition.getSize();
 	}
 
 }

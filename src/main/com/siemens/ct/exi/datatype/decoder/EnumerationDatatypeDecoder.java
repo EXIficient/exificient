@@ -33,15 +33,15 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20081117
  */
 
-public class EnumerationDatatypeDecoder extends AbstractDatatypeDecoder
-{
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName  ) throws IOException
-	{
-		DatatypeEnumeration enumer = (DatatypeEnumeration)datatype;
-		
-		int index = dc.decodeNBitUnsignedInteger ( enumer.getCodingLength ( ) );
-		
-		return enumer.getEnumerationValues ( ).item ( index );
+public class EnumerationDatatypeDecoder extends AbstractDatatypeDecoder {
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		DatatypeEnumeration enumer = (DatatypeEnumeration) datatype;
+
+		int index = dc.decodeNBitUnsignedInteger(enumer.getCodingLength());
+
+		return enumer.getEnumerationValues().item(index);
 	}
 
 }

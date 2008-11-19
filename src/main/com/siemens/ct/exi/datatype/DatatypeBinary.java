@@ -29,15 +29,14 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20081112
  */
 
-public class DatatypeBinary extends AbstractDatatype
-{
-	public DatatypeBinary ( ExpandedName datatypeIdentifier, BuiltInType binaryType )
-	{
-		super ( binaryType, datatypeIdentifier );
+public class DatatypeBinary extends AbstractDatatype {
+	public DatatypeBinary(ExpandedName datatypeIdentifier,
+			BuiltInType binaryType) {
+		super(binaryType, datatypeIdentifier);
 
-		if ( ! ( binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX ) )
-		{
-			throw new RuntimeException ( "Illegal type '" + binaryType + "' for DatatypeBinary" );
+		if (!(binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX)) {
+			throw new RuntimeException("Illegal type '" + binaryType
+					+ "' for DatatypeBinary");
 		}
 	}
 }

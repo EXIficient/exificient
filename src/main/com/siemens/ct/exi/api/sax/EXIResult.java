@@ -36,54 +36,45 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @version 0.1.20080718
  */
 
-public class EXIResult extends SAXResult
-{
+public class EXIResult extends SAXResult {
 	protected OutputStream os;
-	
+
 	protected EXIFactory exiFactory;
 
-    public EXIResult( OutputStream os ) throws IOException
-    {
-    	//	use default exi-factory
-    	this ( os, DefaultEXIFactory.newInstance ( ) );
-    }
-    
-    public EXIResult( OutputStream os, EXIFactory exiFactory ) throws IOException
-    {
-    	this.os = os;
-    	this.exiFactory = exiFactory;
-    	
-    	init( );
-    }
-    
-    protected void init( ) throws IOException
-    {
-    	//	create new sax encoder
-    	EXIWriter saxEncoder = exiFactory.createEXIWriter ( );
-    	try
-		{
-			saxEncoder.setOutput ( os );
+	public EXIResult(OutputStream os) throws IOException {
+		// use default exi-factory
+		this(os, DefaultEXIFactory.newInstance());
+	}
+
+	public EXIResult(OutputStream os, EXIFactory exiFactory) throws IOException {
+		this.os = os;
+		this.exiFactory = exiFactory;
+
+		init();
+	}
+
+	protected void init() throws IOException {
+		// create new sax encoder
+		EXIWriter saxEncoder = exiFactory.createEXIWriter();
+		try {
+			saxEncoder.setOutput(os);
+		} catch (EXIException e) {
+			throw new IOException(e);
 		}
-		catch ( EXIException e )
-		{
-			throw new IOException( e );
-		}
-    	
-    	//	set internal states
-    	setHandler ( saxEncoder );
-    	setLexicalHandler ( saxEncoder );
-    }
-    
-    public OutputStream getOutputStream( )
-    {
-    	return os;
-    }
-    
-    public void setOutputStream( OutputStream os ) throws IOException
-    {
-    	this.os = os;
-    	
-    	init( );
-    }
+
+		// set internal states
+		setHandler(saxEncoder);
+		setLexicalHandler(saxEncoder);
+	}
+
+	public OutputStream getOutputStream() {
+		return os;
+	}
+
+	public void setOutputStream(OutputStream os) throws IOException {
+		this.os = os;
+
+		init();
+	}
 
 }

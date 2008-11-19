@@ -33,124 +33,101 @@ import javax.xml.XMLConstants;
  * @version 0.1.20081014
  */
 
-public class NamespacePrefixLevels
-{
-	private static final String NAMESPACE_PFX 	= "ns";
-	
-	//protected UnsynchronizedStack<PrefixMapping> prefixLevels;
+public class NamespacePrefixLevels {
+	private static final String NAMESPACE_PFX = "ns";
+
+	// protected UnsynchronizedStack<PrefixMapping> prefixLevels;
 	protected Stack<PrefixMapping> prefixLevels;
-	
+
 	int pfxCount = 0;
-	
-	public NamespacePrefixLevels()
-	{
-		//prefixLevels = new UnsynchronizedStack<PrefixMapping>();
+
+	public NamespacePrefixLevels() {
+		// prefixLevels = new UnsynchronizedStack<PrefixMapping>();
 		prefixLevels = new Stack<PrefixMapping>();
-		
-		//	default pefixes
-		this.addLevel ( );
-		
-		//	special prefixes, etc "http://www.w3.org/XML/1998/namespace" --> xml
-		addPrefix( XMLConstants.XML_NS_URI , XMLConstants.XML_NS_PREFIX );
-		addPrefix( XMLConstants.NULL_NS_URI , XMLConstants.DEFAULT_NS_PREFIX );
+
+		// default pefixes
+		this.addLevel();
+
+		// special prefixes, etc "http://www.w3.org/XML/1998/namespace" --> xml
+		addPrefix(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+		addPrefix(XMLConstants.NULL_NS_URI, XMLConstants.DEFAULT_NS_PREFIX);
 	}
-	
-	public void clear()
-	{
-		assert( prefixLevels != null );
-		
-		prefixLevels.clear ( );
+
+	public void clear() {
+		assert (prefixLevels != null);
+
+		prefixLevels.clear();
 	}
-	
-	public void addLevel()
-	{
-		prefixLevels.push ( new PrefixMapping() );	//	new element
+
+	public void addLevel() {
+		prefixLevels.push(new PrefixMapping()); // new element
 	}
-	
-	public void removeLevel()
-	{
-		prefixLevels.pop( );
+
+	public void removeLevel() {
+		prefixLevels.pop();
 	}
-	
-	public PrefixMapping getCurrentMapping()
-	{
-		return prefixLevels.peek ( );
+
+	public PrefixMapping getCurrentMapping() {
+		return prefixLevels.peek();
 	}
-	
-	//	given prefix
-	public void addPrefix( final String uri, final String pfx )
-	{
-		assert( prefixLevels != null && ! prefixLevels.isEmpty ( ) );
-		
-		prefixLevels.peek ( ).addPrefix ( uri, pfx );
-		
+
+	// given prefix
+	public void addPrefix(final String uri, final String pfx) {
+		assert (prefixLevels != null && !prefixLevels.isEmpty());
+
+		prefixLevels.peek().addPrefix(uri, pfx);
+
 		pfxCount++;
 	}
 
-	//	other *unique* pfx
-	public void createPrefix( final String uri )
-	{
-		addPrefix ( uri, NAMESPACE_PFX + pfxCount );
+	// other *unique* pfx
+	public void createPrefix(final String uri) {
+		addPrefix(uri, NAMESPACE_PFX + pfxCount);
 	}
-	
-	
-	public boolean hasPrefixForURI( String uri )
-	{
-		//	from inner element to outer
-		for ( int i = ( prefixLevels.size ( ) - 1 ); i >= 0; i-- )
-		{
-			PrefixMapping levelMapping = prefixLevels.get ( i );
-			if ( levelMapping.containsPrefix ( uri ) )
-			{
+
+	public boolean hasPrefixForURI(String uri) {
+		// from inner element to outer
+		for (int i = (prefixLevels.size() - 1); i >= 0; i--) {
+			PrefixMapping levelMapping = prefixLevels.get(i);
+			if (levelMapping.containsPrefix(uri)) {
 				return true;
 			}
 		}
-		
-		
+
 		return false;
 	}
-	
-	public String getPrefix( final String uri )
-	{
-		//	from inner element to outer
-		for ( int i = ( prefixLevels.size ( ) - 1 ); i >= 0; i-- )
-		{
-			PrefixMapping levelMapping = prefixLevels.get ( i );
-			if ( levelMapping.containsPrefix ( uri ) )
-			{
-				return levelMapping.getPrefix ( uri );
+
+	public String getPrefix(final String uri) {
+		// from inner element to outer
+		for (int i = (prefixLevels.size() - 1); i >= 0; i--) {
+			PrefixMapping levelMapping = prefixLevels.get(i);
+			if (levelMapping.containsPrefix(uri)) {
+				return levelMapping.getPrefix(uri);
 			}
 		}
-		
+
 		return null;
 	}
 
 }
 
-
-class PrefixMapping
-{
+class PrefixMapping {
 	protected Map<String, String> mapping;
-	
-	public PrefixMapping ()
-	{
+
+	public PrefixMapping() {
 		mapping = new HashMap<String, String>();
 	}
-	
-	public void addPrefix( final String uri, final String pfx )
-	{
-		mapping.put ( uri, pfx );
+
+	public void addPrefix(final String uri, final String pfx) {
+		mapping.put(uri, pfx);
 	}
-	
-	public boolean containsPrefix( final String uri )
-	{
-		return mapping.containsKey ( uri );
+
+	public boolean containsPrefix(final String uri) {
+		return mapping.containsKey(uri);
 	}
-	
-	public String getPrefix( final String uri )
-	{
-		return mapping.get ( uri );
+
+	public String getPrefix(final String uri) {
+		return mapping.get(uri);
 	}
-	
-	
+
 }

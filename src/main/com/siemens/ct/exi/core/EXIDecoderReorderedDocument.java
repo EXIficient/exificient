@@ -30,23 +30,20 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20081023
  */
 
-public class EXIDecoderReorderedDocument extends AbstractEXIDecoderReordered
-{
-	public EXIDecoderReorderedDocument( EXIFactory exiFactory )
-	{
-		super( exiFactory );
+public class EXIDecoderReorderedDocument extends AbstractEXIDecoderReordered {
+	public EXIDecoderReorderedDocument(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
 
 	@Override
-	protected void initForEachRun() throws EXIException
-	{
-		super.initForEachRun ( );
-		
-		//	push stack with document grammar (possible root elements etc)
-		pushRule ( grammar.getBuiltInDocumentGrammar( ) );
-		
-		//	pre-read structure
-		initStructure( );
+	protected void initForEachRun() throws EXIException {
+		super.initForEachRun();
+
+		// push stack with document grammar (possible root elements etc)
+		pushRule(grammar.getBuiltInDocumentGrammar());
+
+		// pre-read structure
+		initStructure();
 	}
 
 }

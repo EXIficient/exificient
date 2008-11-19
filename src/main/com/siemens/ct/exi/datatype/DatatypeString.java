@@ -29,10 +29,8 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DatatypeString extends AbstractDatatype
-{
-	public DatatypeString( ExpandedName datatypeIdentifier )
-	{
-		super( BuiltInType.BUILTIN_STRING, datatypeIdentifier );
+public class DatatypeString extends AbstractDatatype {
+	public DatatypeString(ExpandedName datatypeIdentifier) {
+		super(BuiltInType.BUILTIN_STRING, datatypeIdentifier);
 	}
 }

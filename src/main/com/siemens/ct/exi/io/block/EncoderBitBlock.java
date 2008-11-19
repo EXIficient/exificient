@@ -32,16 +32,13 @@ import com.siemens.ct.exi.io.channel.BitEncoderChannel;
  * @version 0.1.20080718
  */
 
-public class EncoderBitBlock extends AbstractEncoderBitByteBlock
-{
-	public EncoderBitBlock( OutputStream outputStream, TypeEncoder typeEncoder )
-	{
-		super( outputStream, typeEncoder );
+public class EncoderBitBlock extends AbstractEncoderBitByteBlock {
+	public EncoderBitBlock(OutputStream outputStream, TypeEncoder typeEncoder) {
+		super(outputStream, typeEncoder);
 	}
-	
+
 	@Override
-	protected void init( )
-	{
-		channel = new BitEncoderChannel( outputStream );
+	protected void init() {
+		channel = new BitEncoderChannel(outputStream);
 	}
 }

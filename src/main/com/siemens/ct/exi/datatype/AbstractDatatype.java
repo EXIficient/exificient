@@ -29,37 +29,31 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20081111
  */
 
-public abstract class AbstractDatatype implements Datatype
-{
+public abstract class AbstractDatatype implements Datatype {
 	// default built-in datatype (no codec map used)
-	protected BuiltInType	defaultbuiltInType;
-	//	for codec map (pluggable codecs)
+	protected BuiltInType defaultbuiltInType;
+	// for codec map (pluggable codecs)
 	protected ExpandedName datatypeIdentifier;
 
-	public AbstractDatatype ( BuiltInType builtInType, ExpandedName datatypeIdentifier )
-	{
+	public AbstractDatatype(BuiltInType builtInType,
+			ExpandedName datatypeIdentifier) {
 		this.defaultbuiltInType = builtInType;
 		this.datatypeIdentifier = datatypeIdentifier;
 	}
 
-	public BuiltInType getDefaultBuiltInType ()
-	{
+	public BuiltInType getDefaultBuiltInType() {
 		return defaultbuiltInType;
 	}
-	
-	public ExpandedName getDatatypeIdentifier() 
-	{
+
+	public ExpandedName getDatatypeIdentifier() {
 		return datatypeIdentifier;
 	}
-	
-	public boolean equals( Object o )
-	{
-		if ( o instanceof Datatype )
-		{
-			return ( this.getDefaultBuiltInType ( ) == ((Datatype)o).getDefaultBuiltInType ( ) );
-		}
-		else
-		{
+
+	public boolean equals(Object o) {
+		if (o instanceof Datatype) {
+			return (this.getDefaultBuiltInType() == ((Datatype) o)
+					.getDefaultBuiltInType());
+		} else {
 			return false;
 		}
 	}

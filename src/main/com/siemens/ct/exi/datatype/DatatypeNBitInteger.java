@@ -31,35 +31,31 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class DatatypeNBitInteger extends AbstractDatatype
-{
+public class DatatypeNBitInteger extends AbstractDatatype {
 	protected final XSDInteger lowerBound;
 	protected final XSDInteger upperBound;
 	protected final int numberOfBits4Range;
 
-	public DatatypeNBitInteger( ExpandedName datatypeIdentifier, XSDInteger lowerBound, XSDInteger upperBound, int boundedRange )
-	{
-		super( BuiltInType.BUILTIN_NBIT_INTEGER, datatypeIdentifier );
-		
+	public DatatypeNBitInteger(ExpandedName datatypeIdentifier,
+			XSDInteger lowerBound, XSDInteger upperBound, int boundedRange) {
+		super(BuiltInType.BUILTIN_NBIT_INTEGER, datatypeIdentifier);
+
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
-		
-		//	calculate number of bits to represent range
-		numberOfBits4Range = MethodsBag.getCodingLength ( boundedRange );
+
+		// calculate number of bits to represent range
+		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
 	}
-	
-	public XSDInteger getLowerBound ()
-	{
+
+	public XSDInteger getLowerBound() {
 		return lowerBound;
 	}
 
-	public XSDInteger getUpperBound ()
-	{
+	public XSDInteger getUpperBound() {
 		return upperBound;
 	}
-	
-	public int getNumberOfBits ()
-	{
+
+	public int getNumberOfBits() {
 		return numberOfBits4Range;
 	}
 

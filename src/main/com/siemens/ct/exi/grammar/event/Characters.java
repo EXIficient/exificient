@@ -30,19 +30,17 @@ package com.siemens.ct.exi.grammar.event;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.util.ExpandedName;
 
-public class Characters extends AbstractDatatypeEvent
-{
+public class Characters extends AbstractDatatypeEvent {
 
-	public Characters ( ExpandedName valueType, Datatype datatype  )
-	{
-		super ( "CH", valueType, datatype  );
+	public Characters(ExpandedName valueType, Datatype datatype) {
+		super("CH", valueType, datatype);
 		eventType = EventType.CHARACTERS;
 	}
-//
-//	public Characters ( )
-//	{
-//		super ( "CH(*)", BuiltIn.DEFAULT_QNAME, BuiltIn.DEFAULT_DATATYPE  );
-//		eventType = EventType.CHARACTERS;
-//	}
-	
+	//
+	// public Characters ( )
+	// {
+	// super ( "CH(*)", BuiltIn.DEFAULT_QNAME, BuiltIn.DEFAULT_DATATYPE );
+	// eventType = EventType.CHARACTERS;
+	// }
+
 }

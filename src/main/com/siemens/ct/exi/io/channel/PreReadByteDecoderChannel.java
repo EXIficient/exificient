@@ -37,147 +37,124 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @version 0.1.20081111
  */
 
-public class PreReadByteDecoderChannel implements DecoderChannel
-{
+public class PreReadByteDecoderChannel implements DecoderChannel {
 	private String[] decodedValues;
 	private int currentValueIndex = 0;
 
-	public PreReadByteDecoderChannel ( TypeDecoder decoder, ByteDecoderChannel bdc,
-			ExpandedName qname, List<Datatype> datatypes, int occurrences ) throws IOException
-	{
-		assert ( datatypes.size ( ) == occurrences );
+	public PreReadByteDecoderChannel(TypeDecoder decoder,
+			ByteDecoderChannel bdc, ExpandedName qname,
+			List<Datatype> datatypes, int occurrences) throws IOException {
+		assert (datatypes.size() == occurrences);
 
-		decodedValues = new String[ occurrences ];
-		
-		for ( int i = 0; i < occurrences; i++ )
-		{
-			decodedValues[ i ] =  ( decoder.readTypeValidValue ( datatypes.get ( i ), bdc, qname.getNamespaceURI ( ), qname.getLocalName ( ) ) );
+		decodedValues = new String[occurrences];
+
+		for (int i = 0; i < occurrences; i++) {
+			decodedValues[i] = (decoder.readTypeValidValue(datatypes.get(i),
+					bdc, qname.getNamespaceURI(), qname.getLocalName()));
 		}
 	}
-	
-	protected String getNextValue( )
-	{
-		return decodedValues[ currentValueIndex++ ];
+
+	protected String getNextValue() {
+		return decodedValues[currentValueIndex++];
 	}
 
-	public int decode () throws IOException
-	{
-		// TODO 
-		throw new RuntimeException( );
-	}
-
-	public byte[] decodeBinary () throws IOException
-	{
+	public int decode() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeBinaryAsString () throws IOException
-	{
-		return getNextValue( );
-	}
-
-	public boolean decodeBoolean () throws IOException
-	{
+	public byte[] decodeBinary() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeBooleanAsString () throws IOException
-	{
-		return getNextValue( );
+	public String decodeBinaryAsString() throws IOException {
+		return getNextValue();
 	}
 
-	public Calendar decodeDateTime ( DatetimeType type ) throws IOException
-	{
+	public boolean decodeBoolean() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeDateTimeAsString ( DatetimeType type ) throws IOException
-	{
-		return getNextValue( );
+	public String decodeBooleanAsString() throws IOException {
+		return getNextValue();
 	}
 
-	public BigDecimal decodeDecimal () throws IOException
-	{
+	public Calendar decodeDateTime(DatetimeType type) throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeDecimalAsString () throws IOException
-	{
-		return getNextValue( );
+	public String decodeDateTimeAsString(DatetimeType type) throws IOException {
+		return getNextValue();
 	}
 
-	public int decodeEventCode ( int characteristics ) throws IOException
-	{
+	public BigDecimal decodeDecimal() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public float decodeFloat () throws IOException
-	{
+	public String decodeDecimalAsString() throws IOException {
+		return getNextValue();
+	}
+
+	public int decodeEventCode(int characteristics) throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeFloatAsString () throws IOException
-	{
-		return getNextValue( );
-	}
-
-	public int decodeInteger () throws IOException
-	{
+	public float decodeFloat() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public String decodeIntegerAsString () throws IOException
-	{
-		return getNextValue( );
+	public String decodeFloatAsString() throws IOException {
+		return getNextValue();
 	}
 
-	public int decodeNBitUnsignedInteger ( int n ) throws IOException
-	{
+	public int decodeInteger() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
-	
+
+	public String decodeIntegerAsString() throws IOException {
+		return getNextValue();
+	}
+
+	public int decodeNBitUnsignedInteger(int n) throws IOException {
+		// TODO
+		throw new RuntimeException();
+	}
+
 	/**
 	 * Decodes and returns an n-bit unsigned integer as string.
 	 */
-	public String decodeNBitUnsignedIntegerAsString ( int n ) throws IOException
-	{
-		return getNextValue( );
+	public String decodeNBitUnsignedIntegerAsString(int n) throws IOException {
+		return getNextValue();
 	}
 
-	public String decodeString () throws IOException
-	{
-		return getNextValue( );
+	public String decodeString() throws IOException {
+		return getNextValue();
 	}
 
-	public String decodeStringOnly ( int length ) throws IOException
-	{
+	public String decodeStringOnly(int length) throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public int decodeUnsignedInteger () throws IOException
-	{
+	public int decodeUnsignedInteger() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
 
-	public long decodeUnsignedIntegerAsLong () throws IOException
-	{
+	public long decodeUnsignedIntegerAsLong() throws IOException {
 		// TODO
-		throw new RuntimeException( );
+		throw new RuntimeException();
 	}
-	
-	public String decodeUnsignedIntegerAsString () throws IOException
-	{
-		return getNextValue( );
+
+	public String decodeUnsignedIntegerAsString() throws IOException {
+		return getNextValue();
 	}
 
 }

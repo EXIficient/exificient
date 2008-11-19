@@ -37,52 +37,46 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @version 0.1.20080908
  */
 
-public class PrefixSAXEncoder extends NoPrefixSAXEncoder
-{
-	protected Map<String, String>	elementPrefixMapping;
+public class PrefixSAXEncoder extends NoPrefixSAXEncoder {
+	protected Map<String, String> elementPrefixMapping;
 
-	public PrefixSAXEncoder ( EXIFactory factory )
-	{
-		super ( factory );
+	public PrefixSAXEncoder(EXIFactory factory) {
+		super(factory);
 
-		elementPrefixMapping = new HashMap<String, String> ( );
+		elementPrefixMapping = new HashMap<String, String>();
 	}
 
 	@Override
-	public void startPrefixMapping ( String prefix, String uri ) throws SAXException
-	{
-		super.startPrefixMapping ( prefix, uri );
+	public void startPrefixMapping(String prefix, String uri)
+			throws SAXException {
+		super.startPrefixMapping(prefix, uri);
 
 		// preserve prefix only
-		elementPrefixMapping.put ( prefix, uri );
+		elementPrefixMapping.put(prefix, uri);
 	}
 
 	@Override
-	public void startElement ( String uri, String local, String raw, Attributes attributes ) throws SAXException
-	{
-		try
-		{
-			checkPendingCharacters ( );
+	public void startElement(String uri, String local, String raw,
+			Attributes attributes) throws SAXException {
+		try {
+			checkPendingCharacters();
 
 			// prefix mapping
-			String pfx = QNameUtilities.getPrefixPart ( raw );
-			encoder.encodeStartElement ( uri, local, pfx );
+			String pfx = QNameUtilities.getPrefixPart(raw);
+			encoder.encodeStartElement(uri, local, pfx);
 
 			// prefixes from (startPrefixMapping)
-			handleNS ( );
+			handleNS();
 
 			// attributes
-			if ( attributes != null && attributes.getLength ( ) > 0 )
-			{
-				handleAttributes ( attributes );
+			if (attributes != null && attributes.getLength() > 0) {
+				handleAttributes(attributes);
 			}
-		}
-		catch ( Exception e )
-		{
-			throw new SAXException ( "startElement: " + raw, e );
+		} catch (Exception e) {
+			throw new SAXException("startElement: " + raw, e);
 		}
 	}
-	
+
 	/*
 	 * TODO 6. Encoding EXI Streams Namespace (NS) and attribute (AT) events are
 	 * encoded in a specific order following the associated start element (SE)
@@ -96,18 +90,17 @@ public class PrefixSAXEncoder extends NoPrefixSAXEncoder
 	 * grammars are used, attribute events can occur in any order. Namespace
 	 * (NS) events can occur in any order regardless of the grammars used for
 	 * processing the associated element.
-	 * 
 	 */
-	protected void handleNS () throws Exception
-	{
-		for ( Iterator<String> i = elementPrefixMapping.keySet ( ).iterator ( ); i.hasNext ( ); )
-		{
-			String pfx = i.next ( );
-			encoder.encodeNamespaceDeclaration ( elementPrefixMapping.get ( pfx ), pfx );
+	protected void handleNS() throws Exception {
+		for (Iterator<String> i = elementPrefixMapping.keySet().iterator(); i
+				.hasNext();) {
+			String pfx = i.next();
+			encoder.encodeNamespaceDeclaration(elementPrefixMapping.get(pfx),
+					pfx);
 		}
 
 		// reset
-		elementPrefixMapping.clear ( );
+		elementPrefixMapping.clear();
 	}
 
 }

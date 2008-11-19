@@ -16,7 +16,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 package com.siemens.ct.exi;
 
 /**
@@ -34,8 +33,7 @@ package com.siemens.ct.exi;
  * @version 0.1.20080718
  */
 
-public enum CodingMode
-{
+public enum CodingMode {
 	/**
 	 * Alignment option value bit-packed indicates that the the event codes and
 	 * associated content are packed in bits without any paddings in-between.
@@ -60,29 +58,26 @@ public enum CodingMode
 	 * step of applying the DEFLATE algorithm.
 	 */
 	PRE_COMPRESSION(false, true),
-	
+
 	/**
 	 * The compression option is used to increase compactness using additional
 	 * computational resources (DEFLATE algorithm).
 	 */
 	COMPRESSION(true, true);
 
-	private final boolean	usesDeflate;
-	private final boolean	usesRechanneling;
+	private final boolean usesDeflate;
+	private final boolean usesRechanneling;
 
-	private CodingMode ( boolean deflate, boolean rechanneling )
-	{
+	private CodingMode(boolean deflate, boolean rechanneling) {
 		usesDeflate = deflate;
 		usesRechanneling = rechanneling;
 	}
 
-	public boolean usesDeflate ()
-	{
+	public boolean usesDeflate() {
 		return usesDeflate;
 	}
 
-	public boolean usesRechanneling ()
-	{
+	public boolean usesRechanneling() {
 		return usesRechanneling;
 	}
 }

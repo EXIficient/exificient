@@ -32,21 +32,21 @@ import javax.xml.XMLConstants;
  * @version 0.1.20081023
  */
 
-public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameComparable
-{
-	protected String	namespaceURI;
-	protected String	localName;
+public class ExpandedName implements Comparable<ExpandedName>,
+		ExpandedNameComparable {
+	protected String namespaceURI;
+	protected String localName;
 
-	public ExpandedName ( String namespaceURI, String localName )
-	{
+	public ExpandedName(String namespaceURI, String localName) {
 		// URI
-		this.namespaceURI = ( namespaceURI == null ? XMLConstants.NULL_NS_URI : namespaceURI );
+		this.namespaceURI = (namespaceURI == null ? XMLConstants.NULL_NS_URI
+				: namespaceURI);
 
 		// LocalName
-		assert ( localName != null );
-		if ( localName == null )
-		{
-			throw new IllegalArgumentException ( "ExpandedNames localName is not allowed to be null!" );
+		assert (localName != null);
+		if (localName == null) {
+			throw new IllegalArgumentException(
+					"ExpandedNames localName is not allowed to be null!");
 		}
 
 		this.localName = localName;
@@ -56,35 +56,29 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 		// this.localName = this.localName.intern ( );
 	}
 
-	public String getNamespaceURI ()
-	{
+	public String getNamespaceURI() {
 		return namespaceURI;
 	}
 
-	public void setNamespaceURI ( String namespaceURI )
-	{
+	public void setNamespaceURI(String namespaceURI) {
 		this.namespaceURI = namespaceURI;
 		// this.namespaceURI = namespaceURI.intern ( );
 	}
 
-	public String getLocalName ()
-	{
+	public String getLocalName() {
 		return localName;
 	}
 
-	public void setLocalName ( String localName )
-	{
+	public void setLocalName(String localName) {
 		this.localName = localName;
 		// this.localName = localName.intern ( );
 	}
 
-	public boolean equals ( Object o )
-	{
-		if ( o instanceof ExpandedName )
-		{
-			ExpandedName other = (ExpandedName)o;
-			return ( localName.equals ( other.localName ) &&
-					namespaceURI.equals ( other.namespaceURI ) );
+	public boolean equals(Object o) {
+		if (o instanceof ExpandedName) {
+			ExpandedName other = (ExpandedName) o;
+			return (localName.equals(other.localName) && namespaceURI
+					.equals(other.namespaceURI));
 		}
 		return false;
 	}
@@ -98,29 +92,27 @@ public class ExpandedName implements Comparable<ExpandedName>, ExpandedNameCompa
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
-	public final int hashCode ()
-	{
-		return namespaceURI.hashCode ( ) ^ localName.hashCode ( );
+	public final int hashCode() {
+		return namespaceURI.hashCode() ^ localName.hashCode();
 	}
 
 	/*
 	 * EXI#s lexical order: sorted first by qname's local-name then by qname's
 	 * URI
 	 */
-	public int compareTo ( ExpandedName o )
-	{
-		int cLocalPart = localName.compareTo ( o.localName );
-		return ( cLocalPart == 0 ? namespaceURI.compareTo ( o.namespaceURI ) : cLocalPart );
+	public int compareTo(ExpandedName o) {
+		int cLocalPart = localName.compareTo(o.localName);
+		return (cLocalPart == 0 ? namespaceURI.compareTo(o.namespaceURI)
+				: cLocalPart);
 	}
 
-	public int compareTo ( String namespaceURI, String localName )
-	{
-		int cLocalPart = this.localName.compareTo ( localName );
-		return ( cLocalPart == 0 ? this.namespaceURI.compareTo ( namespaceURI ) : cLocalPart );
+	public int compareTo(String namespaceURI, String localName) {
+		int cLocalPart = this.localName.compareTo(localName);
+		return (cLocalPart == 0 ? this.namespaceURI.compareTo(namespaceURI)
+				: cLocalPart);
 	}
 
-	public String toString ()
-	{
-		return ( "{" + namespaceURI + "}" + localName );
+	public String toString() {
+		return ("{" + namespaceURI + "}" + localName);
 	}
 }

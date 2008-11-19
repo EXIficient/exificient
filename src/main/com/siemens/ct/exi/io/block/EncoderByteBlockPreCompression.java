@@ -32,22 +32,20 @@ import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
  * @version 0.1.20080718
  */
 
-public class EncoderByteBlockPreCompression extends AbstractEncoderByteBlockChannelized
-{
-	
-	public EncoderByteBlockPreCompression( OutputStream outputStream, TypeEncoder typeEncoder )
-	{
-		super( outputStream, typeEncoder );
+public class EncoderByteBlockPreCompression extends
+		AbstractEncoderByteBlockChannelized {
+
+	public EncoderByteBlockPreCompression(OutputStream outputStream,
+			TypeEncoder typeEncoder) {
+		super(outputStream, typeEncoder);
 	}
-	
-	protected OutputStream getStream( )
-	{
+
+	protected OutputStream getStream() {
 		return outputStream;
 	}
-	
-	protected void finalizeStream( ) throws IOException
-	{
-		//	nothing to do
+
+	protected void finalizeStream() throws IOException {
+		// nothing to do
 	}
-	
+
 }

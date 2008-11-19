@@ -36,75 +36,66 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 /*
  * <Built-in Element Grammar>
  * 
- *  ElementContent :
- * 		EE					0
- * 		ChildContentItems 	(1.0)
+ * ElementContent : EE 0 ChildContentItems (1.0)
  * 
- * ChildContentItems (n.m) :
- * 		SE (*) 	ElementContent	n. m
- * 		CH 		ElementContent	n.(m+1)
- * 		ER 		ElementContent	n.(m+2)
- * 		CM 		ElementContent	n.(m+3).0
- * 		PI	 	ElementContent	n.(m+3).1
- * 
+ * ChildContentItems (n.m) : SE () ElementContent n. m CH ElementContent n.(m+1)
+ * ER ElementContent n.(m+2) CM ElementContent n.(m+3).0 PI ElementContent
+ * n.(m+3).1
  */
-public class SchemaLessRuleElement extends SchemaLessRuleContent
-{
+public class SchemaLessRuleElement extends SchemaLessRuleContent {
 
-	protected SchemaLessRuleElement ( )
-	{
-		super ( );
-		
-		//	EE on first level
-		addRule ( END_ELEMENT_EVENT, END_RULE );
-	}
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
-		return getEventCode( eventType, get2ndLevelEventsChildContentItems ( fidelityOptions ) );
-	}
-	
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
-		return get2ndLevelEventsChildContentItems ( fidelityOptions ).get( eventCode );
+	protected SchemaLessRuleElement() {
+		super();
+
+		// EE on first level
+		addRule(END_ELEMENT_EVENT, END_RULE);
 	}
 
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
-		//	childContentItems only
-		int ch2 = get2ndLevelEventsChildContentItems ( fidelityOptions ).size();
-		
-		//	3rd level ?
-		if ( get3rdLevelCharacteristics ( fidelityOptions ) > 0 )
-		{
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		return getEventCode(eventType,
+				get2ndLevelEventsChildContentItems(fidelityOptions));
+	}
+
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
+		return get2ndLevelEventsChildContentItems(fidelityOptions).get(
+				eventCode);
+	}
+
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		// childContentItems only
+		int ch2 = get2ndLevelEventsChildContentItems(fidelityOptions).size();
+
+		// 3rd level ?
+		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
 			ch2++;
 		}
-		
+
 		return ch2;
 	}
 
 	@Override
-	public void learnStartElement ( String uri, String localName )
-	{
-		addRule ( new StartElement ( uri, localName ), this );
+	public void learnStartElement(String uri, String localName) {
+		addRule(new StartElement(uri, localName), this);
 	}
-	
+
 	/*
-	 * 	Note: learnEndElement ( ) not necessary since EE is already present on
+	 * Note: learnEndElement ( ) not necessary since EE is already present on
 	 * first level for element-content-rules
 	 */
 
 	@Override
-	public void learnAttribute ( String uri, String localName )
-	{
-		//	this should never happen!
-		throw new IllegalArgumentException( "ElementContent Rule cannot learn AT events" );
+	public void learnAttribute(String uri, String localName) {
+		// this should never happen!
+		throw new IllegalArgumentException(
+				"ElementContent Rule cannot learn AT events");
 	}
 
 	@Override
-	public void learnCharacters ()
-	{
-		addRule ( new Characters ( BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE ), this );
+	public void learnCharacters() {
+		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
+				BuiltIn.DEFAULT_DATATYPE), this);
 	}
 
 }

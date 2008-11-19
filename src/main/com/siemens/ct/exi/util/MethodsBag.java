@@ -27,9 +27,9 @@ package com.siemens.ct.exi.util;
  * @version 0.1.20081010
  */
 
-public class MethodsBag
-{
-	static final int[]	smallLengths	= new int[] { 0, 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4 };
+public class MethodsBag {
+	static final int[] smallLengths = new int[] { 0, 0, 1, 2, 2, 3, 3, 3, 3, 4,
+			4, 4, 4, 4, 4, 4, 4 };
 
 	/**
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
@@ -39,33 +39,27 @@ public class MethodsBag
 	 *            integer value
 	 * 
 	 */
-	public static int numberOf7BitBlocksToRepresent ( final int n )
-	{
-		assert ( n >= 0 );
+	public static int numberOf7BitBlocksToRepresent(final int n) {
+		assert (n >= 0);
 
 		// 7 bits
-		if ( n < 128 )
-		{
+		if (n < 128) {
 			return 1;
 		}
 		// 14 bits
-		else if ( n < 16384 )
-		{
+		else if (n < 16384) {
 			return 2;
 		}
 		// 21 bits
-		else if ( n < 2097152 )
-		{
+		else if (n < 2097152) {
 			return 3;
 		}
 		// 28 bits
-		else if ( n < 268435456 )
-		{
+		else if (n < 268435456) {
 			return 4;
 		}
 		// 35 bits
-		else
-		{
+		else {
 			// int, 32 bits
 			return 5;
 		}
@@ -79,71 +73,54 @@ public class MethodsBag
 	 *            long value
 	 * 
 	 */
-	public static int numberOf7BitBlocksToRepresent ( final long l )
-	{
-		if ( l < 0xffffffff )
-		{
-			return numberOf7BitBlocksToRepresent ( (int) l );
+	public static int numberOf7BitBlocksToRepresent(final long l) {
+		if (l < 0xffffffff) {
+			return numberOf7BitBlocksToRepresent((int) l);
 		}
 		// 35 bits
-		else if ( l < 0x800000000L )
-		{
+		else if (l < 0x800000000L) {
 			return 5;
 		}
 		// 42 bits
-		else if ( l < 0x40000000000L )
-		{
+		else if (l < 0x40000000000L) {
 			return 6;
 		}
 		// 49 bits
-		else if ( l < 0x2000000000000L )
-		{
+		else if (l < 0x2000000000000L) {
 			return 7;
 		}
 		// 56 bits
-		else if ( l < 0x100000000000000L )
-		{
+		else if (l < 0x100000000000000L) {
 			return 8;
 		}
 		// 63 bits
-		else if ( l < 0x8000000000000000L )
-		{
+		else if (l < 0x8000000000000000L) {
 			return 9;
 		}
 		// 70 bits
-		else
-		{
+		else {
 			// long, 64 bits
 			return 10;
 		}
 	}
 
-	static final public int getCodingLength ( final int characteristics )
-	{
-		assert ( characteristics > 0 );
+	static final public int getCodingLength(final int characteristics) {
+		assert (characteristics > 0);
 
-		if ( characteristics < 17 )
-		{
+		if (characteristics < 17) {
 			return smallLengths[characteristics];
-		}
-		else if ( characteristics < 33 )
-		{
+		} else if (characteristics < 33) {
 			// 17 .. 32
 			return 5;
-		}
-		else if ( characteristics < 65 )
-		{
+		} else if (characteristics < 65) {
 			// 33 .. 64
 			return 6;
-		}
-		else if ( characteristics < 129 )
-		{
+		} else if (characteristics < 129) {
 			// 65 .. 128
 			return 7;
-		}
-		else
-		{
-			return (int) Math.ceil ( Math.log ( (double) ( characteristics ) ) / Math.log ( 2.0 ) );
+		} else {
+			return (int) Math.ceil(Math.log((double) (characteristics))
+					/ Math.log(2.0));
 		}
 	}
 

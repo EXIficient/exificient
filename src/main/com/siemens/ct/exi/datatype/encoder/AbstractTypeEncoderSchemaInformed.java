@@ -33,83 +33,80 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20081112
  */
 
-public abstract class AbstractTypeEncoderSchemaInformed extends AbstractTypeEncoder
-{
-	protected DatatypeEncoder	lastDatatypeEncoder;
+public abstract class AbstractTypeEncoderSchemaInformed extends
+		AbstractTypeEncoder {
+	protected DatatypeEncoder lastDatatypeEncoder;
 
-	protected DatatypeEncoder	binaryBase64DTE;
-	protected DatatypeEncoder	binaryHexDTE;
-	protected DatatypeEncoder	booleanDTE;
-	protected DatatypeEncoder	booleanPatternDTE;
-	protected DatatypeEncoder	decimalDTE;
-	protected DatatypeEncoder	floatDTE;
-	protected DatatypeEncoder	integerDTE;
-	protected DatatypeEncoder	unsignedIntegerDTE;
-	protected DatatypeEncoder	nBitIntegerDTE;
-	protected DatatypeEncoder	datetimeDTE;
-	protected DatatypeEncoder	enumerationDTE;
-	protected DatatypeEncoder	listDTE;
-	protected DatatypeEncoder	stringDTE;
+	protected DatatypeEncoder binaryBase64DTE;
+	protected DatatypeEncoder binaryHexDTE;
+	protected DatatypeEncoder booleanDTE;
+	protected DatatypeEncoder booleanPatternDTE;
+	protected DatatypeEncoder decimalDTE;
+	protected DatatypeEncoder floatDTE;
+	protected DatatypeEncoder integerDTE;
+	protected DatatypeEncoder unsignedIntegerDTE;
+	protected DatatypeEncoder nBitIntegerDTE;
+	protected DatatypeEncoder datetimeDTE;
+	protected DatatypeEncoder enumerationDTE;
+	protected DatatypeEncoder listDTE;
+	protected DatatypeEncoder stringDTE;
 
-	public AbstractTypeEncoderSchemaInformed ( EXIFactory exiFactory )
-	{
-		super ( exiFactory );
+	public AbstractTypeEncoderSchemaInformed(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
 
-	public boolean isTypeValid ( Datatype datatype, String value )
-	{
-		switch ( datatype.getDefaultBuiltInType ( ) )
-		{
-			case BUILTIN_BINARY_BASE64:
-				lastDatatypeEncoder = binaryBase64DTE;
-				break;
-			case BUILTIN_BINARY_HEX:
-				lastDatatypeEncoder = binaryHexDTE;
-				break;
-			case BUILTIN_BOOLEAN:
-				lastDatatypeEncoder = booleanDTE;
-				break;
-			case BUILTIN_BOOLEAN_PATTERN:
-				lastDatatypeEncoder = booleanPatternDTE;
-				break;
-			case BUILTIN_DECIMAL:
-				lastDatatypeEncoder = decimalDTE;
-				break;
-			case BUILTIN_FLOAT:
-				lastDatatypeEncoder = floatDTE;
-				break;
-			case BUILTIN_INTEGER:
-				lastDatatypeEncoder = integerDTE;
-				break;
-			case BUILTIN_UNSIGNED_INTEGER:
-				lastDatatypeEncoder = unsignedIntegerDTE;
-				break;
-			case BUILTIN_NBIT_INTEGER:
-				lastDatatypeEncoder = nBitIntegerDTE;
-				break;
-			case BUILTIN_DATETIME:
-				lastDatatypeEncoder = datetimeDTE;
-				break;
-			case BUILTIN_ENUMERATION:
-				lastDatatypeEncoder = enumerationDTE;
-				break;
-			case BUILTIN_LIST:
-				lastDatatypeEncoder = listDTE;
-				break;
-			case BUILTIN_STRING:
-				lastDatatypeEncoder = stringDTE;
-				break;
-			default:
-				throw new RuntimeException ( "Unknown BuiltIn Type" );
+	public boolean isTypeValid(Datatype datatype, String value) {
+		switch (datatype.getDefaultBuiltInType()) {
+		case BUILTIN_BINARY_BASE64:
+			lastDatatypeEncoder = binaryBase64DTE;
+			break;
+		case BUILTIN_BINARY_HEX:
+			lastDatatypeEncoder = binaryHexDTE;
+			break;
+		case BUILTIN_BOOLEAN:
+			lastDatatypeEncoder = booleanDTE;
+			break;
+		case BUILTIN_BOOLEAN_PATTERN:
+			lastDatatypeEncoder = booleanPatternDTE;
+			break;
+		case BUILTIN_DECIMAL:
+			lastDatatypeEncoder = decimalDTE;
+			break;
+		case BUILTIN_FLOAT:
+			lastDatatypeEncoder = floatDTE;
+			break;
+		case BUILTIN_INTEGER:
+			lastDatatypeEncoder = integerDTE;
+			break;
+		case BUILTIN_UNSIGNED_INTEGER:
+			lastDatatypeEncoder = unsignedIntegerDTE;
+			break;
+		case BUILTIN_NBIT_INTEGER:
+			lastDatatypeEncoder = nBitIntegerDTE;
+			break;
+		case BUILTIN_DATETIME:
+			lastDatatypeEncoder = datetimeDTE;
+			break;
+		case BUILTIN_ENUMERATION:
+			lastDatatypeEncoder = enumerationDTE;
+			break;
+		case BUILTIN_LIST:
+			lastDatatypeEncoder = listDTE;
+			break;
+		case BUILTIN_STRING:
+			lastDatatypeEncoder = stringDTE;
+			break;
+		default:
+			throw new RuntimeException("Unknown BuiltIn Type");
 		}
 
-		return lastDatatypeEncoder.isValid ( datatype, value );
+		return lastDatatypeEncoder.isValid(datatype, value);
 	}
 
 	// first isValueTypeValid has to be called
-	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		lastDatatypeEncoder.writeValue ( valueChannel, uri, localName );
+	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		lastDatatypeEncoder.writeValue(valueChannel, uri, localName);
 	}
 
 }

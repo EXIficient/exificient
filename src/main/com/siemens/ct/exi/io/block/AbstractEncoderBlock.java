@@ -37,91 +37,84 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractEncoderBlock implements EncoderBlock
-{
-	private int				blockValues	= 0;
-	protected OutputStream	outputStream;
+public abstract class AbstractEncoderBlock implements EncoderBlock {
+	private int blockValues = 0;
+	protected OutputStream outputStream;
 
-	//	TypeEncoder
+	// TypeEncoder
 	TypeEncoder typeEncoder;
 
-	public AbstractEncoderBlock ( OutputStream outputStream, TypeEncoder typeEncoder )
-	{
+	public AbstractEncoderBlock(OutputStream outputStream,
+			TypeEncoder typeEncoder) {
 		this.outputStream = outputStream;
 		this.typeEncoder = typeEncoder;
 
-		init ( );
+		init();
 	}
 
-	protected abstract void init ();
+	protected abstract void init();
 
-	protected int getNumberOfBlockValues ()
-	{
+	protected int getNumberOfBlockValues() {
 		return blockValues;
 	}
-	
+
 	protected abstract EncoderChannel getStructureChannel();
-	
-	protected abstract EncoderChannel getValueChannel( String uri, String localName );
-	
+
+	protected abstract EncoderChannel getValueChannel(String uri,
+			String localName);
+
 	/*
 	 * Structure Channel
 	 */
-	public void writeEventCode ( int eventCode, int codeLength ) throws IOException
-	{
-		getStructureChannel ( ).encodeNBitUnsignedInteger ( eventCode,  codeLength );
+	public void writeEventCode(int eventCode, int codeLength)
+			throws IOException {
+		getStructureChannel().encodeNBitUnsignedInteger(eventCode, codeLength);
 	}
-	
-	public void writeString ( String text ) throws IOException
-	{
-		getStructureChannel ( ).encodeString ( text );
-	}
-	
-	public void writeUri ( String uri ) throws IOException
-	{
-		EncoderChannel structure = getStructureChannel ( );
-		StringTableEncoder stringTable = typeEncoder.getStringTable ( );
 
-		int uriID = stringTable.getURIID ( uri );
-		int nUri = MethodsBag.getCodingLength ( stringTable.getURITableSize ( ) + 1 ); // numberEntries+1 --> n-bit
-		if ( uriID == Constants.NOT_FOUND )
-		{
+	public void writeString(String text) throws IOException {
+		getStructureChannel().encodeString(text);
+	}
+
+	public void writeUri(String uri) throws IOException {
+		EncoderChannel structure = getStructureChannel();
+		StringTableEncoder stringTable = typeEncoder.getStringTable();
+
+		int uriID = stringTable.getURIID(uri);
+		int nUri = MethodsBag
+				.getCodingLength(stringTable.getURITableSize() + 1); // numberEntries+1
+																		// -->
+																		// n-bit
+		if (uriID == Constants.NOT_FOUND) {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by uri encoded as string
-			structure.encodeNBitUnsignedInteger ( 0, nUri );
-			structure.encodeString ( uri );
+			structure.encodeNBitUnsignedInteger(0, nUri);
+			structure.encodeString(uri);
 			// after encoding string value is added to table
-			stringTable.addURI ( uri );
-		}
-		else
-		{
+			stringTable.addURI(uri);
+		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			structure.encodeNBitUnsignedInteger ( uriID + 1, nUri );
+			structure.encodeNBitUnsignedInteger(uriID + 1, nUri);
 		}
 	}
 
-	public void writeLocalName ( String localName, String uri ) throws IOException
-	{
-		EncoderChannel structure = getStructureChannel ( );
-		StringTableEncoder stringTable = typeEncoder.getStringTable ( );
-		
-		int localNameID = stringTable.getLocalNameID ( uri, localName );
+	public void writeLocalName(String localName, String uri) throws IOException {
+		EncoderChannel structure = getStructureChannel();
+		StringTableEncoder stringTable = typeEncoder.getStringTable();
 
-		if ( localNameID == Constants.NOT_FOUND )
-		{
+		int localNameID = stringTable.getLocalNameID(uri, localName);
+
+		if (localNameID == Constants.NOT_FOUND) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
 			// with the length of the string incremented by one
-			structure.encodeUnsignedInteger ( localName.length ( ) + 1 );
-			structure.encodeStringOnly ( localName );
+			structure.encodeUnsignedInteger(localName.length() + 1);
+			structure.encodeStringOnly(localName);
 			// After encoding the string value, it is added to the string table
 			// partition and assigned the next available compact identifier.
-			stringTable.addLocalName ( uri, localName );
-		}
-		else
-		{
+			stringTable.addLocalName(uri, localName);
+		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
 			// Unsigned Integer
@@ -129,72 +122,67 @@ public abstract class AbstractEncoderBlock implements EncoderBlock
 			// n-bit unsigned integer
 			// n is log2 m and m is the number of entries in the string table
 			// partition
-			structure.encodeUnsignedInteger ( 0 );
-			int n = MethodsBag.getCodingLength ( stringTable.getLocalNameTableSize ( uri ) );
-			structure.encodeNBitUnsignedInteger ( localNameID, n );
+			structure.encodeUnsignedInteger(0);
+			int n = MethodsBag.getCodingLength(stringTable
+					.getLocalNameTableSize(uri));
+			structure.encodeNBitUnsignedInteger(localNameID, n);
 		}
 	}
-	
-	public void writePrefix ( String prefix, String uri ) throws IOException
-	{
-		EncoderChannel structure = getStructureChannel ( );
-		StringTableEncoder stringTable = typeEncoder.getStringTable ( );
-		
-		int pfxID = stringTable.getPrefixID ( uri, prefix );
-		int mPfx = stringTable.getPrefixTableSize ( uri ); // number of entries
-		int nPfx = MethodsBag.getCodingLength ( mPfx + 1 ); // n-bit
-		if ( pfxID == Constants.NOT_FOUND )
-		{
+
+	public void writePrefix(String prefix, String uri) throws IOException {
+		EncoderChannel structure = getStructureChannel();
+		StringTableEncoder stringTable = typeEncoder.getStringTable();
+
+		int pfxID = stringTable.getPrefixID(uri, prefix);
+		int mPfx = stringTable.getPrefixTableSize(uri); // number of entries
+		int nPfx = MethodsBag.getCodingLength(mPfx + 1); // n-bit
+		if (pfxID == Constants.NOT_FOUND) {
 			// string value was not found
 			// ==> zero (0) as an n-bit unsigned integer
 			// followed by pfx encoded as string
-			structure.encodeNBitUnsignedInteger ( 0, nPfx );
-			structure.encodeString ( prefix );
+			structure.encodeNBitUnsignedInteger(0, nPfx);
+			structure.encodeString(prefix);
 			// after encoding string value is added to table
-			stringTable.addPrefix ( uri, prefix );
-		}
-		else
-		{
+			stringTable.addPrefix(uri, prefix);
+		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			structure.encodeNBitUnsignedInteger ( pfxID + 1, nPfx );
+			structure.encodeNBitUnsignedInteger(pfxID + 1, nPfx);
 		}
 	}
-	
-	public void writeBoolean ( boolean b ) throws IOException
-	{
-		getStructureChannel ( ). encodeBoolean ( b );
+
+	public void writeBoolean(boolean b) throws IOException {
+		getStructureChannel().encodeBoolean(b);
 	}
-	
+
 	/*
 	 * Value Channel
 	 */
-	public boolean isTypeValid ( Datatype datatype, String value )
-	{
-		return typeEncoder.isTypeValid ( datatype, value );
+	public boolean isTypeValid(Datatype datatype, String value) {
+		return typeEncoder.isTypeValid(datatype, value);
 	}
 
-	public void writeTypeValidValue ( final String uri, final String localName ) throws IOException
-	{
+	public void writeTypeValidValue(final String uri, final String localName)
+			throws IOException {
 		blockValues++;
-		EncoderChannel valueChannel = getValueChannel ( uri, localName );
+		EncoderChannel valueChannel = getValueChannel(uri, localName);
 		valueChannel.incrementValues();
-		typeEncoder.writeTypeValidValue ( valueChannel, uri, localName );
-		//typeEncoder.writeTypeValidValue ( getValueChannel ( uri, localName ), uri, localName );
+		typeEncoder.writeTypeValidValue(valueChannel, uri, localName);
+		// typeEncoder.writeTypeValidValue ( getValueChannel ( uri, localName ),
+		// uri, localName );
 	}
 
-	public void writeValueAsString ( final String uri, final String localName, final String value ) throws IOException
-	{
+	public void writeValueAsString(final String uri, final String localName,
+			final String value) throws IOException {
 		blockValues++;
-		EncoderChannel valueChannel = getValueChannel ( uri, localName );
+		EncoderChannel valueChannel = getValueChannel(uri, localName);
 		valueChannel.incrementValues();
-		typeEncoder.writeValueAsString ( valueChannel, uri, localName, value );
-		// typeEncoder.writeValueAsString ( getValueChannel ( uri, localName ), uri, localName, value );
+		typeEncoder.writeValueAsString(valueChannel, uri, localName, value);
+		// typeEncoder.writeValueAsString ( getValueChannel ( uri, localName ),
+		// uri, localName, value );
 	}
 
-
-	public void close () throws IOException
-	{
-		outputStream.close ( );
+	public void close() throws IOException {
+		outputStream.close();
 	}
 }

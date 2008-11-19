@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
-
 /**
  * TODO Description
  * 
@@ -28,57 +27,54 @@ package com.siemens.ct.exi.grammar.rule;
  * @version 0.1.20081008
  */
 
-public interface SchemaInformedRule extends Rule
-{
+public interface SchemaInformedRule extends Rule {
 	/*
 	 * Add top rules (merge them)
 	 */
-	public void joinRules( Rule rule );
-	
+	public void joinRules(Rule rule);
+
 	/*
 	 * first rule is different (namespace declaration, xsi:typ and xsi:nil)
 	 */
 	public void setFirstElementRule();
-	
+
 	/*
 	 * sets whether type is castable
 	 */
-	public void setHasNamedSubtypes( boolean hasNamedSubtypes );
+	public void setHasNamedSubtypes(boolean hasNamedSubtypes);
 
 	/*
 	 * sets whether element is nillable
 	 */
-	public void setNillable( boolean nillable, SchemaInformedRule typeEmpty );
-	
+	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
+
 	/*
 	 * get ur-type
 	 */
 	public SchemaInformedRule getTypeEmpty();
-	
-	
+
 	/*
 	 * Label
 	 */
-	public void setLabel ( String label );
-	public String getLabel ();
-	
+	public void setLabel(String label);
+
+	public String getLabel();
+
 	/*
 	 * Schema-deviated attributes
 	 */
 	public int getNumberOfSchemaDeviatedAttributes();
-	
+
 	public int getLeastAttributeEventCode();
-	
-	
-	
+
 	/*
 	 * resolves reachable event-rules & replaces Lambdas
 	 */
-	public void resolveLambdaTransitions( );
-	
+	public void resolveLambdaTransitions();
+
 	/*
 	 * clones schema-informed rule
 	 */
 	public SchemaInformedRule duplicate();
-	
+
 }

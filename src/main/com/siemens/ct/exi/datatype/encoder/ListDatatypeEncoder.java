@@ -36,41 +36,37 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20081110
  */
 
-public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	protected Datatype		listDatatype;
-	protected TypeEncoder	listTypeEncoder	= null;
-	protected EXIFactory	exiFactory;
-	protected int			numberOfEnumeratedTypes;
-	protected String		lastValidValue;
+public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	protected Datatype listDatatype;
+	protected TypeEncoder listTypeEncoder = null;
+	protected EXIFactory exiFactory;
+	protected int numberOfEnumeratedTypes;
+	protected String lastValidValue;
 
-	public ListDatatypeEncoder ( TypeEncoder typeEncoder, EXIFactory exiFactory )
-	{
-		super ( typeEncoder );
+	public ListDatatypeEncoder(TypeEncoder typeEncoder, EXIFactory exiFactory) {
+		super(typeEncoder);
 
 		this.exiFactory = exiFactory;
 	}
 
-	public boolean isValid ( Datatype datatype, String value )
-	{
+	public boolean isValid(Datatype datatype, String value) {
 		// setup (list)typeEncoder if not already
-		if ( listTypeEncoder == null )
-		{
+		if (listTypeEncoder == null) {
 			// Note: initialization in constructor causes never ending calls!
-			listTypeEncoder = exiFactory.createTypeEncoder ( );
+			listTypeEncoder = exiFactory.createTypeEncoder();
 		}
 
 		// check first (no cache for writeValue used)
-		listDatatype = ( (DatatypeList) datatype ).getListDatatype ( );
+		listDatatype = ((DatatypeList) datatype).getListDatatype();
 
 		// iterate over all tokens
-		StringTokenizer st = new StringTokenizer ( value, Constants.XSD_LIST_DELIM );
+		StringTokenizer st = new StringTokenizer(value,
+				Constants.XSD_LIST_DELIM);
 		numberOfEnumeratedTypes = 0;
 
-		while ( st.hasMoreTokens ( ) )
-		{
-			if ( !listTypeEncoder.isTypeValid ( listDatatype, st.nextToken ( ) ) )
-			{
+		while (st.hasMoreTokens()) {
+			if (!listTypeEncoder.isTypeValid(listDatatype, st.nextToken())) {
 				// invalid --> abort process
 				return false;
 			}
@@ -81,23 +77,23 @@ public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements Data
 		return true;
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
 		/*
 		 * check AGAIN & write to stream
 		 */
 
 		// length prefixed sequence of values
-		valueChannel.encodeUnsignedInteger ( numberOfEnumeratedTypes );
+		valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
 
 		// iterate over all tokens
-		StringTokenizer st = new StringTokenizer ( lastValidValue, Constants.XSD_LIST_DELIM );
+		StringTokenizer st = new StringTokenizer(lastValidValue,
+				Constants.XSD_LIST_DELIM);
 
-		while ( st.hasMoreTokens ( ) )
-		{
+		while (st.hasMoreTokens()) {
 			// Note: assumption that is valid (was already checked!)
-			listTypeEncoder.isTypeValid ( listDatatype, st.nextToken ( ) );
-			listTypeEncoder.writeTypeValidValue ( valueChannel, uri, localName );
+			listTypeEncoder.isTypeValid(listDatatype, st.nextToken());
+			listTypeEncoder.writeTypeValidValue(valueChannel, uri, localName);
 		}
 	}
 }

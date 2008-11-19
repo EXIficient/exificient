@@ -30,107 +30,99 @@ import com.siemens.ct.exi.Constants;
  * 
  * @version 0.1.20080718
  */
-public abstract class AbstractStringTable implements StringTableCommon
-{
-	
+public abstract class AbstractStringTable implements StringTableCommon {
+
 	/*
 	 * pre-populate URI partition
 	 */
-	protected void initURI( StringTablePartition uriPartition, boolean isSchemaInformed )
-	{
-		uriPartition.add ( Constants.EMPTY_STRING ); /* empty string */
-		uriPartition.add ( XMLConstants.XML_NS_URI );
-		uriPartition.add ( XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI );
-		
-		if ( isSchemaInformed )
-		{
-			uriPartition.add ( XMLConstants.W3C_XML_SCHEMA_NS_URI );
+	protected void initURI(StringTablePartition uriPartition,
+			boolean isSchemaInformed) {
+		uriPartition.add(Constants.EMPTY_STRING); /* empty string */
+		uriPartition.add(XMLConstants.XML_NS_URI);
+		uriPartition.add(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+
+		if (isSchemaInformed) {
+			uriPartition.add(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		}
 	}
 
-	
-	
 	/*
 	 * pre-populate the initial set of prefix partitions
 	 */
-	protected void initPrefixEmpty( StringTablePartition prefixPartitionEmpty )
-	{
-		prefixPartitionEmpty.add ( Constants.EMPTY_STRING ); /* empty string */
+	protected void initPrefixEmpty(StringTablePartition prefixPartitionEmpty) {
+		prefixPartitionEmpty.add(Constants.EMPTY_STRING); /* empty string */
 	}
-	
-	protected void initPrefixXML( StringTablePartition prefixPartitionXML )
-	{
-		prefixPartitionXML.add ( Constants.XML_PFX );	
+
+	protected void initPrefixXML(StringTablePartition prefixPartitionXML) {
+		prefixPartitionXML.add(Constants.XML_PFX);
 	}
-	
-	protected void initPrefixXSI( StringTablePartition prefixPartitionXSI )
-	{
-		prefixPartitionXSI.add ( Constants.XSI_PFX );
+
+	protected void initPrefixXSI(StringTablePartition prefixPartitionXSI) {
+		prefixPartitionXSI.add(Constants.XSI_PFX);
 	}
-	
+
 	/*
 	 * pre-populate the initial set of local name partitions
 	 */
-	protected void initLocalNameXML( StringTablePartition localNamePartitionXML )
-	{
-		localNamePartitionXML.add ( "space" );
-		localNamePartitionXML.add ( "lang" );
-		localNamePartitionXML.add ( "id" );
-		localNamePartitionXML.add ( "base" );
+	protected void initLocalNameXML(StringTablePartition localNamePartitionXML) {
+		localNamePartitionXML.add("space");
+		localNamePartitionXML.add("lang");
+		localNamePartitionXML.add("id");
+		localNamePartitionXML.add("base");
 	}
-	protected void initLocalNameXSI( StringTablePartition localNamePartitionXSI )
-	{
-		localNamePartitionXSI.add ( "type" );
-		localNamePartitionXSI.add ( "nil" );
+
+	protected void initLocalNameXSI(StringTablePartition localNamePartitionXSI) {
+		localNamePartitionXSI.add("type");
+		localNamePartitionXSI.add("nil");
 	}
-	protected void initLocalNameXSD( StringTablePartition localNamePartitionXSD )
-	{
-		localNamePartitionXSD.add ( "anyType" );
-		localNamePartitionXSD.add ( "anySimpleType" );
-		localNamePartitionXSD.add ( "string" );
-		localNamePartitionXSD.add ( "normalizedString" );
-		localNamePartitionXSD.add ( "token" );
-		localNamePartitionXSD.add ( "language" );
-		localNamePartitionXSD.add ( "Name" );
-		localNamePartitionXSD.add ( "NCName" );
-		localNamePartitionXSD.add ( "ID" );
-		localNamePartitionXSD.add ( "IDREF" );
-		localNamePartitionXSD.add ( "IDREFS" );
-		localNamePartitionXSD.add ( "ENTITY" );
-		localNamePartitionXSD.add ( "ENTITIES" );
-		localNamePartitionXSD.add ( "NMTOKEN" );
-		localNamePartitionXSD.add ( "NMTOKENS" );
-		localNamePartitionXSD.add ( "duration" );
-		localNamePartitionXSD.add ( "dateTime" );
-		localNamePartitionXSD.add ( "time" );
-		localNamePartitionXSD.add ( "date" );
-		localNamePartitionXSD.add ( "gYearMonth" );
-		localNamePartitionXSD.add ( "gYear" );
-		localNamePartitionXSD.add ( "gMonthDay" );
-		localNamePartitionXSD.add ( "gDay" );
-		localNamePartitionXSD.add ( "gMonth" );
-		localNamePartitionXSD.add ( "boolean" );
-		localNamePartitionXSD.add ( "base64Binary" );
-		localNamePartitionXSD.add ( "hexBinary" );
-		localNamePartitionXSD.add ( "float" );
-		localNamePartitionXSD.add ( "double" );
-		localNamePartitionXSD.add ( "anyURI" );
-		localNamePartitionXSD.add ( "QName" );
-		localNamePartitionXSD.add ( "NOTATION" );
-		localNamePartitionXSD.add ( "decimal" );
-		localNamePartitionXSD.add ( "integer" );
-		localNamePartitionXSD.add ( "nonPositiveInteger" );
-		localNamePartitionXSD.add ( "negativeInteger" );
-		localNamePartitionXSD.add ( "long" );
-		localNamePartitionXSD.add ( "int" );
-		localNamePartitionXSD.add ( "short" );
-		localNamePartitionXSD.add ( "byte" );
-		localNamePartitionXSD.add ( "nonNegativeInteger" );
-		localNamePartitionXSD.add ( "positiveInteger" );
-		localNamePartitionXSD.add ( "unsignedLong" );
-		localNamePartitionXSD.add ( "unsignedInt" );
-		localNamePartitionXSD.add ( "unsignedShort" );
-		localNamePartitionXSD.add ( "unsignedByte" );
+
+	protected void initLocalNameXSD(StringTablePartition localNamePartitionXSD) {
+		localNamePartitionXSD.add("anyType");
+		localNamePartitionXSD.add("anySimpleType");
+		localNamePartitionXSD.add("string");
+		localNamePartitionXSD.add("normalizedString");
+		localNamePartitionXSD.add("token");
+		localNamePartitionXSD.add("language");
+		localNamePartitionXSD.add("Name");
+		localNamePartitionXSD.add("NCName");
+		localNamePartitionXSD.add("ID");
+		localNamePartitionXSD.add("IDREF");
+		localNamePartitionXSD.add("IDREFS");
+		localNamePartitionXSD.add("ENTITY");
+		localNamePartitionXSD.add("ENTITIES");
+		localNamePartitionXSD.add("NMTOKEN");
+		localNamePartitionXSD.add("NMTOKENS");
+		localNamePartitionXSD.add("duration");
+		localNamePartitionXSD.add("dateTime");
+		localNamePartitionXSD.add("time");
+		localNamePartitionXSD.add("date");
+		localNamePartitionXSD.add("gYearMonth");
+		localNamePartitionXSD.add("gYear");
+		localNamePartitionXSD.add("gMonthDay");
+		localNamePartitionXSD.add("gDay");
+		localNamePartitionXSD.add("gMonth");
+		localNamePartitionXSD.add("boolean");
+		localNamePartitionXSD.add("base64Binary");
+		localNamePartitionXSD.add("hexBinary");
+		localNamePartitionXSD.add("float");
+		localNamePartitionXSD.add("double");
+		localNamePartitionXSD.add("anyURI");
+		localNamePartitionXSD.add("QName");
+		localNamePartitionXSD.add("NOTATION");
+		localNamePartitionXSD.add("decimal");
+		localNamePartitionXSD.add("integer");
+		localNamePartitionXSD.add("nonPositiveInteger");
+		localNamePartitionXSD.add("negativeInteger");
+		localNamePartitionXSD.add("long");
+		localNamePartitionXSD.add("int");
+		localNamePartitionXSD.add("short");
+		localNamePartitionXSD.add("byte");
+		localNamePartitionXSD.add("nonNegativeInteger");
+		localNamePartitionXSD.add("positiveInteger");
+		localNamePartitionXSD.add("unsignedLong");
+		localNamePartitionXSD.add("unsignedInt");
+		localNamePartitionXSD.add("unsignedShort");
+		localNamePartitionXSD.add("unsignedByte");
 	}
-		
+
 }

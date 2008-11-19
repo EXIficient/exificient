@@ -36,36 +36,34 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
  * @version 0.1.20080922
  */
 
-public class FidelityOptions
-{
+public class FidelityOptions {
 	/* Comments, ProcessingInstructions, DTDs and Prefixes are preserved */
-	public static final String		FEATURE_COMMENT			= "PRESERVE_COMMENTS";
-	public static final String		FEATURE_PI				= "PRESERVE_PIS";
-	public static final String		FEATURE_DTD				= "PRESERVE_DTDS";
-	public static final String		FEATURE_PREFIX			= "PRESERVE_PREFIXES";
+	public static final String FEATURE_COMMENT = "PRESERVE_COMMENTS";
+	public static final String FEATURE_PI = "PRESERVE_PIS";
+	public static final String FEATURE_DTD = "PRESERVE_DTDS";
+	public static final String FEATURE_PREFIX = "PRESERVE_PREFIXES";
 
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
 	 */
-	public static final String		FEATURE_LEXICAL_VALUE	= "PRESERVE_LEXICAL_VALUES";
-	public static final String		FEATURE_WS				= "PRESERVE_WHITESPACES";
+	public static final String FEATURE_LEXICAL_VALUE = "PRESERVE_LEXICAL_VALUES";
+	public static final String FEATURE_WS = "PRESERVE_WHITESPACES";
 
 	/* Enable the use of self contained elements in the EXI stream */
-	public static final String		FEATURE_SC				= "SELF_CONTAINED";
+	public static final String FEATURE_SC = "SELF_CONTAINED";
 
 	/* Strict interpretation of schemas is used to achieve better compactness */
-	public static final String		FEATURE_STRICT			= "STRICT";
+	public static final String FEATURE_STRICT = "STRICT";
 
 	/* contains options set to TRUE */
-	protected Set<String>	options;
-	
+	protected Set<String> options;
+
 	/* special strict handling */
 	protected boolean isStrict = false;
 
-	protected FidelityOptions ()
-	{
-		options = new HashSet<String> ( );
+	protected FidelityOptions() {
+		options = new HashSet<String>();
 	}
 
 	/**
@@ -73,9 +71,8 @@ public class FidelityOptions
 	 * 
 	 * @return default fidelity options
 	 */
-	public static FidelityOptions createDefault ()
-	{
-		FidelityOptions fo = new FidelityOptions ( );
+	public static FidelityOptions createDefault() {
+		FidelityOptions fo = new FidelityOptions();
 
 		return fo;
 	}
@@ -86,11 +83,10 @@ public class FidelityOptions
 	 * 
 	 * @return default fidelity options
 	 */
-	public static FidelityOptions createStrict ()
-	{
-		FidelityOptions fo = new FidelityOptions ( );
+	public static FidelityOptions createStrict() {
+		FidelityOptions fo = new FidelityOptions();
 
-		fo.options.add ( FEATURE_STRICT );
+		fo.options.add(FEATURE_STRICT);
 		fo.isStrict = true;
 
 		return fo;
@@ -102,19 +98,18 @@ public class FidelityOptions
 	 * 
 	 * @return default fidelity options
 	 */
-	public static FidelityOptions createAll ()
-	{
-		FidelityOptions fo = new FidelityOptions ( );
+	public static FidelityOptions createAll() {
+		FidelityOptions fo = new FidelityOptions();
 
-		fo.options.add ( FEATURE_COMMENT );
-		fo.options.add ( FEATURE_PI );
-		fo.options.add ( FEATURE_DTD );
-		fo.options.add ( FEATURE_PREFIX );
-		fo.options.add ( FEATURE_LEXICAL_VALUE );
+		fo.options.add(FEATURE_COMMENT);
+		fo.options.add(FEATURE_PI);
+		fo.options.add(FEATURE_DTD);
+		fo.options.add(FEATURE_PREFIX);
+		fo.options.add(FEATURE_LEXICAL_VALUE);
 
-		fo.options.add ( FEATURE_WS );
+		fo.options.add(FEATURE_WS);
 
-		fo.options.add ( FEATURE_SC );
+		fo.options.add(FEATURE_SC);
 
 		return fo;
 	}
@@ -128,50 +123,39 @@ public class FidelityOptions
 	 *            enabling or disabling feature
 	 * @throws UnsupportedOption
 	 */
-	public void setFidelity ( String key, boolean decision ) throws UnsupportedOption
-	{
-		if ( key.equals ( FEATURE_STRICT ) )
-		{
-			if ( decision )
-			{
+	public void setFidelity(String key, boolean decision)
+			throws UnsupportedOption {
+		if (key.equals(FEATURE_STRICT)) {
+			if (decision) {
 				// no other features allowed
-				options.clear ( );
+				options.clear();
 
-				options.add ( key  );
+				options.add(key);
 				isStrict = true;
-			}
-			else
-			{
+			} else {
 				// remove strict (if present)
-				options.remove ( key );
+				options.remove(key);
 				isStrict = false;
 			}
-		}
-		else if ( key.equals ( FEATURE_COMMENT ) || key.equals ( FEATURE_PI ) || key.equals ( FEATURE_DTD )
-				|| key.equals ( FEATURE_PREFIX ) || key.equals ( FEATURE_LEXICAL_VALUE ) || key.equals ( FEATURE_WS )
-				|| key.equals ( FEATURE_SC ) )
-		{
-			if ( decision )
-			{
+		} else if (key.equals(FEATURE_COMMENT) || key.equals(FEATURE_PI)
+				|| key.equals(FEATURE_DTD) || key.equals(FEATURE_PREFIX)
+				|| key.equals(FEATURE_LEXICAL_VALUE) || key.equals(FEATURE_WS)
+				|| key.equals(FEATURE_SC)) {
+			if (decision) {
 				//	
-				if ( isStrict ( ) )
-				{
-					throw new UnsupportedOption ( "StrictMode is exclusive and does not allow any other option." );
+				if (isStrict()) {
+					throw new UnsupportedOption(
+							"StrictMode is exclusive and does not allow any other option.");
+				} else {
+					options.add(key);
 				}
-				else
-				{
-					options.add ( key );
-				}
-			}
-			else
-			{
+			} else {
 				// remove option (if present)
-				options.remove ( key );
+				options.remove(key);
 			}
-		}
-		else
-		{
-			throw new UnsupportedOption ( "FidelityOption '" + key + "' is unknown!" );
+		} else {
+			throw new UnsupportedOption("FidelityOption '" + key
+					+ "' is unknown!");
 		}
 	}
 
@@ -182,9 +166,8 @@ public class FidelityOptions
 	 *            feature
 	 * @return whether option is turned on
 	 */
-	public boolean isFidelityEnabled ( String key )
-	{
-		return options.contains ( key );
+	public boolean isFidelityEnabled(String key) {
+		return options.contains(key);
 	}
 
 	/**
@@ -192,34 +175,29 @@ public class FidelityOptions
 	 * 
 	 * @return boolean whether strict mode is in play
 	 */
-	public boolean isStrict ()
-	{
+	public boolean isStrict() {
 		return isStrict;
 		// return options.contains ( FEATURE_STRICT );
 	}
 
 	@Override
-	public boolean equals ( Object o )
-	{
-		if ( o instanceof FidelityOptions )
-		{
+	public boolean equals(Object o) {
+		if (o instanceof FidelityOptions) {
 			FidelityOptions other = (FidelityOptions) o;
-			return options.equals ( other.options );
+			return options.equals(other.options);
 		}
 
 		return false;
 	}
 
 	@Override
-	public int hashCode ()
-	{
-		return options.hashCode ( );
+	public int hashCode() {
+		return options.hashCode();
 	}
-	
+
 	@Override
-	public String toString()
-	{
-		return options.toString ( );
+	public String toString() {
+		return options.toString();
 	}
 
 }

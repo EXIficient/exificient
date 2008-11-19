@@ -20,7 +20,6 @@ package com.siemens.ct.exi.core.sax;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 
-
 /**
  * TODO Description
  * 
@@ -30,7 +29,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20080908
  */
 
-public abstract class CharactersEncoder
-{
+public abstract class CharactersEncoder {
 	abstract public void checkPendingChars() throws EXIException;
 }

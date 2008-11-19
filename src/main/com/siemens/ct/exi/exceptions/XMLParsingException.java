@@ -27,17 +27,15 @@ package com.siemens.ct.exi.exceptions;
  * @version 0.1.20080718
  */
 
-public class XMLParsingException extends EXIException
-{	
+public class XMLParsingException extends EXIException {
 
 	/**
 	 * 
 	 */
-	private static final long	serialVersionUID	= -1568757949406610062L;
+	private static final long serialVersionUID = -1568757949406610062L;
 
-	public XMLParsingException ( String message )
-	{
-		super ( message );
+	public XMLParsingException(String message) {
+		super(message);
 	}
 
 }

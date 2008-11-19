@@ -34,28 +34,30 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public interface DecoderBlock
-{
-	public void reconstructChannels ( int values, List<ExpandedName> valueQNames, Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences ) throws IOException;	
-	
-	public int readEventCode ( int codeLength ) throws IOException;
-	
-	//	PI, Comment, PI, etc.
-	public String readString ( ) throws IOException;
-	
-	public String readUri ( ) throws IOException;
+public interface DecoderBlock {
+	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
+			Map<ExpandedName, List<Datatype>> dataTypes,
+			Map<ExpandedName, Integer> occurrences) throws IOException;
 
-	public String readLocalName ( String uri ) throws IOException;
-	
-	public String readPrefix ( String uri ) throws IOException;
-	
-	public boolean readBoolean ( ) throws IOException;
-	
+	public int readEventCode(int codeLength) throws IOException;
+
+	// PI, Comment, PI, etc.
+	public String readString() throws IOException;
+
+	public String readUri() throws IOException;
+
+	public String readLocalName(String uri) throws IOException;
+
+	public String readPrefix(String uri) throws IOException;
+
+	public boolean readBoolean() throws IOException;
+
 	/*
 	 * Value Channels
 	 */
-	public String readTypedValidValue ( Datatype datatype, String namespaceURI, String localName ) throws IOException;
-	
-	public String readValueAsString ( String namespaceURI, String localName ) throws IOException;
+	public String readTypedValidValue(Datatype datatype, String namespaceURI,
+			String localName) throws IOException;
+
+	public String readValueAsString(String namespaceURI, String localName)
+			throws IOException;
 }

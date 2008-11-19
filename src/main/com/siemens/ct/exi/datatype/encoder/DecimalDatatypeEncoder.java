@@ -34,31 +34,27 @@ import com.siemens.ct.exi.util.datatype.XSDDecimal;
  * @version 0.1.20080718
  */
 
-public class DecimalDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDDecimal	lastValidDecimal = XSDDecimal.newInstance ( );
-	
-	public DecimalDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+public class DecimalDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
+	private XSDDecimal lastValidDecimal = XSDDecimal.newInstance();
+
+	public DecimalDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastValidDecimal.parse ( value );
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastValidDecimal.parse(value);
 			return true;
-		} 
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException
+	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
-		valueChannel.encodeDecimal ( lastValidDecimal );
+		valueChannel.encodeDecimal(lastValidDecimal);
 	}
 }

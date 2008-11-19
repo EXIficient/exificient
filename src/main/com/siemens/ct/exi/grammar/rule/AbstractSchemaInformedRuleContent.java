@@ -26,7 +26,6 @@ import java.util.Map;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EventType;
 
-
 /**
  * TODO Description
  * 
@@ -36,66 +35,56 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractSchemaInformedRuleContent extends AbstractSchemaInformedRule implements Cloneable
-{
-	protected static Map<FidelityOptions, List<EventType>>	optionsElement;
-	
-	
-	public AbstractSchemaInformedRuleContent( )
-	{
-		super( );
-	}
-	
-	static
-	{
-		optionsElement = new HashMap<FidelityOptions, List<EventType>> ( );
-	}
-	
-	protected static List<EventType> get2ndLevelElementItems ( FidelityOptions fidelityOptions )
-	{
-		if ( !optionsElement.containsKey ( fidelityOptions ) )
-		{
-			List<EventType> events = new ArrayList<EventType> ( );
+public abstract class AbstractSchemaInformedRuleContent extends
+		AbstractSchemaInformedRule implements Cloneable {
+	protected static Map<FidelityOptions, List<EventType>> optionsElement;
 
-			if ( !fidelityOptions.isStrict ( ) )
-			{
+	public AbstractSchemaInformedRuleContent() {
+		super();
+	}
+
+	static {
+		optionsElement = new HashMap<FidelityOptions, List<EventType>>();
+	}
+
+	protected static List<EventType> get2ndLevelElementItems(
+			FidelityOptions fidelityOptions) {
+		if (!optionsElement.containsKey(fidelityOptions)) {
+			List<EventType> events = new ArrayList<EventType>();
+
+			if (!fidelityOptions.isStrict()) {
 				// extensibility: SE(*), CH
-				events.add ( EventType.START_ELEMENT_GENERIC_UNDECLARED );
-				events.add ( EventType.CHARACTERS_GENERIC_UNDECLARED );
+				events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
 
 				// ER
-				if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_DTD ) )
-				{
-					events.add ( EventType.ENTITY_REFERENCE );
+				if (fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+					events.add(EventType.ENTITY_REFERENCE);
 				}
 
 			}
 
-			optionsElement.put ( fidelityOptions, events );
+			optionsElement.put(fidelityOptions, events);
 		}
 
-		return optionsElement.get ( fidelityOptions );
+		return optionsElement.get(fidelityOptions);
 	}
-	
-	
+
 	@Override
-	public String toString()
-	{
-		String s = super.toString ( );
-		
-		if ( isFirstElementRule )
-		{
-			if ( this.hasNamedSubtypes )
-			{
+	public String toString() {
+		String s = super.toString();
+
+		if (isFirstElementRule) {
+			if (this.hasNamedSubtypes) {
 				s += "(xsi:type)";
 			}
-			
-			if ( this.isNillable )
-			{
+
+			if (this.isNillable) {
 				s += "(xsi:nil)";
-			}			
+			}
 		}
-		
+
 		return s;
 	}
 }

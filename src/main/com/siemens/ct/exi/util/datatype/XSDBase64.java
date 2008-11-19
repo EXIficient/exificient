@@ -30,97 +30,82 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
  * @version 0.1.20080718
  */
 
-public class XSDBase64
-{
-	static final byte	UNKNOWN		= -1;
-	static final char	EQUAL_SIGN	= '=';
+public class XSDBase64 {
+	static final byte UNKNOWN = -1;
+	static final char EQUAL_SIGN = '=';
 
-	byte[]				bytes;
-	int					length;
+	byte[] bytes;
+	int length;
 
-	private XSDBase64 ( )
-	{
+	private XSDBase64() {
 	}
-	
-	public int getLength ()
-	{
+
+	public int getLength() {
 		return length;
 	}
 
-	public byte[] getBytes ()
-	{
+	public byte[] getBytes() {
 		return bytes;
 	}
 
-	public static XSDBase64 newInstance ()
-	{
-		return new XSDBase64 ( );
+	public static XSDBase64 newInstance() {
+		return new XSDBase64();
 	}
 
 	// Mapping table from 6-bit nibbles to Base64 characters.
-	private static char[]	map1	= new char[64];
-	static
-	{
+	private static char[] map1 = new char[64];
+	static {
 		int i = 0;
-		for ( char c = 'A'; c <= 'Z'; c++ )
+		for (char c = 'A'; c <= 'Z'; c++)
 			map1[i++] = c;
-		for ( char c = 'a'; c <= 'z'; c++ )
+		for (char c = 'a'; c <= 'z'; c++)
 			map1[i++] = c;
-		for ( char c = '0'; c <= '9'; c++ )
+		for (char c = '0'; c <= '9'; c++)
 			map1[i++] = c;
 		map1[i++] = '+';
 		map1[i++] = '/';
 	}
 
 	// Mapping table from Base64 characters to 6-bit nibbles.
-	private static byte[]	map2	= new byte[128];
-	static
-	{
-		for ( int i = 0; i < map2.length; i++ )
+	private static byte[] map2 = new byte[128];
+	static {
+		for (int i = 0; i < map2.length; i++)
 			map2[i] = -1;
-		for ( int i = 0; i < 64; i++ )
+		for (int i = 0; i < 64; i++)
 			map2[map1[i]] = (byte) i;
 	}
 
-	public void parse ( String s ) throws XMLParsingException
-	{
-		parse ( s.toCharArray ( ), 0, s.length ( ) );
+	public void parse(String s) throws XMLParsingException {
+		parse(s.toCharArray(), 0, s.length());
 	}
 
-	public void parse ( char[] s, int start, int slength ) throws XMLParsingException
-	{
+	public void parse(char[] s, int start, int slength)
+			throws XMLParsingException {
 		// walk over the whole array and overwrite possible whitespaces
 		int currentPosition = start;
 		int iLen = slength;
-		
-		for ( int i = start; i < slength; i++ )
-		{
-			if ( XMLWhitespace.isWhiteSpace ( s[i] ) )
-			{
-				//	don't do anything except reducing length 
+
+		for (int i = start; i < slength; i++) {
+			if (XMLWhitespace.isWhiteSpace(s[i])) {
+				// don't do anything except reducing length
 				iLen--;
-			}
-			else
-			{
-				s[ currentPosition++ ] = s [ i ];
+			} else {
+				s[currentPosition++] = s[i];
 			}
 		}
 
-
-		if ( iLen % 4 != 0 )
-		{
-			throw new XMLParsingException ( "Length of Base64 encoded input string is not a multiple of 4." );
+		if (iLen % 4 != 0) {
+			throw new XMLParsingException(
+					"Length of Base64 encoded input string is not a multiple of 4.");
 		}
 
-		while ( iLen > 0 && s[start + iLen - 1] == '=' )
-		{
+		while (iLen > 0 && s[start + iLen - 1] == '=') {
 			iLen--;
 		}
 
-		length = ( iLen * 3 ) / 4;
+		length = (iLen * 3) / 4;
 
-		if ( bytes == null || bytes.length < length )
-		{
+		if (bytes == null || bytes.length < length) {
 			// extend byte array
 			bytes = new byte[length];
 		}
@@ -128,8 +113,7 @@ public class XSDBase64
 		int ip = 0;
 		int op = 0;
 
-		while ( ip < iLen )
-		{
+		while (ip < iLen) {
 			// 0
 			int i0 = s[start + ip++];
 			int b0 = map2[i0];
@@ -143,21 +127,20 @@ public class XSDBase64
 			int i3 = ip < iLen ? s[start + ip++] : 'A';
 			int b3 = map2[i3];
 			// ok ?
-			if ( i0 > 127 || b0 < 0 || i1 > 127 || b1 < 0 || i2 > 127 || b2 < 0 || i3 > 127 || b3 < 0 )
-			{
-				throw new XMLParsingException ( "Illegal character in Base64 encoded data." );
+			if (i0 > 127 || b0 < 0 || i1 > 127 || b1 < 0 || i2 > 127 || b2 < 0
+					|| i3 > 127 || b3 < 0) {
+				throw new XMLParsingException(
+						"Illegal character in Base64 encoded data.");
 			}
 
-			int o0 = ( b0 << 2 ) | ( b1 >>> 4 );
-			int o1 = ( ( b1 & 0xf ) << 4 ) | ( b2 >>> 2 );
-			int o2 = ( ( b2 & 3 ) << 6 ) | b3;
+			int o0 = (b0 << 2) | (b1 >>> 4);
+			int o1 = ((b1 & 0xf) << 4) | (b2 >>> 2);
+			int o2 = ((b2 & 3) << 6) | b3;
 			bytes[op++] = (byte) o0;
-			if ( op < length )
-			{
+			if (op < length) {
 				bytes[op++] = (byte) o1;
 			}
-			if ( op < length )
-			{
+			if (op < length) {
 				bytes[op++] = (byte) o2;
 			}
 		}
@@ -172,24 +155,22 @@ public class XSDBase64
 	 *            an array containing the data bytes to be encoded.
 	 * @return A character array with the Base64 encoded data.
 	 */
-	public static char[] encode ( byte[] in )
-	{
+	public static char[] encode(byte[] in) {
 		int iLen = in.length;
 
-		int oDataLen = ( iLen * 4 + 2 ) / 3; // output length without padding
-		int oLen = ( ( iLen + 2 ) / 3 ) * 4; // output length including
+		int oDataLen = (iLen * 4 + 2) / 3; // output length without padding
+		int oLen = ((iLen + 2) / 3) * 4; // output length including
 		// padding
 		char[] out = new char[oLen];
 		int ip = 0;
 		int op = 0;
-		while ( ip < iLen )
-		{
+		while (ip < iLen) {
 			int i0 = in[ip++] & 0xff;
 			int i1 = ip < iLen ? in[ip++] & 0xff : 0;
 			int i2 = ip < iLen ? in[ip++] & 0xff : 0;
 			int o0 = i0 >>> 2;
-			int o1 = ( ( i0 & 3 ) << 4 ) | ( i1 >>> 4 );
-			int o2 = ( ( i1 & 0xf ) << 2 ) | ( i2 >>> 6 );
+			int o1 = ((i0 & 3) << 4) | (i1 >>> 4);
+			int o2 = ((i1 & 0xf) << 2) | (i2 >>> 6);
 			int o3 = i2 & 0x3F;
 			out[op++] = map1[o0];
 			out[op++] = map1[o1];

@@ -27,9 +27,6 @@ package com.siemens.ct.exi.util.datatype;
  * @version 0.1.20080718
  */
 
-public enum IntegerType
-{
-	INT_INTEGER,
-	LONG_INTEGER,
-	BIG_INTEGER
+public enum IntegerType {
+	INT_INTEGER, LONG_INTEGER, BIG_INTEGER
 }

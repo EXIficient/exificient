@@ -24,22 +24,21 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
 /**
  * Default Error Handler for EXI exceptions.
  * 
- * <p>Warnings and errors are simply ignored</p>
+ * <p>
+ * Warnings and errors are simply ignored
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
  * @version 0.1.20080818
  */
-public class DefaultErrorHandler implements ErrorHandler
-{
+public class DefaultErrorHandler implements ErrorHandler {
 
-	public void error ( EXIException exception )
-	{
+	public void error(EXIException exception) {
 	}
 
-	public void warning ( EXIException exception )
-	{
+	public void warning(EXIException exception) {
 	}
 
 }

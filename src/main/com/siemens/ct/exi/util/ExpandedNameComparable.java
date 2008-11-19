@@ -28,7 +28,6 @@ package com.siemens.ct.exi.util;
  */
 
 // pair of namespaceURI and localName is an "expanded name"
-public interface ExpandedNameComparable
-{
-	public int compareTo ( String namespaceURI, String localName );
+public interface ExpandedNameComparable {
+	public int compareTo(String namespaceURI, String localName);
 }

@@ -30,45 +30,41 @@ import java.util.List;
  * @version 0.1.20081009
  */
 
-public class StringTablePartitionDecoderImpl implements StringTablePartitionDecoder
-{
+public class StringTablePartitionDecoderImpl implements
+		StringTablePartitionDecoder {
 	/**
 	 * The contents of the table.
 	 */
-	protected List<String>	valueList;
+	protected List<String> valueList;
 
 	/**
 	 * Create a new string table.
 	 */
-	public StringTablePartitionDecoderImpl ()
-	{
-		valueList = new ArrayList<String> ( );
+	public StringTablePartitionDecoderImpl() {
+		valueList = new ArrayList<String>();
 	}
 
 	/**
 	 * Add a record to the table
 	 * 
-	 * @param value -
-	 *            value to insert.
+	 * @param value
+	 *            - value to insert.
 	 */
-	public void add ( final String value )
-	{
-		valueList.add ( value );
+	public void add(final String value) {
+		valueList.add(value);
 	}
 
 	/**
 	 * Get the current size (number of strings) in the table.
 	 */
-	public int getSize ()
-	{
-		return valueList.size ( );
+	public int getSize() {
+		return valueList.size();
 	}
 
 	/**
 	 * Get string at given index.
 	 */
-	public String getValue ( int index )
-	{
-		return valueList.get ( index );
+	public String getValue(int index) {
+		return valueList.get(index);
 	}
 }

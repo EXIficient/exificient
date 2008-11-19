@@ -30,18 +30,16 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  * @version 0.1.20080718
  */
 
-public class DatatypeDatetime extends AbstractDatatype
-{
+public class DatatypeDatetime extends AbstractDatatype {
 	DatetimeType dateType;
 
-	public DatatypeDatetime ( DatetimeType dateType, ExpandedName datatypeIdentifier  )
-	{
-		super( BuiltInType.BUILTIN_DATETIME, datatypeIdentifier );
+	public DatatypeDatetime(DatetimeType dateType,
+			ExpandedName datatypeIdentifier) {
+		super(BuiltInType.BUILTIN_DATETIME, datatypeIdentifier);
 		this.dateType = dateType;
 	}
-	
-	public DatetimeType getDatetimeType( ) 
-	{
+
+	public DatetimeType getDatetimeType() {
 		return dateType;
 	}
 

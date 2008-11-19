@@ -31,26 +31,22 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.1.20081117
  */
 
-public class DatatypeEnumeration extends AbstractDatatype
-{
-	private StringList	enumValues;
-	private int			codingLength;
+public class DatatypeEnumeration extends AbstractDatatype {
+	private StringList enumValues;
+	private int codingLength;
 
-	public DatatypeEnumeration ( StringList enumValues )
-	{
-		super ( BuiltInType.BUILTIN_ENUMERATION, null );
+	public DatatypeEnumeration(StringList enumValues) {
+		super(BuiltInType.BUILTIN_ENUMERATION, null);
 
 		this.enumValues = enumValues;
-		this.codingLength = MethodsBag.getCodingLength ( enumValues.getLength ( ) );
+		this.codingLength = MethodsBag.getCodingLength(enumValues.getLength());
 	}
 
-	public StringList getEnumerationValues ()
-	{
+	public StringList getEnumerationValues() {
 		return enumValues;
 	}
 
-	public int getCodingLength()
-	{
+	public int getCodingLength() {
 		return codingLength;
 	}
 }

@@ -31,64 +31,58 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20081014
  */
 
-public abstract class AbstractGrammar implements Grammar
-{
+public abstract class AbstractGrammar implements Grammar {
 	/*
 	 * Built-in Grammars
 	 */
 	protected Rule builtInDocumentGrammar;
 	protected Rule builtInDocContentGrammar;
 	protected Rule builtInDocEndGrammar;
-	
+
 	// sorted URIs(pre-initializing URI partition)
 	protected String[] uris;
-	
+
 	// sorted LocalNames (pre-initializing LocalName Partition)
 	protected ExpandedName[] localNames;
-	
+
 	private final boolean isSchemaInformed;
-	
-	public AbstractGrammar( boolean isSchemaInformed )
-	{
+
+	public AbstractGrammar(boolean isSchemaInformed) {
 		this.isSchemaInformed = isSchemaInformed;
-		
-		uris = new String[ 0 ];
-		localNames = new ExpandedName[ 0 ];
+
+		uris = new String[0];
+		localNames = new ExpandedName[0];
 	}
-	
-	public boolean isSchemaInformed() 
-	{
+
+	public boolean isSchemaInformed() {
 		return isSchemaInformed;
 	}
 
-	public Rule getBuiltInDocumentGrammar( )
-	{
+	public Rule getBuiltInDocumentGrammar() {
 		return builtInDocumentGrammar;
 	}
-	
-	public void populateStringTable( StringTableCommon stringTable )
-	{
+
+	public void populateStringTable(StringTableCommon stringTable) {
 		/*
-		 * When a schema is provided, the uri partition is also pre-populated with
-		 * the name of each namespace URI declared in the schema, appended in
-		 * lexicographical order.
+		 * When a schema is provided, the uri partition is also pre-populated
+		 * with the name of each namespace URI declared in the schema, appended
+		 * in lexicographical order.
 		 */
-		for ( int i=0; i<uris.length; i++  )
-		{
-			stringTable.addURI ( uris[i] );
+		for (int i = 0; i < uris.length; i++) {
+			stringTable.addURI(uris[i]);
 		}
-		
+
 		/*
 		 * When a schema is provided, the string table (Local-name) is also
 		 * pre-populated with the local name of each attribute, element and type
 		 * declared in the schema, partitioned by namespace URI and sorted
 		 * lexicographically.
 		 */
-		for ( int i=0; i<localNames.length; i++  )
-		{
-			stringTable.addLocalName ( localNames[ i].getNamespaceURI ( ), localNames[ i].getLocalName ( ) );
+		for (int i = 0; i < localNames.length; i++) {
+			stringTable.addLocalName(localNames[i].getNamespaceURI(),
+					localNames[i].getLocalName());
 		}
-		
-	}	
+
+	}
 
 }

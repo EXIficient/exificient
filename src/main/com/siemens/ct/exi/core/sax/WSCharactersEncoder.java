@@ -21,7 +21,6 @@ package com.siemens.ct.exi.core.sax;
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 
-
 /**
  * TODO Description
  * 
@@ -31,23 +30,19 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20080908
  */
 
-public class WSCharactersEncoder extends CharactersEncoder
-{
+public class WSCharactersEncoder extends CharactersEncoder {
 	protected final EXIEncoder encoder;
 	protected final StringBuilder chars;
-	
-	public WSCharactersEncoder( EXIEncoder encoder, StringBuilder chars )
-	{
+
+	public WSCharactersEncoder(EXIEncoder encoder, StringBuilder chars) {
 		this.encoder = encoder;
 		this.chars = chars;
 	}
-	
-	public void checkPendingChars() throws EXIException
-	{
-		if ( chars.length ( ) > 0 )
-		{
-			encoder.encodeCharacters ( chars.toString ( ) );
-			chars.setLength ( 0 );
+
+	public void checkPendingChars() throws EXIException {
+		if (chars.length() > 0) {
+			encoder.encodeCharacters(chars.toString());
+			chars.setLength(0);
 		}
 	}
 

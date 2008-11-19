@@ -29,31 +29,30 @@ import javax.xml.XMLConstants;
  * @version 0.1.20080816
  */
 
-public interface Constants
-{
-	public static final String	EMPTY_STRING			= "";
+public interface Constants {
+	public static final String EMPTY_STRING = "";
 
-	public static final String	XSI_SCHEMA_LOCATION		= "schemaLocation";
+	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
 
-	public static final String	XML_PFX					= XMLConstants.XML_NS_PREFIX;	// "xml";
-	public static final String	XSI_PFX					= "xsi";
-	public static final String	XSI_TYPE				= "type";
-	public static final String	XSI_NIL					= "nil";
+	public static final String XML_PFX = XMLConstants.XML_NS_PREFIX; // "xml";
+	public static final String XSI_PFX = "xsi";
+	public static final String XSI_TYPE = "type";
+	public static final String XSI_NIL = "nil";
 
-	public static final String	COLON					= ":";
+	public static final String COLON = ":";
 
-	public static final String	XSD_LIST_DELIM			= " ";
-	
-	public static final String	XSD_ANY_TYPE			= "anyType";
+	public static final String XSD_LIST_DELIM = " ";
 
-	public static final String	XSD_BOOLEAN_TRUE		= "true";
-	public static final String	XSD_BOOLEAN_1			= "1";
-	public static final String	XSD_BOOLEAN_FALSE		= "false";
-	public static final String	XSD_BOOLEAN_0			= "0";
+	public static final String XSD_ANY_TYPE = "anyType";
 
-	public static final String	DECODED_BOOLEAN_TRUE	= XSD_BOOLEAN_TRUE;
-	public static final String	DECODED_BOOLEAN_FALSE	= XSD_BOOLEAN_FALSE;
+	public static final String XSD_BOOLEAN_TRUE = "true";
+	public static final String XSD_BOOLEAN_1 = "1";
+	public static final String XSD_BOOLEAN_FALSE = "false";
+	public static final String XSD_BOOLEAN_0 = "0";
 
-	public static final int		NOT_FOUND				= -1;
+	public static final String DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_TRUE;
+	public static final String DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_FALSE;
+
+	public static final int NOT_FOUND = -1;
 
 }

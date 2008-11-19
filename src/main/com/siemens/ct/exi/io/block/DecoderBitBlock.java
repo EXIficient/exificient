@@ -38,34 +38,31 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.1.20080718
  */
 
-public class DecoderBitBlock extends AbstractDecoderBlock
-{
+public class DecoderBitBlock extends AbstractDecoderBlock {
 	private BitDecoderChannel bdc;
-	
-	public DecoderBitBlock( InputStream is, TypeDecoder typeDecoder  ) throws IOException
-	{
-		super( is, typeDecoder );
-	}
-	
-	@Override
-	protected void init( )
-	{
-		this.bdc = new BitDecoderChannel( inputStream );
+
+	public DecoderBitBlock(InputStream is, TypeDecoder typeDecoder)
+			throws IOException {
+		super(is, typeDecoder);
 	}
 
-	public DecoderChannel getStructureChannel()
-	{
+	@Override
+	protected void init() {
+		this.bdc = new BitDecoderChannel(inputStream);
+	}
+
+	public DecoderChannel getStructureChannel() {
 		return bdc;
 	}
-	
-	public DecoderChannel getValueChannel( String namespaceURI, String localName  )
-	{
+
+	public DecoderChannel getValueChannel(String namespaceURI, String localName) {
 		return bdc;
 	}
-	
-	public void reconstructChannels( int values, List<ExpandedName> valueQNames, Map<ExpandedName, List<Datatype>> dataTypes, Map<ExpandedName, Integer> occurrences )
-	{
-		//	unused!
+
+	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
+			Map<ExpandedName, List<Datatype>> dataTypes,
+			Map<ExpandedName, Integer> occurrences) {
+		// unused!
 		throw new UnsupportedOperationException("Not allowed!");
 	}
 }

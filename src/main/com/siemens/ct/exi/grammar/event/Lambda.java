@@ -27,11 +27,9 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.1.20080718
  */
 
-public class Lambda extends AbstractEvent
-{
-	public Lambda() 
-	{
-		super( "\u03BB" );	//	lambda sign
+public class Lambda extends AbstractEvent {
+	public Lambda() {
+		super("\u03BB"); // lambda sign
 		eventType = EventType.LAMBDA;
 	}
 }

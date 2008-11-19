@@ -27,11 +27,9 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.1.20080718
  */
 
-public class DocType extends AbstractEvent
-{
-	public DocType() 
-	{
-		super( "DT" );
+public class DocType extends AbstractEvent {
+	public DocType() {
+		super("DT");
 		eventType = EventType.DOC_TYPE;
 	}
 }

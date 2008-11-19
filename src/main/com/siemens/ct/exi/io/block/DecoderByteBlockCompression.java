@@ -39,83 +39,69 @@ import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
  * @version 0.1.20080718
  */
 
-public class DecoderByteBlockCompression extends AbstractDecoderByteBlockChannelized
-{	
+public class DecoderByteBlockCompression extends
+		AbstractDecoderByteBlockChannelized {
 	protected InputStream resettableInputStream;
 	private InflaterInputStream recentInflaterInputStream;
-	
+
 	private long bytesRead = 0;
 
 	protected Inflater inflater;
 
-	public DecoderByteBlockCompression ( InputStream is, TypeDecoder typeDecoder ) throws IOException
-	{
-		super( is, typeDecoder );		
+	public DecoderByteBlockCompression(InputStream is, TypeDecoder typeDecoder)
+			throws IOException {
+		super(is, typeDecoder);
 	}
-	
-	protected void init( ) throws IOException
-	{
-		if ( false )
-		{
+
+	protected void init() throws IOException {
+		if (false) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int b;
-			while (  ( b = inputStream.read ( ) ) != -1 )
-			{
-				baos.write ( b );
+			while ((b = inputStream.read()) != -1) {
+				baos.write(b);
 			}
-			baos.flush ( );
-			
-			resettableInputStream = new ByteArrayInputStream( baos.toByteArray ( ) );
-		}
-		else
-		{
-			resettableInputStream = new BufferedInputStream( inputStream ) ;
-			resettableInputStream.mark ( Integer.MAX_VALUE );
+			baos.flush();
+
+			resettableInputStream = new ByteArrayInputStream(baos.toByteArray());
+		} else {
+			resettableInputStream = new BufferedInputStream(inputStream);
+			resettableInputStream.mark(Integer.MAX_VALUE);
 		}
 
-	
-		structureChannel =  getNextChannel ( );
+		structureChannel = getNextChannel();
 	}
 
-
-	protected ByteDecoderChannel getNextChannel( ) throws IOException
-	{
-		return new ByteDecoderChannel ( getStream () );
+	protected ByteDecoderChannel getNextChannel() throws IOException {
+		return new ByteDecoderChannel(getStream());
 	}
 
-	
-	protected InputStream getStream () throws IOException
-	{	
-		
-		if ( inflater == null )
-		{
-			//	first stream (initialize inflater)
-			inflater = new Inflater( CompileConfiguration.DEFLATE_NOWRAP );
-		}
-		else
-		{
-			if ( ! inflater.finished ( ) )
-			{
+	protected InputStream getStream() throws IOException {
+
+		if (inflater == null) {
+			// first stream (initialize inflater)
+			inflater = new Inflater(CompileConfiguration.DEFLATE_NOWRAP);
+		} else {
+			if (!inflater.finished()) {
 				// [Warning] Inflater not finished
-				
-				while( ! inflater.finished ( ) )
-				{
-					recentInflaterInputStream.read ( );
+
+				while (!inflater.finished()) {
+					recentInflaterInputStream.read();
 				}
 			}
-			
-			//	update new byte position
-			bytesRead += inflater.getBytesRead ( );
-			
-			//	reset byte position
-			resettableInputStream.reset ( );
-			resettableInputStream.skip ( bytesRead );
-			
-			//	reset inflater
-			inflater.reset ( );
+
+			// update new byte position
+			bytesRead += inflater.getBytesRead();
+
+			// reset byte position
+			resettableInputStream.reset();
+			resettableInputStream.skip(bytesRead);
+
+			// reset inflater
+			inflater.reset();
 		}
-		
-		recentInflaterInputStream = new InflaterInputStream( resettableInputStream, inflater );
+
+		recentInflaterInputStream = new InflaterInputStream(
+				resettableInputStream, inflater);
 
 		return recentInflaterInputStream;
 	}

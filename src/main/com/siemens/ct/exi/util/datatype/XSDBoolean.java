@@ -30,37 +30,30 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @version 0.1.20080718
  */
 
-public class XSDBoolean
-{
+public class XSDBoolean {
 	private boolean bool;
 
-	private XSDBoolean ( )
-	{
+	private XSDBoolean() {
 	}
-	
-	public static XSDBoolean newInstance()
-	{
+
+	public static XSDBoolean newInstance() {
 		return new XSDBoolean();
 	}
-	
-	public void parse( String value ) throws XMLParsingException
-	{
-		if ( value.equals ( Constants.XSD_BOOLEAN_0 ) || value.equals ( Constants.XSD_BOOLEAN_FALSE ) )
-		{
+
+	public void parse(String value) throws XMLParsingException {
+		if (value.equals(Constants.XSD_BOOLEAN_0)
+				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {
 			bool = false;
-		}
-		else if ( value.equals ( Constants.XSD_BOOLEAN_1 ) || value.equals (  Constants.XSD_BOOLEAN_TRUE ) )
-		{
+		} else if (value.equals(Constants.XSD_BOOLEAN_1)
+				|| value.equals(Constants.XSD_BOOLEAN_TRUE)) {
 			bool = true;
-		}
-		else
-		{
-			throw new XMLParsingException( "'" + value + "' can not be interpreted as boolean value" );
+		} else {
+			throw new XMLParsingException("'" + value
+					+ "' can not be interpreted as boolean value");
 		}
 	}
-	
-	public boolean getBoolean()
-	{
+
+	public boolean getBoolean() {
 		return bool;
 	}
 

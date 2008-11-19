@@ -27,82 +27,65 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractEvent implements Event
-{
-	protected String	grammarNotation;
+public abstract class AbstractEvent implements Event {
+	protected String grammarNotation;
 
-	protected EventType	eventType;
+	protected EventType eventType;
 
-	public AbstractEvent ( String grammarNotation )
-	{
+	public AbstractEvent(String grammarNotation) {
 		this.grammarNotation = grammarNotation;
 	}
 
-	public EventType getEventType ()
-	{
+	public EventType getEventType() {
 		return eventType;
 	}
 
-	public boolean isEventType ( EventType type )
-	{
-		return ( type == eventType );
+	public boolean isEventType(EventType type) {
+		return (type == eventType);
 	}
 
-	public String toString ()
-	{
+	public String toString() {
 		return grammarNotation;
 	}
 
 	@Override
-	public int hashCode ()
-	{
-		return eventType.ordinal ( );
+	public int hashCode() {
+		return eventType.ordinal();
 	}
 
-	public boolean equals ( Object obj )
-	{
-		if ( this == obj )
-		{
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
-		}
-		else if ( obj instanceof Event )
-		{
-			return ( (Event) obj ).isEventType ( getEventType ( ) );
-		}
-		else
-		{
+		} else if (obj instanceof Event) {
+			return ((Event) obj).isEventType(getEventType());
+		} else {
 			return false;
 		}
 	}
 
-	public int compareTo ( Event o )
-	{
-		if ( this.getEventType ( ).ordinal ( ) == o.getEventType ( ).ordinal ( ) )
-		{
+	public int compareTo(Event o) {
+		if (this.getEventType().ordinal() == o.getEventType().ordinal()) {
 			// same event-type --> further checking necessary
-			switch ( o.getEventType ( ) )
-			{
-				case START_ELEMENT:
-					// CASE 1: first is smallest etc. (schema order)
-					return +1;
+			switch (o.getEventType()) {
+			case START_ELEMENT:
+				// CASE 1: first is smallest etc. (schema order)
+				return +1;
 
-//					// CASE 2: lexical order
-//					StartElement otherSE = (StartElement) o;
-//					return ( ( (StartElement) this ).compareTo ( otherSE.getNamespaceURI ( ), otherSE.getLocalPart ( ) ) );
-				case ATTRIBUTE:
-					Attribute otherAT = (Attribute) o;
-					return ( ( (Attribute) this ).compareTo ( otherAT.getNamespaceURI ( ), otherAT.getLocalPart ( ) ) );
-				default:
-					// default for all other events
-					return 0;
+				// // CASE 2: lexical order
+				// StartElement otherSE = (StartElement) o;
+				// return ( ( (StartElement) this ).compareTo (
+				// otherSE.getNamespaceURI ( ), otherSE.getLocalPart ( ) ) );
+			case ATTRIBUTE:
+				Attribute otherAT = (Attribute) o;
+				return (((Attribute) this).compareTo(otherAT.getNamespaceURI(),
+						otherAT.getLocalPart()));
+			default:
+				// default for all other events
+				return 0;
 			}
-		}
-		else if ( this.getEventType ( ).ordinal ( ) < o.getEventType ( ).ordinal ( ) )
-		{
+		} else if (this.getEventType().ordinal() < o.getEventType().ordinal()) {
 			return -1;
-		}
-		else
-		{
+		} else {
 			return +1;
 		}
 	}

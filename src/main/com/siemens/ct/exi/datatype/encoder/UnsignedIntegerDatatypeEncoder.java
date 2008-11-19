@@ -34,32 +34,28 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20080718
  */
 
-public class UnsignedIntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDInteger lastUnsignedInteger = XSDInteger.newInstance ( );
+public class UnsignedIntegerDatatypeEncoder extends AbstractDatatypeEncoder
+		implements DatatypeEncoder {
+	private XSDInteger lastUnsignedInteger = XSDInteger.newInstance();
 
-	public UnsignedIntegerDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+	public UnsignedIntegerDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastUnsignedInteger.parse ( value );
-			
-			return ( ! lastUnsignedInteger.isNegative ( ) ); 
-		}
-		catch ( XMLParsingException e )
-		{
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastUnsignedInteger.parse(value);
+
+			return (!lastUnsignedInteger.isNegative());
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException
+	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
-		valueChannel.encodeUnsignedInteger ( lastUnsignedInteger );
+		valueChannel.encodeUnsignedInteger(lastUnsignedInteger);
 	}
 }

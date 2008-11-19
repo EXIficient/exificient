@@ -40,106 +40,98 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.1.20080718
  */
 
-public class DOMEncoder
-{
-	protected EXIEncoder	encoder;
+public class DOMEncoder {
+	protected EXIEncoder encoder;
 
 	// attributes
-	private AttributeList	exiAttributes;
+	private AttributeList exiAttributes;
 
-	public DOMEncoder ( EXIFactory factory )
-	{
-		this.encoder = factory.createEXIEncoder ( );
-		
+	public DOMEncoder(EXIFactory factory) {
+		this.encoder = factory.createEXIEncoder();
+
 		// attribute list
-		boolean isSchemaInformed = factory.getGrammar ( ).isSchemaInformed ( );
-		AttributeFactory attFactory = AttributeFactory.newInstance ( );
-		exiAttributes = attFactory.createAttributeListInstance ( isSchemaInformed );
+		boolean isSchemaInformed = factory.getGrammar().isSchemaInformed();
+		AttributeFactory attFactory = AttributeFactory.newInstance();
+		exiAttributes = attFactory
+				.createAttributeListInstance(isSchemaInformed);
 	}
-	
-	
-	public void setOutput( OutputStream os ) throws EXIException
-	{
-		encoder.setOutput ( os );
-	}
-	
-	public void encode( Document doc ) throws EXIException
-	{
-		encoder.encodeStartDocument ( );
-		
-		Element root = doc.getDocumentElement ( );
-		encode( root );
-		
-		encoder.encodeEndDocument ( );
-	}
-	
 
-	protected void encode ( Node root ) throws EXIException
-	{
-		assert ( root.getNodeType ( ) == Node.ELEMENT_NODE );
+	public void setOutput(OutputStream os) throws EXIException {
+		encoder.setOutput(os);
+	}
 
-		encoder.encodeStartElement ( root.getNamespaceURI ( ), root.getNodeName ( ) );
+	public void encode(Document doc) throws EXIException {
+		encoder.encodeStartDocument();
+
+		Element root = doc.getDocumentElement();
+		encode(root);
+
+		encoder.encodeEndDocument();
+	}
+
+	protected void encode(Node root) throws EXIException {
+		assert (root.getNodeType() == Node.ELEMENT_NODE);
+
+		encoder.encodeStartElement(root.getNamespaceURI(), root.getNodeName());
 
 		// attributes
-		exiAttributes.parse ( root.getAttributes ( ) );
+		exiAttributes.parse(root.getAttributes());
 
 		// NS
-		for ( int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations ( ); i++ )
-		{
-			encoder.encodeNamespaceDeclaration ( exiAttributes.getNamespaceDeclarationURI ( i ), exiAttributes.getNamespaceDeclarationPrefix ( i ) );
+		for (int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations(); i++) {
+			encoder.encodeNamespaceDeclaration(exiAttributes
+					.getNamespaceDeclarationURI(i), exiAttributes
+					.getNamespaceDeclarationPrefix(i));
 		}
 
 		// xsi:type
-		if ( exiAttributes.hasXsiType ( ) )
-		{
-			encoder.encodeXsiType ( exiAttributes.getXsiTypeURI ( ), exiAttributes.getXsiTypeLocalName ( ), exiAttributes.getXsiTypeRaw ( ) );
+		if (exiAttributes.hasXsiType()) {
+			encoder.encodeXsiType(exiAttributes.getXsiTypeURI(), exiAttributes
+					.getXsiTypeLocalName(), exiAttributes.getXsiTypeRaw());
 		}
 
 		// xsi:nil
-		if ( exiAttributes.hasXsiNil ( ) )
-		{
-			encoder.encodeXsiNil ( exiAttributes.getXsiNil ( )  );
+		if (exiAttributes.hasXsiNil()) {
+			encoder.encodeXsiNil(exiAttributes.getXsiNil());
 		}
 
 		// AT
-		for ( int i = 0; i < exiAttributes.getNumberOfAttributes ( ); i++ )
-		{
-			encoder.encodeAttribute ( exiAttributes.getAttributeURI ( i ), exiAttributes.getAttributeLocalName ( i ), exiAttributes.getAttributeValue ( i ) );
+		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
+			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
+					exiAttributes.getAttributeLocalName(i), exiAttributes
+							.getAttributeValue(i));
 		}
 
-		NodeList children = root.getChildNodes ( );
+		NodeList children = root.getChildNodes();
 
-		for ( int i = 0; i < children.getLength ( ); i++ )
-		{
-			Node n = children.item ( i );
-			switch ( n.getNodeType ( ) )
-			{
-				case Node.ELEMENT_NODE:
-					encode ( n );
-					break;
-				case Node.ATTRIBUTE_NODE:
-					break;
-				case Node.TEXT_NODE:
-					String value = n.getNodeValue ( );
-					if ( ( value = value.trim ( ) ).length ( ) > 0 )
-					{
-						encoder.encodeCharacters ( value );
-					}
-					break;
-				case Node.COMMENT_NODE:
-					// TODO CM
-					break;
-				case Node.ENTITY_REFERENCE_NODE:
-					// TODO ER
-					break;
-				case Node.PROCESSING_INSTRUCTION_NODE:
-					// TODO PI
-					break;
-				default:
-					throw new EXIException( "Unknown NodeType? " + n.getNodeType ( ) );
+		for (int i = 0; i < children.getLength(); i++) {
+			Node n = children.item(i);
+			switch (n.getNodeType()) {
+			case Node.ELEMENT_NODE:
+				encode(n);
+				break;
+			case Node.ATTRIBUTE_NODE:
+				break;
+			case Node.TEXT_NODE:
+				String value = n.getNodeValue();
+				if ((value = value.trim()).length() > 0) {
+					encoder.encodeCharacters(value);
+				}
+				break;
+			case Node.COMMENT_NODE:
+				// TODO CM
+				break;
+			case Node.ENTITY_REFERENCE_NODE:
+				// TODO ER
+				break;
+			case Node.PROCESSING_INSTRUCTION_NODE:
+				// TODO PI
+				break;
+			default:
+				throw new EXIException("Unknown NodeType? " + n.getNodeType());
 			}
 		}
 
-		encoder.encodeEndElement ( );
+		encoder.encodeEndElement();
 	}
 }

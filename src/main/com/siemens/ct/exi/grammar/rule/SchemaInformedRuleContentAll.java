@@ -30,45 +30,37 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @version 0.1.20081003
  */
 
-public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement
-{
-	static final Event END_ELEMENT = new EndElement ( );
-	
+public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement {
+	static final Event END_ELEMENT = new EndElement();
+
 	@Override
-	public Rule get1stLevelRule ( int ec ) throws IndexOutOfBoundsException
-	{
-		return cloneWithoutGivenEventCode( ec );
+	public Rule get1stLevelRule(int ec) throws IndexOutOfBoundsException {
+		return cloneWithoutGivenEventCode(ec);
 	}
-	
-	protected SchemaInformedRuleContentAll cloneWithoutGivenEventCode( int ec )
-	{
-		Rule original = super.get1stLevelRule ( ec );
-		
+
+	protected SchemaInformedRuleContentAll cloneWithoutGivenEventCode(int ec) {
+		Rule original = super.get1stLevelRule(ec);
+
 		SchemaInformedRuleContentAll clone = new SchemaInformedRuleContentAll();
-		
-		if ( original.getNumberOfEvents ( ) > 0 )
-		{
-			for ( int i=0; i<original.getNumberOfEvents ( ); i++)
-			{
-				if ( i != ec )
-				{
-					clone.addRule ( original.get1stLevelEvent ( i ), clone );
+
+		if (original.getNumberOfEvents() > 0) {
+			for (int i = 0; i < original.getNumberOfEvents(); i++) {
+				if (i != ec) {
+					clone.addRule(original.get1stLevelEvent(i), clone);
 				}
 			}
-			
-			if ( clone.getNumberOfEvents ( ) == 0 )
-			{
-				//	add final EE event
-				clone.addTerminalRule ( END_ELEMENT );
-			}	
+
+			if (clone.getNumberOfEvents() == 0) {
+				// add final EE event
+				clone.addTerminalRule(END_ELEMENT);
+			}
 		}
-		
+
 		return clone;
 	}
-	
-	public String toString( )
-	{
-		return "All" + super.toString ( );
+
+	public String toString() {
+		return "All" + super.toString();
 	}
 
 }

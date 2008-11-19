@@ -33,32 +33,28 @@ import com.siemens.ct.exi.util.datatype.XSDBase64;
  * @version 0.1.20080718
  */
 
-public class BinaryDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
+public class BinaryDatatypeEncoder extends AbstractDatatypeEncoder implements
+		DatatypeEncoder {
 	private XSDBase64 lastValidBytes = XSDBase64.newInstance();
-	
-	public BinaryDatatypeEncoder( TypeEncoder typeEncoder )
-	{
-		super( typeEncoder );
+
+	public BinaryDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
-	
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastValidBytes.parse ( value.toCharArray ( ), 0, value.length ( ) );
+
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastValidBytes.parse(value.toCharArray(), 0, value.length());
 			return true;
-		}
-		catch ( Exception e )
-		{
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	//public void writeValue ( EncoderChannel valueChannel ) throws IOException
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException
+	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
 	{
-		valueChannel.encodeBinary ( lastValidBytes );
+		valueChannel.encodeBinary(lastValidBytes);
 	}
 
 }

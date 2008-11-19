@@ -35,50 +35,44 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @version 0.1.20081111
  */
 
-public class NBitIntegerDatatypeEncoder extends AbstractDatatypeEncoder implements DatatypeEncoder
-{
-	private XSDInteger	lastNBitInteger	= XSDInteger.newInstance ( );
-	private int			valueToEncode;
-	private int			numberOfBits;
+public class NBitIntegerDatatypeEncoder extends AbstractDatatypeEncoder
+		implements DatatypeEncoder {
+	private XSDInteger lastNBitInteger = XSDInteger.newInstance();
+	private int valueToEncode;
+	private int numberOfBits;
 
-	public NBitIntegerDatatypeEncoder ( TypeEncoder typeEncoder )
-	{
-		super ( typeEncoder );
+	public NBitIntegerDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
 	}
 
-	public boolean isValid ( Datatype datatype, String value )
-	{
-		try
-		{
-			lastNBitInteger.parse ( value );
+	public boolean isValid(Datatype datatype, String value) {
+		try {
+			lastNBitInteger.parse(value);
 
-			assert ( datatype instanceof DatatypeNBitInteger );
+			assert (datatype instanceof DatatypeNBitInteger);
 			DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
 
 			// check lower & upper bound
-			if ( lastNBitInteger.compareTo ( nBitDT.getLowerBound ( ) ) >= 0
-					&& lastNBitInteger.compareTo ( nBitDT.getUpperBound ( ) ) <= 0 )
-			{
-				//	calculate offset & update value
-				//	Note: integer cast is possible since bounded range of integer is 4095 or smaller
-				valueToEncode = lastNBitInteger.subtract ( nBitDT.getLowerBound ( ) ).getIntInteger ( );
-				numberOfBits = nBitDT.getNumberOfBits ( );
-				
+			if (lastNBitInteger.compareTo(nBitDT.getLowerBound()) >= 0
+					&& lastNBitInteger.compareTo(nBitDT.getUpperBound()) <= 0) {
+				// calculate offset & update value
+				// Note: integer cast is possible since bounded range of integer
+				// is 4095 or smaller
+				valueToEncode = lastNBitInteger
+						.subtract(nBitDT.getLowerBound()).getIntInteger();
+				numberOfBits = nBitDT.getNumberOfBits();
+
 				return true;
-			}
-			else
-			{
+			} else {
 				return false;
 			}
-		}
-		catch ( XMLParsingException e )
-		{
+		} catch (XMLParsingException e) {
 			return false;
 		}
 	}
 
-	public void writeValue ( EncoderChannel valueChannel, String uri, String localName ) throws IOException
-	{
-		valueChannel.encodeNBitUnsignedInteger ( valueToEncode, numberOfBits );
+	public void writeValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits);
 	}
 }

@@ -30,15 +30,14 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  * @version 0.1.20080718
  */
 
-public interface Grammar
-{
-	public boolean isSchemaInformed ();
+public interface Grammar {
+	public boolean isSchemaInformed();
 
-	public Rule getBuiltInDocumentGrammar ();
+	public Rule getBuiltInDocumentGrammar();
 
-	public Rule getBuiltInFragmentGrammar ();
+	public Rule getBuiltInFragmentGrammar();
 
-	public Rule getRule( ElementKey es );
-	
-	public void populateStringTable( StringTableCommon stringTable );
+	public Rule getRule(ElementKey es);
+
+	public void populateStringTable(StringTableCommon stringTable);
 }

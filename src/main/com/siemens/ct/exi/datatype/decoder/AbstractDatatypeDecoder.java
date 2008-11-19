@@ -27,7 +27,6 @@ package com.siemens.ct.exi.datatype.decoder;
  * @version 0.1.20080718
  */
 
-public abstract class AbstractDatatypeDecoder implements DatatypeDecoder
-{
+public abstract class AbstractDatatypeDecoder implements DatatypeDecoder {
 
 }

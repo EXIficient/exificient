@@ -32,80 +32,55 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 /*
- * DocEnd :
- * 	ED			0
- * 	CM DocEnd	1.0
- * 	PI DocEnd	1.1
+ * DocEnd : ED 0 CM DocEnd 1.0 PI DocEnd 1.1
  */
-public class RuleDocEnd extends AbstractSchemaInformedRule
-{
+public class RuleDocEnd extends AbstractSchemaInformedRule {
 
-	public RuleDocEnd( )
-	{
-		super( );
+	public RuleDocEnd() {
+		super();
 	}
-	
-	public RuleDocEnd( String label )
-	{
-		super( label );
+
+	public RuleDocEnd(String label) {
+		super(label);
 	}
-	
+
 	@Override
-	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions )
-	{
-		//	has second or third level (CM or PI)
-		if ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) ||
-				fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_PI )
-				)
-		{
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		// has second or third level (CM or PI)
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
 			return true;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
-	
-	
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
+
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;
 	}
-	
 
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
 		return null;
 	}
-	
+
 	/*
-	 * Note:
-	 * The following two grammars result in the same bit sequence, therefore the
-	 * second variant is used to keep code simple!!
-	 *  DocEnd :
-	 *  	ED			0
-	 *  	CM DocEnd	1.0
-	 *  	PI DocEnd	1.1
-	 *  	
-	 *  DocEnd :
-	 *  	ED			0
-	 *  	CM DocEnd	1.0.0
-	 *  	PI DocEnd	1.0.1
+	 * Note: The following two grammars result in the same bit sequence,
+	 * therefore the second variant is used to keep code simple!! DocEnd : ED 0
+	 * CM DocEnd 1.0 PI DocEnd 1.1
 	 * 
+	 * DocEnd : ED 0 CM DocEnd 1.0.0 PI DocEnd 1.0.1
 	 */
-	public int get2ndLevelCharacteristics( FidelityOptions fidelityOptions )
-	{
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
 		int ch2 = 0;
-		
-		if ( get3rdLevelCharacteristics ( fidelityOptions ) > 0 )
-		{
+
+		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
 			ch2++;
 		}
-		
+
 		return ch2;
 	}
 
-
 }
-
-

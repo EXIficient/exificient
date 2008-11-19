@@ -29,12 +29,11 @@ import com.siemens.ct.exi.Constants;
  * @version 0.1.20080718
  */
 
-public class StringTableEncoderImplNoGlobalValues extends StringTableEncoderImpl
-{
+public class StringTableEncoderImplNoGlobalValues extends
+		StringTableEncoderImpl {
 
-	public StringTableEncoderImplNoGlobalValues ( boolean isSchemaInformed )
-	{
-		super ( isSchemaInformed );
+	public StringTableEncoderImplNoGlobalValues(boolean isSchemaInformed) {
+		super(isSchemaInformed);
 	}
 
 	/*
@@ -48,8 +47,7 @@ public class StringTableEncoderImplNoGlobalValues extends StringTableEncoderImpl
 	 * TODO currently global values switched off
 	 */
 	@Override
-	public int getGlobalValueID ( String value )
-	{
+	public int getGlobalValueID(String value) {
 		return Constants.NOT_FOUND;
 	}
 

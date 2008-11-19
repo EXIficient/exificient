@@ -38,84 +38,72 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.1.20080718
  */
 
-public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder
-{
-	//	fallback type encoder
+public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
+	// fallback type encoder
 	private TypeEncoderTyped defaultEncoder;
-	
+
 	private HashMap<QName, DatatypeRepresentation> userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeRepresentation>();
 
 	private boolean usePluggableCodec;
-	
+
 	private DatatypeRepresentation lastPluggableEncoder;
-	
-	public TypeEncoderDatatypeRespresentationMap( EXIFactory exiFactory )
-	{
-		//super( true );
-		super( exiFactory );
-		
-		//	hand over "same" string table
-		defaultEncoder = new TypeEncoderTyped( exiFactory, this.stringTable );
+
+	public TypeEncoderDatatypeRespresentationMap(EXIFactory exiFactory) {
+		// super( true );
+		super(exiFactory);
+
+		// hand over "same" string table
+		defaultEncoder = new TypeEncoderTyped(exiFactory, this.stringTable);
 	}
 
-	
-	public void registerDatatypeRepresentation( DatatypeRepresentation datatypeRepresentation )
-	{
-		//pluggableCodecs.put ( datatypeIdentifier, datatypeEncoder );
-		userDefinedDatatypeRepresentations.put ( datatypeRepresentation.getQName ( ), datatypeRepresentation );
+	public void registerDatatypeRepresentation(
+			DatatypeRepresentation datatypeRepresentation) {
+		// pluggableCodecs.put ( datatypeIdentifier, datatypeEncoder );
+		userDefinedDatatypeRepresentations.put(datatypeRepresentation
+				.getQName(), datatypeRepresentation);
 	}
-	
-	public boolean isTypeValid ( Datatype datatype, String value )
-	{
-		if ( userDefinedDatatypeRepresentations.containsKey ( datatype.getDatatypeIdentifier ( ) ) )
-		{
-			//	use pluggable codecs
+
+	public boolean isTypeValid(Datatype datatype, String value) {
+		if (userDefinedDatatypeRepresentations.containsKey(datatype
+				.getDatatypeIdentifier())) {
+			// use pluggable codecs
 			usePluggableCodec = true;
-			
-			// System.out.println ( "[ENC] Pluggable Codec in use for '" + value + "'!" );
-			
-			lastPluggableEncoder = userDefinedDatatypeRepresentations.get ( datatype.getDatatypeIdentifier ( ) );
-			return lastPluggableEncoder.isValid ( datatype, value );
-		}
-		else
-		{
-			//	use default EXI codecs
+
+			// System.out.println ( "[ENC] Pluggable Codec in use for '" + value
+			// + "'!" );
+
+			lastPluggableEncoder = userDefinedDatatypeRepresentations
+					.get(datatype.getDatatypeIdentifier());
+			return lastPluggableEncoder.isValid(datatype, value);
+		} else {
+			// use default EXI codecs
 			usePluggableCodec = false;
 			lastPluggableEncoder = null;
-			
-			return defaultEncoder.isTypeValid ( datatype, value );
+
+			return defaultEncoder.isTypeValid(datatype, value);
 		}
 	}
-	
 
 	// first isValueTypeValid has to be called
-	public void writeTypeValidValue ( EncoderChannel valueChannel, String uri, String localName )
-			throws IOException
-	{
-		if ( usePluggableCodec )
-		{
-			lastPluggableEncoder.writeValue ( valueChannel, uri, localName );
-		}
-		else 
-		{
-			defaultEncoder.writeTypeValidValue ( valueChannel, uri, localName );
+	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
+			String localName) throws IOException {
+		if (usePluggableCodec) {
+			lastPluggableEncoder.writeValue(valueChannel, uri, localName);
+		} else {
+			defaultEncoder.writeTypeValidValue(valueChannel, uri, localName);
 		}
 	}
-
 
 	@Override
-	public void finish () throws IOException
-	{
-		//	finalize all *used* pluggable codecs
-		Iterator<DatatypeRepresentation> iter = userDefinedDatatypeRepresentations.values ( ).iterator ( );
-		
-		while( iter.hasNext ( ) )
-		{
-			iter.next ( ).finish ( );
+	public void finish() throws IOException {
+		// finalize all *used* pluggable codecs
+		Iterator<DatatypeRepresentation> iter = userDefinedDatatypeRepresentations
+				.values().iterator();
+
+		while (iter.hasNext()) {
+			iter.next().finish();
 		}
-		
+
 	}
-
-
 
 }

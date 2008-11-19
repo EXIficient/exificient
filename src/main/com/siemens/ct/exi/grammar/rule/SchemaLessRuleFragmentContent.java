@@ -38,56 +38,47 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 /*
  * <Built-in Fragment Grammar>
  * 
- * FragmentContent :
- * 		SE (*) 	FragmentContent	0
- * 		ED 						1
- * 		CM 		FragmentContent	2.0
- * 		PI 		FragmentContent	2.1
- * 
+ * FragmentContent : SE () FragmentContent 0 ED 1 CM FragmentContent 2.0 PI
+ * FragmentContent 2.1
  */
 
-public class SchemaLessRuleFragmentContent extends AbstractSchemaLessRule
-{
-	public SchemaLessRuleFragmentContent ()
-	{
-		super ( );
+public class SchemaLessRuleFragmentContent extends AbstractSchemaLessRule {
+	public SchemaLessRuleFragmentContent() {
+		super();
 
-		addRule ( new StartElementGeneric ( ), this ); // FragmentContent
-		addTerminalRule ( new EndDocument ( ) );
+		addRule(new StartElementGeneric(), this); // FragmentContent
+		addTerminalRule(new EndDocument());
 	}
 
 	@Override
-	public boolean hasSecondOrThirdLevel ( FidelityOptions fidelityOptions )
-	{
-		return ( fidelityOptions.isFidelityEnabled ( FidelityOptions.FEATURE_COMMENT ) || fidelityOptions
-				.isFidelityEnabled ( FidelityOptions.FEATURE_PI ) );
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return (fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
 
-	public int get2ndLevelEventCode ( EventType eventType, FidelityOptions fidelityOptions )
-	{
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;
 	}
 
-	public EventType get2ndLevelEvent ( int eventCode, FidelityOptions fidelityOptions )
-	{
+	public EventType get2ndLevelEvent(int eventCode,
+			FidelityOptions fidelityOptions) {
 		return null;
 	}
 
-	public int get2ndLevelCharacteristics ( FidelityOptions fidelityOptions )
-	{
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
 		return 0;
 	}
 
 	@Override
-	public void learnStartElement ( String uri, String localName )
-	{
+	public void learnStartElement(String uri, String localName) {
 		// a learned rule is added to the front, technically
 		// it is added to the tail
-		Event event = new StartElement ( uri, localName );
-		if ( !this.contains ( event ) )
-		{
+		Event event = new StartElement(uri, localName);
+		if (!this.contains(event)) {
 			// eventRules.add ( new EventRule ( event, this ) );
-			this.addRule ( event, this );
+			this.addRule(event, this);
 		}
 	}
 

@@ -33,11 +33,12 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.1.20080718
  */
 
-public class DatetimeDatatypeDecoder extends AbstractDatatypeDecoder
-{
-	public String decodeValue ( TypeDecoder decoder, Datatype datatype, DecoderChannel dc, String namespaceURI, String localName ) throws IOException
-	{
-		return dc.decodeDateTimeAsString ( ((DatatypeDatetime)datatype).getDatetimeType ( ) );
+public class DatetimeDatatypeDecoder extends AbstractDatatypeDecoder {
+	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+			DecoderChannel dc, String namespaceURI, String localName)
+			throws IOException {
+		return dc.decodeDateTimeAsString(((DatatypeDatetime) datatype)
+				.getDatetimeType());
 	}
 
 }

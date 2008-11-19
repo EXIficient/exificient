@@ -34,71 +34,60 @@ import com.siemens.ct.exi.io.BitInputStream;
  * @version 0.1.20081111
  */
 
-public class BitDecoderChannel extends AbstractDecoderChannel implements DecoderChannel
-{
+public class BitDecoderChannel extends AbstractDecoderChannel implements
+		DecoderChannel {
 	/**
 	 * Underlying bit input stream from which bits and bytes are read.
 	 */
-	protected BitInputStream	istream;
+	protected BitInputStream istream;
 
 	/**
 	 * Construct a decoder from input stream
 	 */
-	public BitDecoderChannel ( InputStream is )
-	{
-		this.istream = new BitInputStream ( is );
+	public BitDecoderChannel(InputStream is) {
+		this.istream = new BitInputStream(is);
 	}
 
-	public void align () throws IOException
-	{
-		istream.align ( );
+	public void align() throws IOException {
+		istream.align();
 	}
 
-	public int decode () throws IOException
-	{
-		return istream.readBits ( 8 );
+	public int decode() throws IOException {
+		return istream.readBits(8);
 	}
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer.
 	 */
-	public int decodeNBitUnsignedInteger ( int n ) throws IOException
-	{
-		assert ( n >= 0 );
-		
-		if ( n == 0 )
-		{
+	public int decodeNBitUnsignedInteger(int n) throws IOException {
+		assert (n >= 0);
+
+		if (n == 0) {
 			return 0;
-		}
-		else
-		{
-			return istream.readBits ( n );
+		} else {
+			return istream.readBits(n);
 		}
 	}
-
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit
 	 * 0, and the value true is represented by the bit 1.
 	 */
-	public boolean decodeBoolean () throws IOException
-	{
-		return ( istream.readBit ( ) == 1 );
+	public boolean decodeBoolean() throws IOException {
+		return (istream.readBit() == 1);
 	}
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
-	public byte[] decodeBinary () throws IOException
-	{
-		final int length = decodeUnsignedInteger ( );
+	public byte[] decodeBinary() throws IOException {
+		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
 
-		for ( int i = 0; i < length; i++ )
-		{
-			result[i] = (byte) istream.readBits ( 8 );
+		for (int i = 0; i < length; i++) {
+			result[i] = (byte) istream.readBits(8);
 		}
 		return result;
 	}
-	
+
 }
