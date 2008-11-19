@@ -173,7 +173,7 @@ public abstract class AbstractRule implements Rule
 	}
 
 
-	protected boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
+	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
 	{
 		return ( ! fidelityOptions.isStrict ( ) );
 	}

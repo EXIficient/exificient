@@ -37,6 +37,7 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.DecoderBlock;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -155,7 +156,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		int ec3AT;
 		try
 		{
-			ec3AT = block.readEventCode ( sir.getNumberOfSchemaDeviatedAttributes ( ) );
+			ec3AT = block.readEventCode ( MethodsBag.getCodingLength( sir.getNumberOfSchemaDeviatedAttributes ( ) ) );
 		}
 		catch ( IOException e )
 		{
@@ -183,18 +184,17 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 	{
 		try
 		{
-			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
-			int level1 = block.readEventCode ( ch1 );
+			int level1 = block.readEventCode ( currentRule.get1stLevelEventCodeLength( fidelityOptions ) );
 
-			if ( currentRule.getNumberOfEvents ( ) == ch1 )
+			if ( currentRule.hasSecondOrThirdLevel( fidelityOptions ) )
 			{
-				//	strict (in the sense of no 2nd event-code level)
-				return ( level1 < ch1 ? level1 : Constants.NOT_FOUND );
+				//	not strict
+				return ( level1 == currentRule.getNumberOfEvents ( ) ? Constants.NOT_FOUND : level1 );
 			}
 			else
 			{
-				//	not strict
-				return ( level1 < ( ch1 - 1 ) ? level1 : Constants.NOT_FOUND );
+				//	strict (in the sense of no 2nd event-code level)
+				return level1;
 			}
 		}
 		catch ( IOException e )
@@ -208,7 +208,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		try
 		{
 			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
-			int level2 = block.readEventCode ( ch2 );
+			int level2 = block.readEventCode ( MethodsBag.getCodingLength( ch2 ) );
 
 			if ( currentRule.get3rdLevelCharacteristics ( fidelityOptions ) > 0 )
 			{
@@ -230,7 +230,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements EXI
 		try
 		{
 			int ch3 = currentRule.get3rdLevelCharacteristics ( fidelityOptions );
-			return block.readEventCode ( ch3 );
+			return block.readEventCode ( MethodsBag.getCodingLength( ch3 ) );
 		}
 		catch ( IOException e )
 		{

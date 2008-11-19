@@ -95,8 +95,7 @@ public class EventCodeTest extends TestCase
 		
 		//	Sequence: atA, atB, SE(f), SE(e), SE(d), SE(c), SE(b), EE
 		//	Note: SE(a) missing
-		FidelityOptions fo = FidelityOptions.createStrict ( );
-		assertTrue ( r.get1stLevelCharacteristics ( fo ) == 8 );
+		assertTrue ( r.getNumberOfEvents ( ) == 8 );
 
 		Event ev;
 		int eventCode = 0;
@@ -179,7 +178,7 @@ public class EventCodeTest extends TestCase
 		
 		//	### Use_color_0 ###
 		//	1st level
-		assertTrue ( Use_color_0.get1stLevelCharacteristics ( fo ) == 3 );
+		assertTrue ( Use_color_0.getNumberOfEvents() == 2 );
 		// AT( color )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "color" );
 		assertTrue( Use_color_0.get1stLevelEventCode ( ev ) == 0 );
@@ -211,7 +210,7 @@ public class EventCodeTest extends TestCase
 		//	### Use_color_1 ###
 		Rule Use_color_1 = Use_color_0.get1stLevelRule ( 0 );
 		//	1st level
-		assertTrue ( Use_color_1.get1stLevelCharacteristics ( fo ) == 2 );
+		assertTrue ( Use_color_1.getNumberOfEvents( )== 1 );
 		// AT( sku )
 		ev = new Attribute( XMLConstants.NULL_NS_URI, "sku" );
 		assertTrue( Use_color_1.get1stLevelEventCode ( ev ) == 0 );
@@ -220,7 +219,7 @@ public class EventCodeTest extends TestCase
 		//	### Use_sku_1 ###
 		Rule Use_sku_1 = Use_color_1.get1stLevelRule ( 0 );
 		//	1st level
-		assertTrue ( Use_sku_1.get1stLevelCharacteristics ( fo ) == 3 );
+		assertTrue ( Use_sku_1.getNumberOfEvents( ) == 2 );
 		// SE( description )
 		ev = new StartElement( XMLConstants.NULL_NS_URI, "description" );
 		assertTrue( Use_sku_1.get1stLevelEventCode ( ev ) == 0 );

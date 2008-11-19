@@ -58,7 +58,7 @@ public class SchemaInformedRuleFragmentContent extends AbstractSchemaInformedRul
 	}
 	
 	@Override
-	protected boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
+	public boolean hasSecondOrThirdLevel( FidelityOptions fidelityOptions  )
 	{
 		//	FragmentContent contains in any case (even in strict mode) SE(*) event on 2nd level
 		return true;

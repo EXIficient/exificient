@@ -38,6 +38,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.EncoderBlock;
+import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
 /**
@@ -93,11 +94,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 
 	protected void encode1stLevelEventCode ( int pos ) throws EXIException
 	{
-		assert ( pos < currentRule.get1stLevelCharacteristics ( fidelityOptions ) );
-
 		try
 		{
-			block.writeEventCode ( pos, currentRule.get1stLevelCharacteristics ( fidelityOptions ) );
+			block.writeEventCode ( pos, currentRule.get1stLevelEventCodeLength( fidelityOptions ) );
 		}
 		catch ( IOException e )
 		{
@@ -110,14 +109,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// 1st level
-			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
-			block.writeEventCode ( ch1 - 1, ch1 );
+			block.writeEventCode( currentRule.getNumberOfEvents(), currentRule.get1stLevelEventCodeLength( fidelityOptions ));
 
 			// 2nd level
 			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
 			assert ( pos < ch2 );
 
-			block.writeEventCode ( pos, ch2 );
+			block.writeEventCode ( pos, MethodsBag.getCodingLength( ch2 ) );
 		}
 		catch ( IOException e )
 		{
@@ -130,17 +128,16 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// 1st level
-			int ch1 = currentRule.get1stLevelCharacteristics ( fidelityOptions );
-			block.writeEventCode ( ch1 - 1, ch1 );
+			block.writeEventCode( currentRule.getNumberOfEvents(), currentRule.get1stLevelEventCodeLength( fidelityOptions ));
 
 			// 2nd level
 			int ch2 = currentRule.get2ndLevelCharacteristics ( fidelityOptions );
-			block.writeEventCode ( ch2 - 1, ch2 );
+			block.writeEventCode ( ch2 - 1, MethodsBag.getCodingLength( ch2 ) );
 
 			// 3rd level
 			int ch3 = currentRule.get3rdLevelCharacteristics ( fidelityOptions );
 			assert ( pos < ch3 );
-			block.writeEventCode ( pos, ch3 );
+			block.writeEventCode ( pos, MethodsBag.getCodingLength( ch3 ) );
 		}
 		catch ( IOException e )
 		{
@@ -191,8 +188,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// encode 3rd level event-code
-			block.writeEventCode ( ec3, schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) );
-
+			block.writeEventCode ( ec3, MethodsBag.getCodingLength( schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) ) );
+			
 			// encode content as string
 			block.writeValueAsString ( uri, localName, value );
 		}
@@ -222,7 +219,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements EXI
 		try
 		{
 			// encode 3rd level event-code
-			block.writeEventCode ( ec3nil, schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) );
+			block.writeEventCode ( ec3nil, MethodsBag.getCodingLength( schemaCurrentRule.getNumberOfSchemaDeviatedAttributes ( ) ) );
 
 			// encode content as string
 			block.writeString ( value );

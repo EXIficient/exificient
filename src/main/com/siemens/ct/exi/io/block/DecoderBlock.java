@@ -36,11 +36,10 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public interface DecoderBlock
 {
-
 	public void reconstructChannels ( int values, List<ExpandedName> valueQNames, Map<ExpandedName, List<Datatype>> dataTypes,
 			Map<ExpandedName, Integer> occurrences ) throws IOException;	
 	
-	public int readEventCode ( int characteristics ) throws IOException;
+	public int readEventCode ( int codeLength ) throws IOException;
 	
 	//	PI, Comment, PI, etc.
 	public String readString ( ) throws IOException;

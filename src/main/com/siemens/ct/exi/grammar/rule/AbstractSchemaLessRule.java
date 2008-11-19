@@ -24,6 +24,7 @@ import java.util.List;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.Event;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -66,10 +67,9 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements Sch
 		return ( getNumberOfEvents ( ) - 1 - internalIndex );
 	}
 	
-	public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions )
+	public int get1stLevelEventCodeLength ( FidelityOptions fidelityOptions )
 	{
-		// return getNumberOfEvents ( ) + ( hasSecondOrThirdLevel ( fidelityOptions ) ? 1 : 0 );
-		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? events.size ( ) + 1 : events.size ( ) );
+		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? MethodsBag.getCodingLength ( events.size ( ) + 1 ) : MethodsBag.getCodingLength ( events.size ( ) ) );
 	}
 
 	public int get1stLevelEventCode ( Event event )

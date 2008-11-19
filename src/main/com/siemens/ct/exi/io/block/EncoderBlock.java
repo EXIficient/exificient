@@ -33,7 +33,7 @@ import com.siemens.ct.exi.datatype.Datatype;
 
 public interface EncoderBlock
 {
-	public void writeEventCode ( int eventCode, int characteristics ) throws IOException;
+	public void writeEventCode ( int eventCode, int codeLength ) throws IOException;
 	
 	/*
 	 * Structure Channel

@@ -55,15 +55,10 @@ public abstract class AbstractDecoderBlock implements DecoderBlock
 	protected abstract DecoderChannel getStructureChannel ();
 
 	protected abstract DecoderChannel getValueChannel ( String namespaceURI, String localName ) throws IOException;
-
-//	public abstract void reconstructChannels ( TypeDecoder datatypeDecoder, FidelityOptions fidelityOptions,
-//			int values, ArrayList<ExpandedName> valueQNames, HashMap<ExpandedName, ArrayList<Datatype>> dataTypes,
-//			HashMap<ExpandedName, Integer> occurrences ) throws IOException;
-
 	
-	public int readEventCode ( int characteristics ) throws IOException
+	public int readEventCode ( int codeLength ) throws IOException
 	{
-		return getStructureChannel ( ).decodeNBitUnsignedInteger ( MethodsBag.getCodingLength ( characteristics ) );
+		return getStructureChannel ( ).decodeNBitUnsignedInteger ( codeLength );
 	}
 	
 	public String readString ( ) throws IOException

@@ -67,13 +67,9 @@ public abstract class AbstractEncoderBlock implements EncoderBlock
 	/*
 	 * Structure Channel
 	 */
-	public void writeEventCode ( int eventCode, int characteristics ) throws IOException
+	public void writeEventCode ( int eventCode, int codeLength ) throws IOException
 	{
-		assert( eventCode >= 0 );
-		assert( characteristics > 0 );
-		assert( eventCode < characteristics );
-		
-		getStructureChannel ( ).encodeNBitUnsignedInteger ( eventCode,  MethodsBag.getCodingLength ( characteristics ) );
+		getStructureChannel ( ).encodeNBitUnsignedInteger ( eventCode,  codeLength );
 	}
 	
 	public void writeString ( String text ) throws IOException

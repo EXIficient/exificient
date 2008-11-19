@@ -29,6 +29,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventRule;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -43,6 +44,8 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 {
 	protected List<EventRule>			eventRules;
 	protected int numberOfEvents;
+	protected int codeLengthA;
+	protected int codeLengthB;
 
 	protected boolean					lambdasResolved				= false;
 
@@ -86,10 +89,9 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return true;
 	}
 
-	
-	public int get1stLevelCharacteristics( FidelityOptions fidelityOptions )
+	public int get1stLevelEventCodeLength ( FidelityOptions fidelityOptions )
 	{
-		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? numberOfEvents + 1 : numberOfEvents );
+		return ( hasSecondOrThirdLevel ( fidelityOptions ) ? codeLengthB : codeLengthA );
 	}
 	
 	public int get1stLevelEventCode ( Event event )
@@ -213,8 +215,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	public int getNumberOfEvents ()
 	{
-		// return this.hmEvents.size ( );
-		// return eventRules.size ( );
 		return this.numberOfEvents;
 	}
 
@@ -302,6 +302,8 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		eventRules.clear ( );
 		eventRules.addAll ( sorted );
 		numberOfEvents = eventRules.size ( );
+		codeLengthA = MethodsBag.getCodingLength ( numberOfEvents );
+		codeLengthB = MethodsBag.getCodingLength ( numberOfEvents + 1 );
 
 		/*
 		 * reset least-attribute & number of deviated attributes
