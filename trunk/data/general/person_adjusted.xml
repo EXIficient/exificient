@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="person.xsd" age="12">
+    <firstname>Daniel</firstname>
+    <lastname>Peintner</lastname>
+    <telephone>
+        <mobile>0173 111111</mobile>
+    </telephone>
+    <info>
+        <text>
+            <info>
+                <text>
+                    <info/>
+                </text>
+                <sss>AAA gonz a komischo Schas!</sss>
+            </info>
+        </text>
+        <sss>ss</sss>
+    </info>
+
+</person>

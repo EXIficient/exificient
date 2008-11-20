@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns="http://www.siemens.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.siemens.com/ ./test1.xsd">
+    <a>a</a>
+<!--    <b>b</b>
+    <c>c</c>
+    <d>d</d>
+    <e>e</e>-->
+</list>
