@@ -56,7 +56,7 @@ public interface RestrictedCharacterSet {
 	 * the restricted character set.
 	 * </p>
 	 * 
-	 * @see size
+	 * @see RestrictedCharacterSet#size
 	 * @return number of entries
 	 */
 	public int getCodingLength();
