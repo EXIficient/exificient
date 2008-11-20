@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="booleanPattern.xsd" >
+    <!-- no facets -->
+    <b>true</b>
+    <b>1</b>
+    <b>false</b>
+    <b>0</b>
+    <!-- 0/1 facet -->
+    <b01>0</b01>
+    <b01>1</b01>
+    <!-- true/false facet -->
+    <bTF>true</bTF>
+    <bTF>false</bTF>
+</root>
