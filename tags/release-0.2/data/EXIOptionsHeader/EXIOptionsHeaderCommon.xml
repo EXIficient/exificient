@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<header xmlns="http://www.w3.org/2007/exi/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.w3.org/2007/exi/ ./EXIOptionsHeader.xsd">
+          <common>
+              <zip/>
+              <fragments/>
+              <schemaId>bla007</schemaId>
+          </common>
+</header>
