@@ -68,7 +68,7 @@ public class FragmentsTestCase extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos);
+			encoder.setOutput(baos, false);
 
 			encoder.encodeStartDocument();
 
@@ -94,7 +94,7 @@ public class FragmentsTestCase extends TestCase {
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
 			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();

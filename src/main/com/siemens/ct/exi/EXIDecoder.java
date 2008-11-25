@@ -36,7 +36,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public interface EXIDecoder {
-	public void setInputStream(InputStream is) throws EXIException;
+	public void setInputStream(InputStream is, boolean exiHeader) throws EXIException;
 
 	/**
 	 * Reports whether an additional EXI event is available.

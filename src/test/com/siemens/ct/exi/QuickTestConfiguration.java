@@ -18,12 +18,9 @@
 
 package com.siemens.ct.exi;
 
-import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
-@SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;

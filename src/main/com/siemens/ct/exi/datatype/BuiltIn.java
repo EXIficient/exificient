@@ -200,7 +200,7 @@ public class BuiltIn {
 		return datatype;
 	}
 
-	private static ExpandedName XXgetEXIDatatypeID(XSSimpleTypeDefinition std) {
+	private static ExpandedName getXMLSchemaDatatype(XSSimpleTypeDefinition std) {
 		// primitive
 		ExpandedName primitive = getPrimitive(std);
 
@@ -233,7 +233,7 @@ public class BuiltIn {
 	}
 
 	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
-			ExpandedName exiDatatypeID) {
+			ExpandedName datatypeID) {
 		BigInteger min = BigInteger.valueOf(Long.MIN_VALUE);
 		BigInteger max = BigInteger.valueOf(Long.MAX_VALUE);
 
@@ -306,7 +306,7 @@ public class BuiltIn {
 				lowerBound.parse(min.toString());
 				XSDInteger upperBound = XSDInteger.newInstance();
 				upperBound.parse(max.toString());
-				datatype = new DatatypeNBitInteger(exiDatatypeID, lowerBound,
+				datatype = new DatatypeNBitInteger(datatypeID, lowerBound,
 						upperBound, boundedRange.intValue());
 			} catch (XMLParsingException e) {
 				throw new RuntimeException(
@@ -324,12 +324,12 @@ public class BuiltIn {
 			 * minExclusiveXS2 facet is specified with a value equal to or
 			 * greater than -1.
 			 */
-			datatype = new DatatypeUnsignedInteger(exiDatatypeID);
+			datatype = new DatatypeUnsignedInteger(datatypeID);
 		} else {
 			/*
 			 * Otherwise, use Integer representation.
 			 */
-			datatype = new DatatypeInteger(exiDatatypeID);
+			datatype = new DatatypeInteger(datatypeID);
 		}
 
 		return datatype;
@@ -342,60 +342,66 @@ public class BuiltIn {
 	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std) {
 		Datatype datatype;
 
-		ExpandedName exiDatatypeID = XXgetEXIDatatypeID(std);
+		ExpandedName schemaDatatype = getXMLSchemaDatatype(std);
+		
+		ExpandedName datatypeID = null;
+		if ( ! std.getAnonymous() )
+		{
+			datatypeID = new ExpandedName( std.getNamespace(), std.getName() );
+		}
 
-		if (XSD_BASE64BINARY.equals(exiDatatypeID)) {
-			datatype = new DatatypeBinary(exiDatatypeID,
+		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
+			datatype = new DatatypeBinary(datatypeID,
 					BuiltInType.BUILTIN_BINARY_BASE64);
-		} else if (XSD_HEXBINARY.equals(exiDatatypeID)) {
-			datatype = new DatatypeBinary(exiDatatypeID,
+		} else if (XSD_HEXBINARY.equals(schemaDatatype)) {
+			datatype = new DatatypeBinary(datatypeID,
 					BuiltInType.BUILTIN_BINARY_HEX);
-		} else if (XSD_BOOLEAN.equals(exiDatatypeID)) {
+		} else if (XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-				datatype = new DatatypeBooleanPattern(exiDatatypeID);
+				datatype = new DatatypeBooleanPattern(datatypeID);
 			} else {
-				datatype = new DatatypeBoolean(exiDatatypeID);
+				datatype = new DatatypeBoolean(datatypeID);
 			}
-		} else if (XSD_DATETIME.equals(exiDatatypeID)) {
+		} else if (XSD_DATETIME.equals(schemaDatatype)) {
 			ExpandedName primitive = BuiltIn.getPrimitive(std);
 
 			if (XSD_DATETIME.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.dateTime,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_TIME.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.time,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_DATE.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.date,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_GYEARMONTH.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gYearMonth,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_GYEAR.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gYear,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_GMONTHDAY.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gMonthDay,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_GDAY.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gDay,
-						exiDatatypeID);
+						datatypeID);
 			} else if (XSD_GMONTH.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gMonth,
-						exiDatatypeID);
+						datatypeID);
 			} else {
 				throw new RuntimeException();
 			}
-		} else if (XSD_DECIMAL.equals(exiDatatypeID)) {
-			datatype = new DatatypeDecimal(exiDatatypeID);
-		} else if (XSD_DOUBLE.equals(exiDatatypeID)) {
-			datatype = new DatatypeFloat(exiDatatypeID);
-		} else if (XSD_INTEGER.equals(exiDatatypeID)) {
+		} else if (XSD_DECIMAL.equals(schemaDatatype)) {
+			datatype = new DatatypeDecimal(datatypeID);
+		} else if (XSD_DOUBLE.equals(schemaDatatype)) {
+			datatype = new DatatypeFloat(datatypeID);
+		} else if (XSD_INTEGER.equals(schemaDatatype)) {
 			// returns integer type (nbit, unsigned, int) according to facets
-			datatype = BuiltIn.getIntegerDatatype(std, exiDatatypeID);
+			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
 		} else {
 			// ( XSD_STRING.equals ( exiDatatypeID ) )
-			datatype = new DatatypeString(exiDatatypeID);
+			datatype = new DatatypeString(datatypeID);
 		}
 
 		return datatype;

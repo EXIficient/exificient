@@ -33,7 +33,7 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  */
 
 public interface EXIEncoder {
-	public void setOutput(OutputStream os) throws EXIException;
+	public void setOutput(OutputStream os, boolean exiHeader) throws EXIException;
 
 	public void setErrorHandler(ErrorHandler errorHandler);
 

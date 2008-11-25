@@ -22,12 +22,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -43,19 +42,19 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder
 	// fallback type decoder
 	private TypeDecoderTyped defaultDecoder;
 
-	private Map<QName, DatatypeDecoder> userDefinedDatatypeRepresentations;
+	private Map<ExpandedName, DatatypeDecoder> userDefinedDatatypeRepresentations;
 
 	public TypeDecoderDatatypeRepresentationMap(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		defaultDecoder = new TypeDecoderTyped(exiFactory);
-		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeDecoder>();
+		userDefinedDatatypeRepresentations = new HashMap<ExpandedName, DatatypeDecoder>();
 	}
 
 	public void registerDatatypeRepresentation(
 			DatatypeRepresentation datatypeRepresentation) {
 		userDefinedDatatypeRepresentations.put(datatypeRepresentation
-				.getQName(), datatypeRepresentation);
+				.getSchemaDatatype(), datatypeRepresentation);
 	}
 
 	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,

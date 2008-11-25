@@ -82,11 +82,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		this.block = exiFactory.createEncoderBlock(os);
 	}
 
-	public void setOutput(OutputStream os) throws EXIException {
+	public void setOutput(OutputStream os, boolean exiHeader) throws EXIException {
 		this.os = os;
 
-		// EXI header
-		EXIHeader.write(os);
+		if (exiHeader) {
+			// EXI header
+			EXIHeader.write(os);			
+		}
 	}
 
 	protected void encode1stLevelEventCode(int pos) throws EXIException {

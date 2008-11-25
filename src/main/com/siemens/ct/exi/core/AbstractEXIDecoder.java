@@ -92,7 +92,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		}
 	}
 
-	public void setInputStream(InputStream is) throws EXIException {
+	public void setInputStream(InputStream is, boolean exiHeader) throws EXIException {
 		this.is = is;
 
 		// buffer stream if not already
@@ -101,9 +101,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			this.is = new BufferedInputStream(is);
 		}
 
-		// parse header (bit-wise BUT byte padded!)
-		BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-		EXIHeader.parse(headerChannel);
+		if (exiHeader) {
+			// parse header (bit-wise BUT byte padded!)
+			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
+			EXIHeader.parse(headerChannel);	
+		}
 
 		initForEachRun();
 	}

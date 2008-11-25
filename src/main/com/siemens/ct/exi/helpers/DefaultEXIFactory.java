@@ -37,20 +37,20 @@ import com.siemens.ct.exi.core.EXIDecoderReorderedDocument;
 import com.siemens.ct.exi.core.EXIDecoderReorderedFragments;
 import com.siemens.ct.exi.core.EXIEncoderDocument;
 import com.siemens.ct.exi.core.EXIEncoderFragments;
+import com.siemens.ct.exi.core.sax.NoPrefixSAXEncoder;
 import com.siemens.ct.exi.core.sax.PrefixSAXEncoder;
 import com.siemens.ct.exi.core.sax.SAXDecoder;
-import com.siemens.ct.exi.core.sax.NoPrefixSAXEncoder;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderTyped;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderDatatypeRespresentationMap;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderLexical;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderTyped;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.block.DecoderBitBlock;
@@ -115,8 +115,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public void setDatatypeRepresentationMap(
-			DatatypeRepresentation[] pluggableCodecs) {
-		this.userDefinedDatatypeRepresentations = pluggableCodecs;
+			DatatypeRepresentation[] datatypeRepresentations) {
+		this.userDefinedDatatypeRepresentations = datatypeRepresentations;
 	}
 
 	public void setGrammar(Grammar grammar) {

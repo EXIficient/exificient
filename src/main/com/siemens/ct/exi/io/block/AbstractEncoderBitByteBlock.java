@@ -30,7 +30,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.1.20081125
  */
 
 public abstract class AbstractEncoderBitByteBlock extends AbstractEncoderBlock {
@@ -50,6 +50,7 @@ public abstract class AbstractEncoderBitByteBlock extends AbstractEncoderBlock {
 	}
 
 	public void flush() throws IOException {
+		typeEncoder.finish();
 		channel.flush();
 	}
 }
