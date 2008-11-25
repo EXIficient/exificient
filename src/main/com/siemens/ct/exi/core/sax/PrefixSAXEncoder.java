@@ -34,7 +34,7 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080908
+ * @version 0.2.20080908
  */
 
 public class PrefixSAXEncoder extends NoPrefixSAXEncoder {

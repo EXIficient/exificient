@@ -27,7 +27,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081003
+ * @version 0.2.20081003
  */
 
 public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement {

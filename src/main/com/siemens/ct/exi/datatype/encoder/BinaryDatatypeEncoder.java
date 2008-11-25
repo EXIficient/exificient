@@ -30,7 +30,7 @@ import com.siemens.ct.exi.util.datatype.XSDBase64;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.2.20080718
  */
 
 public class BinaryDatatypeEncoder extends AbstractDatatypeEncoder implements

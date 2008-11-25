@@ -48,7 +48,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081031
+ * @version 0.2.20081031
  */
 
 public class SAXDecoder implements XMLReader {

@@ -29,7 +29,7 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081023
+ * @version 0.2.20081023
  */
 
 public class ExpandedName implements Comparable<ExpandedName>,

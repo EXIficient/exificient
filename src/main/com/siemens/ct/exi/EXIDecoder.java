@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081031
+ * @version 0.2.20081031
  */
 
 public interface EXIDecoder {

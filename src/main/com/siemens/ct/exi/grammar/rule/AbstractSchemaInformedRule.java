@@ -37,7 +37,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081009
+ * @version 0.2.20081009
  */
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements

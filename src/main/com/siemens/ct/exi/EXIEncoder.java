@@ -29,7 +29,7 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080818
+ * @version 0.2.20080818
  */
 
 public interface EXIEncoder {

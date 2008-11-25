@@ -33,7 +33,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081117
+ * @version 0.2.20081117
  */
 
 public class RestrictedCharacterSetDatatypeEncoder extends
