@@ -26,7 +26,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.2.20081111
  */
 
 public abstract class AbstractDatatype implements Datatype {

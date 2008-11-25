@@ -28,7 +28,7 @@ import java.io.OutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080718
+ * @version 0.2.20080718
  */
 
 final public class ByteEncoderChannelChannelized extends AbstractEncoderChannel

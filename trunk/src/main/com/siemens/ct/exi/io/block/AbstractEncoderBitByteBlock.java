@@ -30,7 +30,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081125
+ * @version 0.2.20081125
  */
 
 public abstract class AbstractEncoderBitByteBlock extends AbstractEncoderBlock {

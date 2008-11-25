@@ -28,7 +28,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081111
+ * @version 0.2.20081111
  */
 
 public class DatatypeNBitInteger extends AbstractDatatype {

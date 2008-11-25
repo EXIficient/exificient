@@ -49,7 +49,7 @@ import com.siemens.ct.exi.util.UnsynchronizedStack;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081023
+ * @version 0.2.20081023
  */
 
 public abstract class AbstractEXICoder {

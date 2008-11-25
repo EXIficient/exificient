@@ -28,7 +28,7 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081103
+ * @version 0.2.20081103
  */
 
 public class StartElement extends AbstractEvent implements

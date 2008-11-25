@@ -24,7 +24,7 @@ package com.siemens.ct.exi.util;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20081010
+ * @version 0.2.20081010
  */
 
 public class MethodsBag {

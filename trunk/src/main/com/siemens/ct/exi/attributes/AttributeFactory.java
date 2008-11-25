@@ -24,7 +24,7 @@ package com.siemens.ct.exi.attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.1.20080924
+ * @version 0.2.20080924
  */
 
 public class AttributeFactory {
