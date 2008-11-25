@@ -112,7 +112,7 @@ public interface EXIFactory {
 	 * Representation Map.
 	 */
 	public void setDatatypeRepresentationMap(
-			DatatypeRepresentation[] pluggableCodecs);
+			DatatypeRepresentation[] datatypeRepresentations );
 
 	/**
 	 * Returns an <code>EXIEncoder</code>

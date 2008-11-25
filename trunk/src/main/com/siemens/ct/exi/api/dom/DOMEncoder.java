@@ -57,7 +57,7 @@ public class DOMEncoder {
 	}
 
 	public void setOutput(OutputStream os) throws EXIException {
-		encoder.setOutput(os);
+		encoder.setOutput(os, true);
 	}
 
 	public void encode(Document doc) throws EXIException {

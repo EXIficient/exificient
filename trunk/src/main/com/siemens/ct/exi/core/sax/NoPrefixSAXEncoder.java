@@ -82,7 +82,7 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
 	}
 
 	public void setOutput(OutputStream os) throws EXIException {
-		encoder.setOutput(os);
+		encoder.setOutput(os, true);
 	}
 
 	@Override

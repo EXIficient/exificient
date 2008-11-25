@@ -54,6 +54,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setCodingMode(tco.getCodingMode());
 		ef.setFidelityOptions(tco.getFidelityOptions());
 		ef.setFragment(tco.isFragments());
+		ef.setDatatypeRepresentationMap(tco.getDatatypeRepresentations());
+		
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() != null) {
 			Grammar grammar = grammarFactory.createGrammar(tco

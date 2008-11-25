@@ -21,13 +21,13 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import javax.xml.namespace.QName;
+import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -42,8 +42,8 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 	// fallback type encoder
 	private TypeEncoderTyped defaultEncoder;
 
-	private HashMap<QName, DatatypeRepresentation> userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeRepresentation>();
-
+	private Map<ExpandedName, DatatypeRepresentation> userDefinedDatatypeRepresentations;
+	
 	private boolean usePluggableCodec;
 
 	private DatatypeRepresentation lastPluggableEncoder;
@@ -51,6 +51,8 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 	public TypeEncoderDatatypeRespresentationMap(EXIFactory exiFactory) {
 		// super( true );
 		super(exiFactory);
+		
+		userDefinedDatatypeRepresentations = new HashMap<ExpandedName, DatatypeRepresentation>();
 
 		// hand over "same" string table
 		defaultEncoder = new TypeEncoderTyped(exiFactory, this.stringTable);
@@ -60,7 +62,7 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 			DatatypeRepresentation datatypeRepresentation) {
 		// pluggableCodecs.put ( datatypeIdentifier, datatypeEncoder );
 		userDefinedDatatypeRepresentations.put(datatypeRepresentation
-				.getQName(), datatypeRepresentation);
+				.getSchemaDatatype(), datatypeRepresentation);
 	}
 
 	public boolean isTypeValid(Datatype datatype, String value) {

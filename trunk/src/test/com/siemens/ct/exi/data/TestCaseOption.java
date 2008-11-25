@@ -20,6 +20,7 @@ package com.siemens.ct.exi.data;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 
 public class TestCaseOption {
 	private CodingMode codingMode;
@@ -28,6 +29,7 @@ public class TestCaseOption {
 	private String schemaLocation;
 	private boolean xmlEqual;
 	private boolean schemaInformedOnly;
+	private DatatypeRepresentation[] datatypeRepresentations;
 
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -75,6 +77,16 @@ public class TestCaseOption {
 
 	public void setSchemaInformedOnly(boolean schemaInformedOnly) {
 		this.schemaInformedOnly = schemaInformedOnly;
+	}
+	
+
+	public DatatypeRepresentation[] getDatatypeRepresentations() {
+		return datatypeRepresentations;
+	}
+
+	public void setDatatypeRepresentations(
+			DatatypeRepresentation[] datatypeRepresentations) {
+		this.datatypeRepresentations = datatypeRepresentations;
 	}
 
 	@Override

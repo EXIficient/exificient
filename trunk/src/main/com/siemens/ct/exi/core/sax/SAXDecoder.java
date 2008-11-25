@@ -140,7 +140,7 @@ public class SAXDecoder implements XMLReader {
 			IOException, EXIException {
 		// setup (bit) input stream
 		InputStream inputStream = inputSource.getByteStream();
-		decoder.setInputStream(inputStream);
+		decoder.setInputStream(inputStream, true);
 
 		if (contentHandler == null) {
 			throw new SAXException("No content handler set!");

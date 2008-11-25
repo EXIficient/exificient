@@ -56,7 +56,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos);
+			encoder.setOutput(baos, false);
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
 			encoder.encodeEndElement();
@@ -67,7 +67,7 @@ public class SchemaLessTest extends TestCase {
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
 			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -108,7 +108,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos);
+			encoder.setOutput(baos, false);
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -144,7 +144,7 @@ public class SchemaLessTest extends TestCase {
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
 			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
 			decoder.decodeStartDocument();
 
 			decoder.inspectEvent();
@@ -237,7 +237,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos);
+			encoder.setOutput(baos, false);
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -267,7 +267,7 @@ public class SchemaLessTest extends TestCase {
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
 			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
 			decoder.decodeStartDocument();
 
 			decoder.inspectEvent();
@@ -358,7 +358,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos);
+			encoder.setOutput(baos, false);
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -428,7 +428,7 @@ public class SchemaLessTest extends TestCase {
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
 			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
