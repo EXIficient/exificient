@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -68,7 +68,7 @@ public class FragmentsTestCase extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, false);
+			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
 			encoder.encodeStartDocument();
 
@@ -93,8 +93,9 @@ public class FragmentsTestCase extends TestCase {
 		// decoder
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
-			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
+			decoder.setInputStream(
+					new ByteArrayInputStream(baos.toByteArray()), factory
+							.isEXIBodyOnly());
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();

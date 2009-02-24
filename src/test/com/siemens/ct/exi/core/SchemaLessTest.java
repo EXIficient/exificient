@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, false);
+			encoder.setOutput(baos, factory.isEXIBodyOnly());
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
 			encoder.encodeEndElement();
@@ -66,8 +66,9 @@ public class SchemaLessTest extends TestCase {
 		// decoder
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
-			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
+			decoder.setInputStream(
+					new ByteArrayInputStream(baos.toByteArray()), factory
+							.isEXIBodyOnly());
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -108,7 +109,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, false);
+			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -143,8 +144,9 @@ public class SchemaLessTest extends TestCase {
 		// decoder
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
-			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
+			decoder.setInputStream(
+					new ByteArrayInputStream(baos.toByteArray()), factory
+							.isEXIBodyOnly());
 			decoder.decodeStartDocument();
 
 			decoder.inspectEvent();
@@ -237,7 +239,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, false);
+			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -266,8 +268,9 @@ public class SchemaLessTest extends TestCase {
 		// decoder
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
-			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
+			decoder.setInputStream(
+					new ByteArrayInputStream(baos.toByteArray()), factory
+							.isEXIBodyOnly());
 			decoder.decodeStartDocument();
 
 			decoder.inspectEvent();
@@ -358,7 +361,7 @@ public class SchemaLessTest extends TestCase {
 		// encoder
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, false);
+			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
@@ -427,8 +430,9 @@ public class SchemaLessTest extends TestCase {
 		// decoder
 		{
 			EXIDecoder decoder = factory.createEXIDecoder();
-			decoder
-					.setInputStream(new ByteArrayInputStream(baos.toByteArray()), false);
+			decoder.setInputStream(
+					new ByteArrayInputStream(baos.toByteArray()), factory
+							.isEXIBodyOnly());
 
 			assertTrue(decoder.getNextEventType() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();

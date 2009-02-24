@@ -37,12 +37,16 @@ public abstract class AbstractTestCoder {
 		}
 	}
 
+	protected EXIFactory getFactory() {
+		return DefaultEXIFactory.newInstance();
+	}
+	
 	protected EXIFactory getFactoryNoSchema() {
-		EXIFactory ef = DefaultEXIFactory.newInstance();
+		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
-
+		
 		return ef;
 	}
 
