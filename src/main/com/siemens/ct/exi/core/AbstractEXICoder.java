@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -43,7 +43,6 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessRuleStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.UnsynchronizedStack;
 
 /**
  * Shared functionality between EXI Encoder and Decoder.
@@ -51,7 +50,7 @@ import com.siemens.ct.exi.util.UnsynchronizedStack;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081023
+ * @version 0.2.20090224
  */
 
 public abstract class AbstractEXICoder {
@@ -78,14 +77,13 @@ public abstract class AbstractEXICoder {
 
 	// saves scope for character StringTable & Channels as well as for
 	// content-dispatcher
-	protected UnsynchronizedStack<String> scopeURI;
-	protected UnsynchronizedStack<String> scopeLocalName;
+	protected List<String> scopeURI;
+	protected List<String> scopeLocalName;
 
-	protected UnsynchronizedStack<String> scopeTypeURI;
-	protected UnsynchronizedStack<String> scopeTypeLocalName;
+	protected List<String> scopeTypeURI;
+	protected List<String> scopeTypeLocalName;
 
 	// currentRule and rule stack when traversing the EXI document
-	// protected UnsynchronizedStack<Rule> openRules;
 	protected List<Rule> openRules;
 	protected Rule currentRule;
 
@@ -131,13 +129,12 @@ public abstract class AbstractEXICoder {
 		// runtime lists
 		runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
 		openRules = new ArrayList<Rule>();
-
 		// scope
-		scopeURI = new UnsynchronizedStack<String>();
-		scopeLocalName = new UnsynchronizedStack<String>();
+		scopeURI = new ArrayList<String>();
+		scopeLocalName = new ArrayList<String>();
 		// scopeType
-		scopeTypeURI = new UnsynchronizedStack<String>();
-		scopeTypeLocalName = new UnsynchronizedStack<String>();
+		scopeTypeURI = new ArrayList<String>();
+		scopeTypeLocalName = new ArrayList<String>();
 	}
 
 	// re-init (rule stack etc)
@@ -159,37 +156,37 @@ public abstract class AbstractEXICoder {
 	}
 
 	protected final void pushScope(String uri, String localName) {
-		scopeURI.addLast(uri);
-		scopeLocalName.addLast(localName);
+		scopeURI.add(uri);
+		scopeLocalName.add(localName);
 	}
 
 	protected final void pushScopeType(String uri, String localName) {
-		scopeTypeURI.addLast(uri);
-		scopeTypeLocalName.addLast(localName);
+		scopeTypeURI.add(uri);
+		scopeTypeLocalName.add(localName);
 	}
 
 	protected final void popScope() {
-		scopeURI.removeLast();
-		scopeLocalName.removeLast();
+		scopeURI.remove(scopeURI.size()-1);
+		scopeLocalName.remove(scopeLocalName.size()-1);
 
 		// TODO pop scope xsi:type environment as well
 		// mhhh, needs xsi:type and element matching
 	}
 
 	public final String getScopeURI() {
-		return scopeURI.peekLast();
+		return scopeURI.get(scopeURI.size()-1);
 	}
 
 	public final String getScopeLocalName() {
-		return scopeLocalName.peekLast();
+		return scopeLocalName.get(scopeLocalName.size()-1);
 	}
 
 	protected final String getScopeTypeURI() {
-		return scopeTypeURI.peekLast();
+		return scopeTypeURI.get(scopeTypeURI.size()-1);
 	}
 
 	protected final String getScopeTypeLocalName() {
-		return scopeTypeLocalName.peekLast();
+		return scopeTypeLocalName.get(scopeTypeLocalName.size()-1);
 	}
 
 	protected final void replaceRuleAtTheTop(Rule top) {
