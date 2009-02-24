@@ -20,6 +20,8 @@ package com.siemens.ct.exi.api.dom;
 
 import java.io.OutputStream;
 
+import javax.xml.XMLConstants;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -40,13 +42,15 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.2.20080718
  */
 
-public class DOMEncoder {
+public class DOMWriter {
+	protected EXIFactory factory;
 	protected EXIEncoder encoder;
 
 	// attributes
 	private AttributeList exiAttributes;
 
-	public DOMEncoder(EXIFactory factory) {
+	public DOMWriter(EXIFactory factory) {
+		this.factory = factory;
 		this.encoder = factory.createEXIEncoder();
 
 		// attribute list
@@ -57,7 +61,7 @@ public class DOMEncoder {
 	}
 
 	public void setOutput(OutputStream os) throws EXIException {
-		encoder.setOutput(os, true);
+		encoder.setOutput(os, factory.isEXIBodyOnly());
 	}
 
 	public void encode(Document doc) throws EXIException {
@@ -72,7 +76,8 @@ public class DOMEncoder {
 	protected void encode(Node root) throws EXIException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
-		encoder.encodeStartElement(root.getNamespaceURI(), root.getNodeName());
+		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI  : root.getNamespaceURI();
+		encoder.encodeStartElement(namespaceURI, root.getNodeName());
 
 		// attributes
 		exiAttributes.parse(root.getAttributes());
