@@ -18,7 +18,9 @@
 
 package com.siemens.ct.exi.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
@@ -83,7 +85,8 @@ public abstract class AbstractEXICoder {
 	protected UnsynchronizedStack<String> scopeTypeLocalName;
 
 	// currentRule and rule stack when traversing the EXI document
-	protected UnsynchronizedStack<Rule> openRules;
+	// protected UnsynchronizedStack<Rule> openRules;
+	protected List<Rule> openRules;
 	protected Rule currentRule;
 
 	// keys for fetching new rule
@@ -127,7 +130,7 @@ public abstract class AbstractEXICoder {
 	protected void initOnce() {
 		// runtime lists
 		runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
-		openRules = new UnsynchronizedStack<Rule>();
+		openRules = new ArrayList<Rule>();
 
 		// scope
 		scopeURI = new UnsynchronizedStack<String>();
@@ -194,23 +197,26 @@ public abstract class AbstractEXICoder {
 		assert (top != null);
 
 		if (top != currentRule) {
-			openRules.replaceLast(top);
-			currentRule = top;
+			// openRules.replaceLast(currentRule = top);
+			openRules.set(openRules.size()-1, currentRule = top);
 		}
 	}
 
 	protected final void pushRule(Rule r) {
 		// assert ( r != null );
 
-		openRules.addLast(r);
-		currentRule = r;
+		// openRules.addLast(currentRule = r);
+		openRules.add(currentRule = r);
 	}
 
 	protected final void popRule() {
 		assert (!openRules.isEmpty());
 
-		openRules.removeLast();
-		currentRule = openRules.peekLast();
+		// openRules.removeLast();
+		// currentRule = openRules.peekLast();
+		int size = openRules.size();
+		openRules.remove(size-1);
+		currentRule = openRules.get(size-2);
 	}
 
 	protected void pushRule(final String namespaceURI, final String localName) {

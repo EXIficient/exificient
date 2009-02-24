@@ -185,4 +185,24 @@ public abstract class AbstractEncoderBlock implements EncoderBlock {
 	public void close() throws IOException {
 		outputStream.close();
 	}
+	
+
+	public void skipToNextByteBoundary() throws IOException {
+	}
+	
+	public boolean bytePositionSupported() {
+		return false;
+	}
+	
+	public int getNumberOfBytes() {
+		return -1;
+	}
+	
+	public TypeEncoder getTypeEncoder() {
+		return typeEncoder;
+	}
+	
+	public void setTypeEncoder(TypeEncoder typeEncoder) {
+		this.typeEncoder = typeEncoder;
+	}
 }

@@ -164,4 +164,16 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 				localName), namespaceURI, localName);
 	}
 
+	public void skipToNextByteBoundary() throws IOException {
+	}
+	
+	public TypeDecoder getTypeDecoder() {
+		return this.typeDecoder;
+	}
+	
+	public void setTypeDecoder(TypeDecoder typeDecoder) {
+		this.typeDecoder = typeDecoder; 
+	}
+	
+
 }

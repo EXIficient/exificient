@@ -57,7 +57,7 @@ public class EXIResult extends SAXResult {
 		// create new sax encoder
 		EXIWriter saxEncoder = exiFactory.createEXIWriter();
 		try {
-			saxEncoder.setOutput(os);
+			saxEncoder.setOutput(os, exiFactory.isEXIBodyOnly());
 		} catch (EXIException e) {
 			throw new IOException(e);
 		}

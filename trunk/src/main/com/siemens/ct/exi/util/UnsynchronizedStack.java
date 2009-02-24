@@ -103,6 +103,15 @@ public class UnsynchronizedStack<E> {
 	}
 
 	/**
+	 * Returns the number of items on the stack
+	 * 
+	 * @return item count
+	 */
+	public int size() {
+		return size;
+	}
+
+	/**
 	 * Tests if this stack is empty.
 	 * 
 	 * @return <code>true</code> if and only if this stack contains no items;

@@ -85,6 +85,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected FidelityOptions fidelityOptions;
 
 	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
+	
+	protected boolean exiBodyOnly = false;	//	default: false
 
 	protected DefaultEXIFactory() {
 	}
@@ -148,6 +150,14 @@ public class DefaultEXIFactory implements EXIFactory {
 	public CodingMode getCodingMode() {
 		return this.codingMode;
 	}
+	
+	public void setEXIBodyOnly(boolean exiBodyOnly) {
+		this.exiBodyOnly = exiBodyOnly;
+	}
+	
+	public boolean isEXIBodyOnly() {
+		return exiBodyOnly;
+	}
 
 	public EXIEncoder createEXIEncoder() {
 		EXIEncoder encoder;
@@ -189,9 +199,9 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return decoder;
 	}
-
+	
 	public XMLReader createEXIReader() {
-		return new SAXDecoder(this);
+		return new SAXDecoder(this, exiBodyOnly);
 	}
 
 	public TypeEncoder createTypeEncoder() {
