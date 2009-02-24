@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import com.siemens.ct.exi.core.CompileConfiguration;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081016
+ * @version 0.2.20090224
  */
 
 /*
@@ -297,13 +297,13 @@ public abstract class AbstractAttributeList implements AttributeList {
 			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
 					.getNamespaceURI())) {
 				// xsi:type
-				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
+				if (at.getNodeName().equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
 					hasXsiType = true;
 					xsiValue = at.getNodeValue();
 				}
 				// xsi:nil
-				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
+				else if (at.getNodeName().equals(Constants.XSI_NIL)) {
 					setXsiNil(at.getNodeValue());
 				} else if (at.getLocalName().equals(
 						Constants.XSI_SCHEMA_LOCATION)
@@ -320,7 +320,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 			} else {
 				insertAttribute(
 						at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-								: at.getNamespaceURI(), at.getLocalName(),
+								: at.getNamespaceURI(), at.getNodeName(),
 						at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
 								: at.getPrefix(), at.getNodeValue());
 			}
