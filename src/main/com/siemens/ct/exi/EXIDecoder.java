@@ -36,7 +36,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public interface EXIDecoder {
-	public void setInputStream(InputStream is, boolean exiHeader) throws EXIException;
+	public void setInputStream(InputStream is, boolean exiBodyOnly) throws EXIException;
 
 	/**
 	 * Reports whether an additional EXI event is available.
@@ -104,6 +104,15 @@ public interface EXIDecoder {
 	 */
 	public void decodeStartElementGenericUndeclared() throws EXIException;
 
+	
+
+	/**
+	 * Reads EXI a self-contained start element
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeStartFragmentSelfContained() throws EXIException;
+	
 	/**
 	 * Reads EXI end element.
 	 * 
@@ -118,6 +127,14 @@ public interface EXIDecoder {
 	 */
 	public void decodeEndElementUndeclared() throws EXIException;
 
+	/**
+	 * Reads an end element part of self-contained fragments
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeEndFragmentSelfContained() throws EXIException;
+	
+	
 	/**
 	 * Parses expected attribute.
 	 * 

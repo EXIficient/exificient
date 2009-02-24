@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -39,7 +39,7 @@ import com.siemens.ct.exi.io.block.EncoderBlock;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081112
+ * @version 0.2.20090224
  */
 
 public interface EXIFactory {
@@ -104,6 +104,17 @@ public interface EXIFactory {
 	public CodingMode getCodingMode();
 
 	/**
+	 * Sets whether an EXI Body is preceded by an EXI Header. By default any EXI
+	 * stream consists of an EXI header followed by an EXI Body. e.g. SelfContained Fragments
+	 * are treated differently and no additional header is added.
+	 * 
+	 * @param exiBodyOnly
+	 */
+	public void setEXIBodyOnly(boolean exiBodyOnly);
+	
+	public boolean isEXIBodyOnly();
+
+	/**
 	 * By default, each typed value in an EXI stream is represented by the
 	 * associated built-in EXI datatype representation. However, EXI processors
 	 * MAY provide the capability to specify different built-in EXI datatype
@@ -112,7 +123,7 @@ public interface EXIFactory {
 	 * Representation Map.
 	 */
 	public void setDatatypeRepresentationMap(
-			DatatypeRepresentation[] datatypeRepresentations );
+			DatatypeRepresentation[] datatypeRepresentations);
 
 	/**
 	 * Returns an <code>EXIEncoder</code>

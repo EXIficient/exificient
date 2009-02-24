@@ -21,6 +21,7 @@ package com.siemens.ct.exi.io.block;
 import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 
 /**
  * TODO Description
@@ -92,7 +93,22 @@ public interface EncoderBlock {
 	 */
 	// public EncoderChannel getValueChannel( String uri, String localName );
 
+	
 	public void flush() throws IOException;
 
 	public void close() throws IOException;
+	
+	/*
+	 * Self-Contained
+	 */
+	public TypeEncoder getTypeEncoder();
+	
+	public void setTypeEncoder(TypeEncoder typeEncoder);
+	
+	public void skipToNextByteBoundary() throws IOException;
+	
+	public boolean bytePositionSupported();
+	
+	public int getNumberOfBytes();
+	
 }

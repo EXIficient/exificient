@@ -37,5 +37,5 @@ import com.siemens.ct.exi.exceptions.EXIException;
  */
 
 public interface EXIWriter extends ContentHandler, LexicalHandler {
-	public void setOutput(OutputStream os) throws EXIException;
+	public void setOutput(OutputStream os, boolean exiBodyOnly) throws EXIException;
 }

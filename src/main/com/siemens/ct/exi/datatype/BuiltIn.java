@@ -401,6 +401,25 @@ public class BuiltIn {
 			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
 		} else {
 			// ( XSD_STRING.equals ( exiDatatypeID ) )
+//			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
+//				StringList sl = std.getLexicalPattern();
+//				Pattern p = Pattern.compile(sl.item(0));
+//				Matcher m = p.matcher("");
+//				m.groupCount();
+//				// m.group(0);
+//				
+//				// Pattern.compile(sl.item(0), Pattern.LITERAL);
+//				p.split(sl.item(0));
+//				sl.item(0);
+//				sl.getLength();
+//				
+//				RegularExpression re = new RegularExpression(sl.item(0));
+//				re.getNumberOfGroups();
+//				re.getOptions();
+//				re.getPattern();
+//				
+//			}
+			
 			datatype = new DatatypeString(datatypeID);
 		}
 

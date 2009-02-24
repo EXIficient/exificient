@@ -629,4 +629,14 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder {
 		piTarget = piTargets.get(currentProcessingIntructionsIndex);
 		piData = piDatas.get(currentProcessingIntructionsIndex++);
 	}
+
+	public void decodeStartFragmentSelfContained() throws EXIException {
+		throw new EXIException(
+				"SelfContained does NOT support reordered channels such as used in Compression and Pre-Compression mode");
+	}
+
+	public void decodeEndFragmentSelfContained() throws EXIException {
+		throw new EXIException(
+				"SelfContained does NOT support reordered channels such as used in Compression and Pre-Compression mode");
+	}
 }

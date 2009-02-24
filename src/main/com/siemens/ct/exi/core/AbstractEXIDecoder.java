@@ -92,7 +92,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		}
 	}
 
-	public void setInputStream(InputStream is, boolean exiHeader) throws EXIException {
+	public void setInputStream(InputStream is, boolean exiBodyOnly)
+			throws EXIException {
 		this.is = is;
 
 		// buffer stream if not already
@@ -101,10 +102,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			this.is = new BufferedInputStream(is);
 		}
 
-		if (exiHeader) {
+		if (! exiBodyOnly) {
 			// parse header (bit-wise BUT byte padded!)
 			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-			EXIHeader.parse(headerChannel);	
+			EXIHeader.parse(headerChannel);
 		}
 
 		initForEachRun();
@@ -114,8 +115,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		ec = decode1stLevelEventCode();
 
 		if (ec == Constants.NOT_FOUND) {
-			nextEvent = null;
-
 			// 2nd level ?
 			int ec2 = decode2ndLevelEventCode();
 
@@ -124,12 +123,18 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				int ec3 = decode3rdLevelEventCode();
 				nextEventType = currentRule.get3rdLevelEvent(ec3,
 						fidelityOptions);
+
+				// un-set event
+				nextEvent = null;
 			} else {
 				nextEventType = currentRule.get2ndLevelEvent(ec2,
 						fidelityOptions);
 
 				if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
 					updateInvalidValueAttribute();
+				} else {
+					// un-set event
+					nextEvent = null;
 				}
 			}
 		} else {
@@ -369,7 +374,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	protected void decodeEndElementStructure() {
-		// pop top rule
+		// pop top rule & scope
 		popRule();
 		popScope();
 	}

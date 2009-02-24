@@ -70,9 +70,18 @@ public class SAXDecoder implements XMLReader {
 
 	private String deferredStartElementUri;
 	private String deferredStartElementLocalName;
+	
+	//	EXI body is preceded by an EXI header ?
+	private boolean exiBodyOnly = false;
+	
 
 	public SAXDecoder(EXIFactory exiFactory) {
 		this.decoder = exiFactory.createEXIDecoder();
+	}
+
+	public SAXDecoder(EXIFactory exiFactory, boolean exiBodyOnly) {
+		this(exiFactory);
+		this.exiBodyOnly = exiBodyOnly;
 	}
 
 	private void init() {
@@ -140,7 +149,7 @@ public class SAXDecoder implements XMLReader {
 			IOException, EXIException {
 		// setup (bit) input stream
 		InputStream inputStream = inputSource.getByteStream();
-		decoder.setInputStream(inputStream, true);
+		decoder.setInputStream(inputStream, exiBodyOnly);
 
 		if (contentHandler == null) {
 			throw new SAXException("No content handler set!");
@@ -238,8 +247,6 @@ public class SAXDecoder implements XMLReader {
 				decoder.decodeEndElementUndeclared();
 				handleEndElement(eeUri, eeLocalName);
 				break;
-			// case END_DOCUMENT:
-			// Note: done outside
 			case COMMENT:
 				decoder.decodeComment();
 				if (contentHandler instanceof LexicalHandler) {
@@ -252,6 +259,14 @@ public class SAXDecoder implements XMLReader {
 				decoder.decodeProcessingInstruction();
 				contentHandler.processingInstruction(decoder.getPITarget(),
 						decoder.getPIData());
+				break;
+			case SELF_CONTAINED:
+				decoder.decodeStartFragmentSelfContained();
+				// handleStartElement();
+				// throw new EXIException("selfContained not implemented yet");
+				break;
+			case END_DOCUMENT:	//	SelfContained END_DOCUMENT
+				decoder.decodeEndFragmentSelfContained();
 				break;
 			default:
 				// ERROR

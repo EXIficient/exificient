@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.io.block;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
@@ -40,5 +41,10 @@ public class EncoderBitBlock extends AbstractEncoderBitByteBlock {
 	@Override
 	protected void init() {
 		channel = new BitEncoderChannel(outputStream);
+	}
+	
+	@Override
+	public void skipToNextByteBoundary() throws IOException {
+		channel.flush();
 	}
 }

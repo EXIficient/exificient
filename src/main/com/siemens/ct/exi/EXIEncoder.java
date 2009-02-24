@@ -33,7 +33,8 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  */
 
 public interface EXIEncoder {
-	public void setOutput(OutputStream os, boolean exiHeader) throws EXIException;
+	public void setOutput(OutputStream os, boolean exiBodyOnly)
+			throws EXIException;
 
 	public void setErrorHandler(ErrorHandler errorHandler);
 
@@ -66,6 +67,23 @@ public interface EXIEncoder {
 			throws EXIException;
 
 	/**
+	 * Supplies the start of a self-contained element. Self contained elements
+	 * may be read independently from the rest of the EXI body, allowing them to
+	 * be indexed for random access.
+	 * 
+	 * <p>
+	 * Provides access to the namespace URI, and local name of the start tag.
+	 * </p>
+	 * 
+	 * @param uri
+	 * @param localName
+	 * @return byte where the selfContained fragments starts or -1 if not retrievable
+	 * @throws EXIException
+	 */
+	public int encodeStartFragmentSelfContained(String uri, String localName)
+			throws EXIException;
+	
+	/**
 	 * Supplies the start of an element.
 	 * 
 	 * <p>
@@ -87,6 +105,14 @@ public interface EXIEncoder {
 	 * @throws EXIException
 	 */
 	public void encodeEndElement() throws EXIException;
+	
+
+	/**
+	 * Supplies the end tag of an SC fragment.
+	 * 
+	 * @throws EXIException
+	 */
+	public void encodeEndFragmentSelfContained() throws EXIException;
 
 	/**
 	 * Supplies an attribute.

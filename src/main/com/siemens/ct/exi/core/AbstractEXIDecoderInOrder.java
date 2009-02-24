@@ -19,13 +19,18 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartDocument;
+import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
@@ -55,7 +60,8 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 	}
 
 	public boolean hasNextEvent() {
-		return nextEventType != EventType.END_DOCUMENT;
+		return !(nextEventType == EventType.END_DOCUMENT && openRules.size() == 2);
+		// return nextEventType != EventType.END_DOCUMENT;
 	}
 
 	public EventType getNextEventType() {
@@ -211,6 +217,63 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public void decodeProcessingInstruction() throws EXIException {
 		decodeProcessingInstructionStructure();
+	}
+
+	/*
+	 * SELF_CONTAINED
+	 */
+	
+	TypeDecoder scTypeDecoder;
+	Map<String, Map<String, Rule>> scRuntimeDispatcher;
+	
+	public void decodeStartFragmentSelfContained() throws EXIException {
+		try {
+			// 1. Save the string table, grammars, namespace prefixes and any
+			// implementation-specific state learned while processing this EXI
+			// Body.
+			// 2. Initialize the string table, grammars, namespace prefixes and
+			// any implementation-specific state learned while processing this
+			// EXI Body to the state they held just prior to processing this EXI
+			// Body.
+			// 3. Skip to the next byte-aligned boundary in the stream.
+			block.skipToNextByteBoundary();
+			//	string tables
+			scTypeDecoder = this.block.getTypeDecoder();
+			TypeEncoder te = this.exiFactory.createTypeEncoder();
+			this.exiFactory.getGrammar().populateStringTable(te.getStringTable());
+			//	runtime-rules
+			scRuntimeDispatcher = this.runtimeDispatcher;
+			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
+			
+			// 4. Let qname be the qname of the SE event immediately preceding
+			// this SC event.
+			// 5. Let content be the sequence of events following this SC event
+			// that match the grammar for element qname, up to and including the
+			// terminating EE event.
+			// 6. Evaluate the sequence of events (SD, SE(qname), content, ED)
+			// according to the Fragment grammar.
+			this.replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
+			replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
+
+			// inspect stream and detect next event
+			inspectEvent();
+			this.decodeStartElement();
+
+			// remove the *duplicate* scope due to the additional SE
+			this.popScope();
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+	
+	public void decodeEndFragmentSelfContained() throws EXIException {
+		decodeEndDocument();
+		
+		// 7. Restore the string table, grammars, namespace prefixes and
+		// implementation-specific state learned while processing this EXI
+		// Body to that saved in step 1 above.
+		this.block.setTypeDecoder(this.scTypeDecoder);
+		this.runtimeDispatcher = this.scRuntimeDispatcher;
 	}
 
 }

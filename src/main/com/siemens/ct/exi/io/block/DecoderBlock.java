@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -60,4 +61,13 @@ public interface DecoderBlock {
 
 	public String readValueAsString(String namespaceURI, String localName)
 			throws IOException;
+	
+	/*
+	 * Self-Contained
+	 */
+	public TypeDecoder getTypeDecoder();
+	
+	public void setTypeDecoder(TypeDecoder typeDecoder);
+	
+	public void skipToNextByteBoundary() throws IOException;
 }

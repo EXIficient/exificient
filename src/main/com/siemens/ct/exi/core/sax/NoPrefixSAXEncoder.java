@@ -81,8 +81,8 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
 				.createAttributeListInstance(isSchemaInformed);
 	}
 
-	public void setOutput(OutputStream os) throws EXIException {
-		encoder.setOutput(os, true);
+	public void setOutput(OutputStream os, boolean exiBodyOnly) throws EXIException {
+		encoder.setOutput(os, exiBodyOnly);
 	}
 
 	@Override
@@ -99,10 +99,8 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void startElement(String uri, String local, String raw,
 			Attributes attributes) throws SAXException {
 		try {
-			checkPendingCharacters();
-
-			// no prefix mapping
-			encoder.encodeStartElement(uri, local);
+			// handle element only (no attributes)
+			startElementOnly(uri, local);
 
 			// attributes
 			if (attributes != null && attributes.getLength() > 0) {
@@ -111,7 +109,14 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
 		} catch (EXIException e) {
 			throw new SAXException("startElement: " + raw, e);
 		}
+	}
 
+	protected void startElementOnly(String uri, String local)
+			throws EXIException {
+		checkPendingCharacters();
+
+		// no prefix mapping
+		encoder.encodeStartElement(uri, local);
 	}
 
 	/*

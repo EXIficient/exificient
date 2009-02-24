@@ -20,6 +20,8 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
@@ -29,6 +31,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.sax.NamespacePrefixLevels;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
@@ -82,12 +85,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		this.block = exiFactory.createEncoderBlock(os);
 	}
 
-	public void setOutput(OutputStream os, boolean exiHeader) throws EXIException {
+	public void setOutput(OutputStream os, boolean exiBodyOnly)
+			throws EXIException {
 		this.os = os;
 
-		if (exiHeader) {
+		if (! exiBodyOnly) {
 			// EXI header
-			EXIHeader.write(os);			
+			EXIHeader.write(os);
 		}
 	}
 
@@ -773,4 +777,89 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 
+	/*
+	 * SELF_CONTAINED
+	 */
+	
+	TypeEncoder scTypeEncoder;
+	Map<String, Map<String, Rule>> scRuntimeDispatcher;
+	
+	public int encodeStartFragmentSelfContained(String uri, String localName)
+			throws EXIException {
+		
+		int skipBytesSC = -1;
+		
+		// SC Fragment
+		int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED,
+				fidelityOptions);
+
+		if (ec2 == Constants.NOT_FOUND) {
+			// throw error
+			throw new EXIException(
+					"SelfContained fragments need to be supported by EXI's Options. Please revise your configuration.");
+		} else {
+			this.encode2ndLevelEventCode(ec2);
+			
+			// 1. Save the string table, grammars, namespace prefixes and any
+			// implementation-specific state learned while processing this EXI
+			// Body.
+			// 2. Initialize the string table, grammars, namespace prefixes and
+			// any implementation-specific state learned while processing this
+			// EXI Body to the state they held just prior to processing this EXI
+			// Body.
+			// 3. Skip to the next byte-aligned boundary in the stream.
+			try {
+				block.skipToNextByteBoundary();
+				
+				if (block.bytePositionSupported()) {
+					skipBytesSC = block.getNumberOfBytes();
+				}
+				
+			} catch (IOException e) {
+				throw new EXIException(e);
+			}
+			//	string tables
+			scTypeEncoder = this.block.getTypeEncoder();
+			TypeEncoder te = this.exiFactory.createTypeEncoder();
+			this.exiFactory.getGrammar().populateStringTable(te.getStringTable());
+			//	runtime-rules
+			scRuntimeDispatcher = this.runtimeDispatcher;
+			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();			
+			// TODO namespace prefixes
+			
+			// 4. Let qname be the qname of the SE event immediately preceding
+			// this SC event.
+			// 5. Let content be the sequence of events following this SC event
+			// that match the grammar for element qname, up to and including the
+			// terminating EE event.
+			// 6. Evaluate the sequence of events (SD, SE(qname), content, ED)
+			// according to the Fragment grammar.
+			this.replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
+			replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
+			this.encodeStartElement(uri, localName);
+		}
+		
+		return skipBytesSC;
+	}
+
+
+	public void encodeEndFragmentSelfContained() throws EXIException {		
+		//	close SC fragment
+		
+		int ec = currentRule.get1stLevelEventCode(eventED);
+
+		if (ec == Constants.NOT_FOUND) {
+			throw new EXIException("No EXI Event found for endDocument");
+		} else {
+			// encode EventCode
+			this.encode1stLevelEventCode(ec);
+		}
+		this.popRule();
+
+		// 7. Restore the string table, grammars, namespace prefixes and
+		// implementation-specific state learned while processing this EXI
+		// Body to that saved in step 1 above.
+		this.block.setTypeEncoder(this.scTypeEncoder);
+		this.runtimeDispatcher = this.scRuntimeDispatcher;
+	}
 }
