@@ -70,9 +70,9 @@ import com.siemens.ct.exi.grammar.event.Lambda;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleContentAll;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleElement;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleStartTag;
+import com.siemens.ct.exi.grammar.rule.RuleContentAllSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -163,7 +163,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		return new XSDGrammarBuilder();
 	}
 
-	public SchemaInformedGrammar build(XSModel xsModel) throws EXIException {
+	public GrammarSchemaInformed build(XSModel xsModel) throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
 			String exMsg = "Problem occured while building XML Schema Model (XSModel)!";
 
@@ -181,7 +181,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		// initialize grammars
 		ExpandedName[] globalElements = initGrammars();
 
-		SchemaInformedGrammar sig = new SchemaInformedGrammar(globalElements);
+		GrammarSchemaInformed sig = new GrammarSchemaInformed(globalElements);
 
 		// initialize URI table entries
 		String[] uris = initURITableEntries();
@@ -205,11 +205,11 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		return sig;
 	}
 
-	public SchemaInformedGrammar build(String xsdLocation) throws EXIException {
+	public GrammarSchemaInformed build(String xsdLocation) throws EXIException {
 		return build(getXSModel(xsdLocation));
 	}
 
-	public SchemaInformedGrammar build(InputStream inputStream)
+	public GrammarSchemaInformed build(InputStream inputStream)
 			throws EXIException {
 		return build(getXSModel(inputStream));
 	}
@@ -544,7 +544,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 
 	private SchemaInformedRule handleAttributes(SchemaInformedRule ruleContent,
 			SchemaInformedRule ruleContent2, XSObjectList attributes) {
-		SchemaInformedRule ruleCurrent = new SchemaInformedRuleStartTag(
+		SchemaInformedRule ruleCurrent = new RuleStartTagSchemaInformed(
 				ruleContent2);
 		ruleCurrent.joinRules(ruleContent);
 
@@ -557,7 +557,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 
 				Attribute at = getAttributeEvent(attrUse);
 
-				SchemaInformedRule newCurrent = new SchemaInformedRuleStartTag(
+				SchemaInformedRule newCurrent = new RuleStartTagSchemaInformed(
 						ruleContent2);
 				newCurrent.addRule(at, ruleCurrent);
 
@@ -684,7 +684,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
 							.getNamespace())) {
 				// ur-type
-				TypeGrammar urType = SchemaInformedGrammar.getUrTypeRule();
+				TypeGrammar urType = GrammarSchemaInformed.getUrTypeRule();
 				type_i = urType.type;
 				typeEmpty_i = urType.typeEmpty;
 			} else {
@@ -711,18 +711,18 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 				type_i.setHasNamedSubtypes(hasNamedSubTypes(ctd));
 
 				// typeEmpty_i
-				SchemaInformedRule ruleEnd = new SchemaInformedRuleElement();
+				SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
 				ruleEnd.addTerminalRule(END_ELEMENT);
 				typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, attributes);
 			}
 		} else if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
 			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-			SchemaInformedRuleElement simpleContent = translateSimpleTypeDefinitionToFSA(std);
+			RuleElementSchemaInformed simpleContent = translateSimpleTypeDefinitionToFSA(std);
 			type_i = handleAttributes(simpleContent, simpleContent, null);
 			type_i.setHasNamedSubtypes(hasNamedSubTypes(std));
 			// TypeEmpty i
-			SchemaInformedRule ruleEnd = new SchemaInformedRuleElement();
+			SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
 			ruleEnd.addTerminalRule(END_ELEMENT);
 			typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, null);
 		}
@@ -766,7 +766,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			// elements
 			// with no character or element information item children.
 			// (attributes only, no content allowed)
-			ruleContent = new SchemaInformedRuleElement();
+			ruleContent = new RuleElementSchemaInformed();
 			ruleContent.addTerminalRule(END_ELEMENT);
 			break;
 		case XSComplexTypeDefinition.CONTENTTYPE_SIMPLE:
@@ -787,7 +787,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			XSParticle xsParticleElement = ctd.getParticle();
 
 			// additional content, sub elements etc, final EE
-			SchemaInformedRule ruleEE = new SchemaInformedRuleElement();
+			SchemaInformedRule ruleEE = new RuleElementSchemaInformed();
 			ruleEE.addTerminalRule(END_ELEMENT);
 			ruleContent = translateParticleToFSA(xsParticleElement, ruleEE);
 
@@ -800,7 +800,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			XSParticle xsParticleMixed = ctd.getParticle();
 
 			// content, final EE
-			SchemaInformedRule ruleEE3 = new SchemaInformedRuleElement();
+			SchemaInformedRule ruleEE3 = new RuleElementSchemaInformed();
 			ruleEE3.addTerminalRule(END_ELEMENT);
 			ruleContent = translateParticleToFSA(xsParticleMixed, ruleEE3);
 
@@ -839,7 +839,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		}
 	}
 
-	protected SchemaInformedRuleElement translateSimpleTypeDefinitionToFSA(
+	protected RuleElementSchemaInformed translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) {
 
 		ExpandedName nameValueType;
@@ -852,9 +852,9 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		Characters chSchemaValid = new Characters(nameValueType, BuiltIn
 				.getDatatype(std));
 
-		SchemaInformedRuleElement type_i_1 = new SchemaInformedRuleElement();
+		RuleElementSchemaInformed type_i_1 = new RuleElementSchemaInformed();
 
-		SchemaInformedRuleElement type_i_0 = new SchemaInformedRuleElement();
+		RuleElementSchemaInformed type_i_0 = new RuleElementSchemaInformed();
 		type_i_0.addRule(chSchemaValid, type_i_1);
 
 		type_i_1.addTerminalRule(END_ELEMENT);
@@ -888,7 +888,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		// \>--------- lambda -------->/
 		if (particle.getMaxOccursUnbounded()) {
 			// Set t to a new state;
-			SchemaInformedRule t = new SchemaInformedRuleElement();
+			SchemaInformedRule t = new RuleElementSchemaInformed();
 
 			// Set b to the result of translating {term}
 			// to an FSM ending at t using Tt(t);
@@ -1004,7 +1004,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			}
 
 			// AbstractRule ruleSubElement = new RuleElementContent();
-			SchemaInformedRule ruleSubElement = new SchemaInformedRuleElement();
+			SchemaInformedRule ruleSubElement = new RuleElementSchemaInformed();
 			StartElement se = new StartElement(xsElementDeclaration
 					.getNamespace(), xsElementDeclaration.getName());
 
@@ -1056,7 +1056,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 				XSObjectList particles = xsModelGroup.getParticles();
 
 				// AbstractRule b = new RuleElementContent();
-				SchemaInformedRule b = new SchemaInformedRuleElement();
+				SchemaInformedRule b = new RuleElementSchemaInformed();
 
 				for (int i = 0; i < particles.getLength(); i++) {
 					XSParticle xsParticle = (XSParticle) particles.item(i);
@@ -1076,7 +1076,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 
 				XSObjectList particles = xsModelGroup.getParticles();
 
-				SchemaInformedRule b = new SchemaInformedRuleContentAll();
+				SchemaInformedRule b = new RuleContentAllSchemaInformed();
 
 				b.joinRules(s);
 
@@ -1118,7 +1118,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			// SchemaInformedRule particleTerm_i_0 = new
 			// SchemaInformedRuleElement ( );
 
-			SchemaInformedRule urType = SchemaInformedGrammar.getUrTypeRule().type;
+			SchemaInformedRule urType = GrammarSchemaInformed.getUrTypeRule().type;
 			b.joinRules(urType);
 
 			short constraintType = xsWildcard.getConstraintType();

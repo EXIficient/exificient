@@ -16,10 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.core.sax;
-
-import com.siemens.ct.exi.EXIEncoder;
-import com.siemens.ct.exi.exceptions.EXIException;
+package com.siemens.ct.exi.attributes;
 
 /**
  * TODO Description
@@ -27,26 +24,17 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081013
+ * @version 0.2.20080924
  */
 
-public class NoWSCharactersEncoder extends CharactersEncoder {
-	protected final EXIEncoder encoder;
-	protected final StringBuilder chars;
-
-	public NoWSCharactersEncoder(EXIEncoder encoder, StringBuilder chars) {
-		this.encoder = encoder;
-		this.chars = chars;
-	}
-
-	public void checkPendingChars() throws EXIException {
-		String trimmed;
-
-		if (chars.length() > 0
-				&& (trimmed = chars.toString().trim()).length() > 0) {
-			encoder.encodeCharacters(trimmed);
-		}
-		chars.setLength(0);
+public class AttributeListSchemaLess extends AbstractAttributeList {
+	@Override
+	protected void insertAttribute(String uri, String localName, String pfx,
+			String value) {
+		attributeURI.add(uri);
+		attributeLocalName.add(localName);
+		attributePrefix.add(pfx);
+		attributeValue.add(value);
 	}
 
 }

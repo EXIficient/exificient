@@ -20,11 +20,7 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.event.EndDocument;
-import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -32,54 +28,65 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081015
+ * @version 0.2.20080718
  */
 
 /*
- * <Built-in Fragment Grammar>
+ * <Built-in Document Grammar>
  * 
- * FragmentContent : SE () FragmentContent 0 ED 1 CM FragmentContent 2.0 PI
- * FragmentContent 2.1
+ * DocContent : SE () DocEnd 0 DT DocContent 1.0 CM DocContent 1.1.0 PI
+ * DocContent 1.1.1
  */
 
-public class SchemaLessRuleFragmentContent extends AbstractSchemaLessRule {
-	public SchemaLessRuleFragmentContent() {
-		super();
+public class RuleDocContentSchemaLess extends AbstractSchemaLessRule {
+	protected Rule docEnd;
 
-		addRule(new StartElementGeneric(), this); // FragmentContent
-		addTerminalRule(new EndDocument());
+	public RuleDocContentSchemaLess(Rule docEnd) {
+		super();
+		this.docEnd = docEnd;
+	}
+
+	public RuleDocContentSchemaLess(Rule docEnd, String label) {
+		this(docEnd);
+		this.setLabel(label);
 	}
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
+		return (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
+		if (eventType == EventType.DOC_TYPE
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			return 0;
+		}
+
 		return Constants.NOT_FOUND;
 	}
 
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions) {
+		if (eventCode == 0
+				&& fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			return EventType.DOC_TYPE;
+		}
+
 		return null;
 	}
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		return 0;
-	}
+		int ch2 = get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
+		ch2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
+				: 0;
 
-	@Override
-	public void learnStartElement(String uri, String localName) {
-		// a learned rule is added to the front, technically
-		// it is added to the tail
-		Event event = new StartElement(uri, localName);
-		if (!this.contains(event)) {
-			// eventRules.add ( new EventRule ( event, this ) );
-			this.addRule(event, this);
-		}
+		return ch2;
 	}
 
 }

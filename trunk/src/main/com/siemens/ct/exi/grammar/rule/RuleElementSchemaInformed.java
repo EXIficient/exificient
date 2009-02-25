@@ -41,7 +41,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * n.(m+3).1
  */
 
-public class SchemaInformedRuleElement extends
+public class RuleElementSchemaInformed extends
 		AbstractSchemaInformedRuleContent {
 	public String toString() {
 		return "SIContent" + super.toString();
@@ -106,8 +106,8 @@ public class SchemaInformedRuleElement extends
 	}
 
 	@Override
-	public SchemaInformedRuleElement duplicate() {
-		SchemaInformedRuleElement clone = new SchemaInformedRuleElement();
+	public RuleElementSchemaInformed duplicate() {
+		RuleElementSchemaInformed clone = new RuleElementSchemaInformed();
 
 		clone.joinRules(this);
 

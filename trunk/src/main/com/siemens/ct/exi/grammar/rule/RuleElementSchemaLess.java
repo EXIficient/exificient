@@ -42,9 +42,9 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * ER ElementContent n.(m+2) CM ElementContent n.(m+3).0 PI ElementContent
  * n.(m+3).1
  */
-public class SchemaLessRuleElement extends SchemaLessRuleContent {
+public class RuleElementSchemaLess extends RuleContentSchemaLess {
 
-	protected SchemaLessRuleElement() {
+	protected RuleElementSchemaLess() {
 		super();
 
 		// EE on first level

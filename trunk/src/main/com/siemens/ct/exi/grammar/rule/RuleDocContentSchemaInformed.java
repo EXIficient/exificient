@@ -40,19 +40,19 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
  * () DocEnd n.0 DT DocContent n.1 CM DocContent n.2.0 PI DocContent n.2.1
  */
 
-public class SchemaInformedRuleDocContent extends AbstractSchemaInformedRule {
+public class RuleDocContentSchemaInformed extends AbstractSchemaInformedRule {
 	protected Rule docEnd;
 
 	protected final Event seGeneric;
 
-	public SchemaInformedRuleDocContent(Rule docEnd, String label) {
+	public RuleDocContentSchemaInformed(Rule docEnd, String label) {
 		super(label);
 
 		this.docEnd = docEnd;
 		this.seGeneric = new StartElementGeneric();
 	}
 
-	public SchemaInformedRuleDocContent(Rule docEnd) {
+	public RuleDocContentSchemaInformed(Rule docEnd) {
 		this.docEnd = docEnd;
 		this.seGeneric = new StartElementGeneric();
 	}

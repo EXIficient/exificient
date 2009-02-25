@@ -49,14 +49,14 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * n.(m+3).1
  */
 
-public class SchemaLessRuleStartTag extends SchemaLessRuleContent {
-	protected SchemaLessRuleElement elementContent;
+public class RuleStartTagSchemaLess extends RuleContentSchemaLess {
+	protected RuleElementSchemaLess elementContent;
 
-	public SchemaLessRuleStartTag() {
+	public RuleStartTagSchemaLess() {
 		super();
 
 		// initialize elementContent
-		elementContent = new SchemaLessRuleElement();
+		elementContent = new RuleElementSchemaLess();
 	}
 
 	public int get2ndLevelEventCode(EventType eventType,

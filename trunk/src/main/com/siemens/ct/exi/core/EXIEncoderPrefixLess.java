@@ -29,12 +29,11 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.core.sax.NamespacePrefixLevels;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
-import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.DatatypeEvent;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -53,7 +52,7 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @version 0.2.20081023
  */
 
-public class DefaultEXIEncoder extends AbstractEXICoder implements
+public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		EXIEncoder {
 	protected EncoderBlock block;
 
@@ -62,24 +61,15 @@ public class DefaultEXIEncoder extends AbstractEXICoder implements
 	// to parse raw nil value
 	protected XSDBoolean nil;
 
-	// namespace prefixes are related to elements
-	protected NamespacePrefixLevels nsPrefixes;
-
-	protected String lastSEprefix = null;
-
-	public DefaultEXIEncoder(EXIFactory exiFactory) {
+	public EXIEncoderPrefixLess(EXIFactory exiFactory) {
 		super(exiFactory);
 
-		nsPrefixes = new NamespacePrefixLevels();
 		nil = XSDBoolean.newInstance();
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
-
-		// re-set prefixes
-		nsPrefixes.clear();
 
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock(os);
@@ -376,28 +366,16 @@ public class DefaultEXIEncoder extends AbstractEXICoder implements
 		pushScope(uri, localName);
 	}
 
-	public void encodeStartElement(String uri, String localName, String prefix)
+	public void encodeStartElementPrefixMapping(String uri, String prefix)
 			throws EXIException {
-		nsPrefixes.addLevel();
-
-		encodeStartElement(uri, localName);
-
-		// prefix
-		lastSEprefix = prefix;
-
-		if (this.nsPrefixes.hasPrefixForURI(uri)) {
-			// TODO *overlapping* prefixes: same namespace BUT different
-			// prefixes
-			// System.out.println ( "SE_PFX uri found for " + uri + " --> " +
-			// prefix );
-		} else {
-			/*
-			 * If there are no prefixes specified for the URI of the QName by
-			 * preceding NS events in the EXI stream, the prefix is undefined.
-			 * An undefined prefix is represented using zero bits (i.e.,
-			 * omitted).
-			 */
-		}
+		//	no prefix mapping supported
+		//	instantiate appropriate class!
+	}
+	
+	public void encodeNamespaceDeclaration(String uri, String prefix)
+			throws EXIException {
+		//	no prefix mapping supported
+		//	instantiate appropriate class!
 	}
 
 	public void encodeEndElement() throws EXIException {
@@ -449,40 +427,6 @@ public class DefaultEXIEncoder extends AbstractEXICoder implements
 		// pop the rule from the top of the stack
 		popRule();
 		popScope();
-
-		// TODO how to detect whether we deal with preserve prefix on or not in
-		// a smart way
-		if (lastSEprefix != null) {
-			nsPrefixes.removeLevel();
-		}
-	}
-
-	public void encodeNamespaceDeclaration(String uri, String prefix)
-			throws EXIException {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-			try {
-				// event code
-				int ec2 = currentRule.get2ndLevelEventCode(
-						EventType.NAMESPACE_DECLARATION, fidelityOptions);
-				encode2ndLevelEventCode(ec2);
-
-				// prefix mapping
-				block.writeUri(uri);
-				block.writePrefix(prefix, uri);
-
-				// local-element-ns
-				if (prefix.equals(lastSEprefix)) {
-					// System.out.println ( "Prefix '" + prefix + "' is part of
-					// an SE event followed by an associated NS event");
-					block.writeBoolean(true);
-				} else {
-					block.writeBoolean(false);
-				}
-				nsPrefixes.addPrefix(uri, prefix);
-			} catch (IOException e) {
-				throw new EXIException(e);
-			}
-		}
 	}
 
 	public void encodeXsiType(String uri, String localName, String raw)
@@ -500,7 +444,7 @@ public class DefaultEXIEncoder extends AbstractEXICoder implements
 				errorHandler.warning(new EXIException(msg));
 			} else {
 				// lookup type-grammar
-				TypeGrammar tg = ((SchemaInformedGrammar) grammar)
+				TypeGrammar tg = ((GrammarSchemaInformed) grammar)
 						.getTypeGrammar(uri, localName);
 
 				/*

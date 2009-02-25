@@ -16,7 +16,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.attributes;
+package com.siemens.ct.exi.core.sax;
+
+import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
  * TODO Description
@@ -24,17 +26,9 @@ package com.siemens.ct.exi.attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080924
+ * @version 0.2.20080908
  */
 
-public class SchemaLessAttributeList extends AbstractAttributeList {
-	@Override
-	protected void insertAttribute(String uri, String localName, String pfx,
-			String value) {
-		attributeURI.add(uri);
-		attributeLocalName.add(localName);
-		attributePrefix.add(pfx);
-		attributeValue.add(value);
-	}
-
+public abstract class AbstractCharactersEncoder {
+	abstract public void checkPendingChars() throws EXIException;
 }

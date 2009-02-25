@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -34,13 +34,13 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080908
+ * @version 0.2.20090225
  */
 
-public class PrefixSAXEncoder extends NoPrefixSAXEncoder {
+public class SAXEncoderPrefixAware extends SAXEncoderPrefixLess {
 	protected Map<String, String> elementPrefixMapping;
 
-	public PrefixSAXEncoder(EXIFactory factory) {
+	public SAXEncoderPrefixAware(EXIFactory factory) {
 		super(factory);
 
 		elementPrefixMapping = new HashMap<String, String>();
@@ -59,11 +59,13 @@ public class PrefixSAXEncoder extends NoPrefixSAXEncoder {
 	public void startElement(String uri, String local, String raw,
 			Attributes attributes) throws SAXException {
 		try {
-			checkPendingCharacters();
-
+			// handle element only (no attributes)
+			startElementOnly(uri, local);
+			
 			// prefix mapping
 			String pfx = QNameUtilities.getPrefixPart(raw);
-			encoder.encodeStartElement(uri, local, pfx);
+			encoder.encodeStartElementPrefixMapping(uri, pfx);
+			// elementPrefixMapping.put(pfx, uri);
 
 			// prefixes from (startPrefixMapping)
 			handleNS();

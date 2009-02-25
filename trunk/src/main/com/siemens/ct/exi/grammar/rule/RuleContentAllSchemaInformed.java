@@ -30,7 +30,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @version 0.2.20081003
  */
 
-public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement {
+public class RuleContentAllSchemaInformed extends RuleElementSchemaInformed {
 	static final Event END_ELEMENT = new EndElement();
 
 	@Override
@@ -38,10 +38,10 @@ public class SchemaInformedRuleContentAll extends SchemaInformedRuleElement {
 		return cloneWithoutGivenEventCode(ec);
 	}
 
-	protected SchemaInformedRuleContentAll cloneWithoutGivenEventCode(int ec) {
+	protected RuleContentAllSchemaInformed cloneWithoutGivenEventCode(int ec) {
 		Rule original = super.get1stLevelRule(ec);
 
-		SchemaInformedRuleContentAll clone = new SchemaInformedRuleContentAll();
+		RuleContentAllSchemaInformed clone = new RuleContentAllSchemaInformed();
 
 		if (original.getNumberOfEvents() > 0) {
 			for (int i = 0; i < original.getNumberOfEvents(); i++) {

@@ -30,11 +30,11 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.2.20080908
  */
 
-public class WSCharactersEncoder extends CharactersEncoder {
+public class CharactersEncoderWhitespaceAware extends AbstractCharactersEncoder {
 	protected final EXIEncoder encoder;
 	protected final StringBuilder chars;
 
-	public WSCharactersEncoder(EXIEncoder encoder, StringBuilder chars) {
+	public CharactersEncoderWhitespaceAware(EXIEncoder encoder, StringBuilder chars) {
 		this.encoder = encoder;
 		this.chars = chars;
 	}

@@ -55,11 +55,11 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * n.(m+1) ER Element i, content2 n.(m+2) CM Element i, content2 n.(m+3).0 PI
  * Element i, content2 n.(m+3).1
  */
-public class SchemaInformedRuleStartTag extends
+public class RuleStartTagSchemaInformed extends
 		AbstractSchemaInformedRuleContent {
 	SchemaInformedRule elementContent2;
 
-	public SchemaInformedRuleStartTag(SchemaInformedRule elementContent2) {
+	public RuleStartTagSchemaInformed(SchemaInformedRule elementContent2) {
 		super();
 		this.elementContent2 = elementContent2;
 	}
@@ -318,8 +318,8 @@ public class SchemaInformedRuleStartTag extends
 	}
 
 	@Override
-	public SchemaInformedRuleStartTag duplicate() {
-		SchemaInformedRuleStartTag clone = new SchemaInformedRuleStartTag(
+	public RuleStartTagSchemaInformed duplicate() {
+		RuleStartTagSchemaInformed clone = new RuleStartTagSchemaInformed(
 				elementContent2);
 		clone.joinRules(this);
 

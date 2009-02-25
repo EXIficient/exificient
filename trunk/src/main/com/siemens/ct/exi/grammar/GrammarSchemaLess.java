@@ -25,8 +25,8 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
 import com.siemens.ct.exi.grammar.rule.RuleDocument;
 import com.siemens.ct.exi.grammar.rule.RuleFragment;
-import com.siemens.ct.exi.grammar.rule.SchemaLessRuleDocContent;
-import com.siemens.ct.exi.grammar.rule.SchemaLessRuleFragmentContent;
+import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaLess;
+import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaLess;
 
 /**
  * TODO Description
@@ -37,8 +37,8 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessRuleFragmentContent;
  * @version 0.2.20080718
  */
 
-public class SchemaLessGrammar extends AbstractGrammar {
-	public SchemaLessGrammar() {
+public class GrammarSchemaLess extends AbstractGrammar {
+	public GrammarSchemaLess() {
 		super(false);
 
 		init();
@@ -54,7 +54,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		/*
 		 * rule (DocContent)
 		 */
-		builtInDocContentGrammar = new SchemaLessRuleDocContent(
+		builtInDocContentGrammar = new RuleDocContentSchemaLess(
 				builtInDocEndGrammar, "DocContent");
 
 		// rule (DocContent), not schema informed --> level one
@@ -81,7 +81,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		/*
 		 * Fragment Content
 		 */
-		Rule builtInFragmentContentGrammar = new SchemaLessRuleFragmentContent();
+		Rule builtInFragmentContentGrammar = new RuleFragmentContentSchemaLess();
 
 		/*
 		 * Fragment
