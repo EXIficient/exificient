@@ -31,12 +31,9 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIWriter;
-import com.siemens.ct.exi.core.EXIDecoderInOrderDocument;
-import com.siemens.ct.exi.core.EXIDecoderInOrderFragments;
-import com.siemens.ct.exi.core.EXIDecoderReorderedDocument;
-import com.siemens.ct.exi.core.EXIDecoderReorderedFragments;
-import com.siemens.ct.exi.core.EXIEncoderDocument;
-import com.siemens.ct.exi.core.EXIEncoderFragments;
+import com.siemens.ct.exi.core.DefaultEXIDecoderInOrder;
+import com.siemens.ct.exi.core.DefaultEXIDecoderReordered;
+import com.siemens.ct.exi.core.DefaultEXIEncoder;
 import com.siemens.ct.exi.core.sax.NoPrefixSAXEncoder;
 import com.siemens.ct.exi.core.sax.PrefixSAXEncoder;
 import com.siemens.ct.exi.core.sax.SAXDecoder;
@@ -85,8 +82,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected FidelityOptions fidelityOptions;
 
 	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
-	
-	protected boolean exiBodyOnly = false;	//	default: false
+
+	protected boolean exiBodyOnly = false; // default: false
 
 	protected DefaultEXIFactory() {
 	}
@@ -150,25 +147,17 @@ public class DefaultEXIFactory implements EXIFactory {
 	public CodingMode getCodingMode() {
 		return this.codingMode;
 	}
-	
+
 	public void setEXIBodyOnly(boolean exiBodyOnly) {
 		this.exiBodyOnly = exiBodyOnly;
 	}
-	
+
 	public boolean isEXIBodyOnly() {
 		return exiBodyOnly;
 	}
 
 	public EXIEncoder createEXIEncoder() {
-		EXIEncoder encoder;
-
-		if (isFragment) {
-			encoder = new EXIEncoderFragments(this);
-		} else {
-			encoder = new EXIEncoderDocument(this);
-		}
-
-		return encoder;
+		return new DefaultEXIEncoder(this);
 	}
 
 	public EXIWriter createEXIWriter() {
@@ -180,26 +169,13 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public EXIDecoder createEXIDecoder() {
-		EXIDecoder decoder;
-
-		if (isFragment) {
-			if (codingMode == CodingMode.COMPRESSION
-					|| codingMode == CodingMode.PRE_COMPRESSION) {
-				decoder = new EXIDecoderReorderedFragments(this);
-			} else {
-				decoder = new EXIDecoderInOrderFragments(this);
-			}
+		if (codingMode.usesRechanneling()) {
+			return new DefaultEXIDecoderReordered(this);
 		} else {
-			if (codingMode.usesRechanneling()) {
-				decoder = new EXIDecoderReorderedDocument(this);
-			} else {
-				decoder = new EXIDecoderInOrderDocument(this);
-			}
+			return new DefaultEXIDecoderInOrder(this);
 		}
-
-		return decoder;
 	}
-	
+
 	public XMLReader createEXIReader() {
 		return new SAXDecoder(this, exiBodyOnly);
 	}

@@ -53,7 +53,7 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @version 0.2.20081023
  */
 
-public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
+public class DefaultEXIEncoder extends AbstractEXICoder implements
 		EXIEncoder {
 	protected EncoderBlock block;
 
@@ -67,7 +67,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	protected String lastSEprefix = null;
 
-	public AbstractEXIEncoder(EXIFactory exiFactory) {
+	public DefaultEXIEncoder(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		nsPrefixes = new NamespacePrefixLevels();
@@ -83,13 +83,22 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock(os);
+
+		// possible root elements
+		if (exiFactory.isFragment()) {
+			// push stack with fragment grammar
+			pushRule(grammar.getBuiltInFragmentGrammar());
+		} else {
+			// push stack with document grammar
+			pushRule(grammar.getBuiltInDocumentGrammar());
+		}
 	}
 
 	public void setOutput(OutputStream os, boolean exiBodyOnly)
 			throws EXIException {
 		this.os = os;
 
-		if (! exiBodyOnly) {
+		if (!exiBodyOnly) {
 			// EXI header
 			EXIHeader.write(os);
 		}
@@ -780,15 +789,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	/*
 	 * SELF_CONTAINED
 	 */
-	
+
 	TypeEncoder scTypeEncoder;
 	Map<String, Map<String, Rule>> scRuntimeDispatcher;
-	
+
 	public int encodeStartFragmentSelfContained(String uri, String localName)
 			throws EXIException {
-		
+
 		int skipBytesSC = -1;
-		
+
 		// SC Fragment
 		int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED,
 				fidelityOptions);
@@ -799,7 +808,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					"SelfContained fragments need to be supported by EXI's Options. Please revise your configuration.");
 		} else {
 			this.encode2ndLevelEventCode(ec2);
-			
+
 			// 1. Save the string table, grammars, namespace prefixes and any
 			// implementation-specific state learned while processing this EXI
 			// Body.
@@ -810,23 +819,24 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// 3. Skip to the next byte-aligned boundary in the stream.
 			try {
 				block.skipToNextByteBoundary();
-				
+
 				if (block.bytePositionSupported()) {
 					skipBytesSC = block.getNumberOfBytes();
 				}
-				
+
 			} catch (IOException e) {
 				throw new EXIException(e);
 			}
-			//	string tables
+			// string tables
 			scTypeEncoder = this.block.getTypeEncoder();
 			TypeEncoder te = this.exiFactory.createTypeEncoder();
-			this.exiFactory.getGrammar().populateStringTable(te.getStringTable());
-			//	runtime-rules
+			this.exiFactory.getGrammar().populateStringTable(
+					te.getStringTable());
+			// runtime-rules
 			scRuntimeDispatcher = this.runtimeDispatcher;
-			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();			
+			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
 			// TODO namespace prefixes
-			
+
 			// 4. Let qname be the qname of the SE event immediately preceding
 			// this SC event.
 			// 5. Let content be the sequence of events following this SC event
@@ -838,14 +848,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
 			this.encodeStartElement(uri, localName);
 		}
-		
+
 		return skipBytesSC;
 	}
 
+	public void encodeEndFragmentSelfContained() throws EXIException {
+		// close SC fragment
 
-	public void encodeEndFragmentSelfContained() throws EXIException {		
-		//	close SC fragment
-		
 		int ec = currentRule.get1stLevelEventCode(eventED);
 
 		if (ec == Constants.NOT_FOUND) {
