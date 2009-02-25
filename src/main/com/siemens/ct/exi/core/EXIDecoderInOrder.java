@@ -26,7 +26,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartDocument;
@@ -42,8 +42,8 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.2.20081023
  */
 
-public class DefaultEXIDecoderInOrder extends AbstractEXIDecoder {
-	public DefaultEXIDecoderInOrder(EXIFactory exiFactory) {
+public class EXIDecoderInOrder extends AbstractEXIDecoder {
+	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
 	}
 
@@ -148,7 +148,7 @@ public class DefaultEXIDecoderInOrder extends AbstractEXIDecoder {
 		decodeAttributeXsiType();
 
 		// update grammar according to given xsi:type
-		TypeGrammar tg = ((SchemaInformedGrammar) grammar).getTypeGrammar(
+		TypeGrammar tg = ((GrammarSchemaInformed) grammar).getTypeGrammar(
 				this.xsiTypeUri, this.xsiTypeName);
 
 		// type known ?

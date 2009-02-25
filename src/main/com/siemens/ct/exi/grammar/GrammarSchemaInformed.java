@@ -33,10 +33,10 @@ import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
 import com.siemens.ct.exi.grammar.rule.RuleDocument;
 import com.siemens.ct.exi.grammar.rule.RuleFragment;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleDocContent;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleElement;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleFragmentContent;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRuleStartTag;
+import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -48,14 +48,14 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.2.20081016
  */
 
-public class SchemaInformedGrammar extends AbstractGrammar {
+public class GrammarSchemaInformed extends AbstractGrammar {
 	protected Map<ElementKey, Rule> elementDispatcher;
 
 	protected Map<ExpandedName, TypeGrammar> grammarTypes;
 
 	protected final TypeGrammar urType;
 
-	protected SchemaInformedGrammar(ExpandedName[] globalElements) {
+	protected GrammarSchemaInformed(ExpandedName[] globalElements) {
 		super(true);
 
 		// init document
@@ -66,17 +66,17 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
 
 		// ur-type
-		urType = SchemaInformedGrammar.getUrTypeRule();
+		urType = GrammarSchemaInformed.getUrTypeRule();
 	}
 
 	public static TypeGrammar getUrTypeRule() {
 		// ur-Type
-		SchemaInformedRule urType1 = new SchemaInformedRuleElement();
+		SchemaInformedRule urType1 = new RuleElementSchemaInformed();
 		urType1.addRule(new StartElementGeneric(), urType1);
 		urType1.addTerminalRule(new EndElement());
 		urType1.addRule(new CharactersGeneric(), urType1);
 
-		SchemaInformedRule urType0 = new SchemaInformedRuleStartTag(urType1);
+		SchemaInformedRule urType0 = new RuleStartTagSchemaInformed(urType1);
 		urType0.addRule(new AttributeGeneric(), urType0);
 		urType0.addRule(new StartElementGeneric(), urType1);
 		urType0.addTerminalRule(new EndElement());
@@ -85,7 +85,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		urType0.setFirstElementRule();
 
 		// empty ur-Type
-		SchemaInformedRule emptyUrType0 = new SchemaInformedRuleElement();
+		SchemaInformedRule emptyUrType0 = new RuleElementSchemaInformed();
 		emptyUrType0.addRule(new AttributeGeneric(), emptyUrType0);
 		emptyUrType0.addTerminalRule(new EndElement());
 		emptyUrType0.setFirstElementRule();
@@ -139,7 +139,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		/*
 		 * rule (DocContent)
 		 */
-		builtInDocContentGrammar = new SchemaInformedRuleDocContent(
+		builtInDocContentGrammar = new RuleDocContentSchemaInformed(
 				builtInDocEndGrammar, "DocContent");
 
 		/*
@@ -167,7 +167,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		/*
 		 * Fragment Content
 		 */
-		Rule builtInFragmentContentGrammar = new SchemaInformedRuleFragmentContent(
+		Rule builtInFragmentContentGrammar = new RuleFragmentContentSchemaInformed(
 				"FragmentContent");
 
 		// all the unique qnames of elements sorted lexicographically, first by

@@ -84,19 +84,13 @@ public interface EXIEncoder {
 			throws EXIException;
 	
 	/**
-	 * Supplies the start of an element.
-	 * 
-	 * <p>
-	 * Provides access to namespace URI, local name, and the prefix of the start
-	 * tag.
-	 * </p>
+	 * Supplies the mapping between a given URI and its prefix.
 	 * 
 	 * @param uri
-	 * @param localName
 	 * @param prefix
 	 * @throws EXIException
 	 */
-	public void encodeStartElement(String uri, String localName, String prefix)
+	public void encodeStartElementPrefixMapping(String uri, String prefix)
 			throws EXIException;
 
 	/**

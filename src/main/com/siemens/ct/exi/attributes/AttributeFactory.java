@@ -37,9 +37,9 @@ public class AttributeFactory {
 
 	public AttributeList createAttributeListInstance(boolean schemaInformed) {
 		if (schemaInformed) {
-			return new SchemaInformedAttributeList();
+			return new AttributeListSchemaInformed();
 		} else {
-			return new SchemaLessAttributeList();
+			return new AttributeListSchemaLess();
 		}
 	}
 }

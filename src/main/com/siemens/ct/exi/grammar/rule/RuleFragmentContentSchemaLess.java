@@ -21,7 +21,10 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EndDocument;
+import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -29,60 +32,54 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080718
+ * @version 0.2.20081015
  */
 
 /*
- * <Schema-informed Fragment Grammar>
+ * <Built-in Fragment Grammar>
  * 
- * FragmentContent : SE (F 0) FragmentContent 0 SE (F 1) FragmentContent 1 ...
- * SE (F n-1) FragmentContent n-1 ED n SE () FragmentContent (n+1).0 CM
- * FragmentContent (n+1).1.0 PI FragmentContent (n+1).1.1
+ * FragmentContent : SE () FragmentContent 0 ED 1 CM FragmentContent 2.0 PI
+ * FragmentContent 2.1
  */
 
-public class SchemaInformedRuleFragmentContent extends
-		AbstractSchemaInformedRule {
+public class RuleFragmentContentSchemaLess extends AbstractSchemaLessRule {
+	public RuleFragmentContentSchemaLess() {
+		super();
 
-	public SchemaInformedRuleFragmentContent(String label) {
-		super(label);
-
+		addRule(new StartElementGeneric(), this); // FragmentContent
 		addTerminalRule(new EndDocument());
 	}
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		// FragmentContent contains in any case (even in strict mode) SE(*)
-		// event on 2nd level
-		return true;
+		return (fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
-		if (eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED) {
-			return 0;
-		}
-
 		return Constants.NOT_FOUND;
 	}
 
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions) {
-		if (eventCode == 0) {
-			return EventType.START_ELEMENT_GENERIC_UNDECLARED;
-		}
-
 		return null;
 	}
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		// SE(*) in any case
-		int ch2 = 1;
+		return 0;
+	}
 
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
+	@Override
+	public void learnStartElement(String uri, String localName) {
+		// a learned rule is added to the front, technically
+		// it is added to the tail
+		Event event = new StartElement(uri, localName);
+		if (!this.contains(event)) {
+			// eventRules.add ( new EventRule ( event, this ) );
+			this.addRule(event, this);
 		}
-
-		return ch2;
 	}
 
 }

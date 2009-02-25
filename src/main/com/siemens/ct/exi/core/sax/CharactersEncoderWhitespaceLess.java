@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
@@ -26,9 +27,26 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080908
+ * @version 0.2.20081013
  */
 
-public abstract class CharactersEncoder {
-	abstract public void checkPendingChars() throws EXIException;
+public class CharactersEncoderWhitespaceLess extends AbstractCharactersEncoder {
+	protected final EXIEncoder encoder;
+	protected final StringBuilder chars;
+
+	public CharactersEncoderWhitespaceLess(EXIEncoder encoder, StringBuilder chars) {
+		this.encoder = encoder;
+		this.chars = chars;
+	}
+
+	public void checkPendingChars() throws EXIException {
+		String trimmed;
+
+		if (chars.length() > 0
+				&& (trimmed = chars.toString().trim()).length() > 0) {
+			encoder.encodeCharacters(trimmed);
+		}
+		chars.setLength(0);
+	}
+
 }

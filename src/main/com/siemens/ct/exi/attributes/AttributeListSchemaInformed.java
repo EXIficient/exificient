@@ -27,8 +27,8 @@ package com.siemens.ct.exi.attributes;
  * @version 0.2.20080924
  */
 
-public class SchemaInformedAttributeList extends AbstractAttributeList {
-	public SchemaInformedAttributeList() {
+public class AttributeListSchemaInformed extends AbstractAttributeList {
+	public AttributeListSchemaInformed() {
 		super();
 	}
 

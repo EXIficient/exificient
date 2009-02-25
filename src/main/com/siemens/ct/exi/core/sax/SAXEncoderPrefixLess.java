@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Siemens AG
+ * Copyright (C) 2007-2009 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
@@ -42,24 +42,24 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080718
+ * @version 0.2.20090225
  */
 
-public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
+public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 	protected EXIEncoder encoder;
 
 	// buffers the characters of the characters() callback
 	protected StringBuilder sbChars;
 
 	// encodes collected char callbacks
-	protected CharactersEncoder charEncoder;
+	protected AbstractCharactersEncoder charEncoder;
 
 	protected Map<String, String> globalPrefixMapping;
 
 	// attributes
 	private AttributeList exiAttributes;
 
-	public NoPrefixSAXEncoder(EXIFactory factory) {
+	public SAXEncoderPrefixLess(EXIFactory factory) {
 		this.encoder = factory.createEXIEncoder();
 
 		// initialize
@@ -69,9 +69,9 @@ public class NoPrefixSAXEncoder extends DefaultHandler2 implements EXIWriter {
 		// whitespace characters required ?
 		if (factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_WS)) {
-			charEncoder = new WSCharactersEncoder(encoder, sbChars);
+			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
 		} else {
-			charEncoder = new NoWSCharactersEncoder(encoder, sbChars);
+			charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
 		}
 
 		// attribute list

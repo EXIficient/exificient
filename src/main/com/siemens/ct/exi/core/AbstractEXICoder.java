@@ -29,7 +29,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.ElementKey;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeGeneric;
@@ -40,7 +40,7 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaLessRuleStartTag;
+import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaLess;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.ExpandedName;
 
@@ -223,7 +223,7 @@ public abstract class AbstractEXICoder {
 			// element rule known from schema ?
 			if ((ruleToPush = getSchemaRuleForElement(namespaceURI, localName)) == null) {
 				// if rule not present use ur-type
-				TypeGrammar urType = ((SchemaInformedGrammar) grammar)
+				TypeGrammar urType = ((GrammarSchemaInformed) grammar)
 						.getUrType();
 				ruleToPush = urType.getType();
 			}
@@ -284,12 +284,12 @@ public abstract class AbstractEXICoder {
 			// URI & localName unknown
 			mapNS = new HashMap<String, Rule>();
 			runtimeDispatcher.put(namespaceURI, mapNS);
-			r = new SchemaLessRuleStartTag();
+			r = new RuleStartTagSchemaLess();
 			mapNS.put(localName, r);
 		} else {
 			if ((r = mapNS.get(localName)) == null) {
 				// URI known, localName unknown
-				r = new SchemaLessRuleStartTag();
+				r = new RuleStartTagSchemaLess();
 				mapNS.put(localName, r);
 			}
 		}

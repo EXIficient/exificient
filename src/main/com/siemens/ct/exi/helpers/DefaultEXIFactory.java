@@ -31,11 +31,12 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIWriter;
-import com.siemens.ct.exi.core.DefaultEXIDecoderInOrder;
-import com.siemens.ct.exi.core.DefaultEXIDecoderReordered;
-import com.siemens.ct.exi.core.DefaultEXIEncoder;
-import com.siemens.ct.exi.core.sax.NoPrefixSAXEncoder;
-import com.siemens.ct.exi.core.sax.PrefixSAXEncoder;
+import com.siemens.ct.exi.core.EXIDecoderInOrder;
+import com.siemens.ct.exi.core.EXIDecoderReordered;
+import com.siemens.ct.exi.core.EXIEncoderPrefixLess;
+import com.siemens.ct.exi.core.EXIEncoderPrefixAware;
+import com.siemens.ct.exi.core.sax.SAXEncoderPrefixLess;
+import com.siemens.ct.exi.core.sax.SAXEncoderPrefixAware;
 import com.siemens.ct.exi.core.sax.SAXDecoder;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
@@ -157,22 +158,26 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public EXIEncoder createEXIEncoder() {
-		return new DefaultEXIEncoder(this);
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+			return new EXIEncoderPrefixAware(this);
+		} else {
+			return new EXIEncoderPrefixLess(this);
+		}
 	}
 
 	public EXIWriter createEXIWriter() {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-			return new PrefixSAXEncoder(this);
+			return new SAXEncoderPrefixAware(this);
 		} else {
-			return new NoPrefixSAXEncoder(this);
+			return new SAXEncoderPrefixLess(this);
 		}
 	}
 
 	public EXIDecoder createEXIDecoder() {
 		if (codingMode.usesRechanneling()) {
-			return new DefaultEXIDecoderReordered(this);
+			return new EXIDecoderReordered(this);
 		} else {
-			return new DefaultEXIDecoderInOrder(this);
+			return new EXIDecoderInOrder(this);
 		}
 	}
 
