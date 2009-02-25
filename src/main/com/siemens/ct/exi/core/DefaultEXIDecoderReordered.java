@@ -48,7 +48,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.2.20081023
  */
 
-public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder {
+public class DefaultEXIDecoderReordered extends AbstractEXIDecoder {
 	// store appearing events in right order
 	protected List<Event> events;
 	protected List<EventType> eventTypes;
@@ -91,7 +91,7 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder {
 	protected Map<ExpandedName, Integer> occurrences;
 	protected Map<ExpandedName, List<Datatype>> dataTypes;
 
-	public AbstractEXIDecoderReordered(EXIFactory exiFactory) {
+	public DefaultEXIDecoderReordered(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		// events
@@ -160,6 +160,17 @@ public abstract class AbstractEXIDecoderReordered extends AbstractEXIDecoder {
 		occurrences.clear();
 		dataTypes.clear();
 
+		// possible root elements
+		if (this.exiFactory.isFragment()) {
+			// push stack with document grammar
+			pushRule(grammar.getBuiltInFragmentGrammar());
+		} else {
+			// push stack with document grammar
+			pushRule(grammar.getBuiltInDocumentGrammar());
+		}
+
+		// pre-read structure
+		initStructure();
 	}
 
 	protected void initStructure() throws EXIException {

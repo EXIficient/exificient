@@ -42,8 +42,8 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.2.20081023
  */
 
-public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
-	public AbstractEXIDecoderInOrder(EXIFactory exiFactory) {
+public class DefaultEXIDecoderInOrder extends AbstractEXIDecoder {
+	public DefaultEXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
 	}
 
@@ -53,6 +53,15 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 
 		nextEvent = new StartDocument();
 		nextEventType = EventType.START_DOCUMENT;
+
+		// possible root elements
+		if (this.exiFactory.isFragment()) {
+			// push stack with fragment grammar
+			pushRule(grammar.getBuiltInFragmentGrammar());
+		} else {
+			// push stack with document grammar
+			pushRule(grammar.getBuiltInDocumentGrammar());
+		}
 	}
 
 	public void inspectEvent() throws EXIException {
@@ -222,10 +231,10 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 	/*
 	 * SELF_CONTAINED
 	 */
-	
+
 	TypeDecoder scTypeDecoder;
 	Map<String, Map<String, Rule>> scRuntimeDispatcher;
-	
+
 	public void decodeStartFragmentSelfContained() throws EXIException {
 		try {
 			// 1. Save the string table, grammars, namespace prefixes and any
@@ -237,14 +246,15 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 			// Body.
 			// 3. Skip to the next byte-aligned boundary in the stream.
 			block.skipToNextByteBoundary();
-			//	string tables
+			// string tables
 			scTypeDecoder = this.block.getTypeDecoder();
 			TypeEncoder te = this.exiFactory.createTypeEncoder();
-			this.exiFactory.getGrammar().populateStringTable(te.getStringTable());
-			//	runtime-rules
+			this.exiFactory.getGrammar().populateStringTable(
+					te.getStringTable());
+			// runtime-rules
 			scRuntimeDispatcher = this.runtimeDispatcher;
 			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
-			
+
 			// 4. Let qname be the qname of the SE event immediately preceding
 			// this SC event.
 			// 5. Let content be the sequence of events following this SC event
@@ -265,10 +275,10 @@ public abstract class AbstractEXIDecoderInOrder extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
-	
+
 	public void decodeEndFragmentSelfContained() throws EXIException {
 		decodeEndDocument();
-		
+
 		// 7. Restore the string table, grammars, namespace prefixes and
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
