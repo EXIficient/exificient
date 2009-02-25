@@ -20,7 +20,9 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -733,9 +735,10 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	/*
 	 * SELF_CONTAINED
 	 */
-
-	TypeEncoder scTypeEncoder;
-	Map<String, Map<String, Rule>> scRuntimeDispatcher;
+	List<TypeEncoder> scTypeEncoders = new ArrayList<TypeEncoder>();
+	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
+	// TypeEncoder scTypeEncoder;
+	// Map<String, Map<String, Rule>> scRuntimeDispatcher;
 
 	public int encodeStartFragmentSelfContained(String uri, String localName)
 			throws EXIException {
@@ -772,12 +775,11 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				throw new EXIException(e);
 			}
 			// string tables
-			scTypeEncoder = this.block.getTypeEncoder();
+			scTypeEncoders.add(this.block.getTypeEncoder());
 			TypeEncoder te = this.exiFactory.createTypeEncoder();
-			this.exiFactory.getGrammar().populateStringTable(
-					te.getStringTable());
+			this.block.setTypeEncoder(te);
 			// runtime-rules
-			scRuntimeDispatcher = this.runtimeDispatcher;
+			scRuntimeDispatchers.add(this.runtimeDispatcher);
 			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
 			// TODO namespace prefixes
 
@@ -812,7 +814,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// 7. Restore the string table, grammars, namespace prefixes and
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
-		this.block.setTypeEncoder(this.scTypeEncoder);
-		this.runtimeDispatcher = this.scRuntimeDispatcher;
+		this.block.setTypeEncoder(scTypeEncoders.remove(scTypeEncoders.size()-1));
+		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
 	}
 }

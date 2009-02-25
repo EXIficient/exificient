@@ -19,7 +19,9 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
@@ -231,9 +233,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	/*
 	 * SELF_CONTAINED
 	 */
-
-	TypeDecoder scTypeDecoder;
-	Map<String, Map<String, Rule>> scRuntimeDispatcher;
+	List<TypeDecoder> scTypeDecoders = new ArrayList<TypeDecoder>();
+	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
+	// TypeDecoder scTypeDecoder;
+	// Map<String, Map<String, Rule>> scRuntimeDispatcher;
 
 	public void decodeStartFragmentSelfContained() throws EXIException {
 		try {
@@ -247,12 +250,11 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			// 3. Skip to the next byte-aligned boundary in the stream.
 			block.skipToNextByteBoundary();
 			// string tables
-			scTypeDecoder = this.block.getTypeDecoder();
-			TypeEncoder te = this.exiFactory.createTypeEncoder();
-			this.exiFactory.getGrammar().populateStringTable(
-					te.getStringTable());
+			scTypeDecoders.add(this.block.getTypeDecoder());
+			TypeDecoder td = this.exiFactory.createTypeDecoder();
+			this.block.setTypeDecoder(td);
 			// runtime-rules
-			scRuntimeDispatcher = this.runtimeDispatcher;
+			scRuntimeDispatchers.add(this.runtimeDispatcher);
 			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
 
 			// 4. Let qname be the qname of the SE event immediately preceding
@@ -282,8 +284,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// 7. Restore the string table, grammars, namespace prefixes and
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
-		this.block.setTypeDecoder(this.scTypeDecoder);
-		this.runtimeDispatcher = this.scRuntimeDispatcher;
+		this.block.setTypeDecoder(scTypeDecoders.remove(scTypeDecoders.size()-1));
+		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
 	}
 
 }
