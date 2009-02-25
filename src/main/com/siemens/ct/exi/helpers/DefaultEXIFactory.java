@@ -216,6 +216,9 @@ public class DefaultEXIFactory implements EXIFactory {
 			// use string only
 			typeEncoder = new TypeEncoderString(this);
 		}
+		
+		// populate type-encoder string table
+		getGrammar().populateStringTable(typeEncoder.getStringTable());
 
 		return typeEncoder;
 	}
@@ -249,6 +252,9 @@ public class DefaultEXIFactory implements EXIFactory {
 			// strings only
 			typeDecoder = new TypeDecoderString(this);
 		}
+		
+		// populate type-encoder string table
+		getGrammar().populateStringTable(typeDecoder.getStringTable());
 
 		return typeDecoder;
 	}
@@ -257,9 +263,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		EncoderBlock encBlock;
 
 		TypeEncoder typeEncoder = this.createTypeEncoder();
-
-		// populate type-encoder string table
-		getGrammar().populateStringTable(typeEncoder.getStringTable());
 
 		switch (codingMode) {
 		case BIT_PACKED:
@@ -288,9 +291,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		DecoderBlock decBlock;
 
 		TypeDecoder typeDecoder = this.createTypeDecoder();
-
-		// populate type-encoder string table
-		getGrammar().populateStringTable(typeDecoder.getStringTable());
 
 		switch (codingMode) {
 		case BIT_PACKED:
