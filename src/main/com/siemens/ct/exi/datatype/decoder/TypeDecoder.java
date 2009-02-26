@@ -35,7 +35,10 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  */
 
 public interface TypeDecoder extends TypeCoder {
+	
 	public StringTableDecoder getStringTable();
+	
+	public void setStringTable(StringTableDecoder stringTable);
 
 	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			String namespaceURI, String localName) throws IOException;

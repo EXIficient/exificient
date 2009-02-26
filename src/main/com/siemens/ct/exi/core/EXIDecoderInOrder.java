@@ -26,7 +26,7 @@ import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
+import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
@@ -233,10 +233,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	/*
 	 * SELF_CONTAINED
 	 */
-	List<TypeDecoder> scTypeDecoders = new ArrayList<TypeDecoder>();
+	List<StringTableDecoder> scStringTables = new ArrayList<StringTableDecoder>();
 	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
-	// TypeDecoder scTypeDecoder;
-	// Map<String, Map<String, Rule>> scRuntimeDispatcher;
 
 	public void decodeStartFragmentSelfContained() throws EXIException {
 		try {
@@ -250,9 +248,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			// 3. Skip to the next byte-aligned boundary in the stream.
 			block.skipToNextByteBoundary();
 			// string tables
-			scTypeDecoders.add(this.block.getTypeDecoder());
-			TypeDecoder td = this.exiFactory.createTypeDecoder();
-			this.block.setTypeDecoder(td);
+			TypeDecoder td = this.block.getTypeDecoder();
+			scStringTables.add(td.getStringTable());
+			td.setStringTable(exiFactory.createTypeDecoder().getStringTable());
 			// runtime-rules
 			scRuntimeDispatchers.add(this.runtimeDispatcher);
 			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
@@ -284,7 +282,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// 7. Restore the string table, grammars, namespace prefixes and
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
-		this.block.setTypeDecoder(scTypeDecoders.remove(scTypeDecoders.size()-1));
+		TypeDecoder td = this.block.getTypeDecoder();
+		td.setStringTable(scStringTables.remove(scStringTables.size()-1));
 		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
 	}
 
