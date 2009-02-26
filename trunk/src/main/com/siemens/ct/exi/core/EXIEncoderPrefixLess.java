@@ -33,6 +33,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
+import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
@@ -735,10 +736,8 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	/*
 	 * SELF_CONTAINED
 	 */
-	List<TypeEncoder> scTypeEncoders = new ArrayList<TypeEncoder>();
+	List<StringTableEncoder> scStringTables = new ArrayList<StringTableEncoder>();
 	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
-	// TypeEncoder scTypeEncoder;
-	// Map<String, Map<String, Rule>> scRuntimeDispatcher;
 
 	public int encodeStartFragmentSelfContained(String uri, String localName)
 			throws EXIException {
@@ -768,16 +767,17 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				block.skipToNextByteBoundary();
 
 				if (block.bytePositionSupported()) {
-					skipBytesSC = block.getNumberOfBytes();
+					skipBytesSC = block.getBytePosition();
 				}
 
 			} catch (IOException e) {
 				throw new EXIException(e);
 			}
 			// string tables
-			scTypeEncoders.add(this.block.getTypeEncoder());
-			TypeEncoder te = this.exiFactory.createTypeEncoder();
-			this.block.setTypeEncoder(te);
+			TypeEncoder te = this.block.getTypeEncoder(); 
+			scStringTables.add(te.getStringTable());
+			//	TODO create *just* string table and not whole TypeEncoder again
+			te.setStringTable(exiFactory.createTypeEncoder().getStringTable());
 			// runtime-rules
 			scRuntimeDispatchers.add(this.runtimeDispatcher);
 			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
@@ -814,7 +814,8 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// 7. Restore the string table, grammars, namespace prefixes and
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
-		this.block.setTypeEncoder(scTypeEncoders.remove(scTypeEncoders.size()-1));
+		TypeEncoder te = this.block.getTypeEncoder();
+		te.setStringTable(scStringTables.remove(scStringTables.size()-1));
 		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
 	}
 }

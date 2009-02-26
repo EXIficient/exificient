@@ -170,10 +170,4 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 	public TypeDecoder getTypeDecoder() {
 		return this.typeDecoder;
 	}
-	
-	public void setTypeDecoder(TypeDecoder typeDecoder) {
-		this.typeDecoder = typeDecoder; 
-	}
-	
-
 }

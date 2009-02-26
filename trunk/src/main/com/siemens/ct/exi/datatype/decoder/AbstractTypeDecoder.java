@@ -49,6 +49,10 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 	public StringTableDecoder getStringTable() {
 		return stringTable;
 	}
+	
+	public void setStringTable(StringTableDecoder stringTable) {
+		this.stringTable = stringTable;
+	}
 
 	public String readValueAsString(DecoderChannel dc,
 			final String namespaceURI, final String localName)

@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
+import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
 
 /**
  * TODO Description
@@ -62,38 +63,10 @@ public interface EncoderBlock {
 	public void writeValueAsString(String uri, String localName, String value)
 			throws IOException;
 
-	/*
-	 * 8.2.1 Structure Channel
-	 * 
-	 * The structure channel of each block defines the overall order and
-	 * structure of the events in that block. It contains the event codes and
-	 * associated content for each event in the block, except for Attribute (AT)
-	 * and Character (CH) values, which are stored in the value channels. In
-	 * addition, there are two attribute events whose values are stored in the
-	 * structure channel instead of in value channels, which are xsi:nil and
-	 * xsi:type attributes that match a schema-informed grammar production.
-	 * These attribute events are intrinsic to the grammar system thus are
-	 * essential in processing the structure channel because their values affect
-	 * the grammar to be used for processing the rest of the elements on which
-	 * they appear. All event codes and content in the structure stream occur in
-	 * the same order as they occur in the EXI event sequence.
-	 */
-	// public abstract EncoderChannel getStructureChannel();
 
 	/*
-	 * 8.2.2 Value Channels The values of the Attribute (AT) and Character (CH)
-	 * events in each block are organized into separate channels based on the
-	 * qname of the associated attribute or element. Specifically, the value of
-	 * each Attribute (AT) event is placed in the channel identified by the
-	 * qname of the Attribute and the value of each Character (CH) event is
-	 * placed in the channel identified by the qname of its parent Start Element
-	 * (SE) event. Each block contains exactly one channel for each distinct
-	 * element or attribute qname that occurs in the block. The values in each
-	 * channel occur in the order they occur in the EXI event sequence.
+	 * Stream
 	 */
-	// public EncoderChannel getValueChannel( String uri, String localName );
-
-	
 	public void flush() throws IOException;
 
 	public void close() throws IOException;
@@ -103,12 +76,18 @@ public interface EncoderBlock {
 	 */
 	public TypeEncoder getTypeEncoder();
 	
-	public void setTypeEncoder(TypeEncoder typeEncoder);
+//	public StringTableEncoder getStringTable();
+//	
+//	public void setStringTable(StringTableEncoder stringTable);
+//	
+//	public TypeEncoder getTypeEncoder();
+//	
+//	public void setTypeEncoder(TypeEncoder typeEncoder);
 	
 	public void skipToNextByteBoundary() throws IOException;
 	
 	public boolean bytePositionSupported();
 	
-	public int getNumberOfBytes();
+	public int getBytePosition();
 	
 }

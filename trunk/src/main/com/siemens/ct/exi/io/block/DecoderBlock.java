@@ -67,7 +67,5 @@ public interface DecoderBlock {
 	 */
 	public TypeDecoder getTypeDecoder();
 	
-	public void setTypeDecoder(TypeDecoder typeDecoder);
-	
 	public void skipToNextByteBoundary() throws IOException;
 }

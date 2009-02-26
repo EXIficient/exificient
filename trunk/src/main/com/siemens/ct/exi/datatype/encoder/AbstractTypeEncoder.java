@@ -41,11 +41,16 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 		TypeEncoder {
+	
 	// EXI string table(s)
 	protected StringTableEncoder stringTable;
 
 	public StringTableEncoder getStringTable() {
 		return stringTable;
+	}
+	
+	public void setStringTable(StringTableEncoder stringTable) {
+		this.stringTable = stringTable;
 	}
 
 	// public AbstractTypeEncoder ( boolean isSchemaInformed )
