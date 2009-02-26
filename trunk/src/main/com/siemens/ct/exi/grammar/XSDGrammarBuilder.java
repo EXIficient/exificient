@@ -69,10 +69,10 @@ import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.Lambda;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.RuleContentAllSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**

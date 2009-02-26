@@ -29,14 +29,14 @@ import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
 import com.siemens.ct.exi.grammar.rule.RuleDocument;
-import com.siemens.ct.exi.grammar.rule.RuleFragment;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.RuleFragment;
 import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**

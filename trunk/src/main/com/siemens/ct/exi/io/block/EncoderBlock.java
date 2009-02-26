@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
-import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
 
 /**
  * TODO Description
@@ -75,14 +74,6 @@ public interface EncoderBlock {
 	 * Self-Contained
 	 */
 	public TypeEncoder getTypeEncoder();
-	
-//	public StringTableEncoder getStringTable();
-//	
-//	public void setStringTable(StringTableEncoder stringTable);
-//	
-//	public TypeEncoder getTypeEncoder();
-//	
-//	public void setTypeEncoder(TypeEncoder typeEncoder);
 	
 	public void skipToNextByteBoundary() throws IOException;
 	
