@@ -182,7 +182,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public XMLReader createEXIReader() {
-		return new SAXDecoder(this, exiBodyOnly);
+		return new SAXDecoder(this);
 	}
 
 	public TypeEncoder createTypeEncoder() {
