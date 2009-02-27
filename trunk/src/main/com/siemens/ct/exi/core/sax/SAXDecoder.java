@@ -53,38 +53,32 @@ import com.siemens.ct.exi.exceptions.EXIException;
 
 public class SAXDecoder implements XMLReader {
 
-	private EXIDecoder decoder;
+	protected EXIFactory exiFactory;
+	
+	protected EXIDecoder decoder;
 
-	private ContentHandler contentHandler;
-	private DTDHandler dtdHandler;
+	protected ContentHandler contentHandler;
+	protected DTDHandler dtdHandler;
 
-	private ErrorHandler errorHandler;
+	protected ErrorHandler errorHandler;
 
-	private static final String ATTRIBUTE_TYPE = "CDATA";
-	private static final String COLON = ":";
+	protected static final String ATTRIBUTE_TYPE = "CDATA";
+	protected static final String COLON = ":";
 
-	private AttributesImpl attributes = new AttributesImpl();
+	protected AttributesImpl attributes = new AttributesImpl();
 
 	// namespace prefixes are related to elements
-	NamespacePrefixLevels nsPrefixes;
+	protected NamespacePrefixLevels nsPrefixes;
 
-	private String deferredStartElementUri;
-	private String deferredStartElementLocalName;
-	
-	//	EXI body is preceded by an EXI header ?
-	private boolean exiBodyOnly = false;
-	
+	protected String deferredStartElementUri;
+	protected String deferredStartElementLocalName;	
 
 	public SAXDecoder(EXIFactory exiFactory) {
+		this.exiFactory = exiFactory;
 		this.decoder = exiFactory.createEXIDecoder();
 	}
 
-	public SAXDecoder(EXIFactory exiFactory, boolean exiBodyOnly) {
-		this(exiFactory);
-		this.exiBodyOnly = exiBodyOnly;
-	}
-
-	private void init() {
+	protected void init() {
 		// deferred elements
 		deferredStartElementUri = null;
 		deferredStartElementLocalName = null;
@@ -93,7 +87,7 @@ public class SAXDecoder implements XMLReader {
 		nsPrefixes = new NamespacePrefixLevels();
 	}
 
-	private String getQName(String uri, String localName) {
+	protected String getQName(String uri, String localName) {
 		String pfx;
 
 		// checks whether prefix already exists
@@ -105,7 +99,7 @@ public class SAXDecoder implements XMLReader {
 		return (pfx.length() == 0 ? localName : (pfx + COLON + localName));
 	}
 
-	private void checkDeferredStartElement() throws SAXException {
+	protected void checkDeferredStartElement() throws SAXException {
 		if (deferredStartElementUri != null) {
 			// start SAX startElement
 			String qName = getQName(deferredStartElementUri,
@@ -123,7 +117,7 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	private void startPrefixMappings() throws SAXException {
+	protected void startPrefixMappings() throws SAXException {
 		PrefixMapping pfxMap = nsPrefixes.getCurrentMapping();
 
 		for (Iterator<String> namespace = pfxMap.mapping.keySet().iterator(); namespace
@@ -134,7 +128,7 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	private void endPrefixMappings() throws SAXException {
+	protected void endPrefixMappings() throws SAXException {
 		PrefixMapping pfxMap = nsPrefixes.getCurrentMapping();
 
 		for (Iterator<String> namespace = pfxMap.mapping.keySet().iterator(); namespace
@@ -145,11 +139,11 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	private void parseEXI(InputSource inputSource) throws SAXException,
+	protected void parseEXI(InputSource inputSource) throws SAXException,
 			IOException, EXIException {
 		// setup (bit) input stream
 		InputStream inputStream = inputSource.getByteStream();
-		decoder.setInputStream(inputStream, exiBodyOnly);
+		decoder.setInputStream(inputStream, exiFactory.isEXIBodyOnly());
 
 		if (contentHandler == null) {
 			throw new SAXException("No content handler set!");
