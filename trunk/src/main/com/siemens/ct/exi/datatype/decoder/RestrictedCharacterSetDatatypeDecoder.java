@@ -83,7 +83,9 @@ public class RestrictedCharacterSetDatatypeDecoder extends
 					}
 				}
 			} catch (UnknownElementException e) {
-				throw new IOException(e);
+				throw new IOException(e.getMessage());
+				//	TODO Java 1.5 does not support Throwable as parameter
+				// throw new IOException(e);
 			}
 
 			value = sb.toString();
