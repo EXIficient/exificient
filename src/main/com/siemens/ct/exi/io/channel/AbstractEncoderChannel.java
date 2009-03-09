@@ -318,7 +318,9 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 			try {
 				ff.parse(f + "");
 			} catch (XMLParsingException e) {
-				throw new IOException(e);
+				throw new IOException(e.getMessage());
+				//	TODO Java 1.5 does not support Throwable as parameter
+				// throw new IOException(e);
 			}
 			encodeFloat(ff);
 		}
