@@ -31,6 +31,7 @@ import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 /**
  * TODO Description
@@ -43,11 +44,20 @@ import com.siemens.ct.exi.exceptions.EXIException;
 
 public class DOMBuilder {
 	protected EXIFactory factory;
+	protected EXIFactory scFactory;
 
 	protected DOMImplementation domImplementation;
 
 	public DOMBuilder(EXIFactory factory) throws ParserConfigurationException {
 		this.factory = factory;
+		
+		//	create SC factory
+		scFactory = DefaultEXIFactory.newInstance();
+		scFactory.setCodingMode(factory.getCodingMode());
+		scFactory.setEXIBodyOnly(true);
+		scFactory.setFidelityOptions(factory.getFidelityOptions());
+		scFactory.setFragment(true);
+		scFactory.setGrammar(factory.getGrammar());
 
 		// setup document builder etc.
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
