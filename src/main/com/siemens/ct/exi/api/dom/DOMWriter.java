@@ -67,8 +67,14 @@ public class DOMWriter {
 	public void encode(Document doc) throws EXIException {
 		encoder.encodeStartDocument();
 
+		//	previous nodes
+		//	etc. such as comments and insignificant whitespaces
+		
 		Element root = doc.getDocumentElement();
 		encode(root);
+		
+		//	next nodes
+		//	etc. such as comments and insignificant whitespaces
 
 		encoder.encodeEndDocument();
 	}
@@ -77,7 +83,7 @@ public class DOMWriter {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI  : root.getNamespaceURI();
-		encoder.encodeStartElement(namespaceURI, root.getNodeName());
+		encoder.encodeStartElement(namespaceURI, root.getLocalName());
 
 		// attributes
 		exiAttributes.parse(root.getAttributes());

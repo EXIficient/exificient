@@ -21,17 +21,27 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class DOMRoundtrip extends XMLTestCase {
 
-	public void testNotebook() throws ParserConfigurationException,
+	public void testW3CNotebook() throws Exception {
+		roundtrip("./data/W3C/PrimerNotebook/notebook.xml");
+	}
+
+	public void testW3CEXIbyExample() throws Exception {
+		roundtrip("./data/W3C/EXIbyExample/XMLSample.xml");
+	}
+	
+	public void testW3CXMLSample() throws Exception {
+		roundtrip("./data/W3C/XMLSample/XMLSample.xml");
+	}
+	
+	public void roundtrip(String sXML) throws ParserConfigurationException,
 			SAXException, IOException, EXIException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(new File(
-				"./data/W3C/PrimerNotebook/notebook.xml"));
+		Document document = builder.parse(new File(sXML));
 
 		// exi factory
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		//exiFactory.setEXIBodyOnly(true);
 
 		// encode DOM to EXI
 		DOMWriter domEncoder = new DOMWriter(exiFactory);
@@ -56,6 +66,7 @@ public class DOMRoundtrip extends XMLTestCase {
 			throws SAXException, IOException {
 		XMLUnit.setIgnoreWhitespace(true);
 		XMLUnit.setIgnoreAttributeOrder(true);
+		XMLUnit.setIgnoreComments(true);
 		// XMLUnit.setNormalize(true);
 
 		// Diff diff = compareXML (control, test);
