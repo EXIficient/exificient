@@ -320,7 +320,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 			} else {
 				insertAttribute(
 						at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-								: at.getNamespaceURI(), at.getNodeName(),
+								: at.getNamespaceURI(), at.getLocalName(),
 						at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
 								: at.getPrefix(), at.getNodeValue());
 			}
