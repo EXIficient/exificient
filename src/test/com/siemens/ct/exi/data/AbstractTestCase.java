@@ -27,14 +27,20 @@ import java.util.Vector;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.InputSource;
 
+import com.siemens.ct.exi.AbstractTestEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.QuickTestConfiguration;
-import com.siemens.ct.exi.TestDecoder;
-import com.siemens.ct.exi.TestEncoder;
+import com.siemens.ct.exi.TestDOMEncoder;
+import com.siemens.ct.exi.TestSAXDecoder;
+import com.siemens.ct.exi.TestSAXEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.util.FragmentUtilities;
+
+enum API {
+	SAX, DOM;
+}
 
 public abstract class AbstractTestCase extends XMLTestCase {
 	protected Vector<TestCaseOption> testCaseOptions = new Vector<TestCaseOption>();
@@ -44,7 +50,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		super(s);
 	}
 
-	private void _testOption(TestCaseOption tco) throws Exception {
+	private void _testOption(TestCaseOption tco, API api) throws Exception {
 		if (tco.isSchemaInformedOnly() && tco.getSchemaLocation() == null) {
 			return;
 		}
@@ -63,32 +69,34 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setGrammar(grammar);
 		}
 
-		TestEncoder testEncoder = new TestEncoder();
+		// EXI output stream
+		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
+
+		AbstractTestEncoder testEncoder;
+		if (api == API.SAX) {
+			testEncoder = new TestSAXEncoder(encodedOutput);
+		} else {
+			testEncoder = new TestDOMEncoder(encodedOutput);
+		}
 
 		// XML input stream
 		InputStream xmlInput = new FileInputStream(QuickTestConfiguration
 				.getXmlLocation());
-		// EXI output stream
-		// File tmpEXI = File.createTempFile ( "exificient-enc", ".exi" );
-		// OutputStream encodedOutput = new FileOutputStream( tmpEXI );
-		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
+
 
 		// -> encode
-		testEncoder.encodeTo(ef, xmlInput, encodedOutput);
+		testEncoder.encodeTo(ef, xmlInput);
 		encodedOutput.flush();
 
 		// EXI input stream
 		ByteArrayInputStream exiDocument = new ByteArrayInputStream(
 				encodedOutput.toByteArray());
-		// InputStream exiDocument = new FileInputStream( tmpEXI );
 
 		// decoded XML
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
-		// File tmpXML = File.createTempFile ( "exificient-dec", ".exi.xml" );
-		// OutputStream xmlOutput = new FileOutputStream( tmpXML );
 
 		// <-- decode
-		TestDecoder testDecoder = new TestDecoder();
+		TestSAXDecoder testDecoder = new TestSAXDecoder();
 		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 		xmlOutput.flush();
 
@@ -128,7 +136,13 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// update schema
 			tco.setSchemaLocation(schemaLocation);
 			try {
-				_testOption(tco);
+				//	test both APIs
+				
+				//	1. SAX
+				_testOption(tco, API.SAX);
+				//	2. DOM
+				_testOption(tco, API.DOM);
+				
 			} catch (Exception e) {
 				throw new Exception(e.getLocalizedMessage() + " ["
 						+ tco.toString() + "]", e);

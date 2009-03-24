@@ -20,6 +20,7 @@ package com.siemens.ct.exi.api.dom;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
@@ -36,6 +37,11 @@ class SaxToDomHandler extends DefaultHandler {
 	public SaxToDomHandler(Document doc) {
 		document = doc;
 		currentNode = document;
+	}
+	
+	public SaxToDomHandler(Document doc, DocumentFragment docFragment) {
+		document = doc;
+		currentNode = docFragment;
 	}
 
 	public void startElement(String uri, String name, String qName,

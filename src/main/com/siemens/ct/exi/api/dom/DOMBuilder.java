@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -38,7 +39,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090224
+ * @version 0.2.20090324
  */
 
 public class DOMBuilder {
@@ -56,6 +57,25 @@ public class DOMBuilder {
 		domImplementation = builder.getDOMImplementation();
 	}
 
+	public DocumentFragment parseFragment(InputStream is) throws EXIException {
+		try {
+			// create empty document fragment
+			Document document = domImplementation.createDocument(null, null,null);
+			DocumentFragment docFragment = document.createDocumentFragment();
+
+			// create SAX to DOM Handlers
+			SaxToDomHandler s2dHandler = new SaxToDomHandler(document, docFragment);
+
+			XMLReader reader = factory.createEXIReader();
+			reader.setContentHandler(s2dHandler);
+
+			reader.parse(new InputSource(is));
+			return docFragment;
+		} catch (Exception e) {
+			throw new EXIException(e);
+		}
+	}
+	
 	public Document parse(InputStream is) throws EXIException {
 		try {
 			// create empty document
@@ -73,6 +93,5 @@ public class DOMBuilder {
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}
-
 	}
 }

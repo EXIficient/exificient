@@ -26,14 +26,15 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080816
+ * @version 0.2.20090324
  */
 
 public interface Constants {
 	public static final String EMPTY_STRING = "";
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
-
+	public static final String XSI_NONAMESPACE_SCHEMA_LOCATION = "noNamespaceSchemaLocation ";
+	
 	public static final String XML_PFX = XMLConstants.XML_NS_PREFIX; // "xml";
 	public static final String XSI_PFX = "xsi";
 	public static final String XSI_TYPE = "type";

@@ -23,12 +23,15 @@ import java.io.OutputStream;
 import javax.xml.XMLConstants;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
 
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -39,7 +42,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080718
+ * @version 0.2.20090324
  */
 
 public class DOMWriter {
@@ -49,15 +52,28 @@ public class DOMWriter {
 	// attributes
 	private AttributeList exiAttributes;
 
+	protected boolean preservePrefixes;
+	protected boolean preserveWhitespaces;
+	protected boolean preserveComments;
+	protected boolean preservePIs;
+
 	public DOMWriter(EXIFactory factory) {
 		this.factory = factory;
 		this.encoder = factory.createEXIEncoder();
 
 		// attribute list
-		boolean isSchemaInformed = factory.getGrammar().isSchemaInformed();
 		AttributeFactory attFactory = AttributeFactory.newInstance();
-		exiAttributes = attFactory
-				.createAttributeListInstance(isSchemaInformed);
+		exiAttributes = attFactory.createAttributeListInstance(factory);
+
+		// preserve options
+		preservePrefixes = factory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PREFIX);
+		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_WS);
+		preserveComments = factory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_COMMENT);
+		preservePIs = factory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PI);
 	}
 
 	public void setOutput(OutputStream os) throws EXIException {
@@ -67,26 +83,76 @@ public class DOMWriter {
 	public void encode(Document doc) throws EXIException {
 		encoder.encodeStartDocument();
 
-		//	previous nodes
-		//	etc. such as comments and insignificant whitespaces
-		
 		Element root = doc.getDocumentElement();
-		encode(root);
-		
-		//	next nodes
-		//	etc. such as comments and insignificant whitespaces
+
+		// previous nodes
+		// etc. such as comments and insignificant whitespaces
+		// Node prev = root;
+		// while (root.getPreviousSibling() != null) {
+		// prev = root.getPreviousSibling();
+		//
+		// switch (prev.getNodeType()) {
+		// case Node.TEXT_NODE:
+		// String value = prev.getNodeValue();
+		// if (preserveWhitespaces || (value = value.trim()).length() > 0) {
+		// encoder.encodeCharacters(value);
+		// }
+		// break;
+		// case Node.COMMENT_NODE:
+		// if (preserveComments) {
+		// String c = n.getNodeValue();
+		// encoder.encodeComment(c.toCharArray(), 0, c.length());
+		// }
+		// break;
+		// }
+		// }
+		encodeNode(root);
+
+		// next nodes
+		// etc. such as comments and insignificant whitespaces
 
 		encoder.encodeEndDocument();
 	}
+	
+	public void encodeFragment(DocumentFragment docFragment) throws EXIException {
+		encoder.encodeStartDocument();
+		
+		NodeList nl = docFragment.getChildNodes();
+		for(int i=0;i<nl.getLength(); i++) {
+			encodeNode(nl.item(i));
+		}
+		encoder.encodeEndDocument();
+	}
 
-	protected void encode(Node root) throws EXIException {
+	public void encode(Node n) throws EXIException {
+		if (n.getNodeType() == Node.DOCUMENT_NODE ) {
+			encode((Document)n);
+		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE ) {
+			encodeFragment((DocumentFragment)n);
+		} else {
+			encoder.encodeStartDocument();
+			encodeNode(n);
+			encoder.encodeEndDocument();
+		}
+	}
+	
+	protected void encodeNode(Node root) throws EXIException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
-		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI  : root.getNamespaceURI();
+		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
+				: root.getNamespaceURI();
 		encoder.encodeStartElement(namespaceURI, root.getLocalName());
+
+		if (preservePrefixes) {
+			String pfx = root.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+					: root.getPrefix();
+			encoder.encodeStartElementPrefixMapping(namespaceURI, pfx);
+		}
 
 		// attributes
 		exiAttributes.parse(root.getAttributes());
+
+		// root.getOwnerDocument().getNamespaceURI();
 
 		// NS
 		for (int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations(); i++) {
@@ -119,24 +185,31 @@ public class DOMWriter {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {
 			case Node.ELEMENT_NODE:
-				encode(n);
+				encodeNode(n);
 				break;
 			case Node.ATTRIBUTE_NODE:
 				break;
 			case Node.TEXT_NODE:
 				String value = n.getNodeValue();
-				if ((value = value.trim()).length() > 0) {
+				if (preserveWhitespaces || (value = value.trim()).length() > 0) {
 					encoder.encodeCharacters(value);
 				}
 				break;
 			case Node.COMMENT_NODE:
-				// TODO CM
+				if (preserveComments) {
+					String c = n.getNodeValue();
+					encoder.encodeComment(c.toCharArray(), 0, c.length());
+				}
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
 				// TODO ER
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
-				// TODO PI
+				if (preservePIs) {
+					ProcessingInstruction pi = (ProcessingInstruction) n;
+					encoder.encodeProcessingInstruction(pi.getTarget(), pi
+							.getData());
+				}
 				break;
 			default:
 				throw new EXIException("Unknown NodeType? " + n.getNodeType());

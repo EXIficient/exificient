@@ -18,18 +18,27 @@
 
 package com.siemens.ct.exi;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder {
-	protected GrammarFactory grammarFactory;
-
-	public AbstractTestCoder() {
+	protected static GrammarFactory grammarFactory;
+	
+	static {
 		grammarFactory = GrammarFactory.newInstance();
 	}
 
-	protected EXIFactory getQuickTestEXIactory() throws Exception {
+	public AbstractTestCoder() {
+	}
+
+	protected static EXIFactory getQuickTestEXIactory() throws Exception {
 		if (QuickTestConfiguration.USE_SCHEMA) {
 			return getFactorySchema();
 		} else {
@@ -37,11 +46,11 @@ public abstract class AbstractTestCoder {
 		}
 	}
 
-	protected EXIFactory getFactory() {
+	protected static EXIFactory getFactory() {
 		return DefaultEXIFactory.newInstance();
 	}
 	
-	protected EXIFactory getFactoryNoSchema() {
+	protected static EXIFactory getFactoryNoSchema() {
 		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
@@ -50,14 +59,27 @@ public abstract class AbstractTestCoder {
 		return ef;
 	}
 
-	protected EXIFactory getFactorySchema() throws EXIException {
+	protected static EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
 		ef.setGrammar(getGrammar(QuickTestConfiguration.getXsdLocation()));
 
 		return ef;
 	}
 
-	public Grammar getGrammar(String xsdLocation) throws EXIException {
+	public static Grammar getGrammar(String xsdLocation) throws EXIException {
 		return grammarFactory.createGrammar(xsdLocation);
+	}
+	
+
+	protected static OutputStream getOutputStream(String exiLocation)
+			throws FileNotFoundException {
+		File fileEXI = new File(exiLocation);
+
+		File path = fileEXI.getParentFile();
+		if (!path.exists()) {
+			path.mkdirs();
+		}
+
+		return new BufferedOutputStream(new FileOutputStream(fileEXI));
 	}
 }

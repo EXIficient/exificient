@@ -42,7 +42,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090225
+ * @version 0.2.20090324
  */
 
 public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
@@ -75,13 +75,12 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 		}
 
 		// attribute list
-		boolean isSchemaInformed = factory.getGrammar().isSchemaInformed();
 		AttributeFactory attFactory = AttributeFactory.newInstance();
-		exiAttributes = attFactory
-				.createAttributeListInstance(isSchemaInformed);
+		exiAttributes = attFactory.createAttributeListInstance(factory);
 	}
 
-	public void setOutput(OutputStream os, boolean exiBodyOnly) throws EXIException {
+	public void setOutput(OutputStream os, boolean exiBodyOnly)
+			throws EXIException {
 		encoder.setOutput(os, exiBodyOnly);
 	}
 
