@@ -30,8 +30,6 @@ import java.util.zip.Deflater;
  */
 
 public class CompileConfiguration {
-	public static final boolean PRESERVE_XSI_SCHEMA_LOCATION = false;
-
 	/*
 	 * TESTS (default all "false")
 	 */

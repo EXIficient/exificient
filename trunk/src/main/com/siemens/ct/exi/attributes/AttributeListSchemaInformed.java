@@ -18,18 +18,21 @@
 
 package com.siemens.ct.exi.attributes;
 
+import com.siemens.ct.exi.FidelityOptions;
+
 /**
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080924
+ * @version 0.2.20090324
  */
 
 public class AttributeListSchemaInformed extends AbstractAttributeList {
-	public AttributeListSchemaInformed() {
-		super();
+	
+	public AttributeListSchemaInformed(FidelityOptions fidelityOptions) {
+		super(fidelityOptions);
 	}
 
 	/*

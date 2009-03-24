@@ -18,13 +18,15 @@
 
 package com.siemens.ct.exi.attributes;
 
+import com.siemens.ct.exi.EXIFactory;
+
 /**
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080924
+ * @version 0.2.20090324
  */
 
 public class AttributeFactory {
@@ -35,11 +37,11 @@ public class AttributeFactory {
 		return new AttributeFactory();
 	}
 
-	public AttributeList createAttributeListInstance(boolean schemaInformed) {
-		if (schemaInformed) {
-			return new AttributeListSchemaInformed();
+	public AttributeList createAttributeListInstance(EXIFactory exiFactory) {
+		if (exiFactory.getGrammar().isSchemaInformed()) {
+			return new AttributeListSchemaInformed(exiFactory.getFidelityOptions());
 		} else {
-			return new AttributeListSchemaLess();
+			return new AttributeListSchemaLess(exiFactory.getFidelityOptions());
 		}
 	}
 }

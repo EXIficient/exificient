@@ -43,6 +43,9 @@ public class FidelityOptions {
 	public static final String FEATURE_DTD = "PRESERVE_DTDS";
 	public static final String FEATURE_PREFIX = "PRESERVE_PREFIXES";
 
+	/* attribute schemaLocation (also noNamespaceSchemaLocation) is preserved */
+	public static final String FEATURE_XSI_SCHEMALOCATION = "PRESERVE_XSI_SCHEMALOCATION";
+	
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
@@ -110,6 +113,8 @@ public class FidelityOptions {
 		fo.options.add(FEATURE_WS);
 
 		fo.options.add(FEATURE_SC);
+		
+		fo.options.add(FEATURE_XSI_SCHEMALOCATION);
 
 		return fo;
 	}

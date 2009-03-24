@@ -26,36 +26,41 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class TestEncoderN extends TestEncoder {
+public class TestSAXEncoderN extends TestSAXEncoder {
 	public static final int N_RUNS = 300;
 
+	public TestSAXEncoderN(OutputStream exiOuput) {
+		super(exiOuput);
+	}
+	
 	protected static void test(String xmlLocation, String exiLocation)
 			throws Exception {
-		// create test-encoder
-		TestEncoderN testEncoderN = new TestEncoderN();
-
-		long startTime = System.currentTimeMillis();
-
-		// get factory
-		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
 
 		// EXI output stream
 		File f = new File(exiLocation);
-
 		File path = f.getParentFile();
 		if (!path.exists()) {
 			path.mkdirs();
 		}
-
 		OutputStream encodedOutput = new BufferedOutputStream(
 				new FileOutputStream(f));
+		
+		// create test-encoder
+		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(encodedOutput);
+
+		long startTime = System.currentTimeMillis();
+
+		// get factory
+		EXIFactory ef = TestSAXEncoderN.getQuickTestEXIactory();
+
 
 		for (int i = 0; i < N_RUNS; i++) {
+			
 			// XML input stream
 			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
 					xmlLocation));
 
-			testEncoderN.encodeTo(ef, xmlInput, encodedOutput);
+			testEncoderN.encodeTo(ef, xmlInput);
 		}
 
 		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()

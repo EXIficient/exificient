@@ -19,12 +19,8 @@
 package com.siemens.ct.exi;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,9 +37,13 @@ import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.util.FragmentUtilities;
 import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
-public class TestEncoder extends AbstractTestCoder {
-	public TestEncoder() {
+public class TestSAXEncoder extends AbstractTestEncoder {
+	
+	protected OutputStream exiOutput;
+	
+	public TestSAXEncoder(OutputStream exiOutput) {
 		super();
+		this.exiOutput = exiOutput;
 	}
 
 	protected XMLReader getXMLReader() throws Exception {
@@ -90,13 +90,12 @@ public class TestEncoder extends AbstractTestCoder {
 		return FragmentUtilities.getSurroundingRootInputStream(xmlInput);
 	}
 
-	public void encodeTo(EXIFactory ef, InputStream xmlInput,
-			OutputStream exiOuput) throws Exception {
+	public void encodeTo(EXIFactory ef, InputStream xmlInput) throws Exception {
 		// XML reader
 		XMLReader xmlReader = getXMLReader();
 
 		// set EXI as content & lexical handler
-		SAXResult saxResult = new EXIResult(exiOuput, ef);
+		SAXResult saxResult = new EXIResult(exiOutput, ef);
 		xmlReader.setContentHandler(saxResult.getHandler());
 
 		try {
@@ -115,39 +114,25 @@ public class TestEncoder extends AbstractTestCoder {
 		xmlReader.parse(new InputSource(xmlInput));
 	}
 
-	protected static OutputStream getOutputStream(String exiLocation)
-			throws FileNotFoundException {
-		File fileEXI = new File(exiLocation);
-
-		File path = fileEXI.getParentFile();
-		if (!path.exists()) {
-			path.mkdirs();
-		}
-
-		return new BufferedOutputStream(new FileOutputStream(fileEXI));
-	}
 
 	public static void main(String[] args) throws Exception {
-		// create test-encoder
-		TestEncoder testEncoder = new TestEncoder();
-
-		// get factory
-		EXIFactory ef = testEncoder.getQuickTestEXIactory();
-
-		// XML input stream
-		InputStream xmlInput = new BufferedInputStream(new FileInputStream(
-				QuickTestConfiguration.getXmlLocation()));
 
 		// EXI output stream
 		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
 				.getExiLocation());
 
-		// encode to EXI
-		testEncoder.encodeTo(ef, xmlInput, encodedOutput);
+		// XML input stream
+		InputStream xmlInput = new BufferedInputStream(new FileInputStream(
+				QuickTestConfiguration.getXmlLocation()));
+		
+		// create test-encoder & encode to EXI
+		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
+		EXIFactory ef = TestSAXEncoder.getQuickTestEXIactory(); // get factory
+		testEncoder.encodeTo(ef, xmlInput);
 
 		encodedOutput.flush();
 
-		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()
+		System.out.println("[ENC-SAX] " + QuickTestConfiguration.getXmlLocation()
 				+ " --> " + QuickTestConfiguration.getExiLocation());
 	}
 }

@@ -24,12 +24,14 @@ import java.util.Map;
 
 import javax.xml.XMLConstants;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.CompileConfiguration;
+import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * 
@@ -52,6 +54,11 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public static final int XMLNS_PFX_START = XMLConstants.XMLNS_ATTRIBUTE
 			.length() + 1;
 
+	// EXI FidelityOptions
+	protected FidelityOptions fidelityOptions;
+	protected boolean preserveSchemaLocation;
+	protected boolean preservePrefixes;
+	
 	// xsi:type
 	protected boolean hasXsiType;
 	protected String xsiTypeURI;
@@ -74,7 +81,12 @@ public abstract class AbstractAttributeList implements AttributeList {
 	protected List<String> attributeValue;
 	protected List<String> attributePrefix;
 
-	public AbstractAttributeList() {
+	public AbstractAttributeList(FidelityOptions fidelityOptions) {
+		// fidelityOptions
+		this.fidelityOptions = fidelityOptions;
+		preserveSchemaLocation = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_XSI_SCHEMALOCATION);
+		preservePrefixes = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);		
+
 		// namespace declarations
 		namespaceURI = new ArrayList<String>();
 		namespacePrefix = new ArrayList<String>();
@@ -193,20 +205,11 @@ public abstract class AbstractAttributeList implements AttributeList {
 		xsiNil = rawNil;
 	}
 
-	private void setXsiType(String xsiValue, Map<String, String> prefixMapping) {
+	private void setXsiType(Map<String, String> prefixMapping) {
 		// update xsi:type
 		if (hasXsiType) {
-			String xsiTypePrefix = null;
-
-			int indexCol = xsiValue.indexOf(Constants.COLON);
-			if (indexCol != -1) {
-				xsiTypeLocalName = xsiValue.substring(indexCol + 1);
-				xsiTypePrefix = xsiValue.substring(0, indexCol);
-			} else {
-				xsiTypeLocalName = xsiValue;
-				xsiTypePrefix = XMLConstants.DEFAULT_NS_PREFIX; // ""
-			}
-			xsiTypeRaw = xsiValue;
+			String xsiTypePrefix = QNameUtilities.getPrefixPart(xsiTypeRaw);
+			xsiTypeLocalName= QNameUtilities.getLocalPart(xsiTypeRaw);
 
 			// check prefix mapping
 			if (prefixMapping.containsKey(xsiTypePrefix)) {
@@ -221,12 +224,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 				 * including the prefix.
 				 */
 				xsiTypeURI = null;
-				xsiTypeURI = null;
-
-				// throw new IllegalArgumentException ( "[ERROR] No URI mapping
-				// from xsi:type prefix '" + xsiTypePrefix
-				// + "' found! \nConsider preserving namespaces and prefixes!"
-				// );
+				xsiTypeLocalName = null;
 			}
 		}
 	}
@@ -234,7 +232,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public void parse(Attributes atts, Map<String, String> prefixMapping) {
 		init();
 
-		String xsiValue = null;
+		xsiTypeRaw = null;
 
 		for (int i = 0; i < atts.getLength(); i++) {
 			String localName = atts.getLocalName(i);
@@ -243,9 +241,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 			String qname = atts.getQName(i);
 
 			// namespace declarations
-			// if ( qname.startsWith ( XMLConstants.XMLNS_ATTRIBUTE ) )
 			if (localName.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
-				addNS(atts.getValue(i), getXMLNamespacePrefix(qname));
+				if (preservePrefixes){
+					addNS(atts.getValue(i), getXMLNamespacePrefix(qname));
+				}
 			}
 			// xsi:*
 			else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
@@ -253,13 +252,14 @@ public abstract class AbstractAttributeList implements AttributeList {
 				if (localName.equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
 					hasXsiType = true;
-					xsiValue = atts.getValue(i);
+					xsiTypeRaw = atts.getValue(i);
 				}
 				// xsi:nil
 				else if (localName.equals(Constants.XSI_NIL)) {
 					setXsiNil(atts.getValue(i));
-				} else if (localName.equals(Constants.XSI_SCHEMA_LOCATION)
-						&& !CompileConfiguration.PRESERVE_XSI_SCHEMA_LOCATION) {
+				} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
+						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+						&& !preserveSchemaLocation) {
 					// prune xsi:schemaLocation
 				} else {
 					insertAttribute(atts.getURI(i), atts.getLocalName(i),
@@ -275,13 +275,13 @@ public abstract class AbstractAttributeList implements AttributeList {
 			}
 		}
 
-		setXsiType(xsiValue, prefixMapping);
+		setXsiType(prefixMapping);
 	}
 
 	public void parse(NamedNodeMap attributes) {
 		init();
 
-		String xsiValue = null;
+		xsiTypeRaw = null;
 
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node at = attributes.item(i);
@@ -289,25 +289,46 @@ public abstract class AbstractAttributeList implements AttributeList {
 			// NS
 			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
 					.equals(at.getNamespaceURI())) {
-				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-						: at.getLocalName();
-				addNS(at.getNodeValue(), pfx);
+				if (preservePrefixes){
+					String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+							: at.getLocalName();
+					addNS(at.getNodeValue(), pfx);	
+				}
 			}
 			// xsi:*
 			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
 					.getNamespaceURI())) {
 				// xsi:type
-				if (at.getNodeName().equals(Constants.XSI_TYPE)) {
+				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
 					hasXsiType = true;
-					xsiValue = at.getNodeValue();
+					xsiTypeRaw = at.getNodeValue();
+
+					String pfx = QNameUtilities.getPrefixPart(xsiTypeRaw);
+					
+					Document doc = at.getOwnerDocument();
+					
+					if (XMLConstants.DEFAULT_NS_PREFIX.equals(pfx)) {
+						//	retrieve default namespace
+						assert(doc.isDefaultNamespace(doc.getDocumentElement().getNamespaceURI()));
+						xsiTypeURI = doc.getDocumentElement().getNamespaceURI();
+						
+						if (xsiTypeURI==null) {
+							xsiTypeURI = XMLConstants.NULL_NS_URI;
+						}
+					} else {
+						xsiTypeURI = doc.lookupNamespaceURI(pfx);
+					}
+					
+					xsiTypeLocalName = QNameUtilities.getLocalPart(xsiTypeRaw);
 				}
 				// xsi:nil
-				else if (at.getNodeName().equals(Constants.XSI_NIL)) {
+				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
 					setXsiNil(at.getNodeValue());
-				} else if (at.getLocalName().equals(
-						Constants.XSI_SCHEMA_LOCATION)
-						&& !CompileConfiguration.PRESERVE_XSI_SCHEMA_LOCATION) {
+				} else if ((at.getLocalName().equals(
+						Constants.XSI_SCHEMA_LOCATION) || at.getLocalName()
+						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+						&& !preserveSchemaLocation) {
 					// prune xsi:schemaLocation
 				} else {
 					insertAttribute(
@@ -326,7 +347,8 @@ public abstract class AbstractAttributeList implements AttributeList {
 			}
 		}
 
-		setXsiType(xsiValue, null);
+		//	xsi:type mapping done before
+		// setXsiType(null);
 	}
 
 	private String getPrefixOf(Attributes atts, int index) {

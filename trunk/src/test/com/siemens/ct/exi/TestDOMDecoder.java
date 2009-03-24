@@ -22,19 +22,22 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
 
-public class TestDecoder extends AbstractTestCoder {
+import com.siemens.ct.exi.api.dom.DOMBuilder;
+
+public class TestDOMDecoder extends AbstractTestCoder {
 	protected TransformerFactory tf;
 
-	public TestDecoder() {
+	public TestDOMDecoder() {
 		super();
 
 		tf = TransformerFactory.newInstance();
@@ -48,19 +51,35 @@ public class TestDecoder extends AbstractTestCoder {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 		}
-
-		SAXSource exiSource = new SAXSource(new InputSource(exiDocument));
-		exiSource.setXMLReader(ef.createEXIReader());
-
-		transformer.transform(exiSource, new StreamResult(xmlOutput));
+		
+		//	decode to DOM
+		DOMBuilder domBuilder = new DOMBuilder(ef);
+		Document doc = domBuilder.parse(exiDocument);
+		
+		 //set up a transformer
+		 TransformerFactory transfac = TransformerFactory.newInstance();
+		 Transformer trans = transfac.newTransformer();
+		 trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		 trans.setOutputProperty(OutputKeys.INDENT, "yes");
+		
+		 //create string from xml tree
+		 StringWriter sw = new StringWriter();
+		 StreamResult result = new StreamResult(sw);
+		 DOMSource source = new DOMSource(doc);
+		 trans.transform(source, result);
+		 String xmlString = sw.toString();
+		 
+		 //	
+		 // System.out.println(xmlString);
+		 xmlOutput.write(xmlString.getBytes());
 	}
 
 	public static void main(String[] args) throws Exception {
 		// create test-decoder
-		TestDecoder testDecoder = new TestDecoder();
+		TestDOMDecoder testDecoder = new TestDOMDecoder();
 
 		// get factory
-		EXIFactory ef = testDecoder.getQuickTestEXIactory();
+		EXIFactory ef = TestDOMDecoder.getQuickTestEXIactory();
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration
@@ -74,7 +93,7 @@ public class TestDecoder extends AbstractTestCoder {
 		// decode EXI to XML
 		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 
-		System.out.println("[DEC] " + QuickTestConfiguration.getExiLocation()
+		System.out.println("[DEC_DOM] " + QuickTestConfiguration.getExiLocation()
 				+ " --> " + decodedXMLLocation);
 	}
 
