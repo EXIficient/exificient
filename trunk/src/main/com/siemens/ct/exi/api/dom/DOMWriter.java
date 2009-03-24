@@ -24,7 +24,6 @@ import javax.xml.XMLConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
@@ -83,33 +82,9 @@ public class DOMWriter {
 	public void encode(Document doc) throws EXIException {
 		encoder.encodeStartDocument();
 
-		Element root = doc.getDocumentElement();
-
-		// previous nodes
-		// etc. such as comments and insignificant whitespaces
-		// Node prev = root;
-		// while (root.getPreviousSibling() != null) {
-		// prev = root.getPreviousSibling();
-		//
-		// switch (prev.getNodeType()) {
-		// case Node.TEXT_NODE:
-		// String value = prev.getNodeValue();
-		// if (preserveWhitespaces || (value = value.trim()).length() > 0) {
-		// encoder.encodeCharacters(value);
-		// }
-		// break;
-		// case Node.COMMENT_NODE:
-		// if (preserveComments) {
-		// String c = n.getNodeValue();
-		// encoder.encodeComment(c.toCharArray(), 0, c.length());
-		// }
-		// break;
-		// }
-		// }
-		encodeNode(root);
-
-		// next nodes
-		// etc. such as comments and insignificant whitespaces
+		//	encode all child-nodes to retain root external
+		//	nodes such as as comments and insignificant whitespaces
+		encodeChildNodes(doc.getChildNodes());
 
 		encoder.encodeEndDocument();
 	}
@@ -139,6 +114,7 @@ public class DOMWriter {
 	protected void encodeNode(Node root) throws EXIException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
+		//	start element
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
 				: root.getNamespaceURI();
 		encoder.encodeStartElement(namespaceURI, root.getLocalName());
@@ -151,8 +127,6 @@ public class DOMWriter {
 
 		// attributes
 		exiAttributes.parse(root.getAttributes());
-
-		// root.getOwnerDocument().getNamespaceURI();
 
 		// NS
 		for (int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations(); i++) {
@@ -179,8 +153,15 @@ public class DOMWriter {
 							.getAttributeValue(i));
 		}
 
+		//	children
 		NodeList children = root.getChildNodes();
-
+		encodeChildNodes(children);
+		
+		//	end element
+		encoder.encodeEndElement();
+	}
+	
+	protected void encodeChildNodes(NodeList children) throws EXIException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {
@@ -215,7 +196,5 @@ public class DOMWriter {
 				throw new EXIException("Unknown NodeType? " + n.getNodeType());
 			}
 		}
-
-		encoder.encodeEndElement();
 	}
 }
