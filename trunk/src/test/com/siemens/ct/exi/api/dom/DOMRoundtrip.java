@@ -37,7 +37,7 @@ public class DOMRoundtrip extends XMLTestCase {
 		roundtrip("./data/W3C/EXIbyExample/XMLSample.xml", exiFactory);
 	}
 	
-	public void XtestW3CXMLSample() throws Exception {
+	public void testW3CXMLSample() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		roundtrip("./data/W3C/XMLSample/XMLSample.xml", exiFactory);
 	}
