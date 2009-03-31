@@ -24,6 +24,7 @@ import javax.xml.XMLConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
@@ -41,7 +42,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090324
+ * @version 0.2.20090331
  */
 
 public class DOMWriter {
@@ -51,7 +52,6 @@ public class DOMWriter {
 	// attributes
 	private AttributeList exiAttributes;
 
-	protected boolean preservePrefixes;
 	protected boolean preserveWhitespaces;
 	protected boolean preserveComments;
 	protected boolean preservePIs;
@@ -65,8 +65,6 @@ public class DOMWriter {
 		exiAttributes = attFactory.createAttributeListInstance(factory);
 
 		// preserve options
-		preservePrefixes = factory.getFidelityOptions().isFidelityEnabled(
-				FidelityOptions.FEATURE_PREFIX);
 		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_WS);
 		preserveComments = factory.getFidelityOptions().isFidelityEnabled(
@@ -117,28 +115,31 @@ public class DOMWriter {
 		//	start element
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
 				: root.getNamespaceURI();
-		encoder.encodeStartElement(namespaceURI, root.getLocalName());
+		String localName =  root.getLocalName();
 
-		if (preservePrefixes) {
-			String pfx = root.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-					: root.getPrefix();
-			encoder.encodeStartElementPrefixMapping(namespaceURI, pfx);
-		}
+		encoder.encodeStartElement(namespaceURI, localName, root.getNodeName());
 
 		// attributes
+		NamedNodeMap attributes = root.getAttributes();
 		exiAttributes.parse(root.getAttributes());
 
 		// NS
-		for (int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations(); i++) {
-			encoder.encodeNamespaceDeclaration(exiAttributes
-					.getNamespaceDeclarationURI(i), exiAttributes
-					.getNamespaceDeclarationPrefix(i));
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node at = attributes.item(i);
+
+			// NS
+			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
+					.equals(at.getNamespaceURI())) {
+					String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+							: at.getLocalName();
+					
+					encoder.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
+			}
 		}
 
 		// xsi:type
 		if (exiAttributes.hasXsiType()) {
-			encoder.encodeXsiType(exiAttributes.getXsiTypeURI(), exiAttributes
-					.getXsiTypeLocalName(), exiAttributes.getXsiTypeRaw());
+			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw());
 		}
 
 		// xsi:nil
@@ -182,6 +183,9 @@ public class DOMWriter {
 					encoder.encodeComment(c.toCharArray(), 0, c.length());
 				}
 				break;
+			case Node.DOCUMENT_TYPE_NODE:
+				// TODO DTD
+				break;
 			case Node.ENTITY_REFERENCE_NODE:
 				// TODO ER
 				break;
@@ -193,7 +197,8 @@ public class DOMWriter {
 				}
 				break;
 			default:
-				throw new EXIException("Unknown NodeType? " + n.getNodeType());
+				System.err.println("[WARNING] Unhandled DOM NodeType: " + n.getNodeType());
+				// throw new EXIException("Unknown NodeType? " + n.getNodeType());
 			}
 		}
 	}

@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.attributes;
 
-import java.util.Map;
-
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.Attributes;
 
@@ -29,7 +27,7 @@ import org.xml.sax.Attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080919
+ * @version 0.2.20090331
  */
 
 public interface AttributeList {
@@ -37,8 +35,8 @@ public interface AttributeList {
 	 * Initialization Method
 	 */
 	// SAX
-	public void parse(Attributes attributes, Map<String, String> prefixMapping);
-
+	public void parse(Attributes attributes);
+	
 	// DOM
 	public void parse(NamedNodeMap attributes);
 
@@ -46,10 +44,6 @@ public interface AttributeList {
 	 * XSI-Type
 	 */
 	public boolean hasXsiType();
-
-	public String getXsiTypeURI();
-
-	public String getXsiTypeLocalName();
 
 	public String getXsiTypeRaw();
 
@@ -59,15 +53,6 @@ public interface AttributeList {
 	public boolean hasXsiNil();
 
 	public String getXsiNil();
-
-	/*
-	 * Namespace Declarations
-	 */
-	public int getNumberOfNamespaceDeclarations();
-
-	public String getNamespaceDeclarationURI(int index);
-
-	public String getNamespaceDeclarationPrefix(int index);
 
 	/*
 	 * Attributes

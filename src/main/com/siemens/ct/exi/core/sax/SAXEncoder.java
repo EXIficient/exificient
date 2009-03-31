@@ -19,8 +19,8 @@
 package com.siemens.ct.exi.core.sax;
 
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -45,7 +45,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.2.20090324
  */
 
-public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
+public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	protected EXIEncoder encoder;
 
 	// buffers the characters of the characters() callback
@@ -54,17 +54,18 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 	// encodes collected char callbacks
 	protected AbstractCharactersEncoder charEncoder;
 
-	protected Map<String, String> globalPrefixMapping;
-
 	// attributes
 	private AttributeList exiAttributes;
+	
+	//	prefix mappings
+	protected List<String> prefixMappingPfx;
+	protected List<String> prefixMappingURI;
 
-	public SAXEncoderPrefixLess(EXIFactory factory) {
+	public SAXEncoder(EXIFactory factory) {
 		this.encoder = factory.createEXIEncoder();
 
 		// initialize
 		sbChars = new StringBuilder();
-		globalPrefixMapping = new HashMap<String, String>();
 
 		// whitespace characters required ?
 		if (factory.getFidelityOptions().isFidelityEnabled(
@@ -73,6 +74,10 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 		} else {
 			charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
 		}
+		
+		// NS mappings
+		prefixMappingPfx = new ArrayList<String>();
+		prefixMappingURI = new ArrayList<String>();
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -86,21 +91,27 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
-			throws SAXException {
-		globalPrefixMapping.put(prefix, uri);
+			throws SAXException {		
+		prefixMappingPfx.add(prefix);
+		prefixMappingURI.add(uri);
 	}
 
-	@Override
-	public void endPrefixMapping(String prefix) throws SAXException {
-		globalPrefixMapping.remove(prefix);
-	}
+//	@Override
+//	public void endPrefixMapping(String prefix) throws SAXException {
+//		globalPrefixMapping.remove(prefix);
+//	}
 
 	public void startElement(String uri, String local, String raw,
 			Attributes attributes) throws SAXException {
 		try {
-			// handle element only (no attributes)
-			startElementOnly(uri, local);
+			checkPendingCharacters();
 
+			// start element
+			encoder.encodeStartElement(uri, local, raw);
+			
+			//	handle NS declarations
+			handleNamespaceDeclarations();
+			
 			// attributes
 			if (attributes != null && attributes.getLength() > 0) {
 				handleAttributes(attributes);
@@ -109,14 +120,25 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 			throw new SAXException("startElement: " + raw, e);
 		}
 	}
-
-	protected void startElementOnly(String uri, String local)
-			throws EXIException {
-		checkPendingCharacters();
-
-		// no prefix mapping
-		encoder.encodeStartElement(uri, local);
+	
+	protected void handleNamespaceDeclarations() throws EXIException {
+		assert(prefixMappingPfx.size()==prefixMappingURI.size());
+		
+		for(int i=0; i<prefixMappingPfx.size(); i++) {
+			encoder.encodeNamespaceDeclaration(prefixMappingURI.get(i), prefixMappingPfx.get(i));
+		}
+		
+		prefixMappingPfx.clear();
+		prefixMappingURI.clear();
 	}
+
+//	protected void startElementOnly(String uri, String local)
+//			throws EXIException {
+//		checkPendingCharacters();
+//
+//		// no prefix mapping
+//		encoder.encodeStartElement(uri, local);
+//	}
 
 	/*
 	 * TODO 6. Encoding EXI Streams Namespace (NS) and attribute (AT) events are
@@ -133,8 +155,9 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 	 * processing the associated element.
 	 */
 	protected void handleAttributes(Attributes attributes) throws EXIException {
-		exiAttributes.parse(attributes, this.globalPrefixMapping);
-
+		// exiAttributes.parse(attributes, this.globalPrefixMapping);
+		exiAttributes.parse(attributes);
+		
 		// TODO remove NS event & use start/end PrefixMapping only
 		// 1. Namespace Declarations
 		// for ( int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations (
@@ -147,8 +170,8 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
-			encoder.encodeXsiType(exiAttributes.getXsiTypeURI(), exiAttributes
-					.getXsiTypeLocalName(), exiAttributes.getXsiTypeRaw());
+			
+			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw());
 		}
 
 		// 3. XSI-Nil
@@ -220,17 +243,17 @@ public class SAXEncoderPrefixLess extends DefaultHandler2 implements EXIWriter {
 		charEncoder.checkPendingChars();
 	}
 
-	public void ignorableWhitespace(char[] ch, int start, int length)
-			throws SAXException {
-		// SAX is very clear that ignorableWhitespace is only called for
-		// "element-content-whitespace"s, which is defined in the context of
-		// DTD." +"
-		// [http://mail-archives.apache.org/mod_mbox/xerces-j-dev/200402.mbox/%3C20040202160336.9569.qmail@nagoya.betaversion.org%3E]
-	}
-
-	public void warning(SAXParseException e) {
-		// TODO Logging of warnings anyway ?
-	}
+//	public void ignorableWhitespace(char[] ch, int start, int length)
+//			throws SAXException {
+//		// SAX is very clear that ignorableWhitespace is only called for
+//		// "element-content-whitespace"s, which is defined in the context of
+//		// DTD." +"
+//		// [http://mail-archives.apache.org/mod_mbox/xerces-j-dev/200402.mbox/%3C20040202160336.9569.qmail@nagoya.betaversion.org%3E]
+//	}
+//
+//	public void warning(SAXParseException e) {
+//		// TODO Logging of warnings anyway ?
+//	}
 
 	/* Interface LexicalHandler */
 	public void comment(char[] ch, int start, int length) throws SAXException {

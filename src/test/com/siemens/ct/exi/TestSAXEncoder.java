@@ -19,7 +19,6 @@
 package com.siemens.ct.exi;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +26,6 @@ import java.io.OutputStream;
 
 import javax.xml.transform.sax.SAXResult;
 
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
@@ -35,6 +33,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.util.FragmentUtilities;
+import com.siemens.ct.exi.util.NoEntityResolver;
 import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
 public class TestSAXEncoder extends AbstractTestEncoder {
@@ -66,7 +65,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		}
 
 		// *skip* resolving entities like DTDs
-		xmlReader.setEntityResolver(new MyEntityResolver());
+		xmlReader.setEntityResolver(new NoEntityResolver());
 
 		// xmlReader.setFeature ( "http://xml.org/sax/features/namespaces",
 		// true);
@@ -137,9 +136,3 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 	}
 }
 
-class MyEntityResolver implements EntityResolver {
-	public InputSource resolveEntity(String publicId, String systemId) {
-		return new InputSource(new ByteArrayInputStream(
-				"<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
-	}
-}

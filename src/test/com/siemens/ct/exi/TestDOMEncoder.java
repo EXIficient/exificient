@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 import com.siemens.ct.exi.api.dom.DOMWriter;
 import com.siemens.ct.exi.api.dom.DocumentFragmentBuilder;
 import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.util.NoEntityResolver;
 
 public class TestDOMEncoder extends AbstractTestEncoder {
 
@@ -51,7 +52,10 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		dfactory.setNamespaceAware(true);
 
 		DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
-
+		
+		// *skip* resolving entities like DTDs
+		documentBuilder.setEntityResolver(new NoEntityResolver());
+		
 		Document doc = documentBuilder.parse(is);
 
 		return doc;

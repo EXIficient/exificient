@@ -36,8 +36,7 @@ import com.siemens.ct.exi.core.EXIDecoderReordered;
 import com.siemens.ct.exi.core.EXIEncoderPrefixAware;
 import com.siemens.ct.exi.core.EXIEncoderPrefixLess;
 import com.siemens.ct.exi.core.sax.SAXDecoder;
-import com.siemens.ct.exi.core.sax.SAXEncoderPrefixAware;
-import com.siemens.ct.exi.core.sax.SAXEncoderPrefixLess;
+import com.siemens.ct.exi.core.sax.SAXEncoder;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
@@ -71,7 +70,7 @@ import com.siemens.ct.exi.io.block.EncoderByteBlockPreCompression;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081112
+ * @version 0.2.20090331
  */
 
 public class DefaultEXIFactory implements EXIFactory {
@@ -166,11 +165,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public EXIWriter createEXIWriter() {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-			return new SAXEncoderPrefixAware(this);
-		} else {
-			return new SAXEncoderPrefixLess(this);
-		}
+		return new SAXEncoder(this);
 	}
 
 	public EXIDecoder createEXIDecoder() {

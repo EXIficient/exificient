@@ -21,12 +21,14 @@ package com.siemens.ct.exi.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 
 import javax.xml.XMLConstants;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Characters;
@@ -45,7 +47,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081023
+ * @version 0.2.20090331
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
@@ -62,6 +64,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	// current values
 	protected String elementURI;
 	protected String elementLocalName;
+	protected String elementPrefix;
 	protected String attributeURI;
 	protected String attributeLocalName;
 
@@ -77,13 +80,23 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String piTarget;
 	protected String piData;
 
+	// namespaces/prefixes
+//	protected NamespaceSupport namespaces;
+	protected boolean preservePrefixes;
+
 	public AbstractEXIDecoder(EXIFactory exiFactory) {
 		super(exiFactory);
+
+//		namespaces = new NamespaceSupport();
+		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PREFIX);
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
+
+//		namespaces.reset();
 
 		try {
 			block = exiFactory.createDecoderBlock(is);
@@ -102,7 +115,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			this.is = new BufferedInputStream(is);
 		}
 
-		if (! exiBodyOnly) {
+		if (!exiBodyOnly) {
 			// parse header (bit-wise BUT byte padded!)
 			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
 			EXIHeader.parse(headerChannel);
@@ -214,10 +227,51 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 	}
 
+	protected void handleElementPrefixes() throws EXIException {
+		try {
+			if (preservePrefixes) {
+				@SuppressWarnings("unchecked")
+				Enumeration<String> validPrefixes = namespaces
+						.getPrefixes(elementURI);
+
+				if (validPrefixes.hasMoreElements()) {
+					int numberOfPrefixes = 0;
+					do {
+						validPrefixes.nextElement();
+						numberOfPrefixes++;
+					} while (validPrefixes.hasMoreElements());
+
+					if (numberOfPrefixes > 1) {
+						int id;
+
+						id = block.readEventCode(MethodsBag
+								.getCodingLength(numberOfPrefixes));
+
+						@SuppressWarnings("unchecked")
+						Enumeration<String> validPrefixes2 = namespaces
+								.getPrefixes(elementURI);
+						while (id != 0) {
+							validPrefixes2.nextElement();
+							id--;
+						}
+						this.elementPrefix = validPrefixes2.nextElement();
+					}
+				} else {
+					// no previous NS mapping in charge
+				}
+			}
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
 	protected void decodeStartElementStructure() throws EXIException {
 		// StartEvent
 		this.elementURI = ((StartElement) nextEvent).getNamespaceURI();
 		this.elementLocalName = ((StartElement) nextEvent).getLocalPart();
+
+		// handle element prefixes
+		handleElementPrefixes();
 
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
@@ -230,6 +284,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void decodeStartElementGenericStructure() throws EXIException {
 		// decode uri & local-name
 		decodeStartElementExpandedName();
+
+		// handle element prefixes
+		handleElementPrefixes();
 
 		Rule tmpStorage = currentRule;
 
@@ -248,6 +305,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throws EXIException {
 		// decode uri & local-name
 		decodeStartElementExpandedName();
+
+		// handle element prefixes
+		handleElementPrefixes();
 
 		// learn start-element ?
 		currentRule.learnStartElement(elementURI, elementLocalName);
@@ -270,6 +330,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		}
 	}
 
+	@Override
+	protected void pushScope(String uri, String localName) {
+		super.pushScope(uri, localName);
+
+		// reset local-element-ns prefix
+		elementPrefix = null;
+	}
+
 	protected void decodeNamespaceDeclarationStructure() throws EXIException {
 		try {
 			// prefix mapping
@@ -277,9 +345,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			nsPrefix = block.readPrefix(nsURI);
 			boolean local_element_ns = block.readBoolean();
 			if (local_element_ns) {
-				// TODO local_element_ns
-				// System.out.println ( "local_element_ns: " + nsPrefix );
+				this.elementPrefix = nsPrefix;
 			}
+
+			namespaces.declarePrefix(nsPrefix, nsURI);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -422,6 +491,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	public String getElementLocalName() {
 		return elementLocalName;
+	}
+
+	public String getElementPrefix() {
+		return elementPrefix;
 	}
 
 	public String getAttributeURI() {

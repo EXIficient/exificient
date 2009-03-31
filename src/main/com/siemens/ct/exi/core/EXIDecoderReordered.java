@@ -587,7 +587,6 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		stepToNextEvent();
 
 		popScope();
-
 		// assert ( ev.isEventType( EventType.END_ELEMENT ) );
 	}
 

@@ -45,6 +45,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.EncoderBlock;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * TODO Description
@@ -61,13 +62,17 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 	protected OutputStream os;
 
+	// protected NamespaceSupport namespaces;
+	
 	// to parse raw nil value
 	protected XSDBoolean nil;
-
+	
 	public EXIEncoderPrefixLess(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		nil = XSDBoolean.newInstance();
+
+		// namespaces = new NamespaceSupport();
 	}
 
 	@Override
@@ -76,6 +81,9 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock(os);
+		
+//		// re-set prefixes
+//		namespaces.reset();
 
 		// possible root elements
 		if (exiFactory.isFragment()) {
@@ -97,6 +105,25 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		}
 	}
 
+	
+//	public NamespaceSupport getNamespaces() {
+//		return namespaces;
+//	}
+//	
+//	@Override
+//	protected void pushScope(String uri, String localName) {
+//		super.pushScope(uri, localName);
+//		
+//		namespaces.pushContext();
+//	}
+//
+//	@Override
+//	protected void popScope() {
+//		super.popScope();
+//		
+//		namespaces.popContext();
+//	}
+	
 	protected void encode1stLevelEventCode(int pos) throws EXIException {
 		try {
 			block.writeEventCode(pos, currentRule
@@ -297,7 +324,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	}
 
 	public void encodeStartElement(String uri, String localName)
-			throws EXIException {
+	throws EXIException {
 		// update lookup event
 		eventSE.setNamespaceURI(uri);
 		eventSE.setLocalPart(localName);
@@ -368,17 +395,15 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// update scope
 		pushScope(uri, localName);
 	}
-
-	public void encodeStartElementPrefixMapping(String uri, String prefix)
+	
+	public void encodeStartElement(String uri, String localName, String raw)
 			throws EXIException {
-		//	no prefix mapping supported
-		//	instantiate appropriate class!
+		encodeStartElement(uri, localName);
 	}
 	
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException {
-		//	no prefix mapping supported
-		//	instantiate appropriate class!
+		namespaces.declarePrefix(prefix, uri);
 	}
 
 	public void encodeEndElement() throws EXIException {
@@ -432,7 +457,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		popScope();
 	}
 
-	public void encodeXsiType(String uri, String localName, String raw)
+	public void encodeXsiType(String raw)
 			throws EXIException {
 		if (currentRule.isSchemaRule()) {
 			int ec2 = currentRule.get2ndLevelEventCode(
@@ -442,13 +467,32 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				// schema deviation in strict mode ONLY
 				assert (fidelityOptions.isStrict());
 
-				String msg = "Skip unexpected type-cast, xsi:type ({" + uri
-						+ "}" + localName;
+				String msg = "Skip unexpected type-cast, xsi:type=" + raw;
 				errorHandler.warning(new EXIException(msg));
 			} else {
+				
+				
+				String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
+				String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
+				String xsiTypeLocalName;
+				/*
+				 * If there is no namespace in scope for the specified qname
+				 * prefix, the QName uri is set to empty ("") and the QName
+				 * localName is set to the full lexical value of the QName,
+				 * including the prefix.
+				 */
+				if (xsiTypeURI == null) {
+					xsiTypeURI = XMLConstants.NULL_NS_URI;
+					xsiTypeLocalName = raw;
+				} else {
+					xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
+				}
+				
+				
+				
 				// lookup type-grammar
 				TypeGrammar tg = ((GrammarSchemaInformed) grammar)
-						.getTypeGrammar(uri, localName);
+						.getTypeGrammar(xsiTypeURI, xsiTypeLocalName);
 
 				/*
 				 * The value of each AT (xsi:type) event is represented as a
@@ -469,12 +513,12 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 					// encode event-code
 					encode2ndLevelEventCode(ec2);
 					// type as qname
-					encodeQName(uri, localName);
+					encodeQName(xsiTypeURI, xsiTypeLocalName);
 
 					// update grammar according to given xsi:type
 					this.replaceRuleAtTheTop(tg.getType());
 
-					this.pushScopeType(uri, localName);
+					this.pushScopeType(xsiTypeURI, xsiTypeLocalName);
 				}
 			}
 		} else {
@@ -818,4 +862,5 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		te.setStringTable(scStringTables.remove(scStringTables.size()-1));
 		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
 	}
+
 }
