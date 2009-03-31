@@ -19,13 +19,17 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
+import javax.xml.XMLConstants;
 
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.core.sax.NamespacePrefixLevels;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * TODO Description
@@ -33,63 +37,72 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090225
+ * @version 0.2.20090313
  */
 
 public class EXIEncoderPrefixAware extends EXIEncoderPrefixLess implements
 		EXIEncoder {
-	// namespace prefixes are related to elements
-	protected NamespacePrefixLevels nsPrefixes;
 
 	protected String lastSEprefix = null;
 
 	public EXIEncoderPrefixAware(EXIFactory exiFactory) {
 		super(exiFactory);
-
-		nsPrefixes = new NamespacePrefixLevels();
 	}
 
 	@Override
-	protected void initForEachRun() throws EXIException {
-		super.initForEachRun();
-
-		// re-set prefixes
-		nsPrefixes.clear();
-	}
-
-	public void encodeStartElementPrefixMapping(String uri, String prefix)
+	public void encodeStartElement(String uri, String localName, String raw)
 			throws EXIException {
-		//	push prefix level
-		nsPrefixes.addLevel();
 
-		// prefix
-		lastSEprefix = prefix;
+		// encode element only
+		super.encodeStartElement(uri, localName);
 
-		if (this.nsPrefixes.hasPrefixForURI(uri)) {
-			// TODO *overlapping* prefixes: same namespace BUT different
-			// prefixes
-			// System.out.println ( "SE_PFX uri found for " + uri + " --> " +
-			// prefix );
-		} else {
-			/*
-			 * If there are no prefixes specified for the URI of the QName by
-			 * preceding NS events in the EXI stream, the prefix is undefined.
-			 * An undefined prefix is represented using zero bits (i.e.,
-			 * omitted).
-			 */
-		}
+		try {
+			@SuppressWarnings("unchecked")
+			Enumeration<String> prefixes4GivenURI = this.namespaces
+					.getPrefixes(uri);
+
+			String prefix = QNameUtilities.getPrefixPart(raw);
+
+			if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+				// default namespace
+			} else if (prefixes4GivenURI.hasMoreElements()) {
+
+				int numberOfPrefixes = 0;
+				int id = -1;
+
+				do {
+					if (prefixes4GivenURI.nextElement().equals(prefix)) {
+						id = numberOfPrefixes;
+					}
+					numberOfPrefixes++;
+				} while (prefixes4GivenURI.hasMoreElements());
+
+				if (numberOfPrefixes > 1) {
+					// overlapping URIs
+					block.writeEventCode(id, MethodsBag
+							.getCodingLength(numberOfPrefixes));
+				}
+			} else {
+				/*
+				 * If there are no prefixes specified for the URI of the QName
+				 * by preceding NS events in the EXI stream, the prefix is
+				 * undefined. An undefined prefix is represented using zero bits
+				 * (i.e., omitted).
+				 */
+			}
+
+			lastSEprefix = prefix;
+			
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}		
 	}
 
-	public void encodeEndElement() throws EXIException {
-		// call super-method
-		super.encodeEndElement();
-
-		//	pop prefix level
-		nsPrefixes.removeLevel();
-	}
-
+	@Override
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException {
+		super.encodeNamespaceDeclaration(uri, prefix);
+
 		assert (fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
 
@@ -105,13 +118,10 @@ public class EXIEncoderPrefixAware extends EXIEncoderPrefixLess implements
 
 			// local-element-ns
 			if (prefix.equals(lastSEprefix)) {
-				// System.out.println ( "Prefix '" + prefix + "' is part of
-				// an SE event followed by an associated NS event");
 				block.writeBoolean(true);
 			} else {
 				block.writeBoolean(false);
 			}
-			nsPrefixes.addPrefix(uri, prefix);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}

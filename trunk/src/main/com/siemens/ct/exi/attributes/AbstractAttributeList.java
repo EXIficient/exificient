@@ -20,25 +20,22 @@ package com.siemens.ct.exi.attributes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.XMLConstants;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090224
+ * @version 0.2.20090331
  */
 
 /*
@@ -61,19 +58,11 @@ public abstract class AbstractAttributeList implements AttributeList {
 	
 	// xsi:type
 	protected boolean hasXsiType;
-	protected String xsiTypeURI;
-	protected String xsiTypeLocalName;
 	protected String xsiTypeRaw;
 
 	// xsi:nil
 	protected boolean hasXsiNil;
 	protected String xsiNil;
-
-	// namespace declarations
-	protected List<String> namespaceURI;
-	protected List<String> namespacePrefix;
-	private List<String> nsURIs;
-	private List<String> nsPrefixes;
 
 	// attributes
 	protected List<String> attributeURI;
@@ -87,12 +76,6 @@ public abstract class AbstractAttributeList implements AttributeList {
 		preserveSchemaLocation = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_XSI_SCHEMALOCATION);
 		preservePrefixes = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);		
 
-		// namespace declarations
-		namespaceURI = new ArrayList<String>();
-		namespacePrefix = new ArrayList<String>();
-		nsURIs = new ArrayList<String>();
-		nsPrefixes = new ArrayList<String>();
-
 		// attributes
 		attributeURI = new ArrayList<String>();
 		attributeLocalName = new ArrayList<String>();
@@ -104,19 +87,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 		hasXsiType = false;
 		hasXsiNil = false;
 
-		namespaceURI.clear();
-		namespacePrefix.clear();
-
 		attributeURI.clear();
 		attributeLocalName.clear();
 		attributeValue.clear();
 		attributePrefix.clear();
-	}
-
-	// "xmlns:foo" --> "foo"
-	protected static String getXMLNamespacePrefix(String qname) {
-		return (qname.length() > XMLNS_PFX_START ? qname
-				.substring(XMLNS_PFX_START) : "");
 	}
 
 	/*
@@ -125,15 +99,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public boolean hasXsiType() {
 		return hasXsiType;
 	}
-
-	public String getXsiTypeURI() {
-		return xsiTypeURI;
-	}
-
-	public String getXsiTypeLocalName() {
-		return xsiTypeLocalName;
-	}
-
+	
 	public String getXsiTypeRaw() {
 		return xsiTypeRaw;
 	}
@@ -147,21 +113,6 @@ public abstract class AbstractAttributeList implements AttributeList {
 
 	public String getXsiNil() {
 		return xsiNil;
-	}
-
-	/*
-	 * Namespace Declarations
-	 */
-	public int getNumberOfNamespaceDeclarations() {
-		return namespaceURI.size();
-	}
-
-	public String getNamespaceDeclarationURI(int index) {
-		return namespaceURI.get(index);
-	}
-
-	public String getNamespaceDeclarationPrefix(int index) {
-		return namespacePrefix.get(index);
 	}
 
 	/*
@@ -187,49 +138,13 @@ public abstract class AbstractAttributeList implements AttributeList {
 		return attributePrefix.get(index);
 	}
 
-	/*
-	 * 
-	 */
-
-	protected void addNS(String namespaceUri, String pfx) {
-		namespaceURI.add(namespaceUri);
-		namespacePrefix.add(pfx);
-
-		// update global uri+pfx (necessary for xsi:type)
-		nsURIs.add(namespaceUri);
-		nsPrefixes.add(pfx);
-	}
-
 	private void setXsiNil(String rawNil) {
 		hasXsiNil = true;
 		xsiNil = rawNil;
 	}
 
-	private void setXsiType(Map<String, String> prefixMapping) {
-		// update xsi:type
-		if (hasXsiType) {
-			String xsiTypePrefix = QNameUtilities.getPrefixPart(xsiTypeRaw);
-			xsiTypeLocalName= QNameUtilities.getLocalPart(xsiTypeRaw);
-
-			// check prefix mapping
-			if (prefixMapping.containsKey(xsiTypePrefix)) {
-				xsiTypeURI = prefixMapping.get(xsiTypePrefix);
-			} else if (XMLConstants.DEFAULT_NS_PREFIX.equals(xsiTypePrefix)) {
-				xsiTypeURI = XMLConstants.NULL_NS_URI;
-			} else {
-				/*
-				 * If there is no namespace in scope for the specified qname
-				 * prefix, the QName uri is set to empty ("") and the QName
-				 * localName is set to the full lexical value of the QName,
-				 * including the prefix.
-				 */
-				xsiTypeURI = null;
-				xsiTypeLocalName = null;
-			}
-		}
-	}
-
-	public void parse(Attributes atts, Map<String, String> prefixMapping) {
+	public void parse(Attributes atts) {
+		
 		init();
 
 		xsiTypeRaw = null;
@@ -238,16 +153,8 @@ public abstract class AbstractAttributeList implements AttributeList {
 			String localName = atts.getLocalName(i);
 			String uri = atts.getURI(i);
 
-			String qname = atts.getQName(i);
-
-			// namespace declarations
-			if (localName.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
-				if (preservePrefixes){
-					addNS(atts.getValue(i), getXMLNamespacePrefix(qname));
-				}
-			}
 			// xsi:*
-			else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+			if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
 				// xsi:type
 				if (localName.equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
@@ -274,8 +181,6 @@ public abstract class AbstractAttributeList implements AttributeList {
 						getPrefixOf(atts, i), atts.getValue(i));
 			}
 		}
-
-		setXsiType(prefixMapping);
 	}
 
 	public void parse(NamedNodeMap attributes) {
@@ -289,11 +194,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 			// NS
 			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
 					.equals(at.getNamespaceURI())) {
-				if (preservePrefixes){
-					String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-							: at.getLocalName();
-					addNS(at.getNodeValue(), pfx);	
-				}
+				//	do not care about NS
 			}
 			// xsi:*
 			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
@@ -303,24 +204,6 @@ public abstract class AbstractAttributeList implements AttributeList {
 					// Note: prefix to uri mapping is done later on
 					hasXsiType = true;
 					xsiTypeRaw = at.getNodeValue();
-
-					String pfx = QNameUtilities.getPrefixPart(xsiTypeRaw);
-					
-					Document doc = at.getOwnerDocument();
-					
-					if (XMLConstants.DEFAULT_NS_PREFIX.equals(pfx)) {
-						//	retrieve default namespace
-						assert(doc.isDefaultNamespace(doc.getDocumentElement().getNamespaceURI()));
-						xsiTypeURI = doc.getDocumentElement().getNamespaceURI();
-						
-						if (xsiTypeURI==null) {
-							xsiTypeURI = XMLConstants.NULL_NS_URI;
-						}
-					} else {
-						xsiTypeURI = doc.lookupNamespaceURI(pfx);
-					}
-					
-					xsiTypeLocalName = QNameUtilities.getLocalPart(xsiTypeRaw);
 				}
 				// xsi:nil
 				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
@@ -346,9 +229,6 @@ public abstract class AbstractAttributeList implements AttributeList {
 								: at.getPrefix(), at.getNodeValue());
 			}
 		}
-
-		//	xsi:type mapping done before
-		// setXsiType(null);
 	}
 
 	private String getPrefixOf(Attributes atts, int index) {

@@ -20,6 +20,8 @@ package com.siemens.ct.exi;
 
 import java.io.OutputStream;
 
+import org.xml.sax.helpers.NamespaceSupport;
+
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 
@@ -29,7 +31,7 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080818
+ * @version 0.2.20090331
  */
 
 public interface EXIEncoder {
@@ -38,6 +40,14 @@ public interface EXIEncoder {
 
 	public void setErrorHandler(ErrorHandler errorHandler);
 
+	
+	/**
+	 * Provides namespace support.
+	 * 
+	 * @return <code>NamespaceSupport</code> for prefix mapping
+	 */
+	public NamespaceSupport getNamespaces();
+	
 	/**
 	 * Reports the beginning of a set of XML events
 	 * 
@@ -61,9 +71,25 @@ public interface EXIEncoder {
 	 * 
 	 * @param uri
 	 * @param localName
+	 * @param raw
 	 * @throws EXIException
 	 */
 	public void encodeStartElement(String uri, String localName)
+			throws EXIException;
+	
+	/**
+	 * Supplies the start of an element.
+	 * 
+	 * <p>
+	 * Provides access to the namespace URI, local name , and raw representation of the start tag.
+	 * </p>
+	 * 
+	 * @param uri
+	 * @param localName
+	 * @param raw
+	 * @throws EXIException
+	 */
+	public void encodeStartElement(String uri, String localName, String raw)
 			throws EXIException;
 
 	/**
@@ -82,16 +108,7 @@ public interface EXIEncoder {
 	 */
 	public int encodeStartFragmentSelfContained(String uri, String localName)
 			throws EXIException;
-	
-	/**
-	 * Supplies the mapping between a given URI and its prefix.
-	 * 
-	 * @param uri
-	 * @param prefix
-	 * @throws EXIException
-	 */
-	public void encodeStartElementPrefixMapping(String uri, String prefix)
-			throws EXIException;
+
 
 	/**
 	 * Supplies the end tag of an element.
@@ -162,12 +179,10 @@ public interface EXIEncoder {
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param uri
-	 * @param localName
-	 * @param raw
+	 * @param raw xsi:type value
 	 * @throws EXIException
 	 */
-	public void encodeXsiType(String uri, String localName, String raw)
+	public void encodeXsiType(String xsiTypeRaw)
 			throws EXIException;
 
 	/**

@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.xml.sax.helpers.NamespaceSupport;
+
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -50,7 +52,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090224
+ * @version 0.2.20090331
  */
 
 public abstract class AbstractEXICoder {
@@ -82,6 +84,9 @@ public abstract class AbstractEXICoder {
 
 	protected List<String> scopeTypeURI;
 	protected List<String> scopeTypeLocalName;
+	
+	// namespaces/prefixes
+	protected NamespaceSupport namespaces;
 
 	// currentRule and rule stack when traversing the EXI document
 	protected List<Rule> openRules;
@@ -113,6 +118,9 @@ public abstract class AbstractEXICoder {
 		ruleName = new ExpandedName(null, "");
 		ruleScope = new ExpandedName(null, "");
 		ruleScopeType = new ExpandedName(null, "");
+
+		// namespaces/prefixes
+		namespaces = new NamespaceSupport();
 
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
@@ -153,11 +161,16 @@ public abstract class AbstractEXICoder {
 		scopeTypeURI.clear();
 		scopeTypeLocalName.clear();
 		pushScopeType(null, null);
+		// namespaces/prefixes
+		namespaces.reset();
 	}
 
-	protected final void pushScope(String uri, String localName) {
+	protected void pushScope(String uri, String localName) {
 		scopeURI.add(uri);
 		scopeLocalName.add(localName);
+		
+		// push NS context
+		namespaces.pushContext();
 	}
 
 	protected final void pushScopeType(String uri, String localName) {
@@ -165,10 +178,13 @@ public abstract class AbstractEXICoder {
 		scopeTypeLocalName.add(localName);
 	}
 
-	protected final void popScope() {
+	protected void popScope() {
 		scopeURI.remove(scopeURI.size()-1);
 		scopeLocalName.remove(scopeLocalName.size()-1);
 
+		// pop NS context
+		namespaces.popContext();
+		
 		// TODO pop scope xsi:type environment as well
 		// mhhh, needs xsi:type and element matching
 	}
@@ -179,6 +195,10 @@ public abstract class AbstractEXICoder {
 
 	public final String getScopeLocalName() {
 		return scopeLocalName.get(scopeLocalName.size()-1);
+	}
+
+	public NamespaceSupport getNamespaces() {
+		return this.namespaces;
 	}
 
 	protected final String getScopeTypeURI() {

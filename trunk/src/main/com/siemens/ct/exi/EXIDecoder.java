@@ -21,6 +21,7 @@ package com.siemens.ct.exi;
 import java.io.InputStream;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -32,7 +33,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081031
+ * @version 0.2.20090331
  */
 
 public interface EXIDecoder {
@@ -162,14 +163,14 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeAttributeGenericUndeclared() throws EXIException;
-
+	
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeNamespaceDeclaration() throws EXIException;
-
+	
 	/**
 	 * Reads xsi:type from EXI stream.
 	 * 
@@ -256,6 +257,14 @@ public interface EXIDecoder {
 	public String getElementLocalName();
 
 	/**
+	 * Provides (last) element prefix
+	 * 
+	 * @return <code>String</code> for element prefix
+	 */
+	public String getElementPrefix();
+	
+	
+	/**
 	 * Provides (last) attribute namespace
 	 * 
 	 * @return <code>String</code> for attribute URI
@@ -268,7 +277,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for attribute name
 	 */
 	public String getAttributeLocalName();
-
+	
 	/**
 	 * Provides attribute value
 	 * 
@@ -315,6 +324,13 @@ public interface EXIDecoder {
 	public String getComment();
 
 	/**
+	 * Provides namespace support.
+	 * 
+	 * @return <code>NamespaceSupport</code> for prefix mapping
+	 */
+	public NamespaceSupport getNamespaces();
+	
+	/**
 	 * Provides URI of namespace declaration.
 	 * 
 	 * @return <code>String</code> for NS uri
@@ -327,7 +343,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for NS prefix
 	 */
 	public String getNSPrefix();
-
+	
 	/**
 	 * Provides processing instructions target.
 	 * 

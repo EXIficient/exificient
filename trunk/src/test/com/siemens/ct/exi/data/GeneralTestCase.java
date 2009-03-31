@@ -39,7 +39,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj ( );
 		// GeneralTestCase.setConfigurationPurchaseOrder ( );
-		// GeneralTestCase.setConfigurationTest1 ( );
+		GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest2 ( );
 		// GeneralTestCase.setConfigurationTest3 ( );
 		// GeneralTestCase.setConfigurationTest4 ( );
@@ -50,7 +50,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
 		// GeneralTestCase.setConfigurationDocType ( );
-		GeneralTestCase.setConfigurationPatterns ( );
+		// GeneralTestCase.setConfigurationPatterns ( );
 	}
 
 	protected void setUp() {
