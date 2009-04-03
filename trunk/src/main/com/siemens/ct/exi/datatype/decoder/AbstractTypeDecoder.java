@@ -49,7 +49,7 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 	public StringTableDecoder getStringTable() {
 		return stringTable;
 	}
-	
+
 	public void setStringTable(StringTableDecoder stringTable) {
 		this.stringTable = stringTable;
 	}

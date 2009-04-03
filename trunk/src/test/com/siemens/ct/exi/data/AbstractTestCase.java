@@ -21,16 +21,24 @@ package com.siemens.ct.exi.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.xml.sax.InputSource;
+import javax.xml.parsers.ParserConfigurationException;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import com.siemens.ct.exi.AbstractTestDecoder;
 import com.siemens.ct.exi.AbstractTestEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.QuickTestConfiguration;
+import com.siemens.ct.exi.TestDOMDecoder;
 import com.siemens.ct.exi.TestDOMEncoder;
 import com.siemens.ct.exi.TestSAXDecoder;
 import com.siemens.ct.exi.TestSAXEncoder;
@@ -61,7 +69,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setFidelityOptions(tco.getFidelityOptions());
 		ef.setFragment(tco.isFragments());
 		ef.setDatatypeRepresentationMap(tco.getDatatypeRepresentations());
-		
+
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() != null) {
 			Grammar grammar = grammarFactory.createGrammar(tco
@@ -70,55 +78,89 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		}
 
 		// EXI output stream
-		ByteArrayOutputStream encodedOutput = new ByteArrayOutputStream();
-
-		AbstractTestEncoder testEncoder;
-		if (api == API.SAX) {
-			testEncoder = new TestSAXEncoder(encodedOutput);
-		} else {
-			testEncoder = new TestDOMEncoder(encodedOutput);
-		}
+		ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
 
 		// XML input stream
 		InputStream xmlInput = new FileInputStream(QuickTestConfiguration
 				.getXmlLocation());
 
+		AbstractTestEncoder testEncoder = getTestEncoder(api, exiEncodedOutput);
 
-		// -> encode
+		// --> encode
 		testEncoder.encodeTo(ef, xmlInput);
-		encodedOutput.flush();
+		exiEncodedOutput.flush();
 
 		// EXI input stream
 		ByteArrayInputStream exiDocument = new ByteArrayInputStream(
-				encodedOutput.toByteArray());
+				exiEncodedOutput.toByteArray());
 
-		// decoded XML
-		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
+		// <-- decode as SAX
+		decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
 
-		// <-- decode
-		TestSAXDecoder testDecoder = new TestSAXDecoder();
-		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
-		xmlOutput.flush();
+		// <-- decode as DOM
+		exiDocument.reset();
+		decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
+	}
 
-		// check XML validity
-		if (tco.isXmlEqual()) {
-			InputStream control = new FileInputStream(QuickTestConfiguration
-					.getXmlLocation());
-			InputStream test = new ByteArrayInputStream(xmlOutput.toByteArray());
-			// InputStream test = new FileInputStream( tmpXML );
+	protected void decode(EXIFactory ef, InputStream exiDocument, API api,
+			boolean checkValidity) throws Exception {
+		try {
+			// decoded XML
+			ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 
-			if (ef.isFragment()) {
-				// surround with root element for equality check
-				control = FragmentUtilities
-						.getSurroundingRootInputStream(control);
-				test = FragmentUtilities.getSurroundingRootInputStream(test);
+			// decode
+			AbstractTestDecoder testDecoder = getTestDecoder(API.SAX);
+			testDecoder.decodeTo(ef, exiDocument, xmlOutput);
+			xmlOutput.flush();
+
+			// check XML validity
+			if (checkValidity) {
+				InputStream control = new FileInputStream(
+						QuickTestConfiguration.getXmlLocation());
+				InputStream test = new ByteArrayInputStream(xmlOutput
+						.toByteArray());
+
+				checkXMLValidity(ef, control, test);
+
 			}
-
-			assertXMLEqual(new InputSource(control), new InputSource(test));
-		} else {
-			// TODO DOCTYPE ?
-			// assertXMLValid ( decodedXML );
+		} catch (Exception e) {
+			throw new Exception("Decode " + api, e);
 		}
+	}
+
+	protected AbstractTestEncoder getTestEncoder(API api,
+			OutputStream encodedOutput) {
+		if (api == API.SAX) {
+			return new TestSAXEncoder(encodedOutput);
+		} else {
+			return new TestDOMEncoder(encodedOutput);
+		}
+	}
+
+	protected AbstractTestDecoder getTestDecoder(API api) {
+		if (api == API.SAX) {
+			return new TestSAXDecoder();
+		} else {
+			return new TestDOMDecoder();
+		}
+	}
+
+	protected void checkXMLValidity(EXIFactory ef, InputStream control,
+			InputStream test) throws IOException, ParserConfigurationException,
+			SAXException {
+		if (ef.isFragment()) {
+			// surround with root element for equality check
+			control = FragmentUtilities.getSurroundingRootInputStream(control);
+			test = FragmentUtilities.getSurroundingRootInputStream(test);
+		}
+
+		XMLUnit.setIgnoreWhitespace(true);
+		XMLUnit.setIgnoreAttributeOrder(true);
+
+		Document docControl = TestDOMEncoder.getDocument(control);
+		Document docTest = TestDOMEncoder.getDocument(test);
+		assertXMLEqual(docControl, docTest);
+		// assertXMLEqual(new InputSource(control), new InputSource(test));
 	}
 
 	protected void _test() throws Exception {
@@ -136,13 +178,14 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// update schema
 			tco.setSchemaLocation(schemaLocation);
 			try {
-				//	test both APIs
-				
-				//	1. SAX
+				// test both APIs
+
+				// 1. SAX
 				_testOption(tco, API.SAX);
-				//	2. DOM
+
+				// 2. DOM
 				_testOption(tco, API.DOM);
-				
+
 			} catch (Exception e) {
 				throw new Exception(e.getLocalizedMessage() + " ["
 						+ tco.toString() + "]", e);

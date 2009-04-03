@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
 
-public class TestSAXDecoder extends AbstractTestCoder {
+public class TestSAXDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
 
 	public TestSAXDecoder() {
@@ -74,8 +74,9 @@ public class TestSAXDecoder extends AbstractTestCoder {
 		// decode EXI to XML
 		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 
-		System.out.println("[DEC-SAX] " + QuickTestConfiguration.getExiLocation()
-				+ " --> " + decodedXMLLocation);
+		System.out.println("[DEC-SAX] "
+				+ QuickTestConfiguration.getExiLocation() + " --> "
+				+ decodedXMLLocation);
 	}
 
 }

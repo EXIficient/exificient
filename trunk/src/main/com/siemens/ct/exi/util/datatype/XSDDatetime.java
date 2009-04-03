@@ -93,7 +93,7 @@ public class XSDDatetime {
 				iTZMinutes = parseTimezoneInMinutesOffset(sbCal);
 				break;
 			case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
-							// [TimeZone]
+				// [TimeZone]
 				iYear = parseYear(sbCal) - YEAR_OFFSET;
 				checkCharacter(sbCal, '-'); // hyphen
 				iMonthDay = parseMonthDay(sbCal);

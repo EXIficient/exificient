@@ -343,11 +343,10 @@ public class BuiltIn {
 		Datatype datatype;
 
 		ExpandedName schemaDatatype = getXMLSchemaDatatype(std);
-		
+
 		ExpandedName datatypeID = null;
-		if ( ! std.getAnonymous() )
-		{
-			datatypeID = new ExpandedName( std.getNamespace(), std.getName() );
+		if (!std.getAnonymous()) {
+			datatypeID = new ExpandedName(std.getNamespace(), std.getName());
 		}
 
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
@@ -369,26 +368,21 @@ public class BuiltIn {
 				datatype = new DatatypeDatetime(DatetimeType.dateTime,
 						datatypeID);
 			} else if (XSD_TIME.equals(primitive)) {
-				datatype = new DatatypeDatetime(DatetimeType.time,
-						datatypeID);
+				datatype = new DatatypeDatetime(DatetimeType.time, datatypeID);
 			} else if (XSD_DATE.equals(primitive)) {
-				datatype = new DatatypeDatetime(DatetimeType.date,
-						datatypeID);
+				datatype = new DatatypeDatetime(DatetimeType.date, datatypeID);
 			} else if (XSD_GYEARMONTH.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gYearMonth,
 						datatypeID);
 			} else if (XSD_GYEAR.equals(primitive)) {
-				datatype = new DatatypeDatetime(DatetimeType.gYear,
-						datatypeID);
+				datatype = new DatatypeDatetime(DatetimeType.gYear, datatypeID);
 			} else if (XSD_GMONTHDAY.equals(primitive)) {
 				datatype = new DatatypeDatetime(DatetimeType.gMonthDay,
 						datatypeID);
 			} else if (XSD_GDAY.equals(primitive)) {
-				datatype = new DatatypeDatetime(DatetimeType.gDay,
-						datatypeID);
+				datatype = new DatatypeDatetime(DatetimeType.gDay, datatypeID);
 			} else if (XSD_GMONTH.equals(primitive)) {
-				datatype = new DatatypeDatetime(DatetimeType.gMonth,
-						datatypeID);
+				datatype = new DatatypeDatetime(DatetimeType.gMonth, datatypeID);
 			} else {
 				throw new RuntimeException();
 			}
@@ -401,25 +395,25 @@ public class BuiltIn {
 			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
 		} else {
 			// ( XSD_STRING.equals ( exiDatatypeID ) )
-//			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-//				StringList sl = std.getLexicalPattern();
-//				Pattern p = Pattern.compile(sl.item(0));
-//				Matcher m = p.matcher("");
-//				m.groupCount();
-//				// m.group(0);
-//				
-//				// Pattern.compile(sl.item(0), Pattern.LITERAL);
-//				p.split(sl.item(0));
-//				sl.item(0);
-//				sl.getLength();
-//				
-//				RegularExpression re = new RegularExpression(sl.item(0));
-//				re.getNumberOfGroups();
-//				re.getOptions();
-//				re.getPattern();
-//				
-//			}
-			
+			// if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
+			// StringList sl = std.getLexicalPattern();
+			// Pattern p = Pattern.compile(sl.item(0));
+			// Matcher m = p.matcher("");
+			// m.groupCount();
+			// // m.group(0);
+			//				
+			// // Pattern.compile(sl.item(0), Pattern.LITERAL);
+			// p.split(sl.item(0));
+			// sl.item(0);
+			// sl.getLength();
+			//				
+			// RegularExpression re = new RegularExpression(sl.item(0));
+			// re.getNumberOfGroups();
+			// re.getOptions();
+			// re.getPattern();
+			//				
+			// }
+
 			datatype = new DatatypeString(datatypeID);
 		}
 

@@ -24,6 +24,7 @@ import javax.xml.XMLConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -80,42 +81,43 @@ public class DOMWriter {
 	public void encode(Document doc) throws EXIException {
 		encoder.encodeStartDocument();
 
-		//	encode all child-nodes to retain root external
-		//	nodes such as as comments and insignificant whitespaces
+		// encode all child-nodes to retain root external
+		// nodes such as as comments and insignificant whitespaces
 		encodeChildNodes(doc.getChildNodes());
 
 		encoder.encodeEndDocument();
 	}
-	
-	public void encodeFragment(DocumentFragment docFragment) throws EXIException {
+
+	public void encodeFragment(DocumentFragment docFragment)
+			throws EXIException {
 		encoder.encodeStartDocument();
-		
+
 		NodeList nl = docFragment.getChildNodes();
-		for(int i=0;i<nl.getLength(); i++) {
+		for (int i = 0; i < nl.getLength(); i++) {
 			encodeNode(nl.item(i));
 		}
 		encoder.encodeEndDocument();
 	}
 
 	public void encode(Node n) throws EXIException {
-		if (n.getNodeType() == Node.DOCUMENT_NODE ) {
-			encode((Document)n);
-		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE ) {
-			encodeFragment((DocumentFragment)n);
+		if (n.getNodeType() == Node.DOCUMENT_NODE) {
+			encode((Document) n);
+		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE) {
+			encodeFragment((DocumentFragment) n);
 		} else {
 			encoder.encodeStartDocument();
 			encodeNode(n);
 			encoder.encodeEndDocument();
 		}
 	}
-	
+
 	protected void encodeNode(Node root) throws EXIException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
-		//	start element
+		// start element
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
 				: root.getNamespaceURI();
-		String localName =  root.getLocalName();
+		String localName = root.getLocalName();
 
 		encoder.encodeStartElement(namespaceURI, localName, root.getNodeName());
 
@@ -130,10 +132,10 @@ public class DOMWriter {
 			// NS
 			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
 					.equals(at.getNamespaceURI())) {
-					String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-							: at.getLocalName();
-					
-					encoder.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
+				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+						: at.getLocalName();
+
+				encoder.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
 			}
 		}
 
@@ -154,14 +156,14 @@ public class DOMWriter {
 							.getAttributeValue(i));
 		}
 
-		//	children
+		// children
 		NodeList children = root.getChildNodes();
 		encodeChildNodes(children);
-		
-		//	end element
+
+		// end element
 		encoder.encodeEndElement();
 	}
-	
+
 	protected void encodeChildNodes(NodeList children) throws EXIException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
@@ -184,7 +186,14 @@ public class DOMWriter {
 				}
 				break;
 			case Node.DOCUMENT_TYPE_NODE:
-				// TODO DTD
+				DocumentType dt = (DocumentType) n;
+				String publicID = dt.getPublicId() == null ? "" : dt
+						.getPublicId();
+				String systemID = dt.getSystemId() == null ? "" : dt
+						.getSystemId();
+				String text = dt.getInternalSubset() == null ? "" : dt
+						.getInternalSubset();
+				encoder.encodeDocType(dt.getName(), publicID, systemID, text);
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
 				// TODO ER
@@ -197,8 +206,10 @@ public class DOMWriter {
 				}
 				break;
 			default:
-				System.err.println("[WARNING] Unhandled DOM NodeType: " + n.getNodeType());
-				// throw new EXIException("Unknown NodeType? " + n.getNodeType());
+				System.err.println("[WARNING] Unhandled DOM NodeType: "
+						+ n.getNodeType());
+				// throw new EXIException("Unknown NodeType? " +
+				// n.getNodeType());
 			}
 		}
 	}

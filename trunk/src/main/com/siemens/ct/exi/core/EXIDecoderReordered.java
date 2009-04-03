@@ -71,6 +71,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected List<String> xsiNilsDeviation;
 	protected int currentXsiNilsDeviationIndex;
 
+	protected List<String> docTypes;
+	protected int currentDocTypeIndex;
+
 	protected List<String> comments;
 	protected int currentCommentsIndex;
 
@@ -105,6 +108,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		xsiTypeNames = new ArrayList<String>();
 		xsiNils = new ArrayList<Boolean>();
 		xsiNilsDeviation = new ArrayList<String>();
+		docTypes = new ArrayList<String>();
 		comments = new ArrayList<String>();
 		uris = new ArrayList<String>();
 		prefixes = new ArrayList<String>();
@@ -140,6 +144,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		currentXsiNilsIndex = 0;
 		xsiNilsDeviation.clear();
 		currentXsiNilsDeviationIndex = 0;
+		docTypes.clear();
+		currentDocTypeIndex = 0;
 		comments.clear();
 		currentCommentsIndex = 0;
 
@@ -241,6 +247,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 					stillInitializing = false;
 					continue;
 					// break;
+				case DOC_TYPE:
+					decodeDocTypeInternal();
+					break;
 				case COMMENT:
 					decodeCommentInternal();
 					break;
@@ -608,6 +617,26 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		assert (ev.isEventType(EventType.END_DOCUMENT));
 	}
 
+	protected void decodeDocTypeInternal() throws EXIException {
+		decodeDocTypeStructure();
+
+		// DOCTYPE
+		docTypes.add(docTypeName);
+		docTypes.add(docTypePublicID);
+		docTypes.add(docTypeSystemID);
+		docTypes.add(docTypeText);
+	}
+
+	public void decodeDocType() throws EXIException {
+		Event ev = stepToNextEvent();
+
+		assert (ev.isEventType(EventType.DOC_TYPE));
+		docTypeName = docTypes.get(currentDocTypeIndex++);
+		docTypePublicID = docTypes.get(currentDocTypeIndex++);
+		docTypeSystemID = docTypes.get(currentDocTypeIndex++);
+		docTypeText = docTypes.get(currentDocTypeIndex++);
+	}
+
 	protected void decodeCommentInternal() throws EXIException {
 		decodeCommentStructure();
 
@@ -649,4 +678,5 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		throw new EXIException(
 				"SelfContained does NOT support reordered channels such as used in Compression and Pre-Compression mode");
 	}
+
 }

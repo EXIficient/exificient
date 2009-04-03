@@ -23,24 +23,57 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.siemens.ct.exi.api.dom.DOMBuilder;
 
-public class TestDOMDecoder extends AbstractTestCoder {
+public class TestDOMDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
 
 	public TestDOMDecoder() {
 		super();
 
 		tf = TransformerFactory.newInstance();
+	}
+
+	public static void nodeToWriter(Node n, Writer writer)
+			throws TransformerException {
+		// set up a transformer
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans = transfac.newTransformer();
+		// due to fragments
+		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		// // TEST DOCTYPE
+		// if ( n.getNodeType() == Node.DOCUMENT_NODE ) {
+		// Document doc = (Document)n;
+		// DocumentType dt = doc.getDoctype();
+		//			
+		// String publicID = dt.getPublicId();
+		// if ( publicID != null && publicID.length() > 0 ) {
+		// trans.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, publicID);
+		// }
+		// String systemID = dt.getSystemId();
+		// if (systemID != null && systemID.length() > 0) {
+		// trans.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemID);
+		// }
+		// }
+
+		// create string from xml tree
+		StreamResult result = new StreamResult(writer);
+		DOMSource source = new DOMSource(n);
+		trans.transform(source, result);
 	}
 
 	public void decodeTo(EXIFactory ef, InputStream exiDocument,
@@ -51,27 +84,18 @@ public class TestDOMDecoder extends AbstractTestCoder {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 		}
-		
-		//	decode to DOM
+
+		// decode to DOM
 		DOMBuilder domBuilder = new DOMBuilder(ef);
 		Document doc = domBuilder.parse(exiDocument);
-		
-		 //set up a transformer
-		 TransformerFactory transfac = TransformerFactory.newInstance();
-		 Transformer trans = transfac.newTransformer();
-		 trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		 trans.setOutputProperty(OutputKeys.INDENT, "yes");
-		
-		 //create string from xml tree
-		 StringWriter sw = new StringWriter();
-		 StreamResult result = new StreamResult(sw);
-		 DOMSource source = new DOMSource(doc);
-		 trans.transform(source, result);
-		 String xmlString = sw.toString();
-		 
-		 //	
-		 // System.out.println(xmlString);
-		 xmlOutput.write(xmlString.getBytes());
+
+		// create string from xml tree
+		StringWriter sw = new StringWriter();
+		nodeToWriter(doc, sw);
+		String xmlString = sw.toString();
+
+		// System.out.println(xmlString);
+		xmlOutput.write(xmlString.getBytes());
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -93,8 +117,9 @@ public class TestDOMDecoder extends AbstractTestCoder {
 		// decode EXI to XML
 		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 
-		System.out.println("[DEC_DOM] " + QuickTestConfiguration.getExiLocation()
-				+ " --> " + decodedXMLLocation);
+		System.out.println("[DEC_DOM] "
+				+ QuickTestConfiguration.getExiLocation() + " --> "
+				+ decodedXMLLocation);
 	}
 
 }

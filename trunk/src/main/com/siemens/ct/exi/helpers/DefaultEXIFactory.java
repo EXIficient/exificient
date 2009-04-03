@@ -211,7 +211,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			// use string only
 			typeEncoder = new TypeEncoderString(this);
 		}
-		
+
 		// populate type-encoder string table
 		getGrammar().populateStringTable(typeEncoder.getStringTable());
 
@@ -247,7 +247,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			// strings only
 			typeDecoder = new TypeDecoderString(this);
 		}
-		
+
 		// populate type-encoder string table
 		getGrammar().populateStringTable(typeDecoder.getStringTable());
 

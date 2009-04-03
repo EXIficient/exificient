@@ -30,11 +30,11 @@ import com.siemens.ct.exi.FidelityOptions;
  */
 
 public class AttributeListSchemaLess extends AbstractAttributeList {
-	
+
 	public AttributeListSchemaLess(FidelityOptions fidelityOptions) {
 		super(fidelityOptions);
 	}
-	
+
 	@Override
 	protected void insertAttribute(String uri, String localName, String pfx,
 			String value) {

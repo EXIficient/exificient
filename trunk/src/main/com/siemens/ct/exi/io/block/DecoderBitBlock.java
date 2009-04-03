@@ -65,7 +65,7 @@ public class DecoderBitBlock extends AbstractDecoderBlock {
 		// unused!
 		throw new UnsupportedOperationException("Not allowed!");
 	}
-	
+
 	public void skipToNextByteBoundary() throws IOException {
 		bdc.align();
 	}

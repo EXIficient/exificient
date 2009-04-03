@@ -43,7 +43,7 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 	private TypeEncoderTyped defaultEncoder;
 
 	private Map<ExpandedName, DatatypeRepresentation> userDefinedDatatypeRepresentations;
-	
+
 	private boolean usePluggableCodec;
 
 	private DatatypeRepresentation lastPluggableEncoder;
@@ -51,7 +51,7 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 	public TypeEncoderDatatypeRespresentationMap(EXIFactory exiFactory) {
 		// super( true );
 		super(exiFactory);
-		
+
 		userDefinedDatatypeRepresentations = new HashMap<ExpandedName, DatatypeRepresentation>();
 
 		// hand over "same" string table

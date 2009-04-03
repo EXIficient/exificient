@@ -33,44 +33,46 @@ import org.xml.sax.SAXException;
 public class DocumentFragmentBuilder {
 
 	protected DocumentBuilder docBuilder;
-	
+
 	public DocumentFragmentBuilder(DocumentBuilder docBuilder) {
 		this.docBuilder = docBuilder;
 	}
-	
+
 	public DocumentBuilder getDocumentBuilder() {
 		return this.docBuilder;
 	}
 
-	public DocumentFragment parse(InputStream is) throws SAXException, IOException {
+	public DocumentFragment parse(InputStream is) throws SAXException,
+			IOException {
 		// Wrap the fragment in an arbitrary element
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write("<fragment>".getBytes());
-		
+
 		int b;
-		while( ( b= is.read() ) != -1) {
-			baos.write(b);	
+		while ((b = is.read()) != -1) {
+			baos.write(b);
 		}
-		
+
 		baos.write("</fragment>".getBytes());
 
-		//	parse 
-		Document doc = this.docBuilder.parse(new ByteArrayInputStream(baos.toByteArray()));
-		
-//		// Import the nodes of the new document into doc so that they
-//        // will be compatible with doc
-        Node node = doc.importNode(doc.getDocumentElement(), true);
-		
-		// Create the document fragment node to hold the new nodes
-        DocumentFragment docfrag = doc.createDocumentFragment();
-     
-        // Move the nodes into the fragment
-        while (node.hasChildNodes()) {
-            docfrag.appendChild(node.removeChild(node.getFirstChild()));
-        }
+		// parse
+		Document doc = this.docBuilder.parse(new ByteArrayInputStream(baos
+				.toByteArray()));
 
-        // Return the fragment
-        return docfrag;
+		// // Import the nodes of the new document into doc so that they
+		// // will be compatible with doc
+		Node node = doc.importNode(doc.getDocumentElement(), true);
+
+		// Create the document fragment node to hold the new nodes
+		DocumentFragment docfrag = doc.createDocumentFragment();
+
+		// Move the nodes into the fragment
+		while (node.hasChildNodes()) {
+			docfrag.appendChild(node.removeChild(node.getFirstChild()));
+		}
+
+		// Return the fragment
+		return docfrag;
 	}
 
 }

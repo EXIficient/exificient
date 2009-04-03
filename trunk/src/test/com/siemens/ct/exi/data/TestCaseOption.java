@@ -78,7 +78,6 @@ public class TestCaseOption {
 	public void setSchemaInformedOnly(boolean schemaInformedOnly) {
 		this.schemaInformedOnly = schemaInformedOnly;
 	}
-	
 
 	public DatatypeRepresentation[] getDatatypeRepresentations() {
 		return datatypeRepresentations;

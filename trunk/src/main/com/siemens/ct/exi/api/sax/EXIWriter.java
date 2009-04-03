@@ -21,6 +21,7 @@ package com.siemens.ct.exi.api.sax;
 import java.io.OutputStream;
 
 import org.xml.sax.ContentHandler;
+import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.ext.LexicalHandler;
 
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -36,6 +37,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.2.20080718
  */
 
-public interface EXIWriter extends ContentHandler, LexicalHandler {
-	public void setOutput(OutputStream os, boolean exiBodyOnly) throws EXIException;
+public interface EXIWriter extends ContentHandler, LexicalHandler, DeclHandler {
+	public void setOutput(OutputStream os, boolean exiBodyOnly)
+			throws EXIException;
 }

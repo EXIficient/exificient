@@ -35,9 +35,9 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  */
 
 public interface TypeEncoder extends TypeCoder {
-	
+
 	public StringTableEncoder getStringTable();
-	
+
 	public void setStringTable(StringTableEncoder stringTable);
 
 	/*

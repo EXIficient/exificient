@@ -53,7 +53,7 @@ public class SchemaLessProperties extends AbstractProperties {
 		// decode
 		String sXMLDecoded = decodeEXIToXML(isEXI);
 		// System.out.println(sXMLDecoded);
-		
+
 		// equal ?
 		isXMLEqual(sXMLDecoded);
 	}

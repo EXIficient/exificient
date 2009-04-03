@@ -37,7 +37,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public interface EXIDecoder {
-	public void setInputStream(InputStream is, boolean exiBodyOnly) throws EXIException;
+	public void setInputStream(InputStream is, boolean exiBodyOnly)
+			throws EXIException;
 
 	/**
 	 * Reports whether an additional EXI event is available.
@@ -105,15 +106,13 @@ public interface EXIDecoder {
 	 */
 	public void decodeStartElementGenericUndeclared() throws EXIException;
 
-	
-
 	/**
 	 * Reads EXI a self-contained start element
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeStartFragmentSelfContained() throws EXIException;
-	
+
 	/**
 	 * Reads EXI end element.
 	 * 
@@ -134,8 +133,7 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeEndFragmentSelfContained() throws EXIException;
-	
-	
+
 	/**
 	 * Parses expected attribute.
 	 * 
@@ -163,14 +161,14 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeAttributeGenericUndeclared() throws EXIException;
-	
+
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeNamespaceDeclaration() throws EXIException;
-	
+
 	/**
 	 * Reads xsi:type from EXI stream.
 	 * 
@@ -207,6 +205,13 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeCharactersGenericUndeclared() throws EXIException;
+
+	/**
+	 * Parses DOCTYPE with information items
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeDocType() throws EXIException;
 
 	/**
 	 * Parses comment with associated characters.
@@ -262,8 +267,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for element prefix
 	 */
 	public String getElementPrefix();
-	
-	
+
 	/**
 	 * Provides (last) attribute namespace
 	 * 
@@ -277,7 +281,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for attribute name
 	 */
 	public String getAttributeLocalName();
-	
+
 	/**
 	 * Provides attribute value
 	 * 
@@ -317,6 +321,34 @@ public interface EXIDecoder {
 	public String getCharacters();
 
 	/**
+	 * Provides DOCTYPE name.
+	 * 
+	 * @return <code>String</code> for DOCTYPE name
+	 */
+	public String getDocTypeName();
+
+	/**
+	 * Provides DOCTYPE public ID.
+	 * 
+	 * @return <code>String</code> for DOCTYPE public ID
+	 */
+	public String getDocTypePublicID();
+
+	/**
+	 * Provides DOCTYPE system ID.
+	 * 
+	 * @return <code>String</code> for DOCTYPE system ID
+	 */
+	public String getDocTypeSystemID();
+
+	/**
+	 * Provides DOCTYPE text.
+	 * 
+	 * @return <code>String</code> for DOCTYPE text
+	 */
+	public String getDocTypeText();
+
+	/**
 	 * Provides comment text.
 	 * 
 	 * @return <code>String</code> for comment text
@@ -329,7 +361,7 @@ public interface EXIDecoder {
 	 * @return <code>NamespaceSupport</code> for prefix mapping
 	 */
 	public NamespaceSupport getNamespaces();
-	
+
 	/**
 	 * Provides URI of namespace declaration.
 	 * 
@@ -343,7 +375,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for NS prefix
 	 */
 	public String getNSPrefix();
-	
+
 	/**
 	 * Provides processing instructions target.
 	 * 

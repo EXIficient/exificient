@@ -62,23 +62,22 @@ public interface EncoderBlock {
 	public void writeValueAsString(String uri, String localName, String value)
 			throws IOException;
 
-
 	/*
 	 * Stream
 	 */
 	public void flush() throws IOException;
 
 	public void close() throws IOException;
-	
+
 	/*
 	 * Self-Contained
 	 */
 	public TypeEncoder getTypeEncoder();
-	
+
 	public void skipToNextByteBoundary() throws IOException;
-	
+
 	public boolean bytePositionSupported();
-	
+
 	public int getBytePosition();
-	
+
 }

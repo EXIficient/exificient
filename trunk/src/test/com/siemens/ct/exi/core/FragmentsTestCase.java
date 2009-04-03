@@ -74,7 +74,8 @@ public class FragmentsTestCase extends TestCase {
 
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
 			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalName());
-			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(), atCh1);
+			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
+					atCh1);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());

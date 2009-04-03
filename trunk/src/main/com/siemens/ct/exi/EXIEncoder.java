@@ -40,14 +40,13 @@ public interface EXIEncoder {
 
 	public void setErrorHandler(ErrorHandler errorHandler);
 
-	
 	/**
 	 * Provides namespace support.
 	 * 
 	 * @return <code>NamespaceSupport</code> for prefix mapping
 	 */
 	public NamespaceSupport getNamespaces();
-	
+
 	/**
 	 * Reports the beginning of a set of XML events
 	 * 
@@ -76,12 +75,13 @@ public interface EXIEncoder {
 	 */
 	public void encodeStartElement(String uri, String localName)
 			throws EXIException;
-	
+
 	/**
 	 * Supplies the start of an element.
 	 * 
 	 * <p>
-	 * Provides access to the namespace URI, local name , and raw representation of the start tag.
+	 * Provides access to the namespace URI, local name , and raw representation
+	 * of the start tag.
 	 * </p>
 	 * 
 	 * @param uri
@@ -103,12 +103,12 @@ public interface EXIEncoder {
 	 * 
 	 * @param uri
 	 * @param localName
-	 * @return byte where the selfContained fragments starts or -1 if not retrievable
+	 * @return byte where the selfContained fragments starts or -1 if not
+	 *         retrievable
 	 * @throws EXIException
 	 */
 	public int encodeStartFragmentSelfContained(String uri, String localName)
 			throws EXIException;
-
 
 	/**
 	 * Supplies the end tag of an element.
@@ -116,7 +116,6 @@ public interface EXIEncoder {
 	 * @throws EXIException
 	 */
 	public void encodeEndElement() throws EXIException;
-	
 
 	/**
 	 * Supplies the end tag of an SC fragment.
@@ -179,11 +178,11 @@ public interface EXIEncoder {
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param raw xsi:type value
+	 * @param raw
+	 *            xsi:type value
 	 * @throws EXIException
 	 */
-	public void encodeXsiType(String xsiTypeRaw)
-			throws EXIException;
+	public void encodeXsiType(String xsiTypeRaw) throws EXIException;
 
 	/**
 	 * Supplies a comment as corresponding characters.
@@ -197,6 +196,18 @@ public interface EXIEncoder {
 	 * @throws EXIException
 	 */
 	public void encodeCharacters(String chars) throws EXIException;
+
+	/**
+	 * Supplies content items to represent a DOCTYPE definition
+	 * 
+	 * @param name
+	 * @param publicID
+	 * @param systemID
+	 * @param text
+	 * @throws EXIException
+	 */
+	public void encodeDocType(String name, String publicID, String systemID,
+			String text) throws EXIException;
 
 	/**
 	 * Supplies the text of a comment.

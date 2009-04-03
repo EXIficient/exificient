@@ -74,6 +74,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected boolean xsiNil;
 	protected String xsiNilDeviation;
 	protected String characters;
+	protected String docTypeName;
+	protected String docTypePublicID;
+	protected String docTypeSystemID;
+	protected String docTypeText;
 	protected String comment;
 	protected String nsURI;
 	protected String nsPrefix;
@@ -81,13 +85,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String piData;
 
 	// namespaces/prefixes
-//	protected NamespaceSupport namespaces;
 	protected boolean preservePrefixes;
 
 	public AbstractEXIDecoder(EXIFactory exiFactory) {
 		super(exiFactory);
-
-//		namespaces = new NamespaceSupport();
+		
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PREFIX);
 	}
@@ -95,8 +97,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	@Override
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
-
-//		namespaces.reset();
 
 		try {
 			block = exiFactory.createDecoderBlock(is);
@@ -460,6 +460,18 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		popRule();
 	}
 
+	protected void decodeDocTypeStructure() throws EXIException {
+		try {
+			// decode name, public, system, text AS string
+			docTypeName = block.readString();
+			docTypePublicID = block.readString();
+			docTypeSystemID = block.readString();
+			docTypeText = block.readString();
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
 	protected void decodeCommentStructure() throws EXIException {
 		try {
 			comment = block.readString();
@@ -469,7 +481,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
-
 	}
 
 	protected void decodeProcessingInstructionStructure() throws EXIException {
@@ -527,6 +538,22 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	public String getCharacters() {
 		return characters;
+	}
+
+	public String getDocTypeName() {
+		return docTypeName;
+	}
+
+	public String getDocTypePublicID() {
+		return docTypePublicID;
+	}
+
+	public String getDocTypeSystemID() {
+		return docTypeSystemID;
+	}
+
+	public String getDocTypeText() {
+		return docTypeText;
 	}
 
 	public String getComment() {

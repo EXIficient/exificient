@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.NamespaceSupport;
@@ -263,6 +264,47 @@ public class SAXDecoder implements XMLReader {
 						.remove(eeQualifiedNames.size() - 1));
 				break;
 			/* MISC */
+			case DOC_TYPE:
+				decoder.decodeDocType();
+				if (contentHandler instanceof LexicalHandler) {
+					LexicalHandler lh = (LexicalHandler) contentHandler;
+
+					String publicID = decoder.getDocTypePublicID().length() == 0 ? null
+							: decoder.getDocTypePublicID();
+					String systemID = decoder.getDocTypeSystemID().length() == 0 ? null
+							: decoder.getDocTypeSystemID();
+
+					lh.startDTD(decoder.getDocTypeName(), publicID, systemID);
+
+					if (contentHandler instanceof DeclHandler) {
+						@SuppressWarnings("unused")
+						DeclHandler dh = (DeclHandler) contentHandler;
+						@SuppressWarnings("unused")
+						String text = decoder.getDocTypeText();
+
+						// TODO inform decl-handler properly (currently no
+						// working mode found!)
+
+						// dh.elementDecl("Hello", "(#PCDATA)");
+
+						// dh.externalEntityDecl(decoder.getDocTypeName(),
+						// publicID, systemID);
+
+						// dh.elementDecl("nameA", "modelB");
+						// dh.elementDecl("nameA", "modelB");
+						// dh.internalEntityDecl("nameA", "valueB");
+						// dh.attributeDecl("eName", "aName", "CDATA", "mode",
+						// "value");
+						// dh.externalEntityDecl(decoder.getDocTypeName(), "A",
+						// "B");
+
+						// String docTypeText = decoder.getDocTypeText();
+						// dh.elementDecl("Hello", "(#PCDATA)");
+					}
+
+					lh.endDTD();
+				}
+				break;
 			case COMMENT:
 				checkDeferredStartElement();
 				decoder.decodeComment();

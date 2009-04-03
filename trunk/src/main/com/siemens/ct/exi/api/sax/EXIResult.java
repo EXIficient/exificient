@@ -60,7 +60,7 @@ public class EXIResult extends SAXResult {
 			saxEncoder.setOutput(os, exiFactory.isEXIBodyOnly());
 		} catch (EXIException e) {
 			throw new IOException(e.getMessage());
-			//	TODO Java 1.5 does not support Throwable as parameter
+			// TODO Java 1.5 does not support Throwable as parameter
 			// throw new IOException(e);
 		}
 
