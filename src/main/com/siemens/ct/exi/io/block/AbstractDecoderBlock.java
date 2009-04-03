@@ -166,7 +166,7 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 
 	public void skipToNextByteBoundary() throws IOException {
 	}
-	
+
 	public TypeDecoder getTypeDecoder() {
 		return this.typeDecoder;
 	}

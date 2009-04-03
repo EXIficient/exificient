@@ -222,6 +222,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		decodeEndDocumentStructure();
 	}
 
+	public void decodeDocType() throws EXIException {
+		decodeDocTypeStructure();
+	}
+
 	public void decodeComment() throws EXIException {
 		decodeCommentStructure();
 	}
@@ -283,8 +287,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
 		TypeDecoder td = this.block.getTypeDecoder();
-		td.setStringTable(scStringTables.remove(scStringTables.size()-1));
-		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
+		td.setStringTable(scStringTables.remove(scStringTables.size() - 1));
+		this.runtimeDispatcher = scRuntimeDispatchers
+				.remove(scRuntimeDispatchers.size() - 1);
 	}
 
 }

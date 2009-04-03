@@ -52,10 +52,10 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		dfactory.setNamespaceAware(true);
 
 		DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
-		
+
 		// *skip* resolving entities like DTDs
 		documentBuilder.setEntityResolver(new NoEntityResolver());
-		
+
 		Document doc = documentBuilder.parse(is);
 
 		return doc;
@@ -63,12 +63,13 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 
 	public static DocumentFragment getDocumentFragment(InputStream is)
 			throws ParserConfigurationException, SAXException, IOException {
-		
+
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		dfactory.setNamespaceAware(true);
 
 		DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
-		DocumentFragmentBuilder dfb = new DocumentFragmentBuilder(documentBuilder);
+		DocumentFragmentBuilder dfb = new DocumentFragmentBuilder(
+				documentBuilder);
 
 		DocumentFragment docFragment = dfb.parse(is);
 
@@ -84,7 +85,12 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 			doc = getDocument(xmlInput);
 
 		}
-		
+
+		// // write to console
+		// StringWriter sw = new StringWriter();
+		// TestDOMDecoder.nodeToWriter(doc, sw);
+		// System.out.println(sw.toString());
+
 		// dom encoder
 		DOMWriter enc = new DOMWriter(ef);
 		enc.setOutput(exiOutput);

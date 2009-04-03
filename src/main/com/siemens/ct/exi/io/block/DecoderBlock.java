@@ -61,11 +61,11 @@ public interface DecoderBlock {
 
 	public String readValueAsString(String namespaceURI, String localName)
 			throws IOException;
-	
+
 	/*
 	 * Self-Contained
 	 */
 	public TypeDecoder getTypeDecoder();
-	
+
 	public void skipToNextByteBoundary() throws IOException;
 }

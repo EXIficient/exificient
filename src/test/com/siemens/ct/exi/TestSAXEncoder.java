@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import javax.xml.transform.sax.SAXResult;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -37,9 +36,9 @@ import com.siemens.ct.exi.util.NoEntityResolver;
 import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
 public class TestSAXEncoder extends AbstractTestEncoder {
-	
+
 	protected OutputStream exiOutput;
-	
+
 	public TestSAXEncoder(OutputStream exiOutput) {
 		super();
 		this.exiOutput = exiOutput;
@@ -49,28 +48,29 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		// create xml reader
 		XMLReader xmlReader;
 
-		if (true) {
-			// SAXParserFactory spf = SAXParserFactory.newInstance ( );
-			// // spf.setNamespaceAware ( true );
-			// xmlReader = spf.newSAXParser ( ).getXMLReader ( );
+		xmlReader = XMLReaderFactory
+				.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		// xmlReader = XMLReaderFactory.createXMLReader();
 
-			xmlReader = XMLReaderFactory
-					.createXMLReader("org.apache.xerces.parsers.SAXParser");
-			xmlReader
-					.setFeature("http://xml.org/sax/features/namespaces", true);
-			xmlReader.setFeature(
-					"http://xml.org/sax/features/namespace-prefixes", false);
-		} else {
-			xmlReader = XMLReaderFactory.createXMLReader();
-		}
+		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
+		// do not report namespace declarations as attributes
+		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
+				false);
+
+		// validation
+		xmlReader.setFeature("http://xml.org/sax/features/validation", false);
+
+		// DTD
+		xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
+				false);
+		xmlReader.setFeature(
+				"http://xml.org/sax/features/use-entity-resolver2", false);
+		xmlReader.setFeature(
+				"http://xml.org/sax/features/external-parameter-entities",
+				false);
 
 		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver(new NoEntityResolver());
-
-		// xmlReader.setFeature ( "http://xml.org/sax/features/namespaces",
-		// true);
-		// xmlReader.setFeature (
-		// "http://xml.org/sax/features/namespace-prefixes", false );
 
 		return xmlReader;
 	}
@@ -97,13 +97,13 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		SAXResult saxResult = new EXIResult(exiOutput, ef);
 		xmlReader.setContentHandler(saxResult.getHandler());
 
-		try {
-			// set LexicalHandler
-			xmlReader.setProperty(
-					"http://xml.org/sax/properties/lexical-handler", saxResult
-							.getLexicalHandler());
-		} catch (SAXNotRecognizedException e) {
-		}
+		// set LexicalHandler
+		xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler",
+				saxResult.getLexicalHandler());
+		// set DeclHandler
+		xmlReader.setProperty(
+				"http://xml.org/sax/properties/declaration-handler", saxResult
+						.getLexicalHandler());
 
 		if (ef.isFragment()) {
 			xmlInput = updateInputStreamToFragment(xmlInput);
@@ -112,7 +112,6 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		xmlReader.parse(new InputSource(xmlInput));
 	}
-
 
 	public static void main(String[] args) throws Exception {
 
@@ -123,7 +122,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		// XML input stream
 		InputStream xmlInput = new BufferedInputStream(new FileInputStream(
 				QuickTestConfiguration.getXmlLocation()));
-		
+
 		// create test-encoder & encode to EXI
 		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
 		EXIFactory ef = TestSAXEncoder.getQuickTestEXIactory(); // get factory
@@ -131,8 +130,8 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		encodedOutput.flush();
 
-		System.out.println("[ENC-SAX] " + QuickTestConfiguration.getXmlLocation()
-				+ " --> " + QuickTestConfiguration.getExiLocation());
+		System.out.println("[ENC-SAX] "
+				+ QuickTestConfiguration.getXmlLocation() + " --> "
+				+ QuickTestConfiguration.getExiLocation());
 	}
 }
-

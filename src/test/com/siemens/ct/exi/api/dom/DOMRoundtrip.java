@@ -36,7 +36,7 @@ public class DOMRoundtrip extends XMLTestCase {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		roundtrip("./data/W3C/EXIbyExample/XMLSample.xml", exiFactory);
 	}
-	
+
 	public void testW3CXMLSample() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		roundtrip("./data/W3C/XMLSample/XMLSample.xml", exiFactory);
@@ -44,7 +44,7 @@ public class DOMRoundtrip extends XMLTestCase {
 
 	public void testGeneralPerson() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		//	processing instruction
+		// processing instruction
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		roundtrip("./data/general/person.xml", exiFactory);
 	}
@@ -56,34 +56,37 @@ public class DOMRoundtrip extends XMLTestCase {
 
 	public void testSchemaXsiType() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		//	type-cast pfx for xml-comparison
+		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		//	type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar("./data/schema/xsi-type.xsd");
+		// type-cast --> schema-informed
+		Grammar g = GrammarFactory.newInstance().createGrammar(
+				"./data/schema/xsi-type.xsd");
 		exiFactory.setGrammar(g);
-		
+
 		roundtrip("./data/schema/xsi-type.xml", exiFactory);
 	}
-	
+
 	public void testSchemaXsiType4() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		//	type-cast pfx for xml-comparison
+		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		//	type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar("./data/schema/xsi-type4.xsd");
+		// type-cast --> schema-informed
+		Grammar g = GrammarFactory.newInstance().createGrammar(
+				"./data/schema/xsi-type4.xsd");
 		exiFactory.setGrammar(g);
-		
+
 		roundtrip("./data/schema/xsi-type4.xml", exiFactory);
 	}
-	
+
 	public void testSchemaVehicle() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		//	type-cast pfx for xml-comparison
+		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		//	type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar("./data/schema/vehicle.xsd");
+		// type-cast --> schema-informed
+		Grammar g = GrammarFactory.newInstance().createGrammar(
+				"./data/schema/vehicle.xsd");
 		exiFactory.setGrammar(g);
-		
+
 		roundtrip("./data/schema/vehicle.xml", exiFactory);
 	}
 
@@ -91,28 +94,30 @@ public class DOMRoundtrip extends XMLTestCase {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFragment(true);
 		// exiFactory.setCodingMode(CodingMode.BYTE_PACKED);
-		
+
 		roundtrip("./data/fragment/fragment1.xml.frag", exiFactory);
 	}
-	
+
 	public void testFragment2() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFragment(true);
-		
+
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
-		//	type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar("./data/fragment/fragment.xsd");
+		// type-cast --> schema-informed
+		Grammar g = GrammarFactory.newInstance().createGrammar(
+				"./data/fragment/fragment.xsd");
 		exiFactory.setGrammar(g);
-		
+
 		roundtrip("./data/fragment/fragment2.xml.frag", exiFactory);
 	}
-	
-	public void roundtrip(String sXML, EXIFactory exiFactory) throws ParserConfigurationException,
-			SAXException, IOException, EXIException {
+
+	public void roundtrip(String sXML, EXIFactory exiFactory)
+			throws ParserConfigurationException, SAXException, IOException,
+			EXIException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = factory.newDocumentBuilder();
-		
+
 		Node doc;
 		if (exiFactory.isFragment()) {
 			DocumentFragmentBuilder fdb = new DocumentFragmentBuilder(builder);
@@ -120,7 +125,7 @@ public class DOMRoundtrip extends XMLTestCase {
 		} else {
 			doc = builder.parse(new File(sXML));
 		}
-		
+
 		// encode DOM to EXI
 		DOMWriter domEncoder = new DOMWriter(exiFactory);
 		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
@@ -141,7 +146,7 @@ public class DOMRoundtrip extends XMLTestCase {
 		} else {
 			Document exiDocument = db.parse(is);
 			// equal ?
-			isXMLEqual((Document)doc, exiDocument);			
+			isXMLEqual((Document) doc, exiDocument);
 		}
 	}
 

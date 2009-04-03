@@ -36,7 +36,7 @@ public interface AttributeList {
 	 */
 	// SAX
 	public void parse(Attributes attributes);
-	
+
 	// DOM
 	public void parse(NamedNodeMap attributes);
 

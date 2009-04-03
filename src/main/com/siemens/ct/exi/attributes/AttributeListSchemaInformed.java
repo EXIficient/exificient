@@ -30,7 +30,7 @@ import com.siemens.ct.exi.FidelityOptions;
  */
 
 public class AttributeListSchemaInformed extends AbstractAttributeList {
-	
+
 	public AttributeListSchemaInformed(FidelityOptions fidelityOptions) {
 		super(fidelityOptions);
 	}
@@ -42,7 +42,6 @@ public class AttributeListSchemaInformed extends AbstractAttributeList {
 	@Override
 	protected void insertAttribute(String uri, String localName, String pfx,
 			String value) {
-		// int i = numberOfAttributes;
 		int i = this.getNumberOfAttributes();
 
 		// greater ?
@@ -64,7 +63,6 @@ public class AttributeListSchemaInformed extends AbstractAttributeList {
 		if (getAttributeLocalName(attributeIndex).compareTo(localName) > 0) {
 			return true;
 		} else {
-
 			return (getAttributeURI(attributeIndex).compareTo(uri) > 0);
 		}
 	}

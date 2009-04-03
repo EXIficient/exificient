@@ -105,13 +105,14 @@ public interface EXIFactory {
 
 	/**
 	 * Sets whether an EXI Body is preceded by an EXI Header. By default any EXI
-	 * stream consists of an EXI header followed by an EXI Body. e.g. SelfContained Fragments
-	 * are treated differently and no additional header is added.
+	 * stream consists of an EXI header followed by an EXI Body. e.g.
+	 * SelfContained Fragments are treated differently and no additional header
+	 * is added.
 	 * 
 	 * @param exiBodyOnly
 	 */
 	public void setEXIBodyOnly(boolean exiBodyOnly);
-	
+
 	public boolean isEXIBodyOnly();
 
 	/**

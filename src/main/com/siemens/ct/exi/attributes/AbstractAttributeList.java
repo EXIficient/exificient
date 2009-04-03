@@ -55,7 +55,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	protected FidelityOptions fidelityOptions;
 	protected boolean preserveSchemaLocation;
 	protected boolean preservePrefixes;
-	
+
 	// xsi:type
 	protected boolean hasXsiType;
 	protected String xsiTypeRaw;
@@ -73,8 +73,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public AbstractAttributeList(FidelityOptions fidelityOptions) {
 		// fidelityOptions
 		this.fidelityOptions = fidelityOptions;
-		preserveSchemaLocation = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_XSI_SCHEMALOCATION);
-		preservePrefixes = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);		
+		preserveSchemaLocation = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_XSI_SCHEMALOCATION);
+		preservePrefixes = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
 
 		// attributes
 		attributeURI = new ArrayList<String>();
@@ -99,7 +101,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public boolean hasXsiType() {
 		return hasXsiType;
 	}
-	
+
 	public String getXsiTypeRaw() {
 		return xsiTypeRaw;
 	}
@@ -144,7 +146,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	}
 
 	public void parse(Attributes atts) {
-		
+
 		init();
 
 		xsiTypeRaw = null;
@@ -194,7 +196,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 			// NS
 			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
 					.equals(at.getNamespaceURI())) {
-				//	do not care about NS
+				// do not care about NS
 			}
 			// xsi:*
 			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at

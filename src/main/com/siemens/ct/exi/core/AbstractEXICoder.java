@@ -84,7 +84,7 @@ public abstract class AbstractEXICoder {
 
 	protected List<String> scopeTypeURI;
 	protected List<String> scopeTypeLocalName;
-	
+
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
 
@@ -168,7 +168,7 @@ public abstract class AbstractEXICoder {
 	protected void pushScope(String uri, String localName) {
 		scopeURI.add(uri);
 		scopeLocalName.add(localName);
-		
+
 		// push NS context
 		namespaces.pushContext();
 	}
@@ -179,22 +179,22 @@ public abstract class AbstractEXICoder {
 	}
 
 	protected void popScope() {
-		scopeURI.remove(scopeURI.size()-1);
-		scopeLocalName.remove(scopeLocalName.size()-1);
+		scopeURI.remove(scopeURI.size() - 1);
+		scopeLocalName.remove(scopeLocalName.size() - 1);
 
 		// pop NS context
 		namespaces.popContext();
-		
+
 		// TODO pop scope xsi:type environment as well
 		// mhhh, needs xsi:type and element matching
 	}
 
 	public final String getScopeURI() {
-		return scopeURI.get(scopeURI.size()-1);
+		return scopeURI.get(scopeURI.size() - 1);
 	}
 
 	public final String getScopeLocalName() {
-		return scopeLocalName.get(scopeLocalName.size()-1);
+		return scopeLocalName.get(scopeLocalName.size() - 1);
 	}
 
 	public NamespaceSupport getNamespaces() {
@@ -202,11 +202,11 @@ public abstract class AbstractEXICoder {
 	}
 
 	protected final String getScopeTypeURI() {
-		return scopeTypeURI.get(scopeTypeURI.size()-1);
+		return scopeTypeURI.get(scopeTypeURI.size() - 1);
 	}
 
 	protected final String getScopeTypeLocalName() {
-		return scopeTypeLocalName.get(scopeTypeLocalName.size()-1);
+		return scopeTypeLocalName.get(scopeTypeLocalName.size() - 1);
 	}
 
 	protected final void replaceRuleAtTheTop(Rule top) {
@@ -215,7 +215,7 @@ public abstract class AbstractEXICoder {
 
 		if (top != currentRule) {
 			// openRules.replaceLast(currentRule = top);
-			openRules.set(openRules.size()-1, currentRule = top);
+			openRules.set(openRules.size() - 1, currentRule = top);
 		}
 	}
 
@@ -232,8 +232,8 @@ public abstract class AbstractEXICoder {
 		// openRules.removeLast();
 		// currentRule = openRules.peekLast();
 		int size = openRules.size();
-		openRules.remove(size-1);
-		currentRule = openRules.get(size-2);
+		openRules.remove(size - 1);
+		currentRule = openRules.get(size - 2);
 	}
 
 	protected void pushRule(final String namespaceURI, final String localName) {

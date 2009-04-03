@@ -19,17 +19,22 @@
 package com.siemens.ct.exi.api.dom;
 
 import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
-class SaxToDomHandler extends DefaultHandler {
+class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
+		DTDHandler {
 
 	protected Document document;
 	protected Node currentNode;
@@ -38,7 +43,7 @@ class SaxToDomHandler extends DefaultHandler {
 		document = doc;
 		currentNode = document;
 	}
-	
+
 	public SaxToDomHandler(Document doc, DocumentFragment docFragment) {
 		document = doc;
 		currentNode = docFragment;
@@ -80,6 +85,51 @@ class SaxToDomHandler extends DefaultHandler {
 		ProcessingInstruction pi = document.createProcessingInstruction(target,
 				data);
 		currentNode.appendChild(pi);
+	}
+
+	public void comment(char[] ch, int start, int length) throws SAXException {
+		// add comment node
+		Comment cm = document.createComment(new String(ch, start, length));
+		currentNode.appendChild(cm);
+	}
+
+	public void startDTD(String name, String publicId, String systemId)
+			throws SAXException {
+		if (currentNode instanceof Document) {
+			// Document doc = (Document)currentNode;
+			DocumentType dt = document.getImplementation().createDocumentType(
+					name, publicId, systemId);
+			currentNode.appendChild(dt);
+		}
+	}
+
+	public void endDTD() throws SAXException {
+	}
+
+	public void endCDATA() throws SAXException {
+	}
+
+	public void startCDATA() throws SAXException {
+	}
+
+	public void endEntity(String name) throws SAXException {
+	}
+
+	public void startEntity(String name) throws SAXException {
+	}
+
+	/*
+	 * DTD Handler
+	 */
+	public void notationDecl(String name, String publicId, String systemId)
+			throws SAXException {
+		System.out.println("notationDecl");
+
+	}
+
+	public void unparsedEntityDecl(String name, String publicId,
+			String systemId, String notationName) throws SAXException {
+		System.out.println("unparsedEntityDecl");
 	}
 
 	// TODO error handlers

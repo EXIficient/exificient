@@ -60,11 +60,13 @@ public class DOMBuilder {
 	public DocumentFragment parseFragment(InputStream is) throws EXIException {
 		try {
 			// create empty document fragment
-			Document document = domImplementation.createDocument(null, null,null);
+			Document document = domImplementation.createDocument(null, null,
+					null);
 			DocumentFragment docFragment = document.createDocumentFragment();
 
 			// create SAX to DOM Handlers
-			SaxToDomHandler s2dHandler = new SaxToDomHandler(document, docFragment);
+			SaxToDomHandler s2dHandler = new SaxToDomHandler(document,
+					docFragment);
 
 			XMLReader reader = factory.createEXIReader();
 			reader.setContentHandler(s2dHandler);
@@ -75,7 +77,7 @@ public class DOMBuilder {
 			throw new EXIException(e);
 		}
 	}
-	
+
 	public Document parse(InputStream is) throws EXIException {
 		try {
 			// create empty document
@@ -87,6 +89,7 @@ public class DOMBuilder {
 
 			XMLReader reader = factory.createEXIReader();
 			reader.setContentHandler(s2dHandler);
+			reader.setDTDHandler(s2dHandler);
 
 			reader.parse(new InputSource(is));
 			return document;

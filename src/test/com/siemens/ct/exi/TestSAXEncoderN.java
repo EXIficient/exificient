@@ -32,7 +32,7 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 	public TestSAXEncoderN(OutputStream exiOuput) {
 		super(exiOuput);
 	}
-	
+
 	protected static void test(String xmlLocation, String exiLocation)
 			throws Exception {
 
@@ -44,7 +44,7 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		}
 		OutputStream encodedOutput = new BufferedOutputStream(
 				new FileOutputStream(f));
-		
+
 		// create test-encoder
 		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(encodedOutput);
 
@@ -53,9 +53,8 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		// get factory
 		EXIFactory ef = TestSAXEncoderN.getQuickTestEXIactory();
 
-
 		for (int i = 0; i < N_RUNS; i++) {
-			
+
 			// XML input stream
 			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
 					xmlLocation));

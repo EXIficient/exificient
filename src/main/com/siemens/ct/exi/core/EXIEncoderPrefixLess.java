@@ -62,17 +62,13 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 	protected OutputStream os;
 
-	// protected NamespaceSupport namespaces;
-	
 	// to parse raw nil value
 	protected XSDBoolean nil;
-	
+
 	public EXIEncoderPrefixLess(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		nil = XSDBoolean.newInstance();
-
-		// namespaces = new NamespaceSupport();
 	}
 
 	@Override
@@ -81,9 +77,6 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 		// setup encoder-block
 		this.block = exiFactory.createEncoderBlock(os);
-		
-//		// re-set prefixes
-//		namespaces.reset();
 
 		// possible root elements
 		if (exiFactory.isFragment()) {
@@ -105,25 +98,6 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		}
 	}
 
-	
-//	public NamespaceSupport getNamespaces() {
-//		return namespaces;
-//	}
-//	
-//	@Override
-//	protected void pushScope(String uri, String localName) {
-//		super.pushScope(uri, localName);
-//		
-//		namespaces.pushContext();
-//	}
-//
-//	@Override
-//	protected void popScope() {
-//		super.popScope();
-//		
-//		namespaces.popContext();
-//	}
-	
 	protected void encode1stLevelEventCode(int pos) throws EXIException {
 		try {
 			block.writeEventCode(pos, currentRule
@@ -324,7 +298,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	}
 
 	public void encodeStartElement(String uri, String localName)
-	throws EXIException {
+			throws EXIException {
 		// update lookup event
 		eventSE.setNamespaceURI(uri);
 		eventSE.setLocalPart(localName);
@@ -395,12 +369,12 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// update scope
 		pushScope(uri, localName);
 	}
-	
+
 	public void encodeStartElement(String uri, String localName, String raw)
 			throws EXIException {
 		encodeStartElement(uri, localName);
 	}
-	
+
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException {
 		namespaces.declarePrefix(prefix, uri);
@@ -457,8 +431,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		popScope();
 	}
 
-	public void encodeXsiType(String raw)
-			throws EXIException {
+	public void encodeXsiType(String raw) throws EXIException {
 		if (currentRule.isSchemaRule()) {
 			int ec2 = currentRule.get2ndLevelEventCode(
 					EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
@@ -470,8 +443,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				String msg = "Skip unexpected type-cast, xsi:type=" + raw;
 				errorHandler.warning(new EXIException(msg));
 			} else {
-				
-				
+
 				String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
 				String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
 				String xsiTypeLocalName;
@@ -487,9 +459,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				} else {
 					xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
 				}
-				
-				
-				
+
 				// lookup type-grammar
 				TypeGrammar tg = ((GrammarSchemaInformed) grammar)
 						.getTypeGrammar(xsiTypeURI, xsiTypeLocalName);
@@ -736,6 +706,26 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				.getDatatype();
 	}
 
+	public void encodeDocType(String name, String publicID, String systemID,
+			String text) throws EXIException {
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			try {
+				// DOCTYPE can be found on 2nd level
+				int ec2 = currentRule.get2ndLevelEventCode(EventType.DOC_TYPE,
+						fidelityOptions);
+				encode2ndLevelEventCode(ec2);
+
+				// name, public, system, text AS string
+				block.writeString(name);
+				block.writeString(publicID);
+				block.writeString(systemID);
+				block.writeString(text);
+			} catch (IOException e) {
+				throw new EXIException(e);
+			}
+		}
+	}
+
 	public void encodeComment(char[] ch, int start, int length)
 			throws EXIException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
@@ -818,9 +808,9 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				throw new EXIException(e);
 			}
 			// string tables
-			TypeEncoder te = this.block.getTypeEncoder(); 
+			TypeEncoder te = this.block.getTypeEncoder();
 			scStringTables.add(te.getStringTable());
-			//	TODO create *just* string table and not whole TypeEncoder again
+			// TODO create *just* string table and not whole TypeEncoder again
 			te.setStringTable(exiFactory.createTypeEncoder().getStringTable());
 			// runtime-rules
 			scRuntimeDispatchers.add(this.runtimeDispatcher);
@@ -859,8 +849,9 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// implementation-specific state learned while processing this EXI
 		// Body to that saved in step 1 above.
 		TypeEncoder te = this.block.getTypeEncoder();
-		te.setStringTable(scStringTables.remove(scStringTables.size()-1));
-		this.runtimeDispatcher = scRuntimeDispatchers.remove(scRuntimeDispatchers.size()-1);
+		te.setStringTable(scStringTables.remove(scStringTables.size() - 1));
+		this.runtimeDispatcher = scRuntimeDispatchers
+				.remove(scRuntimeDispatchers.size() - 1);
 	}
 
 }

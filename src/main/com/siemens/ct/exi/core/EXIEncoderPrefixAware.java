@@ -92,10 +92,10 @@ public class EXIEncoderPrefixAware extends EXIEncoderPrefixLess implements
 			}
 
 			lastSEprefix = prefix;
-			
+
 		} catch (IOException e) {
 			throw new EXIException(e);
-		}		
+		}
 	}
 
 	@Override

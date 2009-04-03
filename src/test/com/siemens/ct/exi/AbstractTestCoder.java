@@ -30,7 +30,7 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder {
 	protected static GrammarFactory grammarFactory;
-	
+
 	static {
 		grammarFactory = GrammarFactory.newInstance();
 	}
@@ -49,13 +49,13 @@ public abstract class AbstractTestCoder {
 	protected static EXIFactory getFactory() {
 		return DefaultEXIFactory.newInstance();
 	}
-	
+
 	protected static EXIFactory getFactoryNoSchema() {
 		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
-		
+
 		return ef;
 	}
 
@@ -69,7 +69,6 @@ public abstract class AbstractTestCoder {
 	public static Grammar getGrammar(String xsdLocation) throws EXIException {
 		return grammarFactory.createGrammar(xsdLocation);
 	}
-	
 
 	protected static OutputStream getOutputStream(String exiLocation)
 			throws FileNotFoundException {

@@ -34,7 +34,8 @@ public class CharactersEncoderWhitespaceLess extends AbstractCharactersEncoder {
 	protected final EXIEncoder encoder;
 	protected final StringBuilder chars;
 
-	public CharactersEncoderWhitespaceLess(EXIEncoder encoder, StringBuilder chars) {
+	public CharactersEncoderWhitespaceLess(EXIEncoder encoder,
+			StringBuilder chars) {
 		this.encoder = encoder;
 		this.chars = chars;
 	}

@@ -42,7 +42,7 @@ public class EncoderBitBlock extends AbstractEncoderBitByteBlock {
 	protected void init() {
 		channel = new BitEncoderChannel(outputStream);
 	}
-	
+
 	@Override
 	public void skipToNextByteBoundary() throws IOException {
 		channel.flush();

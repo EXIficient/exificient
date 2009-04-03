@@ -39,7 +39,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj ( );
 		// GeneralTestCase.setConfigurationPurchaseOrder ( );
-		GeneralTestCase.setConfigurationTest1 ( );
+		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest2 ( );
 		// GeneralTestCase.setConfigurationTest3 ( );
 		// GeneralTestCase.setConfigurationTest4 ( );
@@ -49,7 +49,9 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationEmptyContent ( );
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
-		// GeneralTestCase.setConfigurationDocType ( );
+		GeneralTestCase.setConfigurationDocType();
+		// GeneralTestCase.setConfigurationDocType1 ( );
+		// GeneralTestCase.setConfigurationDocType2 ( );
 		// GeneralTestCase.setConfigurationPatterns ( );
 	}
 
@@ -403,7 +405,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	@Test
-	public void XXtestDocType() throws Exception {
+	public void testDocType() throws Exception {
 		// set up configuration
 		setConfigurationDocType();
 
@@ -416,8 +418,36 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/docType.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType.xml.exi");
 	}
-	
-	
+
+	@Test
+	public void testDocType1() throws Exception {
+		// set up configuration
+		setConfigurationDocType1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationDocType1() {
+		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/general/docType1.xml");
+		QuickTestConfiguration.setExiLocation("./out/general/docType1.xml.exi");
+	}
+
+	@Test
+	public void testDocType2() throws Exception {
+		// set up configuration
+		setConfigurationDocType2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationDocType2() {
+		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/general/docType2.xml");
+		QuickTestConfiguration.setExiLocation("./out/general/docType2.xml.exi");
+	}
 
 	@Test
 	public void testPatterns() throws Exception {

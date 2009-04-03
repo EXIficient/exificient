@@ -82,8 +82,8 @@ public abstract class AbstractEncoderBlock implements EncoderBlock {
 		int uriID = stringTable.getURIID(uri);
 		int nUri = MethodsBag
 				.getCodingLength(stringTable.getURITableSize() + 1); // numberEntries+1
-																		// -->
-																		// n-bit
+		// -->
+		// n-bit
 		if (uriID == Constants.NOT_FOUND) {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
@@ -185,18 +185,18 @@ public abstract class AbstractEncoderBlock implements EncoderBlock {
 	public void close() throws IOException {
 		outputStream.close();
 	}
-	
+
 	public TypeEncoder getTypeEncoder() {
 		return this.typeEncoder;
 	}
 
 	public void skipToNextByteBoundary() throws IOException {
 	}
-	
+
 	public boolean bytePositionSupported() {
 		return false;
 	}
-	
+
 	public int getBytePosition() {
 		return -1;
 	}

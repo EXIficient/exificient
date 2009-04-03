@@ -49,8 +49,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		return dt;
 	}
-	
-	
+
 	public void testBinary1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='Binary'>"
@@ -304,7 +303,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(BuiltInType.BUILTIN_ENUMERATION == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BUILTIN_ENUMERATION == dt
+				.getDefaultBuiltInType());
 	}
 
 	public void testList1() throws Exception {
