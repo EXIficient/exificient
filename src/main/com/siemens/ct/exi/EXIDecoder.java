@@ -212,6 +212,13 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeDocType() throws EXIException;
+	
+	/**
+	 * Parses EntityReference
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeEntityReference() throws EXIException;
 
 	/**
 	 * Parses comment with associated characters.
@@ -348,6 +355,14 @@ public interface EXIDecoder {
 	 */
 	public String getDocTypeText();
 
+
+	/**
+	 * Provides ENTITY_REFERENCE name.
+	 * 
+	 * @return <code>String</code> for DOCTYPE name
+	 */
+	public String getEntityReferenceName();
+	
 	/**
 	 * Provides comment text.
 	 * 

@@ -49,9 +49,10 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationEmptyContent ( );
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
-		GeneralTestCase.setConfigurationDocType();
+		// GeneralTestCase.setConfigurationDocType();
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
+		GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 	}
 
@@ -449,6 +450,22 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/docType2.xml.exi");
 	}
 
+	@Test
+	public void testEntityReference1() throws Exception {
+		// set up configuration
+		setConfigurationEntityReference1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationEntityReference1() {
+		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/general/entityReference1.xml");
+		QuickTestConfiguration.setExiLocation("./out/general/entityReference1.xml.exi");
+	}
+
+	
 	@Test
 	public void testPatterns() throws Exception {
 		// set up configuration

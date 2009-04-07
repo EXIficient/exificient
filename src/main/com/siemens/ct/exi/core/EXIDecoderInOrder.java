@@ -225,6 +225,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeDocType() throws EXIException {
 		decodeDocTypeStructure();
 	}
+	
+	public void decodeEntityReference() throws EXIException {
+		decodeEntityReferenceStructure();
+	}
 
 	public void decodeComment() throws EXIException {
 		decodeCommentStructure();

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -52,7 +53,8 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		SAXSource exiSource = new SAXSource(new InputSource(exiDocument));
 		exiSource.setXMLReader(ef.createEXIReader());
 
-		transformer.transform(exiSource, new StreamResult(xmlOutput));
+		Result result = new StreamResult(xmlOutput);
+		transformer.transform(exiSource, result);
 	}
 
 	public static void main(String[] args) throws Exception {

@@ -78,6 +78,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String docTypePublicID;
 	protected String docTypeSystemID;
 	protected String docTypeText;
+	protected String entityReferenceName;
 	protected String comment;
 	protected String nsURI;
 	protected String nsPrefix;
@@ -471,6 +472,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throw new EXIException(e);
 		}
 	}
+	
+	protected void decodeEntityReferenceStructure() throws EXIException {
+		try {
+			// decode name AS string
+			entityReferenceName = block.readString();
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
 
 	protected void decodeCommentStructure() throws EXIException {
 		try {
@@ -554,6 +564,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	public String getDocTypeText() {
 		return docTypeText;
+	}
+	
+	public String getEntityReferenceName() {
+		return entityReferenceName;
 	}
 
 	public String getComment() {

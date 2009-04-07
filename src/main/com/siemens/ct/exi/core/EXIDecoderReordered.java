@@ -74,6 +74,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected List<String> docTypes;
 	protected int currentDocTypeIndex;
 
+	protected List<String> entityReferences;
+	protected int currentEntityReferenceIndex;
+	
 	protected List<String> comments;
 	protected int currentCommentsIndex;
 
@@ -109,6 +112,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		xsiNils = new ArrayList<Boolean>();
 		xsiNilsDeviation = new ArrayList<String>();
 		docTypes = new ArrayList<String>();
+		entityReferences = new ArrayList<String>();
 		comments = new ArrayList<String>();
 		uris = new ArrayList<String>();
 		prefixes = new ArrayList<String>();
@@ -146,6 +150,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		currentXsiNilsDeviationIndex = 0;
 		docTypes.clear();
 		currentDocTypeIndex = 0;
+		entityReferences.clear();
+		currentEntityReferenceIndex = 0;
 		comments.clear();
 		currentCommentsIndex = 0;
 
@@ -249,6 +255,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 					// break;
 				case DOC_TYPE:
 					decodeDocTypeInternal();
+					break;
+				case ENTITY_REFERENCE:
+					decodeEntityReferenceInternal();
 					break;
 				case COMMENT:
 					decodeCommentInternal();
@@ -629,12 +638,26 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 	public void decodeDocType() throws EXIException {
 		Event ev = stepToNextEvent();
-
 		assert (ev.isEventType(EventType.DOC_TYPE));
+		
 		docTypeName = docTypes.get(currentDocTypeIndex++);
 		docTypePublicID = docTypes.get(currentDocTypeIndex++);
 		docTypeSystemID = docTypes.get(currentDocTypeIndex++);
 		docTypeText = docTypes.get(currentDocTypeIndex++);
+	}
+	
+	protected void decodeEntityReferenceInternal() throws EXIException {
+		decodeEntityReferenceStructure();
+
+		// entity reference
+		entityReferences.add(entityReferenceName);
+	}
+	
+	public void decodeEntityReference() throws EXIException {
+		Event ev = stepToNextEvent();
+		assert (ev.isEventType(EventType.ENTITY_REFERENCE));
+		
+		entityReferenceName = entityReferences.get(currentEntityReferenceIndex++);
 	}
 
 	protected void decodeCommentInternal() throws EXIException {
