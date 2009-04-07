@@ -148,10 +148,9 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 
 	public String decodeIntegerAsString() throws IOException {
 		if (decodeBoolean()) {
-			// return ( "-" + decodeUnsignedIntegerAsStringPlusOne ( true ) );
 			sb.setLength(0);
 			sb.append('-');
-			sb.append(decodeUnsignedIntegerAsStringPlusOne(true));
+			sb.append(decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE).toString());
 			return sb.toString();
 		} else {
 			return decodeUnsignedIntegerAsString();
@@ -238,15 +237,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	}
 
 	public String decodeUnsignedIntegerAsString() throws IOException {
-		return decodeUnsignedIntegerAsStringPlusOne(false);
-	}
-
-	protected String decodeUnsignedIntegerAsStringPlusOne(boolean addOne)
-			throws IOException {
-		// TODO a better way needed!!
-
-		return addOne ? decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
-				.toString() : decodeUnsignedIntegerAsBigInteger().toString();
+		return decodeUnsignedIntegerAsBigInteger().toString();
+		// return Integer.toString(decodeUnsignedInteger());
 	}
 
 	/**
