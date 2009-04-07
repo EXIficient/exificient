@@ -210,6 +210,14 @@ public interface EXIEncoder {
 			String text) throws EXIException;
 
 	/**
+	 * Supplies the name of an entity reference
+	 * 
+	 * @param name
+	 * @throws EXIException
+	 */
+	public void encodeEntityReference(String name) throws EXIException;
+	
+	/**
 	 * Supplies the text of a comment.
 	 * 
 	 * @param ch

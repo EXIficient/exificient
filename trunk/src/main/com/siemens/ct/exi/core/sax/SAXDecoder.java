@@ -38,8 +38,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DeclHandler;
-import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.NamespaceSupport;
 
@@ -126,220 +124,6 @@ public class SAXDecoder implements XMLReader {
 			deferredStartElementLocalName = null;
 			attributes.clear();
 		}
-	}
-
-	protected void parseEXI(InputSource inputSource) throws SAXException,
-			IOException, EXIException {
-		// setup (bit) input stream
-		InputStream inputStream = inputSource.getByteStream();
-		decoder.setInputStream(inputStream, exiFactory.isEXIBodyOnly());
-
-		if (contentHandler == null) {
-			throw new SAXException("No content handler set!");
-		}
-
-		// init
-		init();
-
-		// first event ( SD ? )
-		decoder.inspectEvent();
-
-		while (decoder.hasNextEvent()) {
-			EventType eventType = decoder.getNextEventType();
-			switch (eventType) {
-			/* START DOCUMENT */
-			case START_DOCUMENT:
-				decoder.decodeStartDocument();
-				contentHandler.startDocument();
-				break;
-			/* START ELEMENT */
-			case START_ELEMENT:
-			case START_ELEMENT_GENERIC:
-			case START_ELEMENT_GENERIC_UNDECLARED:
-				checkDeferredStartElement();
-				if (eventType == EventType.START_ELEMENT) {
-					decoder.decodeStartElement();
-				} else if (eventType == EventType.START_ELEMENT_GENERIC) {
-					decoder.decodeStartElementGeneric();
-				} else {
-					// START_ELEMENT_GENERIC_UNDECLARED
-					decoder.decodeStartElementGenericUndeclared();
-				}
-				// set new deferred start element
-				deferredStartElementUri = decoder.getElementURI();
-				deferredStartElementLocalName = decoder.getElementLocalName();
-				break;
-			/* NAMESPACE_DECLARATION */
-			case NAMESPACE_DECLARATION:
-				decoder.decodeNamespaceDeclaration();
-				namespaces.declarePrefix(decoder.getNSPrefix(), decoder
-						.getNSUri());
-				break;
-			/* ATTRIBUTES */
-			case ATTRIBUTE:
-			case ATTRIBUTE_INVALID_VALUE:
-			case ATTRIBUTE_GENERIC:
-			case ATTRIBUTE_GENERIC_UNDECLARED:
-				if (eventType == EventType.ATTRIBUTE) {
-					decoder.decodeAttribute();
-				} else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
-					decoder.decodeAttributeInvalidValue();
-				} else if (eventType == EventType.ATTRIBUTE_GENERIC) {
-					decoder.decodeAttributeGeneric();
-				} else {
-					// ATTRIBUTE_GENERIC_UNDECLARED
-					decoder.decodeAttributeGenericUndeclared();
-				}
-				/* attribute handling */
-				String attributeURI = decoder.getAttributeURI();
-				String attributeLocalName = decoder.getAttributeLocalName();
-				String attributeValue = decoder.getAttributeValue();
-
-				attributes.addAttribute(attributeURI, attributeLocalName,
-						getAttributeQualifiedName(attributeURI,
-								attributeLocalName), ATTRIBUTE_TYPE,
-						attributeValue);
-				break;
-			case ATTRIBUTE_XSI_TYPE:
-				decoder.decodeXsiType();
-				attributes.addAttribute(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_TYPE, getAttributeQualifiedName(
-								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-								Constants.XSI_TYPE), ATTRIBUTE_TYPE,
-						getAttributeQualifiedName(decoder.getXsiTypeUri(),
-								decoder.getXsiTypeName()));
-				break;
-			case ATTRIBUTE_XSI_NIL:
-			case ATTRIBUTE_XSI_NIL_DEVIATION:
-				String attributeXsiValue;
-				if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
-					decoder.decodeXsiNil();
-					attributeXsiValue = decoder.getXsiNil() ? Constants.DECODED_BOOLEAN_TRUE
-							: Constants.DECODED_BOOLEAN_FALSE;
-				} else {
-					// ATTRIBUTE_XSI_NIL_DEVIATION
-					decoder.decodeXsiNilDeviation();
-					attributeXsiValue = decoder.getXsiNilDeviation();
-				}
-				attributes.addAttribute(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_NIL, getAttributeQualifiedName(
-								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-								Constants.XSI_NIL), ATTRIBUTE_TYPE,
-						attributeXsiValue);
-				break;
-			/* CHARACTERS */
-			case CHARACTERS:
-			case CHARACTERS_GENERIC:
-			case CHARACTERS_GENERIC_UNDECLARED:
-				checkDeferredStartElement();
-				if (eventType == EventType.CHARACTERS) {
-					decoder.decodeCharacters();
-				} else if (eventType == EventType.CHARACTERS_GENERIC) {
-					decoder.decodeCharactersGeneric();
-				} else {
-					// CHARACTERS_GENERIC_UNDECLARED
-					decoder.decodeCharactersGenericUndeclared();
-				}
-				contentHandler.characters(
-						decoder.getCharacters().toCharArray(), 0, decoder
-								.getCharacters().length());
-				break;
-			/* END-ELEMENTS */
-			case END_ELEMENT:
-			case END_ELEMENT_UNDECLARED:
-				checkDeferredStartElement();
-				// fetch scope before popping rule etc.
-				String eeUri = decoder.getScopeURI();
-				String eeLocalName = decoder.getScopeLocalName();
-				if (eventType == EventType.END_ELEMENT) {
-					decoder.decodeEndElement();
-				} else {
-					// END_ELEMENT_UNDECLARED
-					decoder.decodeEndElementUndeclared();
-				}
-				// start sax end element
-				contentHandler.endElement(eeUri, eeLocalName, eeQualifiedNames
-						.remove(eeQualifiedNames.size() - 1));
-				break;
-			/* MISC */
-			case DOC_TYPE:
-				decoder.decodeDocType();
-				if (contentHandler instanceof LexicalHandler) {
-					LexicalHandler lh = (LexicalHandler) contentHandler;
-
-					String publicID = decoder.getDocTypePublicID().length() == 0 ? null
-							: decoder.getDocTypePublicID();
-					String systemID = decoder.getDocTypeSystemID().length() == 0 ? null
-							: decoder.getDocTypeSystemID();
-
-					lh.startDTD(decoder.getDocTypeName(), publicID, systemID);
-
-					if (contentHandler instanceof DeclHandler) {
-						@SuppressWarnings("unused")
-						DeclHandler dh = (DeclHandler) contentHandler;
-						@SuppressWarnings("unused")
-						String text = decoder.getDocTypeText();
-
-						// TODO inform decl-handler properly (currently no
-						// working mode found!)
-
-						// dh.elementDecl("Hello", "(#PCDATA)");
-
-						// dh.externalEntityDecl(decoder.getDocTypeName(),
-						// publicID, systemID);
-
-						// dh.elementDecl("nameA", "modelB");
-						// dh.elementDecl("nameA", "modelB");
-						// dh.internalEntityDecl("nameA", "valueB");
-						// dh.attributeDecl("eName", "aName", "CDATA", "mode",
-						// "value");
-						// dh.externalEntityDecl(decoder.getDocTypeName(), "A",
-						// "B");
-
-						// String docTypeText = decoder.getDocTypeText();
-						// dh.elementDecl("Hello", "(#PCDATA)");
-					}
-
-					lh.endDTD();
-				}
-				break;
-			case COMMENT:
-				checkDeferredStartElement();
-				decoder.decodeComment();
-				if (contentHandler instanceof LexicalHandler) {
-					String comment = decoder.getComment();
-					((LexicalHandler) contentHandler).comment(comment
-							.toCharArray(), 0, comment.length());
-				}
-				break;
-			case PROCESSING_INSTRUCTION:
-				checkDeferredStartElement();
-				decoder.decodeProcessingInstruction();
-				contentHandler.processingInstruction(decoder.getPITarget(),
-						decoder.getPIData());
-				break;
-			case SELF_CONTAINED:
-				decoder.decodeStartFragmentSelfContained();
-				break;
-			case END_DOCUMENT: // SelfContained END_DOCUMENT
-				decoder.decodeEndFragmentSelfContained();
-				break;
-			default:
-				// ERROR
-				throw new IllegalArgumentException(
-						"Unknown event while decoding! "
-								+ decoder.getNextEventType());
-			}
-
-			// inspect stream whether there is still content
-			decoder.inspectEvent();
-		}
-
-		// case END_DOCUMENT
-		decoder.decodeEndDocument();
-		contentHandler.endDocument();
 	}
 
 	protected String getAttributeQualifiedName(String attributeURI,
@@ -444,13 +228,189 @@ public class SAXDecoder implements XMLReader {
 		assert (decoder != null);
 
 		try {
-			parseEXI(inputSource);
-		} catch (RuntimeException e) {
-			// TODO elaborate a way to support meaningful EXI exceptions
-			throw new SAXException("[EXI] Error while parsing an EXI document",
-					e);
+			// setup (bit) input stream
+			InputStream inputStream = inputSource.getByteStream();
+			decoder.setInputStream(inputStream, exiFactory.isEXIBodyOnly());
+
+			if (contentHandler == null) {
+				throw new SAXException("No content handler set!");
+			}
+
+			// init
+			init();
+
+			// first event ( SD ? )
+			decoder.inspectEvent();
+
+			while (decoder.hasNextEvent()) {
+				EventType eventType = decoder.getNextEventType();
+				switch (eventType) {
+				/* START DOCUMENT */
+				case START_DOCUMENT:
+					decoder.decodeStartDocument();
+					contentHandler.startDocument();
+					break;
+				/* START ELEMENT */
+				case START_ELEMENT:
+				case START_ELEMENT_GENERIC:
+				case START_ELEMENT_GENERIC_UNDECLARED:
+					checkDeferredStartElement();
+					if (eventType == EventType.START_ELEMENT) {
+						decoder.decodeStartElement();
+					} else if (eventType == EventType.START_ELEMENT_GENERIC) {
+						decoder.decodeStartElementGeneric();
+					} else {
+						// START_ELEMENT_GENERIC_UNDECLARED
+						decoder.decodeStartElementGenericUndeclared();
+					}
+					// set new deferred start element
+					deferredStartElementUri = decoder.getElementURI();
+					deferredStartElementLocalName = decoder
+							.getElementLocalName();
+					break;
+				/* NAMESPACE_DECLARATION */
+				case NAMESPACE_DECLARATION:
+					decoder.decodeNamespaceDeclaration();
+					namespaces.declarePrefix(decoder.getNSPrefix(), decoder
+							.getNSUri());
+					break;
+				/* ATTRIBUTES */
+				case ATTRIBUTE:
+				case ATTRIBUTE_INVALID_VALUE:
+				case ATTRIBUTE_GENERIC:
+				case ATTRIBUTE_GENERIC_UNDECLARED:
+					if (eventType == EventType.ATTRIBUTE) {
+						decoder.decodeAttribute();
+					} else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
+						decoder.decodeAttributeInvalidValue();
+					} else if (eventType == EventType.ATTRIBUTE_GENERIC) {
+						decoder.decodeAttributeGeneric();
+					} else {
+						// ATTRIBUTE_GENERIC_UNDECLARED
+						decoder.decodeAttributeGenericUndeclared();
+					}
+					/* attribute handling */
+					String attributeURI = decoder.getAttributeURI();
+					String attributeLocalName = decoder.getAttributeLocalName();
+					String attributeValue = decoder.getAttributeValue();
+
+					attributes.addAttribute(attributeURI, attributeLocalName,
+							getAttributeQualifiedName(attributeURI,
+									attributeLocalName), ATTRIBUTE_TYPE,
+							attributeValue);
+					break;
+				case ATTRIBUTE_XSI_TYPE:
+					decoder.decodeXsiType();
+					attributes
+							.addAttribute(
+									XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+									Constants.XSI_TYPE,
+									getAttributeQualifiedName(
+											XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+											Constants.XSI_TYPE),
+									ATTRIBUTE_TYPE, getAttributeQualifiedName(
+											decoder.getXsiTypeUri(), decoder
+													.getXsiTypeName()));
+					break;
+				case ATTRIBUTE_XSI_NIL:
+				case ATTRIBUTE_XSI_NIL_DEVIATION:
+					String attributeXsiValue;
+					if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
+						decoder.decodeXsiNil();
+						attributeXsiValue = decoder.getXsiNil() ? Constants.DECODED_BOOLEAN_TRUE
+								: Constants.DECODED_BOOLEAN_FALSE;
+					} else {
+						// ATTRIBUTE_XSI_NIL_DEVIATION
+						decoder.decodeXsiNilDeviation();
+						attributeXsiValue = decoder.getXsiNilDeviation();
+					}
+					attributes
+							.addAttribute(
+									XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+									Constants.XSI_NIL,
+									getAttributeQualifiedName(
+											XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+											Constants.XSI_NIL), ATTRIBUTE_TYPE,
+									attributeXsiValue);
+					break;
+				/* CHARACTERS */
+				case CHARACTERS:
+				case CHARACTERS_GENERIC:
+				case CHARACTERS_GENERIC_UNDECLARED:
+					checkDeferredStartElement();
+					if (eventType == EventType.CHARACTERS) {
+						decoder.decodeCharacters();
+					} else if (eventType == EventType.CHARACTERS_GENERIC) {
+						decoder.decodeCharactersGeneric();
+					} else {
+						// CHARACTERS_GENERIC_UNDECLARED
+						decoder.decodeCharactersGenericUndeclared();
+					}
+					contentHandler
+							.characters(decoder.getCharacters().toCharArray(),
+									0, decoder.getCharacters().length());
+					break;
+				/* END-ELEMENTS */
+				case END_ELEMENT:
+				case END_ELEMENT_UNDECLARED:
+					checkDeferredStartElement();
+					// fetch scope before popping rule etc.
+					String eeUri = decoder.getScopeURI();
+					String eeLocalName = decoder.getScopeLocalName();
+					if (eventType == EventType.END_ELEMENT) {
+						decoder.decodeEndElement();
+					} else {
+						// END_ELEMENT_UNDECLARED
+						decoder.decodeEndElementUndeclared();
+					}
+					// start sax end element
+					contentHandler.endElement(eeUri, eeLocalName,
+							eeQualifiedNames
+									.remove(eeQualifiedNames.size() - 1));
+					break;
+				/* MISC */
+				case DOC_TYPE:
+					decoder.decodeDocType();
+					handleDocType();
+					break;
+				case ENTITY_REFERENCE:
+					checkDeferredStartElement();
+					decoder.decodeEntityReference();
+					handleEntityReference();
+					break;
+				case COMMENT:
+					checkDeferredStartElement();
+					decoder.decodeComment();
+					handleComment();
+					break;
+				case PROCESSING_INSTRUCTION:
+					checkDeferredStartElement();
+					decoder.decodeProcessingInstruction();
+					contentHandler.processingInstruction(decoder.getPITarget(),
+							decoder.getPIData());
+					break;
+				case SELF_CONTAINED:
+					decoder.decodeStartFragmentSelfContained();
+					break;
+				case END_DOCUMENT: // SelfContained END_DOCUMENT
+					decoder.decodeEndFragmentSelfContained();
+					break;
+				default:
+					// ERROR
+					throw new IllegalArgumentException(
+							"Unknown event while decoding! "
+									+ decoder.getNextEventType());
+				}
+
+				// inspect stream whether there is still content
+				decoder.inspectEvent();
+			}
+
+			// case END_DOCUMENT
+			decoder.decodeEndDocument();
+			contentHandler.endDocument();
 		} catch (EXIException e) {
-			throw new SAXException(e);
+			throw new SAXException("EXI", e);
 		}
 	}
 
@@ -476,5 +436,17 @@ public class SAXDecoder implements XMLReader {
 
 	public void setProperty(String name, Object value)
 			throws SAXNotRecognizedException, SAXNotSupportedException {
+	}
+
+	/*
+	 * Hooks for Decl & Lexical Handler
+	 */
+	protected void handleDocType() throws SAXException, IOException {
+	}
+
+	protected void handleEntityReference() throws SAXException {
+	}
+
+	protected void handleComment() throws SAXException {
 	}
 }

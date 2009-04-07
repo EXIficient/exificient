@@ -725,6 +725,23 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 			}
 		}
 	}
+	
+
+	public void encodeEntityReference(String name) throws EXIException {
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			try {
+				// EntityReference can be found on 2nd level
+				int ec2 = currentRule.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
+						fidelityOptions);
+				encode2ndLevelEventCode(ec2);
+
+				// name AS string
+				block.writeString(name);
+			} catch (IOException e) {
+				throw new EXIException(e);
+			}
+		}
+	}
 
 	public void encodeComment(char[] ch, int start, int length)
 			throws EXIException {

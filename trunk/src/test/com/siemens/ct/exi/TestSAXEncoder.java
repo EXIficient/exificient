@@ -26,6 +26,7 @@ import java.io.OutputStream;
 
 import javax.xml.transform.sax.SAXResult;
 
+import org.xml.sax.DTDHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -52,23 +53,16 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 				.createXMLReader("org.apache.xerces.parsers.SAXParser");
 		// xmlReader = XMLReaderFactory.createXMLReader();
 
+		//	set XMLReader features
 		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
 		// do not report namespace declarations as attributes
 		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 				false);
-
-		// validation
+		// avoid validation
 		xmlReader.setFeature("http://xml.org/sax/features/validation", false);
-
 		// DTD
 		xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
 				false);
-		xmlReader.setFeature(
-				"http://xml.org/sax/features/use-entity-resolver2", false);
-		xmlReader.setFeature(
-				"http://xml.org/sax/features/external-parameter-entities",
-				false);
-
 		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver(new NoEntityResolver());
 
@@ -104,6 +98,8 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		xmlReader.setProperty(
 				"http://xml.org/sax/properties/declaration-handler", saxResult
 						.getLexicalHandler());
+		// 	set DTD handler
+		xmlReader.setDTDHandler((DTDHandler)saxResult.getHandler());
 
 		if (ef.isFragment()) {
 			xmlInput = updateInputStreamToFragment(xmlInput);

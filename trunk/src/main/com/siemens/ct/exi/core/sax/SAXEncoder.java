@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.EXIEncoder;
@@ -55,17 +53,11 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	protected AbstractCharactersEncoder charEncoder;
 
 	// attributes
-	private AttributeList exiAttributes;
+	protected AttributeList exiAttributes;
 
 	// prefix mappings
 	protected List<String> prefixMappingPfx;
 	protected List<String> prefixMappingURI;
-
-	// DOC_TYPE
-	protected String docTypeName;
-	protected String docTypePublicID;
-	protected String docTypeSystemID;
-	protected String docTypeText;
 
 	public SAXEncoder(EXIFactory factory) {
 		this.encoder = factory.createEXIEncoder();
@@ -95,6 +87,12 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		encoder.setOutput(os, exiBodyOnly);
 	}
 
+	/*
+	 * ======================================================================
+	 * Interface ContentHandler
+	 * ======================================================================
+	 */
+	
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
@@ -110,7 +108,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void startElement(String uri, String local, String raw,
 			Attributes attributes) throws SAXException {
 		try {
-			checkPendingCharacters();
+			charEncoder.checkPendingChars();
 
 			// start element
 			encoder.encodeStartElement(uri, local, raw);
@@ -139,33 +137,12 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		prefixMappingURI.clear();
 	}
 
-	/*
-	 * TODO 6. Encoding EXI Streams Namespace (NS) and attribute (AT) events are
-	 * encoded in a specific order following the associated start element (SE)
-	 * event. Namespace (NS) events are encoded first followed by the
-	 * AT(xsi:type) event if present, followed by the AT(xsi:nil) event if
-	 * present, followed by the rest of the attribute (AT) events.
-	 * 
-	 * When schema-informed grammars are used for processing an element,
-	 * attribute events occur in lexical order in the stream sorted first by
-	 * qname localName then by qname uri. Otherwise, when built-in element
-	 * grammars are used, attribute events can occur in any order. Namespace
-	 * (NS) events can occur in any order regardless of the grammars used for
-	 * processing the associated element.
-	 */
 	protected void handleAttributes(Attributes attributes) throws EXIException {
-		// exiAttributes.parse(attributes, this.globalPrefixMapping);
+		//	1. Namespace declaration(s)
+		//	(done via startPrefixMapping et cetera)
+		
+		// parse remaining attributes
 		exiAttributes.parse(attributes);
-
-		// TODO remove NS event & use start/end PrefixMapping only
-		// 1. Namespace Declarations
-		// for ( int i = 0; i < exiAttributes.getNumberOfNamespaceDeclarations (
-		// ); i++ )
-		// {
-		// encoder.encodeNamespaceDeclaration (
-		// exiAttributes.getNamespaceDeclarationURI ( i ), exiAttributes
-		// .getNamespaceDeclarationPrefix ( i ) );
-		// }
 
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
@@ -187,10 +164,6 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		}
 	}
 
-	/* Interface DefaultHandler */
-	public void setDocumentLocator(Locator loc) {
-	}
-
 	public void startDocument() throws SAXException {
 		try {
 			encoder.encodeStartDocument();
@@ -201,7 +174,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 
 	public void endDocument() throws SAXException {
 		try {
-			checkPendingCharacters();
+			charEncoder.checkPendingChars();
 
 			encoder.encodeEndDocument();
 		} catch (EXIException e) {
@@ -212,7 +185,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void processingInstruction(String target, String data)
 			throws SAXException {
 		try {
-			checkPendingCharacters();
+			charEncoder.checkPendingChars();
 
 			encoder.encodeProcessingInstruction(target, data);
 		} catch (EXIException e) {
@@ -223,7 +196,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void endElement(String uri, String local, String raw)
 			throws SAXException {
 		try {
-			checkPendingCharacters();
+			charEncoder.checkPendingChars();
 
 			encoder.encodeEndElement();
 		} catch (EXIException e) {
@@ -236,117 +209,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		sbChars.append(ch, start, length);
-	}
-
-	protected void checkPendingCharacters() throws EXIException {
-		charEncoder.checkPendingChars();
-	}
-
-	// public void ignorableWhitespace(char[] ch, int start, int length)
-	// throws SAXException {
-	// // SAX is very clear that ignorableWhitespace is only called for
-	// // "element-content-whitespace"s, which is defined in the context of
-	// // DTD." +"
-	// //
-	// [http://mail-archives.apache.org/mod_mbox/xerces-j-dev/200402.mbox/%3C20040202160336.9569.qmail@nagoya.betaversion.org%3E]
-	// }
-	//
-	// public void warning(SAXParseException e) {
-	// // TODO Logging of warnings anyway ?
-	// }
-
-	/* Interface LexicalHandler */
-	public void comment(char[] ch, int start, int length) throws SAXException {
-		try {
-			checkPendingCharacters();
-
-			encoder.encodeComment(ch, start, length);
-		} catch (EXIException e) {
-			throw new SAXException("comment", e);
-		}
-	}
-
-	public void startCDATA() throws SAXException {
-		try {
-			checkPendingCharacters();
-			// System.out.println("> startCDATA");
-		} catch (EXIException e) {
-			throw new SAXException("startCDATA", e);
-		}
-	}
-
-	public void endCDATA() throws SAXException {
-		try {
-			checkPendingCharacters();
-			// System.out.println("> endCDATA");
-		} catch (EXIException e) {
-			throw new SAXException("endCDATA", e);
-		}
-	}
-
-	public void startDTD(String name, String publicId, String systemId)
-			throws SAXException {
-		try {
-			checkPendingCharacters();
-			docTypeName = name;
-			docTypePublicID = publicId == null ? "" : publicId;
-			docTypeSystemID = systemId == null ? "" : systemId;
-			docTypeText = "";
-
-			// System.out.println("> startDTD: " + name + " -> " + publicId +
-			// " -> " + systemId);
-		} catch (EXIException e) {
-			throw new SAXException("startDTD", e);
-		}
-	}
-
-	public void endDTD() throws SAXException {
-		try {
-			encoder.encodeDocType(docTypeName, docTypePublicID,
-					docTypeSystemID, docTypeText);
-			// System.out.println("< endDTD");
-		} catch (Exception e) {
-			throw new SAXException("endDTD", e);
-		}
-	}
-
-	// public void startEntity (String name)
-	// throws SAXException {
-	// }
-	//
-	// public void endEntity (String name)
-	// throws SAXException {
-	// }
-
-	/* Interface ErrorHandler */
-	public void error(SAXParseException ex) {
-		// TODO Should error logging be done anyway ?
-	}
-
-	/* Decl Handler */
-	public void elementDecl(String name, String model) throws SAXException {
-		// <!ELEMENT Hello (#PCDATA)>
-		// --> name == Hello && model == (#PCDATA) <--
-		docTypeText += "<!ELEMENT " + name + " " + model + "> ";
-		// System.out.println("elementDecl " + name + "\t" + model);
-	}
-
-	public void attributeDecl(String eName, String aName, String type,
-			String mode, String value) throws SAXException {
-		// <!ATTLIST TVSCHEDULE NAME CDATA #REQUIRED>
-		docTypeText += "<!ATTLIST " + eName + " " + aName + " " + type + " "
-				+ mode + "> ";
-		// System.out.println("attributeDecl");
-	}
-
-	public void internalEntityDecl(String name, String value)
-			throws SAXException {
-		// System.out.println("internalEntityDecl");
-	}
-
-	public void externalEntityDecl(String name, String publicId, String systemId)
-			throws SAXException {
-		// System.out.println("externalEntityDecl");
+		// new String(ch, start, length);
 	}
 
 }
