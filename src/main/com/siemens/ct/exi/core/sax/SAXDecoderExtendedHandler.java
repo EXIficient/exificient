@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Result;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -48,6 +50,9 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	protected Map<String, String> entities;
 
 	protected boolean dummyEntityWritten;
+
+	// default =!= true
+	protected static final boolean disable_ouput_escaping = true;
 
 	public SAXDecoderExtendedHandler(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -96,56 +101,55 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 			LexicalHandler lh = (LexicalHandler) contentHandler;
 			String entityReferenceName = decoder.getEntityReferenceName();
 
-			// TODO find a way to disable escaping
-			// contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
-			// "");
-
-			// start entity
-			lh.startEntity(entityReferenceName);
-
-			// call entity characters callback
-			char[] entity;
-
-			// check predefined entities in XML
-			if (entityReferenceName.equals("quot")) {
-				// quot " U+0022 (34)
-				entity = Character.toChars(34);
-			} else if (entityReferenceName.equals("amp")) {
-				// amp & U+0026 (38)
-				entity = Character.toChars(38);
-				// contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
-				// "");
-				// entity = "&amp;".toCharArray();
-			} else if (entityReferenceName.equals("apos")) {
-				// apos ' U+0027 (39)
-				entity = Character.toChars(39);
-			} else if (entityReferenceName.equals("lt")) {
-				// lt < U+003C (60)
-				entity = Character.toChars(60);
-			} else if (entityReferenceName.equals("gt")) {
-				// gt > U+003E (62)
-				entity = Character.toChars(62);
+			if (disable_ouput_escaping) {
+				char[] entity = ("&" + entityReferenceName + ";").toCharArray();
+				contentHandler.processingInstruction(
+						Result.PI_DISABLE_OUTPUT_ESCAPING, "");
+				contentHandler.characters(entity, 0, entity.length);
+				contentHandler.processingInstruction(
+						Result.PI_ENABLE_OUTPUT_ESCAPING, "");
 			} else {
-				// local declaration ?
-				if (entities != null
-						&& entities.containsKey(entityReferenceName)) {
-					entity = entities.get(entityReferenceName).toCharArray();
+				// start entity
+				lh.startEntity(entityReferenceName);
+
+				char[] entity;
+
+				// check predefined entities in XML
+				if (entityReferenceName.equals("quot")) {
+					// quot " U+0022 (34)
+					entity = Character.toChars(34);
+				} else if (entityReferenceName.equals("amp")) {
+					// amp & U+0026 (38)
+					entity = Character.toChars(38);
+				} else if (entityReferenceName.equals("apos")) {
+					// apos ' U+0027 (39)
+					entity = Character.toChars(39);
+				} else if (entityReferenceName.equals("lt")) {
+					// lt < U+003C (60)
+					entity = Character.toChars(60);
+				} else if (entityReferenceName.equals("gt")) {
+					// gt > U+003E (62)
+					entity = Character.toChars(62);
 				} else {
-					entity = ("?" + entityReferenceName + "?").toCharArray();
-					System.err
-							.println("Failed to resolve entity resolution for "
-									+ entityReferenceName);
+					// local declaration ?
+					if (entities != null
+							&& entities.containsKey(entityReferenceName)) {
+						entity = entities.get(entityReferenceName)
+								.toCharArray();
+					} else {
+						entity = ("?" + entityReferenceName + "?")
+								.toCharArray();
+						System.err
+								.println("Failed to resolve entity resolution for "
+										+ entityReferenceName);
+					}
 				}
+
+				contentHandler.characters(entity, 0, entity.length);
+
+				// end entity
+				lh.endEntity(entityReferenceName);
 			}
-
-			contentHandler.characters(entity, 0, entity.length);
-
-			// end entity
-			lh.endEntity(entityReferenceName);
-
-			// contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
-			// "");
-
 		}
 	}
 
@@ -190,7 +194,9 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 
 	public void internalEntityDecl(String name, String value)
 			throws SAXException {
-		entities.put(name, value);
+		if (!disable_ouput_escaping) {
+			entities.put(name, value);
+		}
 
 		if (contentHandler instanceof DeclHandler) {
 			DeclHandler dh = (DeclHandler) contentHandler;
@@ -199,8 +205,8 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	}
 
 	/*
-	 * The default transformer seems to need at least one "internalEntityDecl"
-	 * to close the DTD properly!?!
+	 * The default JAXP transformer seems to need at least one
+	 * "internalEntityDecl" to close the DTD properly!?!
 	 */
 	protected void checkDummyEntity() throws SAXException {
 		if (!dummyEntityWritten) {
