@@ -169,21 +169,21 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 * ======================================================================
 	 */
 	public void elementDecl(String name, String model) throws SAXException {
-		// <!ELEMENT Hello (#PCDATA)>
+		// e.g. <!ELEMENT Hello (#PCDATA)>
 		// --> name == Hello && model == (#PCDATA) <--
 		docTypeText += "<!ELEMENT " + name + " " + model + "> ";
 	}
 
 	public void attributeDecl(String eName, String aName, String type,
 			String mode, String value) throws SAXException {
-		// <!ATTLIST TVSCHEDULE NAME CDATA #REQUIRED>
+		// e.g. <!ATTLIST TVSCHEDULE NAME CDATA #REQUIRED>
 		docTypeText += "<!ATTLIST " + eName + " " + aName + " " + type + " "
 				+ mode + "> ";
 	}
 
 	public void internalEntityDecl(String name, String value)
 			throws SAXException {
-		// <!ENTITY eacute "é&#xE9;">
+		// e.g. <!ENTITY eacute "é&#xE9;">
 		docTypeText += "<!ENTITY " + name + " \"" + value + "\"> ";
 	}
 

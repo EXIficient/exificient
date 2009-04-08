@@ -32,7 +32,8 @@ public class W3CTestCase extends AbstractTestCase {
 
 	public static void setupQuickTest() {
 		// W3CTestCase.setConfigurationW3CXMLSample ( );
-		W3CTestCase.setConfigurationW3CXMLSample_Pfx();
+		// W3CTestCase.setConfigurationW3CXMLSample_Pfx();
+		W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
 		// W3CTestCase.setConfigurationW3CEXIbyExample ( );
 		// W3CTestCase.setConfigurationW3CPrimerNotebook();
 	}
@@ -123,6 +124,24 @@ public class W3CTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/W3C/XMLSample/XMLSample_pfx.xml");
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/XMLSample/XMLSample_pfx.exi");
+	}
+	
+	@Test
+	public void testW3CXMLSample_Pfx2() throws Exception {
+		// set up configuration
+		setConfigurationW3CXMLSample_Pfx2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationW3CXMLSample_Pfx2() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/W3C/XMLSample/XMLSample.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/W3C/XMLSample/XMLSample_pfx2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/W3C/XMLSample/XMLSample_pfx2.exi");
 	}
 
 	@Test

@@ -23,7 +23,7 @@ import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
