@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081104
+ * @version 0.3.20081104
  */
 
 public abstract class RuleContentSchemaLess extends AbstractSchemaLessRule {

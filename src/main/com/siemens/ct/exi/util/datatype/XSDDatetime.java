@@ -28,7 +28,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081014
+ * @version 0.3.20081014
  */
 
 public class XSDDatetime {

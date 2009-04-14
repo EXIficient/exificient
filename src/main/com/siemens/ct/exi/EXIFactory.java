@@ -39,7 +39,7 @@ import com.siemens.ct.exi.io.block.EncoderBlock;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090224
+ * @version 0.3.20090224
  */
 
 public interface EXIFactory {

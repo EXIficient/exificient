@@ -30,7 +30,7 @@ import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081105
+ * @version 0.3.20081105
  */
 
 public class DecoderByteBlockPreCompression extends

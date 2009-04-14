@@ -40,7 +40,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081031
+ * @version 0.3.20081031
  */
 
 public abstract class AbstractEncoderChannel implements EncoderChannel {

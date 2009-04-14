@@ -27,7 +27,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081013
+ * @version 0.3.20081013
  */
 
 public class CharactersEncoderWhitespaceLess extends AbstractCharactersEncoder {

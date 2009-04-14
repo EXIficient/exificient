@@ -42,7 +42,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090414
+ * @version 0.3.20090414
  */
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {

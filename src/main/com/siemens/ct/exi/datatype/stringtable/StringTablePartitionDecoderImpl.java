@@ -27,7 +27,7 @@ import java.util.List;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081009
+ * @version 0.3.20081009
  */
 
 public class StringTablePartitionDecoderImpl implements

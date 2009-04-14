@@ -31,7 +31,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081117
+ * @version 0.3.20081117
  */
 
 public interface TypeDecoder extends TypeCoder {
