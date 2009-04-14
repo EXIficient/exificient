@@ -32,7 +32,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081117
+ * @version 0.3.20081117
  */
 
 public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder

@@ -38,7 +38,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081105
+ * @version 0.3.20081105
  */
 
 public abstract class AbstractDecoderByteBlockChannelized extends

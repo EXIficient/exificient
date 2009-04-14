@@ -27,7 +27,7 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  * @author Martin.Winter@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081117
+ * @version 0.3.20081117
  */
 
 public class XSDFloat {

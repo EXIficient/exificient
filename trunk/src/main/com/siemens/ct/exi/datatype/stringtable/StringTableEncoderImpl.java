@@ -31,7 +31,7 @@ import com.siemens.ct.exi.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080915
+ * @version 0.3.20080915
  */
 
 public class StringTableEncoderImpl extends AbstractStringTable implements

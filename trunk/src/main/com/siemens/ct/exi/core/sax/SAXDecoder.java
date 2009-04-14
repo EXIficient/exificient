@@ -53,7 +53,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090414
+ * @version 0.3.20090414
  */
 
 public class SAXDecoder implements XMLReader {

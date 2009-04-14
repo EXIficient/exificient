@@ -72,7 +72,7 @@ import com.siemens.ct.exi.io.block.EncoderByteBlockPreCompression;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.3.20090331
  */
 
 public class DefaultEXIFactory implements EXIFactory {
