@@ -40,7 +40,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090324
+ * @version 0.2.20090414
  */
 
 public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
@@ -92,7 +92,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	 * Interface ContentHandler
 	 * ======================================================================
 	 */
-	
+
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
@@ -108,20 +108,26 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void startElement(String uri, String local, String raw,
 			Attributes attributes) throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
-
-			// start element
-			encoder.encodeStartElement(uri, local, raw);
-
-			// handle NS declarations
-			handleNamespaceDeclarations();
-
-			// attributes
-			if (attributes != null && attributes.getLength() > 0) {
-				handleAttributes(attributes);
-			}
+			// no prefix
+			this.startElementPfx(uri, local, null, attributes);
 		} catch (EXIException e) {
 			throw new SAXException("startElement: " + raw, e);
+		}
+	}
+
+	protected void startElementPfx(String uri, String local, String prefix,
+			Attributes attributes) throws EXIException {
+		charEncoder.checkPendingChars();
+
+		// start element
+		encoder.encodeStartElement(uri, local, prefix);
+
+		// handle NS declarations
+		handleNamespaceDeclarations();
+
+		// attributes
+		if (attributes != null && attributes.getLength() > 0) {
+			handleAttributes(attributes);
 		}
 	}
 
@@ -138,9 +144,9 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	}
 
 	protected void handleAttributes(Attributes attributes) throws EXIException {
-		//	1. Namespace declaration(s)
-		//	(done via startPrefixMapping et cetera)
-		
+		// 1. Namespace declaration(s)
+		// (done via startPrefixMapping et cetera)
+
 		// parse remaining attributes
 		exiAttributes.parse(attributes);
 
@@ -156,10 +162,10 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		}
 
 		// 4. Remaining Attributes
-		// TODO AT prefix encoding
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
 			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
+							.getAttributePrefix(i), exiAttributes
 							.getAttributeValue(i));
 		}
 	}

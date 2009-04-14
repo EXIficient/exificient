@@ -43,7 +43,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.2.20090414
  */
 
 public class DOMWriter {
@@ -119,7 +119,7 @@ public class DOMWriter {
 				: root.getNamespaceURI();
 		String localName = root.getLocalName();
 
-		encoder.encodeStartElement(namespaceURI, localName, root.getNodeName());
+		encoder.encodeStartElement(namespaceURI, localName, root.getPrefix());
 
 		// attributes
 		NamedNodeMap attributes = root.getAttributes();
@@ -153,6 +153,7 @@ public class DOMWriter {
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
 			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
+							.getAttributePrefix(i), exiAttributes
 							.getAttributeValue(i));
 		}
 

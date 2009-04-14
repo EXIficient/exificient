@@ -156,6 +156,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		XMLUnit.setIgnoreWhitespace(true);
 		XMLUnit.setIgnoreAttributeOrder(true);
+		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
 
 		Document docControl = TestDOMEncoder.getDocument(control);
 		Document docTest = TestDOMEncoder.getDocument(test);

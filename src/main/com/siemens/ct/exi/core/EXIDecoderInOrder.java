@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -41,12 +42,21 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081023
+ * @version 0.2.20090414
  */
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {
+	//	selfContained fragments
+	protected List<StringTableDecoder> scStringTables;
+	protected List<Map<String, Map<String, Rule>>> scRuntimeDispatchers;
+	
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
+		
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+			scStringTables = new ArrayList<StringTableDecoder>();
+			scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
+		}
 	}
 
 	@Override
@@ -241,9 +251,6 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	/*
 	 * SELF_CONTAINED
 	 */
-	List<StringTableDecoder> scStringTables = new ArrayList<StringTableDecoder>();
-	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
-
 	public void decodeStartFragmentSelfContained() throws EXIException {
 		try {
 			// 1. Save the string table, grammars, namespace prefixes and any

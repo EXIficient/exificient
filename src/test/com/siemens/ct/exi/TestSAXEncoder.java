@@ -121,7 +121,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		// create test-encoder & encode to EXI
 		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
-		EXIFactory ef = TestSAXEncoder.getQuickTestEXIactory(); // get factory
+		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
 		testEncoder.encodeTo(ef, xmlInput);
 
 		encodedOutput.flush();

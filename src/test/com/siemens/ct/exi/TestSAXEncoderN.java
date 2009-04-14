@@ -51,7 +51,7 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		long startTime = System.currentTimeMillis();
 
 		// get factory
-		EXIFactory ef = TestSAXEncoderN.getQuickTestEXIactory();
+		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
 
 		for (int i = 0; i < N_RUNS; i++) {
 

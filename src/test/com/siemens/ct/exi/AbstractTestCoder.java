@@ -38,7 +38,7 @@ public abstract class AbstractTestCoder {
 	public AbstractTestCoder() {
 	}
 
-	protected static EXIFactory getQuickTestEXIactory() throws Exception {
+	protected EXIFactory getQuickTestEXIactory() throws Exception {
 		if (QuickTestConfiguration.USE_SCHEMA) {
 			return getFactorySchema();
 		} else {
@@ -46,11 +46,11 @@ public abstract class AbstractTestCoder {
 		}
 	}
 
-	protected static EXIFactory getFactory() {
+	protected EXIFactory getFactory() {
 		return DefaultEXIFactory.newInstance();
 	}
 
-	protected static EXIFactory getFactoryNoSchema() {
+	protected EXIFactory getFactoryNoSchema() {
 		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
@@ -59,7 +59,7 @@ public abstract class AbstractTestCoder {
 		return ef;
 	}
 
-	protected static EXIFactory getFactorySchema() throws EXIException {
+	protected EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
 		ef.setGrammar(getGrammar(QuickTestConfiguration.getXsdLocation()));
 

@@ -31,7 +31,7 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.2.20090414
  */
 
 public interface EXIEncoder {
@@ -65,31 +65,16 @@ public interface EXIEncoder {
 	 * Supplies the start of an element.
 	 * 
 	 * <p>
-	 * Provides access to the namespace URI, and local name of the start tag.
-	 * </p>
-	 * 
-	 * @param uri
-	 * @param localName
-	 * @param raw
-	 * @throws EXIException
-	 */
-	public void encodeStartElement(String uri, String localName)
-			throws EXIException;
-
-	/**
-	 * Supplies the start of an element.
-	 * 
-	 * <p>
-	 * Provides access to the namespace URI, local name , and raw representation
+	 * Provides access to the namespace URI, local name , and prefix representation
 	 * of the start tag.
 	 * </p>
 	 * 
 	 * @param uri
 	 * @param localName
-	 * @param raw
+	 * @param prefix (can be null according to fidelity options)
 	 * @throws EXIException
 	 */
-	public void encodeStartElement(String uri, String localName, String raw)
+	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException;
 
 	/**
@@ -107,7 +92,7 @@ public interface EXIEncoder {
 	 *         retrievable
 	 * @throws EXIException
 	 */
-	public int encodeStartFragmentSelfContained(String uri, String localName)
+	public int encodeStartFragmentSelfContained(String uri, String localName, String prefix)
 			throws EXIException;
 
 	/**
@@ -128,29 +113,13 @@ public interface EXIEncoder {
 	 * Supplies an attribute.
 	 * 
 	 * <p>
-	 * Provides access to the namespace URI, local name, and value of the
-	 * attribute.
-	 * </p>
-	 * 
-	 * @param uri
-	 * @param localName
-	 * @param value
-	 * @throws EXIException
-	 */
-	public void encodeAttribute(String uri, String localName, String value)
-			throws EXIException;
-
-	/**
-	 * Supplies an attribute.
-	 * 
-	 * <p>
 	 * Provides access to the namespace URI, local name, prefix, and value of
 	 * the attribute.
 	 * </p>
 	 * 
 	 * @param uri
 	 * @param localName
-	 * @param prefix
+	 * @param prefix (can be null according to fidelity options)
 	 * @param value
 	 * @throws EXIException
 	 */

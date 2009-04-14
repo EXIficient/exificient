@@ -103,7 +103,7 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		TestDOMDecoder testDecoder = new TestDOMDecoder();
 
 		// get factory
-		EXIFactory ef = TestDOMDecoder.getQuickTestEXIactory();
+		EXIFactory ef = testDecoder.getQuickTestEXIactory();
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration

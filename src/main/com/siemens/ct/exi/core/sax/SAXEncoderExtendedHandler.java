@@ -18,11 +18,13 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * TODO Description
@@ -30,7 +32,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090406
+ * @version 0.2.20090414
  */
 
 public class SAXEncoderExtendedHandler extends SAXEncoder {
@@ -58,6 +60,18 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		noEntityReference = true;
 		// normal stuff
 		super.startDocument();
+	}
+
+	@Override
+	public void startElement(String uri, String local, String raw,
+			Attributes attributes) throws SAXException {
+		try {
+			// prefix aware
+			startElementPfx(uri, local, QNameUtilities.getPrefixPart(raw),
+					attributes);
+		} catch (EXIException e) {
+			throw new SAXException("startElement: " + raw, e);
+		}
 	}
 
 	@Override
