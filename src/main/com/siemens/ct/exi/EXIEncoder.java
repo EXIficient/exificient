@@ -147,7 +147,7 @@ public interface EXIEncoder {
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param raw
+	 * @param xsiTypeRaw
 	 *            xsi:type value
 	 * @throws EXIException
 	 */
