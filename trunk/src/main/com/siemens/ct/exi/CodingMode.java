@@ -30,7 +30,7 @@ package com.siemens.ct.exi;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20080718
+ * @version 0.3.20080718
  */
 
 public enum CodingMode {
