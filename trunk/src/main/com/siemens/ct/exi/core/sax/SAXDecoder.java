@@ -139,7 +139,7 @@ public class SAXDecoder implements XMLReader {
 			} else if ((pfx = namespaces.getPrefix(attributeURI)) == null) {
 				// create unique prefix
 				pfx = this.getUniquePrefix(attributeURI);
-			}	
+			}
 		}
 
 		return (pfx.length() == 0 ? attributeLocalName
@@ -148,7 +148,7 @@ public class SAXDecoder implements XMLReader {
 
 	protected String getElementQualifiedName(String elementURI,
 			String elementLocalName) throws SAXException {
-		
+
 		String pfx = this.decoder.getElementPrefix();
 
 		if (pfx == null) {
@@ -174,7 +174,7 @@ public class SAXDecoder implements XMLReader {
 			pfx = createdPrefixes.get(uri);
 			// add to namespace context, if not already
 			if (namespaces.getPrefix(uri) == null) {
-				namespaces.declarePrefix(pfx, uri);
+				declarePrefix(pfx, uri);
 			}
 		} else {
 			// create *new* prefix
@@ -182,10 +182,15 @@ public class SAXDecoder implements XMLReader {
 				pfx = "ns" + createdPfxCnt++;
 			} while (namespaces.getURI(pfx) != null);
 
-			namespaces.declarePrefix(pfx, uri);
+			declarePrefix(pfx, uri);
 			createdPrefixes.put(uri, pfx);
 		}
 		return pfx;
+	}
+
+	protected void declarePrefix(String prefix, String uri) throws SAXException {
+		namespaces.declarePrefix(prefix, uri);
+		contentHandler.startPrefixMapping(prefix, uri);
 	}
 
 	/*
@@ -272,8 +277,7 @@ public class SAXDecoder implements XMLReader {
 				/* NAMESPACE_DECLARATION */
 				case NAMESPACE_DECLARATION:
 					decoder.decodeNamespaceDeclaration();
-					namespaces.declarePrefix(decoder.getNSPrefix(), decoder
-							.getNSUri());
+					declarePrefix(decoder.getNSPrefix(), decoder.getNSUri());
 					break;
 				/* ATTRIBUTES */
 				case ATTRIBUTE:
