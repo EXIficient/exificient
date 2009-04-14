@@ -1,0 +1,81 @@
+<xsd:schema targetNamespace="http://www.w3.org/2007/exi/"
+    xmlns:tns="http://www.w3.org/2007/exi/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+    
+    <xsd:element name="header">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="lesscommon" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="uncommon" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:any namespace="##other" minOccurs="0" />
+                                        <xsd:element name="codecMap" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:any namespace="##other" /> <!-- schema type -->
+                                                    <xsd:any namespace="##other" /> <!-- CODEC -->
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="preserve" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="schemaLocations" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="dtd" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="prefixes" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="lexicalValues" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="whitespace" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="comments" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                        <xsd:element name="pi" minOccurs="0">
+                                            <xsd:complexType />
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="common" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="zip" minOccurs="0">
+                                <xsd:complexType />
+                            </xsd:element>
+                            <xsd:element name="fragments" minOccurs="0">
+                                <xsd:complexType />
+                            </xsd:element>
+                            <xsd:element name="schemaId" minOccurs="0" nillable="true">
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string" />
+                                </xsd:simpleType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="strict" minOccurs="0">
+                    <xsd:complexType />
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+</xsd:schema>

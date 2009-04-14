@@ -1,0 +1,36 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+    <xs:element name="qnames">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="elInteger"/>
+                <xs:element name="elFloat">
+			        <xs:complexType>
+			            <xs:sequence>
+			                <xs:element name="content" type="xs:float" />
+			            </xs:sequence>
+			        </xs:complexType>
+				</xs:element>
+                <xs:element ref="elDate"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	
+    <xs:element name="elInteger">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content" type="xs:integer" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	
+    <xs:element name="elDate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="content" type="xs:date"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	
+</xs:schema>

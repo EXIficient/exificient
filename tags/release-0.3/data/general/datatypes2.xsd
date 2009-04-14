@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="root" >
+        <xs:complexType>
+            <xs:sequence>
+                <!-- Built-in Type: Binary -->
+                <xs:element name="rBase64Binary"  minOccurs="0" maxOccurs="unbounded" >
+                   <xs:simpleType>
+                       <xs:restriction base="xs:base64Binary">
+                       </xs:restriction>                       
+                   </xs:simpleType>
+                </xs:element>
+                <xs:element name="rHexBinary"  minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:hexBinary">
+                        </xs:restriction>                       
+                    </xs:simpleType>                    
+                </xs:element>
+                <!-- Built-in Type: Boolean {true, false, 1, 0} -->
+                <xs:element name="rBoolean"   minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:boolean">
+                        </xs:restriction>                       
+                    </xs:simpleType>                    
+                </xs:element>
+                <!-- Built-in Type: Date-Time -->
+                <xs:element name="dateTime"  type="xs:dateTime" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="time"  type="xs:time" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="date"  type="xs:date" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="gYearMonth"  type="xs:gYearMonth" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="gYear"  type="xs:gYear" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="gMonthDay"  type="xs:gMonthDay" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="gDay"  type="xs:gDay" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="gMonth"  type="xs:gMonth" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: Decimal -->
+                <xs:element name="decimal"  type="xs:decimal" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: Float -->
+                <xs:element name="float"  type="xs:float" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="double"  type="xs:double" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: Integer -->
+                <xs:element name="integer"  type="xs:integer" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="nonPositiveInteger"  type="xs:nonPositiveInteger" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="negativeInteger"  type="xs:negativeInteger" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="long"  type="xs:long" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="int"  type="xs:int" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="short"  type="xs:short" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="byte"  type="xs:byte" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="nonNegativeInteger"  type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="unsignedLong"  type="xs:unsignedLong" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="positiveInteger"  type="xs:positiveInteger" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="unsignedInt"  type="xs:unsignedInt" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="unsignedShort"  type="xs:unsignedShort" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="unsignedByte"  type="xs:unsignedByte" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: QName -->
+                <xs:element name="qName"  type="xs:QName" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: List -->
+                <!-- TODO: all typed derived by list, inclduing IDREFS and ENTITIES -->
+                <!-- Built-in Type: String -->
+                <xs:element name="string"  type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="normalizedString"  type="xs:normalizedString" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="token"  type="xs:token" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="language"  type="xs:language" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="name"  type="xs:Name" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="nCName"  type="xs:NCName" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="iD"  type="xs:ID" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="iDREF"  type="xs:IDREF" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="eNTITY"  type="xs:ENTITY" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="nMTOKEN"  type="xs:NMTOKEN" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="anySimpleType"  type="xs:anySimpleType" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="anyURI"  type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
+                <!-- TODO Notation-->
+                <!-- 
+                <xs:element name="Notation" type="xs:Notation" minOccurs="0" maxOccurs="unbounded" />
+                -->
+                <xs:element name="duration"  type="xs:duration" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>
