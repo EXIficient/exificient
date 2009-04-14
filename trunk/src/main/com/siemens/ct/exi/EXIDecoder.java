@@ -33,7 +33,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.2.20090414
  */
 
 public interface EXIDecoder {
@@ -288,6 +288,13 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for attribute name
 	 */
 	public String getAttributeLocalName();
+	
+	/**
+	 * Provides (last) attribute prefix
+	 * 
+	 * @return <code>String</code> for element prefix
+	 */
+	public String getAttributePrefix();
 
 	/**
 	 * Provides attribute value

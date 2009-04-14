@@ -29,7 +29,6 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * TODO Description
@@ -37,7 +36,7 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090313
+ * @version 0.2.20090414
  */
 
 public class EXIEncoderPrefixAware extends EXIEncoderPrefixLess implements
@@ -50,53 +49,49 @@ public class EXIEncoderPrefixAware extends EXIEncoderPrefixLess implements
 	}
 
 	@Override
-	public void encodeStartElement(String uri, String localName, String raw)
-			throws EXIException {
+	protected void encodeQNamePrefix(String uri, String prefix)
+			throws IOException {
+		
+		@SuppressWarnings("unchecked")
+		Enumeration<String> prefixes4GivenURI = this.namespaces
+				.getPrefixes(uri);
 
-		// encode element only
-		super.encodeStartElement(uri, localName);
+		if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+			// default namespace
+		} else if (prefixes4GivenURI.hasMoreElements()) {
 
-		try {
-			@SuppressWarnings("unchecked")
-			Enumeration<String> prefixes4GivenURI = this.namespaces
-					.getPrefixes(uri);
+			int numberOfPrefixes = 0;
+			int id = -1;
 
-			String prefix = QNameUtilities.getPrefixPart(raw);
-
-			if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
-				// default namespace
-			} else if (prefixes4GivenURI.hasMoreElements()) {
-
-				int numberOfPrefixes = 0;
-				int id = -1;
-
-				do {
-					if (prefixes4GivenURI.nextElement().equals(prefix)) {
-						id = numberOfPrefixes;
-					}
-					numberOfPrefixes++;
-				} while (prefixes4GivenURI.hasMoreElements());
-
-				if (numberOfPrefixes > 1) {
-					// overlapping URIs
-					block.writeEventCode(id, MethodsBag
-							.getCodingLength(numberOfPrefixes));
+			do {
+				if (prefixes4GivenURI.nextElement().equals(prefix)) {
+					id = numberOfPrefixes;
 				}
-			} else {
-				/*
-				 * If there are no prefixes specified for the URI of the QName
-				 * by preceding NS events in the EXI stream, the prefix is
-				 * undefined. An undefined prefix is represented using zero bits
-				 * (i.e., omitted).
-				 */
+				numberOfPrefixes++;
+			} while (prefixes4GivenURI.hasMoreElements());
+
+			if (numberOfPrefixes > 1) {
+				// overlapping URIs
+				block.writeEventCode(id, MethodsBag
+						.getCodingLength(numberOfPrefixes));
 			}
-
-			lastSEprefix = prefix;
-
-		} catch (IOException e) {
-			throw new EXIException(e);
+		} else {
+			/*
+			 * If there are no prefixes specified for the URI of the QName by
+			 * preceding NS events in the EXI stream, the prefix is undefined.
+			 * An undefined prefix is represented using zero bits (i.e.,
+			 * omitted).
+			 */
 		}
 	}
+	
+	@Override
+	public void encodeStartElement(String uri, String localName, String prefix)
+	throws EXIException {
+		super.encodeStartElement(uri, localName, prefix);
+		lastSEprefix = prefix;
+	}
+
 
 	@Override
 	public void encodeNamespaceDeclaration(String uri, String prefix)

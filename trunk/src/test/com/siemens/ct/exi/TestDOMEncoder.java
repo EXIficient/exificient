@@ -34,7 +34,6 @@ import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.api.dom.DOMWriter;
 import com.siemens.ct.exi.api.dom.DocumentFragmentBuilder;
-import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.util.NoEntityResolver;
 
 public class TestDOMEncoder extends AbstractTestEncoder {
@@ -108,13 +107,8 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		// create DOM encoder
 		TestDOMEncoder testEncoder = new TestDOMEncoder(encodedOutput);
 
-		// grammar
-		Grammar grammar = AbstractTestCoder.getGrammar(QuickTestConfiguration
-				.getXsdLocation());
-
-		// factory
-		EXIFactory exiFactory = AbstractTestCoder.getFactoryNoSchema();
-		exiFactory.setGrammar(grammar);
+		// get factory
+		EXIFactory exiFactory = testEncoder.getQuickTestEXIactory();
 
 		// EXI input stream
 		InputStream xmlInput = new FileInputStream(

@@ -57,8 +57,10 @@ public class SchemaLessTest extends TestCase {
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
-			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName(),
+					pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 		}
@@ -111,27 +113,29 @@ public class SchemaLessTest extends TestCase {
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
+			String pfx = null; // unset according fidelity-options
+
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
-					.getLocalName());
+					.getLocalName(), pfx);
 
 			encoder.encodeStartElement(el1.getNamespaceURI(), el1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch1);
 			encoder.encodeEndElement();
 
 			encoder.encodeStartElement(el2.getNamespaceURI(), el2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 
 			encoder.encodeStartElement(el3.getNamespaceURI(), el3
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch3);
 			encoder.encodeEndElement();
 
 			encoder.encodeStartElement(el2.getNamespaceURI(), el2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch1);
 			encoder.encodeEndElement();
 
@@ -241,21 +245,23 @@ public class SchemaLessTest extends TestCase {
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
+			String pfx = null; // unset according fidelity-options
+
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
-					atCh1);
+					pfx, atCh1);
 
 			encoder.encodeStartElement(el1.getNamespaceURI(), el1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch1);
 			encoder.encodeEndElement();
 
 			encoder.encodeStartElement(el2.getNamespaceURI(), el2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
-					atCh1);
+					pfx, atCh1);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 
@@ -363,60 +369,62 @@ public class SchemaLessTest extends TestCase {
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
 
+			String pfx = null; // unset according fidelity-options
+
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root
-					.getLocalName());
+					.getLocalName(), pfx);
 
 			encoder.encodeStartElement(el1.getNamespaceURI(), el1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
-					atCh1);
+					pfx, atCh1);
 			encoder.encodeStartElement(elx1.getNamespaceURI(), elx1
-					.getLocalName());
+					.getLocalName(), pfx);
 
 			encoder.encodeStartElement(elxx1.getNamespaceURI(), elxx1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch1);
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elxx2.getNamespaceURI(), elxx2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elx2.getNamespaceURI(), elx2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elx3.getNamespaceURI(), elx3
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch3);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();
 
 			encoder.encodeStartElement(el1.getNamespaceURI(), el1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
-					atCh2);
+					pfx, atCh2);
 			encoder.encodeStartElement(elx1.getNamespaceURI(), elx1
-					.getLocalName());
+					.getLocalName(), pfx);
 
 			encoder.encodeStartElement(elxx1.getNamespaceURI(), elxx1
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch1);
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elxx2.getNamespaceURI(), elxx2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elx2.getNamespaceURI(), elx2
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch2);
 			encoder.encodeEndElement();
 			encoder.encodeStartElement(elx3.getNamespaceURI(), elx3
-					.getLocalName());
+					.getLocalName(), pfx);
 			encoder.encodeCharacters(ch3);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();

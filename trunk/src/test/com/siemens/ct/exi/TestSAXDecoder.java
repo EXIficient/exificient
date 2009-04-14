@@ -62,7 +62,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		TestSAXDecoder testDecoder = new TestSAXDecoder();
 
 		// get factory
-		EXIFactory ef = TestSAXDecoder.getQuickTestEXIactory();
+		EXIFactory ef = testDecoder.getQuickTestEXIactory();
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration

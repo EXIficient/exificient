@@ -53,7 +53,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.2.20090414
  */
 
 public class SAXDecoder implements XMLReader {
@@ -128,16 +128,18 @@ public class SAXDecoder implements XMLReader {
 
 	protected String getAttributeQualifiedName(String attributeURI,
 			String attributeLocalName) throws SAXException {
-		String pfx;
+		String pfx = decoder.getAttributePrefix();
 
-		if (attributeURI.equals(namespaces
-				.getURI(XMLConstants.DEFAULT_NS_PREFIX))
-				|| attributeURI.equals(XMLConstants.NULL_NS_URI)) {
-			// default namespace
-			pfx = XMLConstants.DEFAULT_NS_PREFIX;
-		} else if ((pfx = namespaces.getPrefix(attributeURI)) == null) {
-			// create unique prefix
-			pfx = this.getUniquePrefix(attributeURI);
+		if (pfx == null) {
+			if (attributeURI.equals(namespaces
+					.getURI(XMLConstants.DEFAULT_NS_PREFIX))
+					|| attributeURI.equals(XMLConstants.NULL_NS_URI)) {
+				// default namespace
+				pfx = XMLConstants.DEFAULT_NS_PREFIX;
+			} else if ((pfx = namespaces.getPrefix(attributeURI)) == null) {
+				// create unique prefix
+				pfx = this.getUniquePrefix(attributeURI);
+			}	
 		}
 
 		return (pfx.length() == 0 ? attributeLocalName
@@ -146,9 +148,8 @@ public class SAXDecoder implements XMLReader {
 
 	protected String getElementQualifiedName(String elementURI,
 			String elementLocalName) throws SAXException {
-		String pfx;
-
-		pfx = this.decoder.getElementPrefix();
+		
+		String pfx = this.decoder.getElementPrefix();
 
 		if (pfx == null) {
 			if (elementURI.equals(XMLConstants.NULL_NS_URI)

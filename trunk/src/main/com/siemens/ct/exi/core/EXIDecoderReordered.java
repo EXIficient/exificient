@@ -45,7 +45,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081023
+ * @version 0.2.20090414
  */
 
 public class EXIDecoderReordered extends AbstractEXIDecoder {
@@ -57,6 +57,11 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	// content
 	protected List<ExpandedName> genericElements;
 	protected int currentGenericElementsIndex;
+	
+	protected List<String> elementPrefixes;
+	protected int currentElementPrefixIndex;
+	protected List<String> attributePrefixes;
+	protected int currentAttributePrefixIndex;
 
 	protected List<ExpandedName> genericAttributes;
 	protected int currentGenericAttributesIndex;
@@ -106,6 +111,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 		// content
 		genericElements = new ArrayList<ExpandedName>();
+		elementPrefixes = new ArrayList<String>();
+		attributePrefixes = new ArrayList<String>();
 		genericAttributes = new ArrayList<ExpandedName>();
 		xsiTypeUris = new ArrayList<String>();
 		xsiTypeNames = new ArrayList<String>();
@@ -141,6 +148,11 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		// content
 		genericElements.clear();
 		currentGenericElementsIndex = 0;
+		
+		elementPrefixes.clear();
+		currentElementPrefixIndex = 0;
+		attributePrefixes.clear();
+		currentAttributePrefixIndex = 0;
 
 		genericAttributes.clear();
 		currentGenericAttributesIndex = 0;
@@ -329,6 +341,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 	protected void decodeStartElementInternal() throws EXIException {
 		decodeStartElementStructure();
+		
+		elementPrefixes.add(this.elementPrefix);
 	}
 
 	public void decodeStartElement() throws EXIException {
@@ -336,6 +350,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		StartElement se = ((StartElement) stepToNextEvent());
 		this.elementURI = se.getNamespaceURI();
 		this.elementLocalName = se.getLocalPart();
+		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
 	}
@@ -344,6 +359,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		decodeStartElementGenericStructure();
 
 		genericElements.add(new ExpandedName(elementURI, elementLocalName));
+		elementPrefixes.add(this.elementPrefix);
 	}
 
 	public void decodeStartElementGeneric() throws EXIException {
@@ -353,6 +369,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		ExpandedName qname = genericElements.get(currentGenericElementsIndex++);
 		this.elementURI = qname.getNamespaceURI();
 		this.elementLocalName = qname.getLocalName();
+		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
 	}
@@ -361,6 +378,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		decodeStartElementGenericUndeclaredStructure();
 
 		genericElements.add(new ExpandedName(elementURI, elementLocalName));
+		elementPrefixes.add(this.elementPrefix);
 	}
 
 	public void decodeStartElementGenericUndeclared() throws EXIException {
@@ -370,6 +388,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		ExpandedName qname = genericElements.get(currentGenericElementsIndex++);
 		this.elementURI = qname.getNamespaceURI();
 		this.elementLocalName = qname.getLocalName();
+		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
 	}
@@ -391,6 +410,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 	protected void decodeAttributeInternal() throws EXIException {
 		Attribute at = decodeAttributeStructure();
+		
+		attributePrefixes.add(this.attributePrefix);
 
 		incrementValues(new ExpandedName(at.getNamespaceURI(), at
 				.getLocalPart()), at.getDatatype());
@@ -399,6 +420,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected void decodeAttributeInvalidValueInternal() throws EXIException {
 		Attribute at = decodeAttributeStructure();
 
+		attributePrefixes.add(this.attributePrefix);
+		
 		incrementValues(new ExpandedName(at.getNamespaceURI(), at
 				.getLocalPart()), BuiltIn.DEFAULT_DATATYPE);
 	}
@@ -407,6 +430,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		Attribute at = (Attribute) stepToNextEvent();
 		this.attributeURI = at.getNamespaceURI();
 		this.attributeLocalName = at.getLocalPart();
+		this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
 
 		try {
 			// decode attribute value
@@ -421,6 +445,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		Attribute at = (Attribute) stepToNextEvent();
 		this.attributeURI = at.getNamespaceURI();
 		this.attributeLocalName = at.getLocalPart();
+		this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
 
 		try {
 			// decode attribute value as string
@@ -436,6 +461,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 		ExpandedName n = new ExpandedName(attributeURI, attributeLocalName);
 		genericAttributes.add(n);
+		attributePrefixes.add(this.attributePrefix);
 
 		incrementValues(n, BuiltIn.DEFAULT_DATATYPE);
 	}
@@ -446,6 +472,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 		ExpandedName n = new ExpandedName(attributeURI, attributeLocalName);
 		genericAttributes.add(n);
+		attributePrefixes.add(this.attributePrefix);
 
 		incrementValues(n, BuiltIn.DEFAULT_DATATYPE);
 	}
@@ -458,6 +485,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 					.get(currentGenericAttributesIndex++);
 			this.attributeURI = n.getNamespaceURI();
 			this.attributeLocalName = n.getLocalName();
+			this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
 
 			// decode attribute value
 			attributeValue = block.readValueAsString(attributeURI,

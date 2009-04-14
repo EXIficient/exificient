@@ -53,7 +53,7 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20081023
+ * @version 0.2.20090414
  */
 
 public class EXIEncoderPrefixLess extends AbstractEXICoder implements
@@ -65,10 +65,20 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	// to parse raw nil value
 	protected XSDBoolean nil;
 
+	// selfContained fragments
+	protected List<StringTableEncoder> scStringTables;
+	protected List<Map<String, Map<String, Rule>>> scRuntimeDispatchers;
+
 	public EXIEncoderPrefixLess(EXIFactory exiFactory) {
 		super(exiFactory);
 
+		// xsi:nil
 		nil = XSDBoolean.newInstance();
+		// selfContained
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+			scStringTables = new ArrayList<StringTableEncoder>();
+			scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
+		}
 	}
 
 	@Override
@@ -98,170 +108,49 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		}
 	}
 
-	protected void encode1stLevelEventCode(int pos) throws EXIException {
-		try {
-			block.writeEventCode(pos, currentRule
-					.get1stLevelEventCodeLength(fidelityOptions));
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+	protected void encode1stLevelEventCode(int pos) throws IOException {
+		block.writeEventCode(pos, currentRule
+				.get1stLevelEventCodeLength(fidelityOptions));
 	}
 
-	protected void encode2ndLevelEventCode(int pos) throws EXIException {
-		try {
-			// 1st level
-			block.writeEventCode(currentRule.getNumberOfEvents(), currentRule
-					.get1stLevelEventCodeLength(fidelityOptions));
+	protected void encode2ndLevelEventCode(int pos) throws IOException {
+		// 1st level
+		block.writeEventCode(currentRule.getNumberOfEvents(), currentRule
+				.get1stLevelEventCodeLength(fidelityOptions));
 
-			// 2nd level
-			int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
-			assert (pos < ch2);
+		// 2nd level
+		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
+		assert (pos < ch2);
 
-			block.writeEventCode(pos, MethodsBag.getCodingLength(ch2));
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+		block.writeEventCode(pos, MethodsBag.getCodingLength(ch2));
 	}
 
-	protected void encode3rdLevelEventCode(int pos) throws EXIException {
-		try {
-			// 1st level
-			block.writeEventCode(currentRule.getNumberOfEvents(), currentRule
-					.get1stLevelEventCodeLength(fidelityOptions));
+	protected void encode3rdLevelEventCode(int pos) throws IOException {
+		// 1st level
+		block.writeEventCode(currentRule.getNumberOfEvents(), currentRule
+				.get1stLevelEventCodeLength(fidelityOptions));
 
-			// 2nd level
-			int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
-			block.writeEventCode(ch2 - 1, MethodsBag.getCodingLength(ch2));
+		// 2nd level
+		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
+		block.writeEventCode(ch2 - 1, MethodsBag.getCodingLength(ch2));
 
-			// 3rd level
-			int ch3 = currentRule.get3rdLevelCharacteristics(fidelityOptions);
-			assert (pos < ch3);
-			block.writeEventCode(pos, MethodsBag.getCodingLength(ch3));
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+		// 3rd level
+		int ch3 = currentRule.get3rdLevelCharacteristics(fidelityOptions);
+		assert (pos < ch3);
+		block.writeEventCode(pos, MethodsBag.getCodingLength(ch3));
 	}
 
-	protected void encodeQName(String uri, String localName)
-			throws EXIException {
-		try {
-			block.writeUri(uri);
-			block.writeLocalName(localName, uri);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+	protected void encodeQNamePrefix(String uri, String prefix) throws IOException {
+		//	no prefix coding in this instance (sub-classes ?)
 	}
 
-	// Note: value needs to be type-checked beforehands
-	protected void encodeTypeValidValue(int ec, String uri, String localName)
-			throws EXIException {
-		try {
-			// encode EventCode
-			encode1stLevelEventCode(ec);
-
-			// value content
-			block.writeTypeValidValue(uri, localName);
-		} catch (Exception e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void encodeTypeInvalidValueAttribute(int atEventCode, String uri,
-			String localName, String value) throws EXIException {
-		// encode 2nd level event-code
-		encodeTypeInvalidAttributeSecondLevel();
-
-		// calculate 3rd level event-code
-		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) currentRule;
-		int ec3 = atEventCode - schemaCurrentRule.getLeastAttributeEventCode();
-
-		try {
-			// encode 3rd level event-code
-			block.writeEventCode(ec3, MethodsBag
-					.getCodingLength(schemaCurrentRule
-							.getNumberOfSchemaDeviatedAttributes()));
-
-			// encode content as string
-			block.writeValueAsString(uri, localName, value);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void encodeTypeInvalidAttributeSecondLevel() throws EXIException {
-		int ec2ATdeviated = currentRule.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
-
-		// encode 2nd level event-code
-		encode2ndLevelEventCode(ec2ATdeviated);
-	}
-
-	protected void encodeTypeInvalidXsiAttribute(String value)
-			throws EXIException {
-		// encode 2nd level event-code
-		encodeTypeInvalidAttributeSecondLevel();
-
-		// calculate 3rd level event-code
-		SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) currentRule;
-		int ec3nil = schemaCurrentRule.getNumberOfSchemaDeviatedAttributes() - 1;
-
-		try {
-			// encode 3rd level event-code
-			block.writeEventCode(ec3nil, MethodsBag
-					.getCodingLength(schemaCurrentRule
-							.getNumberOfSchemaDeviatedAttributes()));
-
-			// encode content as string
-			block.writeString(value);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void encodeGenericValue(int ec, String uri, String localName,
-			String value) throws EXIException {
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-		try {
-			// content as string
-			block.writeValueAsString(uri, localName, value);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void encodeUnexpectedAttribute(String uri, String localName,
-			String value) throws EXIException {
-		// encode expanded name
-		encodeExpandedName(uri, localName);
-
-		// encode content as string
-		try {
-			block.writeValueAsString(uri, localName, value);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void encodeUnexpectedAttributeAndLearn(String uri,
-			String localName, String value) throws EXIException {
-		// encode unexpected attribute
-		encodeUnexpectedAttribute(uri, localName, value);
-
-		// learn attribute event ?
-		currentRule.learnAttribute(uri, localName);
-	}
-
-	protected void encodeExpandedName(String uri, String localName)
-			throws EXIException {
-		try {
-			// encode expanded name (uri & localName)
-			block.writeUri(uri);
-			block.writeLocalName(localName, uri);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+	protected void encodeQName(String uri, String localName, String prefix)
+			throws IOException {
+		// encode expanded name (uri followed by localName)
+		block.writeUri(uri);
+		block.writeLocalName(localName, uri);
+		//	prefix 
+		encodeQNamePrefix(uri, prefix);
 	}
 
 	public void encodeStartDocument() throws EXIException {
@@ -275,20 +164,19 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		// replaceRuleAtTheTop ( getCurrentRule ( ).stepForward ( isStartTagRule
 		// ( ), EventType.START_DOCUMENT ) );
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
-
 	}
 
 	public void encodeEndDocument() throws EXIException {
-		int ec = currentRule.get1stLevelEventCode(eventED);
-
-		if (ec == Constants.NOT_FOUND) {
-			throw new EXIException("No EXI Event found for endDocument");
-		} else {
-			// encode EventCode
-			this.encode1stLevelEventCode(ec);
-		}
-
 		try {
+			int ec = currentRule.get1stLevelEventCode(eventED);
+
+			if (ec == Constants.NOT_FOUND) {
+				throw new EXIException("No EXI Event found for endDocument");
+			} else {
+				// encode EventCode
+				this.encode1stLevelEventCode(ec);
+			}
+
 			// flush chunk(s) to bit/byte output stream
 			block.flush();
 			// block.close ( );
@@ -297,82 +185,73 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		}
 	}
 
-	public void encodeStartElement(String uri, String localName)
+	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException {
-		// update lookup event
-		eventSE.setNamespaceURI(uri);
-		eventSE.setLocalPart(localName);
+		try {
+			// update lookup event
+			eventSE.setNamespaceURI(uri);
+			eventSE.setLocalPart(localName);
 
-		int ec = currentRule.get1stLevelEventCode(eventSE);
+			int ec = currentRule.get1stLevelEventCode(eventSE);
 
-		if (ec == Constants.NOT_FOUND) {
-			// generic SE (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode(eventSEg);
+			if (ec == Constants.NOT_FOUND) {
+				// generic SE (on first level)
+				int ecGeneric = currentRule.get1stLevelEventCode(eventSEg);
 
-			if (ecGeneric == Constants.NOT_FOUND) {
-				// Undeclared SE(*) can be found on 2nd level
-				int ecSEundeclared = currentRule.get2ndLevelEventCode(
-						EventType.START_ELEMENT_GENERIC_UNDECLARED,
-						fidelityOptions);
+				if (ecGeneric == Constants.NOT_FOUND) {
+					// Undeclared SE(*) can be found on 2nd level
+					int ecSEundeclared = currentRule.get2ndLevelEventCode(
+							EventType.START_ELEMENT_GENERIC_UNDECLARED,
+							fidelityOptions);
 
-				if (ecSEundeclared == Constants.NOT_FOUND) {
-					// TODO skip element ?
-					throw new IllegalArgumentException("SE " + uri + ":"
-							+ localName);
+					if (ecSEundeclared == Constants.NOT_FOUND) {
+						// TODO skip element ?
+						throw new IllegalArgumentException("SE " + uri + ":"
+								+ localName);
+					} else {
+						// encode [undeclared] event-code
+						encode2ndLevelEventCode(ecSEundeclared);
+						// encode expanded name
+						encodeQName(uri, localName, prefix);
+						// learn startElement event ?
+						currentRule.learnStartElement(uri, localName);
+						// step forward in current rule (replace rule at the
+						// top)
+						replaceRuleAtTheTop(currentRule
+								.getElementContentRuleForUndeclaredSE());
+						// push next rule
+						pushRule(uri, localName);
+					}
 				} else {
-					// encode [undeclared] event-code
-					encode2ndLevelEventCode(ecSEundeclared);
-
+					// SE(*) on first level
+					// encode EventCode
+					encode1stLevelEventCode(ecGeneric);
 					// encode expanded name
-					encodeExpandedName(uri, localName);
-
-					// learn startElement event ?
-					currentRule.learnStartElement(uri, localName);
-
+					encodeQName(uri, localName, prefix);
+					Rule tmpStorage = currentRule;
 					// step forward in current rule (replace rule at the top)
-					replaceRuleAtTheTop(currentRule
-							.getElementContentRuleForUndeclaredSE());
-
+					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
 					// push next rule
 					pushRule(uri, localName);
+					// learning in schema-less case
+					tmpStorage.learnStartElement(uri, localName);
 				}
 			} else {
-				// SE(*) on first level
 				// encode EventCode
-				encode1stLevelEventCode(ecGeneric);
-
-				// encode expanded name
-				encodeExpandedName(uri, localName);
-
-				Rule tmpStorage = currentRule;
-
+				encode1stLevelEventCode(ec);
+				//	prefix ?
+				encodeQNamePrefix(uri, prefix);
 				// step forward in current rule (replace rule at the top)
-				replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
-
+				replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 				// push next rule
 				pushRule(uri, localName);
-
-				// learning in schema-less case
-				tmpStorage.learnStartElement(uri, localName);
 			}
-		} else {
-			// encode EventCode
-			encode1stLevelEventCode(ec);
 
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-			// push next rule
-			pushRule(uri, localName);
+			// update scope
+			pushScope(uri, localName);
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
-
-		// update scope
-		pushScope(uri, localName);
-	}
-
-	public void encodeStartElement(String uri, String localName, String raw)
-			throws EXIException {
-		encodeStartElement(uri, localName);
 	}
 
 	public void encodeNamespaceDeclaration(String uri, String prefix)
@@ -381,216 +260,128 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	}
 
 	public void encodeEndElement() throws EXIException {
-		int ec = currentRule.get1stLevelEventCode(eventEE);
+		try {
+			int ec = currentRule.get1stLevelEventCode(eventEE);
 
-		// Special case: SAX does not inform about empty ("") CH events
-		// --> if EE is not found check whether an empty CH event *helps*
-		if (ec == Constants.NOT_FOUND) {
-			int ecCH = currentRule.get1stLevelEventCode(eventCH);
+			// Special case: SAX does not inform about empty ("") CH events
+			// --> if EE is not found check whether an empty CH event *helps*
+			if (ec == Constants.NOT_FOUND) {
+				int ecCH = currentRule.get1stLevelEventCode(eventCH);
 
-			if (ecCH != Constants.NOT_FOUND
-					&& block.isTypeValid(getDatatypeOfEvent(ecCH),
-							Constants.EMPTY_STRING)) {
+				if (ecCH != Constants.NOT_FOUND
+						&& block.isTypeValid(getDatatypeOfEvent(ecCH),
+								Constants.EMPTY_STRING)) {
 
-				// Yep, CH is successful
+					// Yep, CH is successful
+					// encode schema-valid content plus moves on in grammar
+					encode1stLevelEventCode(ecCH);
+					block.writeTypeValidValue(getScopeURI(),
+							getScopeLocalName());
 
-				// encode schema-valid content plus moves on in grammar
-				encodeTypeValidValue(ecCH, getScopeURI(), getScopeLocalName());
+					// step forward in current rule (replace rule at the top)
+					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecCH));
 
-				// step forward in current rule (replace rule at the top)
-				replaceRuleAtTheTop(currentRule.get1stLevelRule(ecCH));
-
-				// try the EE event once again
-				ec = currentRule.get1stLevelEventCode(eventEE);
+					// try the EE event once again
+					ec = currentRule.get1stLevelEventCode(eventEE);
+				}
 			}
-		}
 
-		if (ec == Constants.NOT_FOUND) {
-			// Undeclared EE can be found on 2nd level
-			int ecEEundeclared = currentRule.get2ndLevelEventCode(
-					EventType.END_ELEMENT_UNDECLARED, fidelityOptions);
+			if (ec == Constants.NOT_FOUND) {
+				// Undeclared EE can be found on 2nd level
+				int ecEEundeclared = currentRule.get2ndLevelEventCode(
+						EventType.END_ELEMENT_UNDECLARED, fidelityOptions);
 
-			if (ecEEundeclared == Constants.NOT_FOUND) {
-				// TODO skip element ?
-				throw new IllegalArgumentException("EE " + getScopeURI() + ":"
-						+ getScopeLocalName());
+				if (ecEEundeclared == Constants.NOT_FOUND) {
+					// TODO skip element ?
+					throw new IllegalArgumentException("EE " + getScopeURI()
+							+ ":" + getScopeLocalName());
+				} else {
+					// encode [undeclared] event-code
+					encode2ndLevelEventCode(ecEEundeclared);
+
+					// learn end-element event ?
+					currentRule.learnEndElement();
+				}
 			} else {
-				// encode [undeclared] event-code
-				encode2ndLevelEventCode(ecEEundeclared);
-
-				// learn end-element event ?
-				currentRule.learnEndElement();
+				// encode EventCode
+				encode1stLevelEventCode(ec);
 			}
-		} else {
-			// encode EventCode
-			encode1stLevelEventCode(ec);
-		}
 
-		// pop the rule from the top of the stack
-		popRule();
-		popScope();
+			// pop the rule from the top of the stack
+			popRule();
+			popScope();
+
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
 
 	public void encodeXsiType(String raw) throws EXIException {
-		if (currentRule.isSchemaRule()) {
-			int ec2 = currentRule.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
+		try {
+			if (currentRule.isSchemaRule()) {
+				int ec2 = currentRule.get2ndLevelEventCode(
+						EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
 
-			if (ec2 == Constants.NOT_FOUND) {
-				// schema deviation in strict mode ONLY
-				assert (fidelityOptions.isStrict());
+				if (ec2 == Constants.NOT_FOUND) {
+					// schema deviation in strict mode ONLY
+					assert (fidelityOptions.isStrict());
 
-				String msg = "Skip unexpected type-cast, xsi:type=" + raw;
-				errorHandler.warning(new EXIException(msg));
-			} else {
-
-				String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
-				String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
-				String xsiTypeLocalName;
-				/*
-				 * If there is no namespace in scope for the specified qname
-				 * prefix, the QName uri is set to empty ("") and the QName
-				 * localName is set to the full lexical value of the QName,
-				 * including the prefix.
-				 */
-				if (xsiTypeURI == null) {
-					xsiTypeURI = XMLConstants.NULL_NS_URI;
-					xsiTypeLocalName = raw;
+					String msg = "Skip unexpected type-cast, xsi:type=" + raw;
+					errorHandler.warning(new EXIException(msg));
 				} else {
-					xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
-				}
 
-				// lookup type-grammar
-				TypeGrammar tg = ((GrammarSchemaInformed) grammar)
-						.getTypeGrammar(xsiTypeURI, xsiTypeLocalName);
-
-				/*
-				 * The value of each AT (xsi:type) event is represented as a
-				 * QName (see 7.1.7 QName). If there is no namespace in scope
-				 * for the specified qname prefix, the QName uri is set to empty
-				 * ("") and the QName localName is set to the full lexical value
-				 * of the QName, including the prefix.
-				 */
-
-				if (tg == null) {
-					// TODO type unknown --> what to do ?
-
-					// encode event-code
-					encode2ndLevelEventCode(ec2);
-					// type as qname
-					encodeQName(Constants.EMPTY_STRING, raw);
-				} else {
-					// encode event-code
-					encode2ndLevelEventCode(ec2);
-					// type as qname
-					encodeQName(xsiTypeURI, xsiTypeLocalName);
-
-					// update grammar according to given xsi:type
-					this.replaceRuleAtTheTop(tg.getType());
-
-					this.pushScopeType(xsiTypeURI, xsiTypeLocalName);
-				}
-			}
-		} else {
-			// schema-less mode
-
-			// AT(*) can be found on 2nd level
-			int ecATundeclared = currentRule.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions);
-
-			if (ecATundeclared == Constants.NOT_FOUND) {
-				// Warn encoder that the attribute is simply skipped
-				String msg = "Skip AT xsi:type: " + raw;
-				errorHandler.warning(new EXIException(msg));
-			} else {
-				// encode event-code
-				encode2ndLevelEventCode(ecATundeclared);
-
-				// TODO The value of each AT (xsi:type) event matching the AT(*)
-				// terminal is represented as a QName (see 7.1.7 QName). If
-				// there is
-				// no namespace in scope for the specified qname prefix, the
-				// QName
-				// uri is set to empty ("") and the QName localName is set to
-				// the
-				// full lexical value of the QName, including the prefix.
-				encodeUnexpectedAttribute(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_TYPE, raw);
-			}
-		}
-	}
-
-	public void encodeXsiNil(String rawNil) throws EXIException {
-		if (currentRule.isSchemaRule()) {
-			// nillable ?
-			int ec2 = currentRule.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
-
-			if (ec2 == Constants.NOT_FOUND) {
-				// Warn encoder that the attribute is simply skipped
-				String msg = "Skip AT xsi:nil=" + rawNil;
-				errorHandler.warning(new EXIException(msg));
-			} else {
-				// schema-valid boolean ?
-				try {
-					nil.parse(rawNil);
-
-					// encode event-code + nil value
-					encode2ndLevelEventCode(ec2);
-					try {
-						block.writeBoolean(nil.getBoolean());
-					} catch (IOException e) {
-						throw new EXIException(e);
+					String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
+					String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
+					String xsiTypeLocalName;
+					/*
+					 * If there is no namespace in scope for the specified qname
+					 * prefix, the QName uri is set to empty ("") and the QName
+					 * localName is set to the full lexical value of the QName,
+					 * including the prefix.
+					 */
+					if (xsiTypeURI == null) {
+						xsiTypeURI = XMLConstants.NULL_NS_URI;
+						xsiTypeLocalName = raw;
+					} else {
+						xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
 					}
 
-					if (nil.getBoolean()) {
-						replaceRuleAtTheTop(((SchemaInformedRule) currentRule)
-								.getTypeEmpty());
+					// lookup type-grammar
+					TypeGrammar tg = ((GrammarSchemaInformed) grammar)
+							.getTypeGrammar(xsiTypeURI, xsiTypeLocalName);
+
+					/*
+					 * The value of each AT (xsi:type) event is represented as a
+					 * QName (see 7.1.7 QName). If there is no namespace in
+					 * scope for the specified qname prefix, the QName uri is
+					 * set to empty ("") and the QName localName is set to the
+					 * full lexical value of the QName, including the prefix.
+					 */
+
+					if (tg == null) {
+						// TODO type unknown --> what to do ?
+
+						// encode event-code
+						encode2ndLevelEventCode(ec2);
+						// type as qname
+						encodeQName(Constants.EMPTY_STRING, raw, "");
+
+					} else {
+						// encode event-code
+						encode2ndLevelEventCode(ec2);
+						// type as qname
+						encodeQName(xsiTypeURI, xsiTypeLocalName, "");
+
+						// update grammar according to given xsi:type
+						this.replaceRuleAtTheTop(tg.getType());
+
+						this.pushScopeType(xsiTypeURI, xsiTypeLocalName);
 					}
-
-				} catch (XMLParsingException e) {
-					// TODO If the value is not a schema-valid Boolean, the AT
-					// (xsi:nil) event is represented by the AT(*)
-					// [schema-invalid value] terminal
-					encodeTypeInvalidXsiAttribute(rawNil);
 				}
-			}
-		} else {
-			// schema-less mode
-
-			// AT(*) can be found on 2nd level
-			int ecATundeclared = currentRule.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions);
-
-			if (ecATundeclared == Constants.NOT_FOUND) {
-				// Warn encoder that the attribute is simply skipped
-				String msg = "Skip AT xsi:nil";
-				errorHandler.warning(new EXIException(msg));
 			} else {
-				// encode event-code
-				encode2ndLevelEventCode(ecATundeclared);
+				// schema-less mode
 
-				encodeUnexpectedAttribute(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_NIL, rawNil);
-			}
-		}
-	}
-
-	public void encodeAttribute(final String uri, final String localName,
-			String value) throws EXIException {
-		eventAT.setNamespaceURI(uri);
-		eventAT.setLocalPart(localName);
-
-		int ec = currentRule.get1stLevelEventCode(eventAT);
-
-		if (ec == Constants.NOT_FOUND) {
-			// generic AT (on first level)
-			int ecGeneric = currentRule.get1stLevelEventCode(eventATg);
-
-			if (ecGeneric == Constants.NOT_FOUND) {
-				// Undeclared AT(*) can be found on 2nd level
+				// AT(*) can be found on 2nd level
 				int ecATundeclared = currentRule
 						.get2ndLevelEventCode(
 								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
@@ -598,47 +389,201 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 				if (ecATundeclared == Constants.NOT_FOUND) {
 					// Warn encoder that the attribute is simply skipped
-					// Note: should never happen except in strict mode
-					assert (fidelityOptions.isStrict());
-					String msg = "Skip AT " + uri + ":" + localName + " = "
-							+ value + " (StrictMode="
-							+ fidelityOptions.isStrict() + ")";
+					String msg = "Skip AT xsi:type: " + raw;
 					errorHandler.warning(new EXIException(msg));
 				} else {
 					// encode event-code
 					encode2ndLevelEventCode(ecATundeclared);
 
-					encodeUnexpectedAttributeAndLearn(uri, localName, value);
+					// TODO The value of each AT (xsi:type) event matching the
+					// AT(*)
+					// terminal is represented as a QName (see 7.1.7 QName). If
+					// there is
+					// no namespace in scope for the specified qname prefix, the
+					// QName
+					// uri is set to empty ("") and the QName localName is set
+					// to
+					// the
+					// full lexical value of the QName, including the prefix.
+					encodeQName(
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+							Constants.XSI_TYPE, "");
+					block.writeValueAsString(
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+							Constants.XSI_TYPE, raw);
 				}
-			} else {
-				// encode EventCode
-				encode1stLevelEventCode(ecGeneric);
-
-				encodeUnexpectedAttributeAndLearn(uri, localName, value);
-
-				// step forward in current rule (replace rule at the top)
-				replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
-
 			}
-		} else {
-			// attribute event found
-			if (block.isTypeValid(getDatatypeOfEvent(ec), value)) {
-				// encode schema-valid content plus moves on in grammar
-				encodeTypeValidValue(ec, uri, localName);
-			} else {
-				// encode schema-invalid value AT
-				encodeTypeInvalidValueAttribute(ec, uri, localName, value);
-			}
-
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 	}
 
-	public void encodeAttribute(String uri, String localName, String prefix,
-			String value) throws EXIException {
-		throw new RuntimeException("Encoding of AT prefix not yet implemented");
+	public void encodeXsiNil(String rawNil) throws EXIException {
+		try {
+			if (currentRule.isSchemaRule()) {
+				// nillable ?
+				int ec2 = currentRule.get2ndLevelEventCode(
+						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
+
+				if (ec2 == Constants.NOT_FOUND) {
+					// Warn encoder that the attribute is simply skipped
+					String msg = "Skip AT xsi:nil=" + rawNil;
+					errorHandler.warning(new EXIException(msg));
+				} else {
+					// schema-valid boolean ?
+					try {
+						nil.parse(rawNil);
+
+						// encode event-code + nil value
+						encode2ndLevelEventCode(ec2);
+						try {
+							block.writeBoolean(nil.getBoolean());
+						} catch (IOException e) {
+							throw new EXIException(e);
+						}
+
+						if (nil.getBoolean()) {
+							replaceRuleAtTheTop(((SchemaInformedRule) currentRule)
+									.getTypeEmpty());
+						}
+
+					} catch (XMLParsingException e) {
+						// TODO If the value is not a schema-valid Boolean, the
+						// AT
+						// (xsi:nil) event is represented by the AT(*)
+						// [schema-invalid value] terminal
+						// encode invalid 2nd level AT event-code
+						int ec2ATdeviated = currentRule.get2ndLevelEventCode(
+								EventType.ATTRIBUTE_INVALID_VALUE,
+								fidelityOptions);
+						encode2ndLevelEventCode(ec2ATdeviated);
+
+						// calculate 3rd level event-code
+						SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) currentRule;
+						int ec3nil = schemaCurrentRule
+								.getNumberOfSchemaDeviatedAttributes() - 1;
+
+						// encode 3rd level event-code
+						block
+								.writeEventCode(
+										ec3nil,
+										MethodsBag
+												.getCodingLength(schemaCurrentRule
+														.getNumberOfSchemaDeviatedAttributes()));
+
+						// encode content as string
+						block.writeString(rawNil);
+					}
+				}
+			} else {
+				// schema-less mode
+
+				// AT(*) can be found on 2nd level
+				int ecATundeclared = currentRule
+						.get2ndLevelEventCode(
+								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+								fidelityOptions);
+
+				if (ecATundeclared == Constants.NOT_FOUND) {
+					// Warn encoder that the attribute is simply skipped
+					String msg = "Skip AT xsi:nil";
+					errorHandler.warning(new EXIException(msg));
+				} else {
+					// encode event-code
+					encode2ndLevelEventCode(ecATundeclared);
+
+					encodeQName(
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+							Constants.XSI_NIL, "");
+
+					block.writeValueAsString(
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+							Constants.XSI_NIL, rawNil);
+				}
+			}
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
+
+	public void encodeAttribute(final String uri, final String localName, String prefix,
+			String value) throws EXIException {
+		try {
+			eventAT.setNamespaceURI(uri);
+			eventAT.setLocalPart(localName);
+
+			int ec = currentRule.get1stLevelEventCode(eventAT);
+
+			if (ec == Constants.NOT_FOUND) {
+				// generic AT (on first level)
+				int ecGeneric = currentRule.get1stLevelEventCode(eventATg);
+
+				if (ecGeneric == Constants.NOT_FOUND) {
+					// Undeclared AT(*) can be found on 2nd level
+					int ecATundeclared = currentRule.get2ndLevelEventCode(
+							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+							fidelityOptions);
+
+					if (ecATundeclared == Constants.NOT_FOUND) {
+						// Warn encoder that the attribute is simply skipped
+						// Note: should never happen except in strict mode
+						assert (fidelityOptions.isStrict());
+						String msg = "Skip AT " + uri + ":" + localName + " = "
+								+ value + " (StrictMode="
+								+ fidelityOptions.isStrict() + ")";
+						errorHandler.warning(new EXIException(msg));
+					} else {
+						// encode event-code
+						encode2ndLevelEventCode(ecATundeclared);
+						// encode unexpected attribute & learn attribute event ?
+						encodeQName(uri, localName, prefix);
+						block.writeValueAsString(uri, localName, value);
+						currentRule.learnAttribute(uri, localName);
+					}
+				} else {
+					// encode EventCode
+					encode1stLevelEventCode(ecGeneric);
+					// encode unexpected attribute & learn attribute event ?
+					encodeQName(uri, localName, prefix);
+					block.writeValueAsString(uri, localName, value);
+					currentRule.learnAttribute(uri, localName);
+					// step forward in current rule (replace rule at the top)
+					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
+				}
+			} else {
+				// attribute event found
+				if (block.isTypeValid(getDatatypeOfEvent(ec), value)) {
+					// encode event-code & schema-valid content
+					encode1stLevelEventCode(ec);
+					encodeQNamePrefix(uri, prefix);
+					block.writeTypeValidValue(uri, localName);
+				} else {
+					// encode schema-invalid value AT
+					int ec2ATdeviated = currentRule.get2ndLevelEventCode(
+							EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
+					encode2ndLevelEventCode(ec2ATdeviated);
+					// AT specialty: calculate 3rd level attribute event-code
+					SchemaInformedRule schemaCurrentRule = (SchemaInformedRule) currentRule;
+					int ec3 = ec
+							- schemaCurrentRule.getLeastAttributeEventCode();
+					// encode 3rd level event-code
+					block.writeEventCode(ec3, MethodsBag
+							.getCodingLength(schemaCurrentRule
+									.getNumberOfSchemaDeviatedAttributes()));
+					//	prefix ?
+					encodeQNamePrefix(uri, prefix);
+					// encode content as string
+					block.writeValueAsString(uri, localName, value);
+				}
+
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+			}
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+	
 
 	public void encodeCharacters(String chars) throws EXIException {
 		try {
@@ -681,14 +626,16 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 					// encode schema-invalid content as string plus moves on in
 					// grammar
-					encodeGenericValue(ecGeneric, getScopeURI(),
+					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
+					block.writeValueAsString(getScopeURI(),
 							getScopeLocalName(), chars);
 				}
 			} else {
 				// right characters event found & data type-valid
 				// --> encode EventCode, schema-valid content plus grammar moves
 				// on
-				encodeTypeValidValue(ec, getScopeURI(), getScopeLocalName());
+				encode1stLevelEventCode(ec);
+				block.writeTypeValidValue(getScopeURI(), getScopeLocalName());
 
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
@@ -696,7 +643,6 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
-
 	}
 
 	protected Datatype getDatatypeOfEvent(int eventCode) {
@@ -725,14 +671,13 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 			}
 		}
 	}
-	
 
 	public void encodeEntityReference(String name) throws EXIException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			try {
 				// EntityReference can be found on 2nd level
-				int ec2 = currentRule.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
-						fidelityOptions);
+				int ec2 = currentRule.get2ndLevelEventCode(
+						EventType.ENTITY_REFERENCE, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
 
 				// name AS string
@@ -787,88 +732,102 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 	/*
 	 * SELF_CONTAINED
 	 */
-	List<StringTableEncoder> scStringTables = new ArrayList<StringTableEncoder>();
-	List<Map<String, Map<String, Rule>>> scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
-
-	public int encodeStartFragmentSelfContained(String uri, String localName)
+	public int encodeStartFragmentSelfContained(String uri, String localName, String prefix)
 			throws EXIException {
+		try {
+			int skipBytesSC = -1;
 
-		int skipBytesSC = -1;
+			// SC Fragment
+			int ec2 = currentRule.get2ndLevelEventCode(
+					EventType.SELF_CONTAINED, fidelityOptions);
 
-		// SC Fragment
-		int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED,
-				fidelityOptions);
+			if (ec2 == Constants.NOT_FOUND) {
+				// throw error
+				throw new EXIException(
+						"SelfContained fragments need to be supported by EXI's Options. Please revise your configuration.");
+			} else {
 
-		if (ec2 == Constants.NOT_FOUND) {
-			// throw error
-			throw new EXIException(
-					"SelfContained fragments need to be supported by EXI's Options. Please revise your configuration.");
-		} else {
-			this.encode2ndLevelEventCode(ec2);
+				this.encode2ndLevelEventCode(ec2);
 
-			// 1. Save the string table, grammars, namespace prefixes and any
-			// implementation-specific state learned while processing this EXI
-			// Body.
-			// 2. Initialize the string table, grammars, namespace prefixes and
-			// any implementation-specific state learned while processing this
-			// EXI Body to the state they held just prior to processing this EXI
-			// Body.
-			// 3. Skip to the next byte-aligned boundary in the stream.
-			try {
+				// 1. Save the string table, grammars, namespace prefixes and
+				// any
+				// implementation-specific state learned while processing this
+				// EXI
+				// Body.
+				// 2. Initialize the string table, grammars, namespace prefixes
+				// and
+				// any implementation-specific state learned while processing
+				// this
+				// EXI Body to the state they held just prior to processing this
+				// EXI
+				// Body.
+				// 3. Skip to the next byte-aligned boundary in the stream.
 				block.skipToNextByteBoundary();
 
 				if (block.bytePositionSupported()) {
 					skipBytesSC = block.getBytePosition();
 				}
 
-			} catch (IOException e) {
-				throw new EXIException(e);
-			}
-			// string tables
-			TypeEncoder te = this.block.getTypeEncoder();
-			scStringTables.add(te.getStringTable());
-			// TODO create *just* string table and not whole TypeEncoder again
-			te.setStringTable(exiFactory.createTypeEncoder().getStringTable());
-			// runtime-rules
-			scRuntimeDispatchers.add(this.runtimeDispatcher);
-			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
-			// TODO namespace prefixes
+				// string tables
+				TypeEncoder te = this.block.getTypeEncoder();
+				scStringTables.add(te.getStringTable());
+				// TODO create *just* string table and not whole TypeEncoder
+				// again
+				te.setStringTable(exiFactory.createTypeEncoder()
+						.getStringTable());
+				// runtime-rules
+				scRuntimeDispatchers.add(this.runtimeDispatcher);
+				this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
+				// TODO namespace prefixes
 
-			// 4. Let qname be the qname of the SE event immediately preceding
-			// this SC event.
-			// 5. Let content be the sequence of events following this SC event
-			// that match the grammar for element qname, up to and including the
-			// terminating EE event.
-			// 6. Evaluate the sequence of events (SD, SE(qname), content, ED)
-			// according to the Fragment grammar.
-			this.replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
-			this.encodeStartElement(uri, localName);
+				// 4. Let qname be the qname of the SE event immediately
+				// preceding
+				// this SC event.
+				// 5. Let content be the sequence of events following this SC
+				// event
+				// that match the grammar for element qname, up to and including
+				// the
+				// terminating EE event.
+				// 6. Evaluate the sequence of events (SD, SE(qname), content,
+				// ED)
+				// according to the Fragment grammar.
+				this.replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
+				replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
+				this.encodeStartElement(uri, localName, prefix);
+			}
+
+			return skipBytesSC;
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 
-		return skipBytesSC;
 	}
 
 	public void encodeEndFragmentSelfContained() throws EXIException {
-		// close SC fragment
+		try {
+			// close SC fragment
+			int ec = currentRule.get1stLevelEventCode(eventED);
 
-		int ec = currentRule.get1stLevelEventCode(eventED);
+			if (ec == Constants.NOT_FOUND) {
+				throw new EXIException("No EXI Event found for endDocument");
+			} else {
+				// encode EventCode
 
-		if (ec == Constants.NOT_FOUND) {
-			throw new EXIException("No EXI Event found for endDocument");
-		} else {
-			// encode EventCode
-			this.encode1stLevelEventCode(ec);
+				this.encode1stLevelEventCode(ec);
+
+			}
+			this.popRule();
+
+			// 7. Restore the string table, grammars, namespace prefixes and
+			// implementation-specific state learned while processing this EXI
+			// Body to that saved in step 1 above.
+			TypeEncoder te = this.block.getTypeEncoder();
+			te.setStringTable(scStringTables.remove(scStringTables.size() - 1));
+			this.runtimeDispatcher = scRuntimeDispatchers
+					.remove(scRuntimeDispatchers.size() - 1);
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
-		this.popRule();
-
-		// 7. Restore the string table, grammars, namespace prefixes and
-		// implementation-specific state learned while processing this EXI
-		// Body to that saved in step 1 above.
-		TypeEncoder te = this.block.getTypeEncoder();
-		te.setStringTable(scStringTables.remove(scStringTables.size() - 1));
-		this.runtimeDispatcher = scRuntimeDispatchers
-				.remove(scRuntimeDispatchers.size() - 1);
 	}
 
 }

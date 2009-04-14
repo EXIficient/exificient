@@ -69,20 +69,22 @@ public class FragmentsTestCase extends TestCase {
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			
+			String pfx = null;	//	unset according fidelity-options
 
 			encoder.encodeStartDocument();
 
-			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
-			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalName());
-			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName(), pfx);
+			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalName(), pfx);
+			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(), pfx,
 					atCh1);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();
-			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName());
-			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalName());
-			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(),
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalName(), pfx);
+			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalName(), pfx);
+			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalName(), pfx,
 					atCh2);
-			encoder.encodeAttribute(at2.getNamespaceURI(), at2.getLocalName(),
+			encoder.encodeAttribute(at2.getNamespaceURI(), at2.getLocalName(), pfx,
 					atCh3);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();

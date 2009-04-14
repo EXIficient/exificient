@@ -47,7 +47,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.2.20090331
+ * @version 0.2.20090414
  */
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
@@ -67,6 +67,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String elementPrefix;
 	protected String attributeURI;
 	protected String attributeLocalName;
+	protected String attributePrefix;
 
 	protected String attributeValue;
 	protected String xsiTypeUri;
@@ -90,7 +91,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	public AbstractEXIDecoder(EXIFactory exiFactory) {
 		super(exiFactory);
-		
+
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PREFIX);
 	}
@@ -228,12 +229,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 	}
 
-	protected void handleElementPrefixes() throws EXIException {
+	protected String decodeQNamePrefix(String uri) throws EXIException {
 		try {
+			String prefix = null;
 			if (preservePrefixes) {
 				@SuppressWarnings("unchecked")
-				Enumeration<String> validPrefixes = namespaces
-						.getPrefixes(elementURI);
+				Enumeration<String> validPrefixes = namespaces.getPrefixes(uri);
 
 				if (validPrefixes.hasMoreElements()) {
 					int numberOfPrefixes = 0;
@@ -250,17 +251,19 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 						@SuppressWarnings("unchecked")
 						Enumeration<String> validPrefixes2 = namespaces
-								.getPrefixes(elementURI);
+								.getPrefixes(uri);
 						while (id != 0) {
 							validPrefixes2.nextElement();
 							id--;
 						}
-						this.elementPrefix = validPrefixes2.nextElement();
+						prefix = validPrefixes2.nextElement();
+
 					}
 				} else {
 					// no previous NS mapping in charge
 				}
 			}
+			return prefix;
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -272,7 +275,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		this.elementLocalName = ((StartElement) nextEvent).getLocalPart();
 
 		// handle element prefixes
-		handleElementPrefixes();
+		elementPrefix = decodeQNamePrefix(this.elementURI);
 
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
@@ -287,7 +290,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		decodeStartElementExpandedName();
 
 		// handle element prefixes
-		handleElementPrefixes();
+		elementPrefix = decodeQNamePrefix(elementURI);
 
 		Rule tmpStorage = currentRule;
 
@@ -308,7 +311,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		decodeStartElementExpandedName();
 
 		// handle element prefixes
-		handleElementPrefixes();
+		elementPrefix = decodeQNamePrefix(this.elementURI);
 
 		// learn start-element ?
 		currentRule.learnStartElement(elementURI, elementLocalName);
@@ -361,6 +364,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		this.attributeURI = at.getNamespaceURI();
 		this.attributeLocalName = at.getLocalPart();
 
+		// handle attribute prefix
+		attributePrefix = decodeQNamePrefix(this.attributeURI);
+
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 
@@ -370,6 +376,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void decodeAttributeGenericStructure() throws EXIException {
 		// decode structure
 		decodeAttributeGenericUndeclaredStructure();
+
+		// handle attribute prefix
+		attributePrefix = decodeQNamePrefix(this.attributeURI);
 
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
@@ -381,6 +390,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// decode uri & local-name
 			this.attributeURI = block.readUri();
 			this.attributeLocalName = block.readLocalName(attributeURI);
+
+			// handle attribute prefix
+			attributePrefix = decodeQNamePrefix(this.attributeURI);
 
 			if (attributeURI
 					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)
@@ -472,7 +484,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throw new EXIException(e);
 		}
 	}
-	
+
 	protected void decodeEntityReferenceStructure() throws EXIException {
 		try {
 			// decode name AS string
@@ -525,6 +537,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public String getAttributeLocalName() {
 		return attributeLocalName;
 	}
+	
+	public String getAttributePrefix() {
+		return attributePrefix;
+	}
 
 	public String getAttributeValue() {
 		return attributeValue;
@@ -565,7 +581,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public String getDocTypeText() {
 		return docTypeText;
 	}
-	
+
 	public String getEntityReferenceName() {
 		return entityReferenceName;
 	}
