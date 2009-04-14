@@ -16,7 +16,6 @@
       <nsp:link nsp:subordinates="worker"/>
    </person>
    
-   
   <person id="Boss">
       <nss:name xmlns:nss="http://www.svl.xyz.com" xmlns:nssFoo="http://www.svl.xyz.com"
          xmlns:nspFoo="http://www.pok.xyz.com">
