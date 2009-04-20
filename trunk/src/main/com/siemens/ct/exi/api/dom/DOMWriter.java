@@ -113,11 +113,15 @@ public class DOMWriter {
 
 	protected void encodeNode(Node root) throws EXIException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
-
+		
 		// start element
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
 				: root.getNamespaceURI();
 		String localName = root.getLocalName();
+		if (localName == null) {
+			//	namespace-awareness ??
+			throw new EXIException("EXI requires namespace-aware DOM (nodes)");
+		}
 
 		encoder.encodeStartElement(namespaceURI, localName, root.getPrefix());
 
