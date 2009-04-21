@@ -81,7 +81,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081014
+ * @version 0.3.20090421
  */
 
 /*
@@ -332,7 +332,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		}
 	}
 
-	private ExpandedName[] initGrammars() {
+	private ExpandedName[] initGrammars() throws EXIException {
 		// ExpandedName[] globalElements
 		ArrayList<ExpandedName> docElements = new ArrayList<ExpandedName>();
 
@@ -507,7 +507,8 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		return vSortedAttributes;
 	}
 
-	protected Attribute getAttributeEvent(XSAttributeUse attrUse) {
+	protected Attribute getAttributeEvent(XSAttributeUse attrUse)
+			throws EXIException {
 		XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
 		XSSimpleTypeDefinition attrTypeDefinition = attrDecl
 				.getTypeDefinition();
@@ -543,7 +544,8 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	}
 
 	private SchemaInformedRule handleAttributes(SchemaInformedRule ruleContent,
-			SchemaInformedRule ruleContent2, XSObjectList attributes) {
+			SchemaInformedRule ruleContent2, XSObjectList attributes)
+			throws EXIException {
 		SchemaInformedRule ruleCurrent = new RuleStartTagSchemaInformed(
 				ruleContent2);
 		ruleCurrent.joinRules(ruleContent);
@@ -607,7 +609,8 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	}
 
 	protected void translatElementDeclarationToFSA(
-			XSElementDeclaration xsElementDeclaration, ExpandedName scope) {
+			XSElementDeclaration xsElementDeclaration, ExpandedName scope)
+			throws EXIException {
 		// handle element recursion
 		if (this.handledElements.contains(xsElementDeclaration)) {
 			return;
@@ -673,8 +676,10 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	 * 
 	 * @param td
 	 * @return
+	 * @throws EXIException
 	 */
-	protected TypeGrammar translateTypeDefinitionToFSA(XSTypeDefinition td) {
+	protected TypeGrammar translateTypeDefinitionToFSA(XSTypeDefinition td)
+			throws EXIException {
 		SchemaInformedRule type_i = null;
 		SchemaInformedRule typeEmpty_i = null;
 
@@ -756,7 +761,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	}
 
 	protected SchemaInformedRule translateComplexTypeDefinitionToFSA(
-			XSComplexTypeDefinition ctd) {
+			XSComplexTypeDefinition ctd) throws EXIException {
 		SchemaInformedRule ruleContent = null;
 
 		switch (ctd.getContentType()) {
@@ -840,7 +845,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	}
 
 	protected RuleElementSchemaInformed translateSimpleTypeDefinitionToFSA(
-			XSSimpleTypeDefinition std) {
+			XSSimpleTypeDefinition std) throws EXIException {
 
 		ExpandedName nameValueType;
 		if (std.getAnonymous()) {
@@ -868,7 +873,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	 * Algorithm Tp(S) To translate a particle to an FSA ending at a state S
 	 */
 	protected SchemaInformedRule translateParticleToFSA(XSParticle particle,
-			SchemaInformedRule s) {
+			SchemaInformedRule s) throws EXIException {
 		// 1. Set n to S
 		SchemaInformedRule n = s;
 
@@ -957,7 +962,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	// private SchemaInformedRule translateTermToFSA ( XSTerm xsTerm,
 	// ExpandedName scope, SchemaInformedRule s )
 	protected SchemaInformedRule translateTermToFSA(XSTerm xsTerm,
-			SchemaInformedRule s) {
+			SchemaInformedRule s) throws EXIException {
 		if (xsTerm instanceof XSElementDeclaration) {
 			// Element declaration
 			// If the term is an element declaration, create a new state b,

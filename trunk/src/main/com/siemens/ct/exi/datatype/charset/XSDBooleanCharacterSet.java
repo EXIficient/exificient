@@ -16,10 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.charset;
+
+import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 /**
- * TODO Description
+ * Built-In Restricted Character Set for xsd:boolean
+ * http://www.w3.org/TR/exi/#builtInRestrictedStrings
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -27,16 +30,29 @@ package com.siemens.ct.exi.datatype;
  * @version 0.3.20090421
  */
 
-public enum BuiltInType {
-	BUILTIN_BINARY_BASE64, BUILTIN_BINARY_HEX, BUILTIN_BOOLEAN, BUILTIN_BOOLEAN_PATTERN, BUILTIN_DECIMAL, BUILTIN_FLOAT, BUILTIN_NBIT_INTEGER, BUILTIN_UNSIGNED_INTEGER, BUILTIN_INTEGER, BUILTIN_QNAME,
-	/* Datetime */
-	BUILTIN_DATETIME,
-	/* String */
-	BUILTIN_STRING,
-	/* Enumeration */
-	BUILTIN_ENUMERATION,
-	/* List */
-	BUILTIN_LIST,
-	/* Restricted Character Set */
-	BUILTIN_RESTRICTED_CHARACTER_SET;
+public class XSDBooleanCharacterSet extends AbstractRestrictedCharacterSet {
+
+	/*
+	 * xsd:boolean { #x9, #xA, #xD, #x20, 0, 1, a, e, f, l, r, s, t, u }
+	 */
+	public XSDBooleanCharacterSet() {
+		super();
+		// #x9, #xA, #xD, #x20
+		addValue(XMLWhitespace.WS_TAB);
+		addValue(XMLWhitespace.WS_NL);
+		addValue(XMLWhitespace.WS_CR);
+		addValue(XMLWhitespace.WS_SPACE);
+		// 0, 1
+		addValue('0');
+		addValue('1');
+		// a, e, f, l, r, s, t, u
+		addValue('a');
+		addValue('e');
+		addValue('f');
+		addValue('l');
+		addValue('r');
+		addValue('s');
+		addValue('t');
+		addValue('u');
+	}
 }

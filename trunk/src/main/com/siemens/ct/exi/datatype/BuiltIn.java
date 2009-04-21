@@ -32,6 +32,9 @@ import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
+import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDRegularExpression;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
@@ -43,7 +46,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
 public class BuiltIn {
@@ -81,7 +84,10 @@ public class BuiltIn {
 	public static final Datatype BOOLEAN_DATATYPE;
 
 	// built-In mapping
-	private static Map<ExpandedName, ExpandedName> datatypeMapping;
+	protected static Map<ExpandedName, ExpandedName> datatypeMapping;
+
+	// regular expression parser
+	protected static XSDRegularExpression xsdRegexp;
 
 	static {
 		/*
@@ -163,9 +169,13 @@ public class BuiltIn {
 		datatypeMapping.put(XSD_STRING, XSD_STRING);
 		// unknown
 		datatypeMapping.put(XSD_ANY_SIMPLE_TYPE, XSD_STRING);
+
+		// regular expressions
+		xsdRegexp = XSDRegularExpression.newInstance();
 	}
 
-	public static Datatype getDatatype(XSSimpleTypeDefinition std) {
+	public static Datatype getDatatype(XSSimpleTypeDefinition std)
+			throws EXIException {
 		Datatype datatype = null;
 
 		// is list ?
@@ -339,7 +349,8 @@ public class BuiltIn {
 		return new ExpandedName(type.getNamespace(), type.getName());
 	}
 
-	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std) {
+	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std)
+			throws EXIException {
 		Datatype datatype;
 
 		ExpandedName schemaDatatype = getXMLSchemaDatatype(std);
@@ -394,27 +405,24 @@ public class BuiltIn {
 			// returns integer type (nbit, unsigned, int) according to facets
 			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
 		} else {
-			// ( XSD_STRING.equals ( exiDatatypeID ) )
-			// if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-			// StringList sl = std.getLexicalPattern();
-			// Pattern p = Pattern.compile(sl.item(0));
-			// Matcher m = p.matcher("");
-			// m.groupCount();
-			// // m.group(0);
-			//				
-			// // Pattern.compile(sl.item(0), Pattern.LITERAL);
-			// p.split(sl.item(0));
-			// sl.item(0);
-			// sl.getLength();
-			//				
-			// RegularExpression re = new RegularExpression(sl.item(0));
-			// re.getNumberOfGroups();
-			// re.getOptions();
-			// re.getPattern();
-			//				
-			// }
-
-			datatype = new DatatypeString(datatypeID);
+			// XSD_STRING with or without pattern
+			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
+				StringList sl = std.getLexicalPattern();
+				assert (sl.getLength() == 1); // why multiple ?
+				xsdRegexp.analyze(sl.item(0));
+				if (xsdRegexp.isEntireSetOfXMLCharacters()) {
+					// *normal* string
+					datatype = new DatatypeString(datatypeID);
+				} else {
+					// restricted char set
+					RestrictedCharacterSet rcs = xsdRegexp
+							.getRestrictedCharacterSet();
+					datatype = new DatatypeRestrictedCharacterSet(datatypeID,
+							rcs);
+				}
+			} else {
+				datatype = new DatatypeString(datatypeID);
+			}
 		}
 
 		return datatype;

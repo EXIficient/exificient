@@ -16,9 +16,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.charset;
 
 import com.siemens.ct.exi.exceptions.UnknownElementException;
+
+/**
+ * If a string value is associated with a schema datatype and one or more of the
+ * datatypes in its datatype hierarchy has one or more pattern facets, there may
+ * be a restricted character set defined for the string value.
+ * http://www.w3.org/TR/exi/#restrictedCharSet
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.3.20090421
+ */
 
 public interface RestrictedCharacterSet {
 	/**

@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
@@ -33,7 +33,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081117
+ * @version 0.3.20090421
  */
 
 public class RestrictedCharacterSetDatatypeEncoder extends
@@ -41,10 +41,17 @@ public class RestrictedCharacterSetDatatypeEncoder extends
 	protected RestrictedCharacterSet rcs;
 	protected String lastValidValue;
 
+	public RestrictedCharacterSetDatatypeEncoder(TypeEncoder typeEncoder) {
+		super(typeEncoder);
+	}
+	
 	public RestrictedCharacterSetDatatypeEncoder(TypeEncoder typeEncoder,
 			RestrictedCharacterSet rcs) {
 		super(typeEncoder);
-
+		setRestrictedCharacterSet(rcs);
+	}
+	
+	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {
 		this.rcs = rcs;
 	}
 
@@ -81,7 +88,7 @@ public class RestrictedCharacterSetDatatypeEncoder extends
 								numberOfBits);
 
 						// UCS code point of the character
-						// TODO UTF-16 surrogate pair?
+						// TODO UTF-16 surrogate pair
 						valueChannel.encodeUnsignedInteger(ch);
 					} else {
 						valueChannel.encodeNBitUnsignedInteger(code,

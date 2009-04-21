@@ -16,10 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.charset;
+
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * TODO Description
+ * Utility class the build a RestrictedCharacterSet by a given Set.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -27,16 +30,14 @@ package com.siemens.ct.exi.datatype;
  * @version 0.3.20090421
  */
 
-public enum BuiltInType {
-	BUILTIN_BINARY_BASE64, BUILTIN_BINARY_HEX, BUILTIN_BOOLEAN, BUILTIN_BOOLEAN_PATTERN, BUILTIN_DECIMAL, BUILTIN_FLOAT, BUILTIN_NBIT_INTEGER, BUILTIN_UNSIGNED_INTEGER, BUILTIN_INTEGER, BUILTIN_QNAME,
-	/* Datetime */
-	BUILTIN_DATETIME,
-	/* String */
-	BUILTIN_STRING,
-	/* Enumeration */
-	BUILTIN_ENUMERATION,
-	/* List */
-	BUILTIN_LIST,
-	/* Restricted Character Set */
-	BUILTIN_RESTRICTED_CHARACTER_SET;
+public class CharacterSet extends AbstractRestrictedCharacterSet {
+
+	public CharacterSet(Set<Character> charSet) {
+		super();
+		// iterate over characters
+		Iterator<Character> iter = charSet.iterator();
+		while(iter.hasNext()) {
+			addValue(iter.next());
+		}
+	}
 }
