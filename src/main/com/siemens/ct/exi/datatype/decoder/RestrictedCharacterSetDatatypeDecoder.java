@@ -21,7 +21,7 @@ package com.siemens.ct.exi.datatype.decoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -32,18 +32,26 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090421
  */
 
 public class RestrictedCharacterSetDatatypeDecoder extends
 		AbstractDatatypeDecoder {
 	protected RestrictedCharacterSet rcs;
 
+	public RestrictedCharacterSetDatatypeDecoder() {
+		super();
+	}
+	
 	public RestrictedCharacterSetDatatypeDecoder(RestrictedCharacterSet rcs) {
 		super();
-
+		setRestrictedCharacterSet(rcs);
+	}
+	
+	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {
 		this.rcs = rcs;
 	}
+	
 
 	public String decodeValue(TypeDecoder decoder, Datatype datatype,
 			DecoderChannel dc, String namespaceURI, String localName)

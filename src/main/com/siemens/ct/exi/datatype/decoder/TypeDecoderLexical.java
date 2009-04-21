@@ -19,7 +19,13 @@
 package com.siemens.ct.exi.datatype.decoder;
 
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.helpers.BuiltInRestrictedCharacterSets;
+import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 
 /**
  * TODO Description
@@ -27,7 +33,7 @@ import com.siemens.ct.exi.helpers.BuiltInRestrictedCharacterSets;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081105
+ * @version 0.3.20090421
  */
 
 public class TypeDecoderLexical extends TypeDecoderTypedSchemaInformed {
@@ -35,24 +41,25 @@ public class TypeDecoderLexical extends TypeDecoderTypedSchemaInformed {
 		super(exiFactory);
 
 		binaryBase64DTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDBase64BinaryInstance());
+				new XSDBase64CharacterSet());
 		binaryHexDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDHexBinaryInstance());
+				new XSDHexBinaryCharacterSet());
 		booleanDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDBooleanInstance());
+				new XSDBooleanCharacterSet());
 		booleanPatternDTD = booleanDTD;
 		decimalDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDDecimalInstance());
+				new XSDDecimalCharacterSet());
 		floatDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDDoubleInstance());
+				new XSDDoubleCharacterSet());
 		integerDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDIntegerInstance());
+				new XSDIntegerCharacterSet());
 		unsignedIntegerDTD = integerDTD;
 		nBitIntegerDTD = integerDTD;
 		datetimeDTD = new RestrictedCharacterSetDatatypeDecoder(
-				BuiltInRestrictedCharacterSets.newXSDDateTimeInstance());
+				new XSDDateTimeCharacterSet());
 		enumerationDTD = new EnumerationDatatypeDecoder();
 		listDTD = new ListDatatypeDecoder(exiFactory);
 		stringDTD = new StringDatatypeDecoder();
+		restrictedCharSetDTD = new RestrictedCharacterSetDatatypeDecoder();
 	}
 }

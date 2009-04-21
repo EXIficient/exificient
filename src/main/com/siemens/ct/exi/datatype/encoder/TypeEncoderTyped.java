@@ -27,7 +27,7 @@ import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
 public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed {
@@ -47,6 +47,7 @@ public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed {
 		enumerationDTE = new EnumerationDatatypeEncoder(this);
 		listDTE = new ListDatatypeEncoder(this, exiFactory);
 		stringDTE = new StringDatatypeEncoder(this);
+		restrictedCharSetDTE = new RestrictedCharacterSetDatatypeEncoder(this);
 	}
 
 	public TypeEncoderTyped(EXIFactory exiFactory,

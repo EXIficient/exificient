@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.DatatypeRestrictedCharacterSet;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
@@ -30,7 +31,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
 public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
@@ -47,6 +48,7 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 	protected DatatypeDecoder enumerationDTD;
 	protected DatatypeDecoder listDTD;
 	protected DatatypeDecoder stringDTD;
+	protected RestrictedCharacterSetDatatypeDecoder restrictedCharSetDTD;
 
 	public TypeDecoderTypedSchemaInformed(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -95,6 +97,12 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 			return stringDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
 			// return decodeValueAsString ( dc, localName );
+		case BUILTIN_RESTRICTED_CHARACTER_SET:
+			restrictedCharSetDTD
+			.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
+					.getRestrictedCharacterSet());
+			return restrictedCharSetDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
 		default:
 			throw new RuntimeException("Unknown BuiltIn Type");
 		}

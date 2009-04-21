@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.DatatypeRestrictedCharacterSet;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
@@ -30,7 +31,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
 public abstract class AbstractTypeEncoderSchemaInformed extends
@@ -50,6 +51,7 @@ public abstract class AbstractTypeEncoderSchemaInformed extends
 	protected DatatypeEncoder enumerationDTE;
 	protected DatatypeEncoder listDTE;
 	protected DatatypeEncoder stringDTE;
+	protected RestrictedCharacterSetDatatypeEncoder restrictedCharSetDTE;
 
 	public AbstractTypeEncoderSchemaInformed(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -95,6 +97,12 @@ public abstract class AbstractTypeEncoderSchemaInformed extends
 			break;
 		case BUILTIN_STRING:
 			lastDatatypeEncoder = stringDTE;
+			break;
+		case BUILTIN_RESTRICTED_CHARACTER_SET:
+			restrictedCharSetDTE
+					.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
+							.getRestrictedCharacterSet());
+			lastDatatypeEncoder = restrictedCharSetDTE;
 			break;
 		default:
 			throw new RuntimeException("Unknown BuiltIn Type");

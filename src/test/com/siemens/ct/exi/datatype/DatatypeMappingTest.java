@@ -324,4 +324,41 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue(BuiltInType.BUILTIN_INTEGER == dtl.getListDatatype()
 				.getDefaultBuiltInType());
 	}
+	
+	public void testRestrictedCharSet1() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='Letter'>"
+				+ "      <xs:restriction base='xs:string'>"
+				+ "      <xs:pattern value='[a-z]'/>"
+				+ "      </xs:restriction>" +
+				"    </xs:simpleType>" + "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Letter", "");
+
+		assertTrue(BuiltInType.BUILTIN_RESTRICTED_CHARACTER_SET == dt
+				.getDefaultBuiltInType());
+	}
+	
+	public void testNoRestrictedCharSet2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='Foo'>"
+				+ "      <xs:restriction base='xs:string'>"
+				+ "      <xs:pattern value='\\c'/>"
+				+ "      </xs:restriction>" +
+				"    </xs:simpleType>" + "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Foo", "");
+
+		assertTrue(BuiltInType.BUILTIN_STRING == dt
+				.getDefaultBuiltInType());
+	}
+	
+	  
+	    
+	      
+	    
+	  
+	
 }

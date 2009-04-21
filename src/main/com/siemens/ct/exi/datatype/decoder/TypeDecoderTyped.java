@@ -26,7 +26,7 @@ import com.siemens.ct.exi.EXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
 public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed {
@@ -46,5 +46,6 @@ public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed {
 		enumerationDTD = new EnumerationDatatypeDecoder();
 		listDTD = new ListDatatypeDecoder(exiFactory);
 		stringDTD = new StringDatatypeDecoder();
+		restrictedCharSetDTD = new RestrictedCharacterSetDatatypeDecoder();
 	}
 }

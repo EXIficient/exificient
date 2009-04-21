@@ -44,7 +44,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
-		SchemaTestCase.setConfigurationSchemaXsiType();
+		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );
@@ -55,8 +55,9 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
-		// SchemaTestCase.setConfigurationAttributeSpace ( );
+		SchemaTestCase.setConfigurationAttributeSpace ( );
 		// SchemaTestCase.setConfigurationBooleanPattern();
+		// SchemaTestCase.setConfigurationPattern1();
 	}
 
 	protected void setUp() {
@@ -549,5 +550,23 @@ public class SchemaTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/schema/booleanPattern.xml");
 		QuickTestConfiguration
 				.setExiLocation("./out/schema/booleanPattern.xml.exi");
+	}
+	
+	@Test
+	public void testPattern1() throws Exception {
+		// set up configuration
+		setConfigurationPattern1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationPattern1() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/pattern.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/pattern.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/pattern.xml.exi");
 	}
 }
