@@ -42,23 +42,6 @@ public class XSDRegularExpression {
 	}
 
 	public void analyze(String regex) throws EXIException {
-		walk(regex);
-	}
-
-	public boolean isEntireSetOfXMLCharacters() {
-		return entireSetOfXMLCharacters;
-	}
-
-	public RestrictedCharacterSet getRestrictedCharacterSet()
-			throws EXIException {
-		if (entireSetOfXMLCharacters) {
-			throw new EXIException(
-					"EXI-regexp, no restricted character set available");
-		}
-		return new CharacterSet(charSet);
-	}
-
-	protected void walk(String regex) throws EXIException {
 		if (regex == null || regex.length() == 0) {
 			throw new EXIException("EXI-regexp, invalid exp: " + regex);
 		} else {
@@ -70,6 +53,13 @@ public class XSDRegularExpression {
 			preLastChar = '?';
 
 			walk(regex, 0);
+
+			// naive validity check
+			// TODO introduce an appropriate pattern syntax check
+			if (startRange || startCount) { // open ?
+				throw new EXIException("Invalid Pattern Syntax: \"" + regex
+						+ "\"");
+			}
 
 			/*
 			 * If the resulting character set contains less than 255 characters,
@@ -83,6 +73,19 @@ public class XSDRegularExpression {
 
 			// System.out.println(regex + " --> " + charSet);
 		}
+	}
+
+	public boolean isEntireSetOfXMLCharacters() {
+		return entireSetOfXMLCharacters;
+	}
+
+	public RestrictedCharacterSet getRestrictedCharacterSet()
+			throws EXIException {
+		if (entireSetOfXMLCharacters) {
+			throw new EXIException(
+					"EXI-regexp, no restricted character set available");
+		}
+		return new CharacterSet(charSet);
 	}
 
 	protected void walk(String regex, int pos) throws EXIException {
