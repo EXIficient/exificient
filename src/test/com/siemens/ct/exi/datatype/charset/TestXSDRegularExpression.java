@@ -312,5 +312,17 @@ public class TestXSDRegularExpression extends AbstractTestCase  {
 		assertTrue(rcs.getCode('?')==Constants.NOT_FOUND);
 		assertTrue(rcs.getCodingLength()==4);
 	}
+	
+	
+	public void testPatternInvalid1() throws EXIException {
+		try {
+			// non-sense
+			String regex = "[bla{4}";
+			xsdRegexp.analyze(regex);
+			fail();
+		} catch (EXIException e) {
+			//	an exception for invalid regex is expected
+		}
+	}
 
 }
