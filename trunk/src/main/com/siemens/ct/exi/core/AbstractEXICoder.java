@@ -41,6 +41,7 @@ import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaLess;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
@@ -59,6 +60,7 @@ public abstract class AbstractEXICoder {
 	// cached events
 	protected final EndDocument eventED;
 	protected final StartElement eventSE;
+	protected final StartElementNS eventSE_NS;
 	protected final StartElementGeneric eventSEg;
 	protected final EndElement eventEE;
 	protected final Attribute eventAT;
@@ -106,6 +108,7 @@ public abstract class AbstractEXICoder {
 		// setup final events
 		eventED = new EndDocument();
 		eventSE = new StartElement(null, null);
+		eventSE_NS = new StartElementNS(null);
 		eventSEg = new StartElementGeneric();
 		eventEE = new EndElement();
 		eventAT = new Attribute(null, null);

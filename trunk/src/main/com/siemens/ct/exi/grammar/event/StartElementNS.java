@@ -20,29 +20,24 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.XMLConstants;
 
-import com.siemens.ct.exi.util.ExpandedNameComparable;
-
 /**
  * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081103
+ * @version 0.3.20090421
  */
 
-public class StartElement extends AbstractEvent implements
-		ExpandedNameComparable {
+public class StartElementNS extends AbstractEvent {
+
 	private String namespaceURI;
 
-	private String localPart;
-
-	public StartElement(String uri, String localName) {
-		super("SE");
-		eventType = EventType.START_ELEMENT;
+	public StartElementNS(String uri) {
+		super("SE(uri:*)");
+		eventType = EventType.START_ELEMENT_NS;
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
-		this.localPart = localName;
 	}
 
 	public String getNamespaceURI() {
@@ -53,39 +48,22 @@ public class StartElement extends AbstractEvent implements
 		this.namespaceURI = namespaceURI;
 	}
 
-	public String getLocalPart() {
-		return localPart;
-	}
-
-	public void setLocalPart(String localPart) {
-		this.localPart = localPart;
-	}
-
 	public String toString() {
-		return "SE(" + namespaceURI + ":" + localPart + ")";
+		return "SE(" + namespaceURI + ":*)";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localPart
-				.hashCode());
+		return (eventType.ordinal() ^ namespaceURI.hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof StartElement) {
-			StartElement otherSE = (StartElement) obj;
-			return (localPart.equals(otherSE.localPart) && namespaceURI
-					.equals(otherSE.namespaceURI));
+		if (obj instanceof StartElementNS) {
+			StartElementNS otherSE = (StartElementNS) obj;
+			return (namespaceURI.equals(otherSE.namespaceURI));
 		} else {
 			return false;
 		}
 	}
-
-	public int compareTo(String namespace, String localName) {
-		// first local-part and then uri
-		final int c1 = localPart.compareTo(localName);
-		return (c1 == 0 ? namespaceURI.compareTo(namespace) : c1);
-	}
-
 }
