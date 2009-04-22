@@ -96,6 +96,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeStartElement() throws EXIException {
 		decodeStartElementStructure();
 	}
+	
+	public void decodeStartElementNS() throws EXIException {
+		decodeStartElementNSStructure();
+	}
 
 	public void decodeStartElementGeneric() throws EXIException {
 		decodeStartElementGenericStructure();

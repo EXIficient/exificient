@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Utility class the build a RestrictedCharacterSet by a given Set.
+ * Utility class to build a RestrictedCharacterSet by a given Set.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com

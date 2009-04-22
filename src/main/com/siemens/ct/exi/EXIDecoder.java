@@ -89,6 +89,17 @@ public interface EXIDecoder {
 	public void decodeStartElement() throws SAXException, EXIException;
 
 	/**
+	 * Reads start element where only the URI is known.
+	 * 
+	 * <p>
+	 * Expected start element with given namespaceURI
+	 * </p>
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeStartElementNS() throws EXIException;
+	
+	/**
 	 * Reads generic start element.
 	 * 
 	 * <p>

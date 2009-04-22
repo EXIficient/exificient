@@ -258,11 +258,14 @@ public class SAXDecoder implements XMLReader {
 					break;
 				/* START ELEMENT */
 				case START_ELEMENT:
+				case START_ELEMENT_NS:
 				case START_ELEMENT_GENERIC:
 				case START_ELEMENT_GENERIC_UNDECLARED:
 					checkDeferredStartElement();
 					if (eventType == EventType.START_ELEMENT) {
 						decoder.decodeStartElement();
+					} else if (eventType == EventType.START_ELEMENT_NS) {
+						decoder.decodeStartElementNS();
 					} else if (eventType == EventType.START_ELEMENT_GENERIC) {
 						decoder.decodeStartElementGeneric();
 					} else {
@@ -318,7 +321,7 @@ public class SAXDecoder implements XMLReader {
 													.getXsiTypeName()));
 					break;
 				case ATTRIBUTE_XSI_NIL:
-				case ATTRIBUTE_XSI_NIL_DEVIATION:
+				case ATTRIBUTE_XSI_NIL_INVALID_VALUE:
 					String attributeXsiValue;
 					if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
 						decoder.decodeXsiNil();

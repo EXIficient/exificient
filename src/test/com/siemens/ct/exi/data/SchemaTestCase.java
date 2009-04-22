@@ -42,6 +42,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaAll2 ( );
 		// SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
+		SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
@@ -55,7 +56,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
-		SchemaTestCase.setConfigurationAttributeSpace ( );
+		// SchemaTestCase.setConfigurationAttributeSpace ( );
 		// SchemaTestCase.setConfigurationBooleanPattern();
 		// SchemaTestCase.setConfigurationPattern1();
 	}
@@ -342,6 +343,21 @@ public class SchemaTestCase extends AbstractTestCase {
 	}
 
 	@Test
+	public void testSchemaWildcard2() throws Exception {
+		// set up configuration
+		setConfigurationSchemaWildcard2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaWildcard2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/wildcard2.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/wildcard2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/wildcard2.exi");
+	}
+
+	@Test
 	public void testSchemaNillable1() throws Exception {
 		// set up configuration
 		setConfigurationSchemaNillable1();
@@ -551,7 +567,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/schema/booleanPattern.xml.exi");
 	}
-	
+
 	@Test
 	public void testPattern1() throws Exception {
 		// set up configuration
@@ -562,11 +578,8 @@ public class SchemaTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationPattern1() {
-		QuickTestConfiguration
-				.setXsdLocation("./data/schema/pattern.xsd");
-		QuickTestConfiguration
-				.setXmlLocation("./data/schema/pattern.xml");
-		QuickTestConfiguration
-				.setExiLocation("./out/schema/pattern.xml.exi");
+		QuickTestConfiguration.setXsdLocation("./data/schema/pattern.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/pattern.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/pattern.xml.exi");
 	}
 }

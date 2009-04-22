@@ -68,6 +68,8 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.Lambda;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleContentAllSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
@@ -1116,33 +1118,63 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			// {process contents}
 			XSWildcard xsWildcard = (XSWildcard) xsTerm;
 
-			SchemaInformedRule b = s;
+			// SchemaInformedRule b = s;
+			// SchemaInformedRule urType =
+			// GrammarSchemaInformed.getUrTypeRule().type;
+			// b.joinRules(urType);
 
-			// SchemaInformedRule particleTerm_i_1 = s;
-			// particleTerm_i_1.addTerminalRule ( END_ELEMENT );
-			// SchemaInformedRule particleTerm_i_0 = new
-			// SchemaInformedRuleElement ( );
+			SchemaInformedRule particleTerm_i_1 = s;
+			particleTerm_i_1.addTerminalRule(END_ELEMENT);
 
-			SchemaInformedRule urType = GrammarSchemaInformed.getUrTypeRule().type;
-			b.joinRules(urType);
-
+			/*
+			 * Wildcard Terms (http://www.w3.org/TR/exi/#wildcardTerms)
+			 * 
+			 * Given a particle {term} PT i that is an XML Schema wildcardXS1
+			 * with property {namespace constraint}, a grammar that reflects the
+			 * wildcard definition is created as follows.
+			 * 
+			 * Create a grammar ParticleTerm i containing the following grammar
+			 * production:
+			 * 
+			 * ParticleTerm i, 1 : EE
+			 */
+			SchemaInformedRule particleTerm_i_0 = new RuleStartTagSchemaInformed(
+					particleTerm_i_1);
+			
 			short constraintType = xsWildcard.getConstraintType();
 			if (constraintType == XSWildcard.NSCONSTRAINT_ANY
 					|| constraintType == XSWildcard.NSCONSTRAINT_NOT) {
-				// SE (*)
-				// b.addRule ( new StartElementGeneric ( ), urType );
-				// particleTerm_i_0.addRule ( new StartElementGeneric ( ),
-				// particleTerm_i_1 );
+				/*
+				 * When the wildcard's {namespace constraint} is either any or
+				 * other, add the following production to ParticleTerm i .
+				 * 
+				 * ParticleTerm i, 0 : SE() ParticleTerm i, 1
+				 */
+				//System.out.println("SE (*)");
+				particleTerm_i_0.addRule(new StartElementGeneric(),
+						particleTerm_i_1);
 			} else {
-				// ns list ?
+				// NSCONSTRAINT_LIST
+				/*
+				 * Otherwise (i.e. {namespace constraint} being a set of
+				 * namespace names), for each member value uri x in {namespace
+				 * constraint} where 0 <= x < n, and n is the number of members,
+				 * augment the uri partition of the String table with uri x (see
+				 * section 7.3.1 String Table Partitions for String table
+				 * pre-population), and add the following production to
+				 * ParticleTerm i .
+				 * 
+				 * ParticleTerm i, 0 : SE(uri x :) ParticleTerm i, 1
+				 */
+				StringList sl = xsWildcard.getNsConstraintList();
+				//System.out.println("SE(uri, *)" + sl);
 				// TODO SE(uri, *) --> StartElementNS( * )
-				// b.addRule ( new StartElementGeneric ( ), urType );
-				// particleTerm_i_0.addRule ( new StartElementGeneric ( ),
-				// urType );
+				particleTerm_i_0.addRule(new StartElementNS(sl.item(0)),
+						particleTerm_i_1);
 			}
 
-			// return particleTerm_i_0;
-			return b;
+			return particleTerm_i_0;
+			// return b;
 		} else {
 			throw new IllegalArgumentException(
 					"Unexpected XSTerm, neither ElementDeclaration, ModelGroup nor Wildcard");

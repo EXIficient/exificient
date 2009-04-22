@@ -19,51 +19,89 @@
 package com.siemens.ct.exi.grammar.event;
 
 /**
- * TODO Description
+ * <p>
+ * EventTypes used to represent XML information items in EXI (see <a
+ * href="http://www.w3.org/TR/exi/#eventCodeAssignment"> EXI Event Code
+ * Assignment</a>).
+ * 
+ * <br/>
+ * 
+ * <p>
+ * Sort all productions with G i, j on the left hand side in the following
+ * order:
+ * <ol>
+ * <li>all productions with AT(qname) on the right hand side sorted lexically by
+ * qname localName, then by qname uri, followed by</li>
+ * <li>all productions with AT(urix : *) on the right hand side sorted lexically
+ * by uri, followed by</li>
+ * <li>any production with AT(*) on the right hand side, followed by</li>
+ * <li>all productions with SE(qname) on the right hand side sorted in schema
+ * order, followed by</li>
+ * <li>all productions with SE(urix : *) on the right hand side sorted in schema
+ * order, followed by</li>
+ * <li>any production with SE(*) on the right hand side, followed by</li>
+ * <li>any production with EE on the right hand side, followed by</li>
+ * <li>any production with CH on the right hand side.</li>
+ * </ol>
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090421
  */
 
+// DO NOT CHANGE ORDER!!
+// !! Ordinal is used for sorting !!
 public enum EventType {
-	// 8.5.3.3 Event Code Assignment
-	//	
-	// Sort all productions with G i, j on the left hand side in the following
-	// order:
-	//
-	// 1. All productions with AT(qname) on the right hand side sorted lexically
-	// by qname localName, then by qname uri, followed by
-	// 2. any production with AT(*) on the right hand side, followed by
-	// 3. all productions with SE(qname) on the right hand side sorted in schema
-	// order, followed by
-	// 5. any production with EE on the right hand side, followed by
-	// 4. any production with CH on the right hand side
-
-	// TODO SE(qname) in schema order?
-
-	// DO NOT CHANGE ORDER!!
-	// !! Ordinal is used for sorting !!
-
 	/*
-	 * Order? SD || ED AT(), AT, ... SE(), SE, ... EE CH
+	 * EXI "frame" events
 	 */
-	START_DOCUMENT, END_DOCUMENT,
-
-	ATTRIBUTE_XSI_TYPE, /* 2nd level */
-	ATTRIBUTE_XSI_NIL, ATTRIBUTE_XSI_NIL_DEVIATION, ATTRIBUTE, ATTRIBUTE_GENERIC, ATTRIBUTE_GENERIC_UNDECLARED, ATTRIBUTE_INVALID_VALUE,
-
-	START_ELEMENT, START_ELEMENT_GENERIC, START_ELEMENT_GENERIC_UNDECLARED, /*
-																			 * 2nd
-																			 * level
-																			 */
-
-	END_ELEMENT, END_ELEMENT_UNDECLARED,
-
-	CHARACTERS_GENERIC, CHARACTERS, CHARACTERS_GENERIC_UNDECLARED, /* 2nd level */
-
-	NAMESPACE_DECLARATION, SELF_CONTAINED, COMMENT, PROCESSING_INSTRUCTION, DOC_TYPE, ENTITY_REFERENCE,
-
+	START_DOCUMENT, // start document
+	END_DOCUMENT, // end document
+	/*
+	 * Special XSI Attributes
+	 */
+	ATTRIBUTE_XSI_TYPE, // xsi:type
+	ATTRIBUTE_XSI_NIL, // xsi:nil
+	ATTRIBUTE_XSI_NIL_INVALID_VALUE, // // xsi:nil deviation 2nd level
+	/*
+	 * Attributes
+	 */
+	ATTRIBUTE, // schema-declared
+	ATTRIBUTE_NS, // schema-declared but URI only
+	ATTRIBUTE_GENERIC, // schema-declared but generic
+	ATTRIBUTE_INVALID_VALUE, // schema-declared but invalid
+	ATTRIBUTE_GENERIC_UNDECLARED, // schema-undeclared
+	/*
+	 * StartElements
+	 */
+	START_ELEMENT, // schema-declared
+	START_ELEMENT_NS, // schema-declared but URI only
+	START_ELEMENT_GENERIC, // schema-declared but generic
+	START_ELEMENT_GENERIC_UNDECLARED, // schema-undeclared
+	/*
+	 * EndElements
+	 */
+	END_ELEMENT, // schema-declared
+	END_ELEMENT_UNDECLARED, // schema-undeclared
+	/*
+	 * Characters
+	 */
+	CHARACTERS, // schema-declared
+	CHARACTERS_GENERIC, // schema-declared
+	CHARACTERS_GENERIC_UNDECLARED, // schema-undeclared
+	/*
+	 * Features & Fidelity Options
+	 */
+	DOC_TYPE, // doc-type part of DocContent only
+	NAMESPACE_DECLARATION, // ns declaration
+	SELF_CONTAINED, // start of self-contained fragment
+	ENTITY_REFERENCE, // entity reference
+	COMMENT, // 
+	PROCESSING_INSTRUCTION,
+	/*
+	 * Utility event while creating grammars
+	 */
 	LAMBDA;
 }

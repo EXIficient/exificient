@@ -35,6 +35,7 @@ import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.DecoderBlock;
@@ -175,7 +176,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			nextEvent = currentRule.get1stLevelEvent(ec);
 		} else if (ec3AT == (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
 			// deviated xsi:nil
-			nextEventType = EventType.ATTRIBUTE_XSI_NIL_DEVIATION;
+			nextEventType = EventType.ATTRIBUTE_XSI_NIL_INVALID_VALUE;
 		} else {
 			throw new EXIException(
 					"Error occured while decoding deviated attribute");
@@ -271,9 +272,28 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	protected void decodeStartElementStructure() throws EXIException {
 		// StartEvent
-		this.elementURI = ((StartElement) nextEvent).getNamespaceURI();
-		this.elementLocalName = ((StartElement) nextEvent).getLocalPart();
+		StartElement se = ((StartElement) nextEvent);
+		this.elementURI = se.getNamespaceURI();
+		this.elementLocalName = se.getLocalPart();
 
+		// handle element prefixes
+		elementPrefix = decodeQNamePrefix(this.elementURI);
+
+		// step forward in current rule (replace rule at the top)
+		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+
+		// update grammars etc.
+		pushRule(elementURI, elementLocalName);
+		pushScope(elementURI, elementLocalName);
+	}
+	
+	protected void decodeStartElementNSStructure() throws EXIException {
+		// StartEventNS
+		StartElementNS seNS = ((StartElementNS) nextEvent);
+		this.elementURI = seNS.getNamespaceURI();
+		// decode local-name
+		decodeStartElementURI(elementURI);
+		
 		// handle element prefixes
 		elementPrefix = decodeQNamePrefix(this.elementURI);
 
@@ -329,6 +349,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// decode uri & local-name
 			this.elementURI = block.readUri();
 			this.elementLocalName = block.readLocalName(elementURI);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+	
+	protected void decodeStartElementURI(String uri) throws EXIException {
+		try {
+			// decode local-name
+			this.elementLocalName = block.readLocalName(uri);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}

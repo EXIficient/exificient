@@ -36,6 +36,7 @@ import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.ExpandedName;
 
@@ -55,8 +56,10 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected int currentEventIndex;
 
 	// content
-	protected List<ExpandedName> genericElements;
-	protected int currentGenericElementsIndex;
+	protected List<String> elementURIs;
+	protected int currentElementURIIndex;
+	protected List<String> elementLocalNames;
+	protected int currentElementLocalNameIndex;
 	
 	protected List<String> elementPrefixes;
 	protected int currentElementPrefixIndex;
@@ -110,7 +113,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		eventTypes = new ArrayList<EventType>();
 
 		// content
-		genericElements = new ArrayList<ExpandedName>();
+		elementURIs = new ArrayList<String>();
+		elementLocalNames = new ArrayList<String>();
 		elementPrefixes = new ArrayList<String>();
 		attributePrefixes = new ArrayList<String>();
 		genericAttributes = new ArrayList<ExpandedName>();
@@ -146,8 +150,10 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		currentEventIndex = 0;
 
 		// content
-		genericElements.clear();
-		currentGenericElementsIndex = 0;
+		elementURIs.clear();
+		currentElementURIIndex = 0;
+		elementLocalNames.clear();
+		currentElementLocalNameIndex = 0;
 		
 		elementPrefixes.clear();
 		currentElementPrefixIndex = 0;
@@ -215,6 +221,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 				case START_ELEMENT:
 					decodeStartElementInternal();
 					break;
+				case START_ELEMENT_NS:
+					decodeStartElementNSInternal();
+					break;
 				case START_ELEMENT_GENERIC:
 					decodeStartElementGenericInternal();
 					break;
@@ -242,7 +251,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 				case ATTRIBUTE_XSI_NIL:
 					decodeAttributeXsiNilInternal();
 					break;
-				case ATTRIBUTE_XSI_NIL_DEVIATION:
+				case ATTRIBUTE_XSI_NIL_INVALID_VALUE:
 					decodeAttributeXsiNilDeviationInternal();
 					break;
 				case CHARACTERS:
@@ -358,17 +367,36 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected void decodeStartElementGenericInternal() throws EXIException {
 		decodeStartElementGenericStructure();
 
-		genericElements.add(new ExpandedName(elementURI, elementLocalName));
+		elementURIs.add(elementURI);
+		elementLocalNames.add(elementLocalName);
 		elementPrefixes.add(this.elementPrefix);
 	}
+	
+	protected void decodeStartElementNSInternal() throws EXIException {
+		decodeStartElementNSStructure();
+		
+		elementLocalNames.add(this.elementLocalName);
+		elementPrefixes.add(this.elementPrefix);
+	}
+	
+	public void decodeStartElementNS() throws EXIException {
+		StartElementNS seNS = ((StartElementNS) stepToNextEvent());
+		this.elementURI = seNS.getNamespaceURI();
+		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
+		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
+
+		pushScope(elementURI, elementLocalName);
+	}
+
+	
+	
 
 	public void decodeStartElementGeneric() throws EXIException {
 		stepToNextEvent();
 
 		// update element content
-		ExpandedName qname = genericElements.get(currentGenericElementsIndex++);
-		this.elementURI = qname.getNamespaceURI();
-		this.elementLocalName = qname.getLocalName();
+		this.elementURI = elementURIs.get(currentElementURIIndex++);
+		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
 		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
@@ -377,7 +405,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected void decodeStartElementUndeclaredInternal() throws EXIException {
 		decodeStartElementGenericUndeclaredStructure();
 
-		genericElements.add(new ExpandedName(elementURI, elementLocalName));
+		elementURIs.add(elementURI);
+		elementLocalNames.add(elementLocalName);
 		elementPrefixes.add(this.elementPrefix);
 	}
 
@@ -385,9 +414,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		stepToNextEvent();
 
 		// update element content
-		ExpandedName qname = genericElements.get(currentGenericElementsIndex++);
-		this.elementURI = qname.getNamespaceURI();
-		this.elementLocalName = qname.getLocalName();
+		this.elementURI = elementURIs.get(currentElementURIIndex++);
+		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
 		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
