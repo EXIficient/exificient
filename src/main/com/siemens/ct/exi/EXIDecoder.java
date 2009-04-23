@@ -151,6 +151,13 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeAttribute() throws EXIException;
+	
+	/**
+	 * Parses expected attribute with given namespaceURI
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeAttributeNS() throws EXIException;
 
 	/**
 	 * Parses expected attribute with schema-invalid value

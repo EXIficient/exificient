@@ -31,6 +31,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -288,21 +289,25 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 	
 	protected void decodeStartElementNSStructure() throws EXIException {
-		// StartEventNS
-		StartElementNS seNS = ((StartElementNS) nextEvent);
-		this.elementURI = seNS.getNamespaceURI();
-		// decode local-name
-		decodeStartElementURI(elementURI);
-		
-		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(this.elementURI);
+		try {
+			// StartEventNS
+			StartElementNS seNS = ((StartElementNS) nextEvent);
+			this.elementURI = seNS.getNamespaceURI();
+			// decode local-name
+			this.elementLocalName = block.readLocalName(elementURI);
+			
+			// handle element prefixes
+			elementPrefix = decodeQNamePrefix(this.elementURI);
 
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+			// step forward in current rule (replace rule at the top)
+			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 
-		// update grammars etc.
-		pushRule(elementURI, elementLocalName);
-		pushScope(elementURI, elementLocalName);
+			// update grammars etc.
+			pushRule(elementURI, elementLocalName);
+			pushScope(elementURI, elementLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
 
 	protected void decodeStartElementGenericStructure() throws EXIException {
@@ -353,20 +358,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throw new EXIException(e);
 		}
 	}
-	
-	protected void decodeStartElementURI(String uri) throws EXIException {
-		try {
-			// decode local-name
-			this.elementLocalName = block.readLocalName(uri);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
 
 	@Override
-	protected void pushScope(String uri, String localName) {
-		super.pushScope(uri, localName);
-
+	protected void pushScope(final String namespaceURI, final String localName) {
+		super.pushScope(namespaceURI, localName);
+		
 		// reset local-element-ns prefix
 		elementPrefix = null;
 	}
@@ -402,6 +398,24 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return at;
 	}
 
+	protected void decodeAttributeNSStructure() throws EXIException {
+		try {
+			// AttributeEventNS
+			AttributeNS atNS = ((AttributeNS) nextEvent);
+			this.attributeURI = atNS.getNamespaceURI();
+			// decode local-name
+			this.attributeLocalName = block.readLocalName(attributeURI);
+			
+			// handle attribute prefix
+			attributePrefix = decodeQNamePrefix(this.attributeURI);
+
+			// step forward in current rule (replace rule at the top)
+			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+	
 	protected void decodeAttributeGenericStructure() throws EXIException {
 		// decode structure
 		decodeAttributeGenericUndeclaredStructure();

@@ -62,6 +62,8 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.AttributeGeneric;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndElement;
@@ -546,16 +548,29 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 	}
 
 	private SchemaInformedRule handleAttributes(SchemaInformedRule ruleContent,
-			SchemaInformedRule ruleContent2, XSObjectList attributes)
-			throws EXIException {
+			SchemaInformedRule ruleContent2, XSObjectList attributes,
+			XSWildcard attributeWC) throws EXIException {
+		// Attribute Uses
+		// http://www.w3.org/TR/exi/#attributeUses
+
 		SchemaInformedRule ruleCurrent = new RuleStartTagSchemaInformed(
 				ruleContent2);
 		ruleCurrent.joinRules(ruleContent);
+
+		// If an {attribute wildcard} is specified, increment n and generate an
+		// additional attribute use grammar G n-1 as follows:
+		// G n-1, 0 :
+		// EE
+		if (attributeWC != null) {
+			ruleCurrent.addTerminalRule(END_ELEMENT);
+			handleAttributeWildCard(attributeWC, ruleCurrent);
+		}
 
 		if (attributes != null && attributes.getLength() > 0) {
 			// attributes will occur sorted lexically by qname (in EXI Stream)
 			Vector<XSAttributeUse> vSortedAttributes = getSortedAttributes(attributes);
 
+			// traverse in reverse order
 			for (int i = vSortedAttributes.size() - 1; i >= 0; i--) {
 				XSAttributeUse attrUse = vSortedAttributes.elementAt(i);
 
@@ -565,6 +580,13 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 						ruleContent2);
 				newCurrent.addRule(at, ruleCurrent);
 
+				// Attribute Wildcard
+				// http://www.w3.org/TR/exi/#complexTypeGrammars
+				if (attributeWC != null) {
+					handleAttributeWildCard(attributeWC, newCurrent);
+				}
+
+				// required attribute ?
 				if (!attrUse.getRequired()) {
 					// optional
 					newCurrent.joinRules(ruleCurrent);
@@ -575,6 +597,37 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 
 		return ruleCurrent;
 
+	}
+
+	protected void handleAttributeWildCard(XSWildcard attributeWC,
+			SchemaInformedRule rule) {
+
+		short constraintType = attributeWC.getConstraintType();
+		if (constraintType == XSWildcard.NSCONSTRAINT_ANY
+				|| constraintType == XSWildcard.NSCONSTRAINT_NOT) {
+			// AT(*)
+			// When the {attribute wildcard}'s {namespace
+			// constraint} is any, or a pair of not and either a
+			// namespace name or the special value absent indicating
+			// no namespace, add the following production to each
+			// grammar G i generated above:
+			// G i, 0 :
+			// AT(*) G i, 0
+			rule.addRule(new AttributeGeneric(), rule);
+		} else {
+			// AT(urix:*)
+			// Otherwise, that is, when {namespace constraint} is a
+			// set of values whose members are namespace names or
+			// the special value absent indicating no namespace, add
+			// the following production to each grammar G i
+			// generated above:
+			// G i, 0 :
+			// AT(urix : *) G i, 0
+			StringList sl = attributeWC.getNsConstraintList();
+			for (int k = 0; k < sl.getLength(); k++) {
+				rule.addRule(new AttributeNS(sl.item(k)), rule);
+			}
+		}
 	}
 
 	private void handleSubstitutionGroups(
@@ -709,29 +762,29 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 
 				// attributes
 				XSObjectList attributes = ctd.getAttributeUses();
-
-				// TODO attribute wildcard AT(*) plus AT(uri, *)
-				// XSWildcard attributeWC = ctd.getAttributeWildcard ( );
+				XSWildcard attributeWC = ctd.getAttributeWildcard();
 
 				// type_i (start tag)
-				type_i = handleAttributes(ruleContent, ruleContent2, attributes);
+				type_i = handleAttributes(ruleContent, ruleContent2,
+						attributes, attributeWC);
 				type_i.setHasNamedSubtypes(hasNamedSubTypes(ctd));
 
 				// typeEmpty_i
 				SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
 				ruleEnd.addTerminalRule(END_ELEMENT);
-				typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, attributes);
+				typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, attributes,
+						attributeWC);
 			}
 		} else if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
 			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 			RuleElementSchemaInformed simpleContent = translateSimpleTypeDefinitionToFSA(std);
-			type_i = handleAttributes(simpleContent, simpleContent, null);
+			type_i = handleAttributes(simpleContent, simpleContent, null, null);
 			type_i.setHasNamedSubtypes(hasNamedSubTypes(std));
 			// TypeEmpty i
 			SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
 			ruleEnd.addTerminalRule(END_ELEMENT);
-			typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, null);
+			typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, null, null);
 		}
 
 		if (!td.getAnonymous()) {
@@ -1140,7 +1193,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			 */
 			SchemaInformedRule particleTerm_i_0 = new RuleStartTagSchemaInformed(
 					particleTerm_i_1);
-			
+
 			short constraintType = xsWildcard.getConstraintType();
 			if (constraintType == XSWildcard.NSCONSTRAINT_ANY
 					|| constraintType == XSWildcard.NSCONSTRAINT_NOT) {
@@ -1150,7 +1203,6 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 				 * 
 				 * ParticleTerm i, 0 : SE() ParticleTerm i, 1
 				 */
-				//System.out.println("SE (*)");
 				particleTerm_i_0.addRule(new StartElementGeneric(),
 						particleTerm_i_1);
 			} else {
@@ -1167,10 +1219,10 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 				 * ParticleTerm i, 0 : SE(uri x :) ParticleTerm i, 1
 				 */
 				StringList sl = xsWildcard.getNsConstraintList();
-				//System.out.println("SE(uri, *)" + sl);
-				// TODO SE(uri, *) --> StartElementNS( * )
-				particleTerm_i_0.addRule(new StartElementNS(sl.item(0)),
-						particleTerm_i_1);
+				for (int i = 0; i < sl.getLength(); i++) {
+					particleTerm_i_0.addRule(new StartElementNS(sl.item(i)),
+							particleTerm_i_1);
+				}
 			}
 
 			return particleTerm_i_0;

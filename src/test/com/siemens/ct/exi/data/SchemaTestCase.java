@@ -42,7 +42,8 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaAll2 ( );
 		// SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
-		SchemaTestCase.setConfigurationSchemaWildcard2();
+		// SchemaTestCase.setConfigurationSchemaWildcard2();
+		SchemaTestCase.setConfigurationSchemaWildcard3();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
@@ -355,6 +356,22 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXsdLocation("./data/schema/wildcard2.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/schema/wildcard2.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/wildcard2.exi");
+	}
+	
+
+	@Test
+	public void testSchemaWildcard3() throws Exception {
+		// set up configuration
+		setConfigurationSchemaWildcard3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaWildcard3() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/wildcard3.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/wildcard3.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/wildcard3.exi");
 	}
 
 	@Test

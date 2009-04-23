@@ -193,7 +193,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 			eventSE.setNamespaceURI(uri);
 			eventSE.setLocalPart(localName);
 
-			// try to find declared SE(uri:*)
+			// try to find declared SE(uri:localName)
 			int ec = currentRule.get1stLevelEventCode(eventSE);
 
 			if (ec != Constants.NOT_FOUND) {
@@ -208,7 +208,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 				// not found, try SE(uri:*)
 				eventSE_NS.setNamespaceURI(uri);
 				int ecNS = currentRule.get1stLevelEventCode(eventSE_NS);
-				
+
 				if (ecNS != Constants.NOT_FOUND) {
 					// looked for SE(uri,*) successfully
 					// encode EventCode
@@ -219,7 +219,7 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 					encodeQNamePrefix(uri, prefix);
 					// step forward in current rule
 					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecNS));
-					//	Note: no built-in grammar --> no learning
+					// Note: no built-in grammar --> no learning
 				} else {
 					// not found, try SE(*), generic SE on first level
 					int ecGeneric = currentRule.get1stLevelEventCode(eventSEg);
@@ -253,21 +253,20 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 							replaceRuleAtTheTop(currentRule
 									.getElementContentRuleForUndeclaredSE());
 						} else {
-							// TODO skip element ?
-							throw new EXIException(
-									"StartElement {"
-											+ uri
-											+ ":"
-											+ localName
-											+ "} unexpected. Consider not use STRICT mode.");
+							// TODO skip element ? introduce specific mode?
+							// Warn encoder that the element is simply skipped
+							// Note: should never happen except in strict mode
+							String msg = "Skip StartElement {" + uri + ":"
+									+ localName
+									+ "}. Consider not use STRICT mode.";
+							errorHandler.warning(new EXIException(msg));
 						}
 					}
 				}
 			}
-			
-			// push next rule
+
+			// push next rule & scope
 			pushRule(uri, localName);
-			// update scope
 			pushScope(uri, localName);
 		} catch (IOException e) {
 			throw new EXIException(e);
@@ -530,46 +529,11 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 			eventAT.setNamespaceURI(uri);
 			eventAT.setLocalPart(localName);
 
+			// try to find declared AT(uri:localName)
 			int ec = currentRule.get1stLevelEventCode(eventAT);
 
-			if (ec == Constants.NOT_FOUND) {
-				// generic AT (on first level)
-				int ecGeneric = currentRule.get1stLevelEventCode(eventATg);
-
-				if (ecGeneric == Constants.NOT_FOUND) {
-					// Undeclared AT(*) can be found on 2nd level
-					int ecATundeclared = currentRule.get2ndLevelEventCode(
-							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-							fidelityOptions);
-
-					if (ecATundeclared == Constants.NOT_FOUND) {
-						// Warn encoder that the attribute is simply skipped
-						// Note: should never happen except in strict mode
-						assert (fidelityOptions.isStrict());
-						String msg = "Skip AT " + uri + ":" + localName + " = "
-								+ value + " (StrictMode="
-								+ fidelityOptions.isStrict() + ")";
-						errorHandler.warning(new EXIException(msg));
-					} else {
-						// encode event-code
-						encode2ndLevelEventCode(ecATundeclared);
-						// encode unexpected attribute & learn attribute event ?
-						encodeQName(uri, localName, prefix);
-						block.writeValueAsString(uri, localName, value);
-						currentRule.learnAttribute(uri, localName);
-					}
-				} else {
-					// encode EventCode
-					encode1stLevelEventCode(ecGeneric);
-					// encode unexpected attribute & learn attribute event ?
-					encodeQName(uri, localName, prefix);
-					block.writeValueAsString(uri, localName, value);
-					currentRule.learnAttribute(uri, localName);
-					// step forward in current rule (replace rule at the top)
-					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecGeneric));
-				}
-			} else {
-				// attribute event found
+			if (ec != Constants.NOT_FOUND) {
+				// AT(uri,localName) successfully found
 				if (block.isTypeValid(getDatatypeOfEvent(ec), value)) {
 					// encode event-code & schema-valid content
 					encode1stLevelEventCode(ec);
@@ -596,6 +560,66 @@ public class EXIEncoderPrefixLess extends AbstractEXICoder implements
 
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+
+			} else {
+				// try to find declared AT(uri:*)
+				eventAT_NS.setNamespaceURI(uri);
+				int ecNS = currentRule.get1stLevelEventCode(eventAT_NS);
+				if (ecNS != Constants.NOT_FOUND) {
+					// encode EventCode
+					encode1stLevelEventCode(ecNS);
+					// encode localName & possible prefix
+					block.writeLocalName(localName, uri);
+					encodeQNamePrefix(uri, prefix);
+					// value
+					block.writeValueAsString(uri, localName, value);
+					currentRule.learnAttribute(uri, localName);
+					// step forward in current rule
+					replaceRuleAtTheTop(currentRule.get1stLevelRule(ecNS));
+					
+					//	TODO is here really learning and stepping forward required (Fragment Grammar ?)
+
+					// TODO mapping to global datatype...
+
+				} else {
+					// try to find declared AT(*), generic AT on first level
+					int ecGeneric = currentRule.get1stLevelEventCode(eventATg);
+
+					if (ecGeneric != Constants.NOT_FOUND) {
+						// encode EventCode
+						encode1stLevelEventCode(ecGeneric);
+						// encode unexpected attribute & learn attribute event ?
+						encodeQName(uri, localName, prefix);
+						block.writeValueAsString(uri, localName, value);
+						currentRule.learnAttribute(uri, localName);
+						// step forward in current rule
+						replaceRuleAtTheTop(currentRule
+								.get1stLevelRule(ecGeneric));
+					} else {
+						// Undeclared AT(*) can be found on 2nd level
+						int ecATundeclared = currentRule.get2ndLevelEventCode(
+								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+								fidelityOptions);
+
+						if (ecATundeclared != Constants.NOT_FOUND) {
+							// encode event-code
+							encode2ndLevelEventCode(ecATundeclared);
+							// encode unexpected attribute & learn attribute
+							// event ?
+							encodeQName(uri, localName, prefix);
+							block.writeValueAsString(uri, localName, value);
+							currentRule.learnAttribute(uri, localName);
+						} else {
+							// Warn encoder that the attribute is simply skipped
+							// Note: should never happen except in strict mode
+							assert (fidelityOptions.isStrict());
+							String msg = "Skip AT " + uri + ":" + localName
+									+ " = " + value + " (StrictMode="
+									+ fidelityOptions.isStrict() + ")";
+							errorHandler.warning(new EXIException(msg));
+						}
+					}
+				}
 			}
 		} catch (IOException e) {
 			throw new EXIException(e);
