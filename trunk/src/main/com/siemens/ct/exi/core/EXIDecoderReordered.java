@@ -31,6 +31,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -55,30 +56,29 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected List<EventType> eventTypes;
 	protected int currentEventIndex;
 
-	// content
+	// elements
 	protected List<String> elementURIs;
 	protected int currentElementURIIndex;
 	protected List<String> elementLocalNames;
 	protected int currentElementLocalNameIndex;
-	
 	protected List<String> elementPrefixes;
 	protected int currentElementPrefixIndex;
+	// attributes 
+	protected List<String> attributeURIs;
+	protected int currentAttributeURIIndex;
+	protected List<String> attributeLocalNames;
+	protected int currentAttributeLocalNameIndex;	
 	protected List<String> attributePrefixes;
 	protected int currentAttributePrefixIndex;
-
-	protected List<ExpandedName> genericAttributes;
-	protected int currentGenericAttributesIndex;
-
+	//	xsi
 	protected List<String> xsiTypeUris;
 	protected List<String> xsiTypeNames;
 	protected int currentXsiTypeIndex;
-
 	protected List<Boolean> xsiNils;
 	protected int currentXsiNilsIndex;
-
 	protected List<String> xsiNilsDeviation;
 	protected int currentXsiNilsDeviationIndex;
-
+	// misc
 	protected List<String> docTypes;
 	protected int currentDocTypeIndex;
 
@@ -112,16 +112,20 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		events = new ArrayList<Event>();
 		eventTypes = new ArrayList<EventType>();
 
-		// content
+		// elements
 		elementURIs = new ArrayList<String>();
 		elementLocalNames = new ArrayList<String>();
 		elementPrefixes = new ArrayList<String>();
+		//	attributes
+		attributeURIs = new ArrayList<String>();
+		attributeLocalNames = new ArrayList<String>();
 		attributePrefixes = new ArrayList<String>();
-		genericAttributes = new ArrayList<ExpandedName>();
+		//	xsi
 		xsiTypeUris = new ArrayList<String>();
 		xsiTypeNames = new ArrayList<String>();
 		xsiNils = new ArrayList<Boolean>();
 		xsiNilsDeviation = new ArrayList<String>();
+		//	misc
 		docTypes = new ArrayList<String>();
 		entityReferences = new ArrayList<String>();
 		comments = new ArrayList<String>();
@@ -149,23 +153,26 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		eventTypes.clear();
 		currentEventIndex = 0;
 
-		// content
+		// elements
 		elementURIs.clear();
 		currentElementURIIndex = 0;
 		elementLocalNames.clear();
 		currentElementLocalNameIndex = 0;
-		
 		elementPrefixes.clear();
 		currentElementPrefixIndex = 0;
+		// attributes
+		attributeURIs.clear();
+		currentAttributeURIIndex = 0;
+		attributeLocalNames.clear();
+		currentAttributeLocalNameIndex = 0;
 		attributePrefixes.clear();
 		currentAttributePrefixIndex = 0;
-
-		genericAttributes.clear();
-		currentGenericAttributesIndex = 0;
+		//	xsi
 		xsiNils.clear();
 		currentXsiNilsIndex = 0;
 		xsiNilsDeviation.clear();
 		currentXsiNilsDeviationIndex = 0;
+		//	misc
 		docTypes.clear();
 		currentDocTypeIndex = 0;
 		entityReferences.clear();
@@ -235,6 +242,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 					break;
 				case ATTRIBUTE:
 					decodeAttributeInternal();
+					break;
+				case ATTRIBUTE_NS:
+					decodeAttributeNSInternal();
 					break;
 				case ATTRIBUTE_INVALID_VALUE:
 					decodeAttributeInvalidValueInternal();
@@ -468,6 +478,30 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
+	
+	protected void decodeAttributeNSInternal() throws EXIException {
+		decodeAttributeNSStructure();
+
+		attributeLocalNames.add(attributeLocalName);
+		attributePrefixes.add(this.attributePrefix);
+
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
+	}
+	
+	public void decodeAttributeNS() throws EXIException {
+		try {
+			AttributeNS atNS = (AttributeNS) stepToNextEvent();
+			this.attributeURI = atNS.getNamespaceURI();
+			this.attributeLocalName = attributeLocalNames.get(currentAttributeLocalNameIndex++);
+			this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
+			
+			// decode attribute value
+			attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException();
+		}		
+	}
 
 	public void decodeAttributeInvalidValue() throws EXIException {
 		Attribute at = (Attribute) stepToNextEvent();
@@ -487,32 +521,30 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected void decodeAttributeGenericInternal() throws EXIException {
 		decodeAttributeGenericStructure();
 
-		ExpandedName n = new ExpandedName(attributeURI, attributeLocalName);
-		genericAttributes.add(n);
+		attributeURIs.add(attributeURI);
+		attributeLocalNames.add(attributeLocalName);
 		attributePrefixes.add(this.attributePrefix);
 
-		incrementValues(n, BuiltIn.DEFAULT_DATATYPE);
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
 	}
 
 	protected void decodeAttributeGenericUndeclaredInternal()
 			throws EXIException {
 		decodeAttributeGenericUndeclaredStructure();
 
-		ExpandedName n = new ExpandedName(attributeURI, attributeLocalName);
-		genericAttributes.add(n);
+		attributeURIs.add(attributeURI);
+		attributeLocalNames.add(attributeLocalName);
 		attributePrefixes.add(this.attributePrefix);
 
-		incrementValues(n, BuiltIn.DEFAULT_DATATYPE);
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
 	}
 
 	public void decodeAttributeGeneric() throws EXIException {
 		try {
 			stepToNextEvent();
 
-			ExpandedName n = genericAttributes
-					.get(currentGenericAttributesIndex++);
-			this.attributeURI = n.getNamespaceURI();
-			this.attributeLocalName = n.getLocalName();
+			this.attributeURI = attributeURIs.get(currentAttributeURIIndex++);
+			this.attributeLocalName = attributeLocalNames.get(currentAttributeLocalNameIndex++);
 			this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
 
 			// decode attribute value

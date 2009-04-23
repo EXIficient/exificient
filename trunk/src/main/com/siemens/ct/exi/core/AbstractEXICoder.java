@@ -35,6 +35,7 @@ import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeGeneric;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndDocument;
@@ -64,6 +65,7 @@ public abstract class AbstractEXICoder {
 	protected final StartElementGeneric eventSEg;
 	protected final EndElement eventEE;
 	protected final Attribute eventAT;
+	protected final AttributeNS eventAT_NS;
 	protected final AttributeGeneric eventATg;
 	protected final Characters eventCH;
 	protected final CharactersGeneric eventCHg;
@@ -112,6 +114,7 @@ public abstract class AbstractEXICoder {
 		eventSEg = new StartElementGeneric();
 		eventEE = new EndElement();
 		eventAT = new Attribute(null, null);
+		eventAT_NS = new AttributeNS(null);
 		eventATg = new AttributeGeneric();
 		eventCH = new Characters(null, null);
 		eventCHg = new CharactersGeneric();
@@ -168,17 +171,18 @@ public abstract class AbstractEXICoder {
 		namespaces.reset();
 	}
 
-	protected void pushScope(String uri, String localName) {
-		scopeURI.add(uri);
+	protected final void pushScopeType(String uri, String localName) {
+		scopeTypeURI.add(uri);
+		scopeTypeLocalName.add(localName);
+	}
+	
+	protected void pushScope(final String namespaceURI, final String localName) {
+		//	push scope
+		scopeURI.add(namespaceURI);
 		scopeLocalName.add(localName);
 
 		// push NS context
 		namespaces.pushContext();
-	}
-
-	protected final void pushScopeType(String uri, String localName) {
-		scopeTypeURI.add(uri);
-		scopeTypeLocalName.add(localName);
 	}
 
 	protected void popScope() {

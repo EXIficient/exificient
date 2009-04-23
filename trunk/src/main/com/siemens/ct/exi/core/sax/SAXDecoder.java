@@ -284,11 +284,14 @@ public class SAXDecoder implements XMLReader {
 					break;
 				/* ATTRIBUTES */
 				case ATTRIBUTE:
+				case ATTRIBUTE_NS:
 				case ATTRIBUTE_INVALID_VALUE:
 				case ATTRIBUTE_GENERIC:
 				case ATTRIBUTE_GENERIC_UNDECLARED:
 					if (eventType == EventType.ATTRIBUTE) {
 						decoder.decodeAttribute();
+					} else if (eventType == EventType.ATTRIBUTE_NS) {
+						decoder.decodeAttributeNS();
 					} else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
 						decoder.decodeAttributeInvalidValue();
 					} else if (eventType == EventType.ATTRIBUTE_GENERIC) {

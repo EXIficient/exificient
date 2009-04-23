@@ -28,7 +28,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081117
+ * @version 0.3.20090422
  */
 
 public interface Rule {
@@ -78,8 +78,6 @@ public interface Rule {
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
 
-	// public int get1stLevelCharacteristics ( FidelityOptions fidelityOptions
-	// );
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions);
 

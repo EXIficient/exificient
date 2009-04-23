@@ -123,6 +123,18 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
+	
+	public void decodeAttributeNS() throws EXIException {
+		try {
+			decodeAttributeNSStructure();
+
+			// decode attribute value as string
+			attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
 
 	public void decodeAttributeInvalidValue() throws EXIException {
 		decodeAttributeStructure();
