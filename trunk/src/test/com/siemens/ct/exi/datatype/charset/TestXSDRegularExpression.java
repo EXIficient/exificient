@@ -31,6 +31,8 @@ public class TestXSDRegularExpression extends AbstractTestCase  {
 		super(testName);
 	}
 	
+
+	
 	public void testPattern1() throws EXIException {
 		String regex = "[A-Z][A-Z][A-Z]";// e.g. "ABC"
 		xsdRegexp.analyze(regex);
@@ -311,6 +313,37 @@ public class TestXSDRegularExpression extends AbstractTestCase  {
 		assertTrue(rcs.getCode('8')==10);
 		assertTrue(rcs.getCode('?')==Constants.NOT_FOUND);
 		assertTrue(rcs.getCodingLength()==4);
+	}
+
+	
+	public void testPattern21() throws EXIException {
+		// Partial Pattern in OpenOffice
+		// ([$]?([^\. ']+|'[^']+'))
+		String regex = "([$]?([^\\. ']+|'[^']+'))";
+		xsdRegexp.analyze(regex);
+		
+		//	TODO.. what is it ?
+		assertTrue(xsdRegexp.isEntireSetOfXMLCharacters());
+	}
+	
+	public void testPattern22() throws EXIException {
+		// Partial Pattern in OpenOffice
+		// ?\.[$]?[A-Z]+[$]?[0-9]+
+		String regex = "?\\.[$]?[A-Z]+[$]?[0-9]+";
+		xsdRegexp.analyze(regex);
+		
+		assertFalse(xsdRegexp.isEntireSetOfXMLCharacters());
+	}
+	
+	
+	public void testPattern23() throws EXIException {
+		// Pattern in OpenOffice
+		// ([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+
+		String regex = "([$]?([^\\. ']+|'[^']+'))?\\.[$]?[A-Z]+[$]?[0-9]+";
+		xsdRegexp.analyze(regex);
+		
+		//	TODO.. what is it ?
+		assertTrue(xsdRegexp.isEntireSetOfXMLCharacters());
 	}
 	
 	
