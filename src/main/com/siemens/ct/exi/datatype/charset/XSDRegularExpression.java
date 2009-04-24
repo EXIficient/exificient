@@ -54,13 +54,6 @@ public class XSDRegularExpression {
 
 			walk(regex, 0);
 
-			// naive validity check
-			// TODO introduce an appropriate pattern syntax check
-			if (startRange || startCount) { // open ?
-				throw new EXIException("Invalid Pattern Syntax: \"" + regex
-						+ "\"");
-			}
-
 			/*
 			 * If the resulting character set contains less than 255 characters,
 			 * the string value has a restricted character set and each
@@ -69,8 +62,14 @@ public class XSDRegularExpression {
 			if (entireSetOfXMLCharacters || charSet.size() >= 255) {
 				charSet.clear();
 				entireSetOfXMLCharacters = true;
+			} else {
+				// naive validity check
+				// TODO introduce an appropriate pattern syntax check
+				if (startRange || startCount) { // anything left open ?
+					throw new EXIException("Invalid Pattern Syntax: \"" + regex
+							+ "\"");
+				}
 			}
-
 			// System.out.println(regex + " --> " + charSet);
 		}
 	}
