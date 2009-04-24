@@ -25,6 +25,14 @@
     <pattern5>1</pattern5>
     <pattern5>6</pattern5>
     
+    <!-- "([$]?([^\. ']+|'[^']+'))" -->
+    <pattern6>A</pattern6>
+    <pattern6>cdas</pattern6>
+    <pattern6>ä</pattern6>
+    
+    <!-- "([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+" -->
+    <pattern7>A.B0</pattern7>
+    
     <patternSSN>078-05-1120</patternSSN>
     <patternSSN>078 05 1120</patternSSN>
     <patternSSN>078051120</patternSSN>

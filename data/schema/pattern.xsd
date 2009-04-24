@@ -10,6 +10,8 @@
         <xs:element name="pattern3" type="Pattern3" maxOccurs="unbounded"/>
         <xs:element name="pattern4" type="Pattern4" maxOccurs="unbounded"/>
         <xs:element name="pattern5" type="Pattern5" maxOccurs="unbounded"/>
+        <xs:element name="pattern6" type="Pattern6" maxOccurs="unbounded"/>
+        <xs:element name="pattern7" type="Pattern7" maxOccurs="unbounded"/>
         <xs:element name="patternSSN" type="PatternSSN" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
@@ -43,6 +45,20 @@
   <xs:simpleType  name="Pattern5">
     <xs:restriction base="xs:string">
       <xs:pattern value="\d"/><!-- \p{Nd} -->
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType  name="Pattern6">
+    <xs:restriction base="xs:string">
+      <!-- Open Office Simple -->  
+      <xs:pattern value="([$]?([^\. ']+|'[^']+'))"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType  name="Pattern7">
+    <xs:restriction base="xs:string">
+      <!-- Open Office -->  
+      <xs:pattern value="([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+"/>
     </xs:restriction>
   </xs:simpleType>
 
