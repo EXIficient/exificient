@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
@@ -34,7 +36,7 @@ import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaLess;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090423
  */
 
 public class GrammarSchemaLess extends AbstractGrammar {
@@ -92,6 +94,10 @@ public class GrammarSchemaLess extends AbstractGrammar {
 				builtInFragmentContentGrammar);
 
 		return builtInFragmentGrammar;
+	}
+	
+	public Datatype getGlobalAttributeDatatype(Attribute at) {
+		return null;
 	}
 
 }

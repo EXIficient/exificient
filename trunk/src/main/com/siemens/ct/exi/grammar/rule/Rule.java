@@ -107,5 +107,13 @@ public interface Rule {
 	public Rule getElementContentRule();
 
 	public Rule getElementContentRuleForUndeclaredSE();
+	
+
+	/*
+	 * Schema-deviated attributes
+	 */
+	public int getNumberOfSchemaDeviatedAttributes();
+
+	public int getLeastAttributeEventCode();
 
 }

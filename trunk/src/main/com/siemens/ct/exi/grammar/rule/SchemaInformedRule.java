@@ -61,13 +61,6 @@ public interface SchemaInformedRule extends Rule {
 	public String getLabel();
 
 	/*
-	 * Schema-deviated attributes
-	 */
-	public int getNumberOfSchemaDeviatedAttributes();
-
-	public int getLeastAttributeEventCode();
-
-	/*
 	 * resolves reachable event-rules & replaces Lambdas
 	 */
 	public void resolveLambdaTransitions();

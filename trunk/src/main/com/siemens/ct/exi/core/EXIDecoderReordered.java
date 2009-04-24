@@ -63,28 +63,26 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected int currentElementLocalNameIndex;
 	protected List<String> elementPrefixes;
 	protected int currentElementPrefixIndex;
-	// attributes 
+	// attributes
 	protected List<String> attributeURIs;
 	protected int currentAttributeURIIndex;
 	protected List<String> attributeLocalNames;
-	protected int currentAttributeLocalNameIndex;	
+	protected int currentAttributeLocalNameIndex;
 	protected List<String> attributePrefixes;
 	protected int currentAttributePrefixIndex;
-	//	xsi
+	// xsi
 	protected List<String> xsiTypeUris;
 	protected List<String> xsiTypeNames;
 	protected int currentXsiTypeIndex;
 	protected List<Boolean> xsiNils;
 	protected int currentXsiNilsIndex;
-	protected List<String> xsiNilsDeviation;
-	protected int currentXsiNilsDeviationIndex;
 	// misc
 	protected List<String> docTypes;
 	protected int currentDocTypeIndex;
 
 	protected List<String> entityReferences;
 	protected int currentEntityReferenceIndex;
-	
+
 	protected List<String> comments;
 	protected int currentCommentsIndex;
 
@@ -116,16 +114,15 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		elementURIs = new ArrayList<String>();
 		elementLocalNames = new ArrayList<String>();
 		elementPrefixes = new ArrayList<String>();
-		//	attributes
+		// attributes
 		attributeURIs = new ArrayList<String>();
 		attributeLocalNames = new ArrayList<String>();
 		attributePrefixes = new ArrayList<String>();
-		//	xsi
+		// xsi
 		xsiTypeUris = new ArrayList<String>();
 		xsiTypeNames = new ArrayList<String>();
 		xsiNils = new ArrayList<Boolean>();
-		xsiNilsDeviation = new ArrayList<String>();
-		//	misc
+		// misc
 		docTypes = new ArrayList<String>();
 		entityReferences = new ArrayList<String>();
 		comments = new ArrayList<String>();
@@ -167,12 +164,10 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		currentAttributeLocalNameIndex = 0;
 		attributePrefixes.clear();
 		currentAttributePrefixIndex = 0;
-		//	xsi
+		// xsi
 		xsiNils.clear();
 		currentXsiNilsIndex = 0;
-		xsiNilsDeviation.clear();
-		currentXsiNilsDeviationIndex = 0;
-		//	misc
+		// misc
 		docTypes.clear();
 		currentDocTypeIndex = 0;
 		entityReferences.clear();
@@ -249,6 +244,9 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 				case ATTRIBUTE_INVALID_VALUE:
 					decodeAttributeInvalidValueInternal();
 					break;
+				case ATTRIBUTE_ANY_INVALID_VALUE:
+					decodeAttributeAnyInvalidValueInternal();
+					break;
 				case ATTRIBUTE_GENERIC:
 					decodeAttributeGenericInternal();
 					break;
@@ -260,9 +258,6 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 					break;
 				case ATTRIBUTE_XSI_NIL:
 					decodeAttributeXsiNilInternal();
-					break;
-				case ATTRIBUTE_XSI_NIL_INVALID_VALUE:
-					decodeAttributeXsiNilDeviationInternal();
 					break;
 				case CHARACTERS:
 					decodeCharactersInternal();
@@ -360,7 +355,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 	protected void decodeStartElementInternal() throws EXIException {
 		decodeStartElementStructure();
-		
+
 		elementPrefixes.add(this.elementPrefix);
 	}
 
@@ -381,32 +376,31 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		elementLocalNames.add(elementLocalName);
 		elementPrefixes.add(this.elementPrefix);
 	}
-	
+
 	protected void decodeStartElementNSInternal() throws EXIException {
 		decodeStartElementNSStructure();
-		
+
 		elementLocalNames.add(this.elementLocalName);
 		elementPrefixes.add(this.elementPrefix);
 	}
-	
+
 	public void decodeStartElementNS() throws EXIException {
 		StartElementNS seNS = ((StartElementNS) stepToNextEvent());
 		this.elementURI = seNS.getNamespaceURI();
-		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
+		this.elementLocalName = elementLocalNames
+				.get(currentElementLocalNameIndex++);
 		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
 	}
-
-	
-	
 
 	public void decodeStartElementGeneric() throws EXIException {
 		stepToNextEvent();
 
 		// update element content
 		this.elementURI = elementURIs.get(currentElementURIIndex++);
-		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
+		this.elementLocalName = elementLocalNames
+				.get(currentElementLocalNameIndex++);
 		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
@@ -425,7 +419,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 		// update element content
 		this.elementURI = elementURIs.get(currentElementURIIndex++);
-		this.elementLocalName = elementLocalNames.get(currentElementLocalNameIndex++);
+		this.elementLocalName = elementLocalNames
+				.get(currentElementLocalNameIndex++);
 		this.elementPrefix = elementPrefixes.get(currentElementPrefixIndex++);
 
 		pushScope(elementURI, elementLocalName);
@@ -448,27 +443,19 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 
 	protected void decodeAttributeInternal() throws EXIException {
 		Attribute at = decodeAttributeStructure();
-		
+
 		attributePrefixes.add(this.attributePrefix);
 
 		incrementValues(new ExpandedName(at.getNamespaceURI(), at
 				.getLocalPart()), at.getDatatype());
 	}
 
-	protected void decodeAttributeInvalidValueInternal() throws EXIException {
-		Attribute at = decodeAttributeStructure();
-
-		attributePrefixes.add(this.attributePrefix);
-		
-		incrementValues(new ExpandedName(at.getNamespaceURI(), at
-				.getLocalPart()), BuiltIn.DEFAULT_DATATYPE);
-	}
-
 	public void decodeAttribute() throws EXIException {
 		Attribute at = (Attribute) stepToNextEvent();
 		this.attributeURI = at.getNamespaceURI();
 		this.attributeLocalName = at.getLocalPart();
-		this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
+		this.attributePrefix = attributePrefixes
+				.get(currentAttributePrefixIndex++);
 
 		try {
 			// decode attribute value
@@ -478,40 +465,83 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
-	
+
 	protected void decodeAttributeNSInternal() throws EXIException {
 		decodeAttributeNSStructure();
 
 		attributeLocalNames.add(attributeLocalName);
 		attributePrefixes.add(this.attributePrefix);
 
-		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName),
+				BuiltIn.DEFAULT_DATATYPE);
 	}
-	
+
 	public void decodeAttributeNS() throws EXIException {
 		try {
 			AttributeNS atNS = (AttributeNS) stepToNextEvent();
 			this.attributeURI = atNS.getNamespaceURI();
-			this.attributeLocalName = attributeLocalNames.get(currentAttributeLocalNameIndex++);
-			this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
-			
+			this.attributeLocalName = attributeLocalNames
+					.get(currentAttributeLocalNameIndex++);
+			this.attributePrefix = attributePrefixes
+					.get(currentAttributePrefixIndex++);
+
 			// decode attribute value
 			attributeValue = block.readValueAsString(attributeURI,
 					attributeLocalName);
 		} catch (IOException e) {
 			throw new EXIException();
-		}		
+		}
+	}
+
+	protected void decodeAttributeInvalidValueInternal() throws EXIException {
+		Attribute at = decodeAttributeStructure();
+
+		attributePrefixes.add(this.attributePrefix);
+
+		incrementValues(new ExpandedName(at.getNamespaceURI(), at
+				.getLocalPart()), BuiltIn.DEFAULT_DATATYPE);
 	}
 
 	public void decodeAttributeInvalidValue() throws EXIException {
-		Attribute at = (Attribute) stepToNextEvent();
-		this.attributeURI = at.getNamespaceURI();
-		this.attributeLocalName = at.getLocalPart();
-		this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
-
 		try {
+
+			Attribute at = (Attribute) stepToNextEvent();
+			this.attributeURI = at.getNamespaceURI();
+			this.attributeLocalName = at.getLocalPart();
+			this.attributePrefix = attributePrefixes
+					.get(currentAttributePrefixIndex++);
+
 			// decode attribute value as string
 			this.attributeValue = block.readValueAsString(attributeURI,
+					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	protected void decodeAttributeAnyInvalidValueInternal() throws EXIException {
+		decodeAttributeAnyInvalidStructure();
+
+		attributeURIs.add(attributeURI);
+		attributeLocalNames.add(attributeLocalName);
+		attributePrefixes.add(this.attributePrefix);
+
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName),
+				BuiltIn.DEFAULT_DATATYPE);
+	}
+
+	public void decodeAttributeAnyInvalidValue() throws EXIException {
+		try {
+			stepToNextEvent();
+
+			this.attributeURI = attributeURIs.get(currentAttributeURIIndex++);
+			this.attributeLocalName = attributeLocalNames
+					.get(currentAttributeLocalNameIndex++);
+			this.attributePrefix = attributePrefixes
+					.get(currentAttributePrefixIndex++);
+
+			// decode attribute value
+			attributeValue = block.readValueAsString(attributeURI,
 					attributeLocalName);
 		} catch (IOException e) {
 			throw new EXIException(e);
@@ -525,7 +555,50 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		attributeLocalNames.add(attributeLocalName);
 		attributePrefixes.add(this.attributePrefix);
 
-		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
+		eventAT.setNamespaceURI(this.attributeURI);
+		eventAT.setLocalPart(this.attributeLocalName);
+		Datatype globalType = grammar.getGlobalAttributeDatatype(eventAT);
+			
+		if (globalType != null) {
+			incrementValues(new ExpandedName(attributeURI, attributeLocalName),
+					globalType);
+		} else {
+			// decode attribute value as string ??
+			// attributeValue = block.readValueAsString(attributeURI,
+			// attributeLocalName);
+			throw new EXIException("No global datatype found for "
+					+ eventAT);
+		}
+	}
+
+	public void decodeAttributeGeneric() throws EXIException {
+		try {
+			stepToNextEvent();
+
+			this.attributeURI = attributeURIs.get(currentAttributeURIIndex++);
+			this.attributeLocalName = attributeLocalNames
+					.get(currentAttributeLocalNameIndex++);
+			this.attributePrefix = attributePrefixes
+					.get(currentAttributePrefixIndex++);
+
+			eventAT.setNamespaceURI(this.attributeURI);
+			eventAT.setLocalPart(this.attributeLocalName);
+
+			Datatype globalType = grammar.getGlobalAttributeDatatype(eventAT);
+
+			if (globalType != null) {
+				attributeValue = block.readTypedValidValue(globalType,
+						attributeURI, attributeLocalName);
+			} else {
+				// decode attribute value as string ??
+				// attributeValue = block.readValueAsString(attributeURI,
+				// attributeLocalName);
+				throw new EXIException("No global datatype found for "
+						+ eventAT);
+			}
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
 
 	protected void decodeAttributeGenericUndeclaredInternal()
@@ -536,16 +609,19 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		attributeLocalNames.add(attributeLocalName);
 		attributePrefixes.add(this.attributePrefix);
 
-		incrementValues(new ExpandedName(attributeURI, attributeLocalName), BuiltIn.DEFAULT_DATATYPE);
+		incrementValues(new ExpandedName(attributeURI, attributeLocalName),
+				BuiltIn.DEFAULT_DATATYPE);
 	}
 
-	public void decodeAttributeGeneric() throws EXIException {
+	public void decodeAttributeGenericUndeclared() throws EXIException {
 		try {
 			stepToNextEvent();
 
 			this.attributeURI = attributeURIs.get(currentAttributeURIIndex++);
-			this.attributeLocalName = attributeLocalNames.get(currentAttributeLocalNameIndex++);
-			this.attributePrefix = attributePrefixes.get(currentAttributePrefixIndex++);
+			this.attributeLocalName = attributeLocalNames
+					.get(currentAttributeLocalNameIndex++);
+			this.attributePrefix = attributePrefixes
+					.get(currentAttributePrefixIndex++);
 
 			// decode attribute value
 			attributeValue = block.readValueAsString(attributeURI,
@@ -553,10 +629,6 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
-	}
-
-	public void decodeAttributeGenericUndeclared() throws EXIException {
-		this.decodeAttributeGeneric();
 	}
 
 	protected void decodeAttributeXsiTypeInternal() throws EXIException {
@@ -606,19 +678,6 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		stepToNextEvent();
 
 		xsiNil = xsiNils.get(currentXsiNilsIndex++);
-	}
-
-	protected void decodeAttributeXsiNilDeviationInternal() throws EXIException {
-		decodeAttributeXsiNilDeviation();
-
-		// deviated xsiNil
-		xsiNilsDeviation.add(xsiNilDeviation);
-	}
-
-	public void decodeXsiNilDeviation() throws EXIException {
-		stepToNextEvent();
-
-		xsiNilDeviation = xsiNilsDeviation.get(currentXsiNilsDeviationIndex++);
 	}
 
 	protected void decodeCharactersInternal() throws EXIException {
@@ -727,25 +786,26 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	public void decodeDocType() throws EXIException {
 		Event ev = stepToNextEvent();
 		assert (ev.isEventType(EventType.DOC_TYPE));
-		
+
 		docTypeName = docTypes.get(currentDocTypeIndex++);
 		docTypePublicID = docTypes.get(currentDocTypeIndex++);
 		docTypeSystemID = docTypes.get(currentDocTypeIndex++);
 		docTypeText = docTypes.get(currentDocTypeIndex++);
 	}
-	
+
 	protected void decodeEntityReferenceInternal() throws EXIException {
 		decodeEntityReferenceStructure();
 
 		// entity reference
 		entityReferences.add(entityReferenceName);
 	}
-	
+
 	public void decodeEntityReference() throws EXIException {
 		Event ev = stepToNextEvent();
 		assert (ev.isEventType(EventType.ENTITY_REFERENCE));
-		
-		entityReferenceName = entityReferences.get(currentEntityReferenceIndex++);
+
+		entityReferenceName = entityReferences
+				.get(currentEntityReferenceIndex++);
 	}
 
 	protected void decodeCommentInternal() throws EXIException {

@@ -33,7 +33,7 @@ public interface Constants {
 	public static final String EMPTY_STRING = "";
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
-	public static final String XSI_NONAMESPACE_SCHEMA_LOCATION = "noNamespaceSchemaLocation ";
+	public static final String XSI_NONAMESPACE_SCHEMA_LOCATION = "noNamespaceSchemaLocation";
 
 	public static final String XML_PFX = XMLConstants.XML_NS_PREFIX; // "xml";
 	public static final String XSI_PFX = "xsi";

@@ -18,7 +18,9 @@
 
 package com.siemens.ct.exi.grammar;
 
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.stringtable.StringTableCommon;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
@@ -40,4 +42,9 @@ public interface Grammar {
 	public Rule getRule(ElementKey es);
 
 	public void populateStringTable(StringTableCommon stringTable);
+	
+	/*
+	 * 
+	 */
+	public Datatype getGlobalAttributeDatatype(Attribute at);
 }

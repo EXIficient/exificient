@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import com.siemens.ct.exi.data.DeviationsTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
@@ -78,8 +79,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict ( );
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict ( );
 		// fidelityOptions = FidelityOptions.createAll();
 	}
 

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -46,13 +47,13 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  */
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {
-	//	selfContained fragments
+	// selfContained fragments
 	protected List<StringTableDecoder> scStringTables;
 	protected List<Map<String, Map<String, Rule>>> scRuntimeDispatchers;
-	
+
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
-		
+
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
 			scStringTables = new ArrayList<StringTableDecoder>();
 			scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
@@ -96,7 +97,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeStartElement() throws EXIException {
 		decodeStartElementStructure();
 	}
-	
+
 	public void decodeStartElementNS() throws EXIException {
 		decodeStartElementNSStructure();
 	}
@@ -123,7 +124,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
-	
+
 	public void decodeAttributeNS() throws EXIException {
 		try {
 			decodeAttributeNSStructure();
@@ -148,13 +149,38 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		}
 	}
 
-	public void decodeAttributeGeneric() throws EXIException {
+	public void decodeAttributeAnyInvalidValue() throws EXIException {
 		try {
-			decodeAttributeGenericStructure();
+			decodeAttributeAnyInvalidStructure();
 
 			// decode attribute value as string
 			attributeValue = block.readValueAsString(attributeURI,
 					attributeLocalName);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	public void decodeAttributeGeneric() throws EXIException {
+		try {
+			decodeAttributeGenericStructure();
+
+			eventAT.setNamespaceURI(this.attributeURI);
+			eventAT.setLocalPart(this.attributeLocalName);
+
+			Datatype globalType = grammar.getGlobalAttributeDatatype(eventAT);
+
+			if (globalType != null) {
+				attributeValue = block.readTypedValidValue(globalType,
+						attributeURI, attributeLocalName);
+			} else {
+				// decode attribute value as string ??
+				// attributeValue = block.readValueAsString(attributeURI,
+				// attributeLocalName);
+				throw new EXIException("No global datatype found for "
+						+ eventAT);
+			}
+
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -202,10 +228,6 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		}
 	}
 
-	public void decodeXsiNilDeviation() throws EXIException {
-		decodeAttributeXsiNilDeviation();
-	}
-
 	public void decodeCharacters() throws EXIException {
 		try {
 			characters = block.readTypedValidValue(decodeCharactersStructure()
@@ -251,7 +273,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeDocType() throws EXIException {
 		decodeDocTypeStructure();
 	}
-	
+
 	public void decodeEntityReference() throws EXIException {
 		decodeEntityReferenceStructure();
 	}
