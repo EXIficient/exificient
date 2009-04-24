@@ -64,14 +64,14 @@ public enum EventType {
 	 */
 	ATTRIBUTE_XSI_TYPE, // xsi:type
 	ATTRIBUTE_XSI_NIL, // xsi:nil
-	ATTRIBUTE_XSI_NIL_INVALID_VALUE, // // xsi:nil deviation 2nd level
 	/*
 	 * Attributes
 	 */
 	ATTRIBUTE, // schema-declared
 	ATTRIBUTE_NS, // schema-declared but URI only
 	ATTRIBUTE_GENERIC, // schema-declared but generic
-	ATTRIBUTE_INVALID_VALUE, // schema-declared but invalid
+	ATTRIBUTE_INVALID_VALUE, // schema-declared with qname but invalid
+	ATTRIBUTE_ANY_INVALID_VALUE, // schema-declared but invalid
 	ATTRIBUTE_GENERIC_UNDECLARED, // schema-undeclared
 	/*
 	 * StartElements

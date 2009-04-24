@@ -18,9 +18,13 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeGeneric;
 import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndDocument;
@@ -52,6 +56,8 @@ public class GrammarSchemaInformed extends AbstractGrammar {
 	protected Map<ElementKey, Rule> elementDispatcher;
 
 	protected Map<ExpandedName, TypeGrammar> grammarTypes;
+	
+	protected Map<Attribute, Datatype> globalAttributes;
 
 	protected final TypeGrammar urType;
 
@@ -64,6 +70,7 @@ public class GrammarSchemaInformed extends AbstractGrammar {
 		// allocate memory
 		elementDispatcher = new HashMap<ElementKey, Rule>();
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
+		globalAttributes = new HashMap<Attribute, Datatype>();
 
 		// ur-type
 		urType = GrammarSchemaInformed.getUrTypeRule();
@@ -128,7 +135,15 @@ public class GrammarSchemaInformed extends AbstractGrammar {
 	public TypeGrammar getUrType() {
 		return urType;
 	}
+	
+	protected void addGlobalAttribute(Attribute at) {
+		globalAttributes.put(at, at.getDatatype());
+	}
 
+	public Datatype getGlobalAttributeDatatype(Attribute at) {
+		return globalAttributes.get(at);
+	}
+	
 	private void initDocumentGrammar(ExpandedName[] globalElements) {
 		/*
 		 * rule (DocEnd)

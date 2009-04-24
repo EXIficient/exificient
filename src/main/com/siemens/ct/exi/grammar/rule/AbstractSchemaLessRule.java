@@ -113,6 +113,16 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		return false;
 	}
 
+	public int getNumberOfSchemaDeviatedAttributes() {
+		throw new RuntimeException(
+				"Schema-related attribute dealing in schema-less case");
+	}
+
+	public int getLeastAttributeEventCode() {
+		throw new RuntimeException(
+				"Schema-related attribute dealing in schema-less case");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

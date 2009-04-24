@@ -27,6 +27,7 @@ import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.ElementKey;
@@ -73,6 +74,7 @@ public abstract class AbstractEXICoder {
 	// factory
 	protected EXIFactory exiFactory;
 	protected Grammar grammar;
+	protected boolean isSchemaInformed;
 	protected FidelityOptions fidelityOptions;
 
 	// error handler
@@ -105,6 +107,7 @@ public abstract class AbstractEXICoder {
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
 		this.grammar = exiFactory.getGrammar();
+		this.isSchemaInformed = grammar.isSchemaInformed();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
 
 		// setup final events
@@ -175,9 +178,9 @@ public abstract class AbstractEXICoder {
 		scopeTypeURI.add(uri);
 		scopeTypeLocalName.add(localName);
 	}
-	
+
 	protected void pushScope(final String namespaceURI, final String localName) {
-		//	push scope
+		// push scope
 		scopeURI.add(namespaceURI);
 		scopeLocalName.add(localName);
 
@@ -246,7 +249,7 @@ public abstract class AbstractEXICoder {
 	protected void pushRule(final String namespaceURI, final String localName) {
 		Rule ruleToPush = null;
 
-		if (grammar.isSchemaInformed()) {
+		if (isSchemaInformed) {
 			// element rule known from schema ?
 			if ((ruleToPush = getSchemaRuleForElement(namespaceURI, localName)) == null) {
 				// if rule not present use ur-type
@@ -322,5 +325,11 @@ public abstract class AbstractEXICoder {
 		}
 
 		return r;
+	}
+
+	protected void throwWarning(String message) {
+		// if (errorHandler != null) {
+		errorHandler.warning(new EXIException(message + ", options=" + fidelityOptions));
+		// }
 	}
 }

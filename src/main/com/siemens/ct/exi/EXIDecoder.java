@@ -98,7 +98,7 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeStartElementNS() throws EXIException;
-	
+
 	/**
 	 * Reads generic start element.
 	 * 
@@ -151,7 +151,7 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeAttribute() throws EXIException;
-	
+
 	/**
 	 * Parses expected attribute with given namespaceURI
 	 * 
@@ -160,11 +160,18 @@ public interface EXIDecoder {
 	public void decodeAttributeNS() throws EXIException;
 
 	/**
-	 * Parses expected attribute with schema-invalid value
+	 * Parses expected attribute with schema-invalid value (qname given)
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeAttributeInvalidValue() throws EXIException;
+
+	/**
+	 * Parses expected attribute with schema-invalid value (NO qname given)
+	 * 
+	 * @throws EXIException
+	 */
+	public void decodeAttributeAnyInvalidValue() throws EXIException;
 
 	/**
 	 * Parses expected generic attribute.
@@ -201,8 +208,6 @@ public interface EXIDecoder {
 	 */
 	public void decodeXsiNil() throws EXIException;
 
-	public void decodeXsiNilDeviation() throws EXIException;
-
 	/**
 	 * Decodes expected characters.
 	 * 
@@ -230,7 +235,7 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 */
 	public void decodeDocType() throws EXIException;
-	
+
 	/**
 	 * Parses EntityReference
 	 * 
@@ -306,7 +311,7 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for attribute name
 	 */
 	public String getAttributeLocalName();
-	
+
 	/**
 	 * Provides (last) attribute prefix
 	 * 
@@ -380,14 +385,13 @@ public interface EXIDecoder {
 	 */
 	public String getDocTypeText();
 
-
 	/**
 	 * Provides ENTITY_REFERENCE name.
 	 * 
 	 * @return <code>String</code> for DOCTYPE name
 	 */
 	public String getEntityReferenceName();
-	
+
 	/**
 	 * Provides comment text.
 	 * 

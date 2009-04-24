@@ -176,8 +176,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			ec = ec3AT + sir.getLeastAttributeEventCode();
 			nextEvent = currentRule.get1stLevelEvent(ec);
 		} else if (ec3AT == (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
-			// deviated xsi:nil
-			nextEventType = EventType.ATTRIBUTE_XSI_NIL_INVALID_VALUE;
+			// ANY deviated attribute (no qname present)
+			 nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
 		} else {
 			throw new EXIException(
 					"Error occured while decoding deviated attribute");
@@ -416,6 +416,23 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		}
 	}
 	
+	protected void decodeAttributeAnyInvalidStructure() throws EXIException {
+		decodeAttributeGenericUndeclaredStructure();
+		
+		// handle attribute prefix
+		attributePrefix = decodeQNamePrefix(this.attributeURI);
+
+//		// step forward in current rule (replace rule at the top)
+//		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+		
+//		try {
+//			// decode nil as string
+//			xsiNilDeviation = block.readValueAsString(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
+//		} catch (IOException e) {
+//			throw new EXIException(e);
+//		}
+	}
+	
 	protected void decodeAttributeGenericStructure() throws EXIException {
 		// decode structure
 		decodeAttributeGenericUndeclaredStructure();
@@ -465,15 +482,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		try {
 			// decode nil
 			this.xsiNil = block.readBoolean();
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void decodeAttributeXsiNilDeviation() throws EXIException {
-		try {
-			// decode nil as string
-			this.xsiNilDeviation = block.readString();
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}

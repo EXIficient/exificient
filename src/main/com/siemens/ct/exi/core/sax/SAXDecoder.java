@@ -286,6 +286,7 @@ public class SAXDecoder implements XMLReader {
 				case ATTRIBUTE:
 				case ATTRIBUTE_NS:
 				case ATTRIBUTE_INVALID_VALUE:
+				case ATTRIBUTE_ANY_INVALID_VALUE:
 				case ATTRIBUTE_GENERIC:
 				case ATTRIBUTE_GENERIC_UNDECLARED:
 					if (eventType == EventType.ATTRIBUTE) {
@@ -294,6 +295,11 @@ public class SAXDecoder implements XMLReader {
 						decoder.decodeAttributeNS();
 					} else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
 						decoder.decodeAttributeInvalidValue();
+					} else if (eventType == EventType.ATTRIBUTE_ANY_INVALID_VALUE) {
+						// invalid attributes with unknown qname, e.g. xsi:nil deviation
+						decoder.decodeAttributeAnyInvalidValue();
+						decoder.getXsiNilDeviation();
+
 					} else if (eventType == EventType.ATTRIBUTE_GENERIC) {
 						decoder.decodeAttributeGeneric();
 					} else {
@@ -324,17 +330,9 @@ public class SAXDecoder implements XMLReader {
 													.getXsiTypeName()));
 					break;
 				case ATTRIBUTE_XSI_NIL:
-				case ATTRIBUTE_XSI_NIL_INVALID_VALUE:
-					String attributeXsiValue;
-					if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
-						decoder.decodeXsiNil();
-						attributeXsiValue = decoder.getXsiNil() ? Constants.DECODED_BOOLEAN_TRUE
-								: Constants.DECODED_BOOLEAN_FALSE;
-					} else {
-						// ATTRIBUTE_XSI_NIL_DEVIATION
-						decoder.decodeXsiNilDeviation();
-						attributeXsiValue = decoder.getXsiNilDeviation();
-					}
+					decoder.decodeXsiNil();
+					String attributeXsiValue = decoder.getXsiNil() ? Constants.DECODED_BOOLEAN_TRUE
+							: Constants.DECODED_BOOLEAN_FALSE;
 					attributes
 							.addAttribute(
 									XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,

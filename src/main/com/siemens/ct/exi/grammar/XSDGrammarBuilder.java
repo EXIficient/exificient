@@ -205,6 +205,17 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		for (ExpandedName typeName : grammarTypes.keySet()) {
 			sig.addTypeGrammar(typeName, grammarTypes.get(typeName));
 		}
+		
+		// global attributes
+		xsModel.getComponents(XSConstants.ELEMENT_DECLARATION);
+		XSNamedMap nm = xsModel.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
+		for (int i=0; i<nm.getLength(); i++) {
+			XSAttributeDeclaration atDecl = (XSAttributeDeclaration)nm.item(i);
+			Attribute at = getAttributeEvent(atDecl);
+			sig.addGlobalAttribute(at);
+		}
+		xsModel.getComponents(XSConstants.ATTRIBUTE_GROUP);
+		xsModel.getComponents(XSConstants.SCOPE_GLOBAL);
 
 		return sig;
 	}
@@ -511,9 +522,8 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 		return vSortedAttributes;
 	}
 
-	protected Attribute getAttributeEvent(XSAttributeUse attrUse)
+	protected Attribute getAttributeEvent(XSAttributeDeclaration attrDecl)
 			throws EXIException {
-		XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
 		XSSimpleTypeDefinition attrTypeDefinition = attrDecl
 				.getTypeDefinition();
 
@@ -574,7 +584,7 @@ public class XSDGrammarBuilder implements DOMErrorHandler {
 			for (int i = vSortedAttributes.size() - 1; i >= 0; i--) {
 				XSAttributeUse attrUse = vSortedAttributes.elementAt(i);
 
-				Attribute at = getAttributeEvent(attrUse);
+				Attribute at = getAttributeEvent(attrUse.getAttrDeclaration());
 
 				SchemaInformedRule newCurrent = new RuleStartTagSchemaInformed(
 						ruleContent2);
