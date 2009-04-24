@@ -30,5 +30,6 @@
   <xs:element name="elString" type="xs:string" />
   <xs:element name="elInt" type="xs:int" />
 
-
+  <xs:attribute name="atFoo1" type="xs:string" />
+  
 </xs:schema>
