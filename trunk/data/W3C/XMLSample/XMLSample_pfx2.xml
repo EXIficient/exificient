@@ -9,10 +9,10 @@
          <nsp:family>Smith</nsp:family>
          <nss:given>Bill</nss:given>
       </nss:name>
-      <email>smith@foo.com</email>
-      <YearsOfService>20</YearsOfService>
-      <weight>175.4</weight>
-      <birthday>1955-03-24</birthday>
+      <email>smith1@foo.com</email>
+      <YearsOfService>21</YearsOfService>
+      <weight>175.1</weight>
+      <birthday>1955-03-21</birthday>
       <nsp:link nsp:subordinates="worker"/>
    </person>
    
@@ -22,10 +22,10 @@
          <nspFoo:family>Smith</nspFoo:family>
          <nss:given>Bill</nss:given>
       </nss:name>
-      <email>smith@foo.com</email>
-      <YearsOfService>20</YearsOfService>
-      <weight>175.4</weight>
-      <birthday>1955-03-24</birthday>
+      <email>smith2@foo.com</email>
+      <YearsOfService>22</YearsOfService>
+      <weight>175.2</weight>
+      <birthday>1955-03-22</birthday>
       <!-- other attribute prefix! -->
       <nsp:link nspX:subordinates="worker"/>
    </person>
@@ -36,10 +36,10 @@
          <nspFoo:family>Smith</nspFoo:family>
          <nss:given>Bill</nss:given>
       </nss:name>
-      <email>smith@foo.com</email>
-      <YearsOfService>20</YearsOfService>
-      <weight>175.4</weight>
-      <birthday>1955-03-24</birthday>
+      <email>smith3@foo.com</email>
+      <YearsOfService>23</YearsOfService>
+      <weight>175.3</weight>
+      <birthday>1955-03-23</birthday>
       <!-- new attribute prefix! -->
       <nsp:link xmlns:nspY="http://www.pok.xyz.com" nspY:subordinates="worker"/>
    </person>

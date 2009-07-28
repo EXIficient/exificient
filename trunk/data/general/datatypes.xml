@@ -2,6 +2,7 @@
 <root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="datatypes.xsd">
     
+    <!-- http://xmlbeans.apache.org/docs/2.0.0/guide/conXMLBeansSupportBuiltInSchemaTypes.html -->
     <!-- Built-in Type: Binary -->
     <base64Binary>SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0g
         TmFtZW4sIHfDpHJlbiBzaWUgbcO2Z2xpY2hlcndlaXNlIGtlaW5lIEjDvHRlIG1laHIsDQpzb25kZXJuIEjDvMOfZS4NCg==
@@ -52,6 +53,7 @@
     <decimal>12678967.543233</decimal>
     <decimal>+100000.00</decimal>
     <decimal>210</decimal>
+    <decimal>12678967.543233999999999999999999</decimal>
 
     <!-- Built-in Type: Float -->
     <float>-1E4</float>
@@ -62,6 +64,7 @@
     <float>0</float>
     <float>INF</float>
     <float>NaN </float>
+    <float>14534545345345343545443544534.454654654566666666</float>
     <double>-1E4</double>
     <double>1267.43233E12</double>
     <double>12.78e-2</double>
@@ -78,6 +81,7 @@
     <nonPositiveInteger>-552</nonPositiveInteger>
     <negativeInteger>-4</negativeInteger>
     <long>2135151351</long>
+    <long>1231538438555555559</long>
     <int>5435</int>
     <short>14155</short>
     <byte>106</byte>
@@ -91,13 +95,8 @@
     
     <!-- Built-in Type: QName -->
     <qName>ss</qName>
-    <!-- ???
-    <qName>http://www.w3.org/TR/xmlschema-2:sayHello</qName>
-    <qName>ss:aa</qName>
-    -->
     
     <!-- Built-in Type: List -->
-    <!-- TODO -->
     <intValues>100 34 56 -23 1567</intValues>
     
     <!-- Built-in Type: String  -->

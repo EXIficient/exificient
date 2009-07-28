@@ -33,6 +33,27 @@
     <!-- "([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+" -->
     <pattern7>A.B0</pattern7>
     
+    <!-- [A-Z-[C-X]] -->
+    <!-- A, B, Y, Z -->
+    <patternSub1>A</patternSub1>
+    <patternSub1>B</patternSub1>
+    <!-- invalid -->
+    <!--<patternSub1>C</patternSub1>-->
+    <patternSub1>Y</patternSub1>
+    <patternSub1>Z</patternSub1>
+    
+    <!-- [A-Z-[C-X-[M-N]]]* -->
+    <!-- A,B,M,N,Y,Z -->
+    <patternSub2>A</patternSub2>
+    <patternSub2>B</patternSub2>
+    <patternSub2>Z</patternSub2>
+    <patternSub2>Y</patternSub2>
+    <patternSub2>M</patternSub2>
+    <patternSub2>N</patternSub2>
+    <!-- invalid -->
+    <!--<patternSub2>C</patternSub2>-->
+    <!--<patternSub2>L</patternSub2>-->
+    
     <patternSSN>078-05-1120</patternSSN>
     <patternSSN>078 05 1120</patternSSN>
     <patternSSN>078051120</patternSSN>
