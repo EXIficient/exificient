@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="datatypeFloat.xsd">
+    <!-- Built-in Type: Float -->
+    <float>-1E4</float>
+    <float>1267.43233E12</float>
+    <float>12.78e-2</float>
+    <float>12</float>
+    <float>-0</float>
+    <float>0</float>
+    <float>INF</float>
+    <float>NaN </float>
+    <float>312321.4546</float>
+    <double>-1E4</double>
+    <double>1267.43233E12</double>
+    <double>12.78e-2</double>
+    <double>12</double>
+    <double>-0</double>
+    <double>0</double>
+    <double>INF</double>
+    <double>NaN</double>
+    <double>12674123423.4323333312</double>
+</root>

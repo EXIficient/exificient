@@ -16,6 +16,10 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    
+    <!-- define a global element with same qname but different content type -->
+    <xs:element name="elFloat" type="xs:float"/>
+    
 	
     <xs:element name="elInteger">
         <xs:complexType>

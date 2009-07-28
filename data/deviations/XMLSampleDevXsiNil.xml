@@ -24,7 +24,7 @@
       <ns:birthday>1968-07-16</ns:birthday>
    </ns:person>
    <!-- unexpected nil & invalid boolean -->
-   <ns:person id="worker"  xsi:nil="falseeeeeeeeeeeeeeee">
+   <ns:person id="worker" xsi:nil="falseeeeeeeeeeeeeeee">
       <ns:name>
          <ns:family>Jones</ns:family>
          <ns:given>Sam</ns:given>
@@ -33,4 +33,5 @@
       <ns:yearsOfService>5</ns:yearsOfService>
       <ns:birthday>1959-01-26</ns:birthday>
    </ns:person>
+   <ns:person xsi:nil="true"/>
 </ns:personnel>
