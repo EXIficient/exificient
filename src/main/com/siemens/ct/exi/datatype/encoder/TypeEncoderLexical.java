@@ -51,10 +51,18 @@ public class TypeEncoderLexical extends AbstractTypeEncoderSchemaInformed {
 				new XSDDecimalCharacterSet());
 		floatDTE = new RestrictedCharacterSetDatatypeEncoder(this,
 				new XSDDoubleCharacterSet());
+		doubleDTE = new RestrictedCharacterSetDatatypeEncoder(this,
+				new XSDDoubleCharacterSet());
 		integerDTE = new RestrictedCharacterSetDatatypeEncoder(this,
 				new XSDIntegerCharacterSet());
+		longDTE = integerDTE;
+		bigIntegerDTE = integerDTE;
 		unsignedIntegerDTE = integerDTE;
+		unsignedLongDTE = integerDTE;
+		unsignedBigIntegerDTE = integerDTE;
 		nBitIntegerDTE = integerDTE;
+		nBitLongDTE = integerDTE;
+		nBitBigIntegerDTE = integerDTE;
 		datetimeDTE = new RestrictedCharacterSetDatatypeEncoder(this,
 				new XSDDateTimeCharacterSet());
 		enumerationDTE = new EnumerationDatatypeEncoder(this);

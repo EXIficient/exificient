@@ -18,11 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
-import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.StartDocument;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaLess;
 import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
@@ -42,44 +39,29 @@ import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaLess;
 public class GrammarSchemaLess extends AbstractGrammar {
 	public GrammarSchemaLess() {
 		super(false);
+		
+		this.schemaEntries = new SchemaEntry[0];
+		this.namedElements = new ElementContainer[0];
 
 		init();
 	}
 
 	private void init() {
-		/*
-		 * rule (DocEnd)
-		 */
-		builtInDocEndGrammar = new RuleDocEnd("DocEnd");
-		builtInDocEndGrammar.addTerminalRule(new EndDocument());
-
-		/*
-		 * rule (DocContent)
-		 */
-		builtInDocContentGrammar = new RuleDocContentSchemaLess(
+		// DocEnd rule
+		Rule builtInDocEndGrammar = new RuleDocEnd("DocEnd");
+		// DocContent rule
+		Rule builtInDocContentGrammar = new RuleDocContentSchemaLess(
 				builtInDocEndGrammar, "DocContent");
-
-		// rule (DocContent), not schema informed --> level one
-		builtInDocContentGrammar.addRule(new StartElementGeneric(),
-				builtInDocEndGrammar);
-
-		/*
-		 * rule (Document)
-		 */
+		// Document rule
 		builtInDocumentGrammar = new RuleDocument(builtInDocContentGrammar,
 				"Document");
-		builtInDocumentGrammar.addRule(new StartDocument(),
-				builtInDocContentGrammar);
 	}
 
-	public Rule getRule(ElementKey es) {
-		return null;
-	}
-
+	/*
+	 * Note: create new instance since fragment content grammar may have
+	 * been changed over time
+	 */
 	public Rule getBuiltInFragmentGrammar() {
-		// Note: create new instance since fragment content grammar may change
-		// over time
-
 		/*
 		 * Fragment Content
 		 */
@@ -95,8 +77,26 @@ public class GrammarSchemaLess extends AbstractGrammar {
 
 		return builtInFragmentGrammar;
 	}
-	
-	public Datatype getGlobalAttributeDatatype(Attribute at) {
+
+	public Attribute getGlobalAttribute(String namespaceURI, String name) {
+		return null;
+	}
+
+	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {
+		// no type grammar available
+		return null;
+	}
+
+	public int getNumberOfGlobalElements() {
+		return 0;
+	}
+	public boolean isGlobalElement(String namespaceURI, String localName) {
+		return false;
+	}
+
+	public ElementContainer getNamedElement(String namespaceURI,
+			String localName) {
+		// no schema information
 		return null;
 	}
 

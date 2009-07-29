@@ -45,11 +45,11 @@ public class DecoderByteBlockPreCompression extends
 		structureChannel = new ByteDecoderChannel(getStream());
 	}
 
-	protected InputStream getStream() throws IOException {
+	public InputStream getStream() throws IOException {
 		return this.inputStream;
 	}
 
-	protected ByteDecoderChannel getNextChannel() throws IOException {
+	public ByteDecoderChannel getNextChannel() throws IOException {
 		return structureChannel;
 	}
 

@@ -31,6 +31,6 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public class DatatypeString extends AbstractDatatype {
 	public DatatypeString(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BUILTIN_STRING, datatypeIdentifier);
+		super(BuiltInType.STRING, datatypeIdentifier);
 	}
 }

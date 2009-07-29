@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.grammar;
 
-import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.stringtable.StringTableCommon;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
@@ -33,18 +31,26 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public interface Grammar {
+	
 	public boolean isSchemaInformed();
 
 	public Rule getBuiltInDocumentGrammar();
 
 	public Rule getBuiltInFragmentGrammar();
 
-	public Rule getRule(ElementKey es);
-
-	public void populateStringTable(StringTableCommon stringTable);
+	public SchemaEntry[] getSchemaEntries();
+	
+	public ElementContainer[] getNamedElements();
+	
+	public ElementContainer getNamedElement(String namespaceURI, String localName);
+	
+	public int getNumberOfGlobalElements();
+	public boolean isGlobalElement(String namespaceURI, String localName);
 	
 	/*
 	 * 
 	 */
-	public Datatype getGlobalAttributeDatatype(Attribute at);
+	public Attribute getGlobalAttribute(String namespaceURI, String name);
+	
+	public TypeGrammar getTypeGrammar(String namespaceURI, String name);
 }

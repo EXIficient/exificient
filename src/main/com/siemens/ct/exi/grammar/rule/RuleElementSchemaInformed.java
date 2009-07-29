@@ -19,6 +19,8 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -43,75 +45,45 @@ import com.siemens.ct.exi.grammar.event.EventType;
 
 public class RuleElementSchemaInformed extends
 		AbstractSchemaInformedRuleContent {
-	public String toString() {
-		return "SIContent" + super.toString();
-	}
 
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2;
-
-		// EE on second level necessary ?
-		if (contains(END_ELEMENT_EVENT)) {
-			// childContentItems only
-			ch2 = get2ndLevelElementItems(fidelityOptions).size();
+	@Override
+	protected void buildEvents2(FidelityOptions fidelityOptions) {
+		if (fidelityOptions.isStrict()) {
+			//	STRICT element grammars do not dispose of any second level events
 		} else {
-			// EE + childContentItems
-			ch2 = get2ndLevelElementItems(fidelityOptions).size() + 1;
-		}
-
-		// 3rd level ?
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
-		}
-
-		return ch2;
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		int ec;
-
-		// EE on second level ?
-		if (contains(END_ELEMENT_EVENT)) {
-			ec = getEventCode(eventType,
-					get2ndLevelElementItems(fidelityOptions));
-		} else {
-			if (eventType == EventType.END_ELEMENT_UNDECLARED) {
-				ec = 0;
-			} else {
-				ec = 1 + getEventCode(eventType,
-						get2ndLevelElementItems(fidelityOptions));
+			int eventCode2 = 0;
+			// EE on second level necessary ?
+			if (!hasEndElement) {
+				events2.add(new EventTypeInformation(EventType.END_ELEMENT_UNDECLARED, eventCode2++));
 			}
-
-		}
-
-		return ec;
-	}
-
-	public EventType get2ndLevelEvent(int eventCode,
-			FidelityOptions fidelityOptions) {
-		assert (eventCode >= 0);
-
-		// EE on second level ?
-		if (contains(END_ELEMENT_EVENT)) {
-			return get2ndLevelElementItems(fidelityOptions).get(eventCode);
-		} else {
-			if (eventCode == 0) {
-				return EventType.END_ELEMENT_UNDECLARED;
-			} else {
-				return get2ndLevelElementItems(fidelityOptions).get(
-						eventCode - 1);
+			// extensibility: SE(*), CH(*)
+			events2.add(new EventTypeInformation(EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
+			// ER
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+				events2.add(new EventTypeInformation(EventType.ENTITY_REFERENCE, eventCode2++));
 			}
 		}
+		
+		fidelityOptions2 = fidelityOptions;
 	}
 
 	@Override
 	public RuleElementSchemaInformed duplicate() {
 		RuleElementSchemaInformed clone = new RuleElementSchemaInformed();
 
-		clone.joinRules(this);
+		//	duplicate top level only
+		for (int i = 0; i < getNumberOfEvents(); i++) {
+			EventInformation ei = lookFor(i);
+			clone.addRule(ei.event, ei.next);
+		}
 
 		return clone;
+	}
+	
+	
+	public String toString() {
+		return "Element" + super.toString();
 	}
 
 }

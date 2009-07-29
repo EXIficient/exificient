@@ -42,6 +42,10 @@ public class RuleFragment extends AbstractSchemaInformedRule {
 		this.fragmentContent = fragmentContent;
 	}
 
+	public String toString() {
+		return "Fragment" + super.toString();
+	}
+	
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;

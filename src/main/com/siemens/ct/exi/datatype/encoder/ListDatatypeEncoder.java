@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeList;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -77,8 +78,28 @@ public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements
 		return true;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		/*
+//		 * check AGAIN & write to stream
+//		 */
+//
+//		// length prefixed sequence of values
+//		valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
+//
+//		// iterate over all tokens
+//		StringTokenizer st = new StringTokenizer(lastValidValue,
+//				Constants.XSD_LIST_DELIM);
+//
+//		while (st.hasMoreTokens()) {
+//			// Note: assumption that is valid (was already checked!)
+//			listTypeEncoder.isTypeValid(listDatatype, st.nextToken());
+//			listTypeEncoder.writeTypeValidValue(valueChannel, uri, localName);
+//		}
+//	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		 listTypeEncoder.setStringEncoder(typeEncoder.getStringEncoder());
 		/*
 		 * check AGAIN & write to stream
 		 */
@@ -93,7 +114,7 @@ public class ListDatatypeEncoder extends AbstractDatatypeEncoder implements
 		while (st.hasMoreTokens()) {
 			// Note: assumption that is valid (was already checked!)
 			listTypeEncoder.isTypeValid(listDatatype, st.nextToken());
-			listTypeEncoder.writeTypeValidValue(valueChannel, uri, localName);
+			listTypeEncoder.writeTypeValidValue(context, valueChannel);
 		}
 	}
 }

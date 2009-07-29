@@ -19,10 +19,12 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.EventInformationSchemaLess;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -37,55 +39,37 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		SchemaLessRule {
-	protected List<Event> events;
-	protected List<Rule> rules;
+	
+	protected List<EventInformation> containers;
+	protected int eventCount;
 
 	public AbstractSchemaLessRule() {
 		super();
-		init();
-	}
-
-	private void init() {
-		events = new ArrayList<Event>();
-		rules = new ArrayList<Rule>();
+		containers = new ArrayList<EventInformation>();
+		eventCount = 0;
 	}
 
 	public final boolean isSchemaRule() {
 		return false;
 	}
-
-	protected int getInternalIndex(int eventCode) {
-		return (getNumberOfEvents() - 1 - eventCode);
+	
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return true;
 	}
-
-	protected int getEventCode(int internalIndex) {
-		return (getNumberOfEvents() - 1 - internalIndex);
+	
+	public Rule getTypeEmpty() {
+		return this;
 	}
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
-		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
-				.getCodingLength(events.size() + 1) : MethodsBag
-				.getCodingLength(events.size()));
+	 		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
+	 				.getCodingLength(eventCount + 1) : MethodsBag
+	 				.getCodingLength(eventCount));
 	}
 
-	public int get1stLevelEventCode(Event event) {
-		for (int i = 0; i < events.size(); i++) {
-			if (events.get(i).equals(event)) {
-				return (getEventCode(i));
-			}
-		}
-
-		return Constants.NOT_FOUND;
-	}
-
-	public Event get1stLevelEvent(int eventCode) {
-		return (events.get(getInternalIndex(eventCode)));
-	}
 
 	public int getNumberOfEvents() {
-		assert (events.size() == rules.size());
-
-		return events.size();
+		return containers.size();
 	}
 
 	/*
@@ -95,21 +79,19 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		assert (!isTerminalRule());
 		assert (!this.contains(event));
 
-		events.add(event);
-		rules.add(rule);
-	}
-
-	public Rule get1stLevelRule(int ec) throws IndexOutOfBoundsException {
-		return rules.get(getInternalIndex(ec));
+		containers.add(new EventInformationSchemaLess(this, rule, event, getNumberOfEvents()));
+		eventCount = containers.size();
 	}
 
 	protected boolean contains(Event event) {
-		for (int i = 0; i < events.size(); i++) {
-			if (events.get(i).equals(event)) {
+		Iterator<EventInformation> iter = containers.iterator();
+		
+		while(iter.hasNext()) {
+			if( iter.next().event.equals(event) ) {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 
@@ -137,13 +119,34 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 			s += "[";
 
 			for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
-				s += "," + this.get1stLevelEvent(ec);
+				s += "," + lookFor(ec).event;
 			}
 
 			s += "]";
 		}
 
 		return s;
+	}
+	
+	
+	
+	// for encoder
+	public EventInformation lookFor( Event event ) {
+		for (int i=0; i<containers.size(); i++) {
+			EventInformation rc = containers.get(i);
+			if (rc.event.equals(event)) {
+				return rc;
+			}
+		}
+		
+		//	nothing found
+		return null;
+	}
+	
+	//	for decoder
+	public EventInformation lookFor( int eventCode ) {
+		assert(eventCode >= 0 && eventCode < containers.size());
+		return containers.get(getNumberOfEvents() - 1 - eventCode);
 	}
 
 }

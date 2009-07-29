@@ -20,7 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -32,13 +31,13 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  */
 
 public class DatatypeNBitInteger extends AbstractDatatype {
-	protected final XSDInteger lowerBound;
-	protected final XSDInteger upperBound;
+	protected final int lowerBound;
+	protected final int upperBound;
 	protected final int numberOfBits4Range;
 
 	public DatatypeNBitInteger(ExpandedName datatypeIdentifier,
-			XSDInteger lowerBound, XSDInteger upperBound, int boundedRange) {
-		super(BuiltInType.BUILTIN_NBIT_INTEGER, datatypeIdentifier);
+			int lowerBound, int upperBound, int boundedRange) {
+		super(BuiltInType.NBIT_INTEGER, datatypeIdentifier);
 
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
@@ -47,11 +46,11 @@ public class DatatypeNBitInteger extends AbstractDatatype {
 		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
 	}
 
-	public XSDInteger getLowerBound() {
+	public int getLowerBound() {
 		return lowerBound;
 	}
 
-	public XSDInteger getUpperBound() {
+	public int getUpperBound() {
 		return upperBound;
 	}
 

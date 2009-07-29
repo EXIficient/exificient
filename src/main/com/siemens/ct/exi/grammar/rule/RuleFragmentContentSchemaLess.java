@@ -45,8 +45,9 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 public class RuleFragmentContentSchemaLess extends AbstractSchemaLessRule {
 	public RuleFragmentContentSchemaLess() {
 		super();
-
-		addRule(new StartElementGeneric(), this); // FragmentContent
+		//	SE(*) --> FragmentContent
+		addRule(new StartElementGeneric(), this);
+		//	EE 
 		addTerminalRule(new EndDocument());
 	}
 

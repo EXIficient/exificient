@@ -29,9 +29,9 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeDatetime;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
 
@@ -44,17 +44,12 @@ public class DatetimeDatatypeEncoder extends AbstractDatatypeEncoder implements
 	}
 
 	public boolean isValid(Datatype datatype, String value) {
-		try {
-			lastValidDatetime.parseEXIDatetime(value,
-					((DatatypeDatetime) datatype).getDatetimeType());
-			return true;
-		} catch (XMLParsingException e) {
-			return false;
-		}
+		return lastValidDatetime.parse(value, ((DatatypeDatetime) datatype)
+				.getDatetimeType());
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+	public void writeValue(NameContext context, EncoderChannel valueChannel)
+			throws IOException {
 		valueChannel.encodeDateTime(lastValidDatetime);
 	}
 

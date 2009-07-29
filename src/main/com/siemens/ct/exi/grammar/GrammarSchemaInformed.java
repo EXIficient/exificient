@@ -18,30 +18,20 @@
 
 package com.siemens.ct.exi.grammar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.AttributeGeneric;
-import com.siemens.ct.exi.grammar.event.CharactersGeneric;
-import com.siemens.ct.exi.grammar.event.EndDocument;
-import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.RuleDocContentSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleDocEnd;
 import com.siemens.ct.exi.grammar.rule.RuleDocument;
-import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
 import com.siemens.ct.exi.grammar.rule.RuleFragment;
 import com.siemens.ct.exi.grammar.rule.RuleFragmentContentSchemaInformed;
-import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.ExpandedNameComparator;
 
 /**
  * TODO Description
@@ -53,145 +43,119 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class GrammarSchemaInformed extends AbstractGrammar {
-	protected Map<ElementKey, Rule> elementDispatcher;
+	
+	protected ExpandedName[] globalElements;	//	subset of entire set of element
 
 	protected Map<ExpandedName, TypeGrammar> grammarTypes;
-	
-	protected Map<Attribute, Datatype> globalAttributes;
 
-	protected final TypeGrammar urType;
+	protected Attribute[] globalAttributes;
 
-	protected GrammarSchemaInformed(ExpandedName[] globalElements) {
+	protected Rule builtInFragmentGrammar;
+
+	protected GrammarSchemaInformed(SchemaEntry[] schemaEntries, ElementContainer[] elements,
+			ExpandedName[] globalElements) {
 		super(true);
+		
+		this.schemaEntries = schemaEntries;
+		this.globalElements = globalElements;
+		this.namedElements = elements;
 
-		// init document
+		// init document & fragment grammar
 		initDocumentGrammar(globalElements);
+		initFragmentGrammar(elements);
 
 		// allocate memory
-		elementDispatcher = new HashMap<ElementKey, Rule>();
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
-		globalAttributes = new HashMap<Attribute, Datatype>();
-
-		// ur-type
-		urType = GrammarSchemaInformed.getUrTypeRule();
+		globalAttributes = new Attribute[0];
 	}
 
-	public static TypeGrammar getUrTypeRule() {
-		// ur-Type
-		SchemaInformedRule urType1 = new RuleElementSchemaInformed();
-		urType1.addRule(new StartElementGeneric(), urType1);
-		urType1.addTerminalRule(new EndElement());
-		urType1.addRule(new CharactersGeneric(), urType1);
 
-		SchemaInformedRule urType0 = new RuleStartTagSchemaInformed(urType1);
-		urType0.addRule(new AttributeGeneric(), urType0);
-		urType0.addRule(new StartElementGeneric(), urType1);
-		urType0.addTerminalRule(new EndElement());
-		urType0.addRule(new CharactersGeneric(), urType1);
-		urType0.setHasNamedSubtypes(true);
-		urType0.setFirstElementRule();
-
-		// empty ur-Type
-		SchemaInformedRule emptyUrType0 = new RuleElementSchemaInformed();
-		emptyUrType0.addRule(new AttributeGeneric(), emptyUrType0);
-		emptyUrType0.addTerminalRule(new EndElement());
-		emptyUrType0.setFirstElementRule();
-
-		// nillable ?
-		urType0.setNillable(false, emptyUrType0);
-
-		return new TypeGrammar(urType0, emptyUrType0);
-	}
-
-	protected void setUriEntries(String[] uris) {
-		this.uris = uris;
-	}
-
-	protected void setLocalNamesEntries(ExpandedName[] localNames) {
-		this.localNames = localNames;
-	}
-
-	protected void addElementRule(ElementKey elementKey, Rule r) {
-		elementDispatcher.put(elementKey, r);
-	}
-
-	public Rule getRule(ElementKey elementKey) {
-		return elementDispatcher.get(elementKey);
-	}
-
-	protected void addTypeGrammar(ExpandedName typeName, TypeGrammar typeGrammar) {
-		grammarTypes.put(typeName, typeGrammar);
+	protected void setTypeGrammars(Map<ExpandedName, TypeGrammar> grammarTypes) {
+		this.grammarTypes = grammarTypes;
 	}
 
 	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {
-		if (namespaceURI == null || name == null) {
-			return null;
-		} else {
-			ExpandedName en = new ExpandedName(namespaceURI, name);
-			return grammarTypes.get(en);
+		assert(namespaceURI != null && name != null);
+		
+		ExpandedName en = new ExpandedName(namespaceURI, name);
+		return grammarTypes.get(en);
+	}
+
+	
+	public ElementContainer getNamedElement(final String namespaceURI, final String localName) {
+		for (ElementContainer namedElement: namedElements) {
+			if (ExpandedNameComparator.compare(namedElement.ename.getNamespaceURI(), namedElement.ename.getLocalName(), namespaceURI, localName) == 0 ) {
+				return namedElement;
+			}
 		}
-	}
-
-	public TypeGrammar getUrType() {
-		return urType;
+		return null;
 	}
 	
-	protected void addGlobalAttribute(Attribute at) {
-		globalAttributes.put(at, at.getDatatype());
+	public int getNumberOfGlobalElements() {
+		return globalElements.length;
 	}
-
-	public Datatype getGlobalAttributeDatatype(Attribute at) {
-		return globalAttributes.get(at);
+	public boolean isGlobalElement(String namespaceURI, String localName) {
+		for(ExpandedName globalElement : globalElements) {
+			if (ExpandedNameComparator.compare(globalElement.getNamespaceURI(), globalElement.getLocalName(), namespaceURI, localName) == 0 ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
-	private void initDocumentGrammar(ExpandedName[] globalElements) {
-		/*
-		 * rule (DocEnd)
-		 */
-		builtInDocEndGrammar = new RuleDocEnd("DocEnd");
-		builtInDocEndGrammar.addTerminalRule(new EndDocument());
+	public ExpandedName[] getGlobalElements() {
+		return globalElements;
+	}
 
-		/*
-		 * rule (DocContent)
-		 */
-		builtInDocContentGrammar = new RuleDocContentSchemaInformed(
+	protected void setGlobalAttributes(Attribute[] globalAttributes) {
+		assert(globalAttributes!=null);
+		this.globalAttributes = globalAttributes;
+	}
+
+	
+	public Attribute getGlobalAttribute(String namespaceURI, String name) {
+		for(Attribute at : globalAttributes) {
+			if (namespaceURI.equals(at.getNamespaceURI()) && name.equals(at.getLocalName())) {
+				return at;
+			}
+		}
+		return null;
+	}
+
+	protected void initDocumentGrammar(ExpandedName[] globalElements) {
+		// DocEnd rule
+		Rule builtInDocEndGrammar = new RuleDocEnd("DocEnd");
+		// DocContent rule
+		Rule builtInDocContentGrammar = new RuleDocContentSchemaInformed(
 				builtInDocEndGrammar, "DocContent");
-
-		/*
-		 * rule (DocContent) add global elements
-		 */
+		// DocContent rule & add global elements
 		for (ExpandedName globalElement : globalElements) {
 			StartElement se = new StartElement(globalElement.getNamespaceURI(),
 					globalElement.getLocalName());
 			builtInDocContentGrammar.addRule(se, builtInDocEndGrammar);
 		}
-
-		/*
-		 * rule (Document)
-		 */
+		// Document rule
 		builtInDocumentGrammar = new RuleDocument(builtInDocContentGrammar,
 				"Document");
-		builtInDocumentGrammar.addRule(new StartDocument(),
-				builtInDocContentGrammar);
 	}
 
-	public Rule getBuiltInFragmentGrammar() {
-		// Note: create new instance since fragment content grammar may change
-		// over time
-
+	protected void initFragmentGrammar(ElementContainer[] namedElements) {
+		// Note: Schema-informed fragment grammar does NOT change over time!
+		/*
+		 * FragmentContent grammar represents the number of unique element
+		 * qnames declared in the schema sorted lexicographically, first by
+		 * localName, then by uri.
+		 */
 		/*
 		 * Fragment Content
 		 */
 		Rule builtInFragmentContentGrammar = new RuleFragmentContentSchemaInformed(
 				"FragmentContent");
 
-		// all the unique qnames of elements sorted lexicographically, first by
-		// localName, then by uri
-		// TODO sorting & *overlapping qname*
-		for (ElementKey elKey : elementDispatcher.keySet()) {
-			ExpandedName name = elKey.getName();
-			StartElement se = new StartElement(name.getNamespaceURI(), name
-					.getLocalName());
+		for (ElementContainer namedElement : namedElements) {
+			ExpandedName ename = namedElement.ename;
+			StartElement se = new StartElement(ename.getNamespaceURI(),
+					ename.getLocalName());
 			builtInFragmentContentGrammar.addRule(se,
 					builtInFragmentContentGrammar);
 		}
@@ -199,11 +163,13 @@ public class GrammarSchemaInformed extends AbstractGrammar {
 		/*
 		 * Fragment
 		 */
-		Rule builtInFragmentGrammar = new RuleFragment(
+		builtInFragmentGrammar = new RuleFragment(
 				builtInFragmentContentGrammar, "Fragment");
 		builtInFragmentGrammar.addRule(new StartDocument(),
 				builtInFragmentContentGrammar);
+	}
 
+	public Rule getBuiltInFragmentGrammar() {
 		return builtInFragmentGrammar;
 	}
 

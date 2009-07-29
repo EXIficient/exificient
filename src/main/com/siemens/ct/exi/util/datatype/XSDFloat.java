@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.util.datatype;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
+import com.siemens.ct.exi.Constants;
 
 /**
  * TODO Description
@@ -31,41 +31,37 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  */
 
 public class XSDFloat {
-	public static final long FLOAT_SPECIAL_VALUES = -16384; // -(2^14)
-	public static final long MANTISSA_INFINITY = 1;
-	public static final long MANTISSA_MINUS_INFINITY = -1;
-	public static final long MANTISSA_NOT_A_NUMBER = 0;
+	public int mantissa;
+	public int exponent;
 
-	public long iMantissa;
-	public long iExponent;
-
-	private XSDFloat() {
+	protected XSDFloat() {
 	}
 
 	public static XSDFloat newInstance() {
 		return new XSDFloat();
 	}
 
-	public void parse(String s) throws XMLParsingException {
+	public boolean parse(String s) {
 		if (s.length() == 0) {
-			throw new XMLParsingException("Empty string while parsing float");
-		} else if (s.equals("INF")) {
-			iMantissa = MANTISSA_INFINITY;
-			iExponent = FLOAT_SPECIAL_VALUES;
-		} else if (s.equals("-INF")) {
-			iMantissa = MANTISSA_MINUS_INFINITY;
-			iExponent = FLOAT_SPECIAL_VALUES;
-		} else if (s.equals("NaN")) {
-			iMantissa = MANTISSA_NOT_A_NUMBER;
-			iExponent = FLOAT_SPECIAL_VALUES;
+			return false;
+			// throw new XMLParsingException("Empty string while parsing float");
+		} else if (s.equals(Constants.FLOAT_INFINITY)) {
+			mantissa = Constants.FLOAT_MANTISSA_INFINITY;
+			exponent = Constants.FLOAT_SPECIAL_VALUES;
+		} else if (s.equals(Constants.FLOAT_MINUS_INFINITY)) {
+			mantissa = Constants.FLOAT_MANTISSA_MINUS_INFINITY;
+			exponent = Constants.FLOAT_SPECIAL_VALUES;
+		} else if (s.equals(Constants.FLOAT_NOT_A_NUMBER)) {
+			mantissa = Constants.FLOAT_MANTISSA_NOT_A_NUMBER;
+			exponent = Constants.FLOAT_SPECIAL_VALUES;
 		} else {
 			char[] chars = s.toCharArray();
 
 			int decimalDigits = 0;
 			int len = chars.length;
 			int pos = 0;
-			iMantissa = 0;
-			iExponent = 0;
+			mantissa = 0;
+			exponent = 0;
 			char c;
 			boolean negative = false;
 			boolean negativeExponent = false;
@@ -82,13 +78,14 @@ public class XSDFloat {
 			while (pos < len && (c = chars[pos++]) != '.' && c != 'e'
 					&& c != 'E') {
 				if (c == '0') {
-					iMantissa = 10 * iMantissa;
+					mantissa = 10 * mantissa;
 				} else if (c > '0' && c <= '9') {
-					iMantissa = 10 * iMantissa + (c - '0');
+					mantissa = 10 * mantissa + (c - '0');
 				} else {
-					throw new XMLParsingException(
-							"Illegal character while parsing float: " + c
-									+ " at pos " + (pos - 1));
+					return false;
+//					throw new XMLParsingException(
+//							"Illegal character while parsing float: " + c
+//									+ " at pos " + (pos - 1));
 				}
 			}
 
@@ -96,15 +93,16 @@ public class XSDFloat {
 			if (c == '.') {
 				while (pos < len && (c = chars[pos++]) != 'e' && c != 'E') {
 					if (c == '0') {
-						iMantissa = 10 * iMantissa;
+						mantissa = 10 * mantissa;
 						decimalDigits++;
 					} else if (c > '0' && c <= '9') {
-						iMantissa = 10 * iMantissa + (c - '0');
+						mantissa = 10 * mantissa + (c - '0');
 						decimalDigits++;
 					} else {
-						throw new XMLParsingException(
-								"Illegal character while parsing float: " + c
-										+ " at pos " + (pos - 1));
+						return false;
+//						throw new XMLParsingException(
+//								"Illegal character while parsing float: " + c
+//										+ " at pos " + (pos - 1));
 					}
 				}
 			}
@@ -124,37 +122,41 @@ public class XSDFloat {
 					c = chars[pos++];
 
 					if (c >= '0' && c <= '9') {
-						iExponent = 10 * iExponent + (c - '0');
+						exponent = 10 * exponent + (c - '0');
 					} else {
-						throw new XMLParsingException(
-								"Illegal character while parsing float: " + c
-										+ " at pos " + (pos - 1));
+						return false;
+//						throw new XMLParsingException(
+//								"Illegal character while parsing float: " + c
+//										+ " at pos " + (pos - 1));
 					}
 				}
 
 				if (negativeExponent) {
-					iExponent = -iExponent;
+					exponent = -exponent;
 				}
 			}
 
 			// check whether whole string is parsed successfully
 			if (pos != len) {
-				throw new XMLParsingException(
-						"Illegal character while parsing float: " + c
-								+ " at pos " + (pos - 1));
+				return false;
+//				throw new XMLParsingException(
+//						"Illegal character while parsing float: " + c
+//								+ " at pos " + (pos - 1));
 			}
 
 			// adjust exponent and mantissa
-			iExponent -= decimalDigits;
+			exponent -= decimalDigits;
 
 			if (negative) {
-				iMantissa = -iMantissa;
+				mantissa = -mantissa;
 			}
 
 			// always encode zero as 0E0
-			if (iMantissa == 0) {
-				iExponent = 0;
+			if (mantissa == 0) {
+				exponent = 0;
 			}
 		}
+		
+		return true;
 	}
 }

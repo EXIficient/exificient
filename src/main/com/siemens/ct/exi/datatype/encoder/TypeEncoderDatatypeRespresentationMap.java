@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -55,7 +56,8 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 		userDefinedDatatypeRepresentations = new HashMap<ExpandedName, DatatypeRepresentation>();
 
 		// hand over "same" string table
-		defaultEncoder = new TypeEncoderTyped(exiFactory, this.stringTable);
+		// defaultEncoder = new TypeEncoderTyped(exiFactory, this.stringTable);
+		defaultEncoder = new TypeEncoderTyped(exiFactory, null);
 	}
 
 	public void registerDatatypeRepresentation(
@@ -86,13 +88,21 @@ public class TypeEncoderDatatypeRespresentationMap extends AbstractTypeEncoder {
 		}
 	}
 
-	// first isValueTypeValid has to be called
-	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	// first isValueTypeValid has to be called
+//	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		if (usePluggableCodec) {
+//			lastPluggableEncoder.writeValue(valueChannel, uri, localName);
+//		} else {
+//			defaultEncoder.writeTypeValidValue(valueChannel, uri, localName);
+//		}
+//	}
+	
+	public void writeTypeValidValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		if (usePluggableCodec) {
-			lastPluggableEncoder.writeValue(valueChannel, uri, localName);
+			lastPluggableEncoder.writeValue(context, valueChannel);
 		} else {
-			defaultEncoder.writeTypeValidValue(valueChannel, uri, localName);
+			defaultEncoder.writeTypeValidValue(context, valueChannel);
 		}
 	}
 

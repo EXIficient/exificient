@@ -23,7 +23,7 @@ import javax.xml.XMLConstants;
 import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.ExpandedNameComparable;
+import com.siemens.ct.exi.util.ExpandedNameComparator;
 
 /**
  * TODO Description
@@ -34,10 +34,9 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @version 0.3.20081103
  */
 
-public class Attribute extends AbstractDatatypeEvent implements
-		ExpandedNameComparable {
+public class Attribute extends AbstractDatatypeEvent {
 	private String namespaceURI;
-	private String localPart;
+	private String localName;
 
 	public Attribute(String uri, String localName, ExpandedName valueType,
 			Datatype datatype) {
@@ -45,7 +44,7 @@ public class Attribute extends AbstractDatatypeEvent implements
 		eventType = EventType.ATTRIBUTE;
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
-		this.localPart = localName;
+		this.localName = localName;
 	}
 
 	public Attribute(String uri, String localName) {
@@ -61,38 +60,44 @@ public class Attribute extends AbstractDatatypeEvent implements
 		this.namespaceURI = namespaceURI;
 	}
 
-	public String getLocalPart() {
-		return localPart;
+	public String getLocalName() {
+		return localName;
 	}
 
-	public void setLocalPart(String localPart) {
-		this.localPart = localPart;
+	public void setLocalName(String localName) {
+		this.localName = localName;
 	}
 
 	public String toString() {
-		return "AT({" + namespaceURI + "}" + localPart + ")";
+		return "AT({" + namespaceURI + "}" + localName + ")";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localPart
+		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
 				.hashCode());
 	}
 
 	public boolean equals(Object obj) {
 		if (obj instanceof Attribute) {
 			Attribute otherAT = (Attribute) obj;
-			return (localPart.equals(otherAT.localPart) && namespaceURI
+			return (localName.equals(otherAT.localName) && namespaceURI
 					.equals(otherAT.namespaceURI));
 		} else {
 			return false;
 		}
 	}
 
-	public int compareTo(String uri, String localName) {
-		// first local-part and then uri
-		final int c1 = localPart.compareTo(localName);
-		return (c1 == 0 ? namespaceURI.compareTo(uri) : c1);
+	@Override
+	public int compareTo(Event o) {
+		if (o instanceof Attribute) {
+			// both AT events
+			Attribute otherAT = (Attribute) o;
+			return ExpandedNameComparator.compare(namespaceURI, localName,
+					otherAT.namespaceURI, otherAT.localName);
+		} else {
+			return super.compareTo(o);
+		}
 	}
 
 }

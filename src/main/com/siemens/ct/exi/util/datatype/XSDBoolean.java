@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.util.datatype;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 
 /**
  * TODO Description
@@ -40,17 +39,24 @@ public class XSDBoolean {
 		return new XSDBoolean();
 	}
 
-	public void parse(String value) throws XMLParsingException {
+	/**
+	 * 
+	 * @param value
+	 * @return valid
+	 */
+	public boolean parse(String value) {
+		boolean validValue = true;
 		if (value.equals(Constants.XSD_BOOLEAN_0)
 				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {
 			bool = false;
+			
 		} else if (value.equals(Constants.XSD_BOOLEAN_1)
 				|| value.equals(Constants.XSD_BOOLEAN_TRUE)) {
 			bool = true;
 		} else {
-			throw new XMLParsingException("'" + value
-					+ "' can not be interpreted as boolean value");
+			validValue = false;
 		}
+		return validValue;
 	}
 
 	public boolean getBoolean() {

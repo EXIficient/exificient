@@ -29,6 +29,36 @@ package com.siemens.ct.exi.datatype.stringtable;
 
 public interface StringTableEncoder extends StringTableCommon {
 
+	
+
+	/**
+	 * Add a value to the local value table and the global value table.
+	 * 
+	 * @param uri
+	 *            - Namespace URI
+	 * @param local
+	 *            - local-name
+	 * @param value
+	 *            - String value to be added.
+	 */
+	public void addValue(String uri, String local, String value);
+
+	/**
+	 * Get size of the localName table partition identified by QName.
+	 * 
+	 * @param uri
+	 *            - Namespace URI
+	 * @param local
+	 *            - local-name
+	 * @return - Number of items (strings) in table.
+	 */
+	public int getLocalValueTableSize(String uri, String local);
+	
+	
+	
+	
+	
+	
 	/**
 	 * Get the ID (index) of the given URI in the URI table.
 	 * 

@@ -20,8 +20,6 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.XMLConstants;
 
-import com.siemens.ct.exi.util.ExpandedNameComparable;
-
 /**
  * TODO Description
  * 
@@ -31,18 +29,17 @@ import com.siemens.ct.exi.util.ExpandedNameComparable;
  * @version 0.3.20081103
  */
 
-public class StartElement extends AbstractEvent implements
-		ExpandedNameComparable {
+public class StartElement extends AbstractEvent {
+	
 	private String namespaceURI;
-
-	private String localPart;
+	private String localName;
 
 	public StartElement(String uri, String localName) {
 		super("SE");
 		eventType = EventType.START_ELEMENT;
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
-		this.localPart = localName;
+		this.localName = localName;
 	}
 
 	public String getNamespaceURI() {
@@ -53,21 +50,21 @@ public class StartElement extends AbstractEvent implements
 		this.namespaceURI = namespaceURI;
 	}
 
-	public String getLocalPart() {
-		return localPart;
+	public String getLocalName() {
+		return localName;
 	}
 
-	public void setLocalPart(String localPart) {
-		this.localPart = localPart;
+	public void setLocalName(String localName) {
+		this.localName = localName;
 	}
 
 	public String toString() {
-		return "SE(" + namespaceURI + ":" + localPart + ")";
+		return "SE(" + namespaceURI + ":" + localName + ")";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localPart
+		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
 				.hashCode());
 	}
 
@@ -75,17 +72,23 @@ public class StartElement extends AbstractEvent implements
 	public boolean equals(Object obj) {
 		if (obj instanceof StartElement) {
 			StartElement otherSE = (StartElement) obj;
-			return (localPart.equals(otherSE.localPart) && namespaceURI
+			return (localName.equals(otherSE.localName) && namespaceURI
 					.equals(otherSE.namespaceURI));
 		} else {
 			return false;
 		}
 	}
-
-	public int compareTo(String namespace, String localName) {
-		// first local-part and then uri
-		final int c1 = localPart.compareTo(localName);
-		return (c1 == 0 ? namespaceURI.compareTo(namespace) : c1);
+	
+	@Override
+	public int compareTo(Event o) {
+		if (o instanceof StartElement) {
+			// both SE events
+			// CASE 1: first is smallest etc. (schema order)
+			 return +1;
+			// // CASE 2: lexical order
+		} else {
+			return super.compareTo(o);
+		}
 	}
 
 }

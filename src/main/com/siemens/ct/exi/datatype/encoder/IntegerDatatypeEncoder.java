@@ -20,10 +20,9 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -36,7 +35,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements
 		DatatypeEncoder {
-	private XSDInteger lastInteger = XSDInteger.newInstance();
+	private int lastInteger;
 
 	public IntegerDatatypeEncoder(TypeEncoder typeEncoder) {
 		super(typeEncoder);
@@ -44,16 +43,19 @@ public class IntegerDatatypeEncoder extends AbstractDatatypeEncoder implements
 
 	public boolean isValid(Datatype datatype, String value) {
 		try {
-			lastInteger.parse(value);
-
+			lastInteger = Integer.parseInt(value);
 			return true;
-		} catch (XMLParsingException e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		valueChannel.encodeInteger(lastInteger);
+//	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		valueChannel.encodeInteger(lastInteger);
 	}
 }

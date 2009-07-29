@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -38,12 +39,19 @@ public class RuleDocEnd extends AbstractSchemaInformedRule {
 
 	public RuleDocEnd() {
 		super();
+		//	add EE rule
+		addTerminalRule(new EndDocument());
 	}
 
 	public RuleDocEnd(String label) {
-		super(label);
+		this();
+		setLabel(label);
 	}
 
+	public String toString() {
+		return "DocEnd" + super.toString();
+	}
+	
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		// has second or third level (CM or PI)

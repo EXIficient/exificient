@@ -54,32 +54,38 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		this.stringTable = stringTable;
 	}
 
-	public String readValueAsString(DecoderChannel dc,
+	public char[] readValueAsString(DecoderChannel dc,
 			final String namespaceURI, final String localName)
 			throws IOException {
-		String value;
+		// String value;
+		char[] value;
 
 		int i = dc.decodeUnsignedInteger();
 
 		if (i == 0) {
 			// local value partition
 			value = readStringAsLocalHit(dc, namespaceURI, localName);
+			// System.out.println("ST LocalHit =" + new String(value));
 		} else if (i == 1) {
 			// found in global value partition
 			value = readStringAsGlobalHit(dc);
+			// System.out.println("ST GlobalHit =" + new String(value));
 		} else {
 			// not found in global value (and local value) partition
 			// ==> string literal is encoded as a String with the length
 			// incremented by two.
 			value = this.readStringAsMiss(dc, namespaceURI, localName, i - 2);
+			// System.out.println("ST Miss '" + new String(value) + "'");
 		}
+		
+//		System.out.println("value=" + new String(value));
 
 		assert (value != null);
 
 		return value;
 	}
 
-	public String readStringAsLocalHit(DecoderChannel dc,
+	public char[] readStringAsLocalHit(DecoderChannel dc,
 			final String namespaceURI, final String localName)
 			throws IOException {
 		int n = MethodsBag.getCodingLength(stringTable.getLocalValueTableSize(
@@ -89,7 +95,7 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		return stringTable.getLocalValue(namespaceURI, localName, localID);
 	}
 
-	public String readStringAsGlobalHit(DecoderChannel dc) throws IOException {
+	public char[] readStringAsGlobalHit(DecoderChannel dc) throws IOException {
 		int n = MethodsBag.getCodingLength(stringTable
 				.getGlobalValueTableSize());
 		int globalID = dc.decodeNBitUnsignedInteger(n);
@@ -97,15 +103,15 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		return stringTable.getGlobalValue(globalID);
 	}
 
-	public String readStringAsMiss(DecoderChannel dc,
+	public char[] readStringAsMiss(DecoderChannel dc,
 			final String namespaceURI, final String localName, final int slen)
 			throws IOException {
-		String value = dc.decodeStringOnly(slen);
+		// String value = dc.decodeStringOnly(slen);
+		char[] value = dc.decodeStringOnly(slen);
 		// After encoding the string value, it is added to both the
 		// associated "local" value string table partition and the global value
 		// string table partition.
-		stringTable.addLocalValue(namespaceURI, localName, value);
-		stringTable.addGlobalValue(value);
+		stringTable.addValue(namespaceURI, localName, value);
 
 		return value;
 	}

@@ -21,6 +21,7 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
@@ -62,8 +63,12 @@ public class BooleanPatternDatatypeEncoder extends AbstractDatatypeEncoder
 		return true;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
+//	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 

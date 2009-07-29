@@ -20,6 +20,7 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDBase64;
@@ -35,26 +36,18 @@ import com.siemens.ct.exi.util.datatype.XSDBase64;
 
 public class BinaryDatatypeEncoder extends AbstractDatatypeEncoder implements
 		DatatypeEncoder {
-	private XSDBase64 lastValidBytes = XSDBase64.newInstance();
+	private XSDBase64 xsdBase64 = XSDBase64.newInstance();
 
 	public BinaryDatatypeEncoder(TypeEncoder typeEncoder) {
 		super(typeEncoder);
 	}
 
 	public boolean isValid(Datatype datatype, String value) {
-		try {
-			lastValidBytes.parse(value.toCharArray(), 0, value.length());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return xsdBase64.parse(value.toCharArray(), 0, value.length());
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
-	{
-		valueChannel.encodeBinary(lastValidBytes);
+	public void writeValue(NameContext context, EncoderChannel valueChannel)
+			throws IOException {
+		valueChannel.encodeBinary(xsdBase64.getBytes());
 	}
-
 }

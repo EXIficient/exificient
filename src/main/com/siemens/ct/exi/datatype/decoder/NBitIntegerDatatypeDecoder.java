@@ -23,7 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeNBitInteger;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * TODO Description
@@ -35,19 +35,16 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  */
 
 public class NBitIntegerDatatypeDecoder extends AbstractDatatypeDecoder {
-	private XSDInteger decodedValue = XSDInteger.newInstance();
-
-	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+	public char[] decodeValue(TypeDecoder decoder, Datatype datatype,
 			DecoderChannel dc, String namespaceURI, String localName)
 			throws IOException {
 		assert (datatype instanceof DatatypeNBitInteger);
 		DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
 
 		// inverse decoded value
-		decodedValue.setToIntegerValue((-1)
-				* dc.decodeNBitUnsignedInteger(nBitDT.getNumberOfBits()));
+		int decodedValue = -dc.decodeNBitUnsignedInteger(nBitDT.getNumberOfBits());
 
 		// add offset again (lower bound)
-		return nBitDT.getLowerBound().subtract(decodedValue).toString();
+		return MethodsBag.itos( (nBitDT.getLowerBound() - decodedValue) );
 	}
 }

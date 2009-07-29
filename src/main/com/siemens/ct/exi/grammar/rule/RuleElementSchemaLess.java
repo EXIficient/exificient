@@ -77,6 +77,8 @@ public class RuleElementSchemaLess extends RuleContentSchemaLess {
 
 	@Override
 	public void learnStartElement(String uri, String localName) {
+//		StartElement se = new StartElement(uri, localName);
+//		Rule next = getElementContentRule();
 		addRule(new StartElement(uri, localName), this);
 	}
 

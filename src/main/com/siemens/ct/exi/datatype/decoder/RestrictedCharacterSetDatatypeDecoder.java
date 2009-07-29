@@ -53,31 +53,33 @@ public class RestrictedCharacterSetDatatypeDecoder extends
 	}
 	
 
-	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+	public char[] decodeValue(TypeDecoder decoder, Datatype datatype,
 			DecoderChannel dc, String namespaceURI, String localName)
 			throws IOException {
-		String value;
+		char[] value;
 
 		int i = dc.decodeUnsignedInteger();
 
 		if (i == 0) {
 			// local value partition
 			value = decoder.readStringAsLocalHit(dc, namespaceURI, localName);
+			// System.out.println("RCS l: " + new String(value));
 		} else if (i == 1) {
 			// found in global value partition
 			value = decoder.readStringAsGlobalHit(dc);
+			// System.out.println("RCS g: " + new String(value));
 		} else {
 			// not found in global value (and local value) partition
 			// ==> restricted character string literal is encoded as a String
-			// with the length
-			// incremented by two.
+			// with the length incremented by two.
 			int slen = i - 2;
 
 			// number of bits
 			int numberOfBits = rcs.getCodingLength();
 			int size = rcs.size();
 
-			StringBuilder sb = new StringBuilder();
+//			StringBuilder sb = new StringBuilder();
+			value = new char[slen];
 			int code;
 
 			try {
@@ -85,9 +87,11 @@ public class RestrictedCharacterSetDatatypeDecoder extends
 					if ((code = dc.decodeNBitUnsignedInteger(numberOfBits)) == size) {
 						// UCS code point of the character
 						// TODO UTF-16 surrogate pair?
-						sb.append((char) dc.decodeUnsignedInteger());
+						// sb.append((char) dc.decodeUnsignedInteger());
+						value[k] = (char) dc.decodeUnsignedInteger();
 					} else {
-						sb.append(rcs.getCharacter(code));
+						// sb.append(rcs.getCharacter(code));
+						value[k] = rcs.getCharacter(code);
 					}
 				}
 			} catch (UnknownElementException e) {
@@ -96,15 +100,16 @@ public class RestrictedCharacterSetDatatypeDecoder extends
 				// throw new IOException(e);
 			}
 
-			value = sb.toString();
+//			// value = sb.toString();
+//			value = new CharArray(c);
 
 			// After encoding the string value, it is added to both the
 			// associated "local" value string table partition and the global
 			// value
 			// string table partition.
 			StringTableDecoder stringTable = decoder.getStringTable();
-			stringTable.addLocalValue(namespaceURI, localName, value);
-			stringTable.addGlobalValue(value);
+			// stringTable.addValue(namespaceURI, localName, value);
+			stringTable.addValue(namespaceURI, localName, value);
 		}
 
 		return value;

@@ -41,9 +41,16 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 	protected DatatypeDecoder booleanPatternDTD;
 	protected DatatypeDecoder decimalDTD;
 	protected DatatypeDecoder floatDTD;
+	protected DatatypeDecoder doubleDTD;
 	protected DatatypeDecoder integerDTD;
+	protected DatatypeDecoder longDTD;
+	protected DatatypeDecoder bigIntegerDTD;
 	protected DatatypeDecoder unsignedIntegerDTD;
+	protected DatatypeDecoder unsignedLongDTD;
+	protected DatatypeDecoder unsignedBigIntegerDTD;
 	protected DatatypeDecoder nBitIntegerDTD;
+	protected DatatypeDecoder nBitLongDTD;
+	protected DatatypeDecoder nBitBigIntegerDTD;
 	protected DatatypeDecoder datetimeDTD;
 	protected DatatypeDecoder enumerationDTD;
 	protected DatatypeDecoder listDTD;
@@ -54,57 +61,82 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 		super(exiFactory);
 	}
 
-	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			String namespaceURI, String localName) throws IOException {
 		switch (datatype.getDefaultBuiltInType()) {
-		case BUILTIN_BINARY_BASE64:
+		case BINARY_BASE64:
 			return binaryBase64DTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
-		case BUILTIN_BINARY_HEX:
+		case BINARY_HEX:
 			return binaryHexDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_BOOLEAN:
+		case BOOLEAN:
 			return booleanDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_BOOLEAN_PATTERN:
+		case BOOLEAN_PATTERN:
 			return booleanPatternDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
-		case BUILTIN_DECIMAL:
+		case DECIMAL:
 			return decimalDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_FLOAT:
+		case FLOAT:
 			return floatDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_INTEGER:
+		case DOUBLE:
+			return doubleDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
+		case INTEGER:
 			return integerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_UNSIGNED_INTEGER:
+		case LONG:
+			return longDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
+		case BIG_INTEGER:
+			return bigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
+		case UNSIGNED_INTEGER:
 			return unsignedIntegerDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
-		case BUILTIN_NBIT_INTEGER:
+		case UNSIGNED_LONG:
+			return unsignedLongDTD.decodeValue(this, datatype, dc,
+					namespaceURI, localName);
+		case UNSIGNED_BIG_INTEGER:
+			return unsignedBigIntegerDTD.decodeValue(this, datatype, dc,
+					namespaceURI, localName);
+		case NBIT_INTEGER:
 			return nBitIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_DATETIME:
+		case NBIT_LONG:
+			return nBitLongDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
+		case NBIT_BIG_INTEGER:
+			return nBitBigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
+					localName);
+		case DATETIME:
 			return datetimeDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_ENUMERATION:
+		case ENUMERATION:
 			return enumerationDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_LIST:
+		case LIST:
 			return listDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
-		case BUILTIN_STRING:
+		case STRING:
 			return stringDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+//			char[] c = stringDTD.decodeValue(this, datatype, dc, namespaceURI,
+//					localName);
+//			System.out.println("StringDec: " + new String(c));
+//			return c;
 			// return decodeValueAsString ( dc, localName );
-		case BUILTIN_RESTRICTED_CHARACTER_SET:
+		case RESTRICTED_CHARACTER_SET:
 			restrictedCharSetDTD
 			.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
 					.getRestrictedCharacterSet());
 			return restrictedCharSetDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
 		default:
-			throw new RuntimeException("Unknown BuiltIn Type");
+			throw new RuntimeException("Unknown BuiltIn Type: " + datatype.getDefaultBuiltInType());
 		}
 	}
 }

@@ -51,10 +51,18 @@ public class TypeDecoderLexical extends TypeDecoderTypedSchemaInformed {
 				new XSDDecimalCharacterSet());
 		floatDTD = new RestrictedCharacterSetDatatypeDecoder(
 				new XSDDoubleCharacterSet());
+		doubleDTD = new RestrictedCharacterSetDatatypeDecoder(
+				new XSDDoubleCharacterSet());
 		integerDTD = new RestrictedCharacterSetDatatypeDecoder(
 				new XSDIntegerCharacterSet());
+		longDTD = integerDTD;
+		bigIntegerDTD = integerDTD;
 		unsignedIntegerDTD = integerDTD;
+		unsignedLongDTD = integerDTD;
+		unsignedBigIntegerDTD = integerDTD;
 		nBitIntegerDTD = integerDTD;
+		nBitLongDTD = integerDTD;
+		nBitBigIntegerDTD = integerDTD;
 		datetimeDTD = new RestrictedCharacterSetDatatypeDecoder(
 				new XSDDateTimeCharacterSet());
 		enumerationDTD = new EnumerationDatatypeDecoder();

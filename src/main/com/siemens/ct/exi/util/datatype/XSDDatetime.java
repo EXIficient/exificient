@@ -66,8 +66,7 @@ public class XSDDatetime {
 		return type;
 	}
 
-	public void parseEXIDatetime(String cal, DatetimeType type)
-			throws XMLParsingException {
+	public boolean parse(String cal, DatetimeType type) {
 		this.type = type;
 
 		// StringBuffer sbCal = new StringBuffer ( cal.trim ( ) );
@@ -129,9 +128,11 @@ public class XSDDatetime {
 			default:
 				throw new UnsupportedOperationException();
 			}
-		} catch (RuntimeException e) {
-			throw new XMLParsingException("'" + cal
-					+ "' is valid datetime type (" + type + ")");
+			return true;
+		} catch (Exception e) {
+			return false;
+//			throw new XMLParsingException("'" + cal
+//					+ "' is valid datetime type (" + type + ")");
 		}
 	}
 

@@ -22,21 +22,26 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.crypto.NoSuchMechanismException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.BuiltIn;
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.block.DecoderBlock;
@@ -55,7 +60,10 @@ import com.siemens.ct.exi.util.MethodsBag;
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		EXIDecoder {
 	// next event
+
 	protected Event nextEvent;
+	protected Rule nextRule;
+	// protected EventRule nextEventRule;
 	protected EventType nextEventType;
 	protected int ec;
 
@@ -70,19 +78,17 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String attributeURI;
 	protected String attributeLocalName;
 	protected String attributePrefix;
-
-	protected String attributeValue;
-	protected String xsiTypeUri;
-	protected String xsiTypeName;
+	protected char[] attributeValue;
+	protected String xsiTypeURI;
+	protected String xsiTypeLocalName;
 	protected boolean xsiNil;
-	protected String xsiNilDeviation;
-	protected String characters;
+	protected char[] characters;
 	protected String docTypeName;
 	protected String docTypePublicID;
 	protected String docTypeSystemID;
 	protected String docTypeText;
 	protected String entityReferenceName;
-	protected String comment;
+	protected char[] comment;
 	protected String nsURI;
 	protected String nsPrefix;
 	protected String piTarget;
@@ -90,17 +96,23 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	// namespaces/prefixes
 	protected boolean preservePrefixes;
+	protected Map<String, String> createdPrefixes;
+	protected int createdPfxCnt;
 
 	public AbstractEXIDecoder(EXIFactory exiFactory) {
 		super(exiFactory);
 
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PREFIX);
+		createdPrefixes = new HashMap<String, String>();
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
+
+		createdPrefixes.clear();
+		createdPfxCnt = 1;
 
 		try {
 			block = exiFactory.createDecoderBlock(is);
@@ -114,7 +126,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		this.is = is;
 
 		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered
+		// TODO is there a *nice* way to detect whether a stream is buffered already
 		if (!(is instanceof BufferedInputStream)) {
 			this.is = new BufferedInputStream(is);
 		}
@@ -129,34 +141,49 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	protected void decodeEventCode() throws EXIException {
-		ec = decode1stLevelEventCode();
+		try {
+			// 1st level
+			ec = block.readEventCode(currentRule
+					.get1stLevelEventCodeLength(fidelityOptions));
 
-		if (ec == Constants.NOT_FOUND) {
-			// 2nd level ?
-			int ec2 = decode2ndLevelEventCode();
+			assert (ec >= 0);
 
-			if (ec2 == Constants.NOT_FOUND) {
-				// 3rd level
-				int ec3 = decode3rdLevelEventCode();
-				nextEventType = currentRule.get3rdLevelEvent(ec3,
-						fidelityOptions);
-
-				// un-set event
-				nextEvent = null;
+			if (ec < currentRule.getNumberOfEvents())  {
+				//	1st level
+				EventInformation ei = currentRule.lookFor(ec);
+				nextEvent = ei.event;
+				nextRule = ei.next;
+				nextEventType = nextEvent.getEventType();
 			} else {
-				nextEventType = currentRule.get2ndLevelEvent(ec2,
-						fidelityOptions);
+				// 2nd level ?
+				int ec2 = decode2ndLevelEventCode();
 
-				if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
-					updateInvalidValueAttribute();
-				} else {
+				if (ec2 == Constants.NOT_FOUND) {
+					// 3rd level
+					int ec3 = decode3rdLevelEventCode();
+					nextEventType = currentRule.get3rdLevelEvent(ec3,
+							fidelityOptions);
+
 					// un-set event
 					nextEvent = null;
+					nextRule = null;
+					// nextEventRule = null;
+				} else {
+					nextEventType = currentRule.get2ndLevelEvent(ec2,
+							fidelityOptions);
+
+					if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
+						updateInvalidValueAttribute();
+					} else {
+						// un-set event
+						nextEvent = null;
+						nextRule = null;
+						// nextEventRule = null;
+					}
 				}
 			}
-		} else {
-			nextEvent = currentRule.get1stLevelEvent(ec);
-			nextEventType = nextEvent.getEventType();
+		} catch (IOException e) {
+			throw new EXIException(e);
 		}
 	}
 
@@ -174,31 +201,16 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		if (ec3AT < (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
 			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode();
-			nextEvent = currentRule.get1stLevelEvent(ec);
+			EventInformation ei = currentRule.lookFor(ec);
+			nextEvent = ei.event;
+			nextRule = ei.next;
+			// nextEventRule = currentRule.get1stLevelEventRule(ec);
 		} else if (ec3AT == (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
 			// ANY deviated attribute (no qname present)
-			 nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
+			nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
 		} else {
 			throw new EXIException(
 					"Error occured while decoding deviated attribute");
-		}
-	}
-
-	protected int decode1stLevelEventCode() throws EXIException {
-		try {
-			int level1 = block.readEventCode(currentRule
-					.get1stLevelEventCodeLength(fidelityOptions));
-
-			if (currentRule.hasSecondOrThirdLevel(fidelityOptions)) {
-				// not strict
-				return (level1 == currentRule.getNumberOfEvents() ? Constants.NOT_FOUND
-						: level1);
-			} else {
-				// strict (in the sense of no 2nd event-code level)
-				return level1;
-			}
-		} catch (IOException e) {
-			throw new EXIException(e);
 		}
 	}
 
@@ -224,11 +236,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
-	}
-
-	protected void decodeStartDocumentStructure() throws EXIException {
-		// step forward
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
 	}
 
 	protected String decodeQNamePrefix(String uri) throws EXIException {
@@ -265,88 +272,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 					// no previous NS mapping in charge
 				}
 			}
+
 			return prefix;
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
-	}
-
-	protected void decodeStartElementStructure() throws EXIException {
-		// StartEvent
-		StartElement se = ((StartElement) nextEvent);
-		this.elementURI = se.getNamespaceURI();
-		this.elementLocalName = se.getLocalPart();
-
-		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(this.elementURI);
-
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-		// update grammars etc.
-		pushRule(elementURI, elementLocalName);
-		pushScope(elementURI, elementLocalName);
-	}
-	
-	protected void decodeStartElementNSStructure() throws EXIException {
-		try {
-			// StartEventNS
-			StartElementNS seNS = ((StartElementNS) nextEvent);
-			this.elementURI = seNS.getNamespaceURI();
-			// decode local-name
-			this.elementLocalName = block.readLocalName(elementURI);
-			
-			// handle element prefixes
-			elementPrefix = decodeQNamePrefix(this.elementURI);
-
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-			// update grammars etc.
-			pushRule(elementURI, elementLocalName);
-			pushScope(elementURI, elementLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void decodeStartElementGenericStructure() throws EXIException {
-		// decode uri & local-name
-		decodeStartElementExpandedName();
-
-		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(elementURI);
-
-		Rule tmpStorage = currentRule;
-
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-		// learn start-element ?
-		tmpStorage.learnStartElement(elementURI, elementLocalName);
-
-		// update grammars etc.
-		pushRule(elementURI, elementLocalName);
-		pushScope(elementURI, elementLocalName);
-	}
-
-	protected void decodeStartElementGenericUndeclaredStructure()
-			throws EXIException {
-		// decode uri & local-name
-		decodeStartElementExpandedName();
-
-		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(this.elementURI);
-
-		// learn start-element ?
-		currentRule.learnStartElement(elementURI, elementLocalName);
-
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.getElementContentRuleForUndeclaredSE());
-
-		// update grammars etc.
-		pushRule(elementURI, elementLocalName);
-		pushScope(elementURI, elementLocalName);
 	}
 
 	protected void decodeStartElementExpandedName() throws EXIException {
@@ -354,219 +284,250 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// decode uri & local-name
 			this.elementURI = block.readUri();
 			this.elementLocalName = block.readLocalName(elementURI);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
 
-	@Override
-	protected void pushScope(final String namespaceURI, final String localName) {
-		super.pushScope(namespaceURI, localName);
-		
-		// reset local-element-ns prefix
-		elementPrefix = null;
-	}
-
-	protected void decodeNamespaceDeclarationStructure() throws EXIException {
-		try {
-			// prefix mapping
-			nsURI = block.readUri();
-			nsPrefix = block.readPrefix(nsURI);
-			boolean local_element_ns = block.readBoolean();
-			if (local_element_ns) {
-				this.elementPrefix = nsPrefix;
+			//	TODO remove after reworked core
+			if ((uriContext = uris.get(elementURI)) == null) {
+				this.addURI(elementURI);
 			}
-
-			namespaces.declarePrefix(nsPrefix, nsURI);
+			if (uriContext.getNameContext(elementLocalName) == null) {
+				uriContext.addLocalName(elementLocalName);
+			}
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
 
-	protected Attribute decodeAttributeStructure() throws EXIException {
-		// Attribute
+	protected Datatype decodeAttributeStructureOnly() throws EXIException {
+		Datatype dtAT;
+		if (nextEventType == EventType.ATTRIBUTE) {
+			dtAT = decodeAttributeStructure();
+		} else if (nextEventType == EventType.ATTRIBUTE_XSI_TYPE) {
+			attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+			attributeLocalName = Constants.XSI_TYPE;
+			dtAT = handleXsi();
+		} else if (nextEventType == EventType.ATTRIBUTE_XSI_NIL) {
+			attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+			attributeLocalName = Constants.XSI_NIL;
+			dtAT = handleXsi();
+		} else if (nextEventType == EventType.ATTRIBUTE_NS) {
+			dtAT = decodeAttributeNSStructure();
+		} else if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
+			dtAT = decodeAttributeInvalidValueStructure();
+		} else if (nextEventType == EventType.ATTRIBUTE_ANY_INVALID_VALUE) {
+			dtAT = decodeAttributeAnyInvalidStructure();
+		} else if (nextEventType == EventType.ATTRIBUTE_GENERIC) {
+			dtAT = decodeAttributeGenericStructure();
+			if (attributeURI
+					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+				// xsi is special
+				dtAT = handleXsi();
+			} else {
+				Attribute globalAT = grammar.getGlobalAttribute(attributeURI,
+						attributeLocalName);
+				if (globalAT != null) {
+					dtAT = globalAT.getDatatype();
+				}
+			}
+		} else {
+			assert (nextEventType == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			dtAT = decodeAttributeGenericUndeclaredStructure();
+			if (attributeURI
+					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+				// xsi is special
+				dtAT = handleXsi();
+			}
+		}
+
+		return dtAT;
+	}
+
+	/*
+	 * Handles and xsi attributes. If the returned datatype is null the
+	 * attribute content (xsi:type & xsi:nil) is already properly set. In any
+	 * other case the appropriate datatype is returned.
+	 */
+	protected Datatype handleXsi() throws EXIException {
+		try {
+			assert (attributeURI
+					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+
+			if (attributeLocalName.equals(Constants.XSI_TYPE)) {
+				xsiTypeURI = block.readUri();
+				xsiTypeLocalName = block.readLocalName(xsiTypeURI);
+
+				// update grammar according to given xsi:type
+				TypeGrammar tg = grammar.getTypeGrammar(xsiTypeURI,
+						xsiTypeLocalName);
+
+				// grammar exists ?
+				if (tg != null) {
+					replaceRuleAtTheTop(tg.getType());
+				}
+
+				attributeValue = getQualifiedName(xsiTypeURI, xsiTypeLocalName,
+						attributePrefix).toCharArray();
+				attributePrefix = null;
+				return null;
+			} else if (attributeLocalName.equals(Constants.XSI_NIL)
+					&& currentRule.isSchemaRule()) {
+				xsiNil = block.readBoolean();
+
+				if (xsiNil) { // jump to typeEmpty
+					replaceRuleAtTheTop(currentRule.getTypeEmpty());
+				}
+
+				attributeValue = xsiNil ? Constants.XSD_BOOLEAN_TRUE_ARRAY
+						: Constants.XSD_BOOLEAN_FALSE_ARRAY;
+				attributePrefix = null;
+				return null;
+			} else {
+				// e.g. xsi:noNamespaceSchemaLocation
+				return BuiltIn.DEFAULT_DATATYPE;
+			}
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	protected Datatype decodeAttributeStructure() throws EXIException {
 		Attribute at = ((Attribute) nextEvent);
 		this.attributeURI = at.getNamespaceURI();
-		this.attributeLocalName = at.getLocalPart();
-
+		this.attributeLocalName = at.getLocalName();
 		// handle attribute prefix
 		attributePrefix = decodeQNamePrefix(this.attributeURI);
-
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-		return at;
+		replaceRuleAtTheTop(nextRule);
+		return at.getDatatype();
 	}
 
-	protected void decodeAttributeNSStructure() throws EXIException {
+	protected Datatype decodeAttributeInvalidValueStructure()
+			throws EXIException {
+		decodeAttributeStructure();
+		return BuiltIn.DEFAULT_DATATYPE;
+	}
+
+	protected Datatype decodeAttributeNSStructure() throws EXIException {
 		try {
 			// AttributeEventNS
 			AttributeNS atNS = ((AttributeNS) nextEvent);
+			// AttributeNS atNS = ((AttributeNS) nextEventRule.event);
 			this.attributeURI = atNS.getNamespaceURI();
 			// decode local-name
 			this.attributeLocalName = block.readLocalName(attributeURI);
-			
+
 			// handle attribute prefix
 			attributePrefix = decodeQNamePrefix(this.attributeURI);
 
 			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+			replaceRuleAtTheTop(nextRule);
+
+			// return atNS;
+			return BuiltIn.DEFAULT_DATATYPE;
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
-	
-	protected void decodeAttributeAnyInvalidStructure() throws EXIException {
-		decodeAttributeGenericUndeclaredStructure();
-		
-		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(this.attributeURI);
 
-//		// step forward in current rule (replace rule at the top)
-//		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-		
-//		try {
-//			// decode nil as string
-//			xsiNilDeviation = block.readValueAsString(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
-//		} catch (IOException e) {
-//			throw new EXIException(e);
-//		}
+	protected Datatype decodeAttributeAnyInvalidStructure() throws EXIException {
+		decodeAttributeGenericUndeclaredStructure();
+		return BuiltIn.DEFAULT_DATATYPE;
 	}
-	
-	protected void decodeAttributeGenericStructure() throws EXIException {
+
+	protected Datatype decodeAttributeGenericStructure() throws EXIException {
 		// decode structure
 		decodeAttributeGenericUndeclaredStructure();
-
-		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(this.attributeURI);
-
 		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
+		replaceRuleAtTheTop(nextRule);
+
+		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
-	protected void decodeAttributeGenericUndeclaredStructure()
+	protected Datatype decodeAttributeGenericUndeclaredStructure()
 			throws EXIException {
 		try {
 			// decode uri & local-name
 			this.attributeURI = block.readUri();
 			this.attributeLocalName = block.readLocalName(attributeURI);
 
+			//	TODO remove after reworked core
+			if ((uriContext = uris.get(attributeURI)) == null) {
+				this.addURI(attributeURI);
+			}
+			if (uriContext.getNameContext(attributeLocalName) == null) {
+				uriContext.addLocalName(attributeLocalName);
+			}
+
 			// handle attribute prefix
 			attributePrefix = decodeQNamePrefix(this.attributeURI);
 
-			if (attributeURI
-					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)
-					&& (attributeLocalName.equals(Constants.XSI_NIL) || attributeLocalName
-							.equals(Constants.XSI_TYPE))) {
-				// no learning for xsi:type or xsi:nil
-			} else {
-				// update grammar
-				currentRule.learnAttribute(attributeURI, attributeLocalName);
+			// update grammar
+			currentRule.learnAttribute(attributeURI, attributeLocalName);
+
+			return BuiltIn.DEFAULT_DATATYPE;
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+	
+
+	protected Datatype decodeCharactersStructureOnly() throws EXIException {
+		Datatype dtCH;
+
+		if (nextEventType == EventType.CHARACTERS) {
+			replaceRuleAtTheTop(nextRule);
+			dtCH = ((Characters) nextEvent).getDatatype();
+		} else if (nextEventType == EventType.CHARACTERS_GENERIC) {
+			replaceRuleAtTheTop(nextRule);
+			dtCH = BuiltIn.DEFAULT_DATATYPE;
+		} else {
+			assert (nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			// learn character event ?
+			currentRule.learnCharacters();
+			// step forward in current rule (replace rule at the top)
+			replaceRuleAtTheTop(currentRule.getElementContentRule());
+			dtCH = BuiltIn.DEFAULT_DATATYPE;
+		}
+
+		return dtCH;
+	}
+
+	protected String getQualifiedName(String attributeURI,
+			String attributeLocalName, String pfx) {
+		if (pfx == null) {
+			if (attributeURI.equals(namespaces
+					.getURI(XMLConstants.DEFAULT_NS_PREFIX))
+					|| attributeURI.equals(XMLConstants.NULL_NS_URI)) {
+				// default namespace
+				pfx = XMLConstants.DEFAULT_NS_PREFIX;
+			} else if ((pfx = namespaces.getPrefix(attributeURI)) == null) {
+				// create unique prefix
+				pfx = this.getUniquePrefix(attributeURI);
 			}
-		} catch (IOException e) {
-			throw new EXIException(e);
 		}
+
+		return (pfx.length() == 0 ? attributeLocalName
+				: (pfx + Constants.COLON + attributeLocalName));
 	}
 
-	protected void decodeAttributeXsiType() throws EXIException {
-		try {
-			// decode type
-			xsiTypeUri = block.readUri();
-			xsiTypeName = block.readLocalName(xsiTypeUri);
-		} catch (IOException e) {
-			throw new EXIException(e);
+	protected String getUniquePrefix(String uri) {
+		String pfx;
+		if (createdPrefixes.containsKey(uri)) {
+			// *re-use* previous created prefix
+			pfx = createdPrefixes.get(uri);
+			// add to namespace context, if not already
+			if (namespaces.getPrefix(uri) == null) {
+				namespaces.declarePrefix(pfx, uri);
+			}
+
+		} else {
+			do {
+				pfx = "ns" + createdPfxCnt++;
+			} while (namespaces.getURI(pfx) != null);
+
+			namespaces.declarePrefix(pfx, uri);
+			createdPrefixes.put(uri, pfx);
 		}
-	}
-
-	protected void decodeAttributeXsiNil() throws EXIException {
-		try {
-			// decode nil
-			this.xsiNil = block.readBoolean();
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected Characters decodeCharactersStructure() throws IOException {
-		// step forward
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-
-		return (Characters) nextEvent;
-	}
-
-	protected void decodeCharactersGenericStructure() {
-		replaceRuleAtTheTop(currentRule.get1stLevelRule(ec));
-	}
-
-	protected void decodeCharactersUndeclaredStructure() {
-		// learn character event ?
-		currentRule.learnCharacters();
-
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(currentRule.getElementContentRule());
-	}
-
-	protected void decodeEndElementStructure() {
-		// pop top rule & scope
-		popRule();
-		popScope();
-	}
-
-	protected void decodeEndElementUndeclaredStructure() {
-		// learn end-element event ?
-		currentRule.learnEndElement();
-
-		// pop stack items
-		decodeEndElementStructure();
-	}
-
-	protected void decodeEndDocumentStructure() throws EXIException {
-		popRule();
-	}
-
-	protected void decodeDocTypeStructure() throws EXIException {
-		try {
-			// decode name, public, system, text AS string
-			docTypeName = block.readString();
-			docTypePublicID = block.readString();
-			docTypeSystemID = block.readString();
-			docTypeText = block.readString();
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void decodeEntityReferenceStructure() throws EXIException {
-		try {
-			// decode name AS string
-			entityReferenceName = block.readString();
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void decodeCommentStructure() throws EXIException {
-		try {
-			comment = block.readString();
-
-			// step forward
-			replaceRuleAtTheTop(currentRule.getElementContentRule());
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	protected void decodeProcessingInstructionStructure() throws EXIException {
-		try {
-			// target & data
-			piTarget = block.readString();
-			piData = block.readString();
-
-			// step forward
-			replaceRuleAtTheTop(currentRule.getElementContentRule());
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
+		return pfx;
 	}
 
 	public String getElementURI() {
@@ -577,10 +538,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return elementLocalName;
 	}
 
-	public String getElementPrefix() {
-		return elementPrefix;
+	public String getElementQName() {
+		return this.getQualifiedName(elementURI, elementLocalName,
+				elementPrefix);
 	}
-
+	
 	public String getAttributeURI() {
 		return attributeURI;
 	}
@@ -588,32 +550,17 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public String getAttributeLocalName() {
 		return attributeLocalName;
 	}
-	
-	public String getAttributePrefix() {
-		return attributePrefix;
-	}
 
-	public String getAttributeValue() {
+	public String getAttributeQName() {
+		return this.getQualifiedName(attributeURI, attributeLocalName,
+				attributePrefix);
+	}
+	
+	public char[] getAttributeValue() {
 		return attributeValue;
 	}
 
-	public String getXsiTypeUri() {
-		return this.xsiTypeUri;
-	}
-
-	public String getXsiTypeName() {
-		return this.xsiTypeName;
-	}
-
-	public boolean getXsiNil() {
-		return xsiNil;
-	}
-
-	public String getXsiNilDeviation() {
-		return xsiNilDeviation;
-	}
-
-	public String getCharacters() {
+	public char[] getCharacters() {
 		return characters;
 	}
 
@@ -637,16 +584,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return entityReferenceName;
 	}
 
-	public String getComment() {
+	public char[] getComment() {
 		return comment;
-	}
-
-	public String getNSUri() {
-		return nsURI;
-	}
-
-	public String getNSPrefix() {
-		return nsPrefix;
 	}
 
 	public String getPITarget() {
@@ -657,4 +596,31 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return piData;
 	}
 
+//	/*
+//	 * Values
+//	 */
+//	@Override
+//	public void addValue(String value) {
+//		throw new RuntimeException("Value decoder");
+//	}
+//
+//	@Override
+//	public int getLocalValueSize() {
+//		throw new RuntimeException("Value decoder");
+//	}
+//
+//	@Override
+//	public int getGlobalValueSize() {
+//		throw new RuntimeException("Value decoder");
+//	}
+
+
+	public void decodeEndFragmentSelfContained() throws EXIException {
+		throw new NoSuchMechanismException("[EXI] SelfContained");
+	}
+
+	public void decodeStartFragmentSelfContained() throws EXIException {
+		throw new NoSuchMechanismException("[EXI] SelfContained");
+	}
+	
 }

@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.util.datatype;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 /**
@@ -75,12 +74,11 @@ public class XSDBase64 {
 			map2[map1[i]] = (byte) i;
 	}
 
-	public void parse(String s) throws XMLParsingException {
-		parse(s.toCharArray(), 0, s.length());
+	public boolean parse(String s) {
+		return parse(s.toCharArray(), 0, s.length());
 	}
 
-	public void parse(char[] s, int start, int slength)
-			throws XMLParsingException {
+	public boolean parse(char[] s, int start, int slength) {
 		// walk over the whole array and overwrite possible whitespaces
 		int currentPosition = start;
 		int iLen = slength;
@@ -95,8 +93,9 @@ public class XSDBase64 {
 		}
 
 		if (iLen % 4 != 0) {
-			throw new XMLParsingException(
-					"Length of Base64 encoded input string is not a multiple of 4.");
+			return false;
+			// throw new XMLParsingException(
+			// "Length of Base64 encoded input string is not a multiple of 4.");
 		}
 
 		while (iLen > 0 && s[start + iLen - 1] == '=') {
@@ -129,8 +128,9 @@ public class XSDBase64 {
 			// ok ?
 			if (i0 > 127 || b0 < 0 || i1 > 127 || b1 < 0 || i2 > 127 || b2 < 0
 					|| i3 > 127 || b3 < 0) {
-				throw new XMLParsingException(
-						"Illegal character in Base64 encoded data.");
+				return false;
+				// throw new XMLParsingException(
+				// "Illegal character in Base64 encoded data.");
 			}
 
 			int o0 = (b0 << 2) | (b1 >>> 4);
@@ -145,6 +145,7 @@ public class XSDBase64 {
 			}
 		}
 
+		return true;
 	}
 
 	/**

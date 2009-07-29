@@ -20,17 +20,18 @@ package com.siemens.ct.exi.io.block;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.siemens.ct.exi.core.CompileConfiguration;
+import javax.xml.XMLConstants;
+
+import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.io.channel.PreReadByteDecoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -45,9 +46,6 @@ public abstract class AbstractDecoderByteBlockChannelized extends
 		AbstractDecoderBlock {
 	protected ByteDecoderChannel structureChannel;
 
-	// valueChannels: uri -> ( localName + EncoderChannelChannelized )
-	protected Map<String, Map<String, DecoderChannel>> valueChannels;
-
 	protected abstract InputStream getStream() throws IOException;
 
 	protected abstract ByteDecoderChannel getNextChannel() throws IOException;
@@ -55,119 +53,116 @@ public abstract class AbstractDecoderByteBlockChannelized extends
 	public AbstractDecoderByteBlockChannelized(InputStream is,
 			TypeDecoder typeDecoder) throws IOException {
 		super(is, typeDecoder);
-
-		valueChannels = new HashMap<String, Map<String, DecoderChannel>>();
 	}
 
-	private void addDecoderChannel(DecoderChannel dc, String uri,
-			String localName) {
-		if (!valueChannels.containsKey(uri)) {
-			valueChannels.put(uri, new HashMap<String, DecoderChannel>());
 
-		}
-		valueChannels.get(uri).put(localName, dc);
-	}
-
-	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
-			Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences) throws IOException {
-
-		if (values <= CompileConfiguration.MAX_NUMBER_OF_VALUES) {
-			// single compressed stream (incl. structure)
+	public void reconstructChannels(int cntValues, List<NameContext> valueQNames,
+			Map<NameContext, List<Datatype>> dataTypes,
+			Map<NameContext, Integer> occurrences,
+			Map<NameContext, PreReadValueContainer> contentValues)
+			throws IOException {		
+		
+		if (cntValues <= Constants.MAX_NUMBER_OF_VALUES) {
+			// single compressed stream (included structure)
 			for (int i = 0; i < valueQNames.size(); i++) {
-				ExpandedName qname = valueQNames.get(i);
+				NameContext channelContext = valueQNames.get(i);
 
-				PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel(
-						typeDecoder, structureChannel, qname, dataTypes
-								.get(qname), occurrences.get(qname));
-
-				// valueChannels.put ( qname, preDC );
-				addDecoderChannel(preDC, qname.getNamespaceURI(), qname
-						.getLocalName());
+				int occs = occurrences.get(channelContext);
+				
+				List<Datatype> datatypes = dataTypes.get(channelContext);
+				
+				char[][] decodedValues = getDecodedValues(structureChannel, channelContext, occs, datatypes);
+				contentValues.put(channelContext, new PreReadValueContainer(decodedValues));
 			}
 		} else {
 			// first stream structure (already read)
-			ByteDecoderChannel bdcLess100 = null;
 
 			// second stream (if any), values <= 100
-			if (areThereAnyLessThan100(valueQNames, occurrences)) {
-				bdcLess100 = getNextChannel();
-			}
-			for (int i = 0; i < valueQNames.size(); i++) {
-				ExpandedName qname = valueQNames.get(i);
+			if (areThereAnyLessEqualThan100(valueQNames, occurrences)) {
+				ByteDecoderChannel bdcLessEqual100 = getNextChannel();
+				for (int i = 0; i < valueQNames.size(); i++) {
+					NameContext channelContext = valueQNames.get(i);
+					int occs = occurrences.get(channelContext);
 
-				if (occurrences.get(qname) <= CompileConfiguration.MAX_NUMBER_OF_VALUES) {
-					// System.out.println ( qname + " <100: " + occurrences.get
-					// ( qname ) );
-
-					// PreReadByteDecoderChannel preDC = new
-					// PreReadByteDecoderChannel( decoder, bdcLess100, qname,
-					// dataTypes.get ( qname ), occurrences.get ( qname ) );
-					PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel(
-							typeDecoder, bdcLess100, qname, dataTypes
-									.get(qname), occurrences.get(qname));
-
-					// valueChannels.put ( qname, preDC );
-					addDecoderChannel(preDC, qname.getNamespaceURI(), qname
-							.getLocalName());
+					if (occs <= Constants.MAX_NUMBER_OF_VALUES) {
+						List<Datatype> datatypes = dataTypes.get(channelContext);
+						
+						char[][] decodedValues = getDecodedValues(bdcLessEqual100, channelContext, occs, datatypes);
+						contentValues.put(channelContext, new PreReadValueContainer(decodedValues));
+					}
 				}
 			}
 
 			// proper stream for greater100
 			for (int i = 0; i < valueQNames.size(); i++) {
-				ExpandedName qname = valueQNames.get(i);
-
-				if (occurrences.get(qname) > CompileConfiguration.MAX_NUMBER_OF_VALUES) {
-					// System.out.println ( qname + ">100: " + occurrences.get (
-					// qname ) );
-
-					// PreReadByteDecoderChannel preDC = new
-					// PreReadByteDecoderChannel( decoder, getNextChannel( ),
-					// qname, dataTypes.get ( qname ), occurrences.get ( qname )
-					// );
-					PreReadByteDecoderChannel preDC = new PreReadByteDecoderChannel(
-							typeDecoder, getNextChannel(), qname, dataTypes
-									.get(qname), occurrences.get(qname));
-
-					// valueChannels.put ( qname, preDC );
-					addDecoderChannel(preDC, qname.getNamespaceURI(), qname
-							.getLocalName());
+				NameContext channelContext = valueQNames.get(i);
+				int occs = occurrences.get(channelContext);
+				if (occs > Constants.MAX_NUMBER_OF_VALUES) {
+					ByteDecoderChannel bdcGreater100 = getNextChannel();
+					List<Datatype> datatypes = dataTypes.get(channelContext);
+					
+					char[][] decodedValues = getDecodedValues(bdcGreater100, channelContext, occs, datatypes);
+					contentValues.put(channelContext, new PreReadValueContainer(decodedValues));
 				}
 			}
 		}
 	}
+	
+	protected char[][] getDecodedValues(ByteDecoderChannel bdc, NameContext channelContext, int occs,
+			List<Datatype> datatypes) throws IOException {
+		
+		String namespaceURI = channelContext.getNamespaceURI();
+		String localName = channelContext.getLocalName();
+		
+		assert (datatypes.size() == occs);
+		char[][] decodedValues = new char[occs][];
+		// char[][] decodedValues = prvc.getValues();
+		
+		for (int k = 0; k < occs; k++) {
+			Datatype dt = datatypes.get(k);
+			if (dt == null) {
+				assert(namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+				assert(decodedValues[k] != null );
+			} else {
+				decodedValues[k] = typeDecoder.readTypeValidValue(dt,
+						bdc, namespaceURI, localName);				
+			}
+		}
+		
+		return decodedValues;
+	}
+	
 
-	private static boolean areThereAnyLessThan100(List<ExpandedName> qnames,
-			Map<ExpandedName, Integer> occurrences) {
+	private static boolean areThereAnyLessEqualThan100(
+			List<NameContext> qnames, Map<NameContext, Integer> occurrences) {
 		for (int i = 0; i < qnames.size(); i++) {
-			if (occurrences.get(qnames.get(i)).intValue() <= CompileConfiguration.MAX_NUMBER_OF_VALUES) {
+			if (occurrences.get(qnames.get(i)) <= Constants.MAX_NUMBER_OF_VALUES) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public DecoderChannel getStructureChannel() {
+
+	public ByteDecoderChannel getStructureChannel() {
 		return structureChannel;
 	}
 
 	public DecoderChannel getValueChannel(String namespaceURI, String localName)
 			throws IOException {
-		return valueChannels.get(namespaceURI).get(localName);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public String readTypedValidValue(Datatype datatype,
+	public char[] readTypedValidValue(Datatype datatype,
 			final String namespaceURI, final String localName)
 			throws IOException {
-		// channelized block already pre-read data -> simply return string value
-		return getValueChannel(namespaceURI, localName).decodeString();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public String readValueAsString(String namespaceURI, String localName)
+	public char[] readValueAsString(String namespaceURI, String localName)
 			throws IOException {
-		// channelized block already pre-read data -> simply return string value
-		return getValueChannel(namespaceURI, localName).decodeString();
+		throw new UnsupportedOperationException();
 	}
 }

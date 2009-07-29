@@ -45,21 +45,21 @@ public interface EXIDecoder {
 	 * 
 	 * @return <tt>true</tt> if the stream has more events.
 	 */
-	public boolean hasNextEvent();
+	public boolean hasNext() throws EXIException;
 
 	/**
 	 * Reports the next available EXI event-type
 	 * 
 	 * @return <code>EventType</code> for next EXI event
 	 */
-	public EventType getNextEventType();
+	public EventType next() throws EXIException;
 
-	/**
-	 * Sniffs EXI stream for reporting next event.
-	 * 
-	 * @throws EXIException
-	 */
-	public void inspectEvent() throws EXIException;
+//	/**
+//	 * Sniffs EXI stream for reporting next event
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void inspectStream() throws EXIException;
 
 	/**
 	 * Initializes the beginning of a set of XML events
@@ -88,34 +88,34 @@ public interface EXIDecoder {
 	 */
 	public void decodeStartElement() throws SAXException, EXIException;
 
-	/**
-	 * Reads start element where only the URI is known.
-	 * 
-	 * <p>
-	 * Expected start element with given namespaceURI
-	 * </p>
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeStartElementNS() throws EXIException;
+//	/**
+//	 * Reads start element where only the URI is known.
+//	 * 
+//	 * <p>
+//	 * Expected start element with given namespaceURI
+//	 * </p>
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeStartElementNS() throws EXIException;
 
-	/**
-	 * Reads generic start element.
-	 * 
-	 * <p>
-	 * Expected generic start element
-	 * </p>
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeStartElementGeneric() throws EXIException;
+//	/**
+//	 * Reads generic start element.
+//	 * 
+//	 * <p>
+//	 * Expected generic start element
+//	 * </p>
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeStartElementGeneric() throws EXIException;
 
-	/**
-	 * Parses unexpected start element.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeStartElementGenericUndeclared() throws EXIException;
+//	/**
+//	 * Parses unexpected start element.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeStartElementGenericUndeclared() throws EXIException;
 
 	/**
 	 * Reads EXI a self-contained start element
@@ -125,18 +125,18 @@ public interface EXIDecoder {
 	public void decodeStartFragmentSelfContained() throws EXIException;
 
 	/**
-	 * Reads EXI end element.
+	 * Reads EXI end element
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeEndElement() throws EXIException;
 
-	/**
-	 * Reads unexpected EXI end element.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeEndElementUndeclared() throws EXIException;
+//	/**
+//	 * Reads unexpected EXI end element.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeEndElementUndeclared() throws EXIException;
 
 	/**
 	 * Reads an end element part of self-contained fragments
@@ -146,46 +146,48 @@ public interface EXIDecoder {
 	public void decodeEndFragmentSelfContained() throws EXIException;
 
 	/**
-	 * Parses expected attribute.
+	 * Parses attribute
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeAttribute() throws EXIException;
+	
+//	public void decodeAttributeXsi() throws EXIException;
+//
+//	/**
+//	 * Parses expected attribute with given namespaceURI
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeAttributeNS() throws EXIException;
 
-	/**
-	 * Parses expected attribute with given namespaceURI
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeAttributeNS() throws EXIException;
+//	/**
+//	 * Parses expected attribute with schema-invalid value (qname given)
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeAttributeInvalidValue() throws EXIException;
 
-	/**
-	 * Parses expected attribute with schema-invalid value (qname given)
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeAttributeInvalidValue() throws EXIException;
+//	/**
+//	 * Parses expected attribute with schema-invalid value (NO qname given)
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeAttributeAnyInvalidValue() throws EXIException;
 
-	/**
-	 * Parses expected attribute with schema-invalid value (NO qname given)
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeAttributeAnyInvalidValue() throws EXIException;
+//	/**
+//	 * Parses expected generic attribute.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeAttributeGeneric() throws EXIException;
 
-	/**
-	 * Parses expected generic attribute.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeAttributeGeneric() throws EXIException;
-
-	/**
-	 * Parses unexpected attribute.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeAttributeGenericUndeclared() throws EXIException;
+//	/**
+//	 * Parses unexpected attribute.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeAttributeGenericUndeclared() throws EXIException;
 
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
@@ -194,40 +196,40 @@ public interface EXIDecoder {
 	 */
 	public void decodeNamespaceDeclaration() throws EXIException;
 
-	/**
-	 * Reads xsi:type from EXI stream.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeXsiType() throws EXIException;
+//	/**
+//	 * Reads xsi:type from EXI stream.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeXsiType() throws EXIException;
+
+//	/**
+//	 * Reads xsi:nil from EXI stream.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeXsiNil() throws EXIException;
 
 	/**
-	 * Reads xsi:nil from EXI stream.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeXsiNil() throws EXIException;
-
-	/**
-	 * Decodes expected characters.
+	 * Decodes characters
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeCharacters() throws EXIException;
 
-	/**
-	 * Decodes generic characters.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeCharactersGeneric() throws EXIException;
+//	/**
+//	 * Decodes generic characters.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeCharactersGeneric() throws EXIException;
 
-	/**
-	 * Decodes unexpected (generic) characters.
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeCharactersGenericUndeclared() throws EXIException;
+//	/**
+//	 * Decodes unexpected (generic) characters.
+//	 * 
+//	 * @throws EXIException
+//	 */
+//	public void decodeCharactersGenericUndeclared() throws EXIException;
 
 	/**
 	 * Parses DOCTYPE with information items
@@ -257,19 +259,19 @@ public interface EXIDecoder {
 	 */
 	public void decodeProcessingInstruction() throws EXIException;
 
-	/**
-	 * Provides current scope URI.
-	 * 
-	 * @return <code>String</code> for URI
-	 */
-	public String getScopeURI();
-
-	/**
-	 * Provides current scope local-name.
-	 * 
-	 * @return <code>String</code> for name
-	 */
-	public String getScopeLocalName();
+//	/**
+//	 * Provides current scope URI.
+//	 * 
+//	 * @return <code>String</code> for URI
+//	 */
+//	public String getScopeURI();
+//
+//	/**
+//	 * Provides current scope local-name.
+//	 * 
+//	 * @return <code>String</code> for name
+//	 */
+//	public String getScopeLocalName();
 
 	// ////////////////////////////////////////////////////////////////
 	//
@@ -292,11 +294,18 @@ public interface EXIDecoder {
 	public String getElementLocalName();
 
 	/**
-	 * Provides (last) element prefix
+	 * Returns qualified name for element name
 	 * 
-	 * @return <code>String</code> for element prefix
+	 * @return <code>String</code> for qname
 	 */
-	public String getElementPrefix();
+	public String getElementQName();
+	
+//	/**
+//	 * Provides (last) element prefix
+//	 * 
+//	 * @return <code>String</code> for element prefix
+//	 */
+//	public String getElementPrefix();
 
 	/**
 	 * Provides (last) attribute namespace
@@ -313,41 +322,48 @@ public interface EXIDecoder {
 	public String getAttributeLocalName();
 
 	/**
-	 * Provides (last) attribute prefix
+	 * Returns qualified name for (last) attribute
 	 * 
-	 * @return <code>String</code> for element prefix
+	 * @return <code>String</code> for qname
 	 */
-	public String getAttributePrefix();
+	public String getAttributeQName();
+	
+//	/**
+//	 * Provides (last) attribute prefix
+//	 * 
+//	 * @return <code>String</code> for element prefix
+//	 */
+//	public String getAttributePrefix();
 
 	/**
 	 * Provides attribute value
 	 * 
 	 * @return <code>String</code> for attribute value
 	 */
-	public String getAttributeValue();
+	public char[] getAttributeValue();
 
-	/**
-	 * Provides xsi:ytpe namespace
-	 * 
-	 * @return <code>String</code> for type URI
-	 */
-	public String getXsiTypeUri();
+//	/**
+//	 * Provides xsi:ytpe namespace
+//	 * 
+//	 * @return <code>String</code> for type URI
+//	 */
+//	public String getXsiTypeUri();
+//
+//	/**
+//	 * Provides xsi:type name
+//	 * 
+//	 * @return <code>String</code> for type name
+//	 */
+//	public String getXsiTypeName();
 
-	/**
-	 * Provides xsi:type name
-	 * 
-	 * @return <code>String</code> for type name
-	 */
-	public String getXsiTypeName();
-
-	/**
-	 * Provides xsi:nil value
-	 * 
-	 * @return <tt>true</tt> for xsi nil
-	 */
-	public boolean getXsiNil();
-
-	public String getXsiNilDeviation();
+//	/**
+//	 * Provides xsi:nil value
+//	 * 
+//	 * @return <tt>true</tt> for xsi nil
+//	 */
+//	public boolean getXsiNil();
+//
+//	public String getXsiNilDeviation();
 
 	/**
 	 * Provides characters as well as significant/insignificant whitespace
@@ -355,7 +371,8 @@ public interface EXIDecoder {
 	 * 
 	 * @return <code>String</code> for characters
 	 */
-	public String getCharacters();
+	// public String getCharacters();
+	public char[] getCharacters();
 
 	/**
 	 * Provides DOCTYPE name.
@@ -397,7 +414,7 @@ public interface EXIDecoder {
 	 * 
 	 * @return <code>String</code> for comment text
 	 */
-	public String getComment();
+	public char[] getComment();
 
 	/**
 	 * Provides namespace support.
@@ -405,20 +422,28 @@ public interface EXIDecoder {
 	 * @return <code>NamespaceSupport</code> for prefix mapping
 	 */
 	public NamespaceSupport getNamespaces();
-
-	/**
-	 * Provides URI of namespace declaration.
-	 * 
-	 * @return <code>String</code> for NS uri
-	 */
-	public String getNSUri();
-
-	/**
-	 * Provides prefix of namespace declaration.
-	 * 
-	 * @return <code>String</code> for NS prefix
-	 */
-	public String getNSPrefix();
+	
+//	/**
+//	 * Returns qualified name for given information items
+//	 * 
+//	 * @return <code>String</code> for qname
+//	 */
+//	public String getQualifiedName(String attributeURI,
+//			String attributeLocalName, String pfx);
+	
+//	/**
+//	 * Provides URI of namespace declaration.
+//	 * 
+//	 * @return <code>String</code> for NS uri
+//	 */
+//	public String getNSUri();
+//
+//	/**
+//	 * Provides prefix of namespace declaration.
+//	 * 
+//	 * @return <code>String</code> for NS prefix
+//	 */
+//	public String getNSPrefix();
 
 	/**
 	 * Provides processing instructions target.

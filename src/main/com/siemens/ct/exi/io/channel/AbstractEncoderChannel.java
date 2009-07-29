@@ -24,15 +24,11 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Calendar;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDBase64;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
-import com.siemens.ct.exi.util.datatype.XSDDecimal;
-import com.siemens.ct.exi.util.datatype.XSDFloat;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -44,15 +40,6 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  */
 
 public abstract class AbstractEncoderChannel implements EncoderChannel {
-	private int values = 0;
-
-	public void incrementValues() {
-		values++;
-	}
-
-	public int getNumberOfChannelValues() {
-		return values;
-	}
 
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.
@@ -60,11 +47,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeBinary(byte[] b) throws IOException {
 		encodeUnsignedInteger(b.length);
 		encode(b, 0, b.length);
-	}
-
-	public void encodeBinary(XSDBase64 b) throws IOException {
-		encodeUnsignedInteger(b.getLength());
-		encode(b.getBytes(), 0, b.getLength());
 	}
 
 	public void encodeBoolean(XSDBoolean b) throws IOException,
@@ -110,47 +92,47 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 			encodeBoolean(true);
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
-			encodeUnsignedInteger(Math.abs(n) - 1);
+			encodeUnsignedInteger((-n) - 1);
 		} else {
 			encodeBoolean(false);
 			encodeUnsignedInteger(n);
 		}
 	}
 
-	public void encodeInteger(XSDInteger xmlInteger) throws IOException {
-		switch (xmlInteger.getIntegerType()) {
-		case INT_INTEGER:
-			encodeInteger(xmlInteger.getIntInteger());
-			break;
-		case LONG_INTEGER:
-			encodeInteger(xmlInteger.getLongInteger());
-			break;
-		case BIG_INTEGER:
-			encodeInteger(xmlInteger.getBigInteger());
-			break;
-		default:
-			throw new RuntimeException();
-		}
-	}
+	// public void encodeInteger(XSDInteger xmlInteger) throws IOException {
+	// switch (xmlInteger.getIntegerType()) {
+	// case INT:
+	// encodeInteger(xmlInteger.getIntInteger());
+	// break;
+	// case LONG:
+	// encodeLong(xmlInteger.getLongInteger());
+	// break;
+	// case BIG_INTEGER:
+	// encodeBigInteger(xmlInteger.getBigInteger());
+	// break;
+	// default:
+	// throw new RuntimeException();
+	// }
+	// }
 
-	public void encodeInteger(long l) throws IOException {
+	public void encodeLong(long l) throws IOException {
 		// signalize sign
 		if (l < 0) {
 			encodeBoolean(true);
-			encodeUnsignedInteger(Math.abs(l) - 1);
+			encodeUnsignedLong((-l) - 1);
 		} else {
 			encodeBoolean(false);
-			encodeUnsignedInteger(Math.abs(l));
+			encodeUnsignedLong(l);
 		}
 	}
 
-	public void encodeInteger(BigInteger bi) throws IOException {
+	public void encodeBigInteger(BigInteger bi) throws IOException {
 		if (bi.signum() < 0) {
 			encodeBoolean(true); // negative
-			encodeUnsignedInteger(bi.negate().subtract(BigInteger.ONE));
+			encodeUnsignedBigInteger(bi.negate().subtract(BigInteger.ONE));
 		} else {
 			encodeBoolean(false); // positive
-			encodeUnsignedInteger(bi);
+			encodeUnsignedBigInteger(bi);
 		}
 	}
 
@@ -191,7 +173,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-	protected void encodeUnsignedInteger(long l) throws IOException {
+	public void encodeUnsignedLong(long l) throws IOException {
 		if (l < 0) {
 			throw new UnsupportedOperationException();
 		}
@@ -208,7 +190,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		encode(lastEncode);
 	}
 
-	protected void encodeUnsignedInteger(BigInteger bi) throws IOException {
+	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException {
 		if (bi.signum() < 0) {
 			throw new UnsupportedOperationException();
 		}
@@ -228,21 +210,22 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		encode(0 | bi.intValue());
 	}
 
-	public void encodeUnsignedInteger(XSDInteger xmlInteger) throws IOException {
-		switch (xmlInteger.getIntegerType()) {
-		case INT_INTEGER:
-			encodeUnsignedInteger(xmlInteger.getIntInteger());
-			break;
-		case LONG_INTEGER:
-			encodeUnsignedInteger(xmlInteger.getLongInteger());
-			break;
-		case BIG_INTEGER:
-			encodeUnsignedInteger(xmlInteger.getBigInteger());
-			break;
-		default:
-			throw new RuntimeException();
-		}
-	}
+	// public void encodeUnsignedInteger(XSDInteger xmlInteger) throws
+	// IOException {
+	// switch (xmlInteger.getIntegerType()) {
+	// case INT:
+	// encodeUnsignedInteger(xmlInteger.getIntInteger());
+	// break;
+	// case LONG:
+	// encodeUnsignedLong(xmlInteger.getLongInteger());
+	// break;
+	// case BIG_INTEGER:
+	// encodeUnsignedBigInteger(xmlInteger.getBigInteger());
+	// break;
+	// default:
+	// throw new RuntimeException();
+	// }
+	// }
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -265,7 +248,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 
 		// integral portion
 		BigDecimal integral = decimal.setScale(0, RoundingMode.FLOOR);
-		encodeUnsignedInteger(integral.toBigInteger());
+		encodeUnsignedBigInteger(integral.toBigInteger());
 
 		// fractional portion (reverse order)
 		BigDecimal fractional = integral.signum() < 0 ? decimal.add(integral)
@@ -278,15 +261,15 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		for (int i = 0; i < (decimal.scale() - length); i++) {
 			sb.append('0');
 		}
-		encodeUnsignedInteger(new BigInteger(sb.toString()));
+		encodeUnsignedBigInteger(new BigInteger(sb.toString()));
 	}
 
-	public void encodeDecimal(XSDDecimal decimal) throws IOException,
-			RuntimeException {
+	public void encodeDecimal(boolean negative, BigInteger integral,
+			BigInteger reverseFraction) throws IOException, RuntimeException {
 		// sign, integral, reverse fractional
-		encodeBoolean(decimal.getSign());
-		encodeUnsignedInteger(decimal.getIntegral());
-		encodeUnsignedInteger(decimal.getReverseFractional());
+		encodeBoolean(negative);
+		encodeUnsignedBigInteger(integral);
+		encodeUnsignedBigInteger(reverseFraction);
 	}
 
 	/**
@@ -303,33 +286,72 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 			// . the mantissa value -1 represents -INF
 			// . any other mantissa value represents NaN
 			if (Float.isNaN(f)) {
-				encodeInteger(XSDFloat.MANTISSA_NOT_A_NUMBER); // m
+				encodeInteger(Constants.FLOAT_MANTISSA_NOT_A_NUMBER); // m
 			} else if (f < 0) {
-				encodeInteger(XSDFloat.MANTISSA_MINUS_INFINITY); // m
+				encodeInteger(Constants.FLOAT_MANTISSA_MINUS_INFINITY); // m
 			} else {
-				encodeInteger(XSDFloat.MANTISSA_INFINITY); // m
+				encodeInteger(Constants.FLOAT_MANTISSA_INFINITY); // m
 			}
-
 			// exponent (special value)
-			encodeInteger(XSDFloat.FLOAT_SPECIAL_VALUES); // e == -(2^14)
+			encodeInteger(Constants.FLOAT_SPECIAL_VALUES); // e == -(2^14)
 		} else {
-			// TODO find clever mechanism to detect mantissa and exponent
-			XSDFloat ff = XSDFloat.newInstance();
-			try {
-				ff.parse(f + "");
-			} catch (XMLParsingException e) {
-				throw new IOException(e.getMessage());
-				// TODO Java 1.5 does not support Throwable as parameter
-				// throw new IOException(e);
+			/*
+			 * floating-point according to the IEEE 754 floating-point
+			 * "single format" bit layout.
+			 */
+			int exponent = 0;
+			while (f - (int) f != 0.0f) {
+				f *= 10;
+				exponent--;
 			}
-			encodeFloat(ff);
+			int mantissa = (int) f;
+
+			encodeFloat(mantissa, exponent);
 		}
 	}
 
-	public void encodeFloat(XSDFloat fl) throws IOException {
+	public void encodeFloat(int mantissa, int exponent) throws IOException {
 		// encode mantissa and exponent
-		encodeInteger(fl.iMantissa);
-		encodeInteger(fl.iExponent);
+		encodeInteger(mantissa);
+		encodeInteger(exponent);
+	}
+
+	public void encodeDouble(double d) throws IOException {
+		// infinity & not a number
+		if (Double.isInfinite(d) || Double.isNaN(d)) {
+			// exponent value is -(2^14),
+			// . the mantissa value 1 represents INF,
+			// . the mantissa value -1 represents -INF
+			// . any other mantissa value represents NaN
+			if (Double.isNaN(d)) {
+				encodeLong(Constants.FLOAT_MANTISSA_NOT_A_NUMBER); // m
+			} else if (d < 0) {
+				encodeLong(Constants.FLOAT_MANTISSA_MINUS_INFINITY); // m
+			} else {
+				encodeLong(Constants.FLOAT_MANTISSA_INFINITY); // m
+			}
+			// exponent (special value)
+			encodeLong(Constants.FLOAT_SPECIAL_VALUES); // e == -(2^14)
+		} else {
+			/*
+			 * floating-point according to the IEEE 754 floating-point
+			 * "double format" bit layout.
+			 */
+			long exponent = 0;
+			while (d - (long) d != 0.0d) {
+				d *= 10;
+				exponent--;
+			}
+			long mantissa = (long) d;
+
+			encodeDouble(mantissa, exponent);
+		}
+	}
+
+	public void encodeDouble(long mantissa, long exponent) throws IOException {
+		// encode mantissa and exponent
+		encodeLong(mantissa);
+		encodeLong(exponent);
 	}
 
 	/**

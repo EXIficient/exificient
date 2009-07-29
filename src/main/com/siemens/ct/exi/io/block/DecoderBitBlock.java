@@ -23,11 +23,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -59,9 +60,10 @@ public class DecoderBitBlock extends AbstractDecoderBlock {
 		return bdc;
 	}
 
-	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
-			Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences) {
+	public void reconstructChannels(int cntValues, List<NameContext> valueQNames,
+			Map<NameContext, List<Datatype>> dataTypes,
+			Map<NameContext, Integer> occurrences,
+			Map<NameContext, PreReadValueContainer> contentValues) {
 		// unused!
 		throw new UnsupportedOperationException("Not allowed!");
 	}

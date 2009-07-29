@@ -203,7 +203,6 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			throws SAXException {
 		try {
 			charEncoder.checkPendingChars();
-
 			encoder.encodeEndElement();
 		} catch (EXIException e) {
 

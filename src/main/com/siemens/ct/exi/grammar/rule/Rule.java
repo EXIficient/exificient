@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 
@@ -36,11 +37,21 @@ public interface Rule {
 	 * end-rule
 	 */
 	public boolean isTerminalRule();
+	
+	/*
+	 * first-element
+	 */
+	public boolean isFirstElementRule();
 
 	/*
 	 * rule created according to schema information
 	 */
 	public boolean isSchemaRule();
+	
+	/*
+	 * get empty type
+	 */
+	public Rule getTypeEmpty();
 
 	/*
 	 * number of events
@@ -52,7 +63,6 @@ public interface Rule {
 	/*
 	 * fetch event-code
 	 */
-	public int get1stLevelEventCode(Event events);
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions);
@@ -61,9 +71,8 @@ public interface Rule {
 			FidelityOptions fidelityOptions);
 
 	/*
-	 * events
+	 * events, rules
 	 */
-	public Event get1stLevelEvent(int eventCode);
 
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions);
@@ -71,10 +80,6 @@ public interface Rule {
 	public EventType get3rdLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions);
 
-	/*
-	 * rule
-	 */
-	public Rule get1stLevelRule(int eventCode) throws IndexOutOfBoundsException;
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
 
@@ -105,8 +110,6 @@ public interface Rule {
 	 * For moving to element grammar
 	 */
 	public Rule getElementContentRule();
-
-	public Rule getElementContentRuleForUndeclaredSE();
 	
 
 	/*
@@ -116,4 +119,23 @@ public interface Rule {
 
 	public int getLeastAttributeEventCode();
 
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
+	// for encoder
+	public EventInformation lookFor( Event event );
+	
+//	public EventInformation lookForStartElement(String uri, String localName);
+//	public RuleContainer getRuleContainer4Attribute(String uri, String localName);
+//	public RuleContainer getRuleContainer4EndElement();
+	
+	//	for decoder
+	public EventInformation lookFor( int eventCode );
+	
 }

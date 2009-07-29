@@ -22,9 +22,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -36,14 +37,16 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public interface DecoderBlock {
-	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
-			Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences) throws IOException;
+	public void reconstructChannels(int cntValues, List<NameContext> valueQNames,
+			Map<NameContext, List<Datatype>> dataTypes,
+			Map<NameContext, Integer> occurrences,
+			Map<NameContext, PreReadValueContainer> contentValues) throws IOException;
 
 	public int readEventCode(int codeLength) throws IOException;
 
 	// PI, Comment, PI, etc.
-	public String readString() throws IOException;
+	// public String readString() throws IOException;
+	public char[] readString() throws IOException;
 
 	public String readUri() throws IOException;
 
@@ -56,11 +59,13 @@ public interface DecoderBlock {
 	/*
 	 * Value Channels
 	 */
-	public String readTypedValidValue(Datatype datatype, String namespaceURI,
+	public char[] readTypedValidValue(Datatype datatype, String namespaceURI,
 			String localName) throws IOException;
 
-	public String readValueAsString(String namespaceURI, String localName)
-			throws IOException;
+//	public String readValueAsString(String namespaceURI, String localName)
+//			throws IOException;
+	public char[] readValueAsString(String namespaceURI, String localName)
+	throws IOException;
 
 	/*
 	 * Self-Contained

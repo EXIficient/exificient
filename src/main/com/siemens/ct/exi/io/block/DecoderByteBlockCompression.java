@@ -19,14 +19,11 @@
 package com.siemens.ct.exi.io.block;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import com.siemens.ct.exi.core.CompileConfiguration;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 
@@ -54,32 +51,21 @@ public class DecoderByteBlockCompression extends
 	}
 
 	protected void init() throws IOException {
-		if (false) {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			int b;
-			while ((b = inputStream.read()) != -1) {
-				baos.write(b);
-			}
-			baos.flush();
-
-			resettableInputStream = new ByteArrayInputStream(baos.toByteArray());
-		} else {
-			resettableInputStream = new BufferedInputStream(inputStream);
-			resettableInputStream.mark(Integer.MAX_VALUE);
-		}
+		resettableInputStream = new BufferedInputStream(inputStream);
+		resettableInputStream.mark(Integer.MAX_VALUE);
 
 		structureChannel = getNextChannel();
 	}
 
-	protected ByteDecoderChannel getNextChannel() throws IOException {
+	public ByteDecoderChannel getNextChannel() throws IOException {
 		return new ByteDecoderChannel(getStream());
 	}
 
-	protected InputStream getStream() throws IOException {
+	public InputStream getStream() throws IOException {
 
 		if (inflater == null) {
 			// first stream (initialize inflater)
-			inflater = new Inflater(CompileConfiguration.DEFLATE_NOWRAP);
+			inflater = new Inflater(true);
 		} else {
 			if (!inflater.finished()) {
 				// [Warning] Inflater not finished

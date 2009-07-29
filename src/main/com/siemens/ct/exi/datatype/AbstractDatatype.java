@@ -57,4 +57,8 @@ public abstract class AbstractDatatype implements Datatype {
 			return false;
 		}
 	}
+	
+	public String toString() {
+		return defaultbuiltInType.toString();
+	}
 }

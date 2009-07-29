@@ -49,12 +49,14 @@ public class GrammarFactory {
 		if (xsdLocation == null || xsdLocation.equals("")) {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
-			return grammarBuilder.build(xsdLocation);
+			grammarBuilder.loadGrammar(xsdLocation);
+			return grammarBuilder.toGrammar();
 		}
 	}
 
 	public Grammar createGrammar(InputStream is) throws EXIException {
-		return grammarBuilder.build(is);
+		grammarBuilder.loadGrammar(is);
+		return grammarBuilder.toGrammar();
 	}
 
 	public Grammar createSchemaLessGrammar() {

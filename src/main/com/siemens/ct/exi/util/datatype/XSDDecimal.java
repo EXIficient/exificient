@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.util.datatype;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
+import java.math.BigInteger;
 
 /**
  * TODO Description
@@ -30,9 +30,10 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
  */
 
 public class XSDDecimal {
-	private boolean sign;
-	private XSDInteger integral = XSDInteger.newInstance();
-	private XSDInteger revFractional = XSDInteger.newInstance();
+	private boolean negative;
+
+	private BigInteger integral;
+	private BigInteger revFractional;
 
 	private XSDDecimal() {
 	}
@@ -41,45 +42,50 @@ public class XSDDecimal {
 		return new XSDDecimal();
 	}
 
-	public boolean getSign() {
-		return sign;
+	public boolean isNegative() {
+		return negative;
 	}
 
-	public XSDInteger getIntegral() {
+	public BigInteger getIntegral() {
 		return integral;
 	}
 
-	public XSDInteger getReverseFractional() {
+	public BigInteger getReverseFractional() {
 		return revFractional;
 	}
 
-	public void parse(String decimal) throws XMLParsingException {
+	public boolean parse(String decimal) {
 		try {
 			// --- handle sign
-			sign = false; // default
+			negative = false; // default
 
 			if (decimal.charAt(0) == '-') {
-				sign = true;
+				negative = true;
 				decimal = decimal.substring(1);
 			} else if (decimal.charAt(0) == '+') {
 				// sign = false;
 				decimal = decimal.substring(1);
 			}
-		} catch (StringIndexOutOfBoundsException e) {
-			throw new XMLParsingException(e.getMessage());
-		}
 
-		// --- handle decimal point
-		final int decPoint = decimal.indexOf('.');
+			// --- handle decimal point
+			final int decPoint = decimal.indexOf('.');
 
-		if (decPoint == -1) {
-			// no decimal point at all
-			integral.parse(decimal);
-			revFractional.setToIntegerValue(0);
-		} else {
-			integral.parse(decimal.substring(0, decPoint));
-			revFractional.parse(new StringBuilder(decimal.substring(
-					decPoint + 1, decimal.length())).reverse().toString());
+			if (decPoint == -1) {
+				// no decimal point at all
+				integral = new BigInteger(decimal);
+				// integral.parse(decimal);
+				revFractional = BigInteger.ZERO;
+				// revFractional.setValue(0);
+			} else {
+				integral = new BigInteger(decimal.substring(0, decPoint));
+				revFractional = new BigInteger(new StringBuilder(decimal
+						.substring(decPoint + 1, decimal.length())).reverse()
+						.toString());
+			}
+			return true;
+		} catch (Exception e) {
+			// throw new XMLParsingException(e.getMessage());
+			return false;
 		}
 
 	}

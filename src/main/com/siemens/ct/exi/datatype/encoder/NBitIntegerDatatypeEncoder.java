@@ -20,11 +20,10 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeNBitInteger;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -37,7 +36,6 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 public class NBitIntegerDatatypeEncoder extends AbstractDatatypeEncoder
 		implements DatatypeEncoder {
-	private XSDInteger lastNBitInteger = XSDInteger.newInstance();
 	private int valueToEncode;
 	private int numberOfBits;
 
@@ -47,32 +45,32 @@ public class NBitIntegerDatatypeEncoder extends AbstractDatatypeEncoder
 
 	public boolean isValid(Datatype datatype, String value) {
 		try {
-			lastNBitInteger.parse(value);
+			valueToEncode = Integer.parseInt(value);
 
 			assert (datatype instanceof DatatypeNBitInteger);
 			DatatypeNBitInteger nBitDT = (DatatypeNBitInteger) datatype;
 
 			// check lower & upper bound
-			if (lastNBitInteger.compareTo(nBitDT.getLowerBound()) >= 0
-					&& lastNBitInteger.compareTo(nBitDT.getUpperBound()) <= 0) {
-				// calculate offset & update value
-				// Note: integer cast is possible since bounded range of integer
-				// is 4095 or smaller
-				valueToEncode = lastNBitInteger
-						.subtract(nBitDT.getLowerBound()).getIntInteger();
+			if (valueToEncode >= nBitDT.getLowerBound()
+					&& valueToEncode <= nBitDT.getUpperBound()) {
+				// retrieve offset & update value
+				valueToEncode -= nBitDT.getLowerBound();
 				numberOfBits = nBitDT.getNumberOfBits();
-
 				return true;
 			} else {
 				return false;
 			}
-		} catch (XMLParsingException e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits);
+//	}
+
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits);
 	}
 }

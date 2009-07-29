@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.grammar.event;
 
+
 /**
  * TODO Description
  * 
@@ -64,29 +65,6 @@ public abstract class AbstractEvent implements Event {
 	}
 
 	public int compareTo(Event o) {
-		if (this.getEventType().ordinal() == o.getEventType().ordinal()) {
-			// same event-type --> further checking necessary
-			switch (o.getEventType()) {
-			case START_ELEMENT:
-				// CASE 1: first is smallest etc. (schema order)
-				return +1;
-
-				// // CASE 2: lexical order
-				// StartElement otherSE = (StartElement) o;
-				// return ( ( (StartElement) this ).compareTo (
-				// otherSE.getNamespaceURI ( ), otherSE.getLocalPart ( ) ) );
-			case ATTRIBUTE:
-				Attribute otherAT = (Attribute) o;
-				return (((Attribute) this).compareTo(otherAT.getNamespaceURI(),
-						otherAT.getLocalPart()));
-			default:
-				// default for all other events
-				return 0;
-			}
-		} else if (this.getEventType().ordinal() < o.getEventType().ordinal()) {
-			return -1;
-		} else {
-			return +1;
-		}
+		return (eventType.ordinal() - o.getEventType().ordinal());
 	}
 }

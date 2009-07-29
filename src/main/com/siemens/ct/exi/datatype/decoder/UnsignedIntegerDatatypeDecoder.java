@@ -33,7 +33,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  */
 
 public class UnsignedIntegerDatatypeDecoder extends AbstractDatatypeDecoder {
-	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+	public char[] decodeValue(TypeDecoder decoder, Datatype datatype,
 			DecoderChannel dc, String namespaceURI, String localName)
 			throws IOException {
 		return dc.decodeUnsignedIntegerAsString();

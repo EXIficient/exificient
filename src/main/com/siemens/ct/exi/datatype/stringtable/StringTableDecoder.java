@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.datatype.stringtable;
 
+
 /**
  * TODO Description
  * 
@@ -28,6 +29,68 @@ package com.siemens.ct.exi.datatype.stringtable;
  */
 
 public interface StringTableDecoder extends StringTableCommon {
+	
+
+	/**
+	 * Add a value to the local value table and the global value table.
+	 * 
+	 * @param uri
+	 *            - Namespace URI
+	 * @param local
+	 *            - local-name
+	 * @param value
+	 *            - String value to be added.
+	 */
+	public void addValue(String uri, String local, char[] value);
+
+	/**
+	 * Get size of the localName table partition identified by QName.
+	 * 
+	 * @param uri
+	 *            - Namespace URI
+	 * @param local
+	 *            - local-name
+	 * @return - Number of items (strings) in table.
+	 */
+	public int getLocalValueTableSize(String uri, String local);
+	
+	
+	
+
+	
+
+	/**
+	 * Get string value of local value given QName and ID.
+	 * 
+	 * @param uri
+	 *            - namespace URI
+	 * @param local
+	 *            - local-name
+	 * @param id
+	 *            - Identifier (table index) of local name.
+	 * @return - Local value or null if not found.
+	 */
+	public char[] getLocalValue(String uri, String local, int id);
+
+	/**
+	 * Get global value using the ID as the key.
+	 * 
+	 * @param id
+	 *            - Identifier of global value in table.
+	 * @return String value or null if not found.
+	 */
+	public char[] getGlobalValue(int id);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Get the URI string value using the ID as the key.
 	 * 
@@ -58,26 +121,6 @@ public interface StringTableDecoder extends StringTableCommon {
 	 * @return - Local name or null if not found.
 	 */
 	public String getLocalNameValue(String uri, int id);
+	
 
-	/**
-	 * Get string value of local value given QName and ID.
-	 * 
-	 * @param uri
-	 *            - namespace URI
-	 * @param local
-	 *            - local-name
-	 * @param id
-	 *            - Identifier (table index) of local name.
-	 * @return - Local value or null if not found.
-	 */
-	public String getLocalValue(String uri, String local, int id);
-
-	/**
-	 * Get global value using the ID as the key.
-	 * 
-	 * @param id
-	 *            - Identifier of global value in table.
-	 * @return String value or null if not found.
-	 */
-	public String getGlobalValue(int id);
 }

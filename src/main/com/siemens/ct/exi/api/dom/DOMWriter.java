@@ -91,11 +91,7 @@ public class DOMWriter {
 	public void encodeFragment(DocumentFragment docFragment)
 			throws EXIException {
 		encoder.encodeStartDocument();
-
-		NodeList nl = docFragment.getChildNodes();
-		for (int i = 0; i < nl.getLength(); i++) {
-			encodeNode(nl.item(i));
-		}
+		encodeChildNodes(docFragment.getChildNodes());
 		encoder.encodeEndDocument();
 	}
 
@@ -120,7 +116,7 @@ public class DOMWriter {
 		String localName = root.getLocalName();
 		if (localName == null) {
 			//	namespace-awareness ??
-			throw new EXIException("EXI requires namespace-aware DOM (nodes)");
+			throw new EXIException("EXI requires namespace-aware DOM (nodes) " + root.getNodeName());
 		}
 
 		encoder.encodeStartElement(namespaceURI, localName, root.getPrefix());

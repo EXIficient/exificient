@@ -20,7 +20,6 @@ package com.siemens.ct.exi;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.xml.sax.XMLReader;
 
@@ -30,7 +29,6 @@ import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.block.DecoderBlock;
-import com.siemens.ct.exi.io.block.EncoderBlock;
 
 /**
  * An EXI Factory is used for setting EXI coding options on one hand and
@@ -164,14 +162,14 @@ public interface EXIFactory {
 	// . getEncoderBlock
 	// . getDecoderBlock
 
-	/**
-	 * Returns an EXI <code>EncoderBlock</code> according coding options like
-	 * CodingMode etc.
-	 * 
-	 * @return encoder block according given EXI options
-	 * @see EncoderBlock
-	 */
-	public EncoderBlock createEncoderBlock(OutputStream outputStream);
+//	/**
+//	 * Returns an EXI <code>EncoderBlock</code> according coding options like
+//	 * CodingMode etc.
+//	 * 
+//	 * @return encoder block according given EXI options
+//	 * @see EncoderBlock
+//	 */
+//	public EncoderBlock createEncoderBlock(OutputStream outputStream);
 
 	/**
 	 * Returns an EXI <code>DecoderBlock</code> according coding options like

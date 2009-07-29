@@ -31,6 +31,6 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public class DatatypeDecimal extends AbstractDatatype {
 	public DatatypeDecimal(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BUILTIN_DECIMAL, datatypeIdentifier);
+		super(BuiltInType.DECIMAL, datatypeIdentifier);
 	}
 }

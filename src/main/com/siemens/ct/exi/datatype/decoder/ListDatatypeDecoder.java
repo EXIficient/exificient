@@ -48,13 +48,14 @@ public class ListDatatypeDecoder extends AbstractDatatypeDecoder {
 		sResult = new StringBuilder();
 	}
 
-	public String decodeValue(TypeDecoder decoder, Datatype datatype,
+	public char[] decodeValue(TypeDecoder decoder, Datatype datatype,
 			DecoderChannel dc, String namespaceURI, String localName)
 			throws IOException {
 		// setup (list)typeEncoder if not already
 		if (listTypeDecoder == null) {
 			// Note: initialization in constructor causes never ending calls!
 			listTypeDecoder = exiFactory.createTypeDecoder();
+			listTypeDecoder.setStringTable(decoder.getStringTable());
 		}
 
 		Datatype listDatatype = ((DatatypeList) datatype).getListDatatype();
@@ -69,6 +70,7 @@ public class ListDatatypeDecoder extends AbstractDatatypeDecoder {
 			sResult.append(Constants.XSD_LIST_DELIM);
 		}
 
-		return sResult.toString();
+		// return sResult.toString();
+		return sResult.toString().toCharArray();
 	}
 }

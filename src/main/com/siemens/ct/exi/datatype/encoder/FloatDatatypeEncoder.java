@@ -20,8 +20,8 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDFloat;
 
@@ -36,25 +36,19 @@ import com.siemens.ct.exi.util.datatype.XSDFloat;
 
 public class FloatDatatypeEncoder extends AbstractDatatypeEncoder implements
 		DatatypeEncoder {
-	private XSDFloat lastValidFloat = XSDFloat.newInstance();
 
+	protected XSDFloat lastValidFloat = XSDFloat.newInstance();
+	
 	public FloatDatatypeEncoder(TypeEncoder typeEncoder) {
 		super(typeEncoder);
 	}
 
 	public boolean isValid(Datatype datatype, String value) {
-		try {
-			lastValidFloat.parse(value);
-
-			return true;
-		} catch (XMLParsingException e) {
-			return false;
-		}
+		return lastValidFloat.parse(value);
 	}
-
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
-		valueChannel.encodeFloat(lastValidFloat);
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		valueChannel.encodeFloat(lastValidFloat.mantissa, lastValidFloat.exponent);
 	}
 
 }

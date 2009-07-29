@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
 import com.siemens.ct.exi.util.datatype.XSDBase64;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
@@ -39,23 +40,24 @@ import com.siemens.ct.exi.util.datatype.XSDDatetime;
  */
 
 public abstract class AbstractDecoderChannel implements DecoderChannel {
-	final static int FLOAT_SPECIAL_VALUES = -16384; // -(2^14)
-
 	final StringBuilder sb;
 
 	public AbstractDecoderChannel() {
 		sb = new StringBuilder();
 	}
 
-	public String decodeBinaryAsString() throws IOException {
+	public char[] decodeBinaryAsString() throws IOException {
 		final byte[] b = decodeBinary();
-
-		return new String(XSDBase64.encode(b));
+		return XSDBase64.encode(b);
+		// return new CharArray(XSDBase64.encode(b));
+		// return new String(XSDBase64.encode(b));
 	}
 
-	public String decodeBooleanAsString() throws IOException {
-		return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE
-				: Constants.DECODED_BOOLEAN_FALSE);
+
+	public char[] decodeBooleanAsString() throws IOException {
+		// return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE
+		// : Constants.DECODED_BOOLEAN_FALSE);
+		return (decodeBoolean() ? Constants.XSD_BOOLEAN_TRUE_ARRAY : Constants.XSD_BOOLEAN_FALSE_ARRAY);
 	}
 
 	/**
@@ -63,22 +65,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
-	public String decodeString() throws IOException {
-		final int length = decodeUnsignedInteger();
-
-		// StringBuilder result = new StringBuilder ( length );
-		sb.setLength(0);
-
-		for (int i = 0; i < length; i++) {
-			int ch = decodeUnsignedInteger();
-
-			if (Character.isSupplementaryCodePoint(ch)) {
-				sb.append(Character.toChars(ch));
-			} else {
-				sb.append((char) ch);
-			}
-		}
-		return sb.toString();
+	public char[] decodeString() throws IOException {
+		return decodeStringOnly(decodeUnsignedInteger());
 	}
 
 	/**
@@ -90,20 +78,33 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 *            Length of the character sequence to read.
 	 * @return The character sequence as a string.
 	 */
-	public String decodeStringOnly(int length) throws IOException {
-		// StringBuffer result = new StringBuffer ( length );
-		sb.setLength(0);
+	public char[] decodeStringOnly(int length) throws IOException {
+		char[] ca = new char[length];
 
 		for (int i = 0; i < length; i++) {
 			int ch = decodeUnsignedInteger();
-
 			if (Character.isSupplementaryCodePoint(ch)) {
-				sb.append(Character.toChars(ch));
+				// TODO SupplementaryCodePoint, increase char array
+				throw new RuntimeException("TODO SupplementaryCodePoint ");
 			} else {
-				sb.append((char) ch);
+				ca[i] = (char) ch;
 			}
 		}
-		return sb.toString();
+		
+		// System.out.println(length + " -->" + new String(ca));
+		return ca;
+
+		// sb.setLength(0);
+		//
+		// for (int i = 0; i < length; i++) {
+		// int ch = decodeUnsignedInteger();
+		// if (Character.isSupplementaryCodePoint(ch)) {
+		// sb.append(Character.toChars(ch));
+		// } else {
+		// sb.append((char) ch);
+		// }
+		// }
+		// return sb.toString();
 	}
 
 	/**
@@ -113,48 +114,95 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * to store the integer's value.
 	 */
 	public int decodeInteger() throws IOException {
-		// negative integer
 		if (decodeBoolean()) {
-			// negative
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
-			return ((decodeUnsignedInteger() + 1) * (-1));
+			return (-(decodeUnsignedInteger() + 1));
 		} else {
 			// positive
 			return decodeUnsignedInteger();
 		}
 	}
-
-	public long decodeIntegerAsLong() throws IOException {
-		// negative integer
+	
+	public long decodeLong() throws IOException {
 		if (decodeBoolean()) {
-			// negative
-			return ((decodeUnsignedIntegerAsLong() + 1) * (-1));
+			// For negative values, the Unsigned Integer holds the
+			// magnitude of the value minus 1
+			return (-(decodeUnsignedLong() + 1L));
 		} else {
 			// positive
-			return decodeUnsignedIntegerAsLong();
+			return decodeUnsignedLong();
 		}
 	}
-
-	public BigInteger decodeIntegerAsBigInteger() throws IOException {
-		// negative integer
+	
+	public BigInteger decodeBigInteger() throws IOException {
 		if (decodeBoolean()) {
-			return decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
-					.negate();
+			// For negative values, the Unsigned Integer holds the
+			// magnitude of the value minus 1
+			return decodeUnsignedBigInteger().add(BigInteger.ONE).negate();
 		} else {
-			return decodeUnsignedIntegerAsBigInteger();
+			// positive
+			return decodeUnsignedBigInteger();
 		}
 	}
+	
+//	protected long decodeUnsignedIntegerAsLong() throws IOException {
+//		long result = 0;
+//
+//		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
+//		long multiplier = 1;
+//		int b;
+//
+//		do {
+//			// 1. Read the next octet
+//			b = decode();
+//			// 2. Multiply the value of the unsigned number represented by the 7
+//			// least significant
+//			// bits of the octet by the current multiplier and add the result to
+//			// the current value.
+//			result += multiplier * (b & 127);
+//			// 3. Multiply the multiplier by 128
+//			multiplier = multiplier << 7;
+//			// 4. If the most significant bit of the octet was 1, go back to
+//			// step 1
+//		} while ((b >>> 7) == 1);
+//
+//		return result;
+//	}
 
-	public String decodeIntegerAsString() throws IOException {
-		if (decodeBoolean()) {
-			sb.setLength(0);
-			sb.append('-');
-			sb.append(decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE).toString());
-			return sb.toString();
-		} else {
-			return decodeUnsignedIntegerAsString();
-		}
+//	protected long decodeIntegerAsLong() throws IOException {
+//		// negative integer
+//		if (decodeBoolean()) {
+//			// negative
+//			return (-(decodeUnsignedIntegerAsLong() + 1));
+//		} else {
+//			// positive
+//			return decodeUnsignedIntegerAsLong();
+//		}
+//	}
+
+	// public BigInteger decodeIntegerAsBigInteger() throws IOException {
+	// // negative integer
+	// if (decodeBoolean()) {
+	// return decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
+	// .negate();
+	// } else {
+	// return decodeUnsignedIntegerAsBigInteger();
+	// }
+	// }
+
+	
+	public char[] decodeIntegerAsString() throws IOException {
+		return MethodsBag.itos(decodeInteger());
+	}
+	
+	public char[] decodeLongAsString() throws IOException {
+		return MethodsBag.itos(decodeLong());
+	}
+	
+	public char[] decodeBigIntegerAsString() throws IOException {
+		//	TODO look for a more memory sensitive way !?
+		return decodeBigInteger().toString().toCharArray();
 	}
 
 	/**
@@ -167,7 +215,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		int result = 0;
 
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		int multiplier = 1;
+		// int multiplier = 1;
+		int mShift = 0;
 		int b;
 
 		do {
@@ -177,78 +226,139 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			// least significant
 			// bits of the octet by the current multiplier and add the result to
 			// the current value.
-			result += multiplier * (b & 127);
+			// result += (b & 127) * multiplier;
+			result += (b & 127) << mShift;
 			// 3. Multiply the multiplier by 128
-			multiplier = multiplier << 7;
+			// multiplier = multiplier << 7;
+			mShift += 7;
 			// 4. If the most significant bit of the octet was 1, go back to
 			// step 1
 		} while ((b >>> 7) == 1);
 
 		return result;
 	}
-
-	public long decodeUnsignedIntegerAsLong() throws IOException {
-		long result = 0;
-
-		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		long multiplier = 1;
+	
+	public long decodeUnsignedLong() throws IOException {
+		long lResult = 0L;
+		int mShift = 0;
 		int b;
-
+		
 		do {
-			// 1. Read the next octet
 			b = decode();
-			// 2. Multiply the value of the unsigned number represented by the 7
-			// least significant
-			// bits of the octet by the current multiplier and add the result to
-			// the current value.
-			result += multiplier * (b & 127);
-			// 3. Multiply the multiplier by 128
-			multiplier = multiplier << 7;
-			// 4. If the most significant bit of the octet was 1, go back to
-			// step 1
+			lResult += ((long)(b & 127)) << mShift;
+			mShift += 7;
 		} while ((b >>> 7) == 1);
-
-		return result;
+		
+		return lResult;
 	}
-
-	public BigInteger decodeUnsignedIntegerAsBigInteger() throws IOException {
-		BigInteger result = BigInteger.ZERO;
-
-		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
+	
+	public BigInteger decodeUnsignedBigInteger() throws IOException {
+		int b;
+		BigInteger bResult = BigInteger.ZERO;
 		BigInteger multiplier = BigInteger.ONE;
-		int b;
-
+		
 		do {
-			// 1. Read the next octet
 			b = decode();
-			// 2. Multiply the value of the unsigned number represented by the 7
-			// least significant
-			// bits of the octet by the current multiplier and add the result to
-			// the current value.
-			result = result.add(multiplier
-					.multiply(BigInteger.valueOf(b & 127)));
-			// 3. Multiply the multiplier by 128
+			bResult = bResult.add(multiplier.multiply(BigInteger
+					.valueOf(b & 127)));
 			multiplier = multiplier.shiftLeft(7);
-			// 4. If the most significant bit of the octet was 1, go back to
-			// step 1
 		} while ((b >>> 7) == 1);
-
-		return result;
+		
+		return bResult;
 	}
 
-	public String decodeUnsignedIntegerAsString() throws IOException {
-		return decodeUnsignedIntegerAsBigInteger().toString();
-		// return Integer.toString(decodeUnsignedInteger());
+//	protected void decodeToXSDInteger(XSDInteger xsd) throws IOException {
+//		boolean negative = decodeBoolean();
+//		decodeToUnsignedXSDInteger(xsd);
+//		if (negative) {
+//			xsd.addOneAndNegate();
+//		}
+//	}
+//
+//
+//	protected void decodeToUnsignedXSDInteger(XSDInteger xsd) throws IOException {
+//		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
+//		// 
+//		// 1. Read the next octet
+//		// 2. Multiply the value of the unsigned number represented by
+//		// the 7 least significant bits of the octet by the current multiplier
+//		// and add the result to the current value.
+//		// 3. Multiply the multiplier by 128
+//		// 4. If the most significant bit of the octet was 1, go back to
+//		// step 1
+//
+//		int b;
+//
+//		// integer ?
+////		int iMultiplier = 1;
+//		int mShift = 0;
+//		int iResult = 0;
+//		for (int i = 0; i < 4; i++) {
+//			b = decode();
+//			// iResult += (b & 127) * iMultiplier;
+//			iResult += (b & 127) << mShift;
+//			if ((b >>> 7) != 1) {
+//				xsd.setValue(iResult);
+//				return;
+//			}
+////			 iMultiplier *= 128;
+////			iMultiplier = iMultiplier << 7;
+//			mShift += 7;
+//		}
+//
+//		// long ?
+//		long lResult = iResult;
+////		long lMultiplier = iMultiplier;
+//		for (int i = 0; i < 4; i++) {
+//			b = decode();
+//			// lResult += (b & 127) * lMultiplier;
+//			lResult += ((long)(b & 127)) << mShift;
+//			if ((b >>> 7) != 1) {
+//				xsd.setValue(lResult);
+//				return;
+//			}
+////			 lMultiplier *= 128;
+////			lMultiplier = lMultiplier << 7;
+//			mShift += 7;
+//		}
+//
+//		// big integer
+//		BigInteger bResult = BigInteger.valueOf(lResult);
+//		// BigInteger multiplier = BigInteger.valueOf(lMultiplier);
+//		BigInteger multiplier = BigInteger.valueOf(72057594037927936L); //	72057594037927936
+//		do {
+//			b = decode();
+//			bResult = bResult.add(multiplier.multiply(BigInteger
+//					.valueOf(b & 127)));
+//			//	shift left does not work !?
+//			// bResult = BigInteger.valueOf(b & 127).shiftLeft(mShift);
+//			multiplier = multiplier.shiftLeft(7);
+//			// mShift += 7;
+//		} while ((b >>> 7) == 1);
+//
+//		xsd.setValue(bResult);
+//	}
+
+	public char[] decodeUnsignedIntegerAsString() throws IOException {
+		return MethodsBag.itos(decodeUnsignedInteger());
+	}
+	
+	public char[] decodeUnsignedLongAsString() throws IOException {
+		return MethodsBag.itos(decodeUnsignedLong());
+	}
+	
+	public char[] decodeUnsignedBigIntegerAsString() throws IOException {
+		return decodeUnsignedBigInteger().toString().toCharArray();
 	}
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer as string.
 	 */
-	public String decodeNBitUnsignedIntegerAsString(int n) throws IOException {
-		// return decodeNBitUnsignedInteger ( n ) + "";
-		sb.setLength(0);
-		sb.append(decodeNBitUnsignedInteger(n));
-		return sb.toString();
+	public char[] decodeNBitUnsignedIntegerAsString(int n) throws IOException {
+//		decodeNBitUnsignedInteger(n);
+		return MethodsBag.itos(n);
+		// return new CharArray(Integer.toString(decodeNBitUnsignedInteger(n)).toCharArray());
+		// return Integer.toString(decodeNBitUnsignedInteger(n));
 	}
 
 	/**
@@ -260,37 +370,49 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
 	public BigDecimal decodeDecimal() throws IOException {
-		boolean negative = decodeBoolean();
-
-		BigInteger integral = decodeUnsignedIntegerAsBigInteger();
-		String sFractional = new StringBuilder(
-				decodeUnsignedIntegerAsBigInteger().toString()).reverse()
-				.toString();
-
-		return new BigDecimal(negative ? "-" + integral + "." + sFractional
-				: integral + "." + sFractional);
+		// return new BigDecimal(decodeDecimalAsString());
+		return new BigDecimal(decodeDecimalAsString());
 	}
 
-	public String decodeDecimalAsString() throws IOException {
+	public char[] decodeDecimalAsString() throws IOException {
 		boolean negative = decodeBoolean();
-		String integral = decodeUnsignedIntegerAsString();
-		String sFractional = new StringBuilder(decodeUnsignedIntegerAsString())
-				.reverse().toString();
 
-		// return ( negative ? "-" + integral + "." + sFractional : integral +
-		// "." + sFractional );
-		sb.setLength(0);
+		char[] integral = decodeUnsignedBigIntegerAsString();
+		char[] fractional = decodeUnsignedBigIntegerAsString();
+		
+		int aLen = (negative? 1 : 0) + integral.length + 1 + fractional.length;
+		char[] caDecimal = new char[aLen];
+		
+		int cnt = 0;
+		//	negative
 		if (negative) {
-			// "-"
-			sb.append('-');
-
+			caDecimal[cnt++] = '-';
 		}
-		// integral + "." + sFractional
-		sb.append(integral);
-		sb.append('.');
-		sb.append(sFractional);
+		//	integral
+		for(int i=0; i<integral.length; i++) {
+			caDecimal[cnt++] = integral[i];
+		}
+		//	dot
+		caDecimal[cnt++] = '.';
+		//	fractional (reverse)
+		for(int i=fractional.length-1; i>=0; i--) {
+			caDecimal[cnt++] = fractional[i];
+		}
 
-		return sb.toString();
+		return caDecimal;
+		
+		
+		
+		
+//		boolean negative = decodeBoolean();
+//
+//		String integral = decodeUnsignedIntegerAsString();
+//		sb.setLength(0);
+//		sb.append(decodeUnsignedIntegerAsString());
+//		String sFractional = sb.reverse().toString();
+//
+//		return (negative ? "-" + integral + "." + sFractional : integral + "."
+//				+ sFractional);
 	}
 
 	/**
@@ -302,7 +424,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		int iMantissa = decodeInteger();
 		int iExponent = decodeInteger();
 
-		if (iExponent == FLOAT_SPECIAL_VALUES) {
+		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
 			if (iMantissa == -1) {
 				return Float.NEGATIVE_INFINITY;
 			} else if (iMantissa == 1) {
@@ -311,29 +433,73 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 				return Float.NaN;
 			}
 		} else {
-			return Float.parseFloat(iMantissa + "E" + iExponent);
+			return iMantissa * (float)(Math.pow(10, iExponent));
 		}
 	}
+	
+	public char[] decodeFloatAsString() throws IOException {
+		int iMantissa = decodeInteger();
+		int iExponent = decodeInteger();
 
-	public String decodeFloatAsString() throws IOException {
-		long iMantissa = decodeIntegerAsLong();
-		long iExponent = decodeIntegerAsLong();
-
-		if (iExponent == FLOAT_SPECIAL_VALUES) {
+		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
 			if (iMantissa == -1) {
-				return "-INF";
+				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
 			} else if (iMantissa == 1) {
-				return "INF";
+				return Constants.FLOAT_INFINITY_CHARARRAY;
 			} else {
-				return "NaN";
+				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
 			}
 		} else {
+			char[] cMantissa = MethodsBag.itos(iMantissa);
+			char[] cExponent = MethodsBag.itos(iExponent);
 			// return iMantissa + "E" + iExponent;
-			sb.setLength(0);
-			sb.append(iMantissa);
-			sb.append('E');
-			sb.append(iExponent);
-			return sb.toString();
+			char[] cFloat = new char[cMantissa.length + 1 + cExponent.length];
+			System.arraycopy(cMantissa, 0, cFloat, 0, cMantissa.length);
+			cFloat[cMantissa.length] = 'E';
+			System.arraycopy(cExponent, 0, cFloat, cMantissa.length+1, cExponent.length);
+			return cFloat;
+		}
+	}
+	
+	public double decodeDouble() throws IOException {
+		long lMantissa = decodeLong();
+		long lExponent = decodeLong();
+
+		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (lMantissa == -1L) {
+				return Float.NEGATIVE_INFINITY;
+			} else if (lMantissa == 1) {
+				return Float.POSITIVE_INFINITY;
+			} else {
+				return Float.NaN;
+			}
+		} else {
+			return lMantissa * (double)(Math.pow(10, lExponent));
+		}		
+	}
+	
+
+	public char[] decodeDoubleAsString() throws IOException {
+		long lMantissa = decodeLong();
+		long lExponent = decodeLong();
+
+		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (lMantissa == -1) {
+				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
+			} else if (lMantissa == 1) {
+				return Constants.FLOAT_INFINITY_CHARARRAY;
+			} else {
+				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
+			}
+		} else {
+			char[] cMantissa = MethodsBag.itos(lMantissa);
+			char[] cExponent = MethodsBag.itos(lExponent);
+			// return iMantissa + "E" + iExponent;
+			char[] cDouble = new char[cMantissa.length + 1 + cExponent.length];
+			System.arraycopy(cMantissa, 0, cDouble, 0, cMantissa.length);
+			cDouble[cMantissa.length] = 'E';
+			System.arraycopy(cExponent, 0, cDouble, cMantissa.length+1, cExponent.length);
+			return cDouble;
 		}
 	}
 
@@ -344,7 +510,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	public Calendar decodeDateTime(DatetimeType type) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.clear();
-
+		
 		switch (type) {
 		case gYear: // gYear Year, [Time-Zone]
 			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
@@ -395,7 +561,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		return cal;
 	}
 
-	public String decodeDateTimeAsString(DatetimeType type) throws IOException {
+	public char[] decodeDateTimeAsString(DatetimeType type) throws IOException {
 		// StringBuilder sbCal = new StringBuilder ( );
 		sb.setLength(0);
 
@@ -472,7 +638,12 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			throw new UnsupportedOperationException();
 		}
 
-		return sb.toString();
+		
+		//	TODO char array like behaviour
+		
+//		return sb.toString();
+//		return new CharArrayString(sb.toString());
+		return sb.toString().toCharArray();
 	}
 
 	private void decodeDateTimeTimezone(Calendar cal) throws IOException {
