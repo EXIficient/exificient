@@ -23,19 +23,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import com.siemens.ct.exi.io.block.EncoderBitBlock;
-import com.siemens.ct.exi.io.block.EncoderBlock;
-import com.siemens.ct.exi.io.block.EncoderByteBlock;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
-import com.siemens.ct.exi.io.channel.ByteEncoderChannelChannelized;
+import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.io.channel.EncoderChannelChannelized;
 
 /**
  * @author MCH07690
@@ -43,7 +40,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannelChannelized;
 public abstract class AbstractTestCase extends TestCase {
 
 	private ByteArrayOutputStream bitBaos;
-	private EncoderChannelChannelized bec;
+	private ByteArrayOutputStream baos;
 
 	public AbstractTestCase() {
 	}
@@ -51,6 +48,11 @@ public abstract class AbstractTestCase extends TestCase {
 	public AbstractTestCase(String name) {
 		super(name);
 	}
+	
+	protected boolean equals(char[] ca, String s) {
+		return Arrays.equals(ca, s.toCharArray());
+	}
+	
 
 	/*
 	 * Bit - Mode
@@ -65,10 +67,6 @@ public abstract class AbstractTestCase extends TestCase {
 		return new ByteArrayInputStream(bitBaos.toByteArray());
 	}
 
-	protected EncoderBlock getBitBlock() {
-		return new EncoderBitBlock(getBitOutputStream(), null);
-	}
-
 	protected EncoderChannel getBitEncoder() {
 		return new BitEncoderChannel(getBitOutputStream());
 	}
@@ -80,17 +78,13 @@ public abstract class AbstractTestCase extends TestCase {
 	/*
 	 * Byte - Mode
 	 */
-	protected EncoderChannelChannelized getByteEncoder() {
-		bec = new ByteEncoderChannelChannelized();
-		return bec;
-	}
-
-	protected EncoderBlock getByteBlock() {
-		return new EncoderByteBlock(getBitOutputStream(), null);
+	protected EncoderChannel getByteEncoder() {
+		this.baos = new ByteArrayOutputStream();
+		return new ByteEncoderChannel(baos);
 	}
 
 	protected DecoderChannel getByteDecoder() throws IOException {
-		return new ByteDecoderChannel(new ByteArrayInputStream(bec
+		return new ByteDecoderChannel(new ByteArrayInputStream(baos
 				.toByteArray()));
 	}
 

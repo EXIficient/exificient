@@ -19,11 +19,10 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 public class IntegerTest extends AbstractTestCase {
 
@@ -64,52 +63,49 @@ public class IntegerTest extends AbstractTestCase {
 		assertTrue(getByteDecoder().decodeInteger() == Integer.MIN_VALUE);
 	}
 
-	public void testInteger0S() throws IOException, XMLParsingException {
+	public void testInteger0S() throws IOException {
 		String s = "0";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
 	}
 
-	public void testInteger1S() throws IOException, XMLParsingException {
+	public void testInteger1S() throws IOException {
 		String s = "1";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
 	}
 
-	public void testIntegerM128S() throws IOException, XMLParsingException {
+	public void testIntegerM128S() throws IOException {
 		String s = "-128";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
 	}
 
 	// public void testIntegerSpace35S() throws IOException
@@ -130,52 +126,64 @@ public class IntegerTest extends AbstractTestCase {
 	// assertTrue(getByteDecoder().decodeIntegerAsString().equals( sDec ) );
 	// }
 
-	public void testIntegerBig1() throws IOException, XMLParsingException {
+	public void testIntegerLong1() throws IOException {
+		String s = "12131321321";
+
+		long xmlInteger = Long.parseLong(s);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeLong(xmlInteger);
+		bitEC.flush();
+		assertTrue(equals(getBitDecoder().decodeLongAsString(), s));
+		// Byte
+		getByteEncoder().encodeLong(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeLongAsString(), s));
+	}
+	
+	public void testIntegerBig1() throws IOException {
 		String s = "12678967543233";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeInteger(xmlInteger);
+		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
 		// Byte
-		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		getByteEncoder().encodeBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
 	}
 
-	public void testIntegerBig2() throws IOException, XMLParsingException {
+	public void testIntegerBig2() throws IOException {
 		String s = "2137000000000000000000000000001";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeInteger(xmlInteger);
+		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
 		// Byte
-		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		getByteEncoder().encodeBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
 	}
 
-	public void testIntegerBig3() throws IOException, XMLParsingException {
+	public void testIntegerBig3() throws IOException {
 		String s = "-5153135115135135135135153153135135153";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeInteger(xmlInteger);
+		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
 		// Byte
-		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeIntegerAsString().equals(s));
+		getByteEncoder().encodeBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
 	}
 
 	public void testIntegerSequence() throws IOException {

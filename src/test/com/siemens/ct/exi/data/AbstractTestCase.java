@@ -160,7 +160,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		Document docControl = TestDOMEncoder.getDocument(control);
 		Document docTest = TestDOMEncoder.getDocument(test);
-		assertXMLEqual(docControl, docTest);
+		assertXMLEqual("doo", docControl, docTest);
 		// assertXMLEqual(new InputSource(control), new InputSource(test));
 	}
 
@@ -183,7 +183,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 				// 1. SAX
 				_testOption(tco, API.SAX);
-
+				
 				// 2. DOM
 				_testOption(tco, API.DOM);
 

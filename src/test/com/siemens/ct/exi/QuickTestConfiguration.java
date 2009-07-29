@@ -19,9 +19,12 @@
 package com.siemens.ct.exi;
 
 import com.siemens.ct.exi.data.DeviationsTestCase;
+import com.siemens.ct.exi.data.FragmentTestCase;
+import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {

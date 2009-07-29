@@ -30,10 +30,12 @@ public class FragmentTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		QuickTestConfiguration.FRAGMENTS = true;
+		// QuickTestConfiguration.FRAGMENTS = true;
 
 		// FragmentTestCase.setConfigurationFragment1 ( );
-		FragmentTestCase.setConfigurationFragment2();
+		// FragmentTestCase.setConfigurationFragment2();
+		FragmentTestCase.setConfigurationFragment3a ( );
+		// FragmentTestCase.setConfigurationFragment3b ( );
 	}
 
 	protected void setUp() {
@@ -119,5 +121,37 @@ public class FragmentTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/fragment/fragment2.xml.frag");
 		QuickTestConfiguration
 				.setExiLocation("./out/fragment/fragment2.xml.frag.exi");
+	}
+	
+	public void testFragment3a() throws Exception {
+		// set up configuration
+		setConfigurationFragment3a();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationFragment3a() {
+		QuickTestConfiguration.setXsdLocation("./data/fragment/fragment3.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/fragment/fragment3a.xml.frag");
+		QuickTestConfiguration
+				.setExiLocation("./out/fragment/fragment3a.xml.frag.exi");
+	}
+	
+	public void testFragment3b() throws Exception {
+		// set up configuration
+		setConfigurationFragment3b();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationFragment3b() {
+		QuickTestConfiguration.setXsdLocation("./data/fragment/fragment3.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/fragment/fragment3b.xml.frag");
+		QuickTestConfiguration
+				.setExiLocation("./out/fragment/fragment3b.xml.frag.exi");
 	}
 }

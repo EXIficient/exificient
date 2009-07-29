@@ -55,9 +55,10 @@ public class SchemaLessProperties extends AbstractProperties {
 		// System.out.println(sXMLDecoded);
 
 		// equal ?
-		isXMLEqual(sXMLDecoded);
+		isXMLEqual(sXMLDecoded);		
 	}
 
+	
 	public void testSimple1() throws Exception {
 		xml = SIMPLE_XML;
 
@@ -69,6 +70,7 @@ public class SchemaLessProperties extends AbstractProperties {
 
 		startTest();
 	}
+
 
 	public void testXsiType() throws Exception {
 		xml = XSI_TYPE_XML;

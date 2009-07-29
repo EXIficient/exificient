@@ -21,10 +21,8 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 public class UnsignedIntegerTest extends AbstractTestCase {
 
@@ -113,7 +111,7 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 		assertTrue(getByteDecoder().decodeUnsignedInteger() == 20000);
 	}
 
-	public void testUnsignedIntegerS0() throws IOException, XMLParsingException {
+	public void testUnsignedIntegerS0() throws IOException {
 		String s = "0";
 		//    	
 		// int i1 = MethodsBag.numberOfBitsToRepresent( Long.valueOf ( "0" ) );
@@ -126,141 +124,142 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 		// "12678967543233" ) );
 		//    	
 		//    	
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getBitDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
 	}
 
-	public void testUnsignedIntegerS1() throws IOException, XMLParsingException {
+	public void testUnsignedIntegerS1() throws IOException {
 		String s = "1";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getBitDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
 	}
 
-	public void testUnsignedIntegerS329() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerS329() throws IOException {
 		String s = "329";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		String sDec = getBitDecoder().decodeUnsignedIntegerAsString();
-		assertTrue(sDec.equals(s));
+		char[] sDec = getBitDecoder().decodeUnsignedIntegerAsString();
+		assertTrue(equals(sDec, s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
 	}
 
-	public void testUnsignedIntegerS2147483647() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerS2147483647() throws IOException  {
 		String s = "2147483647";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getBitDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
 	}
 
-	public void testUnsignedIntegerSBig1() throws IOException,
-			XMLParsingException {
+	public void testUnsignedLongS1() throws IOException {
+		String s = "2147483649997";
+
+		long xmlInteger = Long.parseLong(s);
+
+		// Bit
+		getBitEncoder().encodeUnsignedLong(xmlInteger);
+		assertTrue(equals(getBitDecoder().decodeUnsignedLongAsString(), s));
+		// Byte
+		getByteEncoder().encodeUnsignedLong(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeUnsignedLongAsString(), s));
+	}
+
+	public void testUnsignedIntegerSBig1() throws IOException {
 		String s = "12678967543233";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedIntegerAsString();
-		assertTrue(s + "!=" + s1, s1.equals(s));
+		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
-		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+				s));
 	}
 
-	public void testUnsignedIntegerSBig2() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerSBig2() throws IOException {
 		BigInteger bi = BigInteger.valueOf(Long.MAX_VALUE);
 		bi = bi.add(BigInteger.valueOf(1));
 
 		String s = bi.toString();
 
 		// 9223372036854775808
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedIntegerAsString();
-		assertTrue(s + "!=" + s1, s1.equals(s));
+		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
-		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+				s));
 	}
 
-	public void testUnsignedIntegerSBig3() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerSBig3() throws IOException {
 		String s = "87139166666670000000000000000001";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedIntegerAsString();
-		assertTrue(s + "!=" + s1, s1.equals(s));
+		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
-		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s));
+		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+				s));
 	}
 
-	public void testUnsignedIntegerSBig4() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerSBig4() throws IOException {
 		String s = "0008713916666667000000000000000000";
 		String s2 = "8713916666667000000000000000000";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedIntegerAsString();
-		assertTrue(s2 + "!=" + s1, s1.equals(s2));
+		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		assertTrue(s2 + "!=" + new String(s1), equals(s1, s2));
 		// Byte
-		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(getByteDecoder().decodeUnsignedIntegerAsString().equals(s2));
+		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+				s2));
 	}
 
-	public void testUnsignedIntegerSFailure() throws IOException,
-			XMLParsingException {
+	public void testUnsignedIntegerSFailure() throws IOException {
 		String s = "-123";
 
-		XSDInteger xmlInteger = XSDInteger.newInstance();
-		xmlInteger.parse(s);
+		BigInteger xmlInteger = new BigInteger(s);
 
 		try {
 			// Bit
-			getBitEncoder().encodeUnsignedInteger(xmlInteger);
+			getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
 			fail("Negative values accepted");
 		} catch (RuntimeException e) {
 			// ok

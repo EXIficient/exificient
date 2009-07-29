@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
@@ -43,13 +44,20 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 
 	public void decodeTo(EXIFactory ef, InputStream exiDocument,
 			OutputStream xmlOutput) throws Exception {
+		
 		Transformer transformer = tf.newTransformer();
-
+		
 		if (ef.isFragment()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 		}
 
+		this.decodeTo(ef, exiDocument, xmlOutput, transformer);
+	}
+	
+	protected void decodeTo(EXIFactory ef, InputStream exiDocument,
+			OutputStream xmlOutput, Transformer transformer) throws TransformerException {
+		
 		SAXSource exiSource = new SAXSource(new InputSource(exiDocument));
 		exiSource.setXMLReader(ef.createEXIReader());
 
