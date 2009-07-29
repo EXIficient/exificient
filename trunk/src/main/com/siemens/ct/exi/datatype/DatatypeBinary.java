@@ -18,7 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.datatype.XSDBase64;
 
 /**
  * TODO Description
@@ -30,13 +35,32 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeBinary extends AbstractDatatype {
+
+	private XSDBase64 xsdBase64 = XSDBase64.newInstance();
+
 	public DatatypeBinary(ExpandedName datatypeIdentifier,
 			BuiltInType binaryType) {
 		super(binaryType, datatypeIdentifier);
 
-		if (!(binaryType == BuiltInType.BUILTIN_BINARY_BASE64 || binaryType == BuiltInType.BUILTIN_BINARY_HEX)) {
+		if (!(binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX)) {
 			throw new RuntimeException("Illegal type '" + binaryType
 					+ "' for DatatypeBinary");
 		}
 	}
+
+	/*
+	 * Encoder
+	 */
+	public boolean isValid(Datatype datatype, String value) {
+		return xsdBase64.parse(value.toCharArray(), 0, value.length());
+	}
+
+	public void writeValue(NameContext context, EncoderChannel valueChannel)
+			throws IOException {
+		valueChannel.encodeBinary(xsdBase64.getBytes());
+	}
+
+	/*
+	 * Decoder
+	 */
 }

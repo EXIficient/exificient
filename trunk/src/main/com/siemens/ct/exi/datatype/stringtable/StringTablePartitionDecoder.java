@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.datatype.stringtable;
 
+
 /**
  * TODO Description
  * 
@@ -28,5 +29,7 @@ package com.siemens.ct.exi.datatype.stringtable;
  */
 
 public interface StringTablePartitionDecoder extends StringTablePartition {
+	public void add(String value);
+
 	public String getValue(int index);
 }

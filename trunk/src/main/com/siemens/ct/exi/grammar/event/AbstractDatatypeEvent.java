@@ -32,7 +32,7 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 		DatatypeEvent {
-	// private QName valueType;
+	
 	private final ExpandedName valueType;
 
 	private final Datatype datatype;
@@ -51,5 +51,9 @@ public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 	public Datatype getDatatype() {
 		return datatype;
 	}
-
+	
+	@Override
+	public String toString() {
+		return super.toString() + "(" + datatype + ")";
+	}
 }

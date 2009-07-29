@@ -20,22 +20,19 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.GrammarSchemaInformed;
-import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartDocument;
+import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
  * TODO Description
@@ -50,6 +47,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	// selfContained fragments
 	protected List<StringTableDecoder> scStringTables;
 	protected List<Map<String, Map<String, Rule>>> scRuntimeDispatchers;
+	// next
+	protected boolean hasNext;
 
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -64,281 +63,207 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
 
-		nextEvent = new StartDocument();
+		nextEvent = null;
 		nextEventType = EventType.START_DOCUMENT;
-
-		// possible root elements
-		if (this.exiFactory.isFragment()) {
-			// push stack with fragment grammar
-			pushRule(grammar.getBuiltInFragmentGrammar());
-		} else {
-			// push stack with document grammar
-			pushRule(grammar.getBuiltInDocumentGrammar());
-		}
+		hasNext = true;
 	}
 
-	public void inspectEvent() throws EXIException {
+	public boolean hasNext() throws EXIException {
+		// decode event code
 		decodeEventCode();
+
+		return (nextEventType != EventType.END_DOCUMENT);
 	}
 
-	public boolean hasNextEvent() {
-		return !(nextEventType == EventType.END_DOCUMENT && openRules.size() == 2);
-		// return nextEventType != EventType.END_DOCUMENT;
-	}
-
-	public EventType getNextEventType() {
+	public EventType next() throws EXIException {
 		return nextEventType;
 	}
 
 	public void decodeStartDocument() throws EXIException {
-		decodeStartDocumentStructure();
+		// step forward
+		replaceRuleAtTheTop(currentRule.lookFor(ec).next);
+
+		// try to use "default" schema URI in default namespace
+		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+			if (grammar.isSchemaInformed()) {
+				if (uris.size() > 3) {
+					Iterator<URIContext> u = uris.values().iterator();
+					boolean notDeclaredYet = true;
+					while (notDeclaredYet && u.hasNext()) {
+						URIContext uc = u.next();
+						if (uc.id == 4) {
+							namespaces.declarePrefix("", uc.namespaceURI);
+							notDeclaredYet = true;
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	public void decodeStartElement() throws EXIException {
-		decodeStartElementStructure();
-	}
+		try {
+			// reset local-element-ns prefix
+			elementPrefix = null;
 
-	public void decodeStartElementNS() throws EXIException {
-		decodeStartElementNSStructure();
-	}
+			if (nextEventType == EventType.START_ELEMENT) {
+				// StartEvent
+				StartElement se = ((StartElement) nextEvent);
+				this.elementURI = se.getNamespaceURI();
+				this.elementLocalName = se.getLocalName();
+				// handle element prefixes
+				elementPrefix = decodeQNamePrefix(this.elementURI);
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop(nextRule);
+			} else if (nextEventType == EventType.START_ELEMENT_NS) {
+				// StartEventNS
+				StartElementNS seNS = ((StartElementNS) nextEvent);
+				this.elementURI = seNS.getNamespaceURI();
+				// decode local-name
+				this.elementLocalName = block.readLocalName(elementURI);
+				// handle element prefixes
+				elementPrefix = decodeQNamePrefix(this.elementURI);
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop(nextRule);
+			} else if (nextEventType == EventType.START_ELEMENT_GENERIC) {
+				// decode uri & local-name
+				decodeStartElementExpandedName();
+				// handle element prefixes
+				elementPrefix = decodeQNamePrefix(elementURI);
+				Rule tmpStorage = currentRule;
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop(nextRule);
+				// learn start-element ?
+				tmpStorage.learnStartElement(elementURI, elementLocalName);
+			} else {
+				assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				// decode uri & local-name
+				decodeStartElementExpandedName();
+				// handle element prefixes
+				elementPrefix = decodeQNamePrefix(this.elementURI);
+				// learn start-element ?
+				currentRule.learnStartElement(elementURI, elementLocalName);
+				// step forward in current rule (replace rule at the top)
+				replaceRuleAtTheTop(currentRule.getElementContentRule());
+			}
 
-	public void decodeStartElementGeneric() throws EXIException {
-		decodeStartElementGenericStructure();
-	}
-
-	public void decodeStartElementGenericUndeclared() throws EXIException {
-		decodeStartElementGenericUndeclaredStructure();
+			pushElementContext(elementURI, elementLocalName);
+			pushElementRule();
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
 
 	public void decodeNamespaceDeclaration() throws EXIException {
-		decodeNamespaceDeclarationStructure();
+		try {
+			// prefix mapping
+			nsURI = block.readUri();
+			nsPrefix = block.readPrefix(nsURI);
+			boolean local_element_ns = block.readBoolean();
+			if (local_element_ns) {
+				this.elementPrefix = nsPrefix;
+			}
+
+			namespaces.declarePrefix(nsPrefix, nsURI);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
 
 	public void decodeAttribute() throws EXIException {
 		try {
-			// decode attribute value
-			attributeValue = block.readTypedValidValue(
-					decodeAttributeStructure().getDatatype(), attributeURI,
-					attributeLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeAttributeNS() throws EXIException {
-		try {
-			decodeAttributeNSStructure();
-
-			// decode attribute value as string
-			attributeValue = block.readValueAsString(attributeURI,
-					attributeLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeAttributeInvalidValue() throws EXIException {
-		decodeAttributeStructure();
-
-		try {
-			// decode attribute value as string
-			attributeValue = block.readValueAsString(attributeURI,
-					attributeLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeAttributeAnyInvalidValue() throws EXIException {
-		try {
-			decodeAttributeAnyInvalidStructure();
-
-			// decode attribute value as string
-			attributeValue = block.readValueAsString(attributeURI,
-					attributeLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeAttributeGeneric() throws EXIException {
-		try {
-			decodeAttributeGenericStructure();
-
-			eventAT.setNamespaceURI(this.attributeURI);
-			eventAT.setLocalPart(this.attributeLocalName);
-
-			Datatype globalType = grammar.getGlobalAttributeDatatype(eventAT);
-
-			if (globalType != null) {
-				attributeValue = block.readTypedValidValue(globalType,
-						attributeURI, attributeLocalName);
+			// structure
+			Datatype dtAT = decodeAttributeStructureOnly();
+			// content
+			if (dtAT == null) {
+				// xsi cases --> it has been already taken care of
 			} else {
-				// decode attribute value as string ??
-				// attributeValue = block.readValueAsString(attributeURI,
-				// attributeLocalName);
-				throw new EXIException("No global datatype found for "
-						+ eventAT);
+				attributeValue = block.readTypedValidValue(dtAT, attributeURI,
+						attributeLocalName);
 			}
-
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
 
-	public void decodeAttributeGenericUndeclared() throws EXIException {
-		try {
-			decodeAttributeGenericUndeclaredStructure();
-
-			// decode attribute value
-			attributeValue = block.readValueAsString(attributeURI,
-					attributeLocalName);
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeXsiType() throws EXIException {
-		decodeAttributeXsiType();
-
-		// update grammar according to given xsi:type
-		TypeGrammar tg = ((GrammarSchemaInformed) grammar).getTypeGrammar(
-				this.xsiTypeUri, this.xsiTypeName);
-
-		// type known ?
-		if (tg != null) {
-			this.replaceRuleAtTheTop(tg.getType());
-
-			//
-			this.pushScopeType(this.xsiTypeUri, this.xsiTypeName);
-		}
-	}
-
-	public void decodeXsiNil() throws EXIException {
-		decodeAttributeXsiNil();
-
-		if (this.xsiNil) {
-			// jump to typeEmpty
-			if (currentRule instanceof SchemaInformedRule) {
-				replaceRuleAtTheTop(((SchemaInformedRule) currentRule)
-						.getTypeEmpty());
-			} else {
-				throw new EXIException("EXI, no typeEmpty for xsi:nil");
-			}
-		}
-	}
 
 	public void decodeCharacters() throws EXIException {
 		try {
-			characters = block.readTypedValidValue(decodeCharactersStructure()
-					.getDatatype(), getScopeURI(), getScopeLocalName());
+			// structure
+			Datatype dtCH = decodeCharactersStructureOnly();
+			// content
+			characters = block.readTypedValidValue(dtCH, context.namespaceURI,
+					context.localName);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
 
-	protected void decodeCharactersGenericValue() throws EXIException {
-		try {
-			characters = block.readValueAsString(getScopeURI(),
-					getScopeLocalName());
-		} catch (IOException e) {
-			throw new EXIException(e);
-		}
-	}
-
-	public void decodeCharactersGeneric() throws EXIException {
-		decodeCharactersGenericStructure();
-
-		decodeCharactersGenericValue();
-	}
-
-	public void decodeCharactersGenericUndeclared() throws EXIException {
-		decodeCharactersUndeclaredStructure();
-
-		decodeCharactersGenericValue();
-	}
 
 	public void decodeEndElement() throws EXIException {
-		decodeEndElementStructure();
-	}
+		// set ee information before popping context
+		this.elementURI = context.namespaceURI;
+		this.elementLocalName = context.localName;
 
-	public void decodeEndElementUndeclared() throws EXIException {
-		decodeEndElementUndeclaredStructure();
+		if (nextEventType == EventType.END_ELEMENT_UNDECLARED) {
+			// learn end-element event ?
+			currentRule.learnEndElement();
+		}
+
+		// pop stack items
+		popElementContext();
+		popElementRule();
 	}
 
 	public void decodeEndDocument() throws EXIException {
-		decodeEndDocumentStructure();
+		assert (this.openRules.size() == 1);
 	}
 
 	public void decodeDocType() throws EXIException {
-		decodeDocTypeStructure();
-	}
-
-	public void decodeEntityReference() throws EXIException {
-		decodeEntityReferenceStructure();
-	}
-
-	public void decodeComment() throws EXIException {
-		decodeCommentStructure();
-	}
-
-	public void decodeProcessingInstruction() throws EXIException {
-		decodeProcessingInstructionStructure();
-	}
-
-	/*
-	 * SELF_CONTAINED
-	 */
-	public void decodeStartFragmentSelfContained() throws EXIException {
 		try {
-			// 1. Save the string table, grammars, namespace prefixes and any
-			// implementation-specific state learned while processing this EXI
-			// Body.
-			// 2. Initialize the string table, grammars, namespace prefixes and
-			// any implementation-specific state learned while processing this
-			// EXI Body to the state they held just prior to processing this EXI
-			// Body.
-			// 3. Skip to the next byte-aligned boundary in the stream.
-			block.skipToNextByteBoundary();
-			// string tables
-			TypeDecoder td = this.block.getTypeDecoder();
-			scStringTables.add(td.getStringTable());
-			td.setStringTable(exiFactory.createTypeDecoder().getStringTable());
-			// runtime-rules
-			scRuntimeDispatchers.add(this.runtimeDispatcher);
-			this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
-
-			// 4. Let qname be the qname of the SE event immediately preceding
-			// this SC event.
-			// 5. Let content be the sequence of events following this SC event
-			// that match the grammar for element qname, up to and including the
-			// terminating EE event.
-			// 6. Evaluate the sequence of events (SD, SE(qname), content, ED)
-			// according to the Fragment grammar.
-			this.replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
-			replaceRuleAtTheTop(currentRule.get1stLevelRule(0));
-
-			// inspect stream and detect next event
-			inspectEvent();
-			this.decodeStartElement();
-
-			// remove the *duplicate* scope due to the additional SE
-			this.popScope();
+			// decode name, public, system, text AS string
+			docTypeName = new String(block.readString());
+			docTypePublicID = new String(block.readString());
+			docTypeSystemID = new String(block.readString());
+			docTypeText = new String(block.readString());
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
 
-	public void decodeEndFragmentSelfContained() throws EXIException {
-		decodeEndDocument();
-
-		// 7. Restore the string table, grammars, namespace prefixes and
-		// implementation-specific state learned while processing this EXI
-		// Body to that saved in step 1 above.
-		TypeDecoder td = this.block.getTypeDecoder();
-		td.setStringTable(scStringTables.remove(scStringTables.size() - 1));
-		this.runtimeDispatcher = scRuntimeDispatchers
-				.remove(scRuntimeDispatchers.size() - 1);
+	public void decodeEntityReference() throws EXIException {
+		try {
+			// decode name AS string
+			entityReferenceName = new String(block.readString());
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
+
+	public void decodeComment() throws EXIException {
+		try {
+			comment = block.readString();
+
+			// step forward
+			replaceRuleAtTheTop(currentRule.getElementContentRule());
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
+	public void decodeProcessingInstruction() throws EXIException {
+		try {
+			// target & data
+			piTarget = new String(block.readString());
+			piData = new String(block.readString());
+
+			// step forward
+			replaceRuleAtTheTop(currentRule.getElementContentRule());
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
+	}
+
 
 }

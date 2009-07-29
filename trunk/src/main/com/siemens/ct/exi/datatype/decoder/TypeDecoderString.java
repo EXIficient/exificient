@@ -38,7 +38,7 @@ public class TypeDecoderString extends AbstractTypeDecoder {
 		super(exiFactory);
 	}
 
-	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			String namespaceURI, String localName) throws IOException {
 		return readValueAsString(dc, namespaceURI, localName);
 	}

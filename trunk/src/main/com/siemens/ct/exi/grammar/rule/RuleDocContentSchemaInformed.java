@@ -20,7 +20,6 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
@@ -43,45 +42,28 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 public class RuleDocContentSchemaInformed extends AbstractSchemaInformedRule {
 	protected Rule docEnd;
 
-	protected final Event seGeneric;
-
-	public RuleDocContentSchemaInformed(Rule docEnd, String label) {
-		super(label);
-
-		this.docEnd = docEnd;
-		this.seGeneric = new StartElementGeneric();
-	}
-
 	public RuleDocContentSchemaInformed(Rule docEnd) {
 		this.docEnd = docEnd;
-		this.seGeneric = new StartElementGeneric();
+		//	SE(*) --> DocEnd
+		this.addRule(new StartElementGeneric(), docEnd);
+	}
+	
+	public RuleDocContentSchemaInformed(Rule docEnd, String label) {
+		this(docEnd);
+		this.setLabel(label);
 	}
 
-	@Override
-	public Rule get1stLevelRule(int ec) throws IndexOutOfBoundsException {
-		if (ec == getNumberOfEvents()) {
-			return docEnd;
-		} else {
-			return super.get1stLevelRule(ec);
-		}
+	public String toString() {
+		return "DocContent" + super.toString();
 	}
-
-	public Event get1stLevelEvent(int eventCode) {
-		if (eventCode == getNumberOfEvents()) {
-			return seGeneric;
-		} else {
-			return super.get1stLevelEvent(eventCode);
-		}
-	}
+	
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
-		if (eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED) {
-			return 0;
-		} else if (eventType == EventType.DOC_TYPE
+			if (eventType == EventType.DOC_TYPE
 				&& fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return 1;
+				return 0;
 		}
 
 		return Constants.NOT_FOUND;
@@ -89,9 +71,7 @@ public class RuleDocContentSchemaInformed extends AbstractSchemaInformedRule {
 
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions) {
-		if (eventCode == 0) {
-			return EventType.START_ELEMENT_GENERIC_UNDECLARED;
-		} else if (eventCode == 1
+		if (eventCode == 0
 				&& fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return EventType.DOC_TYPE;
@@ -101,8 +81,7 @@ public class RuleDocContentSchemaInformed extends AbstractSchemaInformedRule {
 	}
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2 = 1; // SE(*), in any case e.g. type-cast possible
-		ch2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
+		int ch2 = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
 				: 0;
 
 		ch2 += get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
@@ -110,14 +89,20 @@ public class RuleDocContentSchemaInformed extends AbstractSchemaInformedRule {
 		return ch2;
 	}
 
+//	public Rule getElementContentRule() {
+//		System.out.println("docEnd Move");
+//		// return this.docEnd;
+//		return this;
+//	}
+	
+//	public Rule getElementContentRuleForUndeclaredSE() {
+//		return this.docEnd;
+//	}
+	
+
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		// DocContent contains in any case SE(*) (even in strict mode)
-		return true;
-	}
-
-	public Rule getElementContentRuleForUndeclaredSE() {
-		return this.docEnd;
+		return get2ndLevelCharacteristics(fidelityOptions) > 0;
 	}
 
 }

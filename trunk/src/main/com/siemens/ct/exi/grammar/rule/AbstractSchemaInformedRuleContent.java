@@ -19,11 +19,11 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -36,55 +36,52 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public abstract class AbstractSchemaInformedRuleContent extends
-		AbstractSchemaInformedRule implements Cloneable {
-	protected static Map<FidelityOptions, List<EventType>> optionsElement;
+		AbstractSchemaInformedRule {
+
+	// second level events according to fidelity options
+	// NOTE: events on second level are produced once. Setting new fidelity
+	// option does not make any difference! A new fidelityOptions object is needed.
+	protected List<EventTypeInformation> events2;
+	protected FidelityOptions fidelityOptions2;
 
 	public AbstractSchemaInformedRuleContent() {
 		super();
+		events2 = new ArrayList<EventTypeInformation>();
 	}
 
-	static {
-		optionsElement = new HashMap<FidelityOptions, List<EventType>>();
+	abstract protected void buildEvents2(FidelityOptions fidelityOptions);
+	
+	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		if(fidelityOptions != fidelityOptions2) {
+			buildEvents2(fidelityOptions);
+		}
+		
+		return (get3rdLevelCharacteristics(fidelityOptions) > 0 ? events2.size() + 1 : events2.size());
 	}
-
-	protected static List<EventType> get2ndLevelElementItems(
+	
+	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
-		if (!optionsElement.containsKey(fidelityOptions)) {
-			List<EventType> events = new ArrayList<EventType>();
-
-			if (!fidelityOptions.isStrict()) {
-				// extensibility: SE(*), CH
-				events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
-
-				// ER
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-					events.add(EventType.ENTITY_REFERENCE);
-				}
-
-			}
-
-			optionsElement.put(fidelityOptions, events);
+		if(fidelityOptions != fidelityOptions2) {
+			buildEvents2(fidelityOptions);
 		}
-
-		return optionsElement.get(fidelityOptions);
-	}
-
-	@Override
-	public String toString() {
-		String s = super.toString();
-
-		if (isFirstElementRule) {
-			if (this.hasNamedSubtypes) {
-				s += "(xsi:type)";
-			}
-
-			if (this.isNillable) {
-				s += "(xsi:nil)";
+		
+		for(EventTypeInformation eti : events2) {
+			if (eti.eventType == eventType) {
+				return eti.eventCode2;
 			}
 		}
-
-		return s;
+		
+		return Constants.NOT_FOUND;
 	}
+	
+	public EventType get2ndLevelEvent(int eventCode2,
+			FidelityOptions fidelityOptions) {
+		if(fidelityOptions != fidelityOptions2) {
+			buildEvents2(fidelityOptions);
+		}
+		
+		assert (eventCode2 >= 0 && eventCode2 < events2.size());
+		return events2.get(eventCode2).eventType;
+	}
+
 }

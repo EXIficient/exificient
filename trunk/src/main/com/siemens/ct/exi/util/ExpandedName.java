@@ -32,8 +32,7 @@ import javax.xml.XMLConstants;
  * @version 0.3.20081023
  */
 
-public class ExpandedName implements Comparable<ExpandedName>,
-		ExpandedNameComparable {
+public class ExpandedName implements Comparable<ExpandedName> {
 	protected String namespaceURI;
 	protected String localName;
 
@@ -50,10 +49,6 @@ public class ExpandedName implements Comparable<ExpandedName>,
 		}
 
 		this.localName = localName;
-
-		// // internalize ?
-		// this.namespaceURI = this.namespaceURI.intern ( );
-		// this.localName = this.localName.intern ( );
 	}
 
 	public String getNamespaceURI() {
@@ -62,7 +57,6 @@ public class ExpandedName implements Comparable<ExpandedName>,
 
 	public void setNamespaceURI(String namespaceURI) {
 		this.namespaceURI = namespaceURI;
-		// this.namespaceURI = namespaceURI.intern ( );
 	}
 
 	public String getLocalName() {
@@ -71,7 +65,6 @@ public class ExpandedName implements Comparable<ExpandedName>,
 
 	public void setLocalName(String localName) {
 		this.localName = localName;
-		// this.localName = localName.intern ( );
 	}
 
 	public boolean equals(Object o) {
@@ -106,11 +99,11 @@ public class ExpandedName implements Comparable<ExpandedName>,
 				: cLocalPart);
 	}
 
-	public int compareTo(String namespaceURI, String localName) {
-		int cLocalPart = this.localName.compareTo(localName);
-		return (cLocalPart == 0 ? this.namespaceURI.compareTo(namespaceURI)
-				: cLocalPart);
-	}
+//	public int compareTo(String namespaceURI, String localName) {
+//		int cLocalPart = this.localName.compareTo(localName);
+//		return (cLocalPart == 0 ? this.namespaceURI.compareTo(namespaceURI)
+//				: cLocalPart);
+//	}
 
 	public String toString() {
 		return ("{" + namespaceURI + "}" + localName);

@@ -34,11 +34,11 @@ import org.apache.xerces.xs.XSTypeDefinition;
 
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDRegularExpression;
+import com.siemens.ct.exi.datatype.encoder.BinaryDatatypeEncoder;
+import com.siemens.ct.exi.datatype.encoder.DatatypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -50,6 +50,11 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  */
 
 public class BuiltIn {
+	
+	enum IntegerType {
+		INT, LONG, BIG_INTEGER
+	}
+	
 	// Binary
 	protected static final ExpandedName XSD_BASE64BINARY;
 	protected static final ExpandedName XSD_HEXBINARY;
@@ -136,7 +141,7 @@ public class BuiltIn {
 				XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
 		// default
 		DEFAULT_VALUE_NAME = XSD_STRING;
-		DEFAULT_BUILTIN = BuiltInType.BUILTIN_STRING;
+		DEFAULT_BUILTIN = BuiltInType.STRING;
 		DEFAULT_DATATYPE = new DatatypeString(DEFAULT_VALUE_NAME);
 		BOOLEAN_DATATYPE = new DatatypeString(XSD_BOOLEAN);
 
@@ -161,7 +166,8 @@ public class BuiltIn {
 		// Decimal
 		datatypeMapping.put(XSD_DECIMAL, XSD_DECIMAL);
 		// Double/Float
-		datatypeMapping.put(XSD_FLOAT, XSD_DOUBLE);
+		// datatypeMapping.put(XSD_FLOAT, XSD_DOUBLE);
+		datatypeMapping.put(XSD_FLOAT, XSD_FLOAT);
 		datatypeMapping.put(XSD_DOUBLE, XSD_DOUBLE);
 		// Integer
 		datatypeMapping.put(XSD_INTEGER, XSD_INTEGER);
@@ -244,48 +250,70 @@ public class BuiltIn {
 
 	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
 			ExpandedName datatypeID) {
-		BigInteger min = BigInteger.valueOf(Long.MIN_VALUE);
-		BigInteger max = BigInteger.valueOf(Long.MAX_VALUE);
+		/*
+		 * detect base integer type (e.g. int, long, BigInteger)
+		 */
+		IntegerType intType;
 
-		// identify lower & upper bound
-		try {
-			// minimum
-			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MININCLUSIVE)) {
-				String sMinInclusive = std
-						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MININCLUSIVE);
-				min = min.max(new BigInteger(sMinInclusive));
-			}
-			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE)) {
-				String sMinExclusive = std
-						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE);
-				min = min.max((new BigInteger(sMinExclusive))
-						.add(BigInteger.ONE));
-			}
-			// maximum
-			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE)) {
-				String sMaxInclusive = std
-						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE);
-				max = max.min(new BigInteger(sMaxInclusive));
-			}
-			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE)) {
-				String sMaxExclusive = std
-						.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE);
-				max = max.min((new BigInteger(sMaxExclusive))
-						.subtract(BigInteger.ONE));
-			}
-		} catch (NumberFormatException e) {
-			// TODO what to do if schema is not valid !??!
-			throw new RuntimeException("SimpleTypeDefinition invalid: " + std);
+		// walk up the hierarchy till we find xsd simple integer types
+		XSTypeDefinition xsdSTD = std;
+		while (!XMLConstants.W3C_XML_SCHEMA_NS_URI
+				.equals(xsdSTD.getNamespace())) {
+			xsdSTD = xsdSTD.getBaseType();
+		}
+		// set appropriate integer type
+		if (xsdSTD.getName().equals("integer")
+				|| xsdSTD.getName().equals("nonPositiveInteger")
+				|| xsdSTD.getName().equals("negativeInteger")
+				|| xsdSTD.getName().equals("nonNegativeInteger")
+				|| xsdSTD.getName().equals("positiveInteger")) {
+			// BigInteger
+			intType = IntegerType.BIG_INTEGER;
+		} else if (xsdSTD.getName().equals("long")
+				|| xsdSTD.getName().equals("unsignedLong")
+				|| xsdSTD.getName().equals("unsignedInt")) {
+			// long
+			intType = IntegerType.LONG;
+		} else {
+			// int
+			intType = IntegerType.INT;
 		}
 
-		// ( max < min)
-		if (max.compareTo(min) == -1) {
-			throw new RuntimeException("max=" + max + " and min=" + min);
+		/*
+		 * identify lower & upper bound
+		 */
+		BigInteger min = new BigInteger("-9999999999999999999999999999999999999999");
+		BigInteger max = new BigInteger("9999999999999999999999999999999999999999");
+		// minimum
+		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MININCLUSIVE)) {
+			String sMinInclusive = std
+					.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MININCLUSIVE);
+			min = min.max(new BigInteger(sMinInclusive));
 		}
+		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE)) {
+			String sMinExclusive = std
+					.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MINEXCLUSIVE);
+			min = min.max((new BigInteger(sMinExclusive)).add(BigInteger.ONE));
+		}
+		// maximum
+		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE)) {
+			String sMaxInclusive = std
+					.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXINCLUSIVE);
+			max = max.min(new BigInteger(sMaxInclusive));
+		}
+		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE)) {
+			String sMaxExclusive = std
+					.getLexicalFacetValue(XSSimpleTypeDefinition.FACET_MAXEXCLUSIVE);
+			max = max.min((new BigInteger(sMaxExclusive))
+					.subtract(BigInteger.ONE));
+		}
+		// ( max >= min)
+		assert (max.compareTo(min) >= 0);
 
-		// calculate bounded range;
+		/*
+		 * calculate bounded range;
+		 */
 		BigInteger boundedRange;
-
 		// max < 0
 		if (max.compareTo(BigInteger.ZERO) == -1) {
 			// max & min negative
@@ -301,30 +329,30 @@ public class BuiltIn {
 			}
 		}
 
+		/*
+		 * Set-up appropriate datatype
+		 */
 		Datatype datatype;
 
-		// boundedRange < 4096
-		if (boundedRange.compareTo(BigInteger.valueOf(4096)) == -1) {
+		if (boundedRange.compareTo(BigInteger.valueOf(4095)) <= 0) {
 			/*
 			 * When the bounded range of integer is 4095 or smaller as
 			 * determined by the values of minInclusiveXS2, minExclusiveXS2,
 			 * maxInclusiveXS2 and maxExclusiveXS2 facets, use n-bit Unsigned
 			 * Integer representation.
 			 */
-			try {
-				XSDInteger lowerBound = XSDInteger.newInstance();
-				lowerBound.parse(min.toString());
-				XSDInteger upperBound = XSDInteger.newInstance();
-				upperBound.parse(max.toString());
-				datatype = new DatatypeNBitInteger(datatypeID, lowerBound,
-						upperBound, boundedRange.intValue());
-			} catch (XMLParsingException e) {
-				throw new RuntimeException(
-						"Error occured while identifying XML Schema bounds", e);
+			if (intType == IntegerType.BIG_INTEGER) {
+				datatype = new DatatypeNBitBigInteger(datatypeID, min, max,
+						boundedRange.intValue());
+			} else if (intType == IntegerType.LONG) {
+				datatype = new DatatypeNBitLong(datatypeID, min.longValue(),
+						max.longValue(), boundedRange.intValue());
+			} else {
+				assert ((intType == IntegerType.INT));
+				datatype = new DatatypeNBitInteger(datatypeID, min.intValue(),
+						max.intValue(), boundedRange.intValue());
 			}
-		}
-		// min >= 0
-		else if (min.signum() >= 0) {
+		} else if (min.signum() >= 0) {
 			/*
 			 * Otherwise, when the integer satisfies one of the followings, use
 			 * Unsigned Integer representation.
@@ -334,12 +362,26 @@ public class BuiltIn {
 			 * minExclusiveXS2 facet is specified with a value equal to or
 			 * greater than -1.
 			 */
-			datatype = new DatatypeUnsignedInteger(datatypeID);
+			if (intType == IntegerType.BIG_INTEGER) {
+				datatype = new DatatypeUnsignedBigInteger(datatypeID);
+			} else if (intType == IntegerType.LONG) {
+				datatype = new DatatypeUnsignedLong(datatypeID);
+			} else {
+				assert ((intType == IntegerType.INT));
+				datatype = new DatatypeUnsignedInteger(datatypeID);
+			}
 		} else {
 			/*
 			 * Otherwise, use Integer representation.
 			 */
-			datatype = new DatatypeInteger(datatypeID);
+			if (intType == IntegerType.BIG_INTEGER) {
+				datatype = new DatatypeSignedBigInteger(datatypeID);
+			} else if (intType == IntegerType.LONG) {
+				datatype = new DatatypeSignedLong(datatypeID);
+			} else {
+				assert ((intType == IntegerType.INT));
+				datatype = new DatatypeSignedInteger(datatypeID);
+			}
 		}
 
 		return datatype;
@@ -362,10 +404,10 @@ public class BuiltIn {
 
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
 			datatype = new DatatypeBinary(datatypeID,
-					BuiltInType.BUILTIN_BINARY_BASE64);
+					BuiltInType.BINARY_BASE64);
 		} else if (XSD_HEXBINARY.equals(schemaDatatype)) {
 			datatype = new DatatypeBinary(datatypeID,
-					BuiltInType.BUILTIN_BINARY_HEX);
+					BuiltInType.BINARY_HEX);
 		} else if (XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
 				datatype = new DatatypeBooleanPattern(datatypeID);
@@ -399,8 +441,10 @@ public class BuiltIn {
 			}
 		} else if (XSD_DECIMAL.equals(schemaDatatype)) {
 			datatype = new DatatypeDecimal(datatypeID);
-		} else if (XSD_DOUBLE.equals(schemaDatatype)) {
+		} else if (XSD_FLOAT.equals(schemaDatatype)) {
 			datatype = new DatatypeFloat(datatypeID);
+		} else if (XSD_DOUBLE.equals(schemaDatatype)) {
+			datatype = new DatatypeDouble(datatypeID);
 		} else if (XSD_INTEGER.equals(schemaDatatype)) {
 			// returns integer type (nbit, unsigned, int) according to facets
 			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
@@ -408,7 +452,11 @@ public class BuiltIn {
 			// XSD_STRING with or without pattern
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
 				StringList sl = std.getLexicalPattern();
-				assert (sl.getLength() == 1); // why multiple ?
+				if (sl.getLength() > 1) {
+					// TODO Multiple patterns
+					// System.out.println("ToDo: Multiple patterns for " + std);
+					// assert (sl.getLength() == 1); // why multiple ?
+				}
 				xsdRegexp.analyze(sl.item(0));
 				if (xsdRegexp.isEntireSetOfXMLCharacters()) {
 					// *normal* string
@@ -449,6 +497,75 @@ public class BuiltIn {
 			return datatypeMapping.get(qnamePrimitive);
 		} else {
 			return DEFAULT_VALUE_NAME;
+		}
+	}
+	
+	public DatatypeEncoder getDatatypeEncoder(BuiltInType builtInType) {
+		switch (builtInType) {
+		case BINARY_BASE64:
+		case BINARY_HEX:
+			return new BinaryDatatypeEncoder(null);
+		case BOOLEAN:
+			return new BinaryDatatypeEncoder(null);
+//		case BOOLEAN_PATTERN:
+//			lastDatatypeEncoder = booleanPatternDTE;
+//			break;
+//		case DECIMAL:
+//			lastDatatypeEncoder = decimalDTE;
+//			break;
+//		case FLOAT:
+//			lastDatatypeEncoder = floatDTE;
+//			break;
+//		case DOUBLE:
+//			lastDatatypeEncoder = doubleDTE;
+//			break;
+//		case INTEGER:
+//			lastDatatypeEncoder = integerDTE;
+//			break;
+//		case LONG:
+//			lastDatatypeEncoder = longDTE;
+//			break;
+//		case BIG_INTEGER:
+//			lastDatatypeEncoder = bigIntegerDTE;
+//			break;
+//		case UNSIGNED_INTEGER:
+//			lastDatatypeEncoder = unsignedIntegerDTE;
+//			break;
+//		case UNSIGNED_LONG:
+//			lastDatatypeEncoder = unsignedLongDTE;
+//			break;
+//		case UNSIGNED_BIG_INTEGER:
+//			lastDatatypeEncoder = unsignedBigIntegerDTE;
+//			break;
+//		case NBIT_INTEGER:
+//			lastDatatypeEncoder = nBitIntegerDTE;
+//			break;
+//		case NBIT_LONG:
+//			lastDatatypeEncoder = nBitLongDTE;
+//			break;
+//		case NBIT_BIG_INTEGER:
+//			lastDatatypeEncoder = nBitBigIntegerDTE;
+//			break;
+//		case DATETIME:
+//			lastDatatypeEncoder = datetimeDTE;
+//			break;
+//		case ENUMERATION:
+//			lastDatatypeEncoder = enumerationDTE;
+//			break;
+//		case LIST:
+//			lastDatatypeEncoder = listDTE;
+//			break;
+//		case STRING:
+//			lastDatatypeEncoder = stringDTE;
+//			break;
+//		case RESTRICTED_CHARACTER_SET:
+//			restrictedCharSetDTE
+//					.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
+//							.getRestrictedCharacterSet());
+//			lastDatatypeEncoder = restrictedCharSetDTE;
+//			break;
+		default:
+			throw new RuntimeException("Unknown BuiltIn Type: " + builtInType);
 		}
 	}
 }

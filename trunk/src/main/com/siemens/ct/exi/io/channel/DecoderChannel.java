@@ -20,6 +20,7 @@ package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
@@ -47,7 +48,7 @@ public interface DecoderChannel {
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException;
 
-	public String decodeNBitUnsignedIntegerAsString(int n) throws IOException;
+	public char[] decodeNBitUnsignedIntegerAsString(int n) throws IOException;
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit
@@ -55,21 +56,22 @@ public interface DecoderChannel {
 	 */
 	public boolean decodeBoolean() throws IOException;
 
-	public String decodeBooleanAsString() throws IOException;
+	public char[] decodeBooleanAsString() throws IOException;
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
 	public byte[] decodeBinary() throws IOException;
 
-	public String decodeBinaryAsString() throws IOException;
+	public char[] decodeBinaryAsString() throws IOException;
 
 	/**
 	 * Decode a string as a length-prefixed sequence of UCS codepoints, each of
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
-	public String decodeString() throws IOException;
+	// public String decodeString() throws IOException;
+	public char[] decodeString() throws IOException;
 
 	/**
 	 * Decode the characters of a string whose length has already been read.
@@ -80,7 +82,8 @@ public interface DecoderChannel {
 	 *            Length of the character sequence to read.
 	 * @return The character sequence as a string.
 	 */
-	public String decodeStringOnly(int length) throws IOException;
+	// public String decodeStringOnly(int length) throws IOException;
+	public char[] decodeStringOnly(int length) throws IOException;
 
 	/**
 	 * Decode an arbitrary precision non negative integer using a sequence of
@@ -90,9 +93,15 @@ public interface DecoderChannel {
 	 */
 	public int decodeUnsignedInteger() throws IOException;
 
-	public long decodeUnsignedIntegerAsLong() throws IOException;
+	public long decodeUnsignedLong() throws IOException;
+	
+	public BigInteger decodeUnsignedBigInteger() throws IOException;
 
-	public String decodeUnsignedIntegerAsString() throws IOException;
+	public char[] decodeUnsignedIntegerAsString() throws IOException;
+	
+	public char[] decodeUnsignedLongAsString() throws IOException;
+	
+	public char[] decodeUnsignedBigIntegerAsString() throws IOException;
 
 	/**
 	 * Decode an arbitrary precision integer using a sign bit followed by a
@@ -101,8 +110,16 @@ public interface DecoderChannel {
 	 * to store the integer's value.
 	 */
 	public int decodeInteger() throws IOException;
+	
+	public long decodeLong() throws IOException;
+	
+	public BigInteger decodeBigInteger() throws IOException;
 
-	public String decodeIntegerAsString() throws IOException;
+	public char[] decodeIntegerAsString() throws IOException;
+	
+	public char[] decodeLongAsString() throws IOException;
+	
+	public char[] decodeBigIntegerAsString() throws IOException;
 
 	/**
 	 * Decode a decimal represented as a Boolean sign followed by two Unsigned
@@ -114,7 +131,7 @@ public interface DecoderChannel {
 	 */
 	public BigDecimal decodeDecimal() throws IOException;
 
-	public String decodeDecimalAsString() throws IOException;
+	public char[] decodeDecimalAsString() throws IOException;
 
 	/**
 	 * Decode a Float represented as two consecutive Integers. The first Integer
@@ -123,7 +140,11 @@ public interface DecoderChannel {
 	 */
 	public float decodeFloat() throws IOException;
 
-	public String decodeFloatAsString() throws IOException;
+	public char[] decodeFloatAsString() throws IOException;
+	
+	public double decodeDouble() throws IOException;
+
+	public char[] decodeDoubleAsString() throws IOException;
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
@@ -131,6 +152,6 @@ public interface DecoderChannel {
 	 */
 	public Calendar decodeDateTime(DatetimeType type) throws IOException;
 
-	public String decodeDateTimeAsString(DatetimeType type) throws IOException;
+	public char[] decodeDateTimeAsString(DatetimeType type) throws IOException;
 
 }

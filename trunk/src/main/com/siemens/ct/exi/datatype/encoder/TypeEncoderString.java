@@ -21,6 +21,7 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
@@ -34,7 +35,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  */
 
 public class TypeEncoderString extends AbstractTypeEncoder {
-	private final static boolean VALID_RESULT = true;
+
 	String lastValidValue;
 
 	public TypeEncoderString(EXIFactory exiFactory) {
@@ -43,12 +44,12 @@ public class TypeEncoderString extends AbstractTypeEncoder {
 
 	public boolean isTypeValid(Datatype datatype, final String value) {
 		lastValidValue = value;
-		return VALID_RESULT;
+		return true;
 	}
-
-	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
-		writeValueAsString(valueChannel, uri, localName, lastValidValue);
+	
+	public void writeTypeValidValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		assert(stringEncoder != null);
+		stringEncoder.writeValueAsString(context, valueChannel, lastValidValue);
 	}
 
 }

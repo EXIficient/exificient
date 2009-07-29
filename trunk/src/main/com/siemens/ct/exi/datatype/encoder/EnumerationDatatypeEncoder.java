@@ -20,8 +20,7 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
-import org.apache.xerces.xs.StringList;
-
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeEnumeration;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -38,7 +37,7 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder
 		implements DatatypeEncoder {
 	private DatatypeEnumeration lastDatatypeEnumeration;
-	private StringList lastEnumValues;
+	// private StringList lastEnumValues;
 	private int lastOrdinalPosition;
 
 	public EnumerationDatatypeEncoder(TypeEncoder typeEncoder) {
@@ -47,12 +46,14 @@ public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder
 
 	public boolean isValid(Datatype datatype, String value) {
 		lastDatatypeEnumeration = ((DatatypeEnumeration) datatype);
-		lastEnumValues = lastDatatypeEnumeration.getEnumerationValues();
+		
+		// lastEnumValues = lastDatatypeEnumeration.getEnumerationValues();
 
 		lastOrdinalPosition = -1;
 		int index = 0;
-		while (index < lastEnumValues.getLength()) {
-			if (lastEnumValues.item(index).equals(value)) {
+		// while (index < lastEnumValues.getLength()) {
+		while (index < lastDatatypeEnumeration.getEnumerationSize()) {
+			if (lastDatatypeEnumeration.getEnumerationValueAsString(index).equals(value)) {
 				lastOrdinalPosition = index;
 				return true;
 			}
@@ -62,8 +63,13 @@ public class EnumerationDatatypeEncoder extends AbstractDatatypeEncoder
 		return false;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition,
+//				lastDatatypeEnumeration.getCodingLength());
+//	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition,
 				lastDatatypeEnumeration.getCodingLength());
 	}

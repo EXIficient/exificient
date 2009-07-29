@@ -20,6 +20,7 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
@@ -45,15 +46,16 @@ public class StringDatatypeEncoder extends AbstractDatatypeEncoder implements
 		return true;
 	}
 
-	// public void writeValue ( TypeEncoder encoder, EncoderChannel
-	// valueChannel, String uri, String localName ) throws IOException
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel, String uri, String
-	// localName ) throws IOException
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException
+//	{
+//		typeEncoder.writeValueAsString(valueChannel, uri, localName, lastValid);
+//	}
+	
+
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException
 	{
-		typeEncoder.writeValueAsString(valueChannel, uri, localName, lastValid);
+		typeEncoder.getStringEncoder().writeValueAsString(context, valueChannel, lastValid);
 	}
 
 }

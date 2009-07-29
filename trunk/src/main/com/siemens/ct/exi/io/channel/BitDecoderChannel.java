@@ -61,12 +61,13 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException {
 		assert (n >= 0);
+		return (n == 0 ? 0 : istream.readBits(n));
 
-		if (n == 0) {
-			return 0;
-		} else {
-			return istream.readBits(n);
-		}
+//		if (n == 0) {
+//			return 0;
+//		} else {
+//			return istream.readBits(n);
+//		}
 	}
 
 	/**

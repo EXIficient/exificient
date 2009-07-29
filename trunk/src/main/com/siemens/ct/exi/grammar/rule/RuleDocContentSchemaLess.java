@@ -21,6 +21,7 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -44,6 +45,8 @@ public class RuleDocContentSchemaLess extends AbstractSchemaLessRule {
 	public RuleDocContentSchemaLess(Rule docEnd) {
 		super();
 		this.docEnd = docEnd;
+		//	SE(*) --> DocEnd
+		this.addRule(new StartElementGeneric(), docEnd);
 	}
 
 	public RuleDocContentSchemaLess(Rule docEnd, String label) {

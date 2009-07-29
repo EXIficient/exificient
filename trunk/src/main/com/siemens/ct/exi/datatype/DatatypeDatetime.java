@@ -35,7 +35,7 @@ public class DatatypeDatetime extends AbstractDatatype {
 
 	public DatatypeDatetime(DatetimeType dateType,
 			ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BUILTIN_DATETIME, datatypeIdentifier);
+		super(BuiltInType.DATETIME, datatypeIdentifier);
 		this.dateType = dateType;
 	}
 

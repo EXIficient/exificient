@@ -21,6 +21,7 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeRestrictedCharacterSet;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -44,9 +45,16 @@ public abstract class AbstractTypeEncoderSchemaInformed extends
 	protected DatatypeEncoder booleanPatternDTE;
 	protected DatatypeEncoder decimalDTE;
 	protected DatatypeEncoder floatDTE;
+	protected DatatypeEncoder doubleDTE;
 	protected DatatypeEncoder integerDTE;
+	protected DatatypeEncoder longDTE;
+	protected DatatypeEncoder bigIntegerDTE;
 	protected DatatypeEncoder unsignedIntegerDTE;
+	protected DatatypeEncoder unsignedLongDTE;
+	protected DatatypeEncoder unsignedBigIntegerDTE;
 	protected DatatypeEncoder nBitIntegerDTE;
+	protected DatatypeEncoder nBitLongDTE;
+	protected DatatypeEncoder nBitBigIntegerDTE;
 	protected DatatypeEncoder datetimeDTE;
 	protected DatatypeEncoder enumerationDTE;
 	protected DatatypeEncoder listDTE;
@@ -59,62 +67,87 @@ public abstract class AbstractTypeEncoderSchemaInformed extends
 
 	public boolean isTypeValid(Datatype datatype, String value) {
 		switch (datatype.getDefaultBuiltInType()) {
-		case BUILTIN_BINARY_BASE64:
+		case BINARY_BASE64:
 			lastDatatypeEncoder = binaryBase64DTE;
 			break;
-		case BUILTIN_BINARY_HEX:
+		case BINARY_HEX:
 			lastDatatypeEncoder = binaryHexDTE;
 			break;
-		case BUILTIN_BOOLEAN:
+		case BOOLEAN:
 			lastDatatypeEncoder = booleanDTE;
 			break;
-		case BUILTIN_BOOLEAN_PATTERN:
+		case BOOLEAN_PATTERN:
 			lastDatatypeEncoder = booleanPatternDTE;
 			break;
-		case BUILTIN_DECIMAL:
+		case DECIMAL:
 			lastDatatypeEncoder = decimalDTE;
 			break;
-		case BUILTIN_FLOAT:
+		case FLOAT:
 			lastDatatypeEncoder = floatDTE;
 			break;
-		case BUILTIN_INTEGER:
+		case DOUBLE:
+			lastDatatypeEncoder = doubleDTE;
+			break;
+		case INTEGER:
 			lastDatatypeEncoder = integerDTE;
 			break;
-		case BUILTIN_UNSIGNED_INTEGER:
+		case LONG:
+			lastDatatypeEncoder = longDTE;
+			break;
+		case BIG_INTEGER:
+			lastDatatypeEncoder = bigIntegerDTE;
+			break;
+		case UNSIGNED_INTEGER:
 			lastDatatypeEncoder = unsignedIntegerDTE;
 			break;
-		case BUILTIN_NBIT_INTEGER:
+		case UNSIGNED_LONG:
+			lastDatatypeEncoder = unsignedLongDTE;
+			break;
+		case UNSIGNED_BIG_INTEGER:
+			lastDatatypeEncoder = unsignedBigIntegerDTE;
+			break;
+		case NBIT_INTEGER:
 			lastDatatypeEncoder = nBitIntegerDTE;
 			break;
-		case BUILTIN_DATETIME:
+		case NBIT_LONG:
+			lastDatatypeEncoder = nBitLongDTE;
+			break;
+		case NBIT_BIG_INTEGER:
+			lastDatatypeEncoder = nBitBigIntegerDTE;
+			break;
+		case DATETIME:
 			lastDatatypeEncoder = datetimeDTE;
 			break;
-		case BUILTIN_ENUMERATION:
+		case ENUMERATION:
 			lastDatatypeEncoder = enumerationDTE;
 			break;
-		case BUILTIN_LIST:
+		case LIST:
 			lastDatatypeEncoder = listDTE;
 			break;
-		case BUILTIN_STRING:
+		case STRING:
 			lastDatatypeEncoder = stringDTE;
 			break;
-		case BUILTIN_RESTRICTED_CHARACTER_SET:
+		case RESTRICTED_CHARACTER_SET:
 			restrictedCharSetDTE
 					.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
 							.getRestrictedCharacterSet());
 			lastDatatypeEncoder = restrictedCharSetDTE;
 			break;
 		default:
-			throw new RuntimeException("Unknown BuiltIn Type");
+			throw new RuntimeException("Unknown BuiltIn Type: " + datatype.getDefaultBuiltInType());
 		}
 
 		return lastDatatypeEncoder.isValid(datatype, value);
 	}
 
 	// first isValueTypeValid has to be called
-	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
-		lastDatatypeEncoder.writeValue(valueChannel, uri, localName);
+//	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		lastDatatypeEncoder.writeValue(valueChannel, uri, localName);
+//	}
+	
+	public void writeTypeValidValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		lastDatatypeEncoder.writeValue(context, valueChannel);
 	}
 
 }

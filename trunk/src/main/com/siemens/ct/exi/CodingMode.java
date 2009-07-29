@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import java.util.zip.Deflater;
+
 /**
  * The alignment option is used to control the alignment of event codes and
  * content items.
@@ -67,6 +69,8 @@ public enum CodingMode {
 
 	private final boolean usesDeflate;
 	private final boolean usesRechanneling;
+	
+	private int deflateLevel = Deflater.DEFAULT_COMPRESSION;
 
 	private CodingMode(boolean deflate, boolean rechanneling) {
 		usesDeflate = deflate;
@@ -75,6 +79,16 @@ public enum CodingMode {
 
 	public boolean usesDeflate() {
 		return usesDeflate;
+	}
+	
+	public int getDeflateLevel() {
+		assert(usesDeflate);
+		return deflateLevel;
+	}
+	
+	public void setDeflateLevel(int deflateLevel) {
+		assert(usesDeflate);
+		this.deflateLevel = deflateLevel;
 	}
 
 	public boolean usesRechanneling() {

@@ -40,9 +40,16 @@ public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed {
 		booleanPatternDTE = new BooleanPatternDatatypeEncoder(this);
 		decimalDTE = new DecimalDatatypeEncoder(this);
 		floatDTE = new FloatDatatypeEncoder(this);
+		doubleDTE = new DoubleDatatypeEncoder(this);
 		integerDTE = new IntegerDatatypeEncoder(this);
+		longDTE = new LongDatatypeEncoder(this);
+		bigIntegerDTE = new BigIntegerDatatypeEncoder(this);
 		unsignedIntegerDTE = new UnsignedIntegerDatatypeEncoder(this);
+		unsignedLongDTE = new UnsignedLongDatatypeEncoder(this);
+		unsignedBigIntegerDTE = new UnsignedBigIntegerDatatypeEncoder(this);
 		nBitIntegerDTE = new NBitIntegerDatatypeEncoder(this);
+		nBitLongDTE = new NBitLongDatatypeEncoder(this);
+		nBitBigIntegerDTE = new NBitBigIntegerDatatypeEncoder(this);
 		datetimeDTE = new DatetimeDatatypeEncoder(this);
 		enumerationDTE = new EnumerationDatatypeEncoder(this);
 		listDTE = new ListDatatypeEncoder(this, exiFactory);
@@ -55,6 +62,6 @@ public class TypeEncoderTyped extends AbstractTypeEncoderSchemaInformed {
 		// typed encoder needs to be schemaInformed
 		this(exiFactory);
 
-		this.stringTable = stringTable;
+		// this.stringTable = stringTable;
 	}
 }

@@ -33,96 +33,84 @@ import com.siemens.ct.exi.Constants;
 public abstract class AbstractStringTable implements StringTableCommon {
 
 	/*
-	 * pre-populate URI partition
+	 * pre-populate partitions
 	 */
-	protected void initURI(StringTablePartition uriPartition,
-			boolean isSchemaInformed) {
-		uriPartition.add(Constants.EMPTY_STRING); /* empty string */
-		uriPartition.add(XMLConstants.XML_NS_URI);
-		uriPartition.add(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-
+	protected void initPartitions(boolean isSchemaInformed) {
+		/*
+		 * 	"", empty string
+		 */
+		addURI(Constants.EMPTY_STRING); 
+		addPrefix(Constants.EMPTY_STRING, Constants.EMPTY_STRING);
+		
+		/*
+		 * "http://www.w3.org/XML/1998/namespace"
+		 */
+		addURI(XMLConstants.XML_NS_URI);
+		addPrefix(XMLConstants.XML_NS_URI, Constants.XML_PFX);
+		addLocalName(XMLConstants.XML_NS_URI, "space");
+		addLocalName(XMLConstants.XML_NS_URI, "lang");
+		addLocalName(XMLConstants.XML_NS_URI, "id");
+		addLocalName(XMLConstants.XML_NS_URI, "base");
+		
+		/*
+		 *  "http://www.w3.org/2001/XMLSchema-instance", xsi
+		 */
+		addURI(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+		addPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_PFX);
+		addLocalName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+		addLocalName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "nil");
+		
+		/*
+		 *  "http://www.w3.org/2001/XMLSchema", xsd
+		 */
 		if (isSchemaInformed) {
-			uriPartition.add(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			addURI(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "anyType");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "normalizedString");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "token");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "language");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "Name");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "NCName");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "ID");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "IDREF");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "IDREFS");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "ENTITY");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "ENTITIES");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "NMTOKEN");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "NMTOKENS");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "duration");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "time");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "date");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYearMonth");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonthDay");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "base64Binary");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "hexBinary");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "float");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "double");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "anyURI");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "QName");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "NOTATION");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonPositiveInteger");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "negativeInteger");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "long");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "short");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "byte");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "positiveInteger");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "unsignedLong");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "unsignedInt");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "unsignedShort");
+			addLocalName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "unsignedByte");
 		}
 	}
-
-	/*
-	 * pre-populate the initial set of prefix partitions
-	 */
-	protected void initPrefixEmpty(StringTablePartition prefixPartitionEmpty) {
-		prefixPartitionEmpty.add(Constants.EMPTY_STRING); /* empty string */
-	}
-
-	protected void initPrefixXML(StringTablePartition prefixPartitionXML) {
-		prefixPartitionXML.add(Constants.XML_PFX);
-	}
-
-	protected void initPrefixXSI(StringTablePartition prefixPartitionXSI) {
-		prefixPartitionXSI.add(Constants.XSI_PFX);
-	}
-
-	/*
-	 * pre-populate the initial set of local name partitions
-	 */
-	protected void initLocalNameXML(StringTablePartition localNamePartitionXML) {
-		localNamePartitionXML.add("space");
-		localNamePartitionXML.add("lang");
-		localNamePartitionXML.add("id");
-		localNamePartitionXML.add("base");
-	}
-
-	protected void initLocalNameXSI(StringTablePartition localNamePartitionXSI) {
-		localNamePartitionXSI.add("type");
-		localNamePartitionXSI.add("nil");
-	}
-
-	protected void initLocalNameXSD(StringTablePartition localNamePartitionXSD) {
-		localNamePartitionXSD.add("anyType");
-		localNamePartitionXSD.add("anySimpleType");
-		localNamePartitionXSD.add("string");
-		localNamePartitionXSD.add("normalizedString");
-		localNamePartitionXSD.add("token");
-		localNamePartitionXSD.add("language");
-		localNamePartitionXSD.add("Name");
-		localNamePartitionXSD.add("NCName");
-		localNamePartitionXSD.add("ID");
-		localNamePartitionXSD.add("IDREF");
-		localNamePartitionXSD.add("IDREFS");
-		localNamePartitionXSD.add("ENTITY");
-		localNamePartitionXSD.add("ENTITIES");
-		localNamePartitionXSD.add("NMTOKEN");
-		localNamePartitionXSD.add("NMTOKENS");
-		localNamePartitionXSD.add("duration");
-		localNamePartitionXSD.add("dateTime");
-		localNamePartitionXSD.add("time");
-		localNamePartitionXSD.add("date");
-		localNamePartitionXSD.add("gYearMonth");
-		localNamePartitionXSD.add("gYear");
-		localNamePartitionXSD.add("gMonthDay");
-		localNamePartitionXSD.add("gDay");
-		localNamePartitionXSD.add("gMonth");
-		localNamePartitionXSD.add("boolean");
-		localNamePartitionXSD.add("base64Binary");
-		localNamePartitionXSD.add("hexBinary");
-		localNamePartitionXSD.add("float");
-		localNamePartitionXSD.add("double");
-		localNamePartitionXSD.add("anyURI");
-		localNamePartitionXSD.add("QName");
-		localNamePartitionXSD.add("NOTATION");
-		localNamePartitionXSD.add("decimal");
-		localNamePartitionXSD.add("integer");
-		localNamePartitionXSD.add("nonPositiveInteger");
-		localNamePartitionXSD.add("negativeInteger");
-		localNamePartitionXSD.add("long");
-		localNamePartitionXSD.add("int");
-		localNamePartitionXSD.add("short");
-		localNamePartitionXSD.add("byte");
-		localNamePartitionXSD.add("nonNegativeInteger");
-		localNamePartitionXSD.add("positiveInteger");
-		localNamePartitionXSD.add("unsignedLong");
-		localNamePartitionXSD.add("unsignedInt");
-		localNamePartitionXSD.add("unsignedShort");
-		localNamePartitionXSD.add("unsignedByte");
-	}
-
 }

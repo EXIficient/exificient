@@ -20,9 +20,10 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.TypeCoder;
-import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
@@ -36,34 +37,22 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public interface TypeEncoder extends TypeCoder {
 
-	public StringTableEncoder getStringTable();
-
-	public void setStringTable(StringTableEncoder stringTable);
-
 	/*
 	 * Value Channel
 	 */
 	public boolean isTypeValid(Datatype datatype, String value);
 
-	public void writeTypeValidValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException;
-
-	public void writeValueAsString(EncoderChannel valueChannel, String uri,
-			String localName, String invalidValue) throws IOException;
-
-	public boolean writeStringAsLocalHit(EncoderChannel valueChannel,
-			String uri, String localName, final String value)
-			throws IOException;
-
-	public boolean writeStringAsGlobalHit(EncoderChannel valueChannel,
-			String value) throws IOException;
-
-	public void writeStringAsMiss(EncoderChannel valueChannel, String uri,
-			String localName, String value) throws IOException;
-
 	/*
 	 * Flush
 	 */
 	public void finish() throws IOException;
-
+	
+	/*
+	 * NEW STUFF
+	 * 
+	 */
+	public void setStringEncoder(StringEncoder stringEncoder);
+	public StringEncoder getStringEncoder();
+	public void writeTypeValidValue(NameContext context, EncoderChannel valueChannel) throws IOException;
+	
 }

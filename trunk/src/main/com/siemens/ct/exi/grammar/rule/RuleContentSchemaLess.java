@@ -49,7 +49,7 @@ public abstract class RuleContentSchemaLess extends AbstractSchemaLessRule {
 		if (!optionsStartTag.containsKey(fidelityOptions)) {
 			List<EventType> events = new ArrayList<EventType>();
 
-			if (!fidelityOptions.isStrict()) {
+//			if (!fidelityOptions.isStrict()) {
 				// extensibility: EE, AT(*)
 				events.add(EventType.END_ELEMENT_UNDECLARED);
 				events.add(EventType.ATTRIBUTE_GENERIC_UNDECLARED);
@@ -64,7 +64,7 @@ public abstract class RuleContentSchemaLess extends AbstractSchemaLessRule {
 						.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
 					events.add(EventType.SELF_CONTAINED);
 				}
-			}
+//			}
 
 			optionsStartTag.put(fidelityOptions, events);
 		}
@@ -77,7 +77,7 @@ public abstract class RuleContentSchemaLess extends AbstractSchemaLessRule {
 		if (!optionsChildContent.containsKey(fidelityOptions)) {
 			List<EventType> events = new ArrayList<EventType>();
 
-			if (!fidelityOptions.isStrict()) {
+//			if (!fidelityOptions.isStrict()) {
 				// extensibility: SE(*), CH
 				events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -88,7 +88,7 @@ public abstract class RuleContentSchemaLess extends AbstractSchemaLessRule {
 					events.add(EventType.ENTITY_REFERENCE);
 				}
 
-			}
+//			}
 
 			optionsChildContent.put(fidelityOptions, events);
 		}

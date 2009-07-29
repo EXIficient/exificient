@@ -23,11 +23,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -51,12 +52,13 @@ public class DecoderByteBlock extends AbstractDecoderBlock {
 
 	protected void init() throws IOException {
 		// bis = new BufferedInputStream( inputStream );
-		structureChannel = this.getNextChannel();
+		// structureChannel = this.getNextChannel();
+		structureChannel = new ByteDecoderChannel(this.inputStream);
 	}
 
-	protected ByteDecoderChannel getNextChannel() throws IOException {
-		return new ByteDecoderChannel(this.inputStream);
-	}
+//	protected ByteDecoderChannel getNextChannel() throws IOException {
+//		return new ByteDecoderChannel(this.inputStream);
+//	}
 
 	public DecoderChannel getStructureChannel() {
 		return structureChannel;
@@ -68,10 +70,23 @@ public class DecoderByteBlock extends AbstractDecoderBlock {
 	}
 
 	// @Override
-	public void reconstructChannels(int values, List<ExpandedName> valueQNames,
-			Map<ExpandedName, List<Datatype>> dataTypes,
-			Map<ExpandedName, Integer> occurrences) throws IOException {
+	public void reconstructChannels(int cntValues, List<NameContext> valueQNames,
+			Map<NameContext, List<Datatype>> dataTypes,
+			Map<NameContext, Integer> occurrences,
+			Map<NameContext, PreReadValueContainer> contentValues) throws IOException {
 		throw new UnsupportedOperationException();
 
 	}
+
+//	public char[] readTypedValidValue(Datatype datatype, String namespaceURI,
+//			String localName) throws IOException {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	public char[] readValueAsString(String namespaceURI, String localName)
+//			throws IOException {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

@@ -31,6 +31,6 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public class DatatypeBooleanPattern extends AbstractDatatype {
 	public DatatypeBooleanPattern(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BUILTIN_BOOLEAN_PATTERN, datatypeIdentifier);
+		super(BuiltInType.BOOLEAN_PATTERN, datatypeIdentifier);
 	}
 }

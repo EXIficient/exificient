@@ -33,18 +33,41 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class DatatypeEnumeration extends AbstractDatatype {
 	private StringList enumValues;
+//	private CharArray[] enumValues2;
+	private char[][] enumValues3;
 	private int codingLength;
 
 	public DatatypeEnumeration(StringList enumValues) {
-		super(BuiltInType.BUILTIN_ENUMERATION, null);
+		super(BuiltInType.ENUMERATION, null);
 
-		this.enumValues = enumValues;
+		 this.enumValues = enumValues;
+//		enumValues2 = new CharArray[enumValues.getLength()];
+		enumValues3 = new char[enumValues.getLength()][];
+		for (int i=0; i<enumValues.getLength(); i++) {
+			// enumValues2[i]  = new CharArray(enumValues.item(i).toCharArray());
+			enumValues3[i] = enumValues.item(i).toCharArray();
+		}
+		
 		this.codingLength = MethodsBag.getCodingLength(enumValues.getLength());
 	}
 
-	public StringList getEnumerationValues() {
-		return enumValues;
+	public String getEnumerationValueAsString(int index) {
+		return enumValues.item(index);
 	}
+	
+	public char[] getEnumerationValueAsCharArray(int index) {
+		return enumValues3[index];
+		// return enumValues2[index].toCharArray();
+	}
+	
+	public int getEnumerationSize() {
+		return enumValues3.length;
+//		return enumValues2.length;
+	}
+	
+//	public StringList getEnumerationValues() {
+//		return enumValues;
+//	}
 
 	public int getCodingLength() {
 		return codingLength;

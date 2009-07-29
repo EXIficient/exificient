@@ -114,11 +114,6 @@ public class RuleStartTagSchemaLess extends RuleContentSchemaLess {
 	}
 
 	@Override
-	public Rule getElementContentRuleForUndeclaredSE() {
-		return getElementContentRule();
-	}
-
-	@Override
 	public void learnStartElement(String uri, String localName) {
 		addRule(new StartElement(uri, localName), getElementContentRule());
 	}
@@ -137,5 +132,10 @@ public class RuleStartTagSchemaLess extends RuleContentSchemaLess {
 	public void learnCharacters() {
 		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
 				BuiltIn.DEFAULT_DATATYPE), getElementContentRule());
+	}
+	
+
+	public boolean isFirstElementRule() {
+		return true;
 	}
 }

@@ -60,7 +60,8 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 		return getStructureChannel().decodeNBitUnsignedInteger(codeLength);
 	}
 
-	public String readString() throws IOException {
+	// public String readString() throws IOException {
+	public char[] readString() throws IOException {
 		return getStructureChannel().decodeString();
 	}
 
@@ -70,6 +71,12 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 
 		String uri;
 
+//		for(int i=0; i<stringTable.getURITableSize(); i++) {
+//			System.out.println("[" + i + "] " + stringTable.getURIValue(i));
+//		}
+		
+		
+		
 		int mUri = stringTable.getURITableSize(); // number of entries
 		int nUri = MethodsBag.getCodingLength(mUri + 1); // n-bit
 		int uriID = structure.decodeNBitUnsignedInteger(nUri);
@@ -77,7 +84,7 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by uri encoded as string
-			uri = structure.decodeString();
+			uri = new String(structure.decodeString());
 			// after encoding string value is added to table
 			stringTable.addURI(uri);
 		} else {
@@ -101,7 +108,7 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 			// ==> string literal is encoded as a String
 			// with the length of the string incremented by one
 			length--;
-			localName = structure.decodeStringOnly(length);
+			localName = new String(structure.decodeStringOnly(length));
 			// After encoding the string value, it is added to the string table
 			// partition and assigned the next available compact identifier.
 			stringTable.addLocalName(uri, localName);
@@ -135,7 +142,7 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by pfx encoded as string
-			prefix = structure.decodeString();
+			prefix = new String(structure.decodeString());
 			// after decoding pfx value is added to table
 			stringTable.addPrefix(uri, prefix);
 		} else {
@@ -151,18 +158,20 @@ public abstract class AbstractDecoderBlock implements DecoderBlock {
 		return getStructureChannel().decodeBoolean();
 	}
 
-	public String readTypedValidValue(Datatype datatype,
+	public char[] readTypedValidValue(Datatype datatype,
 			final String namespaceURI, final String localName)
 			throws IOException {
 		return typeDecoder.readTypeValidValue(datatype, getValueChannel(
 				namespaceURI, localName), namespaceURI, localName);
 	}
 
-	public String readValueAsString(String namespaceURI, String localName)
+	public char[] readValueAsString(String namespaceURI, String localName)
 			throws IOException {
 		return typeDecoder.readValueAsString(getValueChannel(namespaceURI,
 				localName), namespaceURI, localName);
 	}
+
+
 
 	public void skipToNextByteBoundary() throws IOException {
 	}

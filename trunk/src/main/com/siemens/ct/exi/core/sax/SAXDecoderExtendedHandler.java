@@ -61,8 +61,8 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	}
 
 	@Override
-	protected void init() {
-		super.init();
+	protected void initForEachRun() {
+		super.initForEachRun();
 
 		entities.clear();
 		dummyEntityWritten = false;
@@ -157,7 +157,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	protected void handleComment() throws SAXException {
 		if (contentHandler instanceof LexicalHandler) {
 			LexicalHandler lh = (LexicalHandler) contentHandler;
-			char[] comment = decoder.getComment().toCharArray();
+			char[] comment = decoder.getComment();
 			lh.comment(comment, 0, comment.length);
 		}
 	}

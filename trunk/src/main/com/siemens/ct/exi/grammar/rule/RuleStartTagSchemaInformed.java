@@ -18,11 +18,9 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -57,36 +55,75 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 public class RuleStartTagSchemaInformed extends
 		AbstractSchemaInformedRuleContent {
-	SchemaInformedRule elementContent2;
+	
+	protected SchemaInformedRule elementContent2;
+
+	protected boolean isFirstElementRule = false;
 
 	public RuleStartTagSchemaInformed(SchemaInformedRule elementContent2) {
 		super();
 		this.elementContent2 = elementContent2;
 	}
-
-	static HashMap<FidelityOptions, ArrayList<EventType>> optionsStartTag;
-
-	static {
-		optionsStartTag = new HashMap<FidelityOptions, ArrayList<EventType>>();
+	
+	@Override
+	public void setFirstElementRule() {
+		this.isFirstElementRule = true;
+		
+	}
+	
+	public boolean isFirstElementRule() {
+		 return this.isFirstElementRule;
 	}
 
-	protected static ArrayList<EventType> get2ndLevelEventsStartTagItems(
-			FidelityOptions fidelityOptions) {
-		if (!optionsStartTag.containsKey(fidelityOptions)) {
-			ArrayList<EventType> events = new ArrayList<EventType>();
-
-			if (!fidelityOptions.isStrict()) {
-				// extensibility: AT(*)
-				events.add(EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-
-				// TODO AT[schema-invalid]
-				events.add(EventType.ATTRIBUTE);
+	
+	@Override
+	protected void buildEvents2(FidelityOptions fidelityOptions) {
+		int eventCode2 = 0;
+		if (fidelityOptions.isStrict()) {
+			//	STRICT startTag grammars disposes of xsi:type or xsi:nil events on second level only
+			if (isFirstElementRule) {
+				// xsi:type
+				if (isTypeCastable) {
+					events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_TYPE, eventCode2++));	
+				}
+				// xsi:nil
+				if (isNillable) {
+					events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_NIL, eventCode2++));
+				}
 			}
-
-			optionsStartTag.put(fidelityOptions, events);
+		} else {
+			// EE on second level necessary ?
+			if (!hasEndElement) {
+				events2.add(new EventTypeInformation(EventType.END_ELEMENT_UNDECLARED, eventCode2++));	
+			}
+			// xsi:type & xsi:nil ?
+			if (isFirstElementRule) {
+				events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_TYPE, eventCode2++));
+				events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_NIL, eventCode2++));
+			}
+			// AT(*) & AT[schema-invalid]
+			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_INVALID_VALUE, eventCode2++));
+			//	NS, SC
+			if (isFirstElementRule) {
+				if (fidelityOptions .isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+					events2.add(new EventTypeInformation(EventType.NAMESPACE_DECLARATION, eventCode2++));
+				}
+				// SC
+				if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+					events2.add(new EventTypeInformation(EventType.SELF_CONTAINED, eventCode2++));
+				}
+			}
+			// extensibility: SE(*), CH(*)
+			events2.add(new EventTypeInformation(EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
+			// ER
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+				events2.add(new EventTypeInformation(EventType.ENTITY_REFERENCE, eventCode2++));
+			}
 		}
-
-		return optionsStartTag.get(fidelityOptions);
+		
+		fidelityOptions2 = fidelityOptions;
 	}
 
 	@Override
@@ -95,7 +132,7 @@ public class RuleStartTagSchemaInformed extends
 
 		if (fidelityOptions.isStrict()) {
 			if (isFirstElementRule) {
-				hasSoT = hasNamedSubtypes || isNillable;
+				hasSoT = isTypeCastable || isNillable;
 			}
 		} else {
 			hasSoT = true;
@@ -104,229 +141,48 @@ public class RuleStartTagSchemaInformed extends
 		return hasSoT;
 	}
 
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2 = 0;
-
-		if (fidelityOptions.isStrict()) {
-			if (isFirstElementRule) {
-				// xsi:type
-				ch2 += hasNamedSubtypes ? 1 : 0;
-				// xsi:nil
-				ch2 += isNillable ? 1 : 0;
-			}
-		} else {
-			// add EE (if not already)
-			if (!contains(END_ELEMENT_EVENT)) {
-				ch2++;
-			}
-
-			if (isFirstElementRule) {
-				// xsi:type & xsi:nil
-				ch2 += 2;
-			}
-
-			// AT items:
-			// AT(*) & AT[schema-invalid]
-			ch2 += 2;
-
-			if (isFirstElementRule) {
-				// NS
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-					ch2++;
-				}
-				// SC
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-					ch2++;
-				}
-			}
-
-			// content items only
-			ch2 += get2ndLevelElementItems(fidelityOptions).size();
-
-			// 3rd level ?
-			if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-				ch2++;
-			}
-		}
-
-		return ch2;
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		int eventCode2 = Constants.NOT_FOUND;
-
-		if (fidelityOptions.isStrict()) {
-			if (eventType == EventType.ATTRIBUTE_XSI_TYPE && hasNamedSubtypes) {
-				eventCode2 = 0;
-			} else if (eventType == EventType.ATTRIBUTE_XSI_NIL && isNillable) {
-				eventCode2 = hasNamedSubtypes ? 1 : 0;
-			}
-		} else {
-			// EE
-			if (eventType == EventType.END_ELEMENT_UNDECLARED) {
-				eventCode2 = 0;
-			} else {
-				// no EE on first level --> on 2nd level
-				int addToEC2 = contains(END_ELEMENT_EVENT) ? 0 : 1;
-
-				// xsi:type & xsi:nil
-				if (eventType == EventType.ATTRIBUTE_XSI_TYPE) {
-					eventCode2 = 0;
-				} else if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
-					eventCode2 = 1;
-				} else {
-					// firstElement ? xsi:type & xsi:nil
-					addToEC2 += isFirstElementRule ? 2 : 0;
-
-					// AT(*)
-					if (eventType == EventType.ATTRIBUTE_GENERIC_UNDECLARED) {
-						eventCode2 = 0;
-					}
-					// AT[schema-invalid]
-					else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
-						eventCode2 = 1;
-					} else {
-						// AT(*) & AT[schema-invalid]
-						addToEC2 += 2;
-
-						// NS
-						if (eventType == EventType.NAMESPACE_DECLARATION) {
-							eventCode2 = 0;
-						}
-						// SC
-						else if (eventType == EventType.SELF_CONTAINED) {
-							eventCode2 = fidelityOptions
-									.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1
-									: 0;
-						} else {
-							if (isFirstElementRule) {
-								// NS & SC
-								addToEC2 += fidelityOptions
-										.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1
-										: 0;
-								addToEC2 += fidelityOptions
-										.isFidelityEnabled(FidelityOptions.FEATURE_SC) ? 1
-										: 0;
-							}
-
-							// content item ?
-							eventCode2 = getEventCode(eventType,
-									get2ndLevelElementItems(fidelityOptions));
-						}
-					}
-				}
-
-				eventCode2 += (eventCode2 == Constants.NOT_FOUND) ? 0
-						: addToEC2;
-			}
-		}
-
-		return eventCode2;
-	}
-
-	public EventType get2ndLevelEvent(int eventCode,
-			FidelityOptions fidelityOptions) {
-		EventType eventType = null;
-
-		if (fidelityOptions.isStrict()) {
-			if (eventCode == 0) {
-				eventType = (hasNamedSubtypes ? EventType.ATTRIBUTE_XSI_TYPE
-						: EventType.ATTRIBUTE_XSI_NIL);
-			} else if (eventCode == 1 && isNillable) {
-				eventType = EventType.ATTRIBUTE_XSI_NIL;
-			}
-		} else {
-			// no EE on first level --> on 2nd level
-			boolean hasEEon2ndLevel = !contains(END_ELEMENT_EVENT);
-
-			if (hasEEon2ndLevel && eventCode == 0) {
-				eventType = EventType.END_ELEMENT_UNDECLARED;
-			} else {
-				// no EE on first level --> on 2nd level
-				eventCode -= hasEEon2ndLevel ? 1 : 0;
-
-				// xsi:type & xsi:nil
-				if (isFirstElementRule && eventCode == 0) {
-					eventType = EventType.ATTRIBUTE_XSI_TYPE;
-				} else if (isFirstElementRule && eventCode == 1) {
-					eventType = EventType.ATTRIBUTE_XSI_NIL;
-				} else {
-					eventCode -= isFirstElementRule ? 2 : 0;
-
-					// AT(*)
-					if (eventCode == 0) {
-						eventType = EventType.ATTRIBUTE_GENERIC_UNDECLARED;
-					}
-					// AT[schema-invalid]
-					else if (eventCode == 1) {
-						eventType = EventType.ATTRIBUTE_INVALID_VALUE;
-					} else {
-						// AT(*) & AT[schema-invalid]
-						eventCode -= 2;
-
-						boolean fNS = fidelityOptions
-								.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-						boolean fSC = fidelityOptions
-								.isFidelityEnabled(FidelityOptions.FEATURE_SC);
-
-						// NS
-						if (isFirstElementRule && fNS && eventCode == 0) {
-							eventType = EventType.NAMESPACE_DECLARATION;
-						}
-						// SC
-						else if (isFirstElementRule && fSC && eventCode == 1) {
-							eventType = EventType.SELF_CONTAINED;
-						}
-						// SC (without NS)
-						else if (isFirstElementRule && fSC && !fNS
-								&& eventCode == 0) {
-							eventType = EventType.SELF_CONTAINED;
-						} else {
-							// NS & SC
-							if (isFirstElementRule) {
-								if (fNS) {
-									eventCode--;
-								}
-								if (fSC) {
-									eventCode--;
-								}
-							}
-
-							// content item ?
-							// childContent events
-							eventType = get2ndLevelElementItems(fidelityOptions)
-									.get(eventCode);
-						}
-					}
-				}
-			}
-		}
-
-		return eventType;
-	}
 
 	@Override
 	public Rule getElementContentRule() {
 		return elementContent2;
 	}
 
-	public Rule getElementContentRuleForUndeclaredSE() {
-		return getElementContentRule();
-	}
 
 	@Override
 	public RuleStartTagSchemaInformed duplicate() {
 		RuleStartTagSchemaInformed clone = new RuleStartTagSchemaInformed(
 				elementContent2);
-		clone.joinRules(this);
+		
+		//	duplicate top level
+		for (int i = 0; i < getNumberOfEvents(); i++) {
+			EventInformation ei = lookFor(i);
+			clone.addRule(ei.event, ei.next);
+		}
 
 		// nillable and type
-		clone.setHasNamedSubtypes(this.hasNamedSubtypes);
+		clone.setTypeCastable(this.isTypeCastable);
 		clone.setNillable(this.isNillable, typeEmpty);
+		if (this.isFirstElementRule) {
+			clone.setFirstElementRule();	
+		}
 
 		return clone;
 	}
+	
+	public String toString() {
+		String s = "StartTag";
+		
+		if (this.isFirstElementRule) {
+			//	first rule (StartTag)
+			if (this.isTypeCastable) {
+				s += "(xsi:type)";
+			}
+			if (this.isNillable) {
+				s += "(xsi:nil)";
+			}			
+		}
+		
+		return s + super.toString();
+	}
+
 }

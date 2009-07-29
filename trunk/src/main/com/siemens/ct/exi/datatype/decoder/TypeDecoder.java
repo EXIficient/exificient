@@ -40,18 +40,21 @@ public interface TypeDecoder extends TypeCoder {
 
 	public void setStringTable(StringTableDecoder stringTable);
 
-	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			String namespaceURI, String localName) throws IOException;
 
-	public String readValueAsString(DecoderChannel dc, String namespaceURI,
+//	public String readValueAsString(DecoderChannel dc, String namespaceURI,
+//			String localName) throws IOException;
+	public char[] readValueAsString(DecoderChannel dc, String namespaceURI,
+			String localName) throws IOException;
+	
+	
+	public char[] readStringAsLocalHit(DecoderChannel dc, String namespaceURI,
 			String localName) throws IOException;
 
-	public String readStringAsLocalHit(DecoderChannel dc, String namespaceURI,
-			String localName) throws IOException;
+	public char[] readStringAsGlobalHit(DecoderChannel dc) throws IOException;
 
-	public String readStringAsGlobalHit(DecoderChannel dc) throws IOException;
-
-	public String readStringAsMiss(DecoderChannel dc, String namespaceURI,
+	public char[] readStringAsMiss(DecoderChannel dc, String namespaceURI,
 			String localName, int slen) throws IOException;
 
 }

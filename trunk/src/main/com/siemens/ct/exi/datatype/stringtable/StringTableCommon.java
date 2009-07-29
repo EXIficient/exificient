@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.datatype.stringtable;
 
+
 /**
  * TODO Description
  * 
@@ -79,38 +80,6 @@ public interface StringTableCommon {
 	 */
 	public int getLocalNameTableSize(String uri);
 
-	/**
-	 * Add a value to the local value table.
-	 * 
-	 * @param uri
-	 *            - Namespace URI
-	 * @param local
-	 *            - local-name
-	 * @param value
-	 *            - String value to be added.
-	 */
-	public void addLocalValue(String uri, String local, String value);
-
-	// TODO addLocalValue + addGlobalValue could be merged --> addValue
-
-	/**
-	 * Get size of the localName table partition identified by QName.
-	 * 
-	 * @param uri
-	 *            - Namespace URI
-	 * @param local
-	 *            - local-name
-	 * @return - Number of items (strings) in table.
-	 */
-	public int getLocalValueTableSize(String uri, String local);
-
-	/**
-	 * Add a string value to the global value table.
-	 * 
-	 * @param value
-	 *            - Value to be added.
-	 */
-	public void addGlobalValue(String value);
 
 	/**
 	 * Get the current size the global value table.

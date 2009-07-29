@@ -51,9 +51,40 @@ public interface Constants {
 	public static final String XSD_BOOLEAN_FALSE = "false";
 	public static final String XSD_BOOLEAN_0 = "0";
 
+	public static final char[] XSD_BOOLEAN_TRUE_ARRAY = XSD_BOOLEAN_TRUE
+			.toCharArray();
+	public static final char[] XSD_BOOLEAN_1_ARRAY = XSD_BOOLEAN_1
+			.toCharArray();
+	public static final char[] XSD_BOOLEAN_FALSE_ARRAY = XSD_BOOLEAN_FALSE
+			.toCharArray();
+	public static final char[] XSD_BOOLEAN_0_ARRAY = XSD_BOOLEAN_0
+			.toCharArray();
+
 	public static final String DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_TRUE;
 	public static final String DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_FALSE;
 
 	public static final int NOT_FOUND = -1;
+	
 
+	/*
+	 * Block & Channel settings
+	 * Maximal Number of Values (per Block / Channel)
+	 */
+	public static final int MAX_NUMBER_OF_VALUES = 100;
+
+	/*
+	 * Float & Double Values
+	 */
+	public static final String FLOAT_INFINITY = "INF";
+	public static final String FLOAT_MINUS_INFINITY = "-INF";
+	public static final String FLOAT_NOT_A_NUMBER = "NaN";
+	
+	public static final char[] FLOAT_INFINITY_CHARARRAY = FLOAT_INFINITY.toCharArray();
+	public static final char[] FLOAT_MINUS_INFINITY_CHARARRAY = FLOAT_MINUS_INFINITY.toCharArray();
+	public static final char[] FLOAT_NOT_A_NUMBER_CHARARRAY = FLOAT_NOT_A_NUMBER.toCharArray();
+	
+	public static final int FLOAT_SPECIAL_VALUES = -16384; // -(2^14)
+	public static final int FLOAT_MANTISSA_INFINITY = 1;
+	public static final int FLOAT_MANTISSA_MINUS_INFINITY = -1;
+	public static final int FLOAT_MANTISSA_NOT_A_NUMBER = 0;
 }

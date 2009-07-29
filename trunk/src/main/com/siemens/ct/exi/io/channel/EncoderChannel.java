@@ -25,12 +25,8 @@ import java.math.BigInteger;
 import java.util.Calendar;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDBase64;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
-import com.siemens.ct.exi.util.datatype.XSDDecimal;
-import com.siemens.ct.exi.util.datatype.XSDFloat;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -42,11 +38,8 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
  */
 
 public interface EncoderChannel {
+	
 	public OutputStream getOutputStream();
-
-	public void incrementValues();
-
-	public int getNumberOfChannelValues();
 
 	public void flush() throws IOException;
 
@@ -69,8 +62,6 @@ public interface EncoderChannel {
 	 */
 	public void encodeBinary(byte[] b) throws IOException;
 
-	public void encodeBinary(XSDBase64 b) throws IOException;
-
 	/**
 	 * Encode a string as a length-prefixed sequence of UCS codepoints, each of
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
@@ -92,8 +83,12 @@ public interface EncoderChannel {
 	 * store the integer's value.
 	 */
 	public void encodeUnsignedInteger(int n) throws IOException;
+	
+	public void encodeUnsignedLong(long l) throws IOException;
 
-	public void encodeUnsignedInteger(XSDInteger i) throws IOException;
+	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
+	
+//	public void encodeUnsignedInteger(XSDInteger i) throws IOException;
 
 	/**
 	 * Encode an arbitrary precision integer using a sign bit followed by a
@@ -103,11 +98,11 @@ public interface EncoderChannel {
 	 */
 	public void encodeInteger(int n) throws IOException;
 
-	public void encodeInteger(long l) throws IOException;
+	public void encodeLong(long l) throws IOException;
 
-	public void encodeInteger(BigInteger bi) throws IOException;
+	public void encodeBigInteger(BigInteger bi) throws IOException;
 
-	public void encodeInteger(XSDInteger xmlInteger) throws IOException;
+//	public void encodeInteger(XSDInteger xmlInteger) throws IOException;
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -119,7 +114,7 @@ public interface EncoderChannel {
 	 */
 	public void encodeDecimal(BigDecimal decimal) throws IOException;
 
-	public void encodeDecimal(XSDDecimal decimal) throws IOException;
+	public void encodeDecimal(boolean negative, BigInteger integral, BigInteger reverseFraction) throws IOException;
 
 	// public void encodeDecimal ( String decimal ) throws IOException;
 
@@ -131,8 +126,14 @@ public interface EncoderChannel {
 	 */
 	public void encodeFloat(float f) throws IOException;
 
-	public void encodeFloat(XSDFloat f) throws IOException;
-
+	public void encodeFloat(int mantissa, int exponent) throws IOException;
+	
+	public void encodeDouble(double d) throws IOException;
+	
+	public void encodeDouble(long mantissa, long exponent) throws IOException;
+	
+	
+	
 	public void encodeDateTime(Calendar cal, DatetimeType type)
 			throws IOException;
 

@@ -57,7 +57,7 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder
 				.getSchemaDatatype(), datatypeRepresentation);
 	}
 
-	public String readTypeValidValue(Datatype datatype, DecoderChannel dc,
+	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			final String namespaceURI, final String localName)
 			throws IOException {
 		if (userDefinedDatatypeRepresentations.containsKey(datatype

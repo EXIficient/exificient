@@ -21,6 +21,7 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartDocument;
 
 /**
  * TODO Description
@@ -37,11 +38,21 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public class RuleDocument extends AbstractSchemaInformedRule {
 	Rule docContent;
 
-	public RuleDocument(Rule docContent, String label) {
-		super(label);
+	public RuleDocument(Rule docContent) {
+		super();
 		this.docContent = docContent;
+		addRule(new StartDocument(), docContent);
+	}
+	
+	public RuleDocument(Rule docContent, String label) {
+		this(docContent);
+		this.setLabel(label);
 	}
 
+	public String toString() {
+		return "Document" + super.toString();
+	}
+	
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;

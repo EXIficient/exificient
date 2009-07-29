@@ -32,12 +32,12 @@ package com.siemens.ct.exi.grammar.event;
  * <ol>
  * <li>all productions with AT(qname) on the right hand side sorted lexically by
  * qname localName, then by qname uri, followed by</li>
- * <li>all productions with AT(urix : *) on the right hand side sorted lexically
+ * <li>all productions with AT(uri : *) on the right hand side sorted lexically
  * by uri, followed by</li>
  * <li>any production with AT(*) on the right hand side, followed by</li>
  * <li>all productions with SE(qname) on the right hand side sorted in schema
  * order, followed by</li>
- * <li>all productions with SE(urix : *) on the right hand side sorted in schema
+ * <li>all productions with SE(uri : *) on the right hand side sorted in schema
  * order, followed by</li>
  * <li>any production with SE(*) on the right hand side, followed by</li>
  * <li>any production with EE on the right hand side, followed by</li>
@@ -55,10 +55,9 @@ package com.siemens.ct.exi.grammar.event;
 // !! Ordinal is used for sorting !!
 public enum EventType {
 	/*
-	 * EXI "frame" events
+	 * start document
 	 */
-	START_DOCUMENT, // start document
-	END_DOCUMENT, // end document
+	START_DOCUMENT,
 	/*
 	 * Special XSI Attributes
 	 */
@@ -92,6 +91,10 @@ public enum EventType {
 	CHARACTERS_GENERIC, // schema-declared
 	CHARACTERS_GENERIC_UNDECLARED, // schema-undeclared
 	/*
+	 * 	END_DOCUMENT
+	 */
+	END_DOCUMENT,
+	/*
 	 * Features & Fidelity Options
 	 */
 	DOC_TYPE, // doc-type part of DocContent only
@@ -100,8 +103,8 @@ public enum EventType {
 	ENTITY_REFERENCE, // entity reference
 	COMMENT, // 
 	PROCESSING_INSTRUCTION,
-	/*
-	 * Utility event while creating grammars
-	 */
-	LAMBDA;
+//	/*
+//	 * Utility event while creating grammars
+//	 */
+//	LAMBDA;
 }

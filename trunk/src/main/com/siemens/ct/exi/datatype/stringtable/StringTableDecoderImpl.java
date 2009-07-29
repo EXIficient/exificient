@@ -21,10 +21,6 @@ package com.siemens.ct.exi.datatype.stringtable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
-
-import com.siemens.ct.exi.Constants;
-
 /**
  * TODO Description
  * 
@@ -40,8 +36,8 @@ public class StringTableDecoderImpl extends AbstractStringTable implements
 	protected Map<String, StringTablePartitionDecoder> prefixPartitions;
 	protected Map<String, StringTablePartitionDecoder> localNamePartitions;
 
-	protected Map<String, HashMap<String, StringTablePartitionDecoder>> localValuePartitions;
-	protected StringTablePartitionDecoder globalValuePartition;
+	protected Map<String, HashMap<String, StringTablePartitionArrayDecoder>> localValuePartitions;
+	protected StringTablePartitionArrayDecoder globalValuePartition;
 
 	/**
 	 * The constructor will set all tables to their initial states. This
@@ -51,43 +47,25 @@ public class StringTableDecoderImpl extends AbstractStringTable implements
 		uriPartition = getNewPartition();
 		prefixPartitions = new HashMap<String, StringTablePartitionDecoder>();
 		localNamePartitions = new HashMap<String, StringTablePartitionDecoder>();
-		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionDecoder>>();
-		globalValuePartition = getNewPartition();
+		localValuePartitions = new HashMap<String, HashMap<String, StringTablePartitionArrayDecoder>>();
+		globalValuePartition = getNewArrayPartition();
 
-		// URI
-		initURI(uriPartition, isSchemaInformed);
-
-		// Prefix: "", xml, xsi
-		prefixPartitions.put(Constants.EMPTY_STRING, getNewPartition());
-		prefixPartitions.put(XMLConstants.XML_NS_URI, getNewPartition());
-		prefixPartitions.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-				getNewPartition());
-		initPrefixEmpty(prefixPartitions.get(Constants.EMPTY_STRING));
-		initPrefixXML(prefixPartitions.get(XMLConstants.XML_NS_URI));
-		initPrefixXSI(prefixPartitions
-				.get(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-
-		// LocalName: xml, xsi, xsd
-		localNamePartitions.put(XMLConstants.XML_NS_URI, getNewPartition());
-		localNamePartitions.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-				getNewPartition());
-		localNamePartitions.put(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				getNewPartition());
-		initLocalNameXML(localNamePartitions.get(XMLConstants.XML_NS_URI));
-		initLocalNameXSI(localNamePartitions
-				.get(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		initLocalNameXSD(localNamePartitions
-				.get(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		// initialize
+		initPartitions(isSchemaInformed);
 	}
 
 	protected StringTablePartitionDecoder getNewPartition() {
 		return new StringTablePartitionDecoderImpl();
 	}
-
-	protected int getID(StringTablePartitionEncoder partition, String key) {
-		return (partition == null) ? Constants.NOT_FOUND : partition
-				.getIndex(key);
+	
+	protected StringTablePartitionArrayDecoder getNewArrayPartition() {
+		return new StringTablePartitionArrayDecoderImpl();
 	}
+
+//	protected int getID(StringTablePartitionEncoder partition, String key) {
+//		return (partition == null) ? Constants.NOT_FOUND : partition
+//				.getIndex(key);
+//	}
 
 	protected StringTablePartitionDecoder getPartition(
 			Map<String, StringTablePartitionDecoder> partitions, String key) {
@@ -95,6 +73,17 @@ public class StringTableDecoderImpl extends AbstractStringTable implements
 
 		if (partition == null) {
 			partitions.put(key, (partition = getNewPartition()));
+		}
+
+		return partition;
+	}
+	
+	protected StringTablePartitionArrayDecoder getArrayPartition(
+			Map<String, StringTablePartitionArrayDecoder> partitions, String key) {
+		StringTablePartitionArrayDecoder partition = partitions.get(key);
+
+		if (partition == null) {
+			partitions.put(key, (partition = getNewArrayPartition()));
 		}
 
 		return partition;
@@ -119,14 +108,14 @@ public class StringTableDecoderImpl extends AbstractStringTable implements
 		return localNamePartitions.get(uri).getValue(id);
 	}
 
-	public String getLocalValue(String uri, String localName, int id) {
+	public char[] getLocalValue(String uri, String localName, int id) {
 		assert (localValuePartitions.get(uri).size() > 0);
 		assert (localValuePartitions.get(uri).get(localName).getSize() > 0);
 
 		return localValuePartitions.get(uri).get(localName).getValue(id);
 	}
 
-	public String getGlobalValue(int id) {
+	public char[] getGlobalValue(int id) {
 		return globalValuePartition.getValue(id);
 	}
 
@@ -161,32 +150,30 @@ public class StringTableDecoderImpl extends AbstractStringTable implements
 		return getPartition(localNamePartitions, uri).getSize();
 	}
 
-	public void addLocalValue(String uri, String localName, String value) {
+	public void addValue(String uri, String localName, char[] value) {
 		// check URI section first
-		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions
+		HashMap<String, StringTablePartitionArrayDecoder> uriSection = localValuePartitions
 				.get(uri);
 
 		if (uriSection == null) {
 			localValuePartitions
 					.put(
 							uri,
-							(uriSection = new HashMap<String, StringTablePartitionDecoder>()));
+							(uriSection = new HashMap<String, StringTablePartitionArrayDecoder>()));
 		}
-
-		getPartition(uriSection, localName).add(value);
+		//	local table
+		getArrayPartition(uriSection, localName).add(value);
+		//	global table
+		globalValuePartition.add(value);
 	}
 
 	public int getLocalValueTableSize(String uri, String localName) {
 		// check URI section first
-		HashMap<String, StringTablePartitionDecoder> uriSection = localValuePartitions
+		HashMap<String, StringTablePartitionArrayDecoder> uriSection = localValuePartitions
 				.get(uri);
 
-		return (uriSection == null ? 0 : getPartition(uriSection, localName)
+		return (uriSection == null ? 0 : getArrayPartition(uriSection, localName)
 				.getSize());
-	}
-
-	public void addGlobalValue(String value) {
-		globalValuePartition.add(value);
 	}
 
 	public int getGlobalValueTableSize() {

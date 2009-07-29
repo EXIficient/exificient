@@ -20,10 +20,9 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 /**
  * TODO Description
@@ -36,7 +35,7 @@ import com.siemens.ct.exi.util.datatype.XSDInteger;
 
 public class UnsignedIntegerDatatypeEncoder extends AbstractDatatypeEncoder
 		implements DatatypeEncoder {
-	private XSDInteger lastUnsignedInteger = XSDInteger.newInstance();
+	private int lastUnsignedInteger;
 
 	public UnsignedIntegerDatatypeEncoder(TypeEncoder typeEncoder) {
 		super(typeEncoder);
@@ -44,18 +43,19 @@ public class UnsignedIntegerDatatypeEncoder extends AbstractDatatypeEncoder
 
 	public boolean isValid(Datatype datatype, String value) {
 		try {
-			lastUnsignedInteger.parse(value);
-
-			return (!lastUnsignedInteger.isNegative());
-		} catch (XMLParsingException e) {
+			lastUnsignedInteger = Integer.parseInt(value);
+			return (lastUnsignedInteger >= 0);
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
-	{
+//	public void writeValue(EncoderChannel valueChannel, String uri,
+//			String localName) throws IOException {
+//		valueChannel.encodeUnsignedInteger(lastUnsignedInteger);
+//	}
+
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
 		valueChannel.encodeUnsignedInteger(lastUnsignedInteger);
 	}
 }

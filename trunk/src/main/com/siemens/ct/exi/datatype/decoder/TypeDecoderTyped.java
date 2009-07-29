@@ -39,9 +39,16 @@ public class TypeDecoderTyped extends TypeDecoderTypedSchemaInformed {
 		booleanPatternDTD = new BooleanPatternDatatypeDecoder();
 		decimalDTD = new DecimalDatatypeDecoder();
 		floatDTD = new FloatDatatypeDecoder();
+		doubleDTD = new DoubleDatatypeDecoder();
 		integerDTD = new IntegerDatatypeDecoder();
+		longDTD = new LongDatatypeDecoder();
+		bigIntegerDTD = new BigIntegerDatatypeDecoder();
 		unsignedIntegerDTD = new UnsignedIntegerDatatypeDecoder();
+		unsignedLongDTD = new UnsignedLongDatatypeDecoder();
+		unsignedBigIntegerDTD = new UnsignedBigIntegerDatatypeDecoder();
 		nBitIntegerDTD = new NBitIntegerDatatypeDecoder();
+		nBitLongDTD = new NBitLongDatatypeDecoder();
+		nBitBigIntegerDTD = new NBitBigIntegerDatatypeDecoder();
 		datetimeDTD = new DatetimeDatatypeDecoder();
 		enumerationDTD = new EnumerationDatatypeDecoder();
 		listDTD = new ListDatatypeDecoder(exiFactory);

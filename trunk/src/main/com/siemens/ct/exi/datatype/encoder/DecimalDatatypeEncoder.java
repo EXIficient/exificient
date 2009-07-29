@@ -20,8 +20,8 @@ package com.siemens.ct.exi.datatype.encoder;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDDecimal;
 
@@ -43,18 +43,10 @@ public class DecimalDatatypeEncoder extends AbstractDatatypeEncoder implements
 	}
 
 	public boolean isValid(Datatype datatype, String value) {
-		try {
-			lastValidDecimal.parse(value);
-			return true;
-		} catch (XMLParsingException e) {
-			return false;
-		}
+		return lastValidDecimal.parse(value);
 	}
-
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException
-	// public void writeValue ( EncoderChannel valueChannel ) throws IOException
-	{
-		valueChannel.encodeDecimal(lastValidDecimal);
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		valueChannel.encodeDecimal(lastValidDecimal.isNegative(), lastValidDecimal.getIntegral(), lastValidDecimal.getReverseFractional());
 	}
 }

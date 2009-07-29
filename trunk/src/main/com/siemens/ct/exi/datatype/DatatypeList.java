@@ -31,9 +31,9 @@ public class DatatypeList extends AbstractDatatype {
 	private Datatype listDatatype;
 
 	public DatatypeList(Datatype listDatatype) {
-		super(BuiltInType.BUILTIN_LIST, null);
+		super(BuiltInType.LIST, null);
 
-		if (listDatatype.getDefaultBuiltInType() == BuiltInType.BUILTIN_LIST) {
+		if (listDatatype.getDefaultBuiltInType() == BuiltInType.LIST) {
 			throw new IllegalArgumentException();
 		}
 

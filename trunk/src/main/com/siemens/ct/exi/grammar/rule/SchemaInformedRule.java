@@ -29,11 +29,6 @@ package com.siemens.ct.exi.grammar.rule;
 
 public interface SchemaInformedRule extends Rule {
 	/*
-	 * Add top rules (merge them)
-	 */
-	public void joinRules(Rule rule);
-
-	/*
 	 * first rule is different (namespace declaration, xsi:typ and xsi:nil)
 	 */
 	public void setFirstElementRule();
@@ -41,7 +36,7 @@ public interface SchemaInformedRule extends Rule {
 	/*
 	 * sets whether type is castable
 	 */
-	public void setHasNamedSubtypes(boolean hasNamedSubtypes);
+	public void setTypeCastable(boolean hasNamedSubtypes);
 
 	/*
 	 * sets whether element is nillable
@@ -49,21 +44,11 @@ public interface SchemaInformedRule extends Rule {
 	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
 
 	/*
-	 * get ur-type
-	 */
-	public SchemaInformedRule getTypeEmpty();
-
-	/*
 	 * Label
 	 */
 	public void setLabel(String label);
 
 	public String getLabel();
-
-	/*
-	 * resolves reachable event-rules & replaces Lambdas
-	 */
-	public void resolveLambdaTransitions();
 
 	/*
 	 * clones schema-informed rule

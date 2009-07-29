@@ -20,7 +20,8 @@ package com.siemens.ct.exi.helpers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+
+import javax.xml.XMLConstants;
 
 import org.xml.sax.XMLReader;
 
@@ -32,9 +33,11 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.core.EXIDecoderInOrder;
+import com.siemens.ct.exi.core.EXIDecoderInOrderSC;
 import com.siemens.ct.exi.core.EXIDecoderReordered;
-import com.siemens.ct.exi.core.EXIEncoderPrefixAware;
-import com.siemens.ct.exi.core.EXIEncoderPrefixLess;
+import com.siemens.ct.exi.core.EXIEncoderInOrder;
+import com.siemens.ct.exi.core.EXIEncoderInOrderSC;
+import com.siemens.ct.exi.core.EXIEncoderReordered;
 import com.siemens.ct.exi.core.sax.SAXDecoder;
 import com.siemens.ct.exi.core.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.core.sax.SAXEncoder;
@@ -51,17 +54,14 @@ import com.siemens.ct.exi.datatype.encoder.TypeEncoderDatatypeRespresentationMap
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderLexical;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.datatype.encoder.TypeEncoderTyped;
+import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammar.SchemaEntry;
 import com.siemens.ct.exi.io.block.DecoderBitBlock;
 import com.siemens.ct.exi.io.block.DecoderBlock;
 import com.siemens.ct.exi.io.block.DecoderByteBlock;
 import com.siemens.ct.exi.io.block.DecoderByteBlockCompression;
 import com.siemens.ct.exi.io.block.DecoderByteBlockPreCompression;
-import com.siemens.ct.exi.io.block.EncoderBitBlock;
-import com.siemens.ct.exi.io.block.EncoderBlock;
-import com.siemens.ct.exi.io.block.EncoderByteBlock;
-import com.siemens.ct.exi.io.block.EncoderByteBlockCompression;
-import com.siemens.ct.exi.io.block.EncoderByteBlockPreCompression;
 
 /**
  * 
@@ -159,16 +159,23 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public EXIEncoder createEXIEncoder() {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-			return new EXIEncoderPrefixAware(this);
+		if (codingMode.usesRechanneling()) {
+			return new EXIEncoderReordered(this);
 		} else {
-			return new EXIEncoderPrefixLess(this);
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+				return new EXIEncoderInOrderSC(this);
+			} else {
+				return new EXIEncoderInOrder(this);
+			}
 		}
 	}
 
 	public EXIWriter createEXIWriter() {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
-				|| fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ) {
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return new SAXEncoderExtendedHandler(this);
 		} else {
 			return new SAXEncoder(this);
@@ -179,13 +186,20 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (codingMode.usesRechanneling()) {
 			return new EXIDecoderReordered(this);
 		} else {
-			return new EXIDecoderInOrder(this);
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+				return new EXIDecoderInOrderSC(this);
+			} else {
+				return new EXIDecoderInOrder(this);
+			}
 		}
 	}
 
 	public XMLReader createEXIReader() {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
-				|| fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ) {
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
+				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return new SAXDecoderExtendedHandler(this);
 		} else {
 			return new SAXDecoder(this);
@@ -224,8 +238,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			typeEncoder = new TypeEncoderString(this);
 		}
 
-		// populate type-encoder string table
-		getGrammar().populateStringTable(typeEncoder.getStringTable());
+		// // populate type-encoder string table
+		// getGrammar().populateStringTable(typeEncoder.getStringTable());
 
 		return typeEncoder;
 	}
@@ -261,37 +275,50 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 
 		// populate type-encoder string table
-		getGrammar().populateStringTable(typeDecoder.getStringTable());
+		// getGrammar().populateStringTable(typeDecoder.getStringTable());
+		SchemaEntry[] schemaEntries = getGrammar().getSchemaEntries();
+		StringTableDecoder std = typeDecoder.getStringTable();
+		for (SchemaEntry schemaEntry : schemaEntries) {
+			if (!schemaEntry.uri.equals(XMLConstants.NULL_NS_URI)) {
+				std.addURI(schemaEntry.uri);
+			}
+			for (String localName : schemaEntry.localNames) {
+				std.addLocalName(schemaEntry.uri, localName);
+			}
+		}
 
 		return typeDecoder;
 	}
 
-	public EncoderBlock createEncoderBlock(OutputStream outputStream) {
-		EncoderBlock encBlock;
-
-		TypeEncoder typeEncoder = this.createTypeEncoder();
-
-		switch (codingMode) {
-		case BIT_PACKED:
-			encBlock = new EncoderBitBlock(outputStream, typeEncoder);
-			break;
-		case BYTE_PACKED:
-			encBlock = new EncoderByteBlock(outputStream, typeEncoder);
-			break;
-		case PRE_COMPRESSION:
-			encBlock = new EncoderByteBlockPreCompression(outputStream,
-					typeEncoder);
-			break;
-		case COMPRESSION:
-			encBlock = new EncoderByteBlockCompression(outputStream,
-					typeEncoder);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown CodingMode!");
-		}
-
-		return encBlock;
-	}
+//	public EncoderBlock createEncoderBlock(OutputStream outputStream) {
+//		
+//		System.out.println("dsadas");
+//		
+//		EncoderBlock encBlock;
+//
+//		TypeEncoder typeEncoder = this.createTypeEncoder();
+//
+//		switch (codingMode) {
+//		case BIT_PACKED:
+//			encBlock = new EncoderBitBlock(outputStream, typeEncoder);
+//			break;
+//		case BYTE_PACKED:
+//			encBlock = new EncoderByteBlock(outputStream, typeEncoder);
+//			break;
+//		case PRE_COMPRESSION:
+//			encBlock = new EncoderByteBlockPreCompression(outputStream,
+//					typeEncoder);
+//			break;
+//		case COMPRESSION:
+//			encBlock = new EncoderByteBlockCompression(outputStream,
+//					typeEncoder);
+//			break;
+//		default:
+//			throw new IllegalArgumentException("Unknown CodingMode!");
+//		}
+//
+//		return encBlock;
+//	}
 
 	public DecoderBlock createDecoderBlock(InputStream inputStream)
 			throws IOException {

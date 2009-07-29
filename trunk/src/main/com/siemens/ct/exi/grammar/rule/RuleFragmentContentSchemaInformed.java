@@ -22,6 +22,7 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -45,44 +46,34 @@ public class RuleFragmentContentSchemaInformed extends
 
 	public RuleFragmentContentSchemaInformed(String label) {
 		super(label);
-
+		//		SE(*) --> FragmentContent
+		this.addRule(new StartElementGeneric(), this);
 		addTerminalRule(new EndDocument());
 	}
 
-	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		// FragmentContent contains in any case (even in strict mode) SE(*)
-		// event on 2nd level
-		return true;
+	public String toString() {
+		return "FragmentContent" + super.toString();
 	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		if (eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED) {
-			return 0;
-		}
-
-		return Constants.NOT_FOUND;
-	}
-
+	
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions) {
-		if (eventCode == 0) {
-			return EventType.START_ELEMENT_GENERIC_UNDECLARED;
-		}
-
 		return null;
 	}
-
+	
+	public int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		// No events on 2nd level
+		return Constants.NOT_FOUND;
+	}
+	
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		// SE(*) in any case
-		int ch2 = 1;
+		return get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
+	}
 
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
-		}
 
-		return ch2;
+	@Override
+	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return get2ndLevelCharacteristics(fidelityOptions) > 0;
 	}
 
 }

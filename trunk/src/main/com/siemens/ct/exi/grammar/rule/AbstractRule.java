@@ -31,16 +31,21 @@ import java.util.List;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 public abstract class AbstractRule implements Rule {
-	protected static final SchemaInformedRule END_RULE = new RuleDocEnd();
+	
+	protected static final SchemaInformedRule END_RULE = new RuleElementSchemaInformed();
+	static {
+		END_RULE.setLabel("<END>");
+	}
 
 	protected static final EndElement END_ELEMENT_EVENT = new EndElement();
 
-	private String label = null;
+	protected String label = null;
 
 	public AbstractRule() {
 	}
@@ -57,8 +62,12 @@ public abstract class AbstractRule implements Rule {
 		addRule(event, END_RULE);
 	}
 
-	public boolean isTerminalRule() {
+	public final boolean isTerminalRule() {
 		return (this == END_RULE);
+	}
+	
+	public boolean isFirstElementRule() {
+		return false;
 	}
 
 	/*
@@ -88,7 +97,6 @@ public abstract class AbstractRule implements Rule {
 		if (this.label != null && !this.label.equals("")) {
 			return this.label;
 		} else {
-			// return this.getClass().getName() + "[" + this.hashCode() + "]";
 			return this.getClass().getSimpleName() + "[" + this.hashCode()
 					+ "]";
 		}
@@ -150,10 +158,6 @@ public abstract class AbstractRule implements Rule {
 		}
 	}
 
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (!fidelityOptions.isStrict());
-	}
-
 	protected static int getEventCode(EventType eventType,
 			List<EventType> events) {
 		for (int i = 0; i < events.size(); i++) {
@@ -169,9 +173,9 @@ public abstract class AbstractRule implements Rule {
 		return this;
 	}
 
-	public Rule getElementContentRuleForUndeclaredSE() {
-		return this;
-	}
+//	public Rule getElementContentRuleForUndeclaredSE() {
+//		return this;
+//	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -184,21 +188,15 @@ public abstract class AbstractRule implements Rule {
 
 			if (this.getNumberOfEvents() == numberOfEvents) {
 				for (int i = 0; i < numberOfEvents; i++) {
-					// EventRule er = r.getEventRuleAt( i );
-					Event ev = r.get1stLevelEvent(i);
-
+					EventInformation ei = r.lookFor(i);
 					// shallow check
-					// if ( ! er.equals ( this.getEventRuleAt ( i ) ) )
-					if (!ev.equals(this.get1stLevelEvent(i))) {
+					if (!ei.event.equals(lookFor(i).event)) {
 						return false;
 					}
 				}
 
 				return true;
 			}
-
-			return false;
-
 		}
 
 		return false;

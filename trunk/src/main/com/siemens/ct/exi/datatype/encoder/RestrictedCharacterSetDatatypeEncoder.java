@@ -21,9 +21,10 @@ package com.siemens.ct.exi.datatype.encoder;
 import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.stringtable.StringTableEncoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
@@ -61,48 +62,45 @@ public class RestrictedCharacterSetDatatypeEncoder extends
 		lastValidValue = value;
 		return true;
 	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		StringEncoder stringEncoder = typeEncoder.getStringEncoder();
+		
+		if (stringEncoder.isStringHit(context, lastValidValue)) {
+			stringEncoder.writeValueAsString(context, valueChannel, lastValidValue);
+		} else {
+			//	NO local or global value hit
+			// string-table miss ==> restricted character
+			// string literal is encoded as a String with the length
+			// incremented by two.
+			int numberOfTuples = lastValidValue.length();
 
-	public void writeValue(EncoderChannel valueChannel, String uri,
-			String localName) throws IOException {
-		if (!typeEncoder.writeStringAsLocalHit(valueChannel, uri, localName,
-				lastValidValue)) {
-			// global-value hit ?
-			if (!typeEncoder.writeStringAsGlobalHit(valueChannel,
-					lastValidValue)) {
-				// mhh, it is a string-table miss ==> restricted character
-				// string literal is encoded as a String with the length
-				// incremented by two.
-				int numberOfTuples = lastValidValue.length();
+			valueChannel.encodeUnsignedInteger(numberOfTuples + 2);
 
-				valueChannel.encodeUnsignedInteger(numberOfTuples + 2);
+			// number of bits
+			int numberOfBits = rcs.getCodingLength();
 
-				// number of bits
-				int numberOfBits = rcs.getCodingLength();
+			for (int i = 0; i < numberOfTuples; i++) {
+				int code;
+				char ch = lastValidValue.charAt(i);
+				if ((code = rcs.getCode(ch)) == Constants.NOT_FOUND) {
+					// indicate deviation
+					valueChannel.encodeNBitUnsignedInteger(rcs.size(),
+							numberOfBits);
 
-				for (int i = 0; i < numberOfTuples; i++) {
-					int code;
-					char ch = lastValidValue.charAt(i);
-					if ((code = rcs.getCode(ch)) == Constants.NOT_FOUND) {
-						// indicate deviation
-						valueChannel.encodeNBitUnsignedInteger(rcs.size(),
-								numberOfBits);
-
-						// UCS code point of the character
-						// TODO UTF-16 surrogate pair
-						valueChannel.encodeUnsignedInteger(ch);
-					} else {
-						valueChannel.encodeNBitUnsignedInteger(code,
-								numberOfBits);
-					}
+					// UCS code point of the character
+					// TODO UTF-16 surrogate pair
+					valueChannel.encodeUnsignedInteger(ch);
+				} else {
+					valueChannel.encodeNBitUnsignedInteger(code,
+							numberOfBits);
 				}
-
-				// After encoding the string value, it is added to both the
-				// associated "local" value string table partition and the
-				// global value string table partition.
-				StringTableEncoder stringTable = typeEncoder.getStringTable();
-				stringTable.addLocalValue(uri, localName, lastValidValue);
-				stringTable.addGlobalValue(lastValidValue);
 			}
+
+			// After encoding the string value, it is added to both the
+			// associated "local" value string table partition and the
+			// global value string table partition.
+			stringEncoder.addValue(context, lastValidValue);
 		}
 	}
 }

@@ -35,7 +35,7 @@ public class DatatypeRestrictedCharacterSet extends AbstractDatatype {
 	protected RestrictedCharacterSet rcs;
 
 	public DatatypeRestrictedCharacterSet(ExpandedName datatypeIdentifier, RestrictedCharacterSet rcs) {
-		super(BuiltInType.BUILTIN_RESTRICTED_CHARACTER_SET, datatypeIdentifier);
+		super(BuiltInType.RESTRICTED_CHARACTER_SET, datatypeIdentifier);
 		this.rcs = rcs;
 	}
 	
