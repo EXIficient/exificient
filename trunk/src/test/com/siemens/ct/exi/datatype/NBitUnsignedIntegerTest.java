@@ -21,7 +21,10 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.decoder.NBitIntegerDatatypeDecoder;
+import com.siemens.ct.exi.datatype.decoder.NBitLongDatatypeDecoder;
+import com.siemens.ct.exi.datatype.encoder.NBitBigIntegerDatatypeEncoder;
 import com.siemens.ct.exi.datatype.encoder.NBitIntegerDatatypeEncoder;
+import com.siemens.ct.exi.datatype.encoder.NBitLongDatatypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -209,7 +212,8 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 
-		NBitIntegerDatatypeEncoder enc = new NBitIntegerDatatypeEncoder(null);
+		NBitBigIntegerDatatypeEncoder enc = new NBitBigIntegerDatatypeEncoder(
+				null);
 
 		// try to validate
 		assertFalse(enc.isValid(datatype, "12"));
@@ -219,7 +223,51 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 			EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='NBit'>"
-				+ "    <xs:restriction base='xs:integer'>"
+				+ "    <xs:restriction base='xs:long'>"
+				+ "      <xs:minInclusive value='-200' />"
+				+ "      <xs:maxExclusive value='-10'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		String sValue = "-12";
+
+		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "NBit", "");
+
+		String namespaceURI = "";
+		String localName = "";
+
+		// write (bit & byte )
+		NBitLongDatatypeEncoder enc = new NBitLongDatatypeEncoder(null);
+		assertTrue(enc.isValid(datatype, sValue));
+		// bit
+		EncoderChannel bitEC = getBitEncoder();
+		enc.writeValue(null, bitEC);
+		bitEC.flush();
+		// byte
+		enc.writeValue(null, getByteEncoder());
+
+		// read
+		NBitLongDatatypeDecoder dec = new NBitLongDatatypeDecoder();
+		char[] sDecoded;
+		// bit
+		sDecoded = dec.decodeValue(null, datatype, getBitDecoder(),
+				namespaceURI, localName);
+		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
+				sValue));
+		// byte
+		sDecoded = dec.decodeValue(null, datatype, getByteDecoder(),
+				namespaceURI, localName);
+		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
+				sValue));
+	}
+
+	public void testNBitUnsignedIntegerFacet3() throws IOException,
+			EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='NBit'>"
+				+ "    <xs:restriction base='xs:int'>"
 				+ "      <xs:minInclusive value='-200' />"
 				+ "      <xs:maxExclusive value='-10'/>"
 				+ "    </xs:restriction>"
@@ -239,22 +287,24 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		assertTrue(enc.isValid(datatype, sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		enc.writeValue(bitEC, namespaceURI, localName);
+		enc.writeValue(null, bitEC);
 		bitEC.flush();
 		// byte
-		enc.writeValue(getByteEncoder(), namespaceURI, localName);
+		enc.writeValue(null, getByteEncoder());
 
 		// read
 		NBitIntegerDatatypeDecoder dec = new NBitIntegerDatatypeDecoder();
-		String sDecoded;
+		char[] sDecoded;
 		// bit
 		sDecoded = dec.decodeValue(null, datatype, getBitDecoder(),
 				namespaceURI, localName);
-		assertTrue(sValue + " != " + sDecoded, sValue.equals(sDecoded));
+		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
+				sValue));
 		// byte
 		sDecoded = dec.decodeValue(null, datatype, getByteDecoder(),
 				namespaceURI, localName);
-		assertTrue(sValue + " != " + sDecoded, sValue.equals(sDecoded));
+		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
+				sValue));
 	}
 
 	public void testNBitUnsignedIntegerSequence() throws IOException {

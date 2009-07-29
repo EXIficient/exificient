@@ -30,148 +30,125 @@ public class BinaryTest extends AbstractTestCase {
 	}
 
 	public void testHexBinaryAsString0FB7() throws IOException {
-		try {
-			String src = "0FB7";
+		String src = "0FB7";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			String d1 = getBitDecoder().decodeBinaryAsString();
-			assertTrue(d1.equals(src));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(src));
-		} catch (Exception e) {
-			fail();
-		}
-
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		char[] d1 = getBitDecoder().decodeBinaryAsString();
+		assertTrue(equals(d1, src));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), src));
 	}
 
 	public void testBase64BinaryAsString0() throws IOException {
-		try {
-			String src = "ZHM=";
+		String src = "ZHM=";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			assertTrue(getBitDecoder().decodeBinaryAsString().equals(src));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(src));
-		} catch (Exception e) {
-			fail();
-		}
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		assertTrue(equals(getBitDecoder().decodeBinaryAsString(), src));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), src));
 	}
 
 	public void testBase64BinaryAsString1() throws IOException {
-		try {
-			String src = "RGFzIGlzIGphIGVpbiBmZXN0ZXIgQmxlZHNpbm4sIHdlaWwgVW1sYXV0ZSB3aWUg9iB1bmQg/CBtYWNoZW4gU2lubiwgd2llIGF1Y2ggZWluIHNjaGFyZmVzIN8u";
-			// String src = "R0lGODlhAgSzzs7O3t7e";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		String src = "RGFzIGlzIGphIGVpbiBmZXN0ZXIgQmxlZHNpbm4sIHdlaWwgVW1sYXV0ZSB3aWUg9iB1bmQg/CBtYWNoZW4gU2lubiwgd2llIGF1Y2ggZWluIHNjaGFyZmVzIN8u";
+		// String src = "R0lGODlhAgSzzs7O3t7e";
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			String d1 = getBitDecoder().decodeBinaryAsString();
-			assertTrue(d1.equals(src));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(src));
-		} catch (Exception e) {
-			fail();
-		}
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		char[] d1 = getBitDecoder().decodeBinaryAsString();
+		assertTrue(equals(d1, src));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), src));
 	}
 
 	public void testBase64BinaryAsString2() throws IOException {
-		try {
-			String src = "SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0gTmFtZW4sIHfDpHJlbiBzaWUgbcO2Z2xpY2hlcndlaXNlIGtlaW5lIEjDvHRlIG1laHIsDQpzb25kZXJuIEjDvMOfZS4NCg==";
+		String src = "SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0gTmFtZW4sIHfDpHJlbiBzaWUgbcO2Z2xpY2hlcndlaXNlIGtlaW5lIEjDvHRlIG1laHIsDQpzb25kZXJuIEjDvMOfZS4NCg==";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			assertTrue(getBitDecoder().decodeBinaryAsString().equals(src));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(src));
-		} catch (Exception e) {
-			fail();
-		}
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		assertTrue(equals(getBitDecoder().decodeBinaryAsString(), src));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), src));
 	}
 
 	public void testBase64BinarySpaces1() throws IOException {
-		try {
-			String s1 = "ZH";
-			String s2 = "M=";
-			String src = s1 + "  " + s2 + "\n";
+		String s1 = "ZH";
+		String s2 = "M=";
+		String src = s1 + "  " + s2 + "\n";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			String d1 = getBitDecoder().decodeBinaryAsString();
-			assertTrue(d1.equals(s1 + s2));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(s1 + s2));
-		} catch (Exception e) {
-			fail();
-		}
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		char[] d1 = getBitDecoder().decodeBinaryAsString();
+		assertTrue(equals(d1, s1 + s2));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), s1 + s2));
 	}
 
 	public void testBase64BinarySpaces2() throws IOException {
-		try {
-			String s1 = "R0lGODdhWAK+ov////v7++fn58DAwI6Ojl5eXjExMQMDAyxYAr5AA/8Iutz+MMpJq7046827/2Ao";
-			String sE = "\n \n ";
-			String s2 = "jmRpnmiqPsKxvvBqCIxgxHg=";
-			String src = s1 + sE + s2;
+		String s1 = "R0lGODdhWAK+ov////v7++fn58DAwI6Ojl5eXjExMQMDAyxYAr5AA/8Iutz+MMpJq7046827/2Ao";
+		String sE = "\n \n ";
+		String s2 = "jmRpnmiqPsKxvvBqCIxgxHg=";
+		String src = s1 + sE + s2;
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
+		assertTrue(valid);
 
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			bitEC.encodeBinary(b64);
-			bitEC.flush();
-			String d1 = getBitDecoder().decodeBinaryAsString();
-			assertTrue(d1.equals(s1 + s2));
-			// Byte
-			getByteEncoder().encodeBinary(b64);
-			assertTrue(getByteDecoder().decodeBinaryAsString().equals(s1 + s2));
-		} catch (Exception e) {
-			fail();
-		}
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(b64.getBytes());
+		bitEC.flush();
+		char[] d1 = getBitDecoder().decodeBinaryAsString();
+		assertTrue(equals(d1, s1 + s2));
+		// Byte
+		getByteEncoder().encodeBinary(b64.getBytes());
+		assertTrue(equals(getByteDecoder().decodeBinaryAsString(), s1 + s2));
 	}
 
 	public void testBinaryFailure() throws IOException {
-		try {
-			String src = "*invalid-bit*";
+		String src = "*invalid-bit*";
 
-			XSDBase64 b64 = XSDBase64.newInstance();
-			b64.parse(src);
+		XSDBase64 b64 = XSDBase64.newInstance();
+		boolean valid = b64.parse(src);
 
-			fail();
-
-		} catch (Exception e) {
-			// ok
-		}
+		assertFalse(valid);
 	}
 
 }

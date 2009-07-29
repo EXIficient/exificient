@@ -27,6 +27,19 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class DOMRoundtrip extends XMLTestCase {
 
+
+	public void testSchemaNillable1() throws Exception {
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		roundtrip("./data/schema/nillable1.xml", exiFactory);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	public void testW3CNotebook() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		roundtrip("./data/W3C/PrimerNotebook/notebook.xml", exiFactory);
@@ -49,10 +62,10 @@ public class DOMRoundtrip extends XMLTestCase {
 		roundtrip("./data/general/person.xml", exiFactory);
 	}
 
-	public void testSchemaNillable1() throws Exception {
-		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		roundtrip("./data/schema/nillable1.xml", exiFactory);
-	}
+	
+	///////////////////////
+	
+	
 
 	public void testSchemaXsiType() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();

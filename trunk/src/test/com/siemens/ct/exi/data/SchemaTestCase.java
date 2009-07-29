@@ -36,6 +36,14 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaChoiceN1 ( );
 		// SchemaTestCase.setConfigurationSchemaSequence1 ( );
 		// SchemaTestCase.setConfigurationSchemaSequence2 ( );
+		// SchemaTestCase.setConfigurationSchemaGroup1 ( );
+		// SchemaTestCase.setConfigurationSchemaGroup2 ( );
+		// SchemaTestCase.setConfigurationSchemaGroup3 ( );
+		// SchemaTestCase.setConfigurationSchemaUnion1 ( );
+		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1a ( );
+		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1b ( );
+		// SchemaTestCase.setConfigurationSchemaAttributeGroup1a ( );
+		// SchemaTestCase.setConfigurationSchemaAttributeGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences1 ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences2 ( );
 		// SchemaTestCase.setConfigurationSchemaAll ( );
@@ -45,18 +53,20 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
-		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
+		SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );
-		SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
+		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
+		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );
 		// SchemaTestCase.setConfigurationSchemaList ( );
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );
+		// SchemaTestCase.setConfigurationSchemaIdenticalQName3 ( );
 		// SchemaTestCase.setConfigurationAttributeSpace ( );
 		// SchemaTestCase.setConfigurationBooleanPattern();
 		// SchemaTestCase.setConfigurationPattern1();
@@ -73,13 +83,29 @@ public class SchemaTestCase extends AbstractTestCase {
 
 		// #2
 		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		
+		// #3
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.PRE_COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		
+		// #4
+		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createDefault());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 
-		// #3 (all)
+		// #5 (all)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
@@ -87,7 +113,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
-		// #4
+		// #6
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
@@ -95,7 +121,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
-		// #5 (strict)
+		// #7 (strict)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
@@ -104,7 +130,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
-		// #6
+		// #8
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
@@ -201,7 +227,131 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/schema/sequence2.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/sequence2.exi");
 	}
+	
+	@Test
+	public void testSchemaGroup1() throws Exception {
+		// set up configuration
+		setConfigurationSchemaGroup1();
 
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaGroup1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/group1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/group1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/group1.exi");
+	}
+	
+	@Test
+	public void testSchemaGroup2() throws Exception {
+		// set up configuration
+		setConfigurationSchemaGroup2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaGroup2() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/group2.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/group2.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/group2.exi");
+	}
+
+	@Test
+	public void testSchemaGroup3() throws Exception {
+		// set up configuration
+		setConfigurationSchemaGroup3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaGroup3() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/group3.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/group3.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/group3.exi");
+	}
+	
+	
+	@Test
+	public void testSchemaUnion1() throws Exception {
+		// set up configuration
+		setConfigurationSchemaUnion1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaUnion1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/union1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/union1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/union1.exi");
+	}
+	
+	
+	@Test
+	public void testSchemaSubstitutionGroup1a() throws Exception {
+		// set up configuration
+		setConfigurationSchemaSubstitutionGroup1a();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaSubstitutionGroup1a() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/substitutionGroup1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/substitutionGroup1a.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/substitutionGroup1a.xml.exi");
+	}
+	
+	@Test
+	public void testSchemaSubstitutionGroup1b() throws Exception {
+		// set up configuration
+		setConfigurationSchemaSubstitutionGroup1b();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaSubstitutionGroup1b() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/substitutionGroup1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/substitutionGroup1b.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/substitutionGroup1b.xml.exi");
+	}
+
+	@Test
+	public void testSchemaAttributeGroup1a() throws Exception {
+		// set up configuration
+		setConfigurationSchemaAttributeGroup1a();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaAttributeGroup1a() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/attributeGroup1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/attributeGroup1a.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/attributeGroup1a.xml.exi");
+	}
+	
+	
+	@Test
+	public void testSchemaAttributeGroup1b() throws Exception {
+		// set up configuration
+		setConfigurationSchemaAttributeGroup1b();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaAttributeGroup1b() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/attributeGroup1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/attributeGroup1b.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/attributeGroup1b.xml.exi");
+	}
+	
+	
 	@Test
 	public void testSchemaOccurrences1() throws Exception {
 		// set up configuration
@@ -463,6 +613,21 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type4.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type4.exi");
 	}
+	
+	@Test
+	public void testSchemaXsiType5() throws Exception {
+		// set up configuration
+		setConfigurationSchemaXsiType5();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaXsiType5() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/empty.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/xsi-type5.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/xsi-type5.exi");
+	}
 
 	@Test
 	public void testSchemaVehicle() throws Exception {
@@ -565,6 +730,24 @@ public class SchemaTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/schema/identicalQName.xml");
 		QuickTestConfiguration
 				.setExiLocation("./out/schema/identicalQName.xml.exi");
+	}
+	
+	@Test
+	public void testSchemaIdenticalQName3() throws Exception {
+		// set up configuration
+		setConfigurationSchemaIdenticalQName3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaIdenticalQName3() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/schema/identicalQName3.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/schema/identicalQName3.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/schema/identicalQName3.xml.exi");
 	}
 
 	@Test

@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
@@ -33,9 +32,10 @@ public class BooleanTest extends AbstractTestCase {
 		super(testName);
 	}
 
-	public void testBoolean0() throws IOException, XMLParsingException {
+	public void testBoolean0() throws IOException {
 		String s = "0";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -47,25 +47,27 @@ public class BooleanTest extends AbstractTestCase {
 		assertTrue(getByteDecoder().decodeBoolean() == false);
 	}
 
-	public void testBoolean00() throws IOException, XMLParsingException {
+	public void testBoolean00() throws IOException {
 		String s = "0";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
 		assertTrue(getBitDecoder().decodeBooleanAsString().equals(
-				Constants.DECODED_BOOLEAN_FALSE));
+				Constants.XSD_BOOLEAN_FALSE_ARRAY));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
 		assertTrue(getByteDecoder().decodeBooleanAsString().equals(
-				Constants.DECODED_BOOLEAN_FALSE));
+				Constants.XSD_BOOLEAN_FALSE_ARRAY));
 	}
 
-	public void testBooleanFalse() throws IOException, XMLParsingException {
+	public void testBooleanFalse() throws IOException {
 		String s = "false";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -77,9 +79,10 @@ public class BooleanTest extends AbstractTestCase {
 		assertTrue(getByteDecoder().decodeBoolean() == false);
 	}
 
-	public void testBoolean1() throws IOException, XMLParsingException {
+	public void testBoolean1() throws IOException {
 		String s = "1";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -91,25 +94,27 @@ public class BooleanTest extends AbstractTestCase {
 		assertTrue(getByteDecoder().decodeBoolean() == true);
 	}
 
-	public void testBoolean11() throws IOException, XMLParsingException {
+	public void testBoolean11() throws IOException {
 		String s = "1";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
 		assertTrue(getBitDecoder().decodeBooleanAsString().equals(
-				Constants.DECODED_BOOLEAN_TRUE));
+				Constants.XSD_BOOLEAN_TRUE_ARRAY));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
 		assertTrue(getByteDecoder().decodeBooleanAsString().equals(
-				Constants.DECODED_BOOLEAN_TRUE));
+				Constants.XSD_BOOLEAN_TRUE_ARRAY));
 	}
 
-	public void testBooleanTrue() throws IOException, XMLParsingException {
+	public void testBooleanTrue() throws IOException {
 		String s = "true";
-		bool.parse(s);
+		boolean valid = bool.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -122,15 +127,9 @@ public class BooleanTest extends AbstractTestCase {
 	}
 
 	public void testBooleanFailure() throws IOException {
-		try {
-			String s = "trueX";
-			bool.parse(s);
-
-			assertTrue(false);
-
-		} catch (XMLParsingException e) {
-			// ok
-		}
+		String s = "trueX";
+		boolean isValid = bool.parse(s);
+		assertFalse(isValid);
 	}
 
 }

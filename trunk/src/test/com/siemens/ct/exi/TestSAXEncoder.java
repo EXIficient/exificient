@@ -83,7 +83,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		return FragmentUtilities.getSurroundingRootInputStream(xmlInput);
 	}
 
-	public void encodeTo(EXIFactory ef, InputStream xmlInput) throws Exception {
+	public void encodeTo(EXIFactory ef, InputStream xmlInput) throws Exception {		
 		// XML reader
 		XMLReader xmlReader = getXMLReader();
 

@@ -346,6 +346,44 @@ public class TestXSDRegularExpression extends AbstractTestCase  {
 		assertTrue(xsdRegexp.isEntireSetOfXMLCharacters());
 	}
 	
+	public void testPatternSubtraction1() throws EXIException {
+		// [A-Z-[C-X]]
+		// means: A, B, Y, Z 
+		String regex = "[A-Z-[C-X]]";
+		xsdRegexp.analyze(regex);
+		
+		assertFalse(xsdRegexp.isEntireSetOfXMLCharacters());
+		
+		RestrictedCharacterSet rcs = xsdRegexp.getRestrictedCharacterSet();
+		assertTrue(rcs.getCharacter(0)=='A');
+		assertTrue(rcs.getCharacter(1)=='B');
+		assertTrue(rcs.size()==4);
+		assertTrue(rcs.getCharacter(2)=='Y');
+		assertTrue(rcs.getCharacter(3)=='Z');
+		assertTrue(rcs.getCode('?')==Constants.NOT_FOUND);
+		assertTrue(rcs.getCodingLength()==3);
+	}
+	
+	public void testPatternSubtraction2() throws EXIException {
+		// [A-Z-[C-X-[M-N]]]*
+		// means: A,B,M,N,Y,Z 
+		String regex = "[A-Z-[C-X-[M-N]]]*";
+		xsdRegexp.analyze(regex);
+		
+		assertFalse(xsdRegexp.isEntireSetOfXMLCharacters());
+		
+		RestrictedCharacterSet rcs = xsdRegexp.getRestrictedCharacterSet();
+		assertTrue(rcs.getCharacter(0)=='A');
+		assertTrue(rcs.getCharacter(1)=='B');
+		assertTrue(rcs.getCharacter(2)=='M');
+		assertTrue(rcs.getCharacter(3)=='N');
+		assertTrue(rcs.getCharacter(4)=='Y');
+		assertTrue(rcs.getCharacter(5)=='Z');
+		assertTrue(rcs.size()==6);
+		assertTrue(rcs.getCode('?')==Constants.NOT_FOUND);
+		assertTrue(rcs.getCodingLength()==3);
+	}
+	
 	
 	public void testPatternInvalid1() throws EXIException {
 		try {

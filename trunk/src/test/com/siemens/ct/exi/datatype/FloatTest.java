@@ -21,256 +21,390 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.util.datatype.XSDDouble;
 import com.siemens.ct.exi.util.datatype.XSDFloat;
 
 public class FloatTest extends AbstractTestCase {
-	XSDFloat fl = XSDFloat.newInstance();
+	XSDFloat f = XSDFloat.newInstance();
+	XSDDouble d = XSDDouble.newInstance();
 
 	public FloatTest(String testName) {
 		super(testName);
 	}
 
-	public void testFloatNaN() throws IOException, XMLParsingException {
+	public void testFloatType18_4() throws IOException {
+		float f = 18.4f; // 18.39999962
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatType12_25() throws IOException {
+		float f = 12.25f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatType12_75() throws IOException {
+		 float f = 12.75f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatType1567_0() throws IOException {
+		float f = 1567.0f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatTypeNeg0_333() throws IOException {
+		float f = -0.333f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatType0() throws IOException {
+		float f = 0f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	public void testFloatType0_33333() throws IOException {
+		float f = 1f/3f;
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f);
+		bitEC.flush();
+		float df = getBitDecoder().decodeFloat();
+
+		float diff = Math.abs(f-df);
+		assertTrue(diff < 0.000001);
+	}
+	
+	
+	
+	public void testFloatNaN() throws IOException {
 		String s = "NaN";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(sb.equals(s));
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(equals(sb, s));
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(sB.equals(s));
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(equals(sB, s));
 	}
 
-	public void testFloatINF() throws IOException, XMLParsingException {
+	public void testFloatINF() throws IOException {
 		String s = "INF";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeFloatAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeFloatAsString(), s));
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		assertTrue(getByteDecoder().decodeFloatAsString().equals(s));
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		assertTrue(equals(getByteDecoder().decodeFloatAsString(), s));
 	}
 
-	public void testFloatMINF() throws IOException, XMLParsingException {
+	public void testFloatMINF() throws IOException {
 		String s = "-INF";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeFloatAsString().equals(s));
+		assertTrue(equals(getBitDecoder().decodeFloatAsString(), s));
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		assertTrue(getByteDecoder().decodeFloatAsString().equals(s));
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		assertTrue(equals(getByteDecoder().decodeFloatAsString(), s));
 	}
 
-	public void testFloat0() throws IOException, XMLParsingException {
+	public void testFloat0() throws IOException {
 		String s = "-1E4";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat1() throws IOException, XMLParsingException {
+	public void testFloat1() throws IOException {
 		String s = "1267.43233E12";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat2() throws IOException, XMLParsingException {
+	public void testFloat2() throws IOException {
 		String s = "12.78e-2";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat3() throws IOException, XMLParsingException {
+	public void testFloat3() throws IOException {
 		String s = "12";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat4() throws IOException, XMLParsingException {
+	public void testFloat4() throws IOException {
 		String s = "0";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat5() throws IOException, XMLParsingException {
+	public void testFloat5() throws IOException {
 		String s = "-0";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat6() throws IOException, XMLParsingException {
+	public void testFloat6() throws IOException {
 		String s = "-1";
-		fl.parse(s);
+		boolean valid = f.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		char[] sB = getByteDecoder().decodeFloatAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat7() throws IOException, XMLParsingException {
-		String s = "119.9999999999999929";
-		fl.parse(s);
+	public void testDouble1() throws IOException {
+		String s = "119.999999999929";
+		boolean valid = d.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeDouble(d.mantissa, d.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeDoubleAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeDouble(d.mantissa, d.exponent);
+		char[] sB = getByteDecoder().decodeDoubleAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
 
-	public void testFloat8() throws IOException, XMLParsingException {
+	public void testDouble2() throws IOException {
 		String s = "000123400.0031200";
-		fl.parse(s);
+		boolean valid = d.parse(s);
+		assertTrue(valid);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeFloat(fl);
+		bitEC.encodeDouble(d.mantissa, d.exponent);
 		bitEC.flush();
-		String sb = getBitDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		char[] sb = getBitDecoder().decodeDoubleAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
-		getByteEncoder().encodeFloat(fl);
-		String sB = getByteDecoder().decodeFloatAsString();
-		assertTrue(s + " != " + sb, new BigDecimal(s).compareTo(new BigDecimal(
+		getByteEncoder().encodeDouble(d.mantissa, d.exponent);
+		char[] sB = getByteDecoder().decodeDoubleAsString();
+		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
+	}
+	
+	public void testDoubleType18_4() throws IOException {
+		double d = 18.4d;
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDouble(d);
+		bitEC.flush();
+		double dd = getBitDecoder().decodeDouble();
+
+		double diff = Math.abs(d-dd);
+		assertTrue(diff < 0.00000000001);
+	}
+	
+	public void testDoubleType1_123456789() throws IOException {
+		double d = 1.123456789d;
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDouble(d);
+		bitEC.flush();
+		double dd = getBitDecoder().decodeDouble();
+
+		double diff = Math.abs(d-dd);
+		assertTrue(diff < 0.00000000001);
+	}
+	
+	public void testDoubleTypeNeg56783_132154() throws IOException {
+		double d = 56783.132154d;
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDouble(d);
+		bitEC.flush();
+		double dd = getBitDecoder().decodeDouble();
+
+		double diff = Math.abs(d-dd);
+		assertTrue(diff < 0.00000000001);
 	}
 
 	public void testFloatInvalid0() {
 		String s = "x11.1";
 
-		try {
-			fl.parse(s);
-			assertTrue("Invalid float '" + s + "' parsed successfully", false);
-		} catch (XMLParsingException e) {
-			assertTrue(true);
-		}
+			boolean valid = f.parse(s);
+			assertFalse("Invalid float '" + s + "' parsed successfully", valid);
 	}
 
 	public void testFloatInvalid1() {
 		String s = "";
 
-		try {
-			fl.parse(s);
-			assertTrue("Invalid float value '" + s + "' parsed successfully",
-					false);
-		} catch (XMLParsingException e) {
-			assertTrue(true);
-		}
+			boolean valid = f.parse(s);
+			assertFalse("Invalid float value '" + s + "' parsed successfully",
+					valid);
+		
 	}
 
 	public void testFloatInvalid2() {
 		String s = "1.1223x";
 
-		try {
-			fl.parse(s);
-			assertTrue("Invalid float value '" + s + "' parsed successfully",
-					false);
-		} catch (XMLParsingException e) {
-			assertTrue(true);
-		}
+			boolean valid = f.parse(s);
+			assertFalse("Invalid float value '" + s + "' parsed successfully",
+					valid);
 	}
 
 }

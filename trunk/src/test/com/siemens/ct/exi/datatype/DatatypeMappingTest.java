@@ -38,7 +38,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
-		XSModel xsModel = xsdGB.getXSModel(bais);
+		xsdGB.loadGrammar(bais);
+		XSModel xsModel = xsdGB.getXSModel();
 
 		XSTypeDefinition td = xsModel.getTypeDefinition(typeName, typeURI);
 
@@ -61,8 +62,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Binary", "");
 
-		assertTrue(BuiltInType.BUILTIN_BINARY_BASE64 == dt
-				.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BINARY_BASE64 == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_BASE64BINARY == dt.getDatatypeIdentifier());
 	}
 
@@ -77,7 +77,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Binary", "");
 
-		assertTrue(BuiltInType.BUILTIN_BINARY_HEX == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BINARY_HEX == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_HEXBINARY == dt.getDatatypeIdentifier());
 	}
 
@@ -92,7 +92,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Boolean", "");
 
-		assertTrue(BuiltInType.BUILTIN_BOOLEAN == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BOOLEAN == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_BOOLEAN == dt.getDatatypeIdentifier());
 	}
 
@@ -108,8 +108,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Boolean01", "");
 
-		assertTrue(BuiltInType.BUILTIN_BOOLEAN_PATTERN == dt
-				.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BOOLEAN_PATTERN == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_BOOLEAN == dt.getDatatypeIdentifier());
 	}
 
@@ -124,7 +123,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"DateTime", "");
 
-		assertTrue(BuiltInType.BUILTIN_DATETIME == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatatypeDatetime dtd = (DatatypeDatetime) dt;
@@ -142,7 +141,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"DateTime", "");
 
-		assertTrue(BuiltInType.BUILTIN_DATETIME == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatatypeDatetime dtd = (DatatypeDatetime) dt;
@@ -160,23 +159,21 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Float", "");
 
-		assertTrue(BuiltInType.BUILTIN_FLOAT == dt.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_DOUBLE == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.FLOAT == dt.getDefaultBuiltInType());
 	}
 
-	public void testFloat2() throws Exception {
+	public void testDouble1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-				+ "  <xs:simpleType name='Float'>"
+				+ "  <xs:simpleType name='Double'>"
 				+ "    <xs:restriction base='xs:double'>"
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
-				"Float", "");
+				"Double", "");
 
-		assertTrue(BuiltInType.BUILTIN_FLOAT == dt.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_DOUBLE == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.DOUBLE == dt.getDefaultBuiltInType());
 	}
 
 	public void testInteger1() throws Exception {
@@ -190,8 +187,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.BUILTIN_INTEGER == dt.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.BIG_INTEGER == dt.getDefaultBuiltInType());
 	}
 
 	public void testInteger2() throws Exception {
@@ -205,8 +201,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.BUILTIN_INTEGER == dt.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.INTEGER == dt.getDefaultBuiltInType());
 	}
 
 	public void testInteger3() throws Exception {
@@ -220,8 +215,21 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.BUILTIN_INTEGER == dt.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.BIG_INTEGER == dt.getDefaultBuiltInType());
+	}
+
+	public void testInteger4() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='Integer'>"
+				+ "    <xs:restriction base='xs:long'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Integer", "");
+
+		assertTrue(BuiltInType.LONG == dt.getDefaultBuiltInType());
 	}
 
 	public void testUnsignedInteger1() throws Exception {
@@ -235,9 +243,52 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"UnsignedInteger", "");
 
-		assertTrue(BuiltInType.BUILTIN_UNSIGNED_INTEGER == dt
+		assertTrue(BuiltInType.UNSIGNED_BIG_INTEGER == dt
 				.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+	}
+
+	public void testUnsignedInteger2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:unsignedLong'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(BuiltInType.UNSIGNED_LONG == dt.getDefaultBuiltInType());
+	}
+
+	public void testUnsignedInteger3() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:unsignedInt'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(dt.toString(), BuiltInType.UNSIGNED_LONG == dt
+				.getDefaultBuiltInType());
+	}
+
+	public void testUnsignedInteger4() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:unsignedShort'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt
+				.getDefaultBuiltInType());
 	}
 
 	public void testUnsignedIntegerFacet1() throws Exception {
@@ -252,9 +303,40 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"UnsignedInteger", "");
 
-		assertTrue(BuiltInType.BUILTIN_UNSIGNED_INTEGER == dt
+		assertTrue(dt.toString(), BuiltInType.UNSIGNED_BIG_INTEGER == dt
 				.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+	}
+
+	public void testUnsignedIntegerFacet2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:long'>"
+				+ "        <xs:minInclusive value='1' />"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(dt.toString(), BuiltInType.UNSIGNED_LONG == dt
+				.getDefaultBuiltInType());
+	}
+
+	public void testUnsignedIntegerFacet3() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:int'>"
+				+ "        <xs:minInclusive value='33' />"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt
+				.getDefaultBuiltInType());
 	}
 
 	public void testNBitInteger1() throws Exception {
@@ -268,9 +350,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.BUILTIN_NBIT_INTEGER == dt
-				.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.NBIT_INTEGER == dt.getDefaultBuiltInType());
 	}
 
 	public void testNBitIntegerFacet1() throws Exception {
@@ -286,9 +366,39 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.BUILTIN_NBIT_INTEGER == dt
-				.getDefaultBuiltInType());
-		// assertTrue(BuiltIn.XSD_INTEGER == dt.getDatatypeIdentifier());
+		assertTrue(BuiltInType.NBIT_BIG_INTEGER == dt.getDefaultBuiltInType());
+	}
+
+	public void testNBitIntegerFacet2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='NBit'>"
+				+ "    <xs:restriction base='xs:long'>"
+				+ "      <xs:minInclusive value='2' />"
+				+ "      <xs:maxExclusive value='10'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"NBit", "");
+
+		assertTrue(BuiltInType.NBIT_LONG == dt.getDefaultBuiltInType());
+	}
+
+	public void testNBitIntegerFacet3() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='NBit'>"
+				+ "    <xs:restriction base='xs:int'>"
+				+ "      <xs:minInclusive value='2' />"
+				+ "      <xs:maxExclusive value='10'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"NBit", "");
+
+		assertTrue(BuiltInType.NBIT_INTEGER == dt.getDefaultBuiltInType());
 	}
 
 	public void testEnumeration1() throws Exception {
@@ -303,8 +413,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(BuiltInType.BUILTIN_ENUMERATION == dt
-				.getDefaultBuiltInType());
+		assertTrue(BuiltInType.ENUMERATION == dt.getDefaultBuiltInType());
 	}
 
 	public void testList1() throws Exception {
@@ -317,48 +426,42 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"ListInt", "");
 
-		assertTrue(BuiltInType.BUILTIN_LIST == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.LIST == dt.getDefaultBuiltInType());
 
 		DatatypeList dtl = (DatatypeList) dt;
 
-		assertTrue(BuiltInType.BUILTIN_INTEGER == dtl.getListDatatype()
+		assertTrue(BuiltInType.INTEGER == dtl.getListDatatype()
 				.getDefaultBuiltInType());
 	}
-	
+
 	public void testRestrictedCharSet1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='Letter'>"
 				+ "      <xs:restriction base='xs:string'>"
 				+ "      <xs:pattern value='[a-z]'/>"
-				+ "      </xs:restriction>" +
-				"    </xs:simpleType>" + "</xs:schema>";
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Letter", "");
 
-		assertTrue(BuiltInType.BUILTIN_RESTRICTED_CHARACTER_SET == dt
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
 				.getDefaultBuiltInType());
 	}
-	
+
 	public void testNoRestrictedCharSet2() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='Foo'>"
 				+ "      <xs:restriction base='xs:string'>"
 				+ "      <xs:pattern value='\\c'/>"
-				+ "      </xs:restriction>" +
-				"    </xs:simpleType>" + "</xs:schema>";
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Foo", "");
 
-		assertTrue(BuiltInType.BUILTIN_STRING == dt
-				.getDefaultBuiltInType());
+		assertTrue(BuiltInType.STRING == dt.getDefaultBuiltInType());
 	}
-	
-	  
-	    
-	      
-	    
-	  
-	
+
 }
