@@ -46,7 +46,12 @@
                     <xs:simpleType>
                         <xs:list itemType="xs:integer"/>
                     </xs:simpleType>
-                 </xs:element>
+                </xs:element>
+                <xs:element name="listDates"  minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:date"/>
+                    </xs:simpleType>
+                </xs:element>
                 <!-- Built-in Type: String -->
                 <xs:element name="string"  type="xs:string" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="normalizedString"  type="xs:normalizedString" minOccurs="0" maxOccurs="unbounded" />
@@ -60,11 +65,31 @@
                 <xs:element name="nMTOKEN"  type="xs:NMTOKEN" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="anySimpleType"  type="xs:anySimpleType" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="anyURI"  type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
+                <!-- Built-in Type: RestrictedCharSet -->
+                <xs:element name="rcs"  minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType >
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="[A-Z]"></xs:pattern>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
                 <!-- TODO Notation-->
                 <!-- 
                 <xs:element name="Notation" type="xs:Notation" minOccurs="0" maxOccurs="unbounded" />
                 -->
                 <xs:element name="duration"  type="xs:duration" minOccurs="0" maxOccurs="unbounded" />
+                
+
+                <!-- Built-in Type: Enumeration -->
+                <xs:element name="car" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Audi"/>
+                            <xs:enumeration value="Golf"/>
+                            <xs:enumeration value="BMW"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

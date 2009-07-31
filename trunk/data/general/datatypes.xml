@@ -98,6 +98,7 @@
     
     <!-- Built-in Type: List -->
     <intValues>100 34 56 -23 1567</intValues>
+    <listDates>2077-12-12 1999-01-02</listDates>
     
     <!-- Built-in Type: String  -->
     <string>ss ss </string>
@@ -114,12 +115,18 @@
     <nMTOKEN>da</nMTOKEN>
     <anySimpleType>ssd</anySimpleType>
     <anyURI>http://www.w3.org/TR/xmlschema-2/#anyURI</anyURI>
+    <!-- Built-in Type: RestrictedCharSet -->
+    <rcs>A</rcs>
+    <rcs>Z</rcs>
+    
     <!-- 
     <Notation></Notation>
     -->
     <duration>P1Y2MT2H</duration>
     <duration>P0Y1347M0D</duration>
     <duration>-P1347M</duration>
-
+    
+    <!-- Built-in Type: Enumeration -->
+    <car>BMW</car>
     
 </root>
