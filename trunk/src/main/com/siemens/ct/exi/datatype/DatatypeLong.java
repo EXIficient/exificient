@@ -18,6 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -30,7 +36,25 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeLong extends AbstractDatatype {
+	
+	private long lastInteger;
+	
 	public DatatypeLong(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.LONG, datatypeIdentifier);
+		this.rcs = new XSDIntegerCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		try {
+			lastInteger = Long.parseLong(value);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeLong(lastInteger);
 	}
 }

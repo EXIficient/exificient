@@ -22,8 +22,6 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.datatype.XSDBase64;
 
 /**
  * TODO Description
@@ -31,36 +29,23 @@ import com.siemens.ct.exi.util.datatype.XSDBase64;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.3.20090421
  */
 
-public class DatatypeBinary extends AbstractDatatype {
-
-	private XSDBase64 xsdBase64 = XSDBase64.newInstance();
-
-	public DatatypeBinary(ExpandedName datatypeIdentifier,
-			BuiltInType binaryType) {
-		super(binaryType, datatypeIdentifier);
-
-		if (!(binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX)) {
-			throw new RuntimeException("Illegal type '" + binaryType
-					+ "' for DatatypeBinary");
-		}
+public class TypeEncoderTyped extends AbstractTypeEncoder {
+	
+	protected Datatype lastDatatype;
+	
+	public TypeEncoderTyped() {
+		super();
 	}
 
-	/*
-	 * Encoder
-	 */
 	public boolean isValid(Datatype datatype, String value) {
-		return xsdBase64.parse(value.toCharArray(), 0, value.length());
+		lastDatatype = datatype;
+		return datatype.isValid(value);
 	}
-
-	public void writeValue(NameContext context, EncoderChannel valueChannel)
-			throws IOException {
-		valueChannel.encodeBinary(xsdBase64.getBytes());
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		lastDatatype.writeValue(valueChannel, stringEncoder, context);
 	}
-
-	/*
-	 * Decoder
-	 */
 }

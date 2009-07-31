@@ -18,7 +18,14 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.datatype.XSDDouble;
 
 /**
  * TODO Description
@@ -30,7 +37,20 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeDouble extends AbstractDatatype {
+	
+	protected XSDDouble lastValidDouble = XSDDouble.newInstance();
+	
 	public DatatypeDouble(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.DOUBLE, datatypeIdentifier);
+		this.rcs = new XSDDoubleCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		return lastValidDouble.parse(value);
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeDouble(lastValidDouble.mantissa, lastValidDouble.exponent);
 	}
 }

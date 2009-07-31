@@ -18,8 +18,13 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
 import org.apache.xerces.xs.StringList;
 
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -32,19 +37,21 @@ import com.siemens.ct.exi.util.MethodsBag;
  */
 
 public class DatatypeEnumeration extends AbstractDatatype {
+
+	private int lastOrdinalPosition;
+	
 	private StringList enumValues;
-//	private CharArray[] enumValues2;
 	private char[][] enumValues3;
 	private int codingLength;
 
 	public DatatypeEnumeration(StringList enumValues) {
 		super(BuiltInType.ENUMERATION, null);
+		
+		this.rcs = null; 
 
-		 this.enumValues = enumValues;
-//		enumValues2 = new CharArray[enumValues.getLength()];
+		this.enumValues = enumValues;
 		enumValues3 = new char[enumValues.getLength()][];
 		for (int i=0; i<enumValues.getLength(); i++) {
-			// enumValues2[i]  = new CharArray(enumValues.item(i).toCharArray());
 			enumValues3[i] = enumValues.item(i).toCharArray();
 		}
 		
@@ -57,19 +64,48 @@ public class DatatypeEnumeration extends AbstractDatatype {
 	
 	public char[] getEnumerationValueAsCharArray(int index) {
 		return enumValues3[index];
-		// return enumValues2[index].toCharArray();
 	}
 	
 	public int getEnumerationSize() {
 		return enumValues3.length;
-//		return enumValues2.length;
 	}
-	
-//	public StringList getEnumerationValues() {
-//		return enumValues;
-//	}
 
 	public int getCodingLength() {
 		return codingLength;
+	}
+	
+	public boolean isValid(String value) {
+		lastOrdinalPosition = -1;
+		int index = 0;
+		// while (index < lastEnumValues.getLength()) {
+		while (index < getEnumerationSize()) {
+			if (getEnumerationValueAsString(index).equals(value)) {
+				lastOrdinalPosition = index;
+				return true;
+			}
+			index++;
+		}
+
+		return false;
+	}
+	
+	@Override
+	public boolean isValidRCS(String value) {
+		if( isValid(value) ) {
+			return super.isValidRCS(value);
+		} else  {
+			return false;
+		}
+		
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition, getCodingLength());
+	}
+	
+	@Override
+	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
+		this.writeValue(valueChannel, stringEncoder, context);
 	}
 }

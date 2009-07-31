@@ -18,7 +18,14 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.datatype.XSDFloat;
 
 /**
  * TODO Description
@@ -30,7 +37,20 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeFloat extends AbstractDatatype {
+	
+	protected XSDFloat lastValidFloat = XSDFloat.newInstance();
+	
 	public DatatypeFloat(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.FLOAT, datatypeIdentifier);
+		this.rcs = new XSDDoubleCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		return lastValidFloat.parse(value);
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeFloat(lastValidFloat.mantissa, lastValidFloat.exponent);
 	}
 }

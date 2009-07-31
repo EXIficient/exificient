@@ -34,8 +34,6 @@ import org.apache.xerces.xs.XSTypeDefinition;
 
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDRegularExpression;
-import com.siemens.ct.exi.datatype.encoder.BinaryDatatypeEncoder;
-import com.siemens.ct.exi.datatype.encoder.DatatypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
@@ -375,12 +373,12 @@ public class BuiltIn {
 			 * Otherwise, use Integer representation.
 			 */
 			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new DatatypeSignedBigInteger(datatypeID);
+				datatype = new DatatypeBigInteger(datatypeID);
 			} else if (intType == IntegerType.LONG) {
-				datatype = new DatatypeSignedLong(datatypeID);
+				datatype = new DatatypeLong(datatypeID);
 			} else {
 				assert ((intType == IntegerType.INT));
-				datatype = new DatatypeSignedInteger(datatypeID);
+				datatype = new DatatypeInteger(datatypeID);
 			}
 		}
 
@@ -403,11 +401,9 @@ public class BuiltIn {
 		}
 
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
-			datatype = new DatatypeBinary(datatypeID,
-					BuiltInType.BINARY_BASE64);
+			datatype = new DatatypeBinaryBase64(datatypeID);
 		} else if (XSD_HEXBINARY.equals(schemaDatatype)) {
-			datatype = new DatatypeBinary(datatypeID,
-					BuiltInType.BINARY_HEX);
+			datatype = new DatatypeBinaryHex(datatypeID);
 		} else if (XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
 				datatype = new DatatypeBooleanPattern(datatypeID);
@@ -500,72 +496,4 @@ public class BuiltIn {
 		}
 	}
 	
-	public DatatypeEncoder getDatatypeEncoder(BuiltInType builtInType) {
-		switch (builtInType) {
-		case BINARY_BASE64:
-		case BINARY_HEX:
-			return new BinaryDatatypeEncoder(null);
-		case BOOLEAN:
-			return new BinaryDatatypeEncoder(null);
-//		case BOOLEAN_PATTERN:
-//			lastDatatypeEncoder = booleanPatternDTE;
-//			break;
-//		case DECIMAL:
-//			lastDatatypeEncoder = decimalDTE;
-//			break;
-//		case FLOAT:
-//			lastDatatypeEncoder = floatDTE;
-//			break;
-//		case DOUBLE:
-//			lastDatatypeEncoder = doubleDTE;
-//			break;
-//		case INTEGER:
-//			lastDatatypeEncoder = integerDTE;
-//			break;
-//		case LONG:
-//			lastDatatypeEncoder = longDTE;
-//			break;
-//		case BIG_INTEGER:
-//			lastDatatypeEncoder = bigIntegerDTE;
-//			break;
-//		case UNSIGNED_INTEGER:
-//			lastDatatypeEncoder = unsignedIntegerDTE;
-//			break;
-//		case UNSIGNED_LONG:
-//			lastDatatypeEncoder = unsignedLongDTE;
-//			break;
-//		case UNSIGNED_BIG_INTEGER:
-//			lastDatatypeEncoder = unsignedBigIntegerDTE;
-//			break;
-//		case NBIT_INTEGER:
-//			lastDatatypeEncoder = nBitIntegerDTE;
-//			break;
-//		case NBIT_LONG:
-//			lastDatatypeEncoder = nBitLongDTE;
-//			break;
-//		case NBIT_BIG_INTEGER:
-//			lastDatatypeEncoder = nBitBigIntegerDTE;
-//			break;
-//		case DATETIME:
-//			lastDatatypeEncoder = datetimeDTE;
-//			break;
-//		case ENUMERATION:
-//			lastDatatypeEncoder = enumerationDTE;
-//			break;
-//		case LIST:
-//			lastDatatypeEncoder = listDTE;
-//			break;
-//		case STRING:
-//			lastDatatypeEncoder = stringDTE;
-//			break;
-//		case RESTRICTED_CHARACTER_SET:
-//			restrictedCharSetDTE
-//					.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
-//							.getRestrictedCharacterSet());
-//			lastDatatypeEncoder = restrictedCharSetDTE;
-//			break;
-		default:
-			throw new RuntimeException("Unknown BuiltIn Type: " + builtInType);
-		}
-	}
 }

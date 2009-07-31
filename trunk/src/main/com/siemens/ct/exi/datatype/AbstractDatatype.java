@@ -18,6 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -34,6 +40,9 @@ public abstract class AbstractDatatype implements Datatype {
 	protected BuiltInType defaultbuiltInType;
 	// for codec map (pluggable codecs)
 	protected ExpandedName datatypeIdentifier;
+	// restricted char set
+	protected RestrictedCharacterSet rcs;
+	protected String lastRCSValue;
 
 	public AbstractDatatype(BuiltInType builtInType,
 			ExpandedName datatypeIdentifier) {
@@ -48,6 +57,10 @@ public abstract class AbstractDatatype implements Datatype {
 	public ExpandedName getDatatypeIdentifier() {
 		return datatypeIdentifier;
 	}
+	
+	public RestrictedCharacterSet getRestrictedCharacterSet() {
+		return rcs;
+	}
 
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
@@ -58,6 +71,18 @@ public abstract class AbstractDatatype implements Datatype {
 		}
 	}
 	
+	public boolean isValidRCS(String value) {
+		lastRCSValue = value;
+		return true;
+	}
+	
+	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
+		rcsEncoder.setRestrictedCharacterSet(rcs);
+		rcsEncoder.isValid(lastRCSValue);
+		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
+	}
+	
+
 	public String toString() {
 		return defaultbuiltInType.toString();
 	}

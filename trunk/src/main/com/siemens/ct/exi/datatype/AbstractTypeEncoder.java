@@ -20,11 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
-import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -35,27 +31,26 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.3.20080718
  */
 
-public class DatatypeString extends AbstractDatatype {
+public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
+		TypeEncoder {
+
+	protected StringEncoder stringEncoder;
 	
-	protected String lastValue;
-	
-	public DatatypeString(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.STRING, datatypeIdentifier);
-		this.rcs = new XSDStringCharacterSet();
+	public AbstractTypeEncoder() {
 	}
 	
-	public boolean isValid(String value) {
-		lastValue = value;
-		return true;
+	public void finish() throws IOException {
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
-			throws IOException {
-		stringEncoder.writeValueAsString(context, valueChannel, lastValue);
+	/*
+	 * 
+	 */
+	public void setStringEncoder(StringEncoder stringEncoder) {
+		this.stringEncoder = stringEncoder;
 	}
-	
-	@Override
-	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
-		stringEncoder.writeValueAsString(context, valueChannel, this.lastRCSValue);
+
+	public StringEncoder getStringEncoder() {
+		return stringEncoder;
 	}
+
 }

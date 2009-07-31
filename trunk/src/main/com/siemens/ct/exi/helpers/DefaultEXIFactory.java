@@ -43,17 +43,17 @@ import com.siemens.ct.exi.core.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.core.sax.SAXEncoder;
 import com.siemens.ct.exi.core.sax.SAXEncoderExtendedHandler;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
+import com.siemens.ct.exi.datatype.TypeEncoder;
+import com.siemens.ct.exi.datatype.TypeEncoderDatatypeRespresentationMap;
+import com.siemens.ct.exi.datatype.TypeEncoderLexical;
+import com.siemens.ct.exi.datatype.TypeEncoderString;
+import com.siemens.ct.exi.datatype.TypeEncoderTyped;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderTyped;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderDatatypeRespresentationMap;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderLexical;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderTyped;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaEntry;
@@ -214,12 +214,11 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				// use restricted characters sets
-				typeEncoder = new TypeEncoderLexical(this);
+				typeEncoder = new TypeEncoderLexical();
 			} else {
 				if (userDefinedDatatypeRepresentations != null
 						&& userDefinedDatatypeRepresentations.length > 0) {
-					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap(
-							this);
+					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap();
 
 					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
 						enc
@@ -229,13 +228,13 @@ public class DefaultEXIFactory implements EXIFactory {
 					typeEncoder = enc;
 				} else {
 					// use default type encoders
-					typeEncoder = new TypeEncoderTyped(this);
+					typeEncoder = new TypeEncoderTyped();
 				}
 			}
 
 		} else {
 			// use string only
-			typeEncoder = new TypeEncoderString(this);
+			typeEncoder = new TypeEncoderString();
 		}
 
 		// // populate type-encoder string table
@@ -289,36 +288,6 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return typeDecoder;
 	}
-
-//	public EncoderBlock createEncoderBlock(OutputStream outputStream) {
-//		
-//		System.out.println("dsadas");
-//		
-//		EncoderBlock encBlock;
-//
-//		TypeEncoder typeEncoder = this.createTypeEncoder();
-//
-//		switch (codingMode) {
-//		case BIT_PACKED:
-//			encBlock = new EncoderBitBlock(outputStream, typeEncoder);
-//			break;
-//		case BYTE_PACKED:
-//			encBlock = new EncoderByteBlock(outputStream, typeEncoder);
-//			break;
-//		case PRE_COMPRESSION:
-//			encBlock = new EncoderByteBlockPreCompression(outputStream,
-//					typeEncoder);
-//			break;
-//		case COMPRESSION:
-//			encBlock = new EncoderByteBlockCompression(outputStream,
-//					typeEncoder);
-//			break;
-//		default:
-//			throw new IllegalArgumentException("Unknown CodingMode!");
-//		}
-//
-//		return encBlock;
-//	}
 
 	public DecoderBlock createDecoderBlock(InputStream inputStream)
 			throws IOException {

@@ -18,6 +18,13 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+import java.math.BigInteger;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -30,7 +37,25 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeUnsignedBigInteger extends AbstractDatatype {
+	
+	private BigInteger lastUnsignedInteger;
+	
 	public DatatypeUnsignedBigInteger(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.UNSIGNED_BIG_INTEGER, datatypeIdentifier);
+		this.rcs = new XSDIntegerCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		try {
+			lastUnsignedInteger = new BigInteger(value);
+			return (lastUnsignedInteger.signum() != -1);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeUnsignedBigInteger(lastUnsignedInteger);
 	}
 }

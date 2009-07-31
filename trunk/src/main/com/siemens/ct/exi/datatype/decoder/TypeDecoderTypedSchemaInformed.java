@@ -63,67 +63,90 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 
 	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,
 			String namespaceURI, String localName) throws IOException {
+		
+		char[] ccRet;
+		
 		switch (datatype.getDefaultBuiltInType()) {
 		case BINARY_BASE64:
-			return binaryBase64DTD.decodeValue(this, datatype, dc,
+			ccRet = binaryBase64DTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
+			break;
 		case BINARY_HEX:
-			return binaryHexDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = binaryHexDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case BOOLEAN:
-			return booleanDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = booleanDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case BOOLEAN_PATTERN:
-			return booleanPatternDTD.decodeValue(this, datatype, dc,
+			ccRet = booleanPatternDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
+			break;
 		case DECIMAL:
-			return decimalDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = decimalDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case FLOAT:
-			return floatDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = floatDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case DOUBLE:
-			return doubleDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = doubleDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case INTEGER:
-			return integerDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = integerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case LONG:
-			return longDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = longDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case BIG_INTEGER:
-			return bigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = bigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case UNSIGNED_INTEGER:
-			return unsignedIntegerDTD.decodeValue(this, datatype, dc,
+			ccRet = unsignedIntegerDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
+			break;
 		case UNSIGNED_LONG:
-			return unsignedLongDTD.decodeValue(this, datatype, dc,
+			ccRet = unsignedLongDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
+			break;
 		case UNSIGNED_BIG_INTEGER:
-			return unsignedBigIntegerDTD.decodeValue(this, datatype, dc,
+			ccRet = unsignedBigIntegerDTD.decodeValue(this, datatype, dc,
 					namespaceURI, localName);
+			break;
 		case NBIT_INTEGER:
-			return nBitIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = nBitIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case NBIT_LONG:
-			return nBitLongDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = nBitLongDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case NBIT_BIG_INTEGER:
-			return nBitBigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = nBitBigIntegerDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case DATETIME:
-			return datetimeDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = datetimeDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case ENUMERATION:
-			return enumerationDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = enumerationDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case LIST:
-			return listDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = listDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		case STRING:
-			return stringDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = stringDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 //			char[] c = stringDTD.decodeValue(this, datatype, dc, namespaceURI,
 //					localName);
 //			System.out.println("StringDec: " + new String(c));
@@ -133,10 +156,14 @@ public class TypeDecoderTypedSchemaInformed extends AbstractTypeDecoder {
 			restrictedCharSetDTD
 			.setRestrictedCharacterSet(((DatatypeRestrictedCharacterSet) datatype)
 					.getRestrictedCharacterSet());
-			return restrictedCharSetDTD.decodeValue(this, datatype, dc, namespaceURI,
+			ccRet = restrictedCharSetDTD.decodeValue(this, datatype, dc, namespaceURI,
 					localName);
+			break;
 		default:
 			throw new RuntimeException("Unknown BuiltIn Type: " + datatype.getDefaultBuiltInType());
 		}
+		
+		// System.out.println("readTypeValidValue " + new String(ccRet));
+		return ccRet;
 	}
 }

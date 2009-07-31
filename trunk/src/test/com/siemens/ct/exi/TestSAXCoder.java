@@ -16,21 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
 
-import com.siemens.ct.exi.util.ExpandedName;
+package com.siemens.ct.exi;
 
-/**
- * TODO Description
- * 
- * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
- * 
- * @version 0.3.20080718
- */
+public class TestSAXCoder {
 
-public class DatatypeSignedBigInteger extends AbstractDatatype {
-	public DatatypeSignedBigInteger(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BIG_INTEGER, datatypeIdentifier);
+	public static void main(String[] args) throws Exception {
+		// encode
+		TestSAXEncoder.main(null);
+		// decode
+		TestSAXDecoder.main(null);
 	}
+
 }

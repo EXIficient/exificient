@@ -18,7 +18,10 @@
 
 package com.siemens.ct.exi.datatype;
 
-import com.siemens.ct.exi.util.ExpandedName;
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * TODO Description
@@ -26,11 +29,25 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090421
  */
 
-public class DatatypeSignedLong extends AbstractDatatype {
-	public DatatypeSignedLong(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.LONG, datatypeIdentifier);
+public class TypeEncoderLexical extends AbstractTypeEncoder {
+	
+	protected DatatypeRestrictedCharacterSet rcsDatatype;
+	protected Datatype lastDatatype;
+	
+	public TypeEncoderLexical() {
+		super();
+		rcsDatatype = new DatatypeRestrictedCharacterSet(null);
+	}
+
+	public boolean isValid(Datatype datatype, String value) {
+		lastDatatype = datatype;
+		return datatype.isValidRCS(value);
+	}
+	
+	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+		lastDatatype.writeValueRCS(rcsDatatype, valueChannel, stringEncoder, context);
 	}
 }

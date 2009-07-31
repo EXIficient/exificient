@@ -18,6 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -31,6 +37,9 @@ import com.siemens.ct.exi.util.MethodsBag;
  */
 
 public class DatatypeNBitInteger extends AbstractDatatype {
+	
+	private int valueToEncode;
+	
 	protected final int lowerBound;
 	protected final int upperBound;
 	protected final int numberOfBits4Range;
@@ -38,6 +47,7 @@ public class DatatypeNBitInteger extends AbstractDatatype {
 	public DatatypeNBitInteger(ExpandedName datatypeIdentifier,
 			int lowerBound, int upperBound, int boundedRange) {
 		super(BuiltInType.NBIT_INTEGER, datatypeIdentifier);
+		this.rcs = new XSDIntegerCharacterSet();
 
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
@@ -56,6 +66,30 @@ public class DatatypeNBitInteger extends AbstractDatatype {
 
 	public int getNumberOfBits() {
 		return numberOfBits4Range;
+	}
+	
+	public boolean isValid(String value) {
+		try {
+			valueToEncode = Integer.parseInt(value);
+
+
+			// check lower & upper bound
+			if (valueToEncode >= lowerBound
+					&& valueToEncode <= upperBound) {
+				// retrieve offset & update value
+				valueToEncode -= lowerBound;
+				return true;
+			} else {
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
 	}
 
 }

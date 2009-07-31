@@ -18,8 +18,13 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -36,10 +41,13 @@ public class DatatypeNBitBigInteger extends AbstractDatatype {
 	protected final BigInteger lowerBound;
 	protected final BigInteger upperBound;
 	protected final int numberOfBits4Range;
+	
+	private int valueToEncode;
 
 	public DatatypeNBitBigInteger(ExpandedName datatypeIdentifier,
 			BigInteger lowerBound, BigInteger upperBound, int boundedRange) {
 		super(BuiltInType.NBIT_BIG_INTEGER, datatypeIdentifier);
+		this.rcs = new XSDIntegerCharacterSet();
 
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
@@ -58,6 +66,31 @@ public class DatatypeNBitBigInteger extends AbstractDatatype {
 
 	public int getNumberOfBits() {
 		return numberOfBits4Range;
+	}
+	
+	public boolean isValid(String value) {
+		try {
+			BigInteger bValueToEncode = new BigInteger(value);
+
+			// check lower & upper bound
+			if (bValueToEncode.compareTo(lowerBound) >= 0 
+					&& bValueToEncode.compareTo(upperBound) <= 0 ) {
+				// retrieve offset & update value
+				bValueToEncode = bValueToEncode.subtract(lowerBound);
+				assert(bValueToEncode.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0);
+				valueToEncode = bValueToEncode.intValue();
+				return true;
+			} else {
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
 	}
 
 }

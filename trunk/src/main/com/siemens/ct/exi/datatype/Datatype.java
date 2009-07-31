@@ -18,6 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -35,4 +41,16 @@ public interface Datatype {
 
 	// used for codec map
 	public ExpandedName getDatatypeIdentifier();
+	
+	// type aware
+	public boolean isValid(String value);
+	
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
+
+	// restricted character set 
+	public RestrictedCharacterSet getRestrictedCharacterSet();
+	
+	public boolean isValidRCS(String value);
+	
+	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
 }

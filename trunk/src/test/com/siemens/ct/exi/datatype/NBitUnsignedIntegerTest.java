@@ -22,9 +22,6 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.datatype.decoder.NBitIntegerDatatypeDecoder;
 import com.siemens.ct.exi.datatype.decoder.NBitLongDatatypeDecoder;
-import com.siemens.ct.exi.datatype.encoder.NBitBigIntegerDatatypeEncoder;
-import com.siemens.ct.exi.datatype.encoder.NBitIntegerDatatypeEncoder;
-import com.siemens.ct.exi.datatype.encoder.NBitLongDatatypeEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -212,11 +209,8 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 
-		NBitBigIntegerDatatypeEncoder enc = new NBitBigIntegerDatatypeEncoder(
-				null);
-
 		// try to validate
-		assertFalse(enc.isValid(datatype, "12"));
+		assertFalse(datatype.isValid("12"));
 	}
 
 	public void testNBitUnsignedIntegerFacet2() throws IOException,
@@ -239,14 +233,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		String localName = "";
 
 		// write (bit & byte )
-		NBitLongDatatypeEncoder enc = new NBitLongDatatypeEncoder(null);
-		assertTrue(enc.isValid(datatype, sValue));
+		assertTrue(datatype.isValid(sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		enc.writeValue(null, bitEC);
+		datatype.writeValue(bitEC, null, null);
 		bitEC.flush();
 		// byte
-		enc.writeValue(null, getByteEncoder());
+		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
 		NBitLongDatatypeDecoder dec = new NBitLongDatatypeDecoder();
@@ -283,14 +276,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		String localName = "";
 
 		// write (bit & byte )
-		NBitIntegerDatatypeEncoder enc = new NBitIntegerDatatypeEncoder(null);
-		assertTrue(enc.isValid(datatype, sValue));
+		assertTrue(datatype.isValid(sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		enc.writeValue(null, bitEC);
+		datatype.writeValue(bitEC, null, null);
 		bitEC.flush();
 		// byte
-		enc.writeValue(null, getByteEncoder());
+		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
 		NBitIntegerDatatypeDecoder dec = new NBitIntegerDatatypeDecoder();

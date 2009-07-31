@@ -130,9 +130,11 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				List<String> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
-					typeEncoder.isTypeValid(valueDatatypes.get(i),
-							values.get(i));
-					typeEncoder.writeTypeValidValue(context, channel);
+					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+					typeEncoder.writeValue(context, channel);
+//					typeEncoder.isTypeValid(valueDatatypes.get(i),
+//							values.get(i));
+//					typeEncoder.writeTypeValidValue(context, channel);
 				}
 			}
 			finalizeStream();
@@ -167,9 +169,11 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isTypeValid(valueDatatypes.get(i),
-								values.get(i));
-						typeEncoder.writeTypeValidValue(context, leq100);
+						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+						typeEncoder.writeValue(context, leq100);
+//						typeEncoder.isTypeValid(valueDatatypes.get(i),
+//								values.get(i));
+//						typeEncoder.writeTypeValidValue(context, leq100);
 					}
 					wasThereLeq100 = true;
 				}
@@ -189,9 +193,12 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 					//	create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isTypeValid(valueDatatypes.get(i),
-								values.get(i));
-						typeEncoder.writeTypeValidValue(context, gre100);
+						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+						typeEncoder.writeValue(context, gre100);
+						
+//						typeEncoder.isTypeValid(valueDatatypes.get(i),
+//								values.get(i));
+//						typeEncoder.writeTypeValidValue(context, gre100);
 					}
 					//	finish stream
 					finalizeStream();
