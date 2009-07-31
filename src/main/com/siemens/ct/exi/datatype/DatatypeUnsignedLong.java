@@ -18,6 +18,12 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -30,7 +36,25 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeUnsignedLong extends AbstractDatatype {
+	
+	private long lastUnsignedInteger;
+	
 	public DatatypeUnsignedLong(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.UNSIGNED_LONG, datatypeIdentifier);
+		this.rcs = new XSDIntegerCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		try {
+			lastUnsignedInteger = Long.parseLong(value);
+			return (lastUnsignedInteger >= 0);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeUnsignedLong(lastUnsignedInteger);
 	}
 }

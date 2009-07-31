@@ -53,8 +53,10 @@ public class TypeDecoderDatatypeRepresentationMap extends AbstractTypeDecoder
 
 	public void registerDatatypeRepresentation(
 			DatatypeRepresentation datatypeRepresentation) {
-		userDefinedDatatypeRepresentations.put(datatypeRepresentation
-				.getSchemaDatatype(), datatypeRepresentation);
+		
+		throw new RuntimeException("TODO DatatypeRepresentationMap");
+//		userDefinedDatatypeRepresentations.put(datatypeRepresentation
+//				.getSchemaDatatype(), datatypeRepresentation);
 	}
 
 	public char[] readTypeValidValue(Datatype datatype, DecoderChannel dc,

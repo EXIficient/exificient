@@ -75,6 +75,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration
 				.getExiLocation());
+		assert(exiDocument.available()> 0);
 
 		// decoded xml output
 		String decodedXMLLocation = QuickTestConfiguration.getExiLocation()

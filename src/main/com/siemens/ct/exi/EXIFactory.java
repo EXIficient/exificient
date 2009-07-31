@@ -25,8 +25,8 @@ import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.datatype.DatatypeRepresentation;
+import com.siemens.ct.exi.datatype.TypeEncoder;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.block.DecoderBlock;
 

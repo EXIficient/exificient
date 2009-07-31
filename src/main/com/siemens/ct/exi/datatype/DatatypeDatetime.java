@@ -18,8 +18,15 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.util.datatype.XSDDatetime;
 
 /**
  * TODO Description
@@ -31,16 +38,28 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  */
 
 public class DatatypeDatetime extends AbstractDatatype {
-	DatetimeType dateType;
+	DatetimeType datetimeType;
+	
+	private XSDDatetime lastValidDatetime = XSDDatetime.newInstance();
 
 	public DatatypeDatetime(DatetimeType dateType,
 			ExpandedName datatypeIdentifier) {
 		super(BuiltInType.DATETIME, datatypeIdentifier);
-		this.dateType = dateType;
+		this.rcs = new XSDDateTimeCharacterSet();
+		this.datetimeType = dateType;
 	}
 
 	public DatetimeType getDatetimeType() {
-		return dateType;
+		return datetimeType;
+	}
+	
+	public boolean isValid(String value) {
+		return lastValidDatetime.parse(value, datetimeType);
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeDateTime(lastValidDatetime);
 	}
 
 }

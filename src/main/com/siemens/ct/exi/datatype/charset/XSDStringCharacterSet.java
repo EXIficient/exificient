@@ -16,21 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.datatype.charset;
 
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
- * TODO Description
+ * Built-In Restricted Character Set for xsd:integer
+ * http://www.w3.org/TR/exi/#builtInRestrictedStrings
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090421
  */
 
-public class DatatypeSignedInteger extends AbstractDatatype {
-	public DatatypeSignedInteger(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.INTEGER, datatypeIdentifier);
+public class XSDStringCharacterSet extends AbstractRestrictedCharacterSet {
+
+	/*
+	 * xsd:string <none>
+	 */
+	public XSDStringCharacterSet() {
+		super();
 	}
 }

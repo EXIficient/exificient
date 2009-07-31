@@ -18,7 +18,14 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.datatype.XSDDecimal;
 
 /**
  * TODO Description
@@ -30,7 +37,20 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public class DatatypeDecimal extends AbstractDatatype {
+	
+	private XSDDecimal lastValidDecimal = XSDDecimal.newInstance();
+	
 	public DatatypeDecimal(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.DECIMAL, datatypeIdentifier);
+		this.rcs = new XSDDecimalCharacterSet();
+	}
+	
+	public boolean isValid(String value) {
+		return lastValidDecimal.parse(value);
+	}
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+		valueChannel.encodeDecimal(lastValidDecimal.isNegative(), lastValidDecimal.getIntegral(), lastValidDecimal.getReverseFractional());
 	}
 }

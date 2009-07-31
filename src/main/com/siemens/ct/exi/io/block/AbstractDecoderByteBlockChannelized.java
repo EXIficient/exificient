@@ -66,7 +66,6 @@ public abstract class AbstractDecoderByteBlockChannelized extends
 			// single compressed stream (included structure)
 			for (int i = 0; i < valueQNames.size(); i++) {
 				NameContext channelContext = valueQNames.get(i);
-
 				int occs = occurrences.get(channelContext);
 				
 				List<Datatype> datatypes = dataTypes.get(channelContext);

@@ -90,8 +90,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
+		// SchemaTestCase.setupQuickTest ( );
+		GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

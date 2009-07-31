@@ -31,7 +31,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoder;
+import com.siemens.ct.exi.datatype.TypeEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -200,7 +200,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	}
 
 	protected boolean isTypeValid(Datatype datatype, String value) {
-		return typeEncoder.isTypeValid(datatype, value);
+		return typeEncoder.isValid(datatype, value);
+		// return typeEncoder.isTypeValid(datatype, value);
 	}
 
 	protected abstract void writeValueTypeValid() throws IOException;

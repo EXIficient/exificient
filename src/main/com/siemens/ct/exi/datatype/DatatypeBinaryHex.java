@@ -18,14 +18,8 @@
 
 package com.siemens.ct.exi.datatype;
 
-import java.io.IOException;
-
-import com.siemens.ct.exi.core.NameContext;
-import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 
 /**
  * TODO Description
@@ -33,24 +27,14 @@ import com.siemens.ct.exi.util.datatype.XSDBoolean;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20081112
  */
 
-public class DatatypeBoolean extends AbstractDatatype {
-	
-	protected XSDBoolean lastValidBoolean = XSDBoolean.newInstance();
-	
-	public DatatypeBoolean(ExpandedName datatypeIdentifier) {
-		super(BuiltInType.BOOLEAN, datatypeIdentifier);
-		this.rcs = new XSDBooleanCharacterSet();
+public class DatatypeBinaryHex extends AbstractDatatypeBinary {
+
+	public DatatypeBinaryHex(ExpandedName datatypeIdentifier) {
+		super(datatypeIdentifier, BuiltInType.BINARY_HEX);
+		this.rcs = new XSDHexBinaryCharacterSet();
 	}
 
-	public boolean isValid(String value) {
-		return lastValidBoolean.parse(value);
-	}
-
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
-			throws IOException {
-		valueChannel.encodeBoolean(lastValidBoolean);
-	}
 }

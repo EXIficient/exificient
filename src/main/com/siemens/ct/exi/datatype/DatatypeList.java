@@ -18,6 +18,14 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
+
 /**
  * TODO Description
  * 
@@ -28,10 +36,16 @@ package com.siemens.ct.exi.datatype;
  */
 
 public class DatatypeList extends AbstractDatatype {
+	
 	private Datatype listDatatype;
+	
+	protected int numberOfEnumeratedTypes;
+	protected String lastValidValue;
 
 	public DatatypeList(Datatype listDatatype) {
 		super(BuiltInType.LIST, null);
+		
+		this.rcs = listDatatype.getRestrictedCharacterSet();
 
 		if (listDatatype.getDefaultBuiltInType() == BuiltInType.LIST) {
 			throw new IllegalArgumentException();
@@ -42,5 +56,69 @@ public class DatatypeList extends AbstractDatatype {
 
 	public Datatype getListDatatype() {
 		return listDatatype;
+	}
+	
+	public boolean isValid(String value) {
+		// iterate over all tokens
+		StringTokenizer st = new StringTokenizer(value,
+				Constants.XSD_LIST_DELIM);
+		numberOfEnumeratedTypes = 0;
+
+		while (st.hasMoreTokens()) {
+			if (!listDatatype.isValid(st.nextToken())) {
+				// invalid --> abort process
+				return false;
+			}
+			numberOfEnumeratedTypes++;
+		}
+
+		lastValidValue = value;
+		return true;
+	}
+	
+	@Override
+	public boolean isValidRCS(String value) {
+		StringTokenizer st = new StringTokenizer(value,
+				Constants.XSD_LIST_DELIM);
+		numberOfEnumeratedTypes = st.countTokens();
+		return super.isValidRCS(value);
+	}
+	
+
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+			throws IOException {
+			/*
+			 * Needs to check AGAIN & writes to stream
+			 */
+			// length prefixed sequence of values
+			valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
+
+			// iterate over all tokens
+			StringTokenizer st = new StringTokenizer(lastValidValue,
+					Constants.XSD_LIST_DELIM);
+
+			while (st.hasMoreTokens()) {
+				// Note: assumption that is valid (was already checked!)
+				//	Nevertheless isValid method needs to be called!
+				listDatatype.isValid(st.nextToken());
+				listDatatype.writeValue(valueChannel, stringEncoder, context);
+			}
+	}
+	
+	@Override
+	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
+		// length prefixed sequence of values
+		valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
+		
+		// iterate over all tokens
+		StringTokenizer st = new StringTokenizer(this.lastRCSValue,
+				Constants.XSD_LIST_DELIM);
+
+		rcsEncoder.setRestrictedCharacterSet(rcs);
+		
+		while (st.hasMoreTokens()) {
+			rcsEncoder.isValid(st.nextToken());
+			rcsEncoder.writeValue(valueChannel, stringEncoder, context);
+		}
 	}
 }

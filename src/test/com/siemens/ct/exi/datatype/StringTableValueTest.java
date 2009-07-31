@@ -28,7 +28,6 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.core.URIContext;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
-import com.siemens.ct.exi.datatype.encoder.TypeEncoderString;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
@@ -52,22 +51,22 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString(exiFactory);
+		TypeEncoderString tes = new TypeEncoderString();
 		tes.setStringEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val1);
-		tes.writeTypeValidValue(context, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val2);
-		tes.writeTypeValidValue(context, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val1);
-		tes.writeTypeValidValue(context, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(context, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(context, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.writeValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val2);
+		tes.writeValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.writeValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(context, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(context, bec);
 
 		bec.flush();
 		baos.flush();
@@ -114,22 +113,22 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString(exiFactory);
+		TypeEncoderString tes = new TypeEncoderString();
 		tes.setStringEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val1);
-		tes.writeTypeValidValue(c1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val2);
-		tes.writeTypeValidValue(c3, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val1);
-		tes.writeTypeValidValue(c2, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(c3, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(c1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, val3);
-		tes.writeTypeValidValue(c3, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.writeValue(c1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val2);
+		tes.writeValue(c3, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.writeValue(c2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(c3, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(c1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.writeValue(c3, bec);
 
 		bec.flush();
 		baos.flush();
@@ -185,30 +184,30 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString(exiFactory);
+		TypeEncoderString tes = new TypeEncoderString();
 		tes.setStringEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, atCh1);
-		tes.writeTypeValidValue(ca1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch1);
-		tes.writeTypeValidValue(cexx1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch2);
-		tes.writeTypeValidValue(cexx2, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch2);
-		tes.writeTypeValidValue(cex2, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch3);
-		tes.writeTypeValidValue(cex3, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, atCh2);
-		tes.writeTypeValidValue(ca1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch1);
-		tes.writeTypeValidValue(cexx1, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch2);
-		tes.writeTypeValidValue(cexx2, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch2);
-		tes.writeTypeValidValue(cex2, bec);
-		tes.isTypeValid(BuiltIn.DEFAULT_DATATYPE, ch3);
-		tes.writeTypeValidValue(cex2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, atCh1);
+		tes.writeValue(ca1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch1);
+		tes.writeValue(cexx1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.writeValue(cexx2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.writeValue(cex2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch3);
+		tes.writeValue(cex3, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, atCh2);
+		tes.writeValue(ca1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch1);
+		tes.writeValue(cexx1, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.writeValue(cexx2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.writeValue(cex2, bec);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch3);
+		tes.writeValue(cex2, bec);
 
 		bec.flush();
 		baos.flush();
