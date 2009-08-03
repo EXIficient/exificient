@@ -21,6 +21,7 @@ package com.siemens.ct.exi.core.sax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -98,21 +99,13 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	}
 
 	public void startCDATA() throws SAXException {
-		try {
-			charEncoder.checkPendingChars();
-			// System.out.println("> startCDATA");
-		} catch (EXIException e) {
-			throw new SAXException("startCDATA", e);
-		}
+		// <![CDATA[
+		super.characters(Constants.CDATA_START.toCharArray(), 0, Constants.CDATA_START.length());
 	}
 
 	public void endCDATA() throws SAXException {
-		try {
-			charEncoder.checkPendingChars();
-			// System.out.println("> endCDATA");
-		} catch (EXIException e) {
-			throw new SAXException("endCDATA", e);
-		}
+		// ]]>
+		super.characters(Constants.CDATA_END.toCharArray(), 0, Constants.CDATA_END.length());
 	}
 
 	public void startDTD(String name, String publicId, String systemId)
