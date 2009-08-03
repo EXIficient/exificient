@@ -101,12 +101,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 
-	@Override
-	protected EventInformation lookForAttribute(String uri, String localName) {
-
-		return super.lookForAttribute(uri, localName);
-	}
-
 	/*
 	 * Stream
 	 */
@@ -179,6 +173,54 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					.getNumberOfLocalNames());
 			channel.encodeNBitUnsignedInteger(nContext.localNameID, n);
 		}
+	}
+
+	protected EventInformation lookForStartElement(String uri, String localName) {
+		EventInformation ei;
+		
+		// update lookup event
+		eventSE.setNamespaceURI(uri);
+		eventSE.setLocalName(localName);
+
+		// try to find declared SE(uri:localName)
+		ei = currentRule.lookFor(eventSE);
+
+		if (ei == null) {
+
+			// not found, try SE(uri:*)
+			eventSE_NS.setNamespaceURI(uri);
+			ei = currentRule.lookFor(eventSE_NS);
+
+			if (ei == null) {
+				// not found, try SE(*), generic SE on first level
+				ei = currentRule.lookFor(eventSEg);
+			}
+		}
+
+		return ei;
+	}
+
+	protected EventInformation lookForAttribute(String uri, String localName) {
+		EventInformation ei;
+
+		eventAT.setNamespaceURI(uri);
+		eventAT.setLocalName(localName);
+
+		// try to find declared AT(uri:localName)
+		ei = currentRule.lookFor(eventAT);
+
+		if (ei == null) {
+			// try to find declared AT(uri:*)
+			eventAT_NS.setNamespaceURI(uri);
+			ei = currentRule.lookFor(eventAT_NS);
+
+			if (ei == null) {
+				// try to find declared AT(*), generic AT on first level
+				ei = currentRule.lookFor(eventATg);
+			}
+		}
+
+		return ei;
 	}
 
 	public void writePrefix(String prefix, String uri) throws IOException {
@@ -338,6 +380,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			sePrefix = prefix;
 			EventInformation ei = this.lookForStartElement(uri, localName);
 
+			boolean isGenericSE = true;
+			
 			if (ei != null) {
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -345,6 +389,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				EventType eventType = ei.event.getEventType();
 				if (eventType == EventType.START_ELEMENT) {
 					// qname implicit by SE(qname) event
+					isGenericSE = false;
 				} else if (eventType == EventType.START_ELEMENT_NS) {
 					// encode local-name
 					writeLocalName(localName, uri);
@@ -386,7 +431,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// push context
 			pushElementContext(uri, localName);
 			// update and push element rule
-			pushElementRule();
+			pushElementRule(isGenericSE);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
