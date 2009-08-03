@@ -596,25 +596,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return piData;
 	}
 
-//	/*
-//	 * Values
-//	 */
-//	@Override
-//	public void addValue(String value) {
-//		throw new RuntimeException("Value decoder");
-//	}
-//
-//	@Override
-//	public int getLocalValueSize() {
-//		throw new RuntimeException("Value decoder");
-//	}
-//
-//	@Override
-//	public int getGlobalValueSize() {
-//		throw new RuntimeException("Value decoder");
-//	}
-
-
 	public void decodeEndFragmentSelfContained() throws EXIException {
 		throw new NoSuchMechanismException("[EXI] SelfContained");
 	}

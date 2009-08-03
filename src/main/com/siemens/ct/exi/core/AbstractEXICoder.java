@@ -33,7 +33,6 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.ElementContainer;
-import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaEntry;
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -325,7 +324,7 @@ public abstract class AbstractEXICoder {
 		namespaces.popContext();
 	}
 
-	protected void pushElementRule() {
+	protected void pushElementRule(boolean isGenericSE) {
 		// update current rule
 		if ((currentRule = context.getUniqueSchemaRule()) == null) {
 			if (this.elementContextStack.size() == 2) {
@@ -337,7 +336,7 @@ public abstract class AbstractEXICoder {
 				}
 			} else {
 				// no root element
-				if (wasGenericSE && grammar.isGlobalElement(context.namespaceURI, context.localName)) {
+				if (isGenericSE && grammar.isGlobalElement(context.namespaceURI, context.localName)) {
 					//	global element
 					currentRule = context.getGlobalRule();
 				} else {
@@ -397,59 +396,6 @@ public abstract class AbstractEXICoder {
 
 	protected void popAttributeContext() {
 		context = prevElementContext;
-	}
-	
-	protected boolean wasGenericSE;
-
-	protected EventInformation lookForStartElement(String uri, String localName) {
-		EventInformation ei;
-		
-		wasGenericSE = false;
-		
-		// update lookup event
-		eventSE.setNamespaceURI(uri);
-		eventSE.setLocalName(localName);
-
-		// try to find declared SE(uri:localName)
-		ei = currentRule.lookFor(eventSE);
-
-		if (ei == null) {
-			wasGenericSE = true;
-			
-			// not found, try SE(uri:*)
-			eventSE_NS.setNamespaceURI(uri);
-			ei = currentRule.lookFor(eventSE_NS);
-
-			if (ei == null) {
-				// not found, try SE(*), generic SE on first level
-				ei = currentRule.lookFor(eventSEg);
-			}
-		}
-
-		return ei;
-	}
-
-	protected EventInformation lookForAttribute(String uri, String localName) {
-		EventInformation ei;
-
-		eventAT.setNamespaceURI(uri);
-		eventAT.setLocalName(localName);
-
-		// try to find declared AT(uri:localName)
-		ei = currentRule.lookFor(eventAT);
-
-		if (ei == null) {
-			// try to find declared AT(uri:*)
-			eventAT_NS.setNamespaceURI(uri);
-			ei = currentRule.lookFor(eventAT_NS);
-
-			if (ei == null) {
-				// try to find declared AT(*), generic AT on first level
-				ei = currentRule.lookFor(eventATg);
-			}
-		}
-
-		return ei;
 	}
 	
 	/*

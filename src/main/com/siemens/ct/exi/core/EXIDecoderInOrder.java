@@ -106,9 +106,12 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		try {
 			// reset local-element-ns prefix
 			elementPrefix = null;
+			
+			boolean isGenericSE = true;
 
 			if (nextEventType == EventType.START_ELEMENT) {
 				// StartEvent
+				isGenericSE = false;
 				StartElement se = ((StartElement) nextEvent);
 				this.elementURI = se.getNamespaceURI();
 				this.elementLocalName = se.getLocalName();
@@ -149,7 +152,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			}
 
 			pushElementContext(elementURI, elementLocalName);
-			pushElementRule();
+			pushElementRule(isGenericSE);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
