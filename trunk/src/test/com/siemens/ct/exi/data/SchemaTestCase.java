@@ -53,7 +53,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
-		SchemaTestCase.setConfigurationSchemaNillable2 ( );
+		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
@@ -61,6 +61,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
 		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
+		SchemaTestCase.setConfigurationSchemaAny1 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );
 		// SchemaTestCase.setConfigurationSchemaList ( );
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
@@ -662,7 +663,7 @@ public class SchemaTestCase extends AbstractTestCase {
 	}
 
 	@Test
-	public void testSchemaAny() throws Exception {
+	public void testSchemaAny0() throws Exception {
 		// set up configuration
 		setConfigurationSchemaAny0();
 
@@ -674,6 +675,21 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXsdLocation("./data/schema/any.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/schema/any0.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/any0.exi");
+	}
+	
+	@Test
+	public void testSchemaAny1() throws Exception {
+		// set up configuration
+		setConfigurationSchemaAny1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationSchemaAny1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/any1.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/any1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/any1.exi");
 	}
 
 	@Test

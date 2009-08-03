@@ -79,7 +79,18 @@ public class NameContext {
 		this.schemaRuleScopes = scopes;
 	}
 
-	// public Rule getScopeRule(String scopeUri, String scopeLocalName) {
+	public Rule getGlobalRule() {
+		if (schemaRules != null) {
+			for (int i = 0; i < schemaRuleScopes.length; i++) {
+				ExpandedName[] ens = schemaRuleScopes[i];
+				if(ens.length == 0) {
+					return schemaRules[i];
+				}
+			}
+		}
+		return null;
+	}
+	
 	public Rule getScopeRule(List<NameContext> scope) {
 		if (schemaRules != null) {
 			for (int i = 0; i < schemaRuleScopes.length; i++) {
@@ -109,13 +120,6 @@ public class NameContext {
 						return schemaRules[i];
 					}	
 				}
-				
-				
-//				ExpandedName en = schemaRuleScopes[i];
-//				// (en == null) --> global element
-//				if (en != null && en.compareTo(scopeUri, scopeLocalName) == 0) {
-//					return schemaRules[i];
-//				}
 			}
 		}
 

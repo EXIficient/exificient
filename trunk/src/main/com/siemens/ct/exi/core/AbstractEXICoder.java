@@ -337,11 +337,13 @@ public abstract class AbstractEXICoder {
 				}
 			} else {
 				// no root element
-				// try weather scope information can help
-				currentRule = context.getScopeRule(elementContextStack);
-				
-//				NameContext scope = elementContextStack.get(elementContextStack.size() - 2);
-//				currentRule = context.getScopeRule(scope.namespaceURI, scope.localName);
+				if (wasGenericSE && grammar.isGlobalElement(context.namespaceURI, context.localName)) {
+					//	global element
+					currentRule = context.getGlobalRule();
+				} else {
+					// no global element, scope information may help
+					currentRule = context.getScopeRule(elementContextStack);
+				}
 
 				if (currentRule == null) {
 					// element not found in context --> runtime
@@ -396,9 +398,13 @@ public abstract class AbstractEXICoder {
 	protected void popAttributeContext() {
 		context = prevElementContext;
 	}
+	
+	protected boolean wasGenericSE;
 
 	protected EventInformation lookForStartElement(String uri, String localName) {
 		EventInformation ei;
+		
+		wasGenericSE = false;
 		
 		// update lookup event
 		eventSE.setNamespaceURI(uri);
@@ -408,6 +414,8 @@ public abstract class AbstractEXICoder {
 		ei = currentRule.lookFor(eventSE);
 
 		if (ei == null) {
+			wasGenericSE = true;
+			
 			// not found, try SE(uri:*)
 			eventSE_NS.setNamespaceURI(uri);
 			ei = currentRule.lookFor(eventSE_NS);
