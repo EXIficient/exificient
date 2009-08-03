@@ -160,7 +160,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		Document docControl = TestDOMEncoder.getDocument(control);
 		Document docTest = TestDOMEncoder.getDocument(test);
-		assertXMLEqual("doo", docControl, docTest);
+		assertXMLEqual(ef.getFidelityOptions().toString(), docControl, docTest);
 		// assertXMLEqual(new InputSource(control), new InputSource(test));
 	}
 

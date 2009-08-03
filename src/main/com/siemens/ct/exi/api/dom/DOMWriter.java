@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
@@ -198,6 +199,10 @@ public class DOMWriter {
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
 				// TODO ER
+				break;
+			case Node.CDATA_SECTION_NODE:
+				String cdata = n.getNodeValue();
+				encoder.encodeCharacters(Constants.CDATA_START + cdata + Constants.CDATA_END);
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {

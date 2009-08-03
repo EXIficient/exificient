@@ -35,7 +35,9 @@ public class W3CTestCase extends AbstractTestCase {
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx();
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
 		// W3CTestCase.setConfigurationW3CEXIbyExample ( );
-		W3CTestCase.setConfigurationW3CPrimerNotebook();
+		// W3CTestCase.setConfigurationW3CPrimerNotebook();
+		// W3CTestCase.setConfigurationW3CXHTMLStrict1();
+		W3CTestCase.setConfigurationW3CXHTMLTransitional1();
 	}
 
 	protected void setUp() {
@@ -178,6 +180,46 @@ public class W3CTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/W3C/PrimerNotebook/notebook.xml");
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/PrimerNotebook/notebook.exi");
+	}
+	
+	/*
+	 * XHTML examples
+	 */
+	
+	@Test
+	public void testW3CXHTMLStrict1() throws Exception {
+		// set up configuration
+		setConfigurationW3CXHTMLStrict1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationW3CXHTMLStrict1() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/W3C/xhtml/xhtml1-strict.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/W3C/xhtml/www.w3.org.htm");
+		QuickTestConfiguration
+				.setExiLocation("./out/W3C/xhtml/www.w3.org.htm.exi");
+	}
+	
+	@Test
+	public void testW3CXHTMLTransitional1() throws Exception {
+		// set up configuration
+		setConfigurationW3CXHTMLTransitional1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationW3CXHTMLTransitional1() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/W3C/xhtml/xhtml1-transitional.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm");
+		QuickTestConfiguration
+				.setExiLocation("./out/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm.exi");
 	}
 
 }
