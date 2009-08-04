@@ -63,8 +63,8 @@ public interface Constants {
 	public static final char[] XSD_BOOLEAN_0_ARRAY = XSD_BOOLEAN_0
 			.toCharArray();
 
-	public static final String DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_TRUE;
-	public static final String DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_FALSE;
+	public static final char[] DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_1_ARRAY;
+	public static final char[] DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_0_ARRAY;
 
 	public static final int NOT_FOUND = -1;
 	
