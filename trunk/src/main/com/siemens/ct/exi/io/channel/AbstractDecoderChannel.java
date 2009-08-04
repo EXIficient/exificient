@@ -57,7 +57,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	public char[] decodeBooleanAsString() throws IOException {
 		// return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE
 		// : Constants.DECODED_BOOLEAN_FALSE);
-		return (decodeBoolean() ? Constants.XSD_BOOLEAN_TRUE_ARRAY : Constants.XSD_BOOLEAN_FALSE_ARRAY);
+		return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE : Constants.DECODED_BOOLEAN_FALSE);
 	}
 
 	/**
