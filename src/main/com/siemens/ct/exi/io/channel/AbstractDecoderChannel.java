@@ -82,29 +82,15 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		char[] ca = new char[length];
 
 		for (int i = 0; i < length; i++) {
-			int ch = decodeUnsignedInteger();
-			if (Character.isSupplementaryCodePoint(ch)) {
-				// TODO SupplementaryCodePoint, increase char array
-				throw new RuntimeException("TODO SupplementaryCodePoint ");
+			int codePoint = decodeUnsignedInteger();
+			if (Character.isSupplementaryCodePoint(codePoint)) {
+				Character.toChars(codePoint, ca, i++);
 			} else {
-				ca[i] = (char) ch;
+				ca[i] = (char) codePoint;
 			}
 		}
 		
-		// System.out.println(length + " -->" + new String(ca));
 		return ca;
-
-		// sb.setLength(0);
-		//
-		// for (int i = 0; i < length; i++) {
-		// int ch = decodeUnsignedInteger();
-		// if (Character.isSupplementaryCodePoint(ch)) {
-		// sb.append(Character.toChars(ch));
-		// } else {
-		// sb.append((char) ch);
-		// }
-		// }
-		// return sb.toString();
 	}
 
 	/**
