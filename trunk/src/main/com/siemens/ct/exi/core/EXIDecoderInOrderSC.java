@@ -19,11 +19,13 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -45,6 +47,10 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 
 	public EXIDecoderInOrderSC(EXIFactory exiFactory) {
 		super(exiFactory);
+		
+		assert(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC));
+		scStringTables = new ArrayList<StringTableDecoder>();
+		scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
 	}
 
 	/*

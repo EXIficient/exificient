@@ -21,15 +21,12 @@ package com.siemens.ct.exi.datatype.strings;
 import java.io.IOException;
 
 import com.siemens.ct.exi.core.NameContext;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 
-public interface StringEncoder extends StringCoder {
+public interface StringDecoder extends StringCoder {
 	
-	public void addValue(NameContext context, String value);
+	public void addValue(NameContext context, char[] value);
 	
-	public void writeValueAsString(NameContext context, EncoderChannel channel,
-			String value) throws IOException;
-
-	public boolean isStringHit(NameContext context, String value)
-			throws IOException;
+	public char[] readValueAsString(NameContext context, DecoderChannel channel) throws IOException;
+	
 }

@@ -74,7 +74,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		nil = XSDBoolean.newInstance();
 
 		// init once
-		// stringValues = new HashMap<String, ValueContainer>();
 		stringEncoder = new StringEncoderImpl();
 	}
 

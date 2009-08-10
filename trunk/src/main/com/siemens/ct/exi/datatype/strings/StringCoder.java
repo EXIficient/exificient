@@ -18,15 +18,8 @@
 
 package com.siemens.ct.exi.datatype.strings;
 
-import com.siemens.ct.exi.core.NameContext;
 
 public interface StringCoder {
-
-	public void addValue(NameContext context, String value);
-	
-//	public int getLocalValueSize(NameContext context);
-	
-	public int getGlobalValueSize();
 	
 	public void clear();
 }

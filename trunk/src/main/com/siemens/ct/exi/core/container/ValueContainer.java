@@ -21,13 +21,14 @@ package com.siemens.ct.exi.core.container;
 import com.siemens.ct.exi.core.NameContext;
 
 public class ValueContainer {
+	
 	public final NameContext context;
 	public final int localValueID;
 	public final int globalValueID;
-	
-	public ValueContainer(NameContext context, int globalValueID) {
+
+	public ValueContainer(NameContext context, int localValueID, int globalValueID) {
 		this.context = context;
-		this.localValueID = context.incrementLocalValueSize();
+		this.localValueID = localValueID;
 		this.globalValueID = globalValueID;
 	}
 }
