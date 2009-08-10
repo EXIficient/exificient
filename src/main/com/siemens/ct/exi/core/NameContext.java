@@ -32,7 +32,6 @@ public class NameContext {
 
 	// string tables
 	public final int localNameID;
-	protected int localValueSize;
 
 	// unique schema-rule
 	protected Rule schemaRule;
@@ -49,8 +48,6 @@ public class NameContext {
 		// 
 		this.namespaceURI = uriContext.namespaceURI;
 		this.localNameID = uriContext.getNumberOfLocalNames();
-
-		localValueSize = 0;
 	}
 
 	public String getLocalName() {
@@ -59,19 +56,6 @@ public class NameContext {
 
 	public String getNamespaceURI() {
 		return namespaceURI;
-	}
-	
-	/**
-	 * Increments the number of value items in this context.
-	 * 
-	 * @return previous number of values (before incrementing)
-	 */
-	public int incrementLocalValueSize() {
-		return localValueSize++;
-	}
-	
-	public int getLocalValueSize() {
-		return localValueSize;
 	}
 
 	public void setAmbiguousRules(Rule[] rules, ExpandedName[][] scopes) {

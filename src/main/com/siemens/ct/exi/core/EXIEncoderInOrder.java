@@ -58,12 +58,10 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 	protected void writeValueTypeValid()
 			throws IOException {
 		typeEncoder.writeValue(context, channel);
-		// typeEncoder.writeTypeValidValue(context, channel);
 	}
 
 	protected void writeValueAsString(String value)
 			throws IOException {
-//		writeValueAsString(channel, value);
 		stringEncoder.writeValueAsString(context, channel, value);
 	}
 

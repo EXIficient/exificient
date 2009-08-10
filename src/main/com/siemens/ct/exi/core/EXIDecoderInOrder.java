@@ -19,15 +19,11 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -44,19 +40,9 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {
-	// selfContained fragments
-	protected List<StringTableDecoder> scStringTables;
-	protected List<Map<String, Map<String, Rule>>> scRuntimeDispatchers;
-	// next
-	protected boolean hasNext;
 
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
-
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-			scStringTables = new ArrayList<StringTableDecoder>();
-			scRuntimeDispatchers = new ArrayList<Map<String, Map<String, Rule>>>();
-		}
 	}
 
 	@Override
@@ -65,7 +51,6 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 		nextEvent = null;
 		nextEventType = EventType.START_DOCUMENT;
-		hasNext = true;
 	}
 
 	public boolean hasNext() throws EXIException {

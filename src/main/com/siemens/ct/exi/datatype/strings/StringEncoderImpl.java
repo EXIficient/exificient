@@ -11,11 +11,15 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class StringEncoderImpl implements StringEncoder {
 
-	// strings
+	// strings (all)
 	protected Map<String, ValueContainer> stringValues;
+	
+	//	localValue counter
+	protected Map<NameContext, Integer> localValueSize;
 	
 	public StringEncoderImpl() {
 		stringValues = new HashMap<String, ValueContainer>();
+		localValueSize = new HashMap<NameContext, Integer>();
 	}
 	
 	public void writeValueAsString(NameContext context, EncoderChannel valueChannel, String value)
@@ -32,10 +36,8 @@ public class StringEncoderImpl implements StringEncoder {
 				 * string value in the "local" value partition
 				 */
 				valueChannel.encodeUnsignedInteger(0);
-				int n = MethodsBag.getCodingLength(context.getLocalValueSize());
+				int n = MethodsBag.getCodingLength(localValueSize.get(context));
 				valueChannel.encodeNBitUnsignedInteger(vc.localValueID, n);
-				// System.out.println("ST LocalHit = '" + value + "' in " +
-				// context);
 			} else {
 				/*
 				 * global value hit ==> value is represented as one (1) encoded
@@ -43,10 +45,9 @@ public class StringEncoderImpl implements StringEncoder {
 				 * the String value in the global value partition.
 				 */
 				valueChannel.encodeUnsignedInteger(1);
-				int n = MethodsBag.getCodingLength(getGlobalValueSize());
+				//	global value size
+				int n = MethodsBag.getCodingLength(stringValues.size());
 				valueChannel.encodeNBitUnsignedInteger(vc.globalValueID, n);
-				// System.out.println("ST GlobalHit = '" + value +
-				// "' globalID=" + vc.globalValueID);
 			}
 		} else {
 			/*
@@ -54,7 +55,6 @@ public class StringEncoderImpl implements StringEncoder {
 			 * string literal is encoded as a String with the length incremented
 			 * by two.
 			 */
-			// System.out.println("ST Miss \'" + value + "'");
 			valueChannel.encodeUnsignedInteger(value.length() + 2);
 			valueChannel.encodeStringOnly(value);
 			// After encoding the string value, it is added to both the
@@ -72,20 +72,22 @@ public class StringEncoderImpl implements StringEncoder {
 	public void addValue(NameContext context, String value) {
 		assert (!stringValues.containsKey(value));
 		int globalID = stringValues.size();
-		ValueContainer vc = new ValueContainer(context, globalID);
+		
+		//	local value counter
+		Integer cnt = localValueSize.get(context);
+		if( cnt== null) {
+			cnt = 0;
+		}
+		localValueSize.put(context, cnt+1);
+		
+		// ValueContainer vc = new ValueContainer(context, globalID);
+		ValueContainer vc = new ValueContainer(context, cnt, globalID);
 		stringValues.put(value, vc);
-	}
-
-//	public int getLocalValueSize(NameContext context) {
-//		return context.localValueSize;
-//	}
-
-	public int getGlobalValueSize() {
-		return stringValues.size();
 	}
 
 	public void clear() {
 		stringValues.clear();
+		localValueSize.clear();
 	}
 
 }
