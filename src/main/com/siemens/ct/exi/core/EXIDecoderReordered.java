@@ -225,8 +225,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 					// for that ?
 					// Something todo with
 					// http://forums.sun.com/thread.jspa?threadID=713598 ???
-					System.err.println("Inflater not finished");
-
+					
 					while (!inflater.finished()) {
 						recentInflaterInputStream.read();
 					}
