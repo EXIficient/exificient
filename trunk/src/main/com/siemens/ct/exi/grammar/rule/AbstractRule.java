@@ -38,7 +38,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 
 public abstract class AbstractRule implements Rule {
 	
-	protected static final SchemaInformedRule END_RULE = new RuleElementSchemaInformed();
+	protected static final SchemaInformedRule END_RULE = new SchemaInformedElement();
 	static {
 		END_RULE.setLabel("<END>");
 	}

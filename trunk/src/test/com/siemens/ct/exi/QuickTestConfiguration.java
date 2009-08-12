@@ -23,8 +23,8 @@ import com.siemens.ct.exi.data.FragmentTestCase;
 import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
-import com.siemens.ct.exi.datatype.DatatypeRepresentation;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.types.DatatypeRepresentation;
 
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -90,9 +90,9 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		// SchemaTestCase.setupQuickTest ( );
+		SchemaTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

@@ -24,35 +24,30 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.NameContext;
-import com.siemens.ct.exi.core.URIContext;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
+import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
-import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.types.BuiltIn;
+import com.siemens.ct.exi.types.StringTypeDecoder;
+import com.siemens.ct.exi.types.StringTypeEncoder;
 
 public class StringTableValueTest extends AbstractTestCase  {
 
 	@Test
 	public void testStringTableValue0() throws IOException {
-		ExpandedName qn = new ExpandedName("", "el");
-		NameContext context = new NameContext("el", new URIContext("", 0));
+		NameContext context = new NameContext(0, "el", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString();
-		tes.setStringEncoder(new StringEncoderImpl());
+		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
@@ -74,47 +69,33 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Decode
 		 */
-		TypeDecoderString ddl = new TypeDecoderString(exiFactory);
+		StringTypeDecoder ddl = new StringTypeDecoder(new StringDecoderImpl());
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val3));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val3));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn.getNamespaceURI(), qn.getLocalName()), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
 	}
 
 	@Test
-	public void testStringTableValue1() throws IOException {
-		URIContext uc = new URIContext("", 0);
-		
-		ExpandedName qn1 = new ExpandedName("", "el1");
-		NameContext c1 = new NameContext("el1", uc);
-		ExpandedName qn2 = new ExpandedName("", "el2");
-		NameContext c2 = new NameContext("el2", uc);
-		ExpandedName qn3 = new ExpandedName("", "el3");
-		NameContext c3 = new NameContext("el3", uc);
+	public void testStringTableValue1() throws IOException {		
+		NameContext c1 = new NameContext(0, "el1", "");
+		NameContext c2 = new NameContext(1, "el2", "");
+		NameContext c3 = new NameContext(2, "el3", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString();
-		tes.setStringEncoder(new StringEncoderImpl());
+		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
@@ -136,40 +117,28 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Decode
 		 */
-		TypeDecoderString ddl = new TypeDecoderString(exiFactory);
+		StringTypeDecoder ddl = new StringTypeDecoder(new StringDecoderImpl());
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn1.getNamespaceURI(), qn1.getLocalName()), val1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn3.getNamespaceURI(), qn3.getLocalName()), val2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn2.getNamespaceURI(), qn2.getLocalName()), val1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn3.getNamespaceURI(), qn3.getLocalName()), val3));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn1.getNamespaceURI(), qn1.getLocalName()), val3));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				qn3.getNamespaceURI(), qn3.getLocalName()), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc), val1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c2, bdc), val1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc), val3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val3));
 	}
 
 	@Test
 	public void testStringTableValue() throws IOException {
-		URIContext uc = new URIContext("", 0);
-		
-		ExpandedName at1 = new ExpandedName("", "at1");
-		NameContext ca1 = new NameContext("at1", uc);
 
-		ExpandedName elx2 = new ExpandedName("", "elx2");
-		NameContext cex2 = new NameContext("elx2", uc);
-		ExpandedName elx3 = new ExpandedName("", "elx3");
-		NameContext cex3 = new NameContext("elx3", uc);
+		NameContext ca1 = new NameContext(0, "at1", "");
+
+		NameContext cex2 = new NameContext(1, "elx2", "");
+		NameContext cex3 = new NameContext(2, "elx3", "");
 		
-		ExpandedName elxx1 = new ExpandedName("", "elxx1");
-		NameContext cexx1 = new NameContext("elxx1", uc);
-		ExpandedName elxx2 = new ExpandedName("", "elxx2");
-		NameContext cexx2 = new NameContext("elxx2", uc);
+		NameContext cexx1 = new NameContext(3, "elxx1", "");
+		NameContext cexx2 = new NameContext(4, "elxx2", "");
 
 		String atCh1 = "at-ch1";
 		String atCh2 = "at-ch2";
@@ -179,12 +148,10 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-
 		/*
 		 * Encode
 		 */
-		TypeEncoderString tes = new TypeEncoderString();
+		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		tes.setStringEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
@@ -215,30 +182,20 @@ public class StringTableValueTest extends AbstractTestCase  {
 		/*
 		 * Decode
 		 */
-		TypeDecoderString ddl = new TypeDecoderString(exiFactory);
+		StringTypeDecoder ddl = new StringTypeDecoder(new StringDecoderImpl());
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				at1.getNamespaceURI(), at1.getLocalName()), atCh1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elxx1.getNamespaceURI(), elxx1.getLocalName()), ch1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elxx2.getNamespaceURI(), elxx2.getLocalName()), ch2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elx2.getNamespaceURI(), elx2.getLocalName()), ch2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elx3.getNamespaceURI(), elx3.getLocalName()), ch3));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				at1.getNamespaceURI(), at1.getLocalName()), atCh2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elxx1.getNamespaceURI(), elxx1.getLocalName()), ch1));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elxx2.getNamespaceURI(), elxx2.getLocalName()), ch2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elx2.getNamespaceURI(), elx2.getLocalName()), ch2));
-		assertTrue(equals(ddl.readTypeValidValue(BuiltIn.DEFAULT_DATATYPE, bdc,
-				elx2.getNamespaceURI(), elx2.getLocalName()), ch3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc), atCh1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc), ch1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc), ch2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex3, bdc), ch3));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc), atCh2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc), ch1));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc), ch2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch2));
+		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch3));
 	}
 
 }

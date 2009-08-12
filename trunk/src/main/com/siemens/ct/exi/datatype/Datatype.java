@@ -22,8 +22,11 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -42,6 +45,9 @@ public interface Datatype {
 	// used for codec map
 	public ExpandedName getDatatypeIdentifier();
 	
+	/*
+	 * Encoder
+	 */
 	// type aware
 	public boolean isValid(String value);
 	
@@ -52,5 +58,13 @@ public interface Datatype {
 	
 	public boolean isValidRCS(String value);
 	
-	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
+	
+	/*
+	 * Decoder
+	 */
+	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context)
+			throws IOException;
+	
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context) throws IOException;
 }

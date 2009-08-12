@@ -22,7 +22,7 @@ public class StringEncoderImpl implements StringEncoder {
 		localValueSize = new HashMap<NameContext, Integer>();
 	}
 	
-	public void writeValueAsString(NameContext context, EncoderChannel valueChannel, String value)
+	public void writeValue(NameContext context, EncoderChannel valueChannel, String value)
 			throws IOException {
 		
 		ValueContainer vc = stringValues.get(value);
@@ -80,7 +80,6 @@ public class StringEncoderImpl implements StringEncoder {
 		}
 		localValueSize.put(context, cnt+1);
 		
-		// ValueContainer vc = new ValueContainer(context, globalID);
 		ValueContainer vc = new ValueContainer(context, cnt, globalID);
 		stringValues.put(value, vc);
 	}

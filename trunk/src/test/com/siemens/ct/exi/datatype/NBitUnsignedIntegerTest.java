@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.datatype.decoder.NBitIntegerDatatypeDecoder;
-import com.siemens.ct.exi.datatype.decoder.NBitLongDatatypeDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -229,9 +227,6 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 
-		String namespaceURI = "";
-		String localName = "";
-
 		// write (bit & byte )
 		assertTrue(datatype.isValid(sValue));
 		// bit
@@ -242,16 +237,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		NBitLongDatatypeDecoder dec = new NBitLongDatatypeDecoder();
 		char[] sDecoded;
 		// bit
-		sDecoded = dec.decodeValue(null, datatype, getBitDecoder(),
-				namespaceURI, localName);
+		sDecoded = datatype.readValue(getBitDecoder(), null, null);
 		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
 				sValue));
 		// byte
-		sDecoded = dec.decodeValue(null, datatype, getByteDecoder(),
-				namespaceURI, localName);
+		sDecoded = datatype.readValue(getByteDecoder(), null, null);
 		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
 				sValue));
 	}
@@ -272,9 +264,6 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 
-		String namespaceURI = "";
-		String localName = "";
-
 		// write (bit & byte )
 		assertTrue(datatype.isValid(sValue));
 		// bit
@@ -285,16 +274,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		NBitIntegerDatatypeDecoder dec = new NBitIntegerDatatypeDecoder();
 		char[] sDecoded;
 		// bit
-		sDecoded = dec.decodeValue(null, datatype, getBitDecoder(),
-				namespaceURI, localName);
+		sDecoded = datatype.readValue(getBitDecoder(), null, null);
 		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
 				sValue));
 		// byte
-		sDecoded = dec.decodeValue(null, datatype, getByteDecoder(),
-				namespaceURI, localName);
+		sDecoded = datatype.readValue(getByteDecoder(), null, null);;
 		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
 				sValue));
 	}

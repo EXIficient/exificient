@@ -13,11 +13,11 @@ import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.container.ContextContainer;
-import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.types.BuiltIn;
 
 public class EXIEncoderReordered extends AbstractEXIEncoder {
 
@@ -92,8 +92,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	}
 
 	protected OutputStream getStream() {
-		this.exiFactory.getCodingMode();
-		
 		if (codingMode == CodingMode.COMPRESSION) {
 			deflater = new DeflaterOutputStream(os, new Deflater(
 					codingMode.getDeflateLevel(), true));
@@ -132,9 +130,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				for (int i = 0; i < values.size(); i++) {
 					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
 					typeEncoder.writeValue(context, channel);
-//					typeEncoder.isTypeValid(valueDatatypes.get(i),
-//							values.get(i));
-//					typeEncoder.writeTypeValidValue(context, channel);
 				}
 			}
 			finalizeStream();
@@ -171,9 +166,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 					for (int i = 0; i < values.size(); i++) {
 						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
 						typeEncoder.writeValue(context, leq100);
-//						typeEncoder.isTypeValid(valueDatatypes.get(i),
-//								values.get(i));
-//						typeEncoder.writeTypeValidValue(context, leq100);
 					}
 					wasThereLeq100 = true;
 				}
@@ -195,10 +187,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 					for (int i = 0; i < values.size(); i++) {
 						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
 						typeEncoder.writeValue(context, gre100);
-						
-//						typeEncoder.isTypeValid(valueDatatypes.get(i),
-//								values.get(i));
-//						typeEncoder.writeTypeValidValue(context, gre100);
 					}
 					//	finish stream
 					finalizeStream();

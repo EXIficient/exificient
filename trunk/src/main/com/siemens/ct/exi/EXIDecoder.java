@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.xml.sax.SAXException;
@@ -38,7 +39,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 
 public interface EXIDecoder {
 	public void setInputStream(InputStream is, boolean exiBodyOnly)
-			throws EXIException;
+			throws EXIException, IOException;
 
 	/**
 	 * Reports whether an additional EXI event is available.

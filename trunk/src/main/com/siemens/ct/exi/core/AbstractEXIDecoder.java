@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.core;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -26,13 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
-import javax.xml.crypto.NoSuchMechanismException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
@@ -44,8 +41,9 @@ import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.io.block.DecoderBlock;
-import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.types.BuiltIn;
+import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -59,17 +57,20 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		EXIDecoder {
+	
 	// next event
-
 	protected Event nextEvent;
 	protected Rule nextRule;
-	// protected EventRule nextEventRule;
 	protected EventType nextEventType;
 	protected int ec;
 
 	// decoder stream
 	protected InputStream is;
-	protected DecoderBlock block;
+	protected DecoderChannel channel;
+	// protected DecoderBlock block;
+	
+	// Type Decoder (including string decoder etc.)
+	protected TypeDecoder typeDecoder;
 
 	// current values
 	protected String elementURI;
@@ -105,6 +106,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PREFIX);
 		createdPrefixes = new HashMap<String, String>();
+		
+		//	init once
+		typeDecoder = exiFactory.createTypeDecoder();
 	}
 
 	@Override
@@ -113,37 +117,92 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		createdPrefixes.clear();
 		createdPfxCnt = 1;
-
-		try {
-			block = exiFactory.createDecoderBlock(is);
-		} catch (IOException e) {
-			throw new EXIException(e);
+		
+		// clear string values etc.
+		typeDecoder.clear();
+	}
+	
+	protected int readEventCode(int codeLength) throws IOException {
+		return channel.decodeNBitUnsignedInteger(codeLength);
+	}
+	
+	protected String readUri() throws IOException {
+		int nUri = MethodsBag.getCodingLength(uris.size() + 1); // numberEntries+1
+		int uriID = channel.decodeNBitUnsignedInteger(nUri);
+		
+		String uri;
+		
+		if (uriID == 0) {
+			// string value was not found
+			// ==> zero (0) as an n-nit unsigned integer
+			// followed by uri encoded as string
+			uri = new String(channel.decodeString());
+			// after encoding string value is added to table
+			addURI(uri);
+		} else {
+			// string value found
+			// ==> value(i+1) is encoded as n-bit unsigned integer
+			uri = uris.get(uriID - 1).namespaceURI;
+			updateURIContext(uri);
 		}
+
+		return uri;
+	}
+	
+	protected String readLocalName(String uri) throws IOException {
+		
+		int length = channel.decodeUnsignedInteger();
+
+		String localName;
+		if (length > 0) {
+			// string value was not found in local partition
+			// ==> string literal is encoded as a String
+			// with the length of the string incremented by one
+			localName = new String(channel.decodeStringOnly(length-1));
+			// After encoding the string value, it is added to the string table
+			// partition and assigned the next available compact identifier.
+			uriContext.addLocalName(localName);
+		} else {
+			// string value found in local partition
+			// ==> string value is represented as zero (0) encoded as an
+			// Unsigned Integer
+			// followed by an the compact identifier of the string value as an
+			// n-bit unsigned integer
+			// n is log2 m and m is the number of entries in the string table
+			// partition
+			int n = MethodsBag.getCodingLength(uriContext.getLocalNameSize());
+			int localNameID = channel.decodeNBitUnsignedInteger(n);
+			localName = uriContext.getNameContext(localNameID).localName;
+		}
+
+		return localName;
 	}
 
-	public void setInputStream(InputStream is, boolean exiBodyOnly)
-			throws EXIException {
-		this.is = is;
+	protected String readPrefix(String uri) throws IOException {
+		String prefix;
 
-		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered already
-		if (!(is instanceof BufferedInputStream)) {
-			this.is = new BufferedInputStream(is);
+		int nPfx = MethodsBag.getCodingLength(uriContext.getPrefixSize() + 1); // n-bit
+		int pfxID = channel.decodeNBitUnsignedInteger(nPfx);
+		if (pfxID == 0) {
+			// string value was not found
+			// ==> zero (0) as an n-nit unsigned integer
+			// followed by pfx encoded as string
+			prefix = new String(channel.decodeString());
+			// after decoding pfx value is added to table
+			uriContext.addPrefix(prefix);
+		} else {
+			// string value found
+			// ==> value(i+1) is encoded as n-bit unsigned integer
+			prefix = uriContext.getPrefix(pfxID - 1);
 		}
 
-		if (!exiBodyOnly) {
-			// parse header (bit-wise BUT byte padded!)
-			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-			EXIHeader.parse(headerChannel);
-		}
-
-		initForEachRun();
+		return prefix;
 	}
 
 	protected void decodeEventCode() throws EXIException {
 		try {
 			// 1st level
-			ec = block.readEventCode(currentRule
+			ec = readEventCode(currentRule
 					.get1stLevelEventCodeLength(fidelityOptions));
 
 			assert (ec >= 0);
@@ -192,7 +251,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		int ec3AT;
 		try {
-			ec3AT = block.readEventCode(MethodsBag.getCodingLength(sir
+			ec3AT = readEventCode(MethodsBag.getCodingLength(sir
 					.getNumberOfSchemaDeviatedAttributes()));
 		} catch (IOException e) {
 			throw new EXIException(e);
@@ -217,7 +276,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected int decode2ndLevelEventCode() throws EXIException {
 		try {
 			int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
-			int level2 = block.readEventCode(MethodsBag.getCodingLength(ch2));
+			int level2 = readEventCode(MethodsBag.getCodingLength(ch2));
 
 			if (currentRule.get3rdLevelCharacteristics(fidelityOptions) > 0) {
 				return (level2 < (ch2 - 1) ? level2 : Constants.NOT_FOUND);
@@ -232,7 +291,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected int decode3rdLevelEventCode() throws EXIException {
 		try {
 			int ch3 = currentRule.get3rdLevelCharacteristics(fidelityOptions);
-			return block.readEventCode(MethodsBag.getCodingLength(ch3));
+			return readEventCode(MethodsBag.getCodingLength(ch3));
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -255,7 +314,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 					if (numberOfPrefixes > 1) {
 						int id;
 
-						id = block.readEventCode(MethodsBag
+						id = readEventCode(MethodsBag
 								.getCodingLength(numberOfPrefixes));
 
 						@SuppressWarnings("unchecked")
@@ -282,16 +341,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void decodeStartElementExpandedName() throws EXIException {
 		try {
 			// decode uri & local-name
-			this.elementURI = block.readUri();
-			this.elementLocalName = block.readLocalName(elementURI);
-
-			//	TODO remove after reworked core
-			if ((uriContext = uris.get(elementURI)) == null) {
-				this.addURI(elementURI);
-			}
-			if (uriContext.getNameContext(elementLocalName) == null) {
-				uriContext.addLocalName(elementLocalName);
-			}
+			this.elementURI = readUri();
+			this.elementLocalName = readLocalName(elementURI);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -352,8 +403,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 					.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 
 			if (attributeLocalName.equals(Constants.XSI_TYPE)) {
-				xsiTypeURI = block.readUri();
-				xsiTypeLocalName = block.readLocalName(xsiTypeURI);
+				xsiTypeURI = readUri();
+				xsiTypeLocalName = readLocalName(xsiTypeURI);
 
 				// update grammar according to given xsi:type
 				TypeGrammar tg = grammar.getTypeGrammar(xsiTypeURI,
@@ -370,7 +421,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				return null;
 			} else if (attributeLocalName.equals(Constants.XSI_NIL)
 					&& currentRule.isSchemaRule()) {
-				xsiNil = block.readBoolean();
+				xsiNil = channel.decodeBoolean();
 
 				if (xsiNil) { // jump to typeEmpty
 					replaceRuleAtTheTop(currentRule.getTypeEmpty());
@@ -413,7 +464,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// AttributeNS atNS = ((AttributeNS) nextEventRule.event);
 			this.attributeURI = atNS.getNamespaceURI();
 			// decode local-name
-			this.attributeLocalName = block.readLocalName(attributeURI);
+			this.attributeLocalName = readLocalName(attributeURI);
 
 			// handle attribute prefix
 			attributePrefix = decodeQNamePrefix(this.attributeURI);
@@ -446,16 +497,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throws EXIException {
 		try {
 			// decode uri & local-name
-			this.attributeURI = block.readUri();
-			this.attributeLocalName = block.readLocalName(attributeURI);
-
-			//	TODO remove after reworked core
-			if ((uriContext = uris.get(attributeURI)) == null) {
-				this.addURI(attributeURI);
-			}
-			if (uriContext.getNameContext(attributeLocalName) == null) {
-				uriContext.addLocalName(attributeLocalName);
-			}
+			this.attributeURI = readUri();
+			this.attributeLocalName = readLocalName(attributeURI);
 
 			// handle attribute prefix
 			attributePrefix = decodeQNamePrefix(this.attributeURI);
@@ -597,11 +640,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	public void decodeEndFragmentSelfContained() throws EXIException {
-		throw new NoSuchMechanismException("[EXI] SelfContained");
+		throw new RuntimeException("[EXI] SelfContained");
 	}
 
 	public void decodeStartFragmentSelfContained() throws EXIException {
-		throw new NoSuchMechanismException("[EXI] SelfContained");
+		throw new RuntimeException("[EXI] SelfContained");
 	}
 	
 }

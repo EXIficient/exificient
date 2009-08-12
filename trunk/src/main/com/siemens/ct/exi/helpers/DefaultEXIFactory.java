@@ -18,11 +18,6 @@
 
 package com.siemens.ct.exi.helpers;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.XMLConstants;
-
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.CodingMode;
@@ -42,26 +37,23 @@ import com.siemens.ct.exi.core.sax.SAXDecoder;
 import com.siemens.ct.exi.core.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.core.sax.SAXEncoder;
 import com.siemens.ct.exi.core.sax.SAXEncoderExtendedHandler;
-import com.siemens.ct.exi.datatype.DatatypeRepresentation;
-import com.siemens.ct.exi.datatype.TypeEncoder;
-import com.siemens.ct.exi.datatype.TypeEncoderDatatypeRespresentationMap;
-import com.siemens.ct.exi.datatype.TypeEncoderLexical;
-import com.siemens.ct.exi.datatype.TypeEncoderString;
-import com.siemens.ct.exi.datatype.TypeEncoderTyped;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderDatatypeRepresentationMap;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderLexical;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderRepresentationMap;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderString;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoderTyped;
-import com.siemens.ct.exi.datatype.stringtable.StringTableDecoder;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.SchemaEntry;
-import com.siemens.ct.exi.io.block.DecoderBitBlock;
-import com.siemens.ct.exi.io.block.DecoderBlock;
-import com.siemens.ct.exi.io.block.DecoderByteBlock;
-import com.siemens.ct.exi.io.block.DecoderByteBlockCompression;
-import com.siemens.ct.exi.io.block.DecoderByteBlockPreCompression;
+import com.siemens.ct.exi.types.DatatypeRepresentation;
+import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
+import com.siemens.ct.exi.types.DatatypeRespresentationMapTypeEncoder;
+import com.siemens.ct.exi.types.LexicalTypeDecoder;
+import com.siemens.ct.exi.types.LexicalTypeEncoder;
+import com.siemens.ct.exi.types.StringTypeDecoder;
+import com.siemens.ct.exi.types.StringTypeEncoder;
+import com.siemens.ct.exi.types.TypeDecoder;
+import com.siemens.ct.exi.types.TypeDecoderRepresentationMap;
+import com.siemens.ct.exi.types.TypeEncoder;
+import com.siemens.ct.exi.types.TypedTypeDecoder;
+import com.siemens.ct.exi.types.TypedTypeEncoder;
 
 /**
  * 
@@ -207,6 +199,9 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public TypeEncoder createTypeEncoder() {
+		//	string encoder
+		StringEncoder stringEncoder = new StringEncoderImpl();
+		
 		TypeEncoder typeEncoder;
 
 		// create new type encoder
@@ -214,11 +209,11 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				// use restricted characters sets
-				typeEncoder = new TypeEncoderLexical();
+				typeEncoder = new LexicalTypeEncoder(stringEncoder);
 			} else {
 				if (userDefinedDatatypeRepresentations != null
 						&& userDefinedDatatypeRepresentations.length > 0) {
-					TypeEncoderDatatypeRespresentationMap enc = new TypeEncoderDatatypeRespresentationMap();
+					DatatypeRespresentationMapTypeEncoder enc = new DatatypeRespresentationMapTypeEncoder(stringEncoder);
 
 					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
 						enc
@@ -228,34 +223,34 @@ public class DefaultEXIFactory implements EXIFactory {
 					typeEncoder = enc;
 				} else {
 					// use default type encoders
-					typeEncoder = new TypeEncoderTyped();
+					typeEncoder = new TypedTypeEncoder(stringEncoder);
 				}
 			}
 
 		} else {
-			// use string only
-			typeEncoder = new TypeEncoderString();
+			// use strings only
+			typeEncoder = new StringTypeEncoder(stringEncoder);
 		}
-
-		// // populate type-encoder string table
-		// getGrammar().populateStringTable(typeEncoder.getStringTable());
 
 		return typeEncoder;
 	}
 
 	public TypeDecoder createTypeDecoder() {
+		
+		//	string Decoder
+		StringDecoder stringDecoder = new StringDecoderImpl();
+		
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
 		if (isSchemaInformed()) {
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				typeDecoder = new TypeDecoderLexical(this);
+				typeDecoder = new LexicalTypeDecoder(stringDecoder);
 			} else {
 				if (userDefinedDatatypeRepresentations != null
 						&& userDefinedDatatypeRepresentations.length > 0) {
-					TypeDecoderRepresentationMap dec = new TypeDecoderDatatypeRepresentationMap(
-							this);
+					TypeDecoderRepresentationMap dec = new DatatypeRepresentationMapTypeDecoder(stringDecoder);
 
 					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
 						dec
@@ -265,54 +260,14 @@ public class DefaultEXIFactory implements EXIFactory {
 					typeDecoder = dec;
 				} else {
 					// use default type decoders
-					typeDecoder = new TypeDecoderTyped(this);
+					typeDecoder = new TypedTypeDecoder(stringDecoder);
 				}
 			}
 		} else {
 			// strings only
-			typeDecoder = new TypeDecoderString(this);
-		}
-
-		// populate type-encoder string table
-		// getGrammar().populateStringTable(typeDecoder.getStringTable());
-		SchemaEntry[] schemaEntries = getGrammar().getSchemaEntries();
-		StringTableDecoder std = typeDecoder.getStringTable();
-		for (SchemaEntry schemaEntry : schemaEntries) {
-			if (!schemaEntry.uri.equals(XMLConstants.NULL_NS_URI)) {
-				std.addURI(schemaEntry.uri);
-			}
-			for (String localName : schemaEntry.localNames) {
-				std.addLocalName(schemaEntry.uri, localName);
-			}
+			typeDecoder = new StringTypeDecoder(stringDecoder);
 		}
 
 		return typeDecoder;
-	}
-
-	public DecoderBlock createDecoderBlock(InputStream inputStream)
-			throws IOException {
-		DecoderBlock decBlock;
-
-		TypeDecoder typeDecoder = this.createTypeDecoder();
-
-		switch (codingMode) {
-		case BIT_PACKED:
-			decBlock = new DecoderBitBlock(inputStream, typeDecoder);
-			break;
-		case BYTE_PACKED:
-			decBlock = new DecoderByteBlock(inputStream, typeDecoder);
-			break;
-		case PRE_COMPRESSION:
-			decBlock = new DecoderByteBlockPreCompression(inputStream,
-					typeDecoder);
-			break;
-		case COMPRESSION:
-			decBlock = new DecoderByteBlockCompression(inputStream, typeDecoder);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown CodingMode!");
-		}
-
-		return decBlock;
 	}
 }

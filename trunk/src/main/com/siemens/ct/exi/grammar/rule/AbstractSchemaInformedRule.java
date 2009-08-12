@@ -24,7 +24,7 @@ import java.util.TreeSet;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.EventInformationSchemaInformed;
+import com.siemens.ct.exi.grammar.SchemaInformedEventInformation;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.util.MethodsBag;
@@ -159,13 +159,13 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		
 		for(Event ev : sortedEvents) {
 			if(ev == newEvent) {
-				newContainers[eventCode] = new EventInformationSchemaInformed(newRule,
+				newContainers[eventCode] = new SchemaInformedEventInformation(newRule,
 						newEvent, eventCode);
 				newOneAdded = true;
 			} else {
 				//	update event-code only
 				EventInformation oldEI = containers[newOneAdded ? eventCode - 1 : eventCode];
-				newContainers[eventCode] = new EventInformationSchemaInformed(oldEI.next,
+				newContainers[eventCode] = new SchemaInformedEventInformation(oldEI.next,
 						oldEI.event, eventCode);
 			}
 			eventCode++;

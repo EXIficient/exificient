@@ -24,7 +24,7 @@ import java.util.List;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.EventInformationSchemaLess;
+import com.siemens.ct.exi.grammar.SchemaLessEventInformation;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -79,7 +79,7 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		assert (!isTerminalRule());
 		assert (!this.contains(event));
 
-		containers.add(new EventInformationSchemaLess(this, rule, event, getNumberOfEvents()));
+		containers.add(new SchemaLessEventInformation(this, rule, event, getNumberOfEvents()));
 		eventCount = containers.size();
 	}
 

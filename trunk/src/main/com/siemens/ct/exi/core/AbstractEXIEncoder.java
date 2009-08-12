@@ -23,24 +23,31 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 
 import javax.xml.XMLConstants;
-import javax.xml.crypto.NoSuchMechanismException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.TypeEncoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.AttributeGeneric;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
+import com.siemens.ct.exi.grammar.event.Characters;
+import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.DatatypeEvent;
+import com.siemens.ct.exi.grammar.event.EndDocument;
+import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartDocument;
+import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.types.BuiltIn;
+import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
@@ -48,8 +55,18 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		EXIEncoder {
 
-	// strings
-	protected StringEncoder stringEncoder;
+	// cached events
+	protected final StartDocument eventSD = new StartDocument();
+	protected final EndDocument eventED = new EndDocument();
+	protected final StartElement eventSE = new StartElement(null, null);
+	protected final StartElementNS eventSE_NS = new StartElementNS(null);
+	protected final StartElementGeneric eventSEg = new StartElementGeneric();
+	protected final EndElement eventEE = new EndElement();
+	protected final Attribute eventAT = new Attribute(null, null);
+	protected final AttributeNS eventAT_NS = new AttributeNS(null);
+	protected final AttributeGeneric eventATg = new AttributeGeneric();
+	protected final Characters eventCH = new Characters(null, null);
+	protected final CharactersGeneric eventCHg = new CharactersGeneric();
 
 	// prefix of previous start element (relevant for preserving prefixes)
 	protected boolean preservePrefix;
@@ -58,11 +75,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	// to parse raw nil value
 	protected XSDBoolean nil;
 
+	// OutputStream & Channel
+	protected EncoderChannel channel;
 	protected OutputStream os;
 
-	// NEW STUFF
+	// Type Encoder (including string encoder etc.)
 	protected TypeEncoder typeEncoder;
-	protected EncoderChannel channel;
 
 	public AbstractEXIEncoder(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -74,20 +92,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		nil = XSDBoolean.newInstance();
 
 		// init once
-		stringEncoder = new StringEncoderImpl();
+		typeEncoder = exiFactory.createTypeEncoder();
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException {
 		super.initForEachRun();
 
-		// clear string values
-		// stringValues.clear();
-		stringEncoder.clear();
-
-		typeEncoder = exiFactory.createTypeEncoder();
-		// typeEncoder.setStringEncoder(this);
-		typeEncoder.setStringEncoder(this.stringEncoder);
+		// clear string values etc.
+		typeEncoder.clear();
 	}
 
 	public void setOutput(OutputStream os, boolean exiBodyOnly)
@@ -111,23 +124,20 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	 * Structure Channel
 	 */
 
-	public void writeEventCode(int eventCode, int codeLength)
+	protected void writeEventCode(int eventCode, int codeLength)
 			throws IOException {
 		channel.encodeNBitUnsignedInteger(eventCode, codeLength);
 	}
 
 	// PI, Comment, etc.
-	public void writeString(String text) throws IOException {
+	protected void writeString(String text) throws IOException {
 		channel.encodeString(text);
 	}
 
-	public void writeUri(String uri) throws IOException {
-		updateURIContext(uri);
+	protected void writeUri(String uri) throws IOException {
 		int nUri = MethodsBag.getCodingLength(uris.size() + 1); // numberEntries+1
 
-		// -->
-		// n-bit
-		// if (uriID == Constants.NOT_FOUND) {
+		updateURIContext(uri);
 		if (uriContext == null) {
 			// string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
@@ -139,44 +149,57 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			// structureChannel.encodeNBitUnsignedInteger(uriID + 1, nUri);
 			channel.encodeNBitUnsignedInteger(uriContext.id + 1, nUri);
 		}
 	}
 
-	public void writeLocalName(String localName, String uri) throws IOException {
-		NameContext nContext = uriContext.getNameContext(localName);
+	protected void writeLocalName(String localName, String uri)
+			throws IOException {
+		Integer localNameID = uriContext.getLocalNameID(localName);
 
-		if (nContext == null) {
+		if (localNameID == null) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
 			// with the length of the string incremented by one
 			channel.encodeUnsignedInteger(localName.length() + 1);
 			channel.encodeStringOnly(localName);
 			// After encoding the string value, it is added to the string
-			// table
-			// partition and assigned the next available compact identifier.
+			// table partition and assigned the next available compact
+			// identifier.
 			uriContext.addLocalName(localName);
 		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
-			// Unsigned Integer
-			// followed by an the compact identifier of the string value as
-			// an
-			// n-bit unsigned integer
-			// n is log2 m and m is the number of entries in the string
-			// table
-			// partition
+			// Unsigned Integer followed by an the compact identifier of the
+			// string value as an n-bit unsigned integer n is log2 m and m is
+			// the number of entries in the string table partition
 			channel.encodeUnsignedInteger(0);
-			int n = MethodsBag.getCodingLength(uriContext
-					.getNumberOfLocalNames());
-			channel.encodeNBitUnsignedInteger(nContext.localNameID, n);
+			int n = MethodsBag.getCodingLength(uriContext.getLocalNameSize());
+			channel.encodeNBitUnsignedInteger(localNameID, n);
+		}
+	}
+
+	protected void writePrefix(String prefix, String uri) throws IOException {
+		Integer pfxID = uriContext.getPrefixID(prefix);
+		int nPfx = MethodsBag.getCodingLength(uriContext.getPrefixSize() + 1); // n-bit
+		if (pfxID == null) {
+			// string value was not found
+			// ==> zero (0) as an n-bit unsigned integer
+			// followed by pfx encoded as string
+			channel.encodeNBitUnsignedInteger(0, nPfx);
+			channel.encodeString(prefix);
+			// after encoding string value is added to table
+			uriContext.addPrefix(prefix);
+		} else {
+			// string value found
+			// ==> value(i+1) is encoded as n-bit unsigned integer
+			channel.encodeNBitUnsignedInteger(pfxID + 1, nPfx);
 		}
 	}
 
 	protected EventInformation lookForStartElement(String uri, String localName) {
 		EventInformation ei;
-		
+
 		// update lookup event
 		eventSE.setNamespaceURI(uri);
 		eventSE.setLocalName(localName);
@@ -220,24 +243,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 
 		return ei;
-	}
-
-	public void writePrefix(String prefix, String uri) throws IOException {
-		Integer pfxID = uriContext.getPrefixID(prefix);
-		int nPfx = MethodsBag.getCodingLength(uriContext.getPrefixSize() + 1); // n-bit
-		if (pfxID == null) {
-			// string value was not found
-			// ==> zero (0) as an n-bit unsigned integer
-			// followed by pfx encoded as string
-			channel.encodeNBitUnsignedInteger(0, nPfx);
-			channel.encodeString(prefix);
-			// after encoding string value is added to table
-			uriContext.addPrefix(prefix);
-		} else {
-			// string value found
-			// ==> value(i+1) is encoded as n-bit unsigned integer
-			channel.encodeNBitUnsignedInteger(pfxID + 1, nPfx);
-		}
 	}
 
 	protected boolean isTypeValid(Datatype datatype, String value) {
@@ -380,7 +385,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			EventInformation ei = this.lookForStartElement(uri, localName);
 
 			boolean isGenericSE = true;
-			
+
 			if (ei != null) {
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -588,7 +593,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 						assert (ec2 != Constants.NOT_FOUND);
 						encode2ndLevelEventCode(ec2);
 						// qualified name
-						encodeQName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+						encodeQName(
+								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 								Constants.XSI_NIL);
 						encodeQNamePrefix(
 								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "");
@@ -596,7 +602,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 					// encode nil value as Boolean
 					channel.encodeBoolean(nil.getBoolean());
-					
+
 					if (nil.getBoolean()) { // jump to typeEmpty
 						replaceRuleAtTheTop(currentRule.getTypeEmpty());
 					}
@@ -608,9 +614,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					encodeAttributeAnySchemaInvalid(
 							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 							Constants.XSI_NIL, "", rawNil);
-				}				
+				}
 			} else {
-				encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL, "", rawNil);
+				encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+						Constants.XSI_NIL, "", rawNil);
 			}
 		} catch (IOException e) {
 			throw new EXIException(e);
@@ -879,12 +886,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	}
 
 	public void encodeEndFragmentSelfContained() throws EXIException {
-		throw new NoSuchMechanismException("[EXI] SelfContained");
+		throw new RuntimeException("[EXI] SelfContained");
 	}
 
 	public int encodeStartFragmentSelfContained(String uri, String localName,
 			String prefix) throws EXIException {
-		throw new NoSuchMechanismException("[EXI] SelfContained");
+		throw new RuntimeException("[EXI] SelfContained");
 	}
 
 }
