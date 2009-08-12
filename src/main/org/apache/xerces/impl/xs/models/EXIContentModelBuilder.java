@@ -55,7 +55,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.ExpandedName;
 
@@ -170,7 +170,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 	protected static void addNewState(Map<CMState, SchemaInformedRule> states,
 			CMState key) {
-		SchemaInformedRule val = new RuleElementSchemaInformed();
+		SchemaInformedRule val = new SchemaInformedElement();
 		if (key.end) {
 			val.addTerminalRule(END_ELEMENT);
 		}

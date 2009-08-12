@@ -26,7 +26,6 @@ import com.siemens.ct.exi.util.ExpandedNameComparator;
 
 public class NameContext {
 	// 
-	protected final URIContext uriContext;
 	protected final String localName;
 	protected final String namespaceURI;
 
@@ -42,12 +41,10 @@ public class NameContext {
 
 	protected Rule elementFragmentStartTag;
 
-	public NameContext(String localName, URIContext uriContext) {
+	public NameContext(int localNameID, String localName, String namespaceURI) {
+		this.localNameID = localNameID;
 		this.localName = localName;
-		this.uriContext = uriContext;
-		// 
-		this.namespaceURI = uriContext.namespaceURI;
-		this.localNameID = uriContext.getNumberOfLocalNames();
+		this.namespaceURI = namespaceURI;
 	}
 
 	public String getLocalName() {

@@ -61,9 +61,9 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
 		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
-		SchemaTestCase.setConfigurationSchemaAny1 ( );
+		// SchemaTestCase.setConfigurationSchemaAny1 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );
-		// SchemaTestCase.setConfigurationSchemaList ( );
+		SchemaTestCase.setConfigurationSchemaList ( );
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );

@@ -18,18 +18,29 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
+import javax.xml.XMLConstants;
+
+import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
  * TODO Description
@@ -58,10 +69,10 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	// entity references
 	protected List<String> entityReferences;
 	protected int currentEntityReferenceIndex;
-	//	comments
+	// comments
 	protected List<char[]> comments;
 	protected int commentsIndex;
-	//	namespaces
+	// namespaces
 	protected List<NamespaceEntry> nsEntries;
 	protected int nsEntryIndex;
 	// processing instructions
@@ -77,9 +88,20 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected Map<NameContext, Integer> occurrences;
 	protected Map<NameContext, List<Datatype>> dataTypes;
 
+	// Channel and Compression stuff
+	protected CodingMode codingMode;
+
 	// content values
 	protected Map<NameContext, PreReadValueContainer> contentValues;
 	protected Map<Integer, char[]> xsiValues;
+
+	// deflate stuff
+	protected InputStream resettableInputStream;
+	protected InflaterInputStream recentInflaterInputStream;
+	protected long bytesRead;
+	protected Inflater inflater;
+
+	protected boolean firstChannel;
 
 	public EXIDecoderReordered(EXIFactory exiFactory) {
 		super(exiFactory);
@@ -107,6 +129,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// content values
 		contentValues = new HashMap<NameContext, PreReadValueContainer>();
 		xsiValues = new HashMap<Integer, char[]>();
+
+		codingMode = exiFactory.getCodingMode();
 	}
 
 	@Override
@@ -127,11 +151,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// elements
 		elementEntries.clear();
 		elementEntryIndex = 0;
-		
+
 		// attributes
 		attributeEntries.clear();
 		attributeEntryIndex = 0;
-		
+
 		// misc
 		docTypeEntries.clear();
 		docTypeEntryIndex = 0;
@@ -161,6 +185,79 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		preReadContent();
 	}
 
+	@Override
+	public void setInputStream(InputStream is, boolean exiBodyOnly)
+			throws EXIException, IOException {
+
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered
+		// already
+		if (!(is instanceof BufferedInputStream)) {
+			this.is = new BufferedInputStream(is);
+		}
+
+		// header
+		if (!exiBodyOnly) {
+			// parse header (bit-wise)
+			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
+			EXIHeader.parse(headerChannel);
+		}
+
+		// body (structure)
+		firstChannel = true;
+		channel = getNextChannel();
+
+		initForEachRun();
+	}
+
+	public DecoderChannel getNextChannel() throws IOException {
+		if (codingMode == CodingMode.COMPRESSION) {
+			if (firstChannel) {
+				bytesRead = 0;
+				resettableInputStream = new BufferedInputStream(is);
+				resettableInputStream.mark(Integer.MAX_VALUE);
+				// initialize inflater
+				inflater = new Inflater(true);
+				firstChannel = false;
+			} else {
+				if (!inflater.finished()) {
+					// TODO [Warning] Inflater not finished, what is the reason
+					// for that ?
+					// Something todo with
+					// http://forums.sun.com/thread.jspa?threadID=713598 ???
+					System.err.println("Inflater not finished");
+
+					while (!inflater.finished()) {
+						recentInflaterInputStream.read();
+					}
+				}
+
+				// update new byte position
+				bytesRead += inflater.getBytesRead();
+
+				// reset byte position
+				resettableInputStream.reset();
+				resettableInputStream.skip(bytesRead);
+
+				// reset inflater
+				inflater.reset();
+			}
+
+			recentInflaterInputStream = new InflaterInputStream(
+					resettableInputStream, inflater);
+			return new ByteDecoderChannel(recentInflaterInputStream);
+		} else {
+			assert (codingMode == CodingMode.PRE_COMPRESSION);
+			if (firstChannel) {
+				// create once a decoder channel
+				channel = new ByteDecoderChannel(this.is);
+				firstChannel = false;
+			}
+			// there is just one channel
+			return channel;
+		}
+	}
+
 	protected void preReadStructure() throws EXIException {
 		boolean stillInitializing = true;
 
@@ -181,7 +278,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			case START_ELEMENT_GENERIC:
 			case START_ELEMENT_GENERIC_UNDECLARED:
 				super.decodeStartElement();
-				elementEntries.add(new QNameEntry(elementURI, elementLocalName, elementPrefix));
+				elementEntries.add(new QNameEntry(elementURI, elementLocalName,
+						elementPrefix));
 				break;
 			case NAMESPACE_DECLARATION:
 				super.decodeNamespaceDeclaration();
@@ -196,7 +294,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			case ATTRIBUTE_GENERIC:
 			case ATTRIBUTE_GENERIC_UNDECLARED:
 				Datatype dtAT = decodeAttributeStructureOnly();
-				attributeEntries.add(new QNameEntry(attributeURI, attributeLocalName, attributePrefix));
+				attributeEntries.add(new QNameEntry(attributeURI,
+						attributeLocalName, attributePrefix));
 				if (dtAT == null) {
 					// special xsi cases (data already present)
 					xsiValues.put(attributeEntries.size() - 1, attributeValue);
@@ -224,7 +323,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				continue;
 			case DOC_TYPE:
 				super.decodeDocType();
-				docTypeEntries.add(new DocTypeEntry(docTypeName, docTypePublicID, docTypeSystemID, docTypeText));
+				docTypeEntries.add(new DocTypeEntry(docTypeName,
+						docTypePublicID, docTypeSystemID, docTypeText));
 				break;
 			case ENTITY_REFERENCE:
 				super.decodeEntityReference();
@@ -250,12 +350,82 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	protected void preReadContent() throws EXIException {
 		try {
-			block.reconstructChannels(
-					cntValues, valueQNames, dataTypes, occurrences,
-					contentValues);
+			if (cntValues <= Constants.MAX_NUMBER_OF_VALUES) {
+				// single compressed stream (included structure)
+				for (int i = 0; i < valueQNames.size(); i++) {
+					NameContext channelContext = valueQNames.get(i);
+					int occs = occurrences.get(channelContext);
+					List<Datatype> datatypes = dataTypes.get(channelContext);
+					setContentValues(channel, channelContext, occs, datatypes);
+				}
+			} else {
+				// first stream structure (already read)
+
+				// second stream (if any), values <= 100
+				if (areThereAnyLessEqualThan100(valueQNames, occurrences)) {
+					DecoderChannel bdcLessEqual100 = getNextChannel();
+					for (int i = 0; i < valueQNames.size(); i++) {
+						NameContext channelContext = valueQNames.get(i);
+						int occs = occurrences.get(channelContext);
+						if (occs <= Constants.MAX_NUMBER_OF_VALUES) {
+							List<Datatype> datatypes = dataTypes
+									.get(channelContext);
+							setContentValues(bdcLessEqual100, channelContext,
+									occs, datatypes);
+						}
+					}
+				}
+
+				// proper stream for greater100
+				for (int i = 0; i < valueQNames.size(); i++) {
+					NameContext channelContext = valueQNames.get(i);
+					int occs = occurrences.get(channelContext);
+					if (occs > Constants.MAX_NUMBER_OF_VALUES) {
+						DecoderChannel bdcGreater100 = getNextChannel();
+						List<Datatype> datatypes = dataTypes
+								.get(channelContext);
+						setContentValues(bdcGreater100, channelContext, occs,
+								datatypes);
+					}
+				}
+			}
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
+	}
+
+	protected static boolean areThereAnyLessEqualThan100(
+			List<NameContext> qnames, Map<NameContext, Integer> occurrences) {
+		for (int i = 0; i < qnames.size(); i++) {
+			if (occurrences.get(qnames.get(i)) <= Constants.MAX_NUMBER_OF_VALUES) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected void setContentValues(DecoderChannel bdc,
+			NameContext channelContext, int occs, List<Datatype> datatypes)
+			throws IOException {
+
+		assert (datatypes.size() == occs);
+		char[][] decodedValues = new char[occs][];
+
+		for (int k = 0; k < occs; k++) {
+			Datatype dt = datatypes.get(k);
+			if (dt == null) {
+				assert (channelContext.getNamespaceURI()
+						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+				assert (decodedValues[k] != null);
+			} else {
+				decodedValues[k] = typeDecoder.readValue(dt, channelContext,
+						bdc);
+			}
+		}
+
+		// set content value
+		contentValues.put(channelContext, new PreReadValueContainer(
+				decodedValues));
 	}
 
 	protected Event stepToNextEvent() {
@@ -299,32 +469,32 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	public void decodeStartElement() throws EXIException {
 		stepToNextEvent();
 		QNameEntry se = elementEntries.get(elementEntryIndex++);
-		
+
 		elementURI = se.namespaceURI;
 		elementLocalName = se.localName;
 		elementPrefix = se.prefix;
-		
+
 		pushElementContext(elementURI, elementLocalName);
 	}
 
 	public void decodeNamespaceDeclaration() throws EXIException {
 		stepToNextEvent();
-		
+
 		NamespaceEntry ns = nsEntries.get(nsEntryIndex++);
 		nsURI = ns.namespaceURI;
 		nsPrefix = ns.prefix;
-		
+
 		namespaces.declarePrefix(nsPrefix, nsURI);
 	}
 
 	public void decodeAttribute() throws EXIException {
 		stepToNextEvent();
 		QNameEntry at = attributeEntries.get(attributeEntryIndex++);
-		
+
 		attributeURI = at.namespaceURI;
 		attributeLocalName = at.localName;
 		attributePrefix = at.prefix;
-		
+
 		// is it an xsi value?
 		attributeValue = xsiValues.get(attributeEntryIndex - 1);
 		if (attributeValue == null) {
@@ -383,11 +553,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		stepToNextEvent();
 
 		ProcessingEntry pi = processingEntries.get(processingEntryIndex++);
-		
+
 		piTarget = pi.target;
 		piData = pi.data;
 	}
-	
+
 	/*
 	 * Pre-Read Entries
 	 */
@@ -395,42 +565,43 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		final String namespaceURI;
 		final String localName;
 		final String prefix;
-		
+
 		public QNameEntry(String namespaceURI, String localName, String prefix) {
 			this.namespaceURI = namespaceURI;
 			this.localName = localName;
 			this.prefix = prefix;
 		}
 	}
-	
+
 	class NamespaceEntry {
 		final String namespaceURI;
 		final String prefix;
-		
+
 		public NamespaceEntry(String namespaceURI, String prefix) {
 			this.namespaceURI = namespaceURI;
 			this.prefix = prefix;
 		}
 	}
-	
+
 	class DocTypeEntry {
 		final String name;
 		final String publicID;
 		final String systemID;
 		final String text;
-		
-		public DocTypeEntry(String name, String publicID, String systemID, String text) {
+
+		public DocTypeEntry(String name, String publicID, String systemID,
+				String text) {
 			this.name = name;
 			this.publicID = publicID;
 			this.systemID = systemID;
 			this.text = text;
 		}
 	}
-	
+
 	class ProcessingEntry {
 		final String target;
 		final String data;
-		
+
 		public ProcessingEntry(String target, String data) {
 			this.target = target;
 			this.data = data;

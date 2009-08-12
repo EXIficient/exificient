@@ -44,7 +44,6 @@ import org.apache.xerces.xs.XSTypeDefinition;
 import org.apache.xerces.xs.XSWildcard;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeGeneric;
@@ -55,9 +54,10 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.RuleElementSchemaInformed;
-import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaInformed;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
+import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -112,7 +112,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		namedElementContainers.clear();
 	}
 
-	public GrammarSchemaInformed toGrammar() throws EXIException {
+	public SchemaInformedGrammar toGrammar() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
 			String exMsg = "Problem occured while building XML Schema Model (XSModel)!";
 
@@ -188,7 +188,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		ExpandedName[] globalElementsB = new ExpandedName[globalElements.size()];
 		globalElements.toArray(globalElementsB);
 
-		GrammarSchemaInformed sig = new GrammarSchemaInformed(schemaEntries,
+		SchemaInformedGrammar sig = new SchemaInformedGrammar(schemaEntries,
 				namedElementsB, globalElementsB);
 
 		/*
@@ -484,7 +484,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// Attribute Uses
 		// http://www.w3.org/TR/exi/#attributeUses
 
-		SchemaInformedRule ruleStart = new RuleStartTagSchemaInformed(
+		SchemaInformedRule ruleStart = new SchemaInformedStartTag(
 				ruleContent2);
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
@@ -511,7 +511,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 				Attribute at = getAttributeEvent(attrUse.getAttrDeclaration());
 
-				SchemaInformedRule newCurrent = new RuleStartTagSchemaInformed(
+				SchemaInformedRule newCurrent = new SchemaInformedStartTag(
 						ruleContent2);
 				newCurrent.addRule(at, ruleStart);
 
@@ -631,12 +631,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	public static TypeGrammar getUrTypeRule() {
 		// ur-Type
-		SchemaInformedRule urType1 = new RuleElementSchemaInformed();
+		SchemaInformedRule urType1 = new SchemaInformedElement();
 		urType1.addRule(new StartElementGeneric(), urType1);
 		urType1.addTerminalRule(new EndElement());
 		urType1.addRule(new CharactersGeneric(), urType1);
 
-		SchemaInformedRule urType0 = new RuleStartTagSchemaInformed(urType1);
+		SchemaInformedRule urType0 = new SchemaInformedStartTag(urType1);
 		urType0.addRule(new AttributeGeneric(), urType0);
 		urType0.addRule(new StartElementGeneric(), urType1);
 		urType0.addTerminalRule(new EndElement());
@@ -645,7 +645,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		urType0.setFirstElementRule();
 
 		// empty ur-Type
-		SchemaInformedRule emptyUrType0 = new RuleElementSchemaInformed();
+		SchemaInformedRule emptyUrType0 = new SchemaInformedElement();
 		emptyUrType0.addRule(new AttributeGeneric(), emptyUrType0);
 		emptyUrType0.addTerminalRule(new EndElement());
 		// emptyUrType0.setFirstElementRule();
@@ -701,7 +701,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				type_i.setTypeCastable(isTypeCastable(ctd));
 
 				// typeEmpty_i
-				SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
+				SchemaInformedRule ruleEnd = new SchemaInformedElement();
 				ruleEnd.addTerminalRule(END_ELEMENT);
 				typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, attributes,
 						attributeWC);
@@ -710,11 +710,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			assert (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
 			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-			RuleElementSchemaInformed simpleContent = translateSimpleTypeDefinitionToFSA(std);
+			SchemaInformedElement simpleContent = translateSimpleTypeDefinitionToFSA(std);
 			type_i = handleAttributes(simpleContent, simpleContent, null, null);
 			type_i.setTypeCastable(isTypeCastable(std));
 			// TypeEmpty i
-			SchemaInformedRule ruleEnd = new RuleElementSchemaInformed();
+			SchemaInformedRule ruleEnd = new SchemaInformedElement();
 			ruleEnd.addTerminalRule(END_ELEMENT);
 			typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, null, null);
 		}
@@ -765,7 +765,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			// elements
 			// with no character or element information item children.
 			// (attributes only, no content allowed)
-			ruleContent = new RuleElementSchemaInformed();
+			ruleContent = new SchemaInformedElement();
 			ruleContent.addTerminalRule(END_ELEMENT);
 			break;
 		case XSComplexTypeDefinition.CONTENTTYPE_SIMPLE:
@@ -823,7 +823,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected RuleElementSchemaInformed translateSimpleTypeDefinitionToFSA(
+	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {
 
 		ExpandedName nameValueType;
@@ -836,9 +836,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		Characters chSchemaValid = new Characters(nameValueType, BuiltIn
 				.getDatatype(std));
 
-		RuleElementSchemaInformed type_i_1 = new RuleElementSchemaInformed();
+		SchemaInformedElement type_i_1 = new SchemaInformedElement();
 
-		RuleElementSchemaInformed type_i_0 = new RuleElementSchemaInformed();
+		SchemaInformedElement type_i_0 = new SchemaInformedElement();
 		type_i_0.addRule(chSchemaValid, type_i_1);
 
 		type_i_1.addTerminalRule(END_ELEMENT);
@@ -860,7 +860,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// unique
 		boolean unique = true;
 		// fragment rule for several qnames
-		protected RuleStartTagSchemaInformed elementFragmentStartTag;
+		protected SchemaInformedStartTag elementFragmentStartTag;
 
 		public LNC(ExpandedName name) {
 			this.name = name;
@@ -956,7 +956,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			// TODO at present simple BUT NOT standard compliant approach
 
 			// ElementFragmentContent, ??? , SE(*), EE, CH
-			RuleElementSchemaInformed elementFragmentContent = new RuleElementSchemaInformed();
+			SchemaInformedElement elementFragmentContent = new SchemaInformedElement();
 			elementFragmentContent.addRule(new StartElementGeneric(),
 					elementFragmentContent);
 			elementFragmentContent.addTerminalRule(new EndElement());
@@ -964,7 +964,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					elementFragmentContent);
 
 			// ElementFragmentStartTag, ???, AT(*), SE(*), EE, CH
-			elementFragmentStartTag = new RuleStartTagSchemaInformed(
+			elementFragmentStartTag = new SchemaInformedStartTag(
 					elementFragmentContent);
 			elementFragmentStartTag.addRule(new AttributeGeneric(),
 					elementFragmentStartTag);
@@ -975,7 +975,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					elementFragmentContent);
 
 			// ElementFragmentTypeEmpty, ???, AT(*), EE
-			RuleStartTagSchemaInformed elementFragmentTypeEmpty = new RuleStartTagSchemaInformed(
+			SchemaInformedStartTag elementFragmentTypeEmpty = new SchemaInformedStartTag(
 					elementFragmentContent);
 			elementFragmentTypeEmpty.addRule(new AttributeGeneric(),
 					elementFragmentStartTag);

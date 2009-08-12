@@ -341,10 +341,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * Decodes and returns an n-bit unsigned integer as string.
 	 */
 	public char[] decodeNBitUnsignedIntegerAsString(int n) throws IOException {
-//		decodeNBitUnsignedInteger(n);
 		return MethodsBag.itos(n);
-		// return new CharArray(Integer.toString(decodeNBitUnsignedInteger(n)).toCharArray());
-		// return Integer.toString(decodeNBitUnsignedInteger(n));
 	}
 
 	/**

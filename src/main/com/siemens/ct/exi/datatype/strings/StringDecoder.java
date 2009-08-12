@@ -24,9 +24,16 @@ import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 public interface StringDecoder extends StringCoder {
-	
+
 	public void addValue(NameContext context, char[] value);
-	
-	public char[] readValueAsString(NameContext context, DecoderChannel channel) throws IOException;
-	
+
+	public char[] readValue(NameContext context, DecoderChannel channel)
+			throws IOException;
+
+	public char[] readValueLocalHit(NameContext context,
+			DecoderChannel valueChannel) throws IOException;
+
+	public char[] readValueGlobalHit(NameContext context,
+			DecoderChannel valueChannel) throws IOException;
+
 }

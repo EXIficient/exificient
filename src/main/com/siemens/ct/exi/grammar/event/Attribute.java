@@ -20,8 +20,8 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.XMLConstants;
 
-import com.siemens.ct.exi.datatype.BuiltIn;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.ExpandedNameComparator;
 

@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarSchemaLess;
+import com.siemens.ct.exi.grammar.SchemaLessGrammar;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 
 /**
@@ -60,6 +60,6 @@ public class GrammarFactory {
 	}
 
 	public Grammar createSchemaLessGrammar() {
-		return new GrammarSchemaLess();
+		return new SchemaLessGrammar();
 	}
 }

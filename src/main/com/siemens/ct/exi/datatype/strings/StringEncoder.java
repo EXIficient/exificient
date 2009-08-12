@@ -27,7 +27,7 @@ public interface StringEncoder extends StringCoder {
 	
 	public void addValue(NameContext context, String value);
 	
-	public void writeValueAsString(NameContext context, EncoderChannel channel,
+	public void writeValue(NameContext context, EncoderChannel channel,
 			String value) throws IOException;
 
 	public boolean isStringHit(NameContext context, String value)

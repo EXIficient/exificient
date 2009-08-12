@@ -35,19 +35,8 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.ElementContainer;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaEntry;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.AttributeGeneric;
-import com.siemens.ct.exi.grammar.event.AttributeNS;
-import com.siemens.ct.exi.grammar.event.Characters;
-import com.siemens.ct.exi.grammar.event.CharactersGeneric;
-import com.siemens.ct.exi.grammar.event.EndDocument;
-import com.siemens.ct.exi.grammar.event.EndElement;
-import com.siemens.ct.exi.grammar.event.StartDocument;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
-import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.RuleStartTagSchemaLess;
+import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.ExpandedName;
 
@@ -61,18 +50,6 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public abstract class AbstractEXICoder {
-	// cached events
-	protected final StartDocument eventSD = new StartDocument();
-	protected final EndDocument eventED = new EndDocument();
-	protected final StartElement eventSE = new StartElement(null, null);
-	protected final StartElementNS eventSE_NS = new StartElementNS(null);
-	protected final StartElementGeneric eventSEg = new StartElementGeneric();
-	protected final EndElement eventEE = new EndElement();
-	protected final Attribute eventAT = new Attribute(null, null);
-	protected final AttributeNS eventAT_NS = new AttributeNS(null);
-	protected final AttributeGeneric eventATg = new AttributeGeneric();
-	protected final Characters eventCH = new Characters(null, null);
-	protected final CharactersGeneric eventCHg = new CharactersGeneric();
 
 	// factory
 	protected EXIFactory exiFactory;
@@ -83,9 +60,6 @@ public abstract class AbstractEXICoder {
 	// error handler
 	protected ErrorHandler errorHandler;
 
-	// rules learned while coding ( uri -> localName -> rule)
-	protected Map<String, Map<String, Rule>> runtimeDispatcher;
-
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
 
@@ -93,18 +67,15 @@ public abstract class AbstractEXICoder {
 	protected List<Rule> openRules;
 	protected Rule currentRule;
 
-	/*
-	 * NEW STUFF
-	 */
-	protected Map<String, URIContext> uris;
+	// rule generated while coding
 	protected Map<NameContext, Rule> runtimeRules;
 
-	// protected Set<ExpandedName> namedElements2;
-
-	// context cache
+	// URI context
 	protected URIContext uriContext;
-
-	// Core
+	// protected Map<String, URIContext> uris;
+	protected List<URIContext> uris;
+	
+	// Context (incl. stack)
 	protected NameContext context;
 	protected List<NameContext> elementContextStack;
 
@@ -121,12 +92,11 @@ public abstract class AbstractEXICoder {
 		this.errorHandler = new DefaultErrorHandler();
 
 		// init once (runtime lists et cetera)
-		runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
 		runtimeRules = new HashMap<NameContext, Rule>();
 		openRules = new ArrayList<Rule>();
 		elementContextStack = new ArrayList<NameContext>();
-
-		uris = new HashMap<String, URIContext>();
+		// uris = new HashMap<String, URIContext>();
+		uris = new ArrayList<URIContext>();
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -135,8 +105,6 @@ public abstract class AbstractEXICoder {
 
 	// re-init (rule stack etc)
 	protected void initForEachRun() throws EXIException {
-		// rules learned while coding
-		runtimeDispatcher.clear();
 		// stack when traversing the EXI document
 		openRules.clear();
 		currentRule = null;
@@ -266,7 +234,9 @@ public abstract class AbstractEXICoder {
 				String localName = ename.getLocalName();
 
 				updateURIContext(namespaceURI);
-				NameContext nc = uriContext.getNameContext(localName);
+				int localNameID = uriContext.getLocalNameID(localName);
+				NameContext nc = uriContext.getNameContext(localNameID);
+				// NameContext nc = uriContext.getNameContext(localName);
 
 				// rules
 				nc.setUniqueSchemaRule(namedElement.getUniqueRule());
@@ -294,17 +264,9 @@ public abstract class AbstractEXICoder {
 
 	protected void pushElementContext(final String namespaceURI,
 			final String localName) {
-		if (context == null) {
-			// root element --> no context grammar available yet
-			updateURIContext(namespaceURI);
-			context = uriContext.getNameContext(localName);
-		} else {
-			if (uriContext.namespaceURI != namespaceURI) {
-				updateURIContext(namespaceURI);
-			}
-			context = uriContext.getNameContext(localName);
-		}
-
+		//	TODO update URI Context necessary ?
+		updateURIContext(namespaceURI);
+		context = uriContext.getNameContext(uriContext.getLocalNameID(localName));
 		assert (context != null);
 
 		// push context stack
@@ -368,7 +330,7 @@ public abstract class AbstractEXICoder {
 	}
 
 	protected Rule addRuntimeRule(final NameContext key) {
-		Rule rule = new RuleStartTagSchemaLess();
+		Rule rule = new SchemaLessStartTag();
 		runtimeRules.put(key, rule);
 		return rule;
 	}
@@ -385,12 +347,18 @@ public abstract class AbstractEXICoder {
 		prevElementContext = context;
 
 		updateURIContext(namespaceURI);
-		context = uriContext.getNameContext(localName);
-		if (context == null) {
+		Integer localNameID = uriContext.getLocalNameID(localName);		
+		// context = uriContext.getNameContext(localName);
+		// if (context == null) {
+		if (localNameID == null) {
 			uriContext.addLocalName(localName);
-			context = uriContext.getNameContext(localName);
+			localNameID = uriContext.getLocalNameID(localName);	
+//			context = uriContext.getNameContext(localName);
 		}
 
+		context = uriContext.getNameContext(localNameID);
+		
+		
 		assert (context != null);
 	}
 
@@ -401,18 +369,25 @@ public abstract class AbstractEXICoder {
 	/*
 	 * URIs
 	 */
-
-	public void updateURIContext(final String namespaceURI) {
+	protected void updateURIContext(final String namespaceURI) {
 		if (uriContext.namespaceURI != namespaceURI) {
-			uriContext = uris.get(namespaceURI);
+			// uriContext = uris.get(namespaceURI);
+			for(URIContext uc: this.uris) {
+				if (uc.namespaceURI.equals(namespaceURI)) {
+					uriContext = uc;
+					return;
+				}
+			}
+			uriContext = null;
 		}
 	}
-
+	
 	protected void addURI(final String namespaceURI) {
-		assert (!uris.containsKey(namespaceURI));
+		// assert (!uris.containsKey(namespaceURI));
 		uriContext = new URIContext(namespaceURI, uris.size());
-		uris.put(namespaceURI, uriContext);
+		uris.add(uriContext);
 	}
+
 
 
 	/*

@@ -18,9 +18,11 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.io.InputStream;
 
+import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
@@ -29,6 +31,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 
 /**
  * TODO Description
@@ -43,6 +47,33 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
+	}
+
+	public void setInputStream(InputStream is, boolean exiBodyOnly)
+			throws EXIException, IOException {
+		
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered already
+		if (!(is instanceof BufferedInputStream)) {
+			this.is = new BufferedInputStream(is);
+		}
+
+		//	header
+		if (!exiBodyOnly) {
+			// parse header (bit-wise)
+			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
+			EXIHeader.parse(headerChannel);
+		}
+		
+		// body
+		if (exiFactory.getCodingMode()== CodingMode.BIT_PACKED) {
+			channel = new BitDecoderChannel(is);
+		} else {
+			assert (exiFactory.getCodingMode() == CodingMode.BYTE_PACKED);
+			channel = new ByteDecoderChannel(is);
+		}
+		
+		initForEachRun();
 	}
 
 	@Override
@@ -71,27 +102,19 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// try to use "default" schema URI in default namespace
 		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
 			if (grammar.isSchemaInformed()) {
-				if (uris.size() > 3) {
-					Iterator<URIContext> u = uris.values().iterator();
-					boolean notDeclaredYet = true;
-					while (notDeclaredYet && u.hasNext()) {
-						URIContext uc = u.next();
-						if (uc.id == 4) {
-							namespaces.declarePrefix("", uc.namespaceURI);
-							notDeclaredYet = true;
-						}
-					}
+				if (uris.size() > 4) {
+					URIContext uc = uris.get(4);
+					namespaces.declarePrefix("", uc.namespaceURI);
 				}
 			}
 		}
-
 	}
 
 	public void decodeStartElement() throws EXIException {
 		try {
 			// reset local-element-ns prefix
 			elementPrefix = null;
-			
+
 			boolean isGenericSE = true;
 
 			if (nextEventType == EventType.START_ELEMENT) {
@@ -109,7 +132,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 				StartElementNS seNS = ((StartElementNS) nextEvent);
 				this.elementURI = seNS.getNamespaceURI();
 				// decode local-name
-				this.elementLocalName = block.readLocalName(elementURI);
+				this.elementLocalName = readLocalName(elementURI);
 				// handle element prefixes
 				elementPrefix = decodeQNamePrefix(this.elementURI);
 				// step forward in current rule (replace rule at the top)
@@ -146,9 +169,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeNamespaceDeclaration() throws EXIException {
 		try {
 			// prefix mapping
-			nsURI = block.readUri();
-			nsPrefix = block.readPrefix(nsURI);
-			boolean local_element_ns = block.readBoolean();
+			nsURI = readUri();
+			nsPrefix = readPrefix(nsURI);
+			boolean local_element_ns = channel.decodeBoolean();
 			if (local_element_ns) {
 				this.elementPrefix = nsPrefix;
 			}
@@ -167,27 +190,25 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			if (dtAT == null) {
 				// xsi cases --> it has been already taken care of
 			} else {
-				attributeValue = block.readTypedValidValue(dtAT, attributeURI,
-						attributeLocalName);
+				pushAttributeContext(attributeURI, attributeLocalName);
+				attributeValue = typeDecoder.readValue(dtAT, context, channel);
+				popAttributeContext();
 			}
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
 
-
 	public void decodeCharacters() throws EXIException {
 		try {
 			// structure
 			Datatype dtCH = decodeCharactersStructureOnly();
 			// content
-			characters = block.readTypedValidValue(dtCH, context.namespaceURI,
-					context.localName);
+			characters = typeDecoder.readValue(dtCH, context, channel);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 	}
-
 
 	public void decodeEndElement() throws EXIException {
 		// set ee information before popping context
@@ -211,10 +232,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeDocType() throws EXIException {
 		try {
 			// decode name, public, system, text AS string
-			docTypeName = new String(block.readString());
-			docTypePublicID = new String(block.readString());
-			docTypeSystemID = new String(block.readString());
-			docTypeText = new String(block.readString());
+			docTypeName = new String(channel.decodeString());
+			docTypePublicID = new String(channel.decodeString());
+			docTypeSystemID = new String(channel.decodeString());
+			docTypeText = new String(channel.decodeString());
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -223,7 +244,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeEntityReference() throws EXIException {
 		try {
 			// decode name AS string
-			entityReferenceName = new String(block.readString());
+			entityReferenceName = new String(channel.decodeString());
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -231,7 +252,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public void decodeComment() throws EXIException {
 		try {
-			comment = block.readString();
+			comment = channel.decodeString();
 
 			// step forward
 			replaceRuleAtTheTop(currentRule.getElementContentRule());
@@ -243,8 +264,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeProcessingInstruction() throws EXIException {
 		try {
 			// target & data
-			piTarget = new String(block.readString());
-			piData = new String(block.readString());
+			piTarget = new String(channel.decodeString());
+			piData = new String(channel.decodeString());
 
 			// step forward
 			replaceRuleAtTheTop(currentRule.getElementContentRule());
@@ -252,6 +273,5 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			throw new EXIException(e);
 		}
 	}
-
 
 }

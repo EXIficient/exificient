@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-import com.siemens.ct.exi.datatype.BuiltIn;
+import com.siemens.ct.exi.types.BuiltIn;
 
 /**
  * TODO Description

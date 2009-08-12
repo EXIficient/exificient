@@ -20,7 +20,7 @@ package com.siemens.ct.exi.data;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.datatype.DatatypeRepresentation;
+import com.siemens.ct.exi.types.DatatypeRepresentation;
 
 public class TestCaseOption {
 	private CodingMode codingMode;

@@ -26,6 +26,8 @@ import org.apache.xerces.xs.XSTypeDefinition;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
+import com.siemens.ct.exi.types.BuiltIn;
+import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
 
 public class DatatypeMappingTest extends AbstractTestCase {
@@ -126,7 +128,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
-		DatatypeDatetime dtd = (DatatypeDatetime) dt;
+		DatetimeDatatype dtd = (DatetimeDatatype) dt;
 		assertTrue(DatetimeType.dateTime == dtd.getDatetimeType());
 	}
 
@@ -144,7 +146,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
-		DatatypeDatetime dtd = (DatatypeDatetime) dt;
+		DatetimeDatatype dtd = (DatetimeDatatype) dt;
 		assertTrue(DatetimeType.gDay == dtd.getDatetimeType());
 	}
 
@@ -428,7 +430,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.LIST == dt.getDefaultBuiltInType());
 
-		DatatypeList dtl = (DatatypeList) dt;
+		ListDatatype dtl = (ListDatatype) dt;
 
 		assertTrue(BuiltInType.INTEGER == dtl.getListDatatype()
 				.getDefaultBuiltInType());

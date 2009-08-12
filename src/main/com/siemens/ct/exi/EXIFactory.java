@@ -18,17 +18,13 @@
 
 package com.siemens.ct.exi;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.api.sax.EXIWriter;
-import com.siemens.ct.exi.datatype.DatatypeRepresentation;
-import com.siemens.ct.exi.datatype.TypeEncoder;
-import com.siemens.ct.exi.datatype.decoder.TypeDecoder;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.io.block.DecoderBlock;
+import com.siemens.ct.exi.types.DatatypeRepresentation;
+import com.siemens.ct.exi.types.TypeDecoder;
+import com.siemens.ct.exi.types.TypeEncoder;
 
 /**
  * An EXI Factory is used for setting EXI coding options on one hand and
@@ -155,31 +151,6 @@ public interface EXIFactory {
 	 * 
 	 */
 	public XMLReader createEXIReader();
-
-	// TODO offer functionality to set CodingBlock
-	// e.g. setCodingBlockFactory
-	// # CodingBlockFactory
-	// . getEncoderBlock
-	// . getDecoderBlock
-
-//	/**
-//	 * Returns an EXI <code>EncoderBlock</code> according coding options like
-//	 * CodingMode etc.
-//	 * 
-//	 * @return encoder block according given EXI options
-//	 * @see EncoderBlock
-//	 */
-//	public EncoderBlock createEncoderBlock(OutputStream outputStream);
-
-	/**
-	 * Returns an EXI <code>DecoderBlock</code> according coding options like
-	 * CodingMode etc.
-	 * 
-	 * @return decoder block according given EXI options
-	 * @see DecoderBlock
-	 */
-	public DecoderBlock createDecoderBlock(InputStream inputStream)
-			throws IOException;
 
 	/**
 	 * Returns an EXI <code>TypeEncoder</code> according coding options such as

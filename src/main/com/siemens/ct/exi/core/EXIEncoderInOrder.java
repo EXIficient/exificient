@@ -62,7 +62,7 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 
 	protected void writeValueAsString(String value)
 			throws IOException {
-		stringEncoder.writeValueAsString(context, channel, value);
+		typeEncoder.getStringEncoder().writeValue(context, channel, value);
 	}
 
 

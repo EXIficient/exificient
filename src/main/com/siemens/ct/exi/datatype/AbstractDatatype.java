@@ -22,8 +22,11 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.core.NameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.ExpandedName;
 
 /**
@@ -76,12 +79,16 @@ public abstract class AbstractDatatype implements Datatype {
 		return true;
 	}
 	
-	public void writeValueRCS(DatatypeRestrictedCharacterSet rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
 		rcsEncoder.setRestrictedCharacterSet(rcs);
 		rcsEncoder.isValid(lastRCSValue);
 		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
 	}
 	
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context) throws IOException {
+		rcsDecoder.setRestrictedCharacterSet(rcs);
+		return rcsDecoder.readValue(valueChannel, stringDecoder, context);
+	}
 
 	public String toString() {
 		return defaultbuiltInType.toString();
