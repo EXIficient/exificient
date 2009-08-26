@@ -190,9 +190,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			if (dtAT == null) {
 				// xsi cases --> it has been already taken care of
 			} else {
-				pushAttributeContext(attributeURI, attributeLocalName);
-				attributeValue = typeDecoder.readValue(dtAT, context, channel);
-				popAttributeContext();
+				// pushAttributeContext(attributeURI, attributeLocalName);
+				NameContext atContext = getAttributeContext(attributeURI, attributeLocalName);
+				attributeValue = typeDecoder.readValue(dtAT, atContext, channel);
+				// popAttributeContext();
 			}
 		} catch (IOException e) {
 			throw new EXIException(e);
@@ -204,7 +205,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			// structure
 			Datatype dtCH = decodeCharactersStructureOnly();
 			// content
-			characters = typeDecoder.readValue(dtCH, context, channel);
+			characters = typeDecoder.readValue(dtCH, elementContext, channel);
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -212,8 +213,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public void decodeEndElement() throws EXIException {
 		// set ee information before popping context
-		this.elementURI = context.namespaceURI;
-		this.elementLocalName = context.localName;
+		this.elementURI = elementContext.namespaceURI;
+		this.elementLocalName = elementContext.localName;
 
 		if (nextEventType == EventType.END_ELEMENT_UNDECLARED) {
 			// learn end-element event ?

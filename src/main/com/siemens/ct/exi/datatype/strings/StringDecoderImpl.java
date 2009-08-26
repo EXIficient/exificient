@@ -54,9 +54,10 @@ public class StringDecoderImpl implements StringDecoder {
 
 	public char[] readValueLocalHit(NameContext context,
 			DecoderChannel valueChannel) throws IOException {
-		int n = MethodsBag.getCodingLength(localValues.get(context).size());
+		List<char[]> localChars = localValues.get(context);
+		int n = MethodsBag.getCodingLength(localChars.size());
 		int localID = valueChannel.decodeNBitUnsignedInteger(n);
-		return localValues.get(context).get(localID);
+		return localChars.get(localID);
 	}
 	
 	public char[] readValueGlobalHit(NameContext context,
