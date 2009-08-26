@@ -250,9 +250,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		// return typeEncoder.isTypeValid(datatype, value);
 	}
 
-	protected abstract void writeValueTypeValid() throws IOException;
+	protected abstract void writeValueTypeValid(NameContext valueContext) throws IOException;
 
-	protected abstract void writeValueAsString(String value) throws IOException;
+	protected abstract void writeValueAsString(NameContext valueContext, String value) throws IOException;
 
 	/*
 	 * Event-Codes
@@ -492,7 +492,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 				if (ecEEundeclared == Constants.NOT_FOUND) {
 					// Note: should never happen except in strict mode
-					throw new EXIException("Unexpected EE {" + context + ", "
+					throw new EXIException("Unexpected EE {" + elementContext + ", "
 							+ exiFactory.toString());
 				} else {
 					// encode [undeclared] event-code
@@ -681,13 +681,14 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				encodeQNamePrefix(uri, prefix);
 
 				// at context
-				pushAttributeContext(uri, localName);
+				NameContext atContext = getAttributeContext(uri, localName);
+				// pushAttributeContext(uri, localName);
 				if (valid) {
 					// encode value type-aware
-					writeValueTypeValid();
+					writeValueTypeValid(atContext);
 				} else {
 					// encode content as string
-					writeValueAsString(value);
+					writeValueAsString(atContext, value);
 				}
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop(ei.next);
@@ -707,9 +708,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					// prefix
 					encodeQNamePrefix(uri, prefix);
 					// at context
-					pushAttributeContext(uri, localName);
+					// pushAttributeContext(uri, localName);
 					// value as string
-					writeValueAsString(value);
+					writeValueAsString(getAttributeContext(uri, localName), value);
 					currentRule.learnAttribute(uri, localName);
 				} else {
 					// Warn encoder that the attribute is simply skipped
@@ -718,7 +719,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					throwWarning("Skip " + eventAT);
 				}
 			}
-			popAttributeContext();
+			// popAttributeContext();
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -743,12 +744,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			encodeQNamePrefix(uri, prefix);
 
 			// at context
-			pushAttributeContext(uri, localName);
+			// pushAttributeContext(uri, localName);
 
 			// encode content as string
-			writeValueAsString(value);
+			writeValueAsString(getAttributeContext(uri, localName), value);
 
-			popAttributeContext();
+			// popAttributeContext();
 		}
 	}
 
@@ -764,7 +765,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// --> encode EventCode, schema-valid content plus grammar moves
 				// on
 				encode1stLevelEventCode(ei.getEventCode());
-				writeValueTypeValid();
+				writeValueTypeValid(elementContext);
 				// step forward in current rule (replace rule at the top)
 				replaceRuleAtTheTop(ei.next);
 			} else {
@@ -777,7 +778,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					// encode schema-invalid content as string plus moves on in
 					// grammar
 					replaceRuleAtTheTop(ei.next);
-					writeValueAsString(chars);
+					writeValueAsString(elementContext, chars);
 				} else {
 					// Undeclared CH can be found on 2nd level
 					int ecCHundeclared = currentRule.get2ndLevelEventCode(
@@ -795,7 +796,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 						currentRule.learnCharacters();
 
 						// content as string
-						writeValueAsString(chars);
+						writeValueAsString(elementContext, chars);
 
 						// step forward in current rule (replace rule at the
 						// top)

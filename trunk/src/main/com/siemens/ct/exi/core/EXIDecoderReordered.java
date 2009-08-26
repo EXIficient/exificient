@@ -299,16 +299,17 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 					// special xsi cases (data already present)
 					xsiValues.put(attributeEntries.size() - 1, attributeValue);
 				} else {
-					pushAttributeContext(attributeURI, attributeLocalName);
-					incrementValues(dtAT);
-					popAttributeContext();
+					// pushAttributeContext(attributeURI, attributeLocalName);
+					NameContext atContext = getAttributeContext(attributeURI, attributeLocalName);
+					incrementValues(atContext, dtAT);
+					// popAttributeContext();
 				}
 				break;
 			case CHARACTERS:
 			case CHARACTERS_GENERIC:
 			case CHARACTERS_GENERIC_UNDECLARED:
 				Datatype dtCH = decodeCharactersStructureOnly();
-				incrementValues(dtCH);
+				incrementValues(elementContext, dtCH);
 				break;
 			case END_ELEMENT:
 				super.decodeEndElement();
@@ -445,19 +446,19 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// nextEventType = eventTypes.get(currentEventIndex);
 	}
 
-	protected void incrementValues(Datatype datatype) {
+	protected void incrementValues(NameContext valueContext, Datatype datatype) {
 		cntValues++;
 
-		if (valueQNames.contains(context)) {
-			occurrences.put(context, occurrences.get(context) + 1);
+		if (valueQNames.contains(valueContext)) {
+			occurrences.put(valueContext, occurrences.get(valueContext) + 1);
 		} else {
 			// new
-			occurrences.put(context, 1);
-			dataTypes.put(context, new ArrayList<Datatype>());
-			valueQNames.add(context);
+			occurrences.put(valueContext, 1);
+			dataTypes.put(valueContext, new ArrayList<Datatype>());
+			valueQNames.add(valueContext);
 		}
 
-		dataTypes.get(context).add(datatype);
+		dataTypes.get(valueContext).add(datatype);
 	}
 
 	public void decodeStartDocument() throws EXIException {
@@ -498,17 +499,18 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		attributeValue = xsiValues.get(attributeEntryIndex - 1);
 		if (attributeValue == null) {
 			// "normal" content value
-			pushAttributeContext(attributeURI, attributeLocalName);
-			PreReadValueContainer vc = contentValues.get(context);
+			// pushAttributeContext(attributeURI, attributeLocalName);
+			NameContext atContext = getAttributeContext(attributeURI, attributeLocalName);
+			PreReadValueContainer vc = contentValues.get(atContext);
 			assert (vc != null);
 			attributeValue = vc.getNextContantValue();
-			popAttributeContext();
+			// popAttributeContext();
 		}
 	}
 
 	public void decodeCharacters() throws EXIException {
 		stepToNextEvent();
-		PreReadValueContainer vc = contentValues.get(context);
+		PreReadValueContainer vc = contentValues.get(elementContext);
 		assert (vc != null);
 		characters = vc.getNextContantValue();
 	}

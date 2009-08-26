@@ -76,7 +76,7 @@ public abstract class AbstractEXICoder {
 	protected List<URIContext> uris;
 	
 	// Context (incl. stack)
-	protected NameContext context;
+	protected NameContext elementContext;
 	protected List<NameContext> elementContextStack;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
@@ -112,7 +112,7 @@ public abstract class AbstractEXICoder {
 		namespaces.reset();
 		// (core) context
 		elementContextStack.clear();
-		elementContextStack.add(context = null);
+		elementContextStack.add(elementContext = null);
 		initForEachRunContext();
 		// clear runtime rules
 		runtimeRules.clear();
@@ -266,11 +266,11 @@ public abstract class AbstractEXICoder {
 			final String localName) {
 		//	TODO update URI Context necessary ?
 		updateURIContext(namespaceURI);
-		context = uriContext.getNameContext(uriContext.getLocalNameID(localName));
-		assert (context != null);
+		elementContext = uriContext.getNameContext(uriContext.getLocalNameID(localName));
+		assert (elementContext != null);
 
 		// push context stack
-		elementContextStack.add(context);
+		elementContextStack.add(elementContext);
 		// push NS context
 		namespaces.pushContext();
 	}
@@ -280,7 +280,7 @@ public abstract class AbstractEXICoder {
 		assert (!elementContextStack.isEmpty());
 		int sizeContext = elementContextStack.size();
 		elementContextStack.remove(sizeContext - 1);
-		context = elementContextStack.get(sizeContext - 2);
+		elementContext = elementContextStack.get(sizeContext - 2);
 
 		// NS context
 		namespaces.popContext();
@@ -288,30 +288,30 @@ public abstract class AbstractEXICoder {
 
 	protected void pushElementRule(boolean isGenericSE) {
 		// update current rule
-		if ((currentRule = context.getUniqueSchemaRule()) == null) {
+		if ((currentRule = elementContext.getUniqueSchemaRule()) == null) {
 			if (this.elementContextStack.size() == 2) {
 				// root element
-				currentRule = context.getSchemaInformedElementFragmentGrammar();
-				if ((currentRule = getRuntimeRule(context)) == null) {
+				currentRule = elementContext.getSchemaInformedElementFragmentGrammar();
+				if ((currentRule = getRuntimeRule(elementContext)) == null) {
 					// create new runtime rule
-					currentRule = addRuntimeRule(context);
+					currentRule = addRuntimeRule(elementContext);
 				}
 			} else {
 				// no root element
-				if (isGenericSE && grammar.isGlobalElement(context.namespaceURI, context.localName)) {
+				if (isGenericSE && grammar.isGlobalElement(elementContext.namespaceURI, elementContext.localName)) {
 					//	global element
-					currentRule = context.getGlobalRule();
+					currentRule = elementContext.getGlobalRule();
 				} else {
 					// no global element, scope information may help
-					currentRule = context.getScopeRule(elementContextStack);
+					currentRule = elementContext.getScopeRule(elementContextStack);
 				}
 
 				if (currentRule == null) {
 					// element not found in context --> runtime
 					// re-use runtime rule ore create new one
-					if ((currentRule = getRuntimeRule(context)) == null) {
+					if ((currentRule = getRuntimeRule(elementContext)) == null) {
 						// create new runtime rule
-						currentRule = addRuntimeRule(context);
+						currentRule = addRuntimeRule(elementContext);
 					}
 				}
 			}
@@ -339,13 +339,9 @@ public abstract class AbstractEXICoder {
 		return runtimeRules.get(key);
 	}
 
-	NameContext prevElementContext;
-
-	protected void pushAttributeContext(final String namespaceURI,
+	
+	protected NameContext getAttributeContext(final String namespaceURI,
 			final String localName) {
-
-		prevElementContext = context;
-
 		updateURIContext(namespaceURI);
 		Integer localNameID = uriContext.getLocalNameID(localName);		
 		// context = uriContext.getNameContext(localName);
@@ -356,14 +352,10 @@ public abstract class AbstractEXICoder {
 //			context = uriContext.getNameContext(localName);
 		}
 
-		context = uriContext.getNameContext(localNameID);
+		NameContext atContext = uriContext.getNameContext(localNameID);
+		assert (atContext != null);
 		
-		
-		assert (context != null);
-	}
-
-	protected void popAttributeContext() {
-		context = prevElementContext;
+		return atContext;
 	}
 	
 	/*

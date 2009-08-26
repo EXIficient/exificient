@@ -64,12 +64,12 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		return super.isTypeValid(datatype, value);
 	}
 
-	protected void updateContextValue(String value, Datatype datatype) {
-		ContextContainer cc = contexts.get(context);
+	protected void updateContextValue(NameContext valueContext, String value, Datatype datatype) {
+		ContextContainer cc = contexts.get(valueContext);
 		if(cc == null) {
 			cc = new ContextContainer();
-			contexts.put(context, cc);
-			contextOrders.add(context);
+			contexts.put(valueContext, cc);
+			contextOrders.add(valueContext);
 		}
 		
 		cc.addValue(value, datatype);
@@ -77,18 +77,18 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	}
 	
 	@Override
-	protected void writeValueTypeValid()
+	protected void writeValueTypeValid(NameContext valueContext)
 			throws IOException {
 		// System.out.println("ValueType = " + lastValue + " " + this.context);
-		updateContextValue(lastValue, lastDatatype);
+		updateContextValue(valueContext, lastValue, lastDatatype);
 	}
 
 	@Override
-	public void writeValueAsString(String value)
+	public void writeValueAsString(NameContext valueContext, String value)
 			throws IOException {
 		// System.out.println("ValueString = " + lastValue + " " +
 		// this.context);
-		updateContextValue(value, BuiltIn.DEFAULT_DATATYPE);
+		updateContextValue(valueContext, value, BuiltIn.DEFAULT_DATATYPE);
 	}
 
 	protected OutputStream getStream() {
@@ -123,13 +123,13 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// 2. value channels in order
 			for (NameContext contextOrder : contextOrders) {
 				// updating to right context
-				context = contextOrder;
-				ContextContainer cc = contexts.get(context);
+				elementContext = contextOrder;
+				ContextContainer cc = contexts.get(elementContext);
 				List<String> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
 					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
-					typeEncoder.writeValue(context, channel);
+					typeEncoder.writeValue(elementContext, channel);
 				}
 			}
 			finalizeStream();
@@ -158,14 +158,14 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			boolean wasThereLeq100 = false;
 			for (NameContext contextOrder : contextOrders) {
 				// updating to right context
-				context = contextOrder;
-				ContextContainer cc = contexts.get(context);
+				elementContext = contextOrder;
+				ContextContainer cc = contexts.get(elementContext);
 				List<String> values = cc.getValues();
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					for (int i = 0; i < values.size(); i++) {
 						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
-						typeEncoder.writeValue(context, leq100);
+						typeEncoder.writeValue(elementContext, leq100);
 					}
 					wasThereLeq100 = true;
 				}
@@ -177,8 +177,8 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// all value channels having more than 100 values
 			for (NameContext contextOrder : contextOrders) {
 				// updating to right context
-				context = contextOrder;
-				ContextContainer cc = contexts.get(context);
+				elementContext = contextOrder;
+				ContextContainer cc = contexts.get(elementContext);
 				List<String> values = cc.getValues();
 				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
@@ -186,7 +186,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
 					for (int i = 0; i < values.size(); i++) {
 						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
-						typeEncoder.writeValue(context, gre100);
+						typeEncoder.writeValue(elementContext, gre100);
 					}
 					//	finish stream
 					finalizeStream();

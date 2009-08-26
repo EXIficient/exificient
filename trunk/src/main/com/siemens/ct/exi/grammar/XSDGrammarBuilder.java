@@ -725,7 +725,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					.getName());
 			addLocalNameStringEntry(typeName);
 		}
-
+		
 		return new TypeGrammar(type_i, typeEmpty_i);
 	}
 
@@ -848,10 +848,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return type_i_0;
 	}
 
-	class LNC implements Comparable<LNC> {
+	protected class LNC implements Comparable<LNC> {
 		protected final ExpandedName name;
 		// schema-rule
-		protected Rule schemaRule;
+		protected SchemaInformedRule schemaRule;
 		XSElementDeclaration schemaRuleType;
 		ExpandedName[] schemaRuleScope;
 		protected List<Rule> schemaRules;
@@ -870,7 +870,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			schemaRuleScopes = new ArrayList<ExpandedName[]>();
 		}
 
-		public void addSchemaRule(Rule rule, XSElementDeclaration el,
+		public void addSchemaRule(SchemaInformedRule rule, XSElementDeclaration el,
 				ExpandedName distinctiveENs[]) {
 			assert (rule.isFirstElementRule());
 
@@ -987,6 +987,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		public boolean hasUniqueSchemaRule() {
 			return unique;
+		}
+		
+		public SchemaInformedRule getUniqueSchemaRule() {
+			return schemaRule;
 		}
 
 		@Override
