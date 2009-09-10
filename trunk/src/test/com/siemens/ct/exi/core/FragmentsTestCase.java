@@ -105,24 +105,21 @@ public class FragmentsTestCase extends TestCase {
 			//decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			// decoder.decodeStartElementGeneric();
-			decoder.decodeStartElement();
+			decoder.decodeStartElementGeneric();
 			assertTrue(decoder.getElementURI().equals(s1.getNamespaceURI()));
 			assertTrue(decoder.getElementLocalName().equals(s1.getLocalName()));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			// decoder.decodeStartElementGenericUndeclared();
-			decoder.decodeStartElement();
+			decoder.decodeStartElementGenericUndeclared();
 			assertTrue(decoder.getElementURI().equals(s2.getNamespaceURI()));
 			assertTrue(decoder.getElementLocalName().equals(s2.getLocalName()));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			// decoder.decodeAttributeGenericUndeclared();
-			decoder.decodeAttribute();
+			decoder.decodeAttributeGenericUndeclared();
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalName()));
@@ -131,8 +128,7 @@ public class FragmentsTestCase extends TestCase {
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-			// decoder.decodeEndElementUndeclared();
-			decoder.decodeEndElement();
+			decoder.decodeEndElementUndeclared();
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -165,8 +161,7 @@ public class FragmentsTestCase extends TestCase {
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			// decoder.decodeAttributeGenericUndeclared();
-			decoder.decodeAttribute();
+			decoder.decodeAttributeGenericUndeclared();
 			assertTrue(decoder.getAttributeURI().equals(at2.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at2.getLocalName()));

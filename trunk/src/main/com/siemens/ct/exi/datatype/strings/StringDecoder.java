@@ -20,20 +20,20 @@ package com.siemens.ct.exi.datatype.strings;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 public interface StringDecoder extends StringCoder {
 
-	public void addValue(NameContext context, char[] value);
+	public void addValue(Context context, char[] value);
 
-	public char[] readValue(NameContext context, DecoderChannel channel)
+	public char[] readValue(Context context, DecoderChannel channel)
 			throws IOException;
 
-	public char[] readValueLocalHit(NameContext context,
+	public char[] readValueLocalHit(Context context,
 			DecoderChannel valueChannel) throws IOException;
 
-	public char[] readValueGlobalHit(NameContext context,
+	public char[] readValueGlobalHit(Context context,
 			DecoderChannel valueChannel) throws IOException;
 
 }

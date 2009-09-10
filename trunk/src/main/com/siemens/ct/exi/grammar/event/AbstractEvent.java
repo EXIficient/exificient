@@ -29,12 +29,11 @@ package com.siemens.ct.exi.grammar.event;
  */
 
 public abstract class AbstractEvent implements Event {
-	protected String grammarNotation;
 
-	protected EventType eventType;
+	protected final EventType eventType;
 
-	public AbstractEvent(String grammarNotation) {
-		this.grammarNotation = grammarNotation;
+	public AbstractEvent(EventType eventType) {
+		this.eventType = eventType;
 	}
 
 	public EventType getEventType() {
@@ -46,25 +45,22 @@ public abstract class AbstractEvent implements Event {
 	}
 
 	public String toString() {
-		return grammarNotation;
+		return eventType.toString();
 	}
 
-	@Override
-	public int hashCode() {
-		return eventType.ordinal();
-	}
+//	@Override
+//	public int hashCode() {
+//		return eventType.ordinal();
+//	}
 
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
-		} else if (obj instanceof Event) {
-			return ((Event) obj).isEventType(getEventType());
+		} else if (obj instanceof AbstractEvent) {
+			return eventType == ((AbstractEvent) obj).eventType;
+			// return ((Event) obj).isEventType(getEventType());
 		} else {
 			return false;
 		}
-	}
-
-	public int compareTo(Event o) {
-		return (eventType.ordinal() - o.getEventType().ordinal());
 	}
 }

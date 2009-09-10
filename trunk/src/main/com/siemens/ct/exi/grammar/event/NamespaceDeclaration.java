@@ -28,27 +28,9 @@ package com.siemens.ct.exi.grammar.event;
  */
 
 public class NamespaceDeclaration extends AbstractEvent {
-	// private String prefix;
-	// private String uri;
 
 	public NamespaceDeclaration() {
-		super("NS");
-		eventType = EventType.NAMESPACE_DECLARATION;
+		super(EventType.NAMESPACE_DECLARATION);
 	}
 
-	// public void setPrefix( String name ) {
-	// this.prefix = name;
-	// }
-	//	
-	// public String getPrefix() {
-	// return this.prefix;
-	// }
-	//	
-	// public void setUri( String characters ) {
-	// this.uri = characters;
-	// }
-	//	
-	// public String getUri() {
-	// return this.uri;
-	// }
 }

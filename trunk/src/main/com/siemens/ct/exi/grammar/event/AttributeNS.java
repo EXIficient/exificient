@@ -34,8 +34,7 @@ public class AttributeNS extends AbstractEvent {
 	private String namespaceURI;
 
 	public AttributeNS(String uri) {
-		super("AT(uri:*)");
-		eventType = EventType.ATTRIBUTE_NS;
+		super(EventType.ATTRIBUTE_NS);
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 	}
@@ -49,12 +48,13 @@ public class AttributeNS extends AbstractEvent {
 	}
 
 	public String toString() {
-		return "AT(" + namespaceURI + ":*)";
+		return super.toString() + "(" + namespaceURI + ":*)";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode());
+		// return (eventType.ordinal() ^ namespaceURI.hashCode());
+		return (namespaceURI.hashCode());
 	}
 
 	@Override

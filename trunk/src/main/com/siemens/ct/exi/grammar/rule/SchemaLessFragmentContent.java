@@ -21,7 +21,6 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EndDocument;
-import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
@@ -73,13 +72,14 @@ public class SchemaLessFragmentContent extends AbstractSchemaLessRule {
 	}
 
 	@Override
-	public void learnStartElement(String uri, String localName) {
+	// public void learnStartElement(String uri, String localName) {
+	public void learnStartElement(StartElement se) {
 		// a learned rule is added to the front, technically
 		// it is added to the tail
-		Event event = new StartElement(uri, localName);
-		if (!this.contains(event)) {
+		// StartElement se = new StartElement(uri, localName);
+		if (!this.contains(se)) {
 			// eventRules.add ( new EventRule ( event, this ) );
-			this.addRule(event, this);
+			this.addRule(se, this);
 		}
 	}
 

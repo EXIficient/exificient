@@ -20,7 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -51,20 +51,20 @@ public interface Datatype {
 	// type aware
 	public boolean isValid(String value);
 	
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException;
 
 	// restricted character set 
 	public RestrictedCharacterSet getRestrictedCharacterSet();
 	
 	public boolean isValidRCS(String value);
 	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException;
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException;
 	
 	/*
 	 * Decoder
 	 */
-	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context)
+	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, Context context)
 			throws IOException;
 	
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context) throws IOException;
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, Context context) throws IOException;
 }

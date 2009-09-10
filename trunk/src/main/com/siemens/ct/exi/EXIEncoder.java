@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import org.xml.sax.helpers.NamespaceSupport;
@@ -51,31 +52,35 @@ public interface EXIEncoder {
 	 * Reports the beginning of a set of XML events
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeStartDocument() throws EXIException;
+	public void encodeStartDocument() throws EXIException, IOException;
 
 	/**
 	 * Reports the end of a set of XML events.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeEndDocument() throws EXIException;
+	public void encodeEndDocument() throws EXIException, IOException;
 
 	/**
 	 * Supplies the start of an element.
 	 * 
 	 * <p>
-	 * Provides access to the namespace URI, local name , and prefix representation
-	 * of the start tag.
+	 * Provides access to the namespace URI, local name , and prefix
+	 * representation of the start tag.
 	 * </p>
 	 * 
 	 * @param uri
 	 * @param localName
-	 * @param prefix (can be null according to fidelity options)
+	 * @param prefix
+	 *            (can be null according to fidelity options)
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeStartElement(String uri, String localName, String prefix)
-			throws EXIException;
+			throws EXIException, IOException;
 
 	/**
 	 * Supplies the start of a self-contained element. Self contained elements
@@ -91,23 +96,27 @@ public interface EXIEncoder {
 	 * @return byte where the selfContained fragments starts or -1 if not
 	 *         retrievable
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public int encodeStartFragmentSelfContained(String uri, String localName, String prefix)
-			throws EXIException;
+	public int encodeStartFragmentSelfContained(String uri, String localName,
+			String prefix) throws EXIException, IOException;
 
 	/**
 	 * Supplies the end tag of an element.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeEndElement() throws EXIException;
+	public void encodeEndElement() throws EXIException, IOException;
 
 	/**
 	 * Supplies the end tag of an SC fragment.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeEndFragmentSelfContained() throws EXIException;
+	public void encodeEndFragmentSelfContained() throws EXIException,
+			IOException;
 
 	/**
 	 * Supplies an attribute.
@@ -119,12 +128,14 @@ public interface EXIEncoder {
 	 * 
 	 * @param uri
 	 * @param localName
-	 * @param prefix (can be null according to fidelity options)
+	 * @param prefix
+	 *            (can be null according to fidelity options)
 	 * @param value
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeAttribute(String uri, String localName, String prefix,
-			String value) throws EXIException;
+			String value) throws EXIException, IOException;
 
 	/**
 	 * Namespaces are reported as a discrete Namespace event.
@@ -132,17 +143,19 @@ public interface EXIEncoder {
 	 * @param uri
 	 * @param prefix
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeNamespaceDeclaration(String uri, String prefix)
-			throws EXIException;
+			throws EXIException, IOException;
 
 	/**
 	 * Supplies an xsi:nil attribute.
 	 * 
 	 * @param nil
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeXsiNil(String nil) throws EXIException;
+	public void encodeXsiNil(String nil) throws EXIException, IOException;
 
 	/**
 	 * Supplies an xsi:type case.
@@ -150,8 +163,10 @@ public interface EXIEncoder {
 	 * @param xsiTypeRaw
 	 *            xsi:type value
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeXsiType(String xsiTypeRaw) throws EXIException;
+	public void encodeXsiType(String xsiTypeRaw) throws EXIException,
+			IOException;
 
 	/**
 	 * Supplies a comment as corresponding characters.
@@ -163,8 +178,9 @@ public interface EXIEncoder {
 	 * 
 	 * @param chars
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeCharacters(String chars) throws EXIException;
+	public void encodeCharacters(String chars) throws EXIException, IOException;
 
 	/**
 	 * Supplies content items to represent a DOCTYPE definition
@@ -174,18 +190,21 @@ public interface EXIEncoder {
 	 * @param systemID
 	 * @param text
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeDocType(String name, String publicID, String systemID,
-			String text) throws EXIException;
+			String text) throws EXIException, IOException;
 
 	/**
 	 * Supplies the name of an entity reference
 	 * 
 	 * @param name
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void encodeEntityReference(String name) throws EXIException;
-	
+	public void encodeEntityReference(String name) throws EXIException,
+			IOException;
+
 	/**
 	 * Supplies the text of a comment.
 	 * 
@@ -193,9 +212,10 @@ public interface EXIEncoder {
 	 * @param start
 	 * @param length
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeComment(char[] ch, int start, int length)
-			throws EXIException;
+			throws EXIException, IOException;
 
 	/**
 	 * Supplies the target and data for an underlying processing instruction.
@@ -203,7 +223,8 @@ public interface EXIEncoder {
 	 * @param target
 	 * @param data
 	 * @throws EXIException
+	 * @throws IOException
 	 */
 	public void encodeProcessingInstruction(String target, String data)
-			throws EXIException;
+			throws EXIException, IOException;
 }

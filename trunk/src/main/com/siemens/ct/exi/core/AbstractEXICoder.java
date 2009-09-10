@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +33,12 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
-import com.siemens.ct.exi.grammar.ElementContainer;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.SchemaEntry;
+import com.siemens.ct.exi.grammar.URIEntry;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * Shared functionality between EXI Encoder and Decoder.
@@ -50,7 +50,8 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 
 public abstract class AbstractEXICoder {
-
+	
+	
 	// factory
 	protected EXIFactory exiFactory;
 	protected Grammar grammar;
@@ -64,20 +65,19 @@ public abstract class AbstractEXICoder {
 	protected NamespaceSupport namespaces;
 
 	// currentRule and rule stack when traversing the EXI document
-	protected List<Rule> openRules;
 	protected Rule currentRule;
-
-	// rule generated while coding
-	protected Map<NameContext, Rule> runtimeRules;
+	protected List<Rule> openRules;
+	
+	//	SE pool
+	protected Map<Context, StartElement> runtimeElements;	
 
 	// URI context
 	protected URIContext uriContext;
-	// protected Map<String, URIContext> uris;
 	protected List<URIContext> uris;
 	
 	// Context (incl. stack)
-	protected NameContext elementContext;
-	protected List<NameContext> elementContextStack;
+	protected Context elementContext;
+	protected List<Context> elementContextStack;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
@@ -92,10 +92,9 @@ public abstract class AbstractEXICoder {
 		this.errorHandler = new DefaultErrorHandler();
 
 		// init once (runtime lists et cetera)
-		runtimeRules = new HashMap<NameContext, Rule>();
+		runtimeElements = new HashMap<Context, StartElement>();
 		openRules = new ArrayList<Rule>();
-		elementContextStack = new ArrayList<NameContext>();
-		// uris = new HashMap<String, URIContext>();
+		elementContextStack = new ArrayList<Context>();
 		uris = new ArrayList<URIContext>();
 	}
 
@@ -104,7 +103,7 @@ public abstract class AbstractEXICoder {
 	}
 
 	// re-init (rule stack etc)
-	protected void initForEachRun() throws EXIException {
+	protected void initForEachRun() throws EXIException, IOException {
 		// stack when traversing the EXI document
 		openRules.clear();
 		currentRule = null;
@@ -115,7 +114,7 @@ public abstract class AbstractEXICoder {
 		elementContextStack.add(elementContext = null);
 		initForEachRunContext();
 		// clear runtime rules
-		runtimeRules.clear();
+		runtimeElements.clear();
 		
 		// possible root elements
 		if (exiFactory.isFragment()) {
@@ -210,8 +209,8 @@ public abstract class AbstractEXICoder {
 			/*
 			 * Schema URIs & LocalNames
 			 */
-			SchemaEntry[] schemaEntries = grammar.getSchemaEntries();
-			for (SchemaEntry schemaEntry : schemaEntries) {
+			URIEntry[] schemaEntries = grammar.getSchemaEntries();
+			for (URIEntry schemaEntry : schemaEntries) {
 				String uri = schemaEntry.uri;
 				if (uri.equals(XMLConstants.NULL_NS_URI)) {
 					updateURIContext(uri);
@@ -221,30 +220,6 @@ public abstract class AbstractEXICoder {
 				for (String localName : schemaEntry.localNames) {
 					uriContext.addLocalName(localName);
 				}
-			}
-
-			/*
-			 * Named Elements
-			 */
-			ElementContainer[] namedElements = grammar.getNamedElements();
-
-			for (ElementContainer namedElement : namedElements) {
-				ExpandedName ename = namedElement.getExpandedName();
-				String namespaceURI = ename.getNamespaceURI();
-				String localName = ename.getLocalName();
-
-				updateURIContext(namespaceURI);
-				int localNameID = uriContext.getLocalNameID(localName);
-				NameContext nc = uriContext.getNameContext(localNameID);
-				// NameContext nc = uriContext.getNameContext(localName);
-
-				// rules
-				nc.setUniqueSchemaRule(namedElement.getUniqueRule());
-				nc.setAmbiguousRules(namedElement.getAmbiguousRules(),
-						namedElement
-								.getAmbiguousScopes());
-				nc.setSchemaInformedElementFragmentGrammar(namedElement
-						.getSchemaInformedElementFragmentGrammar());
 			}
 		}
 	}
@@ -262,15 +237,11 @@ public abstract class AbstractEXICoder {
 		}
 	}
 
-	protected void pushElementContext(final String namespaceURI,
-			final String localName) {
-		//	TODO update URI Context necessary ?
-		updateURIContext(namespaceURI);
-		elementContext = uriContext.getNameContext(uriContext.getLocalNameID(localName));
-		assert (elementContext != null);
-
+	
+	protected void pushElementContext(Context context) {
+		elementContext = context;
 		// push context stack
-		elementContextStack.add(elementContext);
+		elementContextStack.add(context);
 		// push NS context
 		namespaces.pushContext();
 	}
@@ -286,37 +257,8 @@ public abstract class AbstractEXICoder {
 		namespaces.popContext();
 	}
 
-	protected void pushElementRule(boolean isGenericSE) {
-		// update current rule
-		if ((currentRule = elementContext.getUniqueSchemaRule()) == null) {
-			if (this.elementContextStack.size() == 2) {
-				// root element
-				currentRule = elementContext.getSchemaInformedElementFragmentGrammar();
-				if ((currentRule = getRuntimeRule(elementContext)) == null) {
-					// create new runtime rule
-					currentRule = addRuntimeRule(elementContext);
-				}
-			} else {
-				// no root element
-				if (isGenericSE && grammar.isGlobalElement(elementContext.namespaceURI, elementContext.localName)) {
-					//	global element
-					currentRule = elementContext.getGlobalRule();
-				} else {
-					// no global element, scope information may help
-					currentRule = elementContext.getScopeRule(elementContextStack);
-				}
-
-				if (currentRule == null) {
-					// element not found in context --> runtime
-					// re-use runtime rule ore create new one
-					if ((currentRule = getRuntimeRule(elementContext)) == null) {
-						// create new runtime rule
-						currentRule = addRuntimeRule(elementContext);
-					}
-				}
-			}
-		}
-
+	protected void pushElementRule(Rule r) {
+		currentRule = r;
 		// actually push the rule on the top of the stack
 		assert (currentRule != null);
 		openRules.add(currentRule);
@@ -328,15 +270,25 @@ public abstract class AbstractEXICoder {
 		openRules.remove(size - 1);
 		currentRule = openRules.get(size - 2);
 	}
-
-	protected Rule addRuntimeRule(final NameContext key) {
-		Rule rule = new SchemaLessStartTag();
-		runtimeRules.put(key, rule);
-		return rule;
-	}
-
-	protected Rule getRuntimeRule(final NameContext key) {
-		return runtimeRules.get(key);
+	
+	protected StartElement getGenericStartElement(String uri, String localName) {
+		//	is there a global element that should be used
+		StartElement nextSE = grammar.getGlobalElement(uri, localName);
+		if( nextSE == null) {
+			//	no global element --> runtime start element
+			//	TODO avoid creating StartElement
+			StartElement eventSE = new StartElement(uri, localName);
+			nextSE = runtimeElements.get(eventSE);
+			if ( nextSE == null) {
+				//	create new start element and new runtime rule
+				nextSE = eventSE;
+				nextSE.setRule(new SchemaLessStartTag());
+				//	add element to runtime map
+				runtimeElements.put(nextSE, nextSE);
+			}
+		}
+		
+		return nextSE;
 	}
 
 	
@@ -344,12 +296,9 @@ public abstract class AbstractEXICoder {
 			final String localName) {
 		updateURIContext(namespaceURI);
 		Integer localNameID = uriContext.getLocalNameID(localName);		
-		// context = uriContext.getNameContext(localName);
-		// if (context == null) {
 		if (localNameID == null) {
 			uriContext.addLocalName(localName);
 			localNameID = uriContext.getLocalNameID(localName);	
-//			context = uriContext.getNameContext(localName);
 		}
 
 		NameContext atContext = uriContext.getNameContext(localNameID);

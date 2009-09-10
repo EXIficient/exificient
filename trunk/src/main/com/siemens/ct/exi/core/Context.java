@@ -16,16 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.grammar;
+package com.siemens.ct.exi.core;
 
-public class SchemaEntry {
-	
-	public final String uri;
-	public final String[] localNames;
-	
-	public SchemaEntry(String uri, String[] localNames) {
-		this.uri = uri;
-		this.localNames = localNames;
-	}
+public interface Context {
 
+	public String getLocalName();
+
+	public String getNamespaceURI();
+	
 }

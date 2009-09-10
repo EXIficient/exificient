@@ -16,12 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 package org.apache.xerces.impl.xs.models;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +55,7 @@ import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.util.ExpandedName;
+import com.siemens.ct.exi.util.sort.LexicographicSort;
 
 public abstract class EXIContentModelBuilder extends CMBuilder implements
 		XMLErrorHandler {
@@ -67,12 +65,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	protected static final Event END_ELEMENT = new EndElement();
 
 	protected static final boolean forUPA = false;
+	
+	protected static LexicographicSort lexSort = new LexicographicSort();
 
 	protected SubstitutionGroupHandler subGroupHandler;
 
 	protected XSModel xsModel;
-
-	protected Map<XSElementDeclaration, Vector<XSObject>> elements;
 
 	// errors while schema parsing
 	protected List<String> schemaParsingErrors;
@@ -80,24 +78,22 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	// elements that appear while processing
 	protected List<XSElementDeclaration> remainingElements;
 
-	// scope for elements
-	protected Map<XSElementDeclaration, List<XSComplexTypeDefinition>> enclosingTypes;
+	//	pool for element-declaration of StartElement events
+	protected Map<XSElementDeclaration, StartElement> elementPool;
 
 	public EXIContentModelBuilder() {
 		super(new CMNodeFactory());
 	}
 
 	protected void initOnce() {
-		elements = new HashMap<XSElementDeclaration, Vector<XSObject>>();
 		remainingElements = new ArrayList<XSElementDeclaration>();
-		enclosingTypes = new HashMap<XSElementDeclaration, List<XSComplexTypeDefinition>>();
+		elementPool = new HashMap<XSElementDeclaration, StartElement>();
 		schemaParsingErrors = new ArrayList<String>();
 	}
 
 	protected void initEachRun() {
-		elements.clear();
 		remainingElements.clear();
-		enclosingTypes.clear();
+		elementPool.clear();
 		schemaParsingErrors.clear();
 	}
 
@@ -199,6 +195,21 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 		return knownStates.get(startState);
 	}
+	
+
+	protected StartElement getStartElement(XSElementDeclaration elementDecl) {
+		StartElement se;
+		if (elementPool.containsKey(elementDecl)) {
+			se = elementPool.get(elementDecl);
+		} else {
+			se = new StartElement(elementDecl.getNamespace(),
+					elementDecl.getName());
+			elementPool.put(elementDecl, se);
+		}
+		
+		return se;
+	}
+	
 
 	protected void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
@@ -208,7 +219,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 		for (XSObject xs : possibleElements) {
 			// copy state since it gets modified
-			int[] cstate = Arrays.copyOf(originalState, originalState.length);
+			int[] cstate = new int[originalState.length];
+			System.arraycopy(originalState, 0, cstate, 0, originalState.length);
 
 			if (xs.getType() == XSConstants.ELEMENT_DECLARATION) {
 				// make transition
@@ -236,31 +248,22 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				}
 
-				// update list of "enclosing" types
-				List<XSComplexTypeDefinition> encls;
-				if (enclosingTypes.containsKey(nextEl)) {
-					encls = enclosingTypes.get(nextEl);
-				} else {
-					encls = new ArrayList<XSComplexTypeDefinition>();
-					enclosingTypes.put(nextEl, encls);
-				}
-				if (!encls.contains(enclosingType)) {
-					encls.add(enclosingType);
-				}
-
-				//	retrieve list of possible elements (e.g. substitution group elements)
-				List<ExpandedName> elements = getPossibleElementDeclarations(nextEl);
-				assert(elements.size() > 0);
+				// retrieve list of possible elements (e.g. substitution group
+				// elements)
+				List<XSElementDeclaration> elements = getPossibleElementDeclarations(nextEl);
+				assert (elements.size() > 0);
 				boolean isNewState = false;
-				
-				for(int i=0; i<elements.size(); i++) {
-					ExpandedName nextEN = elements.get(i);
-					Event xsEvent = new StartElement(nextEN.getNamespaceURI(), nextEN.getLocalName());
-					if( i == 0) {
-						//	first element tells the right way to proceed
-						isNewState = handleStateEntry(startState, knownStates, xsEvent, nextState);
+
+				for (int i = 0; i < elements.size(); i++) {
+					XSElementDeclaration nextEN = elements.get(i);
+					Event xsEvent = getStartElement(nextEN);
+					if (i == 0) {
+						// first element tells the right way to proceed
+						isNewState = handleStateEntry(startState, knownStates,
+								xsEvent, nextState);
 					} else {
-						handleStateEntry(startState, knownStates, xsEvent, nextState);
+						handleStateEntry(startState, knownStates, xsEvent,
+								nextState);
 					}
 				}
 
@@ -363,39 +366,42 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			return true;
 		}
 	}
-	
+
 	/**
-	 * Returns a list of possible elements. In general this list is the element itself. In case of
-	 * SubstitutionGroups the list is extended by all possible "replacements". The returned list
-	 * is sorted lexicographically first by {name} then by {target namespace}.
+	 * Returns a list of possible elements. In general this list is the element
+	 * itself. In case of SubstitutionGroups the list is extended by all
+	 * possible "replacements". The returned list is sorted lexicographically
+	 * first by {name} then by {target namespace}.
 	 * 
 	 * (see http://www.w3.org/TR/exi/#elementTerms)
 	 * 
 	 * @param el
 	 * @return
 	 */
-	protected List<ExpandedName> getPossibleElementDeclarations(XSElementDeclaration el) {
-		
-		List<ExpandedName> listElements = new ArrayList<ExpandedName>();
-		
-		//	add element itself
-		listElements.add(new ExpandedName(el.getNamespace(), el.getName()));
-		
-		//	add possible substitution group elements
+	protected List<XSElementDeclaration> getPossibleElementDeclarations(
+			XSElementDeclaration el) {
+
+		List<XSElementDeclaration> listElements = new ArrayList<XSElementDeclaration>();
+
+		// add element itself
+		listElements.add(el);
+
+		// add possible substitution group elements
 		XSObjectList listSG = xsModel.getSubstitutionGroup(el);
 		if (listSG != null && listSG.getLength() > 0) {
 			for (int i = 0; i < listSG.getLength(); i++) {
 				XSElementDeclaration ed = (XSElementDeclaration) listSG.item(i);
-				listElements.add(new ExpandedName(ed.getNamespace(), ed.getName()));
+				listElements.add(ed);
+				// listElements.add(new ExpandedName(ed.getNamespace(),
+				// ed.getName()));
 			}
 		}
-		
-		//	sort list
-		Collections.sort(listElements);
-		
+
+		// sort list
+		Collections.sort(listElements, lexSort);
+
 		return listElements;
 	}
-	
 
 	protected static void printTransition(CMState startState, XSObject xs,
 			CMState nextState) {
@@ -434,20 +440,21 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		public CMState(Vector<XSObject> states, boolean end, int[] state) {
 			this.states = states;
 			this.end = end;
-			this.state = Arrays.copyOf(state, state.length); // copy, may get
-			// modified
+			// copy, may get modified
+			this.state = new int[state.length];
+			System.arraycopy(state, 0, this.state, 0, state.length);
 		}
 
 		public boolean equals(Object o) {
 			if (o instanceof CMState) {
 				CMState other = (CMState) o;
-				if (end == other.end && states.equals(other.states)
-						) {
+				if (end == other.end && states.equals(other.states)) {
 					// if (Arrays.equals(state, other.state)) {
-					assert(state.length > 1 && other.state.length > 1);
-					//	NOTE: 3rd item is counter only!
-					if (state[0] == other.state[0] && state[1] == other.state[1] ) {
-						return true;	
+					assert (state.length > 1 && other.state.length > 1);
+					// NOTE: 3rd item is counter only!
+					if (state[0] == other.state[0]
+							&& state[1] == other.state[1]) {
+						return true;
 					}
 				}
 			}

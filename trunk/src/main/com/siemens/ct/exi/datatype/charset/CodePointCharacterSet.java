@@ -16,29 +16,36 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.util;
+package com.siemens.ct.exi.datatype.charset;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
- * TODO Description
+ * Utility class to build a RestrictedCharacterSet by a given Set.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20090421
  */
 
-public class ExpandedNameComparator implements Comparator<ExpandedName> {
+public class CodePointCharacterSet extends AbstractRestrictedCharacterSet {
 
-	public int compare(ExpandedName o1, ExpandedName o2) {
-		int cLocalPart = o1.getLocalName().compareTo(o2.getLocalName());
-		return (cLocalPart == 0 ? o1.getNamespaceURI().compareTo(
-				o2.getNamespaceURI()) : cLocalPart);
-	}
-	
-	public static int compare(String ns1, String ln1, String ns2, String ln2) {
-		int cLocalPart = ln1.compareTo(ln2);
-		return (cLocalPart == 0 ? ns1.compareTo(ns2) : cLocalPart);
+	public CodePointCharacterSet(Set<Integer> codePoints) {
+		super();
+		//	sort code-points by UCS
+		List<Integer> sortedCodePoints = new ArrayList<Integer>();
+		sortedCodePoints.addAll(codePoints);
+		Collections.sort(sortedCodePoints);
+		
+		// iterate over characters
+		Iterator<Integer> iter = sortedCodePoints.iterator();
+		while(iter.hasNext()) {
+			addValue(iter.next());
+		}
 	}
 }

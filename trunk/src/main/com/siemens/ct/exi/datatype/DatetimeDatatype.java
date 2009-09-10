@@ -20,7 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -60,13 +60,13 @@ public class DatetimeDatatype extends AbstractDatatype {
 		return lastValidDatetime.parse(value, datetimeType);
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
 			throws IOException {
 		valueChannel.encodeDateTime(lastValidDatetime);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
+			StringDecoder stringDecoder, Context context)
 			throws IOException {
 		return valueChannel.decodeDateTimeAsString(datetimeType);
 	}

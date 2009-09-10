@@ -20,10 +20,10 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.XMLConstants;
 
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.ExpandedNameComparator;
 
 /**
  * TODO Description
@@ -34,14 +34,13 @@ import com.siemens.ct.exi.util.ExpandedNameComparator;
  * @version 0.3.20081103
  */
 
-public class Attribute extends AbstractDatatypeEvent {
+public class Attribute extends AbstractDatatypeEvent implements Context {
 	private String namespaceURI;
 	private String localName;
 
 	public Attribute(String uri, String localName, ExpandedName valueType,
 			Datatype datatype) {
-		super("AT", valueType, datatype);
-		eventType = EventType.ATTRIBUTE;
+		super(EventType.ATTRIBUTE, valueType, datatype);
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 		this.localName = localName;
@@ -69,34 +68,26 @@ public class Attribute extends AbstractDatatypeEvent {
 	}
 
 	public String toString() {
-		return "AT({" + namespaceURI + "}" + localName + ")";
+		return super.toString() + "(" + namespaceURI + ":" + localName + ")";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
-				.hashCode());
+//		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
+//				.hashCode());
+		return (namespaceURI.hashCode() ^ localName.hashCode());
 	}
 
+	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Attribute) {
+		if (this == obj) {
+			return true;
+		} else if (obj instanceof Attribute) {
 			Attribute otherAT = (Attribute) obj;
 			return (localName.equals(otherAT.localName) && namespaceURI
 					.equals(otherAT.namespaceURI));
 		} else {
 			return false;
-		}
-	}
-
-	@Override
-	public int compareTo(Event o) {
-		if (o instanceof Attribute) {
-			// both AT events
-			Attribute otherAT = (Attribute) o;
-			return ExpandedNameComparator.compare(namespaceURI, localName,
-					otherAT.namespaceURI, otherAT.localName);
-		} else {
-			return super.compareTo(o);
 		}
 	}
 

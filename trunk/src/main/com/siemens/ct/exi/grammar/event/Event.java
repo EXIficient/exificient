@@ -27,7 +27,7 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.3.20080718
  */
 
-public interface Event extends Comparable<Event> {
+public interface Event {
 	public EventType getEventType();
 
 	public boolean isEventType(EventType eventType);

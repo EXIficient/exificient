@@ -52,7 +52,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getNamedElement("", "root").getUniqueRule();
+		Rule root = g.getGlobalElement("", "root").getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -86,7 +86,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getNamedElement("", "root").getUniqueRule();
+		Rule root = g.getGlobalElement("", "root").getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -127,7 +127,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getNamedElement("", "root").getUniqueRule();
+		Rule root = g.getGlobalElement("", "root").getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -171,7 +171,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getNamedElement("", "root").getUniqueRule();
+		Rule root = g.getGlobalElement("", "root").getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -234,7 +234,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule c = g.getNamedElement("", "root").getUniqueRule();
+		Rule c = g.getGlobalElement("", "root").getRule();
 
 		// SE(c), EE
 		// maxOccurs = "0" --> same rule over and over again
@@ -262,7 +262,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule rule = g.getNamedElement("", "root").getUniqueRule();
+		Rule rule = g.getGlobalElement("", "root").getRule();
 
 		// SE(a), SE(c), EE
 		{
@@ -361,7 +361,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule rule = g.getNamedElement("", "root").getUniqueRule();
+		Rule rule = g.getGlobalElement("", "root").getRule();
 
 		{
 			assertTrue(rule.getNumberOfEvents() == 4);

@@ -33,8 +33,8 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  */
 
 public class TypeGrammar {
-	final SchemaInformedRule type;
-	final SchemaInformedRule typeEmpty;
+	protected final SchemaInformedRule type;
+	protected final SchemaInformedRule typeEmpty;
 
 	public TypeGrammar(SchemaInformedRule type, SchemaInformedRule typeEmpty) {
 		this.type = type;

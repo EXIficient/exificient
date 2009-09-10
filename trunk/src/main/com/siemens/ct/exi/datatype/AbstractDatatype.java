@@ -20,7 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -79,13 +79,13 @@ public abstract class AbstractDatatype implements Datatype {
 		return true;
 	}
 	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context) throws IOException {
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException {
 		rcsEncoder.setRestrictedCharacterSet(rcs);
 		rcsEncoder.isValid(lastRCSValue);
 		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
 	}
 	
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, NameContext context) throws IOException {
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, Context context) throws IOException {
 		rcsDecoder.setRestrictedCharacterSet(rcs);
 		return rcsDecoder.readValue(valueChannel, stringDecoder, context);
 	}

@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class AttributeGeneric extends AbstractEvent {
 	public AttributeGeneric() {
-		super("AT(*)");
-		eventType = EventType.ATTRIBUTE_GENERIC;
+		super(EventType.ATTRIBUTE_GENERIC);
 	}
 }

@@ -20,7 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -90,13 +90,13 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
 			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
 	}
 	
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
+			StringDecoder stringDecoder, Context context)
 			throws IOException {
 		// decode value
 		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);

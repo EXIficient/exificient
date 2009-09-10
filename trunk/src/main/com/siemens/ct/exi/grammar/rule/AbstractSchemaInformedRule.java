@@ -18,16 +18,22 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.SchemaInformedEventInformation;
+import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.sort.EventCodeAssignment;
 
 /**
  * TODO Description
@@ -142,15 +148,20 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		updateSortedEventRules(event, rule);
 	}
 
+	static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
+	
 	protected void updateSortedEventRules(Event newEvent, Rule newRule) {
-		//	create sorted list (events only)
-		Set<Event> sortedEvents = new TreeSet<Event>();
+		//	create sorted event list
+		List<Event> sortedEvents = new ArrayList<Event>();
+		// Set<Event> sortedEvents = new TreeSet<Event>();
 		// add old events
 		for(EventInformation ei : containers) {
 			sortedEvents.add(ei.event);
 		}
 		// add new event
 		sortedEvents.add(newEvent);
+		//	sort events
+		Collections.sort(sortedEvents, eventCodeAss);
 
 		//	create new (sorted) container array
 		EventInformation[] newContainers = new EventInformation[sortedEvents.size()];
@@ -197,17 +208,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		numberDeviatedAttributes++;
 	}
 
-//	private void checkUndecidableEvent(Event event) {
-//		int id = getInternalEventId(event);
-//		EventRule er = this.getEventRuleAt(id);
-//
-//		// NOT same event ? -> throw error
-//		if (!event.equals(er.event)) {
-//			throw new IllegalArgumentException("Illegal Duplicate Event: "
-//					+ event + " for " + this);
-//		}
-//	}
-
 	public void joinRules(Rule rule) {
 		// add *new* events-rules
 		for (int i = 0; i < rule.getNumberOfEvents(); i++) {
@@ -238,13 +238,34 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return this;
 	}
 
-
 	// for encoder
-	public EventInformation lookFor(Event event) {
-		for (int i = 0; i < containers.length; i++) {
-			EventInformation rc = containers[i];
-			if (rc.event.equals(event)) {
-				return rc;
+	public EventInformation lookFor(EventType eventType, String ... args ) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(eventType)) {
+				switch(eventType) {
+				case START_ELEMENT:
+					if (checkQualifiedName((StartElement)ei.event, args[0], args[1])) {
+						return ei;
+					}
+					break;
+				case START_ELEMENT_NS:
+					if (((StartElementNS)ei.event).getNamespaceURI().equals(args[0])) {
+						return ei;
+					}
+					break;
+				case ATTRIBUTE:
+					if (checkQualifiedName((Attribute)ei.event, args[0], args[1])) {
+						return ei;
+					}
+					break;
+				case ATTRIBUTE_NS:
+					if (((AttributeNS)ei.event).getNamespaceURI().equals(args[0])) {
+						return ei;
+					}
+					break;
+				default:
+					return ei;
+				}
 			}
 		}
 

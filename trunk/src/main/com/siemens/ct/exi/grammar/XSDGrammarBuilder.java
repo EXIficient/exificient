@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,6 @@ import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
 import org.apache.xerces.xs.XSNamedMap;
-import org.apache.xerces.xs.XSObject;
 import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
@@ -52,11 +52,12 @@ import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.util.ExpandedName;
 
@@ -72,14 +73,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	protected Map<ExpandedName, TypeGrammar> grammarTypes;
 
-	// sorted LocalNames (pre-initializing LocalName Partition)
-	protected Set<ExpandedName> sortedLocalNames;
+	// local-names (pre-initializing LocalName Partition)
+	// uri -> localNames
+	protected Map<String, List<String>> schemaLocalNames;
 
 	// avoids recursive element handling
-	private Set<XSElementDeclaration> handledElements;
-
-	// / ??????
-	Map<ExpandedName, LNC> namedElementContainers;
+	protected Set<XSElementDeclaration> handledElements;
+	
+	//	pool for attribute-declaration of Attribute events
+	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
 	protected XSDGrammarBuilder() {
 		super();
@@ -97,8 +99,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		handledElements = new HashSet<XSElementDeclaration>();
 		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
-		sortedLocalNames = new TreeSet<ExpandedName>();
-		namedElementContainers = new HashMap<ExpandedName, LNC>();
+		schemaLocalNames = new HashMap<String, List<String>>();
+		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 	}
 
 	@Override
@@ -107,9 +109,111 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		handledElements.clear();
 		grammarTypes.clear();
-		sortedLocalNames.clear();
+		schemaLocalNames.clear();
+		attributePool.clear();
+	}
 
-		namedElementContainers.clear();
+	protected boolean isSameGrammar(List<XSElementDeclaration> elements) {
+		assert (elements.size() > 1);
+		for (int i = 1; i < elements.size(); i++) {
+			// If all such elements have the same type name and {nillable}
+			// property value, their content is evaluated according to
+			// specific grammar for that element declaration
+			XSElementDeclaration e0 = elements.get(0);
+			XSElementDeclaration ei = elements.get(i);
+			if (e0.getTypeDefinition() != ei.getTypeDefinition()
+					|| e0.getNillable() != ei.getNillable()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	protected List<StartElement> getFragmentGrammars() {
+		List<StartElement> fragmentElements = new ArrayList<StartElement>();
+
+		// create unique qname map
+		Map<ExpandedName, List<XSElementDeclaration>> namedElements = new HashMap<ExpandedName, List<XSElementDeclaration>>();
+		for (XSElementDeclaration elDecl : handledElements) {
+			ExpandedName en = new ExpandedName(elDecl.getNamespace(), elDecl
+					.getName());
+			if (namedElements.containsKey(en)) {
+				namedElements.get(en).add(elDecl);
+			} else {
+				List<XSElementDeclaration> list = new ArrayList<XSElementDeclaration>();
+				list.add(elDecl);
+				namedElements.put(en, list);
+			}
+		}
+
+		for (ExpandedName en : namedElements.keySet()) {
+			List<XSElementDeclaration> elements = namedElements.get(en);
+			// If there is more than one element declared with the same qname,
+			// the qname is included only once.
+			assert (elements.size() >= 1);
+			if (elements.size() == 1) {
+				// just one element for this qualified name --> simple task
+				fragmentElements.add(getStartElement(elements.get(0)));
+			} else {
+				// multiple elements
+				if (isSameGrammar(elements)) {
+					fragmentElements.add(getStartElement(elements.get(0)));
+				} else {
+					StartElement se = new StartElement(en.getNamespaceURI(), en
+							.getLocalName());
+					se
+							.setRule(getSchemaInformedElementFragmentGrammar(elements));
+					fragmentElements.add(se);
+					// System.err.println("ambiguous elements " + elements);
+				}
+			}
+		}
+
+		return fragmentElements;
+	}
+
+	// http://www.w3.org/TR/exi/#informedElementFragGrammar
+	protected Rule getSchemaInformedElementFragmentGrammar(
+			List<XSElementDeclaration> elements) {
+		// TODO 8.5.3 Schema-informed Element Fragment Grammar
+		/*
+		 * ElementFragmentContent
+		 */
+		SchemaInformedRule content = new SchemaInformedElement();
+		content.addRule(new StartElementGeneric(), content); // SE (*)
+		content.addTerminalRule(END_ELEMENT); // EE
+		content.addRule(new CharactersGeneric(), content); // CH [untyped value]
+		/*
+		 * ElementFragmentStartTag
+		 */
+		SchemaInformedRule startTag = new SchemaInformedStartTag(content);
+		startTag.addRule(new AttributeGeneric(), startTag);// AT (*)
+		startTag.addRule(new StartElementGeneric(), content); // SE (*)
+		startTag.addTerminalRule(END_ELEMENT); // EE
+		startTag.addRule(new CharactersGeneric(), content);// CH [untyped value]
+		/*
+		 * ElementFragmentTypeEmpty
+		 */
+		SchemaInformedRule typeEmpty = startTag; // not correct
+
+		/*
+		 * As with all schema informed element grammars, the schema-informed
+		 * element fragment grammar is augmented with additional productions
+		 * that describe events that may occur in an EXI stream, but are not
+		 * explicity declared in the schema. The process for augmenting the
+		 * grammar is described in 8.5.4.4 Undeclared Productions. For the
+		 * purposes of this process, the schema-informed element fragment
+		 * grammar is treated as though it is created from an element
+		 * declaration with a {nillable} property value of true and a type
+		 * declaration that has named sub-types, and ElementFragmentTypeEmpty is
+		 * used to serve as the TypeEmpty of the type in the process.
+		 */
+		startTag.setFirstElementRule();
+		startTag.setNillable(true, typeEmpty);
+		startTag.setTypeCastable(true);
+
+		return startTag;
 	}
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
@@ -123,73 +227,41 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			throw new EXIException(exMsg);
 		}
 
-		// initialize grammars (--> global elements)
-		List<ExpandedName> globalElements = initGrammars();
+		// initialize grammars --> global element)
+		List<StartElement> globalElements = initGrammars();
+
+		// schema declared elements --> fragment grammars
+		List<StartElement> fragmentElements = getFragmentGrammars();
+
+		// sort both lists (declared & global elements)
+		Collections.sort(globalElements, lexSort);
+		Collections.sort(fragmentElements, lexSort);
 
 		// (sorted) schema URIs and localNames
 		String[] sortedURIs = initURITableEntries();
-		SchemaEntry[] schemaEntries = new SchemaEntry[sortedURIs.length];
+		URIEntry[] schemaEntries = new URIEntry[sortedURIs.length];
 		for (int i = 0; i < sortedURIs.length; i++) {
 			String uri = sortedURIs[i];
 
-			List<String> localNames = new ArrayList<String>();
-			for (ExpandedName ename : sortedLocalNames) {
-				if (ename.getNamespaceURI().equals(uri)) {
-					localNames.add(ename.getLocalName());
-				}
-			}
-			String[] localNames2 = new String[localNames.size()];
-			localNames.toArray(localNames2);
-			schemaEntries[i] = new SchemaEntry(uri, localNames2);
-		}
-
-		// named elements
-		List<ElementContainer> namedElements = new ArrayList<ElementContainer>();
-
-		for (XSElementDeclaration el : handledElements) {
-			ExpandedName ename = new ExpandedName(el.getNamespace(), el
-					.getName());
-			ElementContainer ec = new ElementContainer(ename);
-
-			if (namedElements.contains(ec)) {
-				continue;
-			}
-			// namedElements[i] = ec;
-			namedElements.add(ec);
-
-			// set lnc data
-			LNC uuu = namedElementContainers.get(ename);
-
-			/*
-			 * Schema-Rules
-			 */
-			if (uuu.hasUniqueSchemaRule()) {
-				ec.setUniqueRule(uuu.schemaRule);
+			String[] localNamesArray;
+			if (schemaLocalNames.containsKey(uri)) {
+				List<String> localNames = schemaLocalNames.get(uri);
+				// sort local-name list
+				Collections.sort(localNames);
+				// create sorted array out of it
+				localNamesArray = new String[localNames.size()];
+				localNames.toArray(localNamesArray);
 			} else {
-				Rule[] rules = new Rule[uuu.schemaRules.size()];
-				uuu.schemaRules.toArray(rules);
-				ExpandedName[][] scopes = new ExpandedName[uuu.schemaRuleScopes
-						.size()][];
-				uuu.schemaRuleScopes.toArray(scopes);
-				ec.setAmbiguousRules(rules, scopes);
+				// no entries, may happen for XMLConstants.NULL_NS_URI
+				localNamesArray = new String[0];
 			}
-			// schema-Informed ElementFragmentGrammar
-			ec
-					.setSchemaInformedElementFragmentGrammar(uuu.elementFragmentStartTag);
 
+			// add schema entry
+			schemaEntries[i] = new URIEntry(uri, localNamesArray, null);
 		}
-
-		// named elements to array
-		ElementContainer[] namedElementsB = new ElementContainer[namedElements
-				.size()];
-		namedElements.toArray(namedElementsB);
-
-		// global elements (subset of named-elements)
-		ExpandedName[] globalElementsB = new ExpandedName[globalElements.size()];
-		globalElements.toArray(globalElementsB);
 
 		SchemaInformedGrammar sig = new SchemaInformedGrammar(schemaEntries,
-				namedElementsB, globalElementsB);
+				fragmentElements, globalElements);
 
 		/*
 		 * type grammar
@@ -204,7 +276,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		Attribute[] globalAttributes = new Attribute[nm.getLength()];
 		for (int i = 0; i < nm.getLength(); i++) {
 			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
-			Attribute at = getAttributeEvent(atDecl);
+			Attribute at = getAttribute(atDecl);
 			globalAttributes[i] = at;
 		}
 		sig.setGlobalAttributes(globalAttributes);
@@ -254,19 +326,30 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * declared in the schema, partitioned by namespace URI and sorted
 	 * lexicographically.
 	 */
-	protected void addLocalNameStringEntry(ExpandedName expName) {
-		if (isNamespacesOfInterest(expName.getNamespaceURI())) {
-			if (!sortedLocalNames.contains(expName)) {
-				// new entry
-				sortedLocalNames.add(expName);
+	protected void addLocalNameStringEntry(String namespaceURI, String localName) {
+		if (namespaceURI == null) {
+			namespaceURI = XMLConstants.NULL_NS_URI;
+		}
+		if (isNamespacesOfInterest(namespaceURI)) {
+			// fetch localName list
+			List<String> localNameList;
+			if (schemaLocalNames.containsKey(namespaceURI)) {
+				localNameList = schemaLocalNames.get(namespaceURI);
+			} else {
+				localNameList = new ArrayList<String>();
+				schemaLocalNames.put(namespaceURI, localNameList);
+			}
+			// check localName value presence
+			if (!localNameList.contains(localName)) {
+				localNameList.add(localName);
 			}
 		}
 	}
 
-	protected List<ExpandedName> initGrammars() throws EXIException {
-		List<ExpandedName> docElements = new ArrayList<ExpandedName>();
+	protected List<StartElement> initGrammars() throws EXIException {
+		List<StartElement> globalElements = new ArrayList<StartElement>();
 
-		// handle all known types
+		// global type definitions
 		XSNamedMap types = xsModel.getComponents(XSConstants.TYPE_DEFINITION);
 		for (int i = 0; i < types.getLength(); i++) {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
@@ -274,7 +357,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			ExpandedName name = new ExpandedName(td.getNamespace(), td
 					.getName());
 			TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
-			
+
 			grammarTypes.put(name, typeGrammar);
 		}
 
@@ -282,210 +365,107 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		XSNamedMap xsGlobalElements = xsModel
 				.getComponents(XSConstants.ELEMENT_DECLARATION);
 		for (int i = 0; i < xsGlobalElements.getLength(); i++) {
-			XSElementDeclaration globalElement = (XSElementDeclaration) xsGlobalElements
+			XSElementDeclaration globalElementDecl = (XSElementDeclaration) xsGlobalElements
 					.item(i);
-			
-			// add global elements (DocContent)
-			docElements.add(new ExpandedName(globalElement.getNamespace(),
-					globalElement.getName()));
+
+			// collect global elements (for DocContent)
+			StartElement seGlobalElement = getStartElement(globalElementDecl);
+			globalElements.add(seGlobalElement);
+			// globalElements.add(new ExpandedName(globalElement.getNamespace(),
+			// globalElement.getName()));
 
 			// create rules for global elements (do not have scope)
-			translatElementDeclarationToFSA(globalElement, new ExpandedName[0]);
+			translatElementDeclarationToFSA(globalElementDecl);
 		}
 
 		// any remaining elements ? (not global elements)
 		for (int i = 0; i < remainingElements.size(); i++) {
 			XSElementDeclaration remElement = remainingElements.get(i);
-
-			//	fetch all distinctive enclosing elements
-			List<XSElementDeclaration> distinctiveEnclosingElements = new ArrayList<XSElementDeclaration>();
-			addAllDistinctiveEnclosingElements(remElement, distinctiveEnclosingElements);
-			// System.out.println(distinctiveEnclosingElements + " <-- " + remElement );
-			
-			//	convert element-declaration list to expanded-name array
-			ExpandedName distinctiveENs[] = new ExpandedName[distinctiveEnclosingElements.size()];
-			for(int k=0; k<distinctiveEnclosingElements.size(); k++) {
-				XSElementDeclaration de = distinctiveEnclosingElements.get(k);
-				distinctiveENs[k] = new ExpandedName(de.getNamespace(), de.getName());
-			}
-			
-			translatElementDeclarationToFSA(remElement, distinctiveENs);
-			
-//			// fetch enclosing elements
-//			List<XSElementDeclaration> directEnclosingElements = getDirectEnclosingElements(remElement);
-//
-//			// iterate over enclosing elements
-//			if (directEnclosingElements.size() > 0) {
-//				for (XSElementDeclaration enclElement : directEnclosingElements) {					
-//					ExpandedName scopeElement = new ExpandedName(enclElement
-//							.getNamespace(), enclElement.getName());
-//					translatElementDeclarationToFSA(remElement, scopeElement);
-//				}
-//			} else {
-//				System.err.println("XXXXXXXXXXX " + distinctiveEnclosingElements.size());
-//				translatElementDeclarationToFSA(remElement, null);
-//			}
+			translatElementDeclarationToFSA(remElement);
 		}
 
-		return docElements;
-	}
-	
-	protected void addAllDistinctiveEnclosingElements(XSElementDeclaration element, List<XSElementDeclaration> allEnclosingElements ) {
-		XSComplexTypeDefinition ctd = element.getEnclosingCTDefinition();
-		if(ctd == null) {
-			//	global element --> STOP
-		} else {
-			List<XSElementDeclaration> directEnclElements =  getDirectEnclosingElements(element);
-			if (directEnclElements.size() > 1 ) {
-				//	distinction since we do have at least 2 different elements
+		// check entire SE pool
+		Iterator<XSElementDeclaration> iterSE = elementPool.keySet().iterator();
+		while (iterSE.hasNext()) {
+			XSElementDeclaration elementDecl = iterSE.next();
+			StartElement se = elementPool.get(elementDecl);
+
+			// element-rule
+			SchemaInformedRule elementRule;
+
+			XSTypeDefinition td = elementDecl.getTypeDefinition();
+			if (td.getAnonymous()) {
+				// create new type grammar for an anonymous type
+				TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
+				elementRule = typeGrammar.getType();
+				elementRule.setNillable(elementDecl.getNillable(), typeGrammar
+						.getTypeEmpty());
 			} else {
-				for(XSElementDeclaration enclEl : directEnclElements ) {
-//					if (enclEl.getScope() != XSConstants.SCOPE_GLOBAL) {
-						allEnclosingElements.add(0, enclEl);	//	add to head
-						addAllDistinctiveEnclosingElements(enclEl, allEnclosingElements );	
-//					}
-				}				
-			}
-		}
-	}
-	
-	protected List<XSElementDeclaration> getDirectEnclosingElements(XSElementDeclaration element) {
-		
-		List<XSComplexTypeDefinition> enclosingCTDs = enclosingTypes.get(element);
-		List<XSElementDeclaration> enclosingElements = new ArrayList<XSElementDeclaration>();
-		
-		// check already handled elements
-		for (XSElementDeclaration he : handledElements) {
-			XSTypeDefinition td = he.getTypeDefinition();
-			if (enclosingCTDs.contains(td)) {
-				if (!enclosingElements.contains(he)) {
-					enclosingElements.add(he);
-				}
-			}
-		}
-		// check remaining elements
-		for (XSElementDeclaration re : remainingElements) {
-			if (re != element) { // unequal this remaining element
-				XSTypeDefinition td = re.getTypeDefinition();
-				if (enclosingCTDs.contains(td)) {
-					if (!enclosingElements.contains(re)) {
-						enclosingElements.add(re);	
-					}
-				}
-			}
-		}
-		
-		return enclosingElements;
-	}
-
-	protected void updateToFirstRule(TypeGrammar typeGrammar, boolean nillable) {
-		// first rule is different in the sense of xsi:type, xsi:nil, NS & SC
-		SchemaInformedRule type = typeGrammar.getType();
-		SchemaInformedRule typeEmpty = typeGrammar.getTypeEmpty();
-		type.setFirstElementRule();
-		type.setNillable(nillable, typeEmpty);
-	}
-
-	protected void addRuleFor(ExpandedName name, ExpandedName distinctiveENs[],
-			TypeGrammar typeGrammar,
-			XSElementDeclaration elementDeclaration) {
-
-		// first rule is different in the sense of xsi:type, xsi:nil, NS & SC
-		updateToFirstRule(typeGrammar, elementDeclaration.getNillable());
-		SchemaInformedRule type = typeGrammar.getType();
-
-		LNC lnc = getLNC(name);
-		lnc.addSchemaRule(type, elementDeclaration, distinctiveENs);
-	}
-
-	protected LNC getLNC(ExpandedName name) {
-		LNC lnc;
-		if (namedElementContainers.containsKey(name)) {
-			lnc = namedElementContainers.get(name);
-		} else {
-			lnc = new LNC(name);
-			namedElementContainers.put(name, lnc);
-		}
-		return lnc;
-	}
-
-	protected static List<XSAttributeUse> getSortedAttributes(
-			XSObjectList attributes) {
-
-		List<ExpandedName> sortedNames = new ArrayList<ExpandedName>();
-		Map<ExpandedName, XSAttributeUse> ht = new HashMap<ExpandedName, XSAttributeUse>();
-
-		// collect names and attributes
-		for (int i = 0; i < attributes.getLength(); i++) {
-			XSObject attr = attributes.item(i);
-			assert (attr.getType() == XSConstants.ATTRIBUTE_USE);
-			XSAttributeUse attrUse = (XSAttributeUse) attr;
-			XSAttributeDeclaration attrDecl = attrUse.getAttrDeclaration();
-
-			ExpandedName key = new ExpandedName(attrDecl.getNamespace(),
-					attrDecl.getName());
-
-			sortedNames.add(key);
-			ht.put(key, attrUse);
-		}
-		
-		// sort collected "names" list
-		Collections.sort(sortedNames);
-
-		// construct sorted attribute list
-		List<XSAttributeUse> sortedAttributes = new ArrayList<XSAttributeUse>();
-		for (ExpandedName key : sortedNames) {
-			XSAttributeUse xsAttr = ht.get(key);
-			sortedAttributes.add(xsAttr);
-		}
-
-		return sortedAttributes;
-	}
-
-	protected Attribute getAttributeEvent(XSAttributeDeclaration attrDecl)
-			throws EXIException {
-		XSSimpleTypeDefinition attrTypeDefinition = attrDecl
-				.getTypeDefinition();
-
-		// expanded name for string table pre-population
-		ExpandedName atName = new ExpandedName(attrDecl.getNamespace(),
-				attrDecl.getName());
-		addLocalNameStringEntry(atName);
-
-		ExpandedName qNameType;
-
-		if (attrTypeDefinition.getAnonymous()) {
-			XSTypeDefinition tdBase = attrTypeDefinition.getBaseType();
-
-			if (tdBase.getName() == null) {
-				//	
-				// System.err.println ( "Abort processing " + tdBase + " (set "
-				// + BuiltIn.DEFAULT_VALUE_NAME + ")" );
-				qNameType = BuiltIn.DEFAULT_VALUE_NAME;
-				// continue;
-			} else {
-				qNameType = new ExpandedName(tdBase.getNamespace(), tdBase
+				// fetch existing grammar from pre-processed type
+				TypeGrammar typeGrammar = getTypeGrammar(td.getNamespace(), td
 						.getName());
+
+				elementRule = typeGrammar.getType();
+
+				// *duplicate* first productions to allow different behavior
+				// (e.g. property nillable is element dependent)
+				if (elementDecl.getNillable()) {
+					elementRule = elementRule.duplicate();
+					elementRule.setNillable(true, typeGrammar.getTypeEmpty());
+				} else {
+					elementRule.setNillable(false, typeGrammar.getTypeEmpty());
+				}
 			}
 
-		} else {
-			qNameType = new ExpandedName(attrTypeDefinition.getNamespace(),
-					attrTypeDefinition.getName());
+			se.setRule(elementRule);
 		}
 
-		return new Attribute(atName.getNamespaceURI(), atName.getLocalName(),
-				qNameType, BuiltIn.getDatatype(attrTypeDefinition));
+		return globalElements;
 	}
 
-	protected SchemaInformedRule handleAttributes(SchemaInformedRule ruleContent,
-			SchemaInformedRule ruleContent2, XSObjectList attributes,
-			XSWildcard attributeWC) throws EXIException {
+	protected Attribute getAttribute(XSAttributeDeclaration attrDecl) throws EXIException {
+		// local name for string table pre-population
+		addLocalNameStringEntry(attrDecl.getNamespace(), attrDecl.getName());
+		
+		Attribute at;
+		if (attributePool.containsKey(attrDecl)) {
+			at = attributePool.get(attrDecl);
+		} else {
+			// AT datatype
+			XSSimpleTypeDefinition attrTypeDefinition = attrDecl
+			.getTypeDefinition();
+			ExpandedName qNameType;
+			if (attrTypeDefinition.getAnonymous()) {
+				XSTypeDefinition tdBase = attrTypeDefinition.getBaseType();
+				if (tdBase.getName() == null) {
+					qNameType = BuiltIn.DEFAULT_VALUE_NAME;
+				} else {
+					qNameType = new ExpandedName(tdBase.getNamespace(), tdBase
+							.getName());
+				}
+			} else {
+				qNameType = new ExpandedName(attrTypeDefinition.getNamespace(),
+						attrTypeDefinition.getName());
+			}
+			
+			//	create new Attribute event
+			at = new Attribute(attrDecl.getNamespace(), attrDecl.getName(),
+					qNameType, BuiltIn.getDatatype(attrTypeDefinition));
+			attributePool.put(attrDecl, at);
+		}
+		
+		return at;
+	}
+
+	protected SchemaInformedRule handleAttributes(
+			SchemaInformedRule ruleContent, SchemaInformedRule ruleContent2,
+			XSObjectList attributes, XSWildcard attributeWC)
+			throws EXIException {
 
 		// Attribute Uses
 		// http://www.w3.org/TR/exi/#attributeUses
 
-		SchemaInformedRule ruleStart = new SchemaInformedStartTag(
-				ruleContent2);
+		SchemaInformedRule ruleStart = new SchemaInformedStartTag(ruleContent2);
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
 			EventInformation ei = ruleContent.lookFor(i);
@@ -498,18 +478,23 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// EE
 		if (attributeWC != null) {
 			ruleStart.addTerminalRule(END_ELEMENT);
-			// handleAttributeWildCard(attributeWC, ruleStart);
 		}
 
 		if (attributes != null && attributes.getLength() > 0) {
 			// attributes will occur sorted lexically by qname (in EXI Stream)
-			List<XSAttributeUse> vSortedAttributes = getSortedAttributes(attributes);
+			List<XSAttributeUse> vSortedAttributes = new ArrayList<XSAttributeUse>();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				assert (attributes.item(i).getType() == XSConstants.ATTRIBUTE_USE);
+				XSAttributeUse attrUse = (XSAttributeUse) attributes.item(i);
+				vSortedAttributes.add(attrUse);
+			}
+			Collections.sort(vSortedAttributes, lexSort);
 
 			// traverse in reverse order
 			for (int i = vSortedAttributes.size() - 1; i >= 0; i--) {
 				XSAttributeUse attrUse = vSortedAttributes.get(i);
 
-				Attribute at = getAttributeEvent(attrUse.getAttrDeclaration());
+				Attribute at = getAttribute(attrUse.getAttrDeclaration());
 
 				SchemaInformedRule newCurrent = new SchemaInformedStartTag(
 						ruleContent2);
@@ -527,9 +512,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					for (int k = 0; k < ruleStart.getNumberOfEvents(); k++) {
 						EventInformation ei = ruleStart.lookFor(k);
 						if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC)) {
-							//	AT(*) wilcard added before
+							// AT(*) wilcard added before
 						} else {
-							newCurrent.addRule(ei.event, ei.next);	
+							newCurrent.addRule(ei.event, ei.next);
 						}
 					}
 				}
@@ -578,21 +563,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	}
 
 	protected void translatElementDeclarationToFSA(
-			XSElementDeclaration xsElementDeclaration, ExpandedName distinctiveENs[])
-			throws EXIException {
-
-		
-//		XSElementDecl[] ddd = subGroupHandler.getSubstitutionGroup((XSElementDecl) xsElementDeclaration);
-//		System.out.println(xsElementDeclaration + " --> " + ddd.length);
-//		XSObjectList l = xsModel.getSubstitutionGroup(xsElementDeclaration);
-//		System.out.println("List" + " --> " + l.getLength());
-//		if(l.getLength() > 0) {
-//			
-//		}
-//		subGroupHandler.addSubstitutionGroup(arg0);
-		
-		// type definition
-		XSTypeDefinition td = xsElementDeclaration.getTypeDefinition();
+			XSElementDeclaration xsElementDeclaration) throws EXIException {
 
 		// handle element recursion
 		if (this.handledElements.contains(xsElementDeclaration)) {
@@ -601,32 +572,18 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 		this.handledElements.add(xsElementDeclaration);
 
-		// expanded name
-		ExpandedName elementName = new ExpandedName(xsElementDeclaration
-				.getNamespace(), xsElementDeclaration.getName());
-
 		// add local name entry for string table pre-population
-		addLocalNameStringEntry(elementName);
+		addLocalNameStringEntry(xsElementDeclaration.getNamespace(),
+				xsElementDeclaration.getName());
+
+		// type definition
+		XSTypeDefinition td = xsElementDeclaration.getTypeDefinition();
 
 		// type grammar
-		TypeGrammar typeGrammar;
 		if (td.getAnonymous()) {
-			// create new type grammar for an anonymous type
-			typeGrammar = translateTypeDefinitionToFSA(td);
-		} else {
-			// fetch existing grammar from pre-processed type
-			TypeGrammar tg = getTypeGrammar(td.getNamespace(), td.getName());
-
-			// *duplicate* first productions to allow different behavior
-			// (e.g. property nillable element not type dependent)
-
-			SchemaInformedRule sir = tg.getType().duplicate();
-			typeGrammar = new TypeGrammar(sir, tg.typeEmpty);
+			// create type grammar for anonymous type
+			translateTypeDefinitionToFSA(td);
 		}
-
-		// set schema-rule for element
-		addRuleFor(elementName, distinctiveENs, typeGrammar,
-				xsElementDeclaration);
 	}
 
 	public static TypeGrammar getUrTypeRule() {
@@ -667,7 +624,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * @return
 	 * @throws EXIException
 	 */
-	protected TypeGrammar translateTypeDefinitionToFSA(XSTypeDefinition td) throws EXIException {
+	protected TypeGrammar translateTypeDefinitionToFSA(XSTypeDefinition td)
+			throws EXIException {
 		SchemaInformedRule type_i = null;
 		SchemaInformedRule typeEmpty_i = null;
 
@@ -683,8 +641,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			} else {
 				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
 
-				SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA(
-						ctd);
+				SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA(ctd);
 
 				// create copy of Element_i_content --> Element_i_content_2
 				// (used for content schema-deviations in start-tags, direct
@@ -721,19 +678,19 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		if (!td.getAnonymous()) {
 			// add to localName table for string table pre-population
-			ExpandedName typeName = new ExpandedName(td.getNamespace(), td
-					.getName());
-			addLocalNameStringEntry(typeName);
+			addLocalNameStringEntry(td.getNamespace(), td.getName());
 		}
-		
+
+		type_i.setFirstElementRule();
+
 		return new TypeGrammar(type_i, typeEmpty_i);
 	}
 
 	protected boolean isTypeCastable(XSTypeDefinition td) {
-		
+
 		boolean isTypeCastable = false;
-		
-		//	has named sub-types
+
+		// has named sub-types
 		XSNamedMap types = this.xsModel
 				.getComponents(XSConstants.TYPE_DEFINITION);
 		for (int i = 0; i < types.getLength(); i++) {
@@ -743,9 +700,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				isTypeCastable = true;
 			}
 		}
-		
-		//  is a simple type definition of which {variety} is union
-		if (!isTypeCastable && td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+
+		// is a simple type definition of which {variety} is union
+		if (!isTypeCastable
+				&& td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 			isTypeCastable = (std.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION);
 		}
@@ -754,8 +712,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	}
 
 	protected SchemaInformedRule translateComplexTypeDefinitionToFSA(
-			XSComplexTypeDefinition ctd)
-			throws EXIException {
+			XSComplexTypeDefinition ctd) throws EXIException {
 		SchemaInformedRule ruleContent = null;
 
 		switch (ctd.getContentType()) {
@@ -846,182 +803,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// TODO TypeEmpty
 
 		return type_i_0;
-	}
-
-	protected class LNC implements Comparable<LNC> {
-		protected final ExpandedName name;
-		// schema-rule
-		protected SchemaInformedRule schemaRule;
-		XSElementDeclaration schemaRuleType;
-		ExpandedName[] schemaRuleScope;
-		protected List<Rule> schemaRules;
-		protected List<XSElementDeclaration> schemaRuleElements;
-		protected List<ExpandedName[]> schemaRuleScopes;
-		// unique
-		boolean unique = true;
-		// fragment rule for several qnames
-		protected SchemaInformedStartTag elementFragmentStartTag;
-
-		public LNC(ExpandedName name) {
-			this.name = name;
-
-			schemaRules = new ArrayList<Rule>();
-			schemaRuleElements = new ArrayList<XSElementDeclaration>();
-			schemaRuleScopes = new ArrayList<ExpandedName[]>();
-		}
-
-		public void addSchemaRule(SchemaInformedRule rule, XSElementDeclaration el,
-				ExpandedName distinctiveENs[]) {
-			assert (rule.isFirstElementRule());
-
-			if (schemaRule == null && unique) {
-				// first entry (should be the default one)
-				// --> set schema rule
-				this.schemaRule = rule;
-				this.schemaRuleType = el;
-				this.schemaRuleScope = distinctiveENs;
-				// add to rule list
-				schemaRules.add(rule);
-				schemaRuleElements.add(el);
-				schemaRuleScopes.add(distinctiveENs);
-			} else {
-				// at least one rule present
-				// --> check for each weather it is already done
-				boolean doneAlready = false;
-				for (XSElementDeclaration e : schemaRuleElements) {
-					XSTypeDefinition t = e.getTypeDefinition();
-					if (t == el.getTypeDefinition()
-							&& e.getNillable() == el.getNillable()) {
-						// same type
-						// --> rules should be the same
-						// assert(schemaRule.equals(rule));
-						doneAlready = true;
-					}
-				}
-
-				if (!doneAlready) {
-					// add to list
-					schemaRules.add(rule);
-					schemaRuleElements.add(el);
-					schemaRuleScopes.add(distinctiveENs);
-					// un-set uniqueness
-					unique = false;
-					schemaRule = null;
-					// merge grammars for Schema-informed Element
-					// FragmentGrammar
-					buildSchemaInformedElementFragmentGrammar();
-				}
-			}
-		}
-
-		protected void buildSchemaInformedElementFragmentGrammar() {
-			boolean doFG = false;
-			if (doFG) {
-				// TODO
-				// see http://www.w3.org/TR/exi/#informedElementFragGrammar
-
-				// attributes sorted lexicographically, first by localName, then
-				// by
-				// uri
-				List<ExpandedName> attributes = new ArrayList<ExpandedName>();
-
-				for (XSElementDeclaration el : schemaRuleElements) {
-					XSTypeDefinition td = el.getTypeDefinition();
-					// TODO If all qname identical attributes have the same type
-					// name, their
-					// value is represented using that type. Otherwise, their
-					// value
-					// is
-					// represented as a String.
-
-					if (td.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE) {
-						XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
-						XSObjectList atts = ctd.getAttributeUses();
-
-						for (int i = 0; i < atts.getLength(); i++) {
-							XSAttributeUse at = (XSAttributeUse) atts.item(i);
-							ExpandedName en = new ExpandedName(at
-									.getNamespace(), at.getName());
-							if (!attributes.contains(en)) {
-								attributes.add(en);
-							}
-						}
-					} else {
-						assert (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
-						// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-					}
-				}
-			}
-
-			// TODO at present simple BUT NOT standard compliant approach
-
-			// ElementFragmentContent, ??? , SE(*), EE, CH
-			SchemaInformedElement elementFragmentContent = new SchemaInformedElement();
-			elementFragmentContent.addRule(new StartElementGeneric(),
-					elementFragmentContent);
-			elementFragmentContent.addTerminalRule(new EndElement());
-			elementFragmentContent.addRule(new CharactersGeneric(),
-					elementFragmentContent);
-
-			// ElementFragmentStartTag, ???, AT(*), SE(*), EE, CH
-			elementFragmentStartTag = new SchemaInformedStartTag(
-					elementFragmentContent);
-			elementFragmentStartTag.addRule(new AttributeGeneric(),
-					elementFragmentStartTag);
-			elementFragmentStartTag.addRule(new StartElementGeneric(),
-					elementFragmentContent);
-			elementFragmentStartTag.addTerminalRule(new EndElement());
-			elementFragmentStartTag.addRule(new CharactersGeneric(),
-					elementFragmentContent);
-
-			// ElementFragmentTypeEmpty, ???, AT(*), EE
-			SchemaInformedStartTag elementFragmentTypeEmpty = new SchemaInformedStartTag(
-					elementFragmentContent);
-			elementFragmentTypeEmpty.addRule(new AttributeGeneric(),
-					elementFragmentStartTag);
-			elementFragmentTypeEmpty.addTerminalRule(new EndElement());
-
-			elementFragmentStartTag.setNillable(true, elementFragmentTypeEmpty);
-			elementFragmentStartTag.setFirstElementRule();
-		}
-
-		public boolean hasUniqueSchemaRule() {
-			return unique;
-		}
-		
-		public SchemaInformedRule getUniqueSchemaRule() {
-			return schemaRule;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o instanceof LNC) {
-				LNC other = (LNC) o;
-				return (this.name.equals(other.name));
-			}
-			return false;
-		}
-
-		/*
-		 * This method returns the hash code value as an integer and is
-		 * supported for the benefit of hashing based collection classes such as
-		 * Hashtable, HashMap, HashSet etc
-		 * 
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public final int hashCode() {
-			return name.hashCode();
-		}
-
-		public String toString() {
-			return "LNC(" + name.toString() + ")";
-		}
-
-		public int compareTo(LNC o) {
-			return this.name.compareTo(o.name);
-		}
 	}
 
 }

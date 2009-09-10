@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -16,14 +16,14 @@ public class StringDecoderImpl implements StringDecoder {
 	List<char[]> globalValues;
 
 	// local values (per context)
-	protected Map<NameContext, List<char[]>> localValues;
+	protected Map<Context, List<char[]>> localValues;
 
 	public StringDecoderImpl() {
 		globalValues = new ArrayList<char[]>();
-		localValues = new HashMap<NameContext, List<char[]>>();
+		localValues = new HashMap<Context, List<char[]>>();
 	}
 
-	public char[] readValue(NameContext context, DecoderChannel valueChannel)
+	public char[] readValue(Context context, DecoderChannel valueChannel)
 			throws IOException {
 		char[] value;
 
@@ -52,7 +52,7 @@ public class StringDecoderImpl implements StringDecoder {
 		return value;
 	}
 
-	public char[] readValueLocalHit(NameContext context,
+	public char[] readValueLocalHit(Context context,
 			DecoderChannel valueChannel) throws IOException {
 		List<char[]> localChars = localValues.get(context);
 		int n = MethodsBag.getCodingLength(localChars.size());
@@ -60,14 +60,14 @@ public class StringDecoderImpl implements StringDecoder {
 		return localChars.get(localID);
 	}
 	
-	public char[] readValueGlobalHit(NameContext context,
+	public char[] readValueGlobalHit(Context context,
 			DecoderChannel valueChannel) throws IOException {
 		int n = MethodsBag.getCodingLength(globalValues.size());
 		int globalID = valueChannel.decodeNBitUnsignedInteger(n);
 		return globalValues.get(globalID);
 	}
 
-	public void addValue(NameContext context, char[] value) {
+	public void addValue(Context context, char[] value) {
 		// global
 		assert (!globalValues.contains(value));
 		globalValues.add(value);

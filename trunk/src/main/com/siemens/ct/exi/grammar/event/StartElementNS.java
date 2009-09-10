@@ -34,8 +34,7 @@ public class StartElementNS extends AbstractEvent {
 	private String namespaceURI;
 
 	public StartElementNS(String uri) {
-		super("SE(uri:*)");
-		eventType = EventType.START_ELEMENT_NS;
+		super(EventType.START_ELEMENT_NS);
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 	}
@@ -49,17 +48,20 @@ public class StartElementNS extends AbstractEvent {
 	}
 
 	public String toString() {
-		return "SE(" + namespaceURI + ":*)";
+		return super.toString() + "(" + namespaceURI + ":*)";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode());
+		// return (eventType.ordinal() ^ namespaceURI.hashCode());
+		return (namespaceURI.hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof StartElementNS) {
+		if (this == obj) {
+			return true;
+		} else if (obj instanceof StartElementNS) {
 			StartElementNS otherSE = (StartElementNS) obj;
 			return (namespaceURI.equals(otherSE.namespaceURI));
 		} else {

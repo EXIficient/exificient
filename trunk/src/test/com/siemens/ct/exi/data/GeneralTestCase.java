@@ -44,11 +44,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest1Pfx ( );
 		// GeneralTestCase.setConfigurationTest2 ( );
-		// GeneralTestCase.setConfigurationTest3 ( );
+		GeneralTestCase.setConfigurationTest3 ( );
 		// GeneralTestCase.setConfigurationTest4 ( );
 		// GeneralTestCase.setConfigurationTest5 ( );
 		// GeneralTestCase.setConfigurationComplexStructure ( );
-		GeneralTestCase.setConfigurationSimpleContent ( );
+		// GeneralTestCase.setConfigurationSimpleContent ( );
 		// GeneralTestCase.setConfigurationEmptyContent ( );
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );

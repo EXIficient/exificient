@@ -55,12 +55,14 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 		}
 	}
 	
-	protected void writeValueTypeValid(NameContext valueContext)
+	@Override
+	protected void writeValueTypeValid(Context valueContext)
 			throws IOException {
 		typeEncoder.writeValue(valueContext, channel);
 	}
 
-	protected void writeValueAsString(NameContext valueContext, String value)
+	@Override
+	protected void writeValueAsString(Context valueContext, String value)
 			throws IOException {
 		typeEncoder.getStringEncoder().writeValue(valueContext, channel, value);
 	}

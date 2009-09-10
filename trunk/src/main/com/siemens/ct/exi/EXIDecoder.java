@@ -21,7 +21,6 @@ package com.siemens.ct.exi;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -45,8 +44,11 @@ public interface EXIDecoder {
 	 * Reports whether an additional EXI event is available.
 	 * 
 	 * @return <tt>true</tt> if the stream has more events.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public boolean hasNext() throws EXIException;
+	public boolean hasNext() throws EXIException, IOException;
 
 	/**
 	 * Reports the next available EXI event-type
@@ -54,13 +56,6 @@ public interface EXIDecoder {
 	 * @return <code>EventType</code> for next EXI event
 	 */
 	public EventType next() throws EXIException;
-
-//	/**
-//	 * Sniffs EXI stream for reporting next event
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void inspectStream() throws EXIException;
 
 	/**
 	 * Initializes the beginning of a set of XML events
@@ -72,7 +67,6 @@ public interface EXIDecoder {
 	/**
 	 * Finalizes the end of a set of XML events
 	 * 
-	 * @throws SAXException
 	 * @throws EXIException
 	 */
 	public void decodeEndDocument() throws EXIException;
@@ -84,195 +78,202 @@ public interface EXIDecoder {
 	 * Start element appearing as expected event.
 	 * </p>
 	 * 
-	 * @throws SAXException
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeStartElement() throws SAXException, EXIException;
+	public void decodeStartElement() throws EXIException, IOException;
 
-//	/**
-//	 * Reads start element where only the URI is known.
-//	 * 
-//	 * <p>
-//	 * Expected start element with given namespaceURI
-//	 * </p>
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeStartElementNS() throws EXIException;
+	/**
+	 * Reads start element where only the URI is known.
+	 * 
+	 * <p>
+	 * Expected start element with given namespaceURI
+	 * </p>
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeStartElementNS() throws EXIException, IOException;
 
-//	/**
-//	 * Reads generic start element.
-//	 * 
-//	 * <p>
-//	 * Expected generic start element
-//	 * </p>
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeStartElementGeneric() throws EXIException;
+	/**
+	 * Reads generic start element.
+	 * 
+	 * <p>
+	 * Expected generic start element
+	 * </p>
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeStartElementGeneric() throws EXIException, IOException;
 
-//	/**
-//	 * Parses unexpected start element.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeStartElementGenericUndeclared() throws EXIException;
+	/**
+	 * Parses unexpected start element.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeStartElementGenericUndeclared() throws EXIException, IOException;
 
 	/**
 	 * Reads EXI a self-contained start element
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeStartFragmentSelfContained() throws EXIException;
+	public void decodeStartFragmentSelfContained() throws EXIException, IOException;
 
 	/**
 	 * Reads EXI end element
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeEndElement() throws EXIException;
+	public void decodeEndElement() throws EXIException, IOException;
 
-//	/**
-//	 * Reads unexpected EXI end element.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeEndElementUndeclared() throws EXIException;
+	/**
+	 * Reads unexpected EXI end element.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeEndElementUndeclared() throws EXIException, IOException;
 
 	/**
 	 * Reads an end element part of self-contained fragments
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeEndFragmentSelfContained() throws EXIException;
+	public void decodeEndFragmentSelfContained() throws EXIException, IOException;
 
+	/**
+	 * Parses xsi:nil attribute
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeXsiNil() throws EXIException, IOException;
+	
+	/**
+	 * Parses xsi:type attribute
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeXsiType() throws EXIException, IOException;
+	
 	/**
 	 * Parses attribute
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeAttribute() throws EXIException;
-	
-//	public void decodeAttributeXsi() throws EXIException;
-//
-//	/**
-//	 * Parses expected attribute with given namespaceURI
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeAttributeNS() throws EXIException;
+	public void decodeAttribute() throws EXIException, IOException;
 
-//	/**
-//	 * Parses expected attribute with schema-invalid value (qname given)
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeAttributeInvalidValue() throws EXIException;
+	/**
+	 * Parses expected attribute with given namespaceURI
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeNS() throws EXIException, IOException;
 
-//	/**
-//	 * Parses expected attribute with schema-invalid value (NO qname given)
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeAttributeAnyInvalidValue() throws EXIException;
+	/**
+	 * Parses expected attribute with schema-invalid value (qname given)
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeInvalidValue() throws EXIException, IOException;
 
-//	/**
-//	 * Parses expected generic attribute.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeAttributeGeneric() throws EXIException;
+	/**
+	 * Parses expected attribute with schema-invalid value (NO qname given)
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeAnyInvalidValue() throws EXIException, IOException;
 
-//	/**
-//	 * Parses unexpected attribute.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeAttributeGenericUndeclared() throws EXIException;
+	/**
+	 * Parses expected generic attribute.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeGeneric() throws EXIException, IOException;
+
+	/**
+	 * Parses unexpected attribute.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeAttributeGenericUndeclared() throws EXIException, IOException;
 
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeNamespaceDeclaration() throws EXIException;
-
-//	/**
-//	 * Reads xsi:type from EXI stream.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeXsiType() throws EXIException;
-
-//	/**
-//	 * Reads xsi:nil from EXI stream.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeXsiNil() throws EXIException;
+	public void decodeNamespaceDeclaration() throws EXIException, IOException;
 
 	/**
 	 * Decodes characters
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeCharacters() throws EXIException;
+	public void decodeCharacters() throws EXIException, IOException;
 
-//	/**
-//	 * Decodes generic characters.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeCharactersGeneric() throws EXIException;
+	/**
+	 * Decodes generic characters.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeCharactersGeneric() throws EXIException, IOException;
 
-//	/**
-//	 * Decodes unexpected (generic) characters.
-//	 * 
-//	 * @throws EXIException
-//	 */
-//	public void decodeCharactersGenericUndeclared() throws EXIException;
+	/**
+	 * Decodes unexpected (generic) characters.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeCharactersGenericUndeclared() throws EXIException, IOException;
 
 	/**
 	 * Parses DOCTYPE with information items
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeDocType() throws EXIException;
+	public void decodeDocType() throws EXIException, IOException;
 
 	/**
 	 * Parses EntityReference
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeEntityReference() throws EXIException;
+	public void decodeEntityReference() throws EXIException, IOException;
 
 	/**
 	 * Parses comment with associated characters.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeComment() throws EXIException;
+	public void decodeComment() throws EXIException, IOException;
 
 	/**
 	 * Parses processing instruction with associated target and data.
 	 * 
 	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public void decodeProcessingInstruction() throws EXIException;
+	public void decodeProcessingInstruction() throws EXIException, IOException;
 
-//	/**
-//	 * Provides current scope URI.
-//	 * 
-//	 * @return <code>String</code> for URI
-//	 */
-//	public String getScopeURI();
-//
-//	/**
-//	 * Provides current scope local-name.
-//	 * 
-//	 * @return <code>String</code> for name
-//	 */
-//	public String getScopeLocalName();
 
 	// ////////////////////////////////////////////////////////////////
 	//
@@ -300,13 +301,6 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for qname
 	 */
 	public String getElementQName();
-	
-//	/**
-//	 * Provides (last) element prefix
-//	 * 
-//	 * @return <code>String</code> for element prefix
-//	 */
-//	public String getElementPrefix();
 
 	/**
 	 * Provides (last) attribute namespace
@@ -328,13 +322,6 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for qname
 	 */
 	public String getAttributeQName();
-	
-//	/**
-//	 * Provides (last) attribute prefix
-//	 * 
-//	 * @return <code>String</code> for element prefix
-//	 */
-//	public String getAttributePrefix();
 
 	/**
 	 * Provides attribute value
@@ -342,29 +329,6 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for attribute value
 	 */
 	public char[] getAttributeValue();
-
-//	/**
-//	 * Provides xsi:ytpe namespace
-//	 * 
-//	 * @return <code>String</code> for type URI
-//	 */
-//	public String getXsiTypeUri();
-//
-//	/**
-//	 * Provides xsi:type name
-//	 * 
-//	 * @return <code>String</code> for type name
-//	 */
-//	public String getXsiTypeName();
-
-//	/**
-//	 * Provides xsi:nil value
-//	 * 
-//	 * @return <tt>true</tt> for xsi nil
-//	 */
-//	public boolean getXsiNil();
-//
-//	public String getXsiNilDeviation();
 
 	/**
 	 * Provides characters as well as significant/insignificant whitespace

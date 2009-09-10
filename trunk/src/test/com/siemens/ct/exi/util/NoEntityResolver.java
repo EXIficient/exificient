@@ -26,6 +26,10 @@ import org.xml.sax.InputSource;
 public class NoEntityResolver implements EntityResolver {
 
 	public InputSource resolveEntity(String publicId, String systemId) {
+//		if (systemId.equals("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd")) {
+//            return new InputSource("./data/W3C/xhtml/xhtml1-strict.dtd");
+//        }
+//		System.out.println( publicId + "\t" + systemId);
 		return new InputSource(new ByteArrayInputStream(
 				"<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
 	}

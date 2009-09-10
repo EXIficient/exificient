@@ -83,6 +83,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 
 		for (int i = 0; i < length; i++) {
 			int codePoint = decodeUnsignedInteger();
+			
 			if (Character.isSupplementaryCodePoint(codePoint)) {
 				Character.toChars(codePoint, ca, i++);
 			} else {
@@ -131,51 +132,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			return decodeUnsignedBigInteger();
 		}
 	}
-	
-//	protected long decodeUnsignedIntegerAsLong() throws IOException {
-//		long result = 0;
-//
-//		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-//		long multiplier = 1;
-//		int b;
-//
-//		do {
-//			// 1. Read the next octet
-//			b = decode();
-//			// 2. Multiply the value of the unsigned number represented by the 7
-//			// least significant
-//			// bits of the octet by the current multiplier and add the result to
-//			// the current value.
-//			result += multiplier * (b & 127);
-//			// 3. Multiply the multiplier by 128
-//			multiplier = multiplier << 7;
-//			// 4. If the most significant bit of the octet was 1, go back to
-//			// step 1
-//		} while ((b >>> 7) == 1);
-//
-//		return result;
-//	}
-
-//	protected long decodeIntegerAsLong() throws IOException {
-//		// negative integer
-//		if (decodeBoolean()) {
-//			// negative
-//			return (-(decodeUnsignedIntegerAsLong() + 1));
-//		} else {
-//			// positive
-//			return decodeUnsignedIntegerAsLong();
-//		}
-//	}
-
-	// public BigInteger decodeIntegerAsBigInteger() throws IOException {
-	// // negative integer
-	// if (decodeBoolean()) {
-	// return decodeUnsignedIntegerAsBigInteger().add(BigInteger.ONE)
-	// .negate();
-	// } else {
-	// return decodeUnsignedIntegerAsBigInteger();
-	// }
-	// }
 
 	
 	public char[] decodeIntegerAsString() throws IOException {
@@ -253,78 +209,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		return bResult;
 	}
 
-//	protected void decodeToXSDInteger(XSDInteger xsd) throws IOException {
-//		boolean negative = decodeBoolean();
-//		decodeToUnsignedXSDInteger(xsd);
-//		if (negative) {
-//			xsd.addOneAndNegate();
-//		}
-//	}
-//
-//
-//	protected void decodeToUnsignedXSDInteger(XSDInteger xsd) throws IOException {
-//		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-//		// 
-//		// 1. Read the next octet
-//		// 2. Multiply the value of the unsigned number represented by
-//		// the 7 least significant bits of the octet by the current multiplier
-//		// and add the result to the current value.
-//		// 3. Multiply the multiplier by 128
-//		// 4. If the most significant bit of the octet was 1, go back to
-//		// step 1
-//
-//		int b;
-//
-//		// integer ?
-////		int iMultiplier = 1;
-//		int mShift = 0;
-//		int iResult = 0;
-//		for (int i = 0; i < 4; i++) {
-//			b = decode();
-//			// iResult += (b & 127) * iMultiplier;
-//			iResult += (b & 127) << mShift;
-//			if ((b >>> 7) != 1) {
-//				xsd.setValue(iResult);
-//				return;
-//			}
-////			 iMultiplier *= 128;
-////			iMultiplier = iMultiplier << 7;
-//			mShift += 7;
-//		}
-//
-//		// long ?
-//		long lResult = iResult;
-////		long lMultiplier = iMultiplier;
-//		for (int i = 0; i < 4; i++) {
-//			b = decode();
-//			// lResult += (b & 127) * lMultiplier;
-//			lResult += ((long)(b & 127)) << mShift;
-//			if ((b >>> 7) != 1) {
-//				xsd.setValue(lResult);
-//				return;
-//			}
-////			 lMultiplier *= 128;
-////			lMultiplier = lMultiplier << 7;
-//			mShift += 7;
-//		}
-//
-//		// big integer
-//		BigInteger bResult = BigInteger.valueOf(lResult);
-//		// BigInteger multiplier = BigInteger.valueOf(lMultiplier);
-//		BigInteger multiplier = BigInteger.valueOf(72057594037927936L); //	72057594037927936
-//		do {
-//			b = decode();
-//			bResult = bResult.add(multiplier.multiply(BigInteger
-//					.valueOf(b & 127)));
-//			//	shift left does not work !?
-//			// bResult = BigInteger.valueOf(b & 127).shiftLeft(mShift);
-//			multiplier = multiplier.shiftLeft(7);
-//			// mShift += 7;
-//		} while ((b >>> 7) == 1);
-//
-//		xsd.setValue(bResult);
-//	}
-
 	public char[] decodeUnsignedIntegerAsString() throws IOException {
 		return MethodsBag.itos(decodeUnsignedInteger());
 	}
@@ -383,19 +267,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		}
 
 		return caDecimal;
-		
-		
-		
-		
-//		boolean negative = decodeBoolean();
-//
-//		String integral = decodeUnsignedIntegerAsString();
-//		sb.setLength(0);
-//		sb.append(decodeUnsignedIntegerAsString());
-//		String sFractional = sb.reverse().toString();
-//
-//		return (negative ? "-" + integral + "." + sFractional : integral + "."
-//				+ sFractional);
 	}
 
 	/**

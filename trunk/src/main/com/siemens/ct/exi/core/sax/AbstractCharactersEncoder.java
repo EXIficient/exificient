@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import java.io.IOException;
+
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
@@ -30,5 +32,5 @@ import com.siemens.ct.exi.exceptions.EXIException;
  */
 
 public abstract class AbstractCharactersEncoder {
-	abstract public void checkPendingChars() throws EXIException;
+	abstract public void checkPendingChars() throws EXIException, IOException;
 }

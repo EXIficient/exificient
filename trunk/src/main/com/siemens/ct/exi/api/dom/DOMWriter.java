@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.api.dom;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.xml.XMLConstants;
@@ -79,7 +80,7 @@ public class DOMWriter {
 		encoder.setOutput(os, factory.isEXIBodyOnly());
 	}
 
-	public void encode(Document doc) throws EXIException {
+	public void encode(Document doc) throws EXIException, IOException {
 		encoder.encodeStartDocument();
 
 		// encode all child-nodes to retain root external
@@ -90,13 +91,13 @@ public class DOMWriter {
 	}
 
 	public void encodeFragment(DocumentFragment docFragment)
-			throws EXIException {
+			throws EXIException, IOException {
 		encoder.encodeStartDocument();
 		encodeChildNodes(docFragment.getChildNodes());
 		encoder.encodeEndDocument();
 	}
 
-	public void encode(Node n) throws EXIException {
+	public void encode(Node n) throws EXIException, IOException {
 		if (n.getNodeType() == Node.DOCUMENT_NODE) {
 			encode((Document) n);
 		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE) {
@@ -108,7 +109,7 @@ public class DOMWriter {
 		}
 	}
 
-	protected void encodeNode(Node root) throws EXIException {
+	protected void encodeNode(Node root) throws EXIException, IOException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 		
 		// start element
@@ -166,7 +167,7 @@ public class DOMWriter {
 		encoder.encodeEndElement();
 	}
 
-	protected void encodeChildNodes(NodeList children) throws EXIException {
+	protected void encodeChildNodes(NodeList children) throws EXIException, IOException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {

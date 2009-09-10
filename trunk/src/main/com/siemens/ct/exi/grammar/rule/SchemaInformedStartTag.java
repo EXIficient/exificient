@@ -81,7 +81,7 @@ public class SchemaInformedStartTag extends
 		int eventCode2 = 0;
 		if (fidelityOptions.isStrict()) {
 			//	STRICT startTag grammars disposes of xsi:type or xsi:nil events on second level only
-			if (isFirstElementRule) {
+			//if (isFirstElementRule) {
 				// xsi:type
 				if (isTypeCastable) {
 					events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_TYPE, eventCode2++));	
@@ -90,7 +90,7 @@ public class SchemaInformedStartTag extends
 				if (isNillable) {
 					events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_NIL, eventCode2++));
 				}
-			}
+			//}
 		} else {
 			// EE on second level necessary ?
 			if (!hasEndElement) {
@@ -131,9 +131,9 @@ public class SchemaInformedStartTag extends
 		boolean hasSoT = false;
 
 		if (fidelityOptions.isStrict()) {
-			if (isFirstElementRule) {
+			//if (isFirstElementRule) {
 				hasSoT = isTypeCastable || isNillable;
-			}
+			//}
 		} else {
 			hasSoT = true;
 		}
@@ -172,7 +172,7 @@ public class SchemaInformedStartTag extends
 	public String toString() {
 		String s = "StartTag";
 		
-		if (this.isFirstElementRule) {
+		//if (this.isFirstElementRule) {
 			//	first rule (StartTag)
 			if (this.isTypeCastable) {
 				s += "(xsi:type)";
@@ -180,7 +180,7 @@ public class SchemaInformedStartTag extends
 			if (this.isNillable) {
 				s += "(xsi:nil)";
 			}			
-		}
+		//}
 		
 		return s + super.toString();
 	}

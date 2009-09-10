@@ -39,7 +39,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaGroup1 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup2 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup3 ( );
-		// SchemaTestCase.setConfigurationSchemaUnion1 ( );
+		SchemaTestCase.setConfigurationSchemaUnion1 ( );
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1a ( );
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaAttributeGroup1a ( );
@@ -63,7 +63,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
 		// SchemaTestCase.setConfigurationSchemaAny1 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );
-		SchemaTestCase.setConfigurationSchemaList ( );
+		// SchemaTestCase.setConfigurationSchemaList ( );
 		// SchemaTestCase.setConfigurationSchemaUnsignedInteger ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName ( );
 		// SchemaTestCase.setConfigurationSchemaIdenticalQName2 ( );

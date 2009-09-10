@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -84,7 +84,7 @@ public class DatatypeRespresentationMapTypeEncoder extends AbstractTypeEncoder {
 		throw new RuntimeException("TODO TyoeEncoder DatatypeRespresentationMap");
 	}
 	
-	public void writeValue(NameContext context, EncoderChannel valueChannel) throws IOException {
+	public void writeValue(Context context, EncoderChannel valueChannel) throws IOException {
 		throw new RuntimeException("TODO TyoeEncoder DatatypeRespresentationMap");
 	}
 

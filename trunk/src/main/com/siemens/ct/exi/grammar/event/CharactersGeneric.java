@@ -30,9 +30,9 @@ import com.siemens.ct.exi.types.BuiltIn;
  */
 
 public class CharactersGeneric extends AbstractDatatypeEvent {
+	
 	public CharactersGeneric() {
-		super("CH(*)", null, BuiltIn.DEFAULT_DATATYPE);
-		eventType = EventType.CHARACTERS_GENERIC;
+		super(EventType.CHARACTERS_GENERIC, null, BuiltIn.DEFAULT_DATATYPE);
 	}
 
 }
