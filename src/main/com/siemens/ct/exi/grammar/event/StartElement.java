@@ -20,6 +20,9 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.XMLConstants;
 
+import com.siemens.ct.exi.core.Context;
+import com.siemens.ct.exi.grammar.rule.Rule;
+
 /**
  * TODO Description
  * 
@@ -29,14 +32,15 @@ import javax.xml.XMLConstants;
  * @version 0.3.20081103
  */
 
-public class StartElement extends AbstractEvent {
+public class StartElement extends AbstractEvent implements Context {
 	
 	private String namespaceURI;
 	private String localName;
+	
+	private Rule rule;
 
 	public StartElement(String uri, String localName) {
-		super("SE");
-		eventType = EventType.START_ELEMENT;
+		super(EventType.START_ELEMENT);
 
 		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
 		this.localName = localName;
@@ -57,37 +61,37 @@ public class StartElement extends AbstractEvent {
 	public void setLocalName(String localName) {
 		this.localName = localName;
 	}
+	
+	public void setRule(Rule rule) {
+		this.rule = rule;
+	}
+	
+	public Rule getRule() {
+		return rule;
+	}
+	
 
 	public String toString() {
-		return "SE(" + namespaceURI + ":" + localName + ")";
+		return super.toString() + "(" + namespaceURI + ":" + localName + ")";
 	}
 
 	@Override
 	public int hashCode() {
-		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
-				.hashCode());
+//		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
+//				.hashCode());
+		return (namespaceURI.hashCode() ^ localName.hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof StartElement) {
+		if (this == obj) {
+			return true;
+		} else if (obj instanceof StartElement) {
 			StartElement otherSE = (StartElement) obj;
 			return (localName.equals(otherSE.localName) && namespaceURI
 					.equals(otherSE.namespaceURI));
 		} else {
 			return false;
-		}
-	}
-	
-	@Override
-	public int compareTo(Event o) {
-		if (o instanceof StartElement) {
-			// both SE events
-			// CASE 1: first is smallest etc. (schema order)
-			 return +1;
-			// // CASE 2: lexical order
-		} else {
-			return super.compareTo(o);
 		}
 	}
 

@@ -20,15 +20,10 @@ package com.siemens.ct.exi.grammar;
 
 import java.io.ByteArrayInputStream;
 
-import javax.xml.XMLConstants;
-
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.EndElement;
-import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
@@ -79,50 +74,35 @@ public class EventCodeTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 		
-		Rule r = g.getNamedElement("", "optional").getUniqueRule();
+		// Rule r = g.getNamedElement("", "optional").getUniqueRule();
+		Rule rRoot = g.getGlobalElement("", "root").getRule();
+		StartElement seOptional = (StartElement) rRoot.lookFor(EventType.START_ELEMENT, "", "optional").event;
+		Rule rOptional = seOptional.getRule();
 
 		// Sequence: atA, atB, SE(f), SE(e), SE(d), SE(c), SE(b), EE
 		// Note: SE(a) missing
-		assertTrue(r.getNumberOfEvents() == 8);
+		assertTrue(rOptional.getNumberOfEvents() == 8);
 
-		Event ev;
 		int eventCode = 0;
 
 		// AT( atA )
-		ev = new Attribute(XMLConstants.NULL_NS_URI, "atA");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.ATTRIBUTE, "", "atA").getEventCode() == eventCode++);
 		// AT( atB )
-		ev = new Attribute(XMLConstants.NULL_NS_URI, "atB");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.ATTRIBUTE, "", "atB").getEventCode() == eventCode++);
 		// SE( f )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "f");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "f").getEventCode() == eventCode++);
 		// SE( e )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "e");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "e").getEventCode() == eventCode++);
 		// SE( d )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "d");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "d").getEventCode() == eventCode++);
 		// SE( c )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "c");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "c").getEventCode() == eventCode++);
 		// SE( b )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "b");
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "b").getEventCode() == eventCode++);
 		// EE
-		ev = new EndElement();
-		assertTrue(r.lookFor(ev).getEventCode() == eventCode++);
-
+		assertTrue(rOptional.lookFor(EventType.END_ELEMENT).getEventCode() == eventCode++);
 		// Unknown
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "unknown");
-		assertTrue(r.lookFor(ev) == null);
+		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "unknown") == null);
 	}
 
 	public void testEventCodeEXISpecExample() throws Exception {
@@ -146,23 +126,20 @@ public class EventCodeTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule Use_color_0 = g.getNamedElement("", "product").getUniqueRule();
-		assertTrue(g.isGlobalElement("", "product"));
+		Rule Use_color_0 = g.getGlobalElement("", "product").getRule();
+		// assertTrue(g.isGlobalElement("", "product"));
+		assertTrue(g.getGlobalElement("", "product") != null);
 		
 		// default fidelity options
 		FidelityOptions fo = FidelityOptions.createDefault();
-
-		Event ev;
 
 		// ### Use_color_0 ###
 		// 1st level
 		assertTrue(Use_color_0.getNumberOfEvents() == 2);
 		// AT( color )
-		ev = new Attribute(XMLConstants.NULL_NS_URI, "color");
-		assertTrue(Use_color_0.lookFor(ev).getEventCode() == 0);
+		assertTrue(Use_color_0.lookFor(EventType.ATTRIBUTE, "", "color").getEventCode() == 0);
 		// AT( sku )
-		ev = new Attribute(XMLConstants.NULL_NS_URI, "sku");
-		assertTrue(Use_color_0.lookFor(ev).getEventCode() == 1);
+		assertTrue(Use_color_0.lookFor(EventType.ATTRIBUTE, "", "sku").getEventCode() == 1);
 		// 2nd level
 		assertTrue(Use_color_0.get2ndLevelCharacteristics(fo) == 7);
 		// EE 2.0
@@ -196,19 +173,16 @@ public class EventCodeTest extends TestCase {
 		// 1st level
 		assertTrue(Use_color_1.getNumberOfEvents() == 1);
 		// AT( sku )
-		ev = new Attribute(XMLConstants.NULL_NS_URI, "sku");
-		assertTrue(Use_color_1.lookFor(ev).getEventCode() == 0);
+		assertTrue(Use_color_1.lookFor(EventType.ATTRIBUTE, "", "sku").getEventCode() == 0);
 
 		// ### Use_sku_1 ###
 		Rule Use_sku_1 = Use_color_1.lookFor(0).next;
 		// 1st level
 		assertTrue(Use_sku_1.getNumberOfEvents() == 2);
 		// SE( description )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "description");
-		assertTrue(Use_sku_1.lookFor(ev).getEventCode() == 0);
+		assertTrue(Use_sku_1.lookFor(EventType.START_ELEMENT, "", "description").getEventCode() == 0);
 		// SE( quantity )
-		ev = new StartElement(XMLConstants.NULL_NS_URI, "quantity");
-		assertTrue(Use_sku_1.lookFor(ev).getEventCode() == 1);
+		assertTrue(Use_sku_1.lookFor(EventType.START_ELEMENT, "", "quantity").getEventCode() == 1);
 
 		// ### Term_description0_1 ###
 

@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class SelfContained extends AbstractEvent {
 	public SelfContained() {
-		super("SC");
-		eventType = EventType.SELF_CONTAINED;
+		super(EventType.SELF_CONTAINED);
 	}
 }

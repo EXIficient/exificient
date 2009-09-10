@@ -451,8 +451,62 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
 				.getDefaultBuiltInType());
 	}
+	
+	public void testRestrictedCharSet2() throws Exception {
+		//	uses xs:language but defines *own* pattern facet
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myLanguage'>"
+				+ "      <xs:restriction base='xs:language'>"
+				+ "      <xs:pattern value='[a-c]'/>"
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
 
-	public void testNoRestrictedCharSet2() throws Exception {
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myLanguage", "");
+
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
+				.getDefaultBuiltInType());
+	}
+	
+	public void testRestrictedCharSet3() throws Exception {
+		//	uses xs:language but defines *own* BUT same pattern facet
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myLanguage'>"
+				+ "      <xs:restriction base='xs:language'>"
+				+ "      <xs:pattern value='([a-zA-Z]{1,8})(-[a-zA-Z0-9]{1,8})*'/>"
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myLanguage", "");
+
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
+				.getDefaultBuiltInType());
+	}
+	
+	public void testRestrictedCharSet4() throws Exception {
+		//	uses indirectly xs:language but defines *own* BUT same pattern facet
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myLanguageParent'>"
+				+ "      <xs:restriction base='xs:language'>"
+				+ "      <xs:pattern value='([a-zA-Z]{1,8})(-[a-zA-Z0-9]{1,8})*'/>"
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "    <xs:simpleType name='myLanguage'>"
+				+ "      <xs:restriction base='myLanguageParent' />"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myLanguage", "");
+
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
+				.getDefaultBuiltInType());
+	}
+
+	public void testNoRestrictedCharSet1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='Foo'>"
 				+ "      <xs:restriction base='xs:string'>"
@@ -464,6 +518,25 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Foo", "");
 
 		assertTrue(BuiltInType.STRING == dt.getDefaultBuiltInType());
+	}
+
+	public void testNoRestrictedCharSet2() throws Exception {
+		/*
+		 * NOTE: If the target datatype definition is a definition for a
+		 * built-in datatypeXS2, there is no restricted character set for the
+		 * string value. 
+		 * http://www.w3.org/TR/exi/#restrictedCharSet
+		 */
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myLanguage'>"
+				+ "      <xs:restriction base='xs:language' />"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myLanguage", "");
+
+		assertTrue("" + dt.getDefaultBuiltInType(), BuiltInType.STRING == dt.getDefaultBuiltInType());
 	}
 
 }

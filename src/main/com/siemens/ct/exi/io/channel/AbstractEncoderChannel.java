@@ -70,7 +70,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeStringOnly(final String s) throws IOException {
 		for (int i = 0; i < s.length(); i++) {
 			final char ch = s.charAt(i);
-
+			
 			// Is this a UTF-16 surrogate pair?
 			if (Character.isHighSurrogate(ch)) {
 				encodeUnsignedInteger(Character.toCodePoint(ch, s.charAt(++i)));
@@ -99,21 +99,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-	// public void encodeInteger(XSDInteger xmlInteger) throws IOException {
-	// switch (xmlInteger.getIntegerType()) {
-	// case INT:
-	// encodeInteger(xmlInteger.getIntInteger());
-	// break;
-	// case LONG:
-	// encodeLong(xmlInteger.getLongInteger());
-	// break;
-	// case BIG_INTEGER:
-	// encodeBigInteger(xmlInteger.getBigInteger());
-	// break;
-	// default:
-	// throw new RuntimeException();
-	// }
-	// }
 
 	public void encodeLong(long l) throws IOException {
 		// signalize sign
@@ -209,23 +194,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		// 0XXXXXXX
 		encode(0 | bi.intValue());
 	}
-
-	// public void encodeUnsignedInteger(XSDInteger xmlInteger) throws
-	// IOException {
-	// switch (xmlInteger.getIntegerType()) {
-	// case INT:
-	// encodeUnsignedInteger(xmlInteger.getIntInteger());
-	// break;
-	// case LONG:
-	// encodeUnsignedLong(xmlInteger.getLongInteger());
-	// break;
-	// case BIG_INTEGER:
-	// encodeUnsignedBigInteger(xmlInteger.getBigInteger());
-	// break;
-	// default:
-	// throw new RuntimeException();
-	// }
-	// }
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned

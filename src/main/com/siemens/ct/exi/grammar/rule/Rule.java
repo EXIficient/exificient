@@ -22,6 +22,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
 
 /**
  * TODO Description
@@ -98,7 +99,8 @@ public interface Rule {
 	/*
 	 * learning grammar
 	 */
-	public void learnStartElement(String uri, String localName);
+	// public void learnStartElement(String uri, String localName);
+	public void learnStartElement(StartElement se);
 
 	public void learnEndElement();
 
@@ -129,11 +131,7 @@ public interface Rule {
 	 */
 	
 	// for encoder
-	public EventInformation lookFor( Event event );
-	
-//	public EventInformation lookForStartElement(String uri, String localName);
-//	public RuleContainer getRuleContainer4Attribute(String uri, String localName);
-//	public RuleContainer getRuleContainer4EndElement();
+	public EventInformation lookFor( EventType eventType, String ... args );
 	
 	//	for decoder
 	public EventInformation lookFor( int eventCode );

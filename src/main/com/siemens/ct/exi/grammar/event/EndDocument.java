@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class EndDocument extends AbstractEvent {
 	public EndDocument() {
-		super("ED");
-		eventType = EventType.END_DOCUMENT;
+		super(EventType.END_DOCUMENT);
 	}
 }

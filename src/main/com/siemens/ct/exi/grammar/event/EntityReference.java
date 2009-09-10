@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class EntityReference extends AbstractEvent {
 	public EntityReference() {
-		super("ER");
-		eventType = EventType.ENTITY_REFERENCE;
+		super(EventType.ENTITY_REFERENCE);
 	}
 }

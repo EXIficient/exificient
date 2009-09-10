@@ -20,7 +20,7 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -41,7 +41,7 @@ public interface TypeEncoder extends TypeCoder {
 	 */
 	public boolean isValid(Datatype datatype, String value);
 
-	public void writeValue(NameContext context, EncoderChannel valueChannel)
+	public void writeValue(Context context, EncoderChannel valueChannel)
 			throws IOException;
 			
 	/*

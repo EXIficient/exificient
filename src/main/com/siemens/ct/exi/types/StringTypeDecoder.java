@@ -20,7 +20,7 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -40,7 +40,7 @@ public class StringTypeDecoder extends AbstractTypeDecoder {
 		super(stringDecoder);
 	}
 
-	public char[] readValue(Datatype datatype, NameContext context,
+	public char[] readValue(Datatype datatype, Context context,
 			DecoderChannel valueChannel) throws IOException {
 		return stringDecoder.readValue(context, valueChannel);
 	}

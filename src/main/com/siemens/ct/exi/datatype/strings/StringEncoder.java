@@ -20,16 +20,16 @@ package com.siemens.ct.exi.datatype.strings;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public interface StringEncoder extends StringCoder {
 	
-	public void addValue(NameContext context, String value);
+	public void addValue(Context context, String value);
 	
-	public void writeValue(NameContext context, EncoderChannel channel,
+	public void writeValue(Context context, EncoderChannel channel,
 			String value) throws IOException;
 
-	public boolean isStringHit(NameContext context, String value)
+	public boolean isStringHit(Context context, String value)
 			throws IOException;
 }

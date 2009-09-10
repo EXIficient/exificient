@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar;
 
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessDocContent;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
@@ -40,8 +41,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 	public SchemaLessGrammar() {
 		super(false);
 		
-		this.schemaEntries = new SchemaEntry[0];
-		this.namedElements = new ElementContainer[0];
+		this.schemaEntries = new URIEntry[0];
 
 		init();
 	}
@@ -87,17 +87,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		return null;
 	}
 
-	public int getNumberOfGlobalElements() {
-		return 0;
-	}
-	public boolean isGlobalElement(String namespaceURI, String localName) {
-		return false;
-	}
-
-	public ElementContainer getNamedElement(String namespaceURI,
-			String localName) {
-		// no schema information
+	public StartElement getGlobalElement(String namespaceURI, String localName) {
 		return null;
 	}
-
 }

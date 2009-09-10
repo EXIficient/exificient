@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import java.io.IOException;
+
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 
@@ -40,7 +42,7 @@ public class CharactersEncoderWhitespaceLess extends AbstractCharactersEncoder {
 		this.chars = chars;
 	}
 
-	public void checkPendingChars() throws EXIException {
+	public void checkPendingChars() throws EXIException, IOException {
 		String trimmed;
 
 		if (chars.length() > 0

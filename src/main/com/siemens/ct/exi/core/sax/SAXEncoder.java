@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,17 +107,17 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	// }
 
 	public void startElement(String uri, String local, String raw,
-			Attributes attributes) throws SAXException {
+			Attributes attributes) throws SAXException  {
 		try {
 			// no prefix
 			this.startElementPfx(uri, local, null, attributes);
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("startElement: " + raw, e);
 		}
 	}
 
 	protected void startElementPfx(String uri, String local, String prefix,
-			Attributes attributes) throws EXIException {
+			Attributes attributes) throws EXIException, IOException {
 		charEncoder.checkPendingChars();
 
 		// start element
@@ -131,7 +132,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		}
 	}
 
-	protected void handleNamespaceDeclarations() throws EXIException {
+	protected void handleNamespaceDeclarations() throws EXIException, IOException {
 		assert (prefixMappingPfx.size() == prefixMappingURI.size());
 
 		for (int i = 0; i < prefixMappingPfx.size(); i++) {
@@ -143,7 +144,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		prefixMappingURI.clear();
 	}
 
-	protected void handleAttributes(Attributes attributes) throws EXIException {
+	protected void handleAttributes(Attributes attributes) throws EXIException, IOException {
 		// 1. Namespace declaration(s)
 		// (done via startPrefixMapping et cetera)
 
@@ -173,7 +174,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void startDocument() throws SAXException {
 		try {
 			encoder.encodeStartDocument();
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("startDocument", e);
 		}
 	}
@@ -183,7 +184,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			charEncoder.checkPendingChars();
 
 			encoder.encodeEndDocument();
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("endDocument", e);
 		}
 	}
@@ -194,7 +195,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			charEncoder.checkPendingChars();
 
 			encoder.encodeProcessingInstruction(target, data);
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("processingInstruction", e);
 		}
 	}
@@ -204,7 +205,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		try {
 			charEncoder.checkPendingChars();
 			encoder.encodeEndElement();
-		} catch (EXIException e) {
+		} catch (Exception e) {
 
 			throw new SAXException("endElement=" + raw, e);
 		}

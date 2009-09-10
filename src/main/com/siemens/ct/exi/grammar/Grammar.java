@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.grammar;
 
 import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
@@ -38,14 +39,9 @@ public interface Grammar {
 
 	public Rule getBuiltInFragmentGrammar();
 
-	public SchemaEntry[] getSchemaEntries();
+	public URIEntry[] getSchemaEntries();
 	
-	public ElementContainer[] getNamedElements();
-	
-	public ElementContainer getNamedElement(String namespaceURI, String localName);
-	
-	public int getNumberOfGlobalElements();
-	public boolean isGlobalElement(String namespaceURI, String localName);
+	public StartElement getGlobalElement(String namespaceURI, String localName);
 	
 	/*
 	 * 

@@ -20,6 +20,8 @@ package com.siemens.ct.exi.util;
 
 import javax.xml.XMLConstants;
 
+import com.siemens.ct.exi.core.Context;
+
 /**
  * Definition: An expanded name is a pair consisting of a namespace name and a
  * local name (see <a href="http://www.w3.org/TR/xml-names11/#dt-expname">W3C
@@ -32,7 +34,7 @@ import javax.xml.XMLConstants;
  * @version 0.3.20081023
  */
 
-public class ExpandedName implements Comparable<ExpandedName> {
+public class ExpandedName implements Comparable<ExpandedName>, Context {
 	protected String namespaceURI;
 	protected String localName;
 

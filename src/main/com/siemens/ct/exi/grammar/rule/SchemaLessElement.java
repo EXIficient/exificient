@@ -76,10 +76,12 @@ public class SchemaLessElement extends SchemaLessContent {
 	}
 
 	@Override
-	public void learnStartElement(String uri, String localName) {
+	// public void learnStartElement(String uri, String localName) {
+	public void learnStartElement(StartElement se) {
 //		StartElement se = new StartElement(uri, localName);
 //		Rule next = getElementContentRule();
-		addRule(new StartElement(uri, localName), this);
+		// addRule(new StartElement(uri, localName), this);
+		addRule(se, this);
 	}
 
 	/*

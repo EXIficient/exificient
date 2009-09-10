@@ -36,7 +36,6 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.container.PreReadValueContainer;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
@@ -52,8 +51,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  */
 
 public class EXIDecoderReordered extends EXIDecoderInOrder {
-	// store appearing events in right order
-	protected List<Event> events;
+	// store appearing event-types in right order
 	protected List<EventType> eventTypes;
 	protected int eventIndex;
 
@@ -84,16 +82,18 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	// store value events (qnames) in right order
 	// plus necessary information to reconstruct value channels
-	protected List<NameContext> valueQNames;
-	protected Map<NameContext, Integer> occurrences;
-	protected Map<NameContext, List<Datatype>> dataTypes;
+	protected List<Context> valueQNames;
+	protected Map<Context, Integer> occurrences;
+	protected Map<Context, List<Datatype>> dataTypes;
 
 	// Channel and Compression stuff
 	protected CodingMode codingMode;
 
 	// content values
-	protected Map<NameContext, PreReadValueContainer> contentValues;
-	protected Map<Integer, char[]> xsiValues;
+	protected Map<Context, PreReadValueContainer> contentValues;
+
+	protected List<char[]> xsiValues;
+	protected int xsiEntryIndex;
 
 	// deflate stuff
 	protected InputStream resettableInputStream;
@@ -107,10 +107,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		super(exiFactory);
 
 		// events
-		events = new ArrayList<Event>();
-		// eventRules = new ArrayList<EventRule>();
 		eventTypes = new ArrayList<EventType>();
-
 		// elements
 		elementEntries = new ArrayList<QNameEntry>();
 		// attributes
@@ -122,29 +119,28 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nsEntries = new ArrayList<NamespaceEntry>();
 		processingEntries = new ArrayList<ProcessingEntry>();
 		// value events
-		valueQNames = new ArrayList<NameContext>();
-		occurrences = new HashMap<NameContext, Integer>();
-		dataTypes = new HashMap<NameContext, List<Datatype>>();
+		valueQNames = new ArrayList<Context>();
+		occurrences = new HashMap<Context, Integer>();
+		dataTypes = new HashMap<Context, List<Datatype>>();
 
 		// content values
-		contentValues = new HashMap<NameContext, PreReadValueContainer>();
-		xsiValues = new HashMap<Integer, char[]>();
+		contentValues = new HashMap<Context, PreReadValueContainer>();
+
+		xsiValues = new ArrayList<char[]>();
 
 		codingMode = exiFactory.getCodingMode();
 	}
 
 	@Override
-	protected void initForEachRun() throws EXIException {
+	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
 		// next event
-		// nextEvent = new StartDocument();
 		nextEvent = null;
-		// nextEventRule = null;
 		nextEventType = EventType.START_DOCUMENT;
 
 		// events
-		events.clear();
+		// events.clear();
 		eventTypes.clear();
 		eventIndex = 0;
 
@@ -179,6 +175,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// content values
 		contentValues.clear();
 		xsiValues.clear();
+		xsiEntryIndex = 0;
 
 		// pre-read structure and afterwards pre-read content (values)
 		preReadStructure();
@@ -225,7 +222,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 					// for that ?
 					// Something todo with
 					// http://forums.sun.com/thread.jspa?threadID=713598 ???
-					
+
 					while (!inflater.finished()) {
 						recentInflaterInputStream.read();
 					}
@@ -257,12 +254,12 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		}
 	}
 
-	protected void preReadStructure() throws EXIException {
+	protected void preReadStructure() throws EXIException, IOException {
 		boolean stillInitializing = true;
 
 		while (stillInitializing) {
 
-			events.add(nextEvent); // add event to array list
+			// events.add(nextEvent); // add event to array list
 			// events.add(nextEventRule == null ? null :
 			// nextEventRule.event); // add event to array list
 			// eventRules.add(nextEventRule); // add event to array list
@@ -273,49 +270,98 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				super.decodeStartDocument();
 				break;
 			case START_ELEMENT:
-			case START_ELEMENT_NS:
-			case START_ELEMENT_GENERIC:
-			case START_ELEMENT_GENERIC_UNDECLARED:
 				super.decodeStartElement();
-				elementEntries.add(new QNameEntry(elementURI, elementLocalName,
+				
+//				elementEntries.add(new QNameEntry(elementURI, elementLocalName,
+//						elementPrefix));
+				elementEntries.add(new QNameEntry(elementContext,
+						elementPrefix));
+				break;
+			case START_ELEMENT_NS:
+				super.decodeStartElementNS();
+				elementEntries.add(new QNameEntry(elementContext,
+						elementPrefix));
+				break;
+			case START_ELEMENT_GENERIC:
+				super.decodeStartElementGeneric();
+				elementEntries.add(new QNameEntry(elementContext,
+						elementPrefix));
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				super.decodeStartElementGenericUndeclared();
+				elementEntries.add(new QNameEntry(elementContext,
 						elementPrefix));
 				break;
 			case NAMESPACE_DECLARATION:
 				super.decodeNamespaceDeclaration();
 				nsEntries.add(new NamespaceEntry(nsURI, nsPrefix));
 				break;
-			case ATTRIBUTE:
 			case ATTRIBUTE_XSI_TYPE:
+				decodeAttributeXsiTypeStructure();
+				xsiValues.add(attributeValue);
+				break;
 			case ATTRIBUTE_XSI_NIL:
-			case ATTRIBUTE_INVALID_VALUE:
+				decodeAttributeXsiNilStructure();
+				xsiValues.add(attributeValue);
+				break;
+			case ATTRIBUTE:
+				Datatype dtAT = decodeAttributeStructure();
+				NameContext atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
+				break;
 			case ATTRIBUTE_NS:
+				dtAT = decodeAttributeNSStructure();
+				atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
+				break;
+			case ATTRIBUTE_INVALID_VALUE:
+				dtAT = decodeAttributeInvalidValueStructure();
+				atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
+				break;
 			case ATTRIBUTE_ANY_INVALID_VALUE:
+				dtAT = decodeAttributeAnyInvalidValueStructure();
+				atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
+				break;
 			case ATTRIBUTE_GENERIC:
+				dtAT = decodeAttributeGenericStructure();
+				atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
+				break;
 			case ATTRIBUTE_GENERIC_UNDECLARED:
-				Datatype dtAT = decodeAttributeStructureOnly();
-				attributeEntries.add(new QNameEntry(attributeURI,
-						attributeLocalName, attributePrefix));
-				if (dtAT == null) {
-					// special xsi cases (data already present)
-					xsiValues.put(attributeEntries.size() - 1, attributeValue);
-				} else {
-					// pushAttributeContext(attributeURI, attributeLocalName);
-					NameContext atContext = getAttributeContext(attributeURI, attributeLocalName);
-					incrementValues(atContext, dtAT);
-					// popAttributeContext();
-				}
+				dtAT = decodeAttributeGenericUndeclaredStructure();
+				atContext = getAttributeContext(attributeURI,
+						attributeLocalName);
+				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
+				incrementValues(atContext, dtAT);
 				break;
 			case CHARACTERS:
+				incrementValues(elementContext, decodeCharactersStructureOnly());
+				break;
 			case CHARACTERS_GENERIC:
+				incrementValues(elementContext,
+						decodeCharactersGenericStructureOnly());
+				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				Datatype dtCH = decodeCharactersStructureOnly();
-				incrementValues(elementContext, dtCH);
+				incrementValues(elementContext,
+						decodeCharactersGenericUndeclaredStructureOnly());
 				break;
 			case END_ELEMENT:
 				super.decodeEndElement();
 				break;
 			case END_ELEMENT_UNDECLARED:
-				super.decodeEndElement();
+				super.decodeEndElementUndeclared();
 				break;
 			case END_DOCUMENT:
 				super.decodeEndDocument();
@@ -353,7 +399,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			if (cntValues <= Constants.MAX_NUMBER_OF_VALUES) {
 				// single compressed stream (included structure)
 				for (int i = 0; i < valueQNames.size(); i++) {
-					NameContext channelContext = valueQNames.get(i);
+					Context channelContext = valueQNames.get(i);
 					int occs = occurrences.get(channelContext);
 					List<Datatype> datatypes = dataTypes.get(channelContext);
 					setContentValues(channel, channelContext, occs, datatypes);
@@ -365,7 +411,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				if (areThereAnyLessEqualThan100(valueQNames, occurrences)) {
 					DecoderChannel bdcLessEqual100 = getNextChannel();
 					for (int i = 0; i < valueQNames.size(); i++) {
-						NameContext channelContext = valueQNames.get(i);
+						Context channelContext = valueQNames.get(i);
 						int occs = occurrences.get(channelContext);
 						if (occs <= Constants.MAX_NUMBER_OF_VALUES) {
 							List<Datatype> datatypes = dataTypes
@@ -378,7 +424,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 				// proper stream for greater100
 				for (int i = 0; i < valueQNames.size(); i++) {
-					NameContext channelContext = valueQNames.get(i);
+					Context channelContext = valueQNames.get(i);
 					int occs = occurrences.get(channelContext);
 					if (occs > Constants.MAX_NUMBER_OF_VALUES) {
 						DecoderChannel bdcGreater100 = getNextChannel();
@@ -395,7 +441,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	protected static boolean areThereAnyLessEqualThan100(
-			List<NameContext> qnames, Map<NameContext, Integer> occurrences) {
+			List<Context> qnames, Map<Context, Integer> occurrences) {
 		for (int i = 0; i < qnames.size(); i++) {
 			if (occurrences.get(qnames.get(i)) <= Constants.MAX_NUMBER_OF_VALUES) {
 				return true;
@@ -405,7 +451,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	protected void setContentValues(DecoderChannel bdc,
-			NameContext channelContext, int occs, List<Datatype> datatypes)
+			Context channelContext, int occs, List<Datatype> datatypes)
 			throws IOException {
 
 		assert (datatypes.size() == occs);
@@ -413,14 +459,14 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 		for (int k = 0; k < occs; k++) {
 			Datatype dt = datatypes.get(k);
-			if (dt == null) {
-				assert (channelContext.getNamespaceURI()
-						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-				assert (decodedValues[k] != null);
-			} else {
+//			if (dt == null) {
+//				assert (channelContext.getNamespaceURI()
+//						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+//				assert (decodedValues[k] != null);
+//			} else {
 				decodedValues[k] = typeDecoder.readValue(dt, channelContext,
 						bdc);
-			}
+//			}
 		}
 
 		// set content value
@@ -428,25 +474,21 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				decodedValues));
 	}
 
-	protected Event stepToNextEvent() {
-		return events.get(eventIndex++);
-		// return eventRules.get(currentEventIndex++).event;
-	}
-
 	public boolean hasNext() {
 		// return ( events.size() > ( currentEventIndex ) );
 		// ED --> no next event
-		return (events.size() > (eventIndex + 1));
+		return (eventTypes.size() > (eventIndex + 1));
+		// return (events.size() > (eventIndex + 1));
 		// return (eventRules.size() > (currentEventIndex + 1));
 	}
 
 	public EventType next() throws EXIException {
 		// return eventTypes.get(currentEventIndex);
-		return (nextEventType = eventTypes.get(eventIndex));
+		return (nextEventType = eventTypes.get(eventIndex++));
 		// nextEventType = eventTypes.get(currentEventIndex);
 	}
 
-	protected void incrementValues(NameContext valueContext, Datatype datatype) {
+	protected void incrementValues(Context valueContext, Datatype datatype) {
 		cntValues++;
 
 		if (valueQNames.contains(valueContext)) {
@@ -461,25 +503,41 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		dataTypes.get(valueContext).add(datatype);
 	}
 
-	public void decodeStartDocument() throws EXIException {
-		stepToNextEvent();
-		// assert (ev.isEventType(EventType.START_DOCUMENT));
+	@Override
+	public void decodeStartDocument() {
 	}
 
-	public void decodeStartElement() throws EXIException {
-		stepToNextEvent();
+	@Override
+	public void decodeStartElement() {
 		QNameEntry se = elementEntries.get(elementEntryIndex++);
 
-		elementURI = se.namespaceURI;
-		elementLocalName = se.localName;
+		elementURI = se.context.getNamespaceURI();
+		elementLocalName = se.context.getLocalName();
 		elementPrefix = se.prefix;
 
-		pushElementContext(elementURI, elementLocalName);
+//		if (TEST_NEW)  {
+			pushElementContext(se.context);
+//		} else  {
+//			pushElementContext(elementURI, elementLocalName);	
+//		}
+	}
+
+	@Override
+	public void decodeStartElementNS() {
+		decodeStartElement();
+	}
+
+	@Override
+	public void decodeStartElementGeneric() {
+		decodeStartElement();
+	}
+
+	@Override
+	public void decodeStartElementGenericUndeclared() {
+		decodeStartElement();
 	}
 
 	public void decodeNamespaceDeclaration() throws EXIException {
-		stepToNextEvent();
-
 		NamespaceEntry ns = nsEntries.get(nsEntryIndex++);
 		nsURI = ns.namespaceURI;
 		nsPrefix = ns.prefix;
@@ -487,48 +545,95 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		namespaces.declarePrefix(nsPrefix, nsURI);
 	}
 
-	public void decodeAttribute() throws EXIException {
-		stepToNextEvent();
-		QNameEntry at = attributeEntries.get(attributeEntryIndex++);
+	@Override
+	public void decodeAttributeXsiNil() throws EXIException, IOException {
+		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+		attributeLocalName = Constants.XSI_NIL;
 
-		attributeURI = at.namespaceURI;
-		attributeLocalName = at.localName;
-		attributePrefix = at.prefix;
-
-		// is it an xsi value?
-		attributeValue = xsiValues.get(attributeEntryIndex - 1);
-		if (attributeValue == null) {
-			// "normal" content value
-			// pushAttributeContext(attributeURI, attributeLocalName);
-			NameContext atContext = getAttributeContext(attributeURI, attributeLocalName);
-			PreReadValueContainer vc = contentValues.get(atContext);
-			assert (vc != null);
-			attributeValue = vc.getNextContantValue();
-			// popAttributeContext();
-		}
+		attributeValue = xsiValues.get(xsiEntryIndex++);
 	}
 
+	@Override
+	public void decodeAttributeXsiType() throws EXIException, IOException {
+		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+		attributeLocalName = Constants.XSI_TYPE;
+
+		attributeValue = xsiValues.get(xsiEntryIndex++);
+	}
+	
+	@Override
+	public void decodeAttribute() throws EXIException {
+		QNameEntry at = attributeEntries.get(attributeEntryIndex++);
+
+		attributeURI = at.context.getNamespaceURI();
+		attributeLocalName = at.context.getLocalName();
+		attributePrefix = at.prefix;
+
+		NameContext atContext = getAttributeContext(attributeURI,
+				attributeLocalName);
+		PreReadValueContainer vc = contentValues.get(atContext);
+		assert (vc != null);
+		attributeValue = vc.getNextContantValue();
+	}
+	
+	@Override
+	public void decodeAttributeNS() throws EXIException, IOException {
+		decodeAttribute();
+	}
+	
+	@Override
+	public void decodeAttributeInvalidValue() throws EXIException, IOException {
+		decodeAttribute();
+	}
+
+	@Override
+	public void decodeAttributeAnyInvalidValue() throws EXIException, IOException {
+		decodeAttribute();
+	}
+
+	@Override
+	public void decodeAttributeGeneric() throws EXIException, IOException {
+		decodeAttribute();
+	}
+
+	@Override
+	public void decodeAttributeGenericUndeclared() throws EXIException, IOException {
+		decodeAttribute();
+	}
+
+
+	@Override
 	public void decodeCharacters() throws EXIException {
-		stepToNextEvent();
 		PreReadValueContainer vc = contentValues.get(elementContext);
 		assert (vc != null);
 		characters = vc.getNextContantValue();
 	}
 
+	@Override
+	public void decodeCharactersGeneric() throws EXIException, IOException {
+		decodeCharacters();
+	}
+
+	@Override
+	public void decodeCharactersGenericUndeclared() throws EXIException,
+			IOException {
+		decodeCharacters();
+	}
+
+	@Override
 	public void decodeEndElement() throws EXIException {
-		stepToNextEvent();
 		popElementContext();
 	}
 
-	public void decodeEndDocument() throws EXIException {
-		Event ev = stepToNextEvent();
+	@Override
+	public void decodeEndElementUndeclared() throws EXIException {
+		decodeEndElement();
+	}
 
-		assert (ev.isEventType(EventType.END_DOCUMENT));
+	public void decodeEndDocument() throws EXIException {
 	}
 
 	public void decodeDocType() throws EXIException {
-		Event ev = stepToNextEvent();
-		assert (ev.isEventType(EventType.DOC_TYPE));
 		DocTypeEntry dt = docTypeEntries.get(docTypeEntryIndex++);
 
 		docTypeName = dt.name;
@@ -538,21 +643,15 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	public void decodeEntityReference() throws EXIException {
-		Event ev = stepToNextEvent();
-		assert (ev.isEventType(EventType.ENTITY_REFERENCE));
-
 		entityReferenceName = entityReferences
 				.get(currentEntityReferenceIndex++);
 	}
 
 	public void decodeComment() throws EXIException {
-		stepToNextEvent();
 		comment = comments.get(commentsIndex++);
 	}
 
 	public void decodeProcessingInstruction() throws EXIException {
-		stepToNextEvent();
-
 		ProcessingEntry pi = processingEntries.get(processingEntryIndex++);
 
 		piTarget = pi.target;
@@ -563,13 +662,16 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	 * Pre-Read Entries
 	 */
 	class QNameEntry {
-		final String namespaceURI;
-		final String localName;
+//		final String namespaceURI;
+//		final String localName;
+		final Context context;
 		final String prefix;
 
-		public QNameEntry(String namespaceURI, String localName, String prefix) {
-			this.namespaceURI = namespaceURI;
-			this.localName = localName;
+		// public QNameEntry(String namespaceURI, String localName, String prefix) {
+		public QNameEntry(Context context, String prefix) {
+			this.context = context;
+//			this.namespaceURI = namespaceURI;
+//			this.localName = localName;
 			this.prefix = prefix;
 		}
 	}

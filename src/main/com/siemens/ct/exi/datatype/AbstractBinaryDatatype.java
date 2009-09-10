@@ -20,7 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -55,7 +55,7 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 		return xsdBase64.parse(value.toCharArray(), 0, value.length());
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
 			throws IOException {
 		valueChannel.encodeBinary(xsdBase64.getBytes());
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 	 */
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
+			StringDecoder stringDecoder, Context context)
 			throws IOException {
 		return valueChannel.decodeBinaryAsString();
 	}

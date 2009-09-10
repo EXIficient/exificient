@@ -22,9 +22,9 @@ import java.util.List;
 
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.util.ExpandedName;
-import com.siemens.ct.exi.util.ExpandedNameComparator;
+import com.siemens.ct.exi.util.sort.LexicographicSort;
 
-public class NameContext {
+public class NameContext implements Context {
 	// 
 	protected final String localName;
 	protected final String namespaceURI;
@@ -72,7 +72,7 @@ public class NameContext {
 		return null;
 	}
 	
-	public Rule getScopeRule(List<NameContext> scope) {
+	public Rule getScopeRule(List<Context> scope) {
 		if (schemaRules != null) {
 			for (int i = 0; i < schemaRuleScopes.length; i++) {
 				ExpandedName[] ens = schemaRuleScopes[i];
@@ -91,8 +91,8 @@ public class NameContext {
 					boolean OK = true;
 					while(ensIndex >= 0 && scopeIndex > 0 && OK)  {
 						ExpandedName en = ens[ensIndex];
-						NameContext s = scope.get(scopeIndex);
-						OK = ExpandedNameComparator.compare(en.getNamespaceURI(), en.getLocalName(), s.getNamespaceURI(), s.getLocalName()) == 0;
+						NameContext s = (NameContext) scope.get(scopeIndex);
+						OK = LexicographicSort.compare(en.getNamespaceURI(), en.getLocalName(), s.getNamespaceURI(), s.getLocalName()) == 0;
 						ensIndex--;
 						scopeIndex--;
 					}

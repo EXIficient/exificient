@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class ProcessingInstruction extends AbstractEvent {
 	public ProcessingInstruction() {
-		super("PI");
-		eventType = EventType.PROCESSING_INSTRUCTION;
+		super(EventType.PROCESSING_INSTRUCTION);
 	}
 }

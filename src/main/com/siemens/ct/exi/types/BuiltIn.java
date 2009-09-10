@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.XMLConstants;
 
+import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
 import org.apache.xerces.xs.StringList;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSMultiValueFacet;
@@ -32,12 +33,12 @@ import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
-import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.BigIntegerDatatype;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.datatype.BooleanPatternDatatype;
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
 import com.siemens.ct.exi.datatype.DoubleDatatype;
@@ -54,8 +55,8 @@ import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.datatype.UnsignedBigIntegerDatatype;
 import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
+import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDRegularExpression;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
@@ -70,11 +71,11 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  */
 
 public class BuiltIn {
-	
+
 	enum IntegerType {
 		INT, LONG, BIG_INTEGER
 	}
-	
+
 	// Binary
 	protected static final ExpandedName XSD_BASE64BINARY;
 	protected static final ExpandedName XSD_HEXBINARY;
@@ -110,9 +111,6 @@ public class BuiltIn {
 
 	// built-In mapping
 	protected static Map<ExpandedName, ExpandedName> datatypeMapping;
-
-	// regular expression parser
-	protected static XSDRegularExpression xsdRegexp;
 
 	static {
 		/*
@@ -195,9 +193,6 @@ public class BuiltIn {
 		datatypeMapping.put(XSD_STRING, XSD_STRING);
 		// unknown
 		datatypeMapping.put(XSD_ANY_SIMPLE_TYPE, XSD_STRING);
-
-		// regular expressions
-		xsdRegexp = XSDRegularExpression.newInstance();
 	}
 
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
@@ -302,8 +297,10 @@ public class BuiltIn {
 		/*
 		 * identify lower & upper bound
 		 */
-		BigInteger min = new BigInteger("-9999999999999999999999999999999999999999");
-		BigInteger max = new BigInteger("9999999999999999999999999999999999999999");
+		BigInteger min = new BigInteger(
+				"-9999999999999999999999999999999999999999");
+		BigInteger max = new BigInteger(
+				"9999999999999999999999999999999999999999");
 		// minimum
 		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_MININCLUSIVE)) {
 			String sMinInclusive = std
@@ -470,21 +467,26 @@ public class BuiltIn {
 			// XSD_STRING with or without pattern
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
 				StringList sl = std.getLexicalPattern();
-				if (sl.getLength() > 1) {
-					// TODO Multiple patterns
-					// System.out.println("ToDo: Multiple patterns for " + std);
-					// assert (sl.getLength() == 1); // why multiple ?
-				}
-				xsdRegexp.analyze(sl.item(0));
-				if (xsdRegexp.isEntireSetOfXMLCharacters()) {
+
+				if (isBuiltInTypeFacet(std, sl.getLength())) {
 					// *normal* string
 					datatype = new StringDatatype(datatypeID);
 				} else {
-					// restricted char set
-					RestrictedCharacterSet rcs = xsdRegexp
-							.getRestrictedCharacterSet();
-					datatype = new RestrictedCharacterSetDatatype(datatypeID,
-							rcs);
+					// analyze most-derived datatype facet only
+					String regexPattern = sl.item(0);
+					EXIRegularExpression re = new EXIRegularExpression(
+							regexPattern);
+
+					if (re.isEntireSetOfXMLCharacters()) {
+						// *normal* string
+						datatype = new StringDatatype(datatypeID);
+					} else {
+						// restricted char set
+						RestrictedCharacterSet rcs = new CodePointCharacterSet(
+								re.getCodePoints());
+						datatype = new RestrictedCharacterSetDatatype(
+								datatypeID, rcs);
+					}
 				}
 			} else {
 				datatype = new StringDatatype(datatypeID);
@@ -492,6 +494,37 @@ public class BuiltIn {
 		}
 
 		return datatype;
+	}
+
+	private static boolean isBuiltInTypeFacet(XSSimpleTypeDefinition std,
+			int patternListLength) {
+		// Note: only the most derived type is of interest
+		XSSimpleTypeDefinition baseType = (XSSimpleTypeDefinition) std
+				.getBaseType();
+		boolean isBuiltInTypeFacet;
+
+		if (baseType == null
+				|| !baseType
+						.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
+			// check std type
+			isBuiltInTypeFacet = XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(std
+					.getNamespace());
+		} else {
+			if (baseType.getLexicalPattern().getLength() < patternListLength) {
+				/*
+				 * --> std defines the last pattern (check whether it is a
+				 * built-in type)
+				 */
+				isBuiltInTypeFacet = XMLConstants.W3C_XML_SCHEMA_NS_URI
+						.equals(std.getNamespace());
+			} else {
+				// call again base type
+				isBuiltInTypeFacet = isBuiltInTypeFacet(baseType,
+						patternListLength);
+			}
+		}
+
+		return isBuiltInTypeFacet;
 	}
 
 	private static ExpandedName getPrimitive(XSSimpleTypeDefinition std) {
@@ -517,5 +550,5 @@ public class BuiltIn {
 			return DEFAULT_VALUE_NAME;
 		}
 	}
-	
+
 }

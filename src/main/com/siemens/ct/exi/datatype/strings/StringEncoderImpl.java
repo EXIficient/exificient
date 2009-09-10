@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.core.container.ValueContainer;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
@@ -15,14 +15,14 @@ public class StringEncoderImpl implements StringEncoder {
 	protected Map<String, ValueContainer> stringValues;
 	
 	//	localValue counter
-	protected Map<NameContext, Integer> localValueSize;
+	protected Map<Context, Integer> localValueSize;
 	
 	public StringEncoderImpl() {
 		stringValues = new HashMap<String, ValueContainer>();
-		localValueSize = new HashMap<NameContext, Integer>();
+		localValueSize = new HashMap<Context, Integer>();
 	}
 	
-	public void writeValue(NameContext context, EncoderChannel valueChannel, String value)
+	public void writeValue(Context context, EncoderChannel valueChannel, String value)
 			throws IOException {
 		
 		ValueContainer vc = stringValues.get(value);
@@ -65,11 +65,11 @@ public class StringEncoderImpl implements StringEncoder {
 	}
 
 	// Restricted char set
-	public boolean isStringHit(NameContext context, String value) throws IOException {
+	public boolean isStringHit(Context context, String value) throws IOException {
 		return (stringValues.get(value) != null);
 	}
 
-	public void addValue(NameContext context, String value) {
+	public void addValue(Context context, String value) {
 		assert (!stringValues.containsKey(value));
 		int globalID = stringValues.size();
 		

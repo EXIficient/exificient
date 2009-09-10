@@ -25,7 +25,10 @@ import java.util.List;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.SchemaLessEventInformation;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Event;
+import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -131,15 +134,27 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	
 	
 	// for encoder
-	public EventInformation lookFor( Event event ) {
-		for (int i=0; i<containers.size(); i++) {
-			EventInformation rc = containers.get(i);
-			if (rc.event.equals(event)) {
-				return rc;
+	public EventInformation lookFor(EventType eventType, String ... args ) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(eventType)) {
+				switch(eventType) {
+				case START_ELEMENT:
+					if (checkQualifiedName((StartElement)ei.event, args[0], args[1])) {
+						return ei;
+					}
+					break;
+				case ATTRIBUTE:
+					if (checkQualifiedName((Attribute)ei.event, args[0], args[1])) {
+						return ei;
+					}
+					break;
+				default:
+					return ei;
+				}
 			}
 		}
-		
-		//	nothing found
+
+		// nothing found
 		return null;
 	}
 	

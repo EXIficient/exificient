@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class StartDocument extends AbstractEvent {
 	public StartDocument() {
-		super("SD");
-		eventType = EventType.START_DOCUMENT;
+		super(EventType.START_DOCUMENT);
 	}
 }

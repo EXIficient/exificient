@@ -24,9 +24,11 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
+import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -37,7 +39,7 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 	@Test
 	public void testStringTableValue0() throws IOException {
-		NameContext context = new NameContext(0, "el", "");
+		Context context = new StartElement("el", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
@@ -83,9 +85,9 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 	@Test
 	public void testStringTableValue1() throws IOException {		
-		NameContext c1 = new NameContext(0, "el1", "");
-		NameContext c2 = new NameContext(1, "el2", "");
-		NameContext c3 = new NameContext(2, "el3", "");
+		Context c1 = new StartElement("el1", "");
+		Context c2 = new StartElement("el2", "");
+		Context c3 = new StartElement("el3", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
@@ -132,13 +134,13 @@ public class StringTableValueTest extends AbstractTestCase  {
 	@Test
 	public void testStringTableValue() throws IOException {
 
-		NameContext ca1 = new NameContext(0, "at1", "");
+		Context ca1 = new Attribute("at1", "");
 
-		NameContext cex2 = new NameContext(1, "elx2", "");
-		NameContext cex3 = new NameContext(2, "elx3", "");
+		Context cex2 = new StartElement("elx2", "");
+		Context cex3 = new StartElement("elx3", "");
 		
-		NameContext cexx1 = new NameContext(3, "elxx1", "");
-		NameContext cexx2 = new NameContext(4, "elxx2", "");
+		Context cexx1 = new StartElement("elxx1", "");
+		Context cexx2 = new StartElement("elxx2", "");
 
 		String atCh1 = "at-ch1";
 		String atCh2 = "at-ch2";

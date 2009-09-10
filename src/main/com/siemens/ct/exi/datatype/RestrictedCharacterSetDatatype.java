@@ -21,11 +21,10 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -44,23 +43,24 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	protected String lastValidValue;
 
-	public RestrictedCharacterSetDatatype(ExpandedName datatypeIdentifier, RestrictedCharacterSet rcs) {
+	public RestrictedCharacterSetDatatype(ExpandedName datatypeIdentifier,
+			RestrictedCharacterSet rcs) {
 		this(datatypeIdentifier);
 		this.rcs = rcs;
 	}
-	
+
 	public RestrictedCharacterSetDatatype(ExpandedName datatypeIdentifier) {
 		super(BuiltInType.RESTRICTED_CHARACTER_SET, datatypeIdentifier);
 	}
-	
+
 	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {
 		this.rcs = rcs;
 	}
-	
+
 	public RestrictedCharacterSet getRestrictedCharacterSet() {
 		return rcs;
 	}
-	
+
 	public boolean isValid(String value) {
 		// Note: no validity check needed since any char-sequence can be encoded
 		// due to fallback mechanism
@@ -68,13 +68,13 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		return true;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
-			throws IOException {
-		
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, Context context) throws IOException {
+
 		if (stringEncoder.isStringHit(context, lastValidValue)) {
 			stringEncoder.writeValue(context, valueChannel, lastValidValue);
 		} else {
-			//	NO local or global value hit
+			// NO local or global value hit
 			// string-table miss ==> restricted character
 			// string literal is encoded as a String with the length
 			// incremented by two.
@@ -86,19 +86,16 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			int numberOfBits = rcs.getCodingLength();
 
 			for (int i = 0; i < numberOfTuples; i++) {
-				int code;
-				char ch = lastValidValue.charAt(i);
-				if ((code = rcs.getCode(ch)) == Constants.NOT_FOUND) {
+				int codePoint = lastValidValue.codePointAt(i);
+				int code = rcs.getCode(codePoint);
+				if (code == Constants.NOT_FOUND) {
 					// indicate deviation
 					valueChannel.encodeNBitUnsignedInteger(rcs.size(),
 							numberOfBits);
 
-					// UCS code point of the character
-					// TODO UTF-16 surrogate pair
-					valueChannel.encodeUnsignedInteger(ch);
+					valueChannel.encodeUnsignedInteger(codePoint);
 				} else {
-					valueChannel.encodeNBitUnsignedInteger(code,
-							numberOfBits);
+					valueChannel.encodeNBitUnsignedInteger(code, numberOfBits);
 				}
 			}
 
@@ -110,12 +107,11 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
-			throws IOException {
+			StringDecoder stringDecoder, Context context) throws IOException {
 		char[] value;
 
 		int i = valueChannel.decodeUnsignedInteger();
-		
+
 		if (i == 0) {
 			// local value partition
 			value = stringDecoder.readValueLocalHit(context, valueChannel);
@@ -133,24 +129,20 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			int size = rcs.size();
 
 			value = new char[slen];
-			int code;
 
-			try {
-				for (int k = 0; k < slen; k++) {
-					if ((code = valueChannel.decodeNBitUnsignedInteger(numberOfBits)) == size) {
-						// UCS code point of the character
-						// TODO UTF-16 surrogate pair?
-						value[k] = (char) valueChannel.decodeUnsignedInteger();
-					} else {
-						value[k] = rcs.getCharacter(code);
-					}
+			for (int k = 0; k < slen; k++) {
+				int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);
+				int codePoint;
+				if (code == size) {
+					// deviation
+					codePoint = valueChannel.decodeUnsignedInteger();
+				} else {
+					codePoint = rcs.getCodePoint(code);
 				}
-			} catch (UnknownElementException e) {
-				throw new IOException(e.getMessage());
-				// TODO Java 1.5 does not support Throwable as parameter
-				// throw new IOException(e);
-			}
 
+				Character.toChars(codePoint, value, k);
+
+			}
 
 			// After encoding the string value, it is added to both the
 			// associated "local" value string table partition and the global

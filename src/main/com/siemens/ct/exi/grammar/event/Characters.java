@@ -33,7 +33,6 @@ import com.siemens.ct.exi.util.ExpandedName;
 public class Characters extends AbstractDatatypeEvent {
 
 	public Characters(ExpandedName valueType, Datatype datatype) {
-		super("CH", valueType, datatype);
-		eventType = EventType.CHARACTERS;
+		super(EventType.CHARACTERS, valueType, datatype);
 	}
 }

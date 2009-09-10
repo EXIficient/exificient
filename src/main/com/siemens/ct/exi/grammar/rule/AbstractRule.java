@@ -31,10 +31,12 @@ import java.util.List;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartElement;
 
 public abstract class AbstractRule implements Rule {
 	
@@ -77,7 +79,8 @@ public abstract class AbstractRule implements Rule {
 	 * com.siemens.exi.grammar.rule.Rule#learnStartElement(javax.xml.namespace
 	 * .QName)
 	 */
-	public void learnStartElement(String uri, String localName) {
+	// public void learnStartElement(String uri, String localName) {
+	public void learnStartElement(StartElement se) {
 	}
 
 	public void learnEndElement() {
@@ -201,6 +204,11 @@ public abstract class AbstractRule implements Rule {
 
 		return false;
 
+	}
+	
+	protected static boolean checkQualifiedName(Context c, String namespaceURI, String localName) {
+		return (c.getLocalName().equals(localName) && c.getNamespaceURI()
+				.equals(namespaceURI));
 	}
 
 }

@@ -21,7 +21,7 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -66,13 +66,13 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 		return retValue;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, NameContext context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
 			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
+			StringDecoder stringDecoder, Context context)
 			throws IOException {
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
 		switch (booleanID) {

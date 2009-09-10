@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	/*
 	 * SELF_CONTAINED
 	 */
-	public void decodeStartFragmentSelfContained() throws EXIException {
+	public void decodeStartFragmentSelfContained() throws EXIException, IOException {
 		throw new RuntimeException("[EXI] SC");
 //		try {
 //			// 1. Save the string table, grammars, namespace prefixes and any

@@ -29,18 +29,18 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected String lastValue;
 	protected Datatype lastDatatype;
 
-	protected List<NameContext> contextOrders;
-	protected Map<NameContext, ContextContainer> contexts;
+	protected List<Context> contextOrders;
+	protected Map<Context, ContextContainer> contexts;
 
 	public EXIEncoderReordered(EXIFactory exiFactory) {
 		super(exiFactory);
 
-		contextOrders = new ArrayList<NameContext>();
-		contexts = new HashMap<NameContext, ContextContainer>();
+		contextOrders = new ArrayList<Context>();
+		contexts = new HashMap<Context, ContextContainer>();
 	}
 
 	@Override
-	protected void initForEachRun() throws EXIException {
+	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
 		blockValues = 0;
@@ -64,7 +64,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		return super.isTypeValid(datatype, value);
 	}
 
-	protected void updateContextValue(NameContext valueContext, String value, Datatype datatype) {
+	protected void updateContextValue(Context valueContext, String value, Datatype datatype) {
 		ContextContainer cc = contexts.get(valueContext);
 		if(cc == null) {
 			cc = new ContextContainer();
@@ -77,14 +77,14 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	}
 	
 	@Override
-	protected void writeValueTypeValid(NameContext valueContext)
+	protected void writeValueTypeValid(Context valueContext)
 			throws IOException {
 		// System.out.println("ValueType = " + lastValue + " " + this.context);
 		updateContextValue(valueContext, lastValue, lastDatatype);
 	}
 
 	@Override
-	public void writeValueAsString(NameContext valueContext, String value)
+	public void writeValueAsString(Context valueContext, String value)
 			throws IOException {
 		// System.out.println("ValueString = " + lastValue + " " +
 		// this.context);
@@ -121,7 +121,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 			// 1. structure stream already written
 			// 2. value channels in order
-			for (NameContext contextOrder : contextOrders) {
+			for (Context contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);
@@ -156,7 +156,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// (as a single stream )
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
-			for (NameContext contextOrder : contextOrders) {
+			for (Context contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);
@@ -175,7 +175,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			}
 
 			// all value channels having more than 100 values
-			for (NameContext contextOrder : contextOrders) {
+			for (Context contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);

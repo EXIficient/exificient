@@ -16,28 +16,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype.charset;
+package com.siemens.ct.exi.grammar;
 
-import java.util.Iterator;
-import java.util.Set;
-
-/**
- * Utility class to build a RestrictedCharacterSet by a given Set.
- * 
- * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
- * 
- * @version 0.3.20090421
- */
-
-public class CharacterSet extends AbstractRestrictedCharacterSet {
-
-	public CharacterSet(Set<Character> charSet) {
-		super();
-		// iterate over characters
-		Iterator<Character> iter = charSet.iterator();
-		while(iter.hasNext()) {
-			addValue(iter.next());
-		}
+public class URIEntry {
+	
+	public final String uri;
+	public final String[] localNames;
+	public final String[] prefixes;
+	
+	public URIEntry(String uri, String[] localNames, String[] prefixes) {
+		this.uri = uri;
+		this.localNames = localNames;
+		this.prefixes = prefixes;
 	}
+
 }

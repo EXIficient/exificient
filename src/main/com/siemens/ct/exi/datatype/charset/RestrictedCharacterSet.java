@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
-import com.siemens.ct.exi.exceptions.UnknownElementException;
 
 /**
  * If a string value is associated with a schema datatype and one or more of the
@@ -34,25 +33,24 @@ import com.siemens.ct.exi.exceptions.UnknownElementException;
 
 public interface RestrictedCharacterSet {
 	/**
-	 * Retrieves the character with given code(-point).
+	 * Retrieves the code-point for given code.
 	 * 
 	 * @param code
-	 * @return char or
-	 * @throws UnknownElementException
-	 *             code unknown
+	 * @return codePoint
+	 * @throws IndexOutOfBoundsException
 	 */
 
-	public char getCharacter(int code) throws UnknownElementException;
+	public int getCodePoint(int code);
 
 	/**
-	 * Returns code for given character or <code>NOT_FOUND</code> == -1 for
+	 * Returns code for given code-point or <code>NOT_FOUND</code> == -1 for
 	 * invalid char.
 	 * 
 	 * @param c
 	 *            character of interest
-	 * @return code(-point)
+	 * @return code
 	 */
-	public int getCode(char c);
+	public int getCode(int codePoint);
 
 	/**
 	 * Returns the number of entries for the set.

@@ -114,8 +114,10 @@ public class SchemaLessStartTag extends SchemaLessContent {
 	}
 
 	@Override
-	public void learnStartElement(String uri, String localName) {
-		addRule(new StartElement(uri, localName), getElementContentRule());
+	// public void learnStartElement(String uri, String localName) {
+	public void learnStartElement(StartElement se) {
+		// addRule(new StartElement(uri, localName), getElementContentRule());
+		addRule(se, getElementContentRule());
 	}
 
 	@Override

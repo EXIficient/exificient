@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.apache.xerces.xs.StringList;
 
-import com.siemens.ct.exi.core.NameContext;
+import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -103,7 +103,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, NameContext context)
+			StringEncoder stringEncoder, Context context)
 			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition,
 				codingLength);
@@ -112,12 +112,12 @@ public class EnumerationDatatype extends AbstractDatatype {
 	@Override
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
 			EncoderChannel valueChannel, StringEncoder stringEncoder,
-			NameContext context) throws IOException {
+			Context context) throws IOException {
 		writeValue(valueChannel, stringEncoder, context);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, NameContext context)
+			StringDecoder stringDecoder, Context context)
 			throws IOException {
 		int index = valueChannel.decodeNBitUnsignedInteger(codingLength);
 
@@ -127,7 +127,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 	@Override
 	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			NameContext context) throws IOException {
+			Context context) throws IOException {
 		return readValue(valueChannel, stringDecoder, context);	
 	}
 

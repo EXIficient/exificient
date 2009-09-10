@@ -29,7 +29,6 @@ package com.siemens.ct.exi.grammar.event;
 
 public class Comment extends AbstractEvent {
 	public Comment() {
-		super("CM");
-		eventType = EventType.COMMENT;
+		super(EventType.COMMENT);
 	}
 }

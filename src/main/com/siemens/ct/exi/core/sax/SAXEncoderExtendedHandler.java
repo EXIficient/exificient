@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
@@ -70,7 +69,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			// prefix aware
 			startElementPfx(uri, local, QNameUtilities.getPrefixPart(raw),
 					attributes);
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("startElement: " + raw, e);
 		}
 	}
@@ -93,7 +92,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		try {
 			charEncoder.checkPendingChars();
 			encoder.encodeComment(ch, start, length);
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("comment", e);
 		}
 	}
@@ -116,7 +115,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			docTypePublicID = publicId == null ? "" : publicId;
 			docTypeSystemID = systemId == null ? "" : systemId;
 			docTypeText = "";
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("startDTD", e);
 		}
 	}
@@ -137,7 +136,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 				charEncoder.checkPendingChars();
 				noEntityReference = false;
 			}
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("startEntity", e);
 		}
 	}
@@ -152,7 +151,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 				}
 				noEntityReference = true;
 			}
-		} catch (EXIException e) {
+		} catch (Exception e) {
 			throw new SAXException("endEntity " + name, e);
 		}
 	}

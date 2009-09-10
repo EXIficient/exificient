@@ -18,11 +18,12 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.exceptions.UnknownElementException;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -39,17 +40,11 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 	// #xD, CR (carriage-return)
 	// #x20, SP (space)
 
-	protected Map<Character, Integer> codeSet;
-	protected Map<Integer, Character> characterSet;
+	protected Map<Integer, Integer> codeSet; // codePoint --> internal code
+	protected List<Integer> codePointList;	// internal code --> codePoint
 
 	protected int size;
 	protected int codingLength;
-
-	/*
-	 * TODO: If the restricted character set for a datatype contains at least
-	 * 255 characters or contains non-BMP characters, the character set of the
-	 * datatype is not restricted and can be omitted from further consideration.
-	 */
 
 	/*
 	 * The characters in the restricted character set are sorted by UCS [ISO/IEC
@@ -60,23 +55,16 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 	 */
 
 	protected AbstractRestrictedCharacterSet() {
-		codeSet = new HashMap<Character, Integer>();
-		characterSet = new HashMap<Integer, Character>();
+		codeSet = new HashMap<Integer, Integer>();
+		codePointList = new ArrayList<Integer>();
 	}
 
-	public char getCharacter(int code) throws UnknownElementException {
-		Character character = characterSet.get(code);
-
-		if (character == null) {
-			throw new UnknownElementException(
-					"Unknown RestrictedCharacterSet code: " + code);
-		} else {
-			return character;
-		}
+	public int getCodePoint(int code) {
+		return codePointList.get(code);
 	}
 
-	public int getCode(char c) {
-		Integer code = codeSet.get(c);
+	public int getCode(int codePoint) {
+		Integer code = codeSet.get(codePoint);
 
 		return (code == null ? Constants.NOT_FOUND : code);
 	}
@@ -89,12 +77,12 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 		return codingLength;
 	}
 
-	protected void addValue(char c) {
-		codeSet.put(c, codeSet.size());
-		characterSet.put(characterSet.size(), c);
+	protected void addValue(int codePoint) {
+		codeSet.put(codePoint, codeSet.size());
+		codePointList.add(codePoint);
 
 		// adjust size / codingLength
-		assert (codeSet.size() == characterSet.size());
+		assert (codeSet.size() == codePointList.size());
 		size = codeSet.size();
 		codingLength = MethodsBag.getCodingLength(size + 1);
 	}

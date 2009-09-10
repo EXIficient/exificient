@@ -101,9 +101,7 @@ public class SAXDecoder implements XMLReader {
 		}
 
 		// start so far deferred start element
-//		String qname = decoder.getQualifiedName(deferredStartElementUri,
-//				deferredStartElementLocalName, decoder.getElementPrefix());
-		String qname = decoder.getElementQName();		
+		String qname = decoder.getElementQName();
 		contentHandler.startElement(deferredStartElementUri,
 				deferredStartElementLocalName, qname, attributes);
 		// save qualified-name for EE)
@@ -162,12 +160,9 @@ public class SAXDecoder implements XMLReader {
 			if (contentHandler == null) {
 				throw new SAXException("No content handler set!");
 			}
-			
+
 			// init
 			initForEachRun();
-
-//			// first event ( SD ? )
-//			decoder.inspectStream();
 
 			while (decoder.hasNext()) {
 				EventType eventType = decoder.next();
@@ -186,8 +181,17 @@ public class SAXDecoder implements XMLReader {
 					if (deferredStartElementUri != null) {
 						startDeferredElement();
 					}
-					decoder.decodeStartElement();
-					
+					if (eventType == EventType.START_ELEMENT) {
+						decoder.decodeStartElement();
+					} else if (eventType == EventType.START_ELEMENT_NS) {
+						decoder.decodeStartElementNS();
+					} else if (eventType == EventType.START_ELEMENT_GENERIC) {
+						decoder.decodeStartElementGeneric();
+					} else {
+						assert(eventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+						decoder.decodeStartElementGenericUndeclared();
+					}
+
 					// set new deferred start element
 					deferredStartElementUri = decoder.getElementURI();
 					deferredStartElementLocalName = decoder
@@ -202,12 +206,30 @@ public class SAXDecoder implements XMLReader {
 				case ATTRIBUTE_ANY_INVALID_VALUE:
 				case ATTRIBUTE_GENERIC:
 				case ATTRIBUTE_GENERIC_UNDECLARED:
-					decoder.decodeAttribute();
-
+					if (eventType == EventType.ATTRIBUTE) {
+						decoder.decodeAttribute();
+					} else if (eventType == EventType.ATTRIBUTE_NS) {
+						decoder.decodeAttributeNS();
+					} else if (eventType == EventType.ATTRIBUTE_XSI_NIL) {
+						decoder.decodeAttributeXsiNil();
+					} else if (eventType == EventType.ATTRIBUTE_XSI_TYPE) {
+						decoder.decodeAttributeXsiType();
+					} else if (eventType == EventType.ATTRIBUTE_INVALID_VALUE) {
+						decoder.decodeAttributeInvalidValue();
+					} else if (eventType == EventType.ATTRIBUTE_ANY_INVALID_VALUE) {
+						decoder.decodeAttributeAnyInvalidValue();
+					} else if (eventType == EventType.ATTRIBUTE_GENERIC) {
+						decoder.decodeAttributeGeneric();
+					} else {
+						assert(eventType == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+						decoder.decodeAttributeGenericUndeclared();
+					}
+					
 					String attributeURI = decoder.getAttributeURI();
 					String attributeLocalName = decoder.getAttributeLocalName();
 					String attributeQname = decoder.getAttributeQName();
-					String attributeValue = new String(decoder.getAttributeValue());
+					String attributeValue = new String(decoder
+							.getAttributeValue());
 
 					attributes.addAttribute(attributeURI, attributeLocalName,
 							attributeQname, ATTRIBUTE_TYPE, attributeValue);
@@ -219,7 +241,16 @@ public class SAXDecoder implements XMLReader {
 					if (deferredStartElementUri != null) {
 						startDeferredElement();
 					}
-					decoder.decodeCharacters();
+					
+					if (eventType == EventType.CHARACTERS) {
+						decoder.decodeCharacters();
+					} else if (eventType == EventType.CHARACTERS_GENERIC) {
+						decoder.decodeCharactersGeneric();
+					} else {
+						assert(eventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
+						decoder.decodeCharactersGenericUndeclared();
+					}
+					
 					char[] chars = decoder.getCharacters();
 					contentHandler.characters(chars, 0, chars.length);
 					break;
@@ -229,12 +260,17 @@ public class SAXDecoder implements XMLReader {
 					if (deferredStartElementUri != null) {
 						startDeferredElement();
 					}
-					decoder.decodeEndElement();
-					
+					if (eventType == EventType.END_ELEMENT) {
+						decoder.decodeEndElement();
+					} else {
+						assert(eventType == EventType.END_ELEMENT_UNDECLARED);
+						decoder.decodeEndElementUndeclared();
+					}
+
 					// fetch scope before popping rule etc.
 					String eeUri = decoder.getElementURI();
 					String eeLocalName = decoder.getElementLocalName();
-					
+
 					// start sax end element
 					contentHandler.endElement(eeUri, eeLocalName,
 							eeQualifiedNames
@@ -281,13 +317,9 @@ public class SAXDecoder implements XMLReader {
 					break;
 				default:
 					// ERROR
-					throw new IllegalArgumentException(
-							"Unknown event while decoding! "
-									+ decoder.next());
+					throw new EXIException("Unknown EXI event while decoding! "
+							+ decoder.next());
 				}
-
-//				// inspect stream whether there is still content
-//				decoder.inspectStream();
 			}
 
 			// END_DOCUMENT
