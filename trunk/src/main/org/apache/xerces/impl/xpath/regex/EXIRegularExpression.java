@@ -47,6 +47,11 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 
 public class EXIRegularExpression extends RegularExpression {
 
+	/*
+	 * If the resulting set of characters contains less than 256 characters and
+	 * contains only BMP characters, the string value has a restricted character
+	 * set
+	 */
 	public static final int MAX_NUMBER_OF_CHARACTERS = 255;
 
 	private static final long serialVersionUID = 1L;
@@ -64,6 +69,8 @@ public class EXIRegularExpression extends RegularExpression {
 		handleToken(this.tokentree, set);
 	}
 
+
+	// TODO detect whether we have ONLY BMP characters
 	public boolean isEntireSetOfXMLCharacters() {
 		return !(isRestrictedSet && set.size() <= MAX_NUMBER_OF_CHARACTERS);
 	}
@@ -105,8 +112,8 @@ public class EXIRegularExpression extends RegularExpression {
 			RangeToken rt = (RangeToken) t;
 			int[] ranges = rt.ranges;
 			for (int k = 0; k < ranges.length; k += 2) {
-				//	abort processing due to huge range
-				if( (ranges[k + 1] - ranges[k] ) > MAX_NUMBER_OF_CHARACTERS) {
+				// abort processing due to huge range
+				if ((ranges[k + 1] - ranges[k]) > MAX_NUMBER_OF_CHARACTERS) {
 					isRestrictedSet = false;
 					return;
 				}

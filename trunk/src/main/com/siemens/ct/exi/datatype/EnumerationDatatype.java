@@ -77,11 +77,13 @@ public class EnumerationDatatype extends AbstractDatatype {
 		return codingLength;
 	}
 
+	// When the preserve.lexicalValues option is false, enumerated values are
+	// encoded as n-bit Unsigned Integers
 	public boolean isValid(String value) {
 		lastOrdinalPosition = -1;
 		int index = 0;
 		// while (index < lastEnumValues.getLength()) {
-		while (index < getEnumerationSize()) {
+		while (index < enumValuesCH.length) {
 			if (getEnumerationValueAsString(index).equals(value)) {
 				lastOrdinalPosition = index;
 				return true;
@@ -93,18 +95,20 @@ public class EnumerationDatatype extends AbstractDatatype {
 	}
 
 	@Override
+	// When the preserve.lexicalValues option is true, enumerated values are
+	// encoded as String
 	public boolean isValidRCS(String value) {
-		if (isValid(value)) {
-			return super.isValidRCS(value);
-		} else {
-			return false;
-		}
-
+		this.lastRCSValue = value;
+		return true;
+		// if (isValid(value)) {
+		// return super.isValidRCS(value);
+		// } else {
+		// return false;
+		// }
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, Context context)
-			throws IOException {
+			StringEncoder stringEncoder, Context context) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastOrdinalPosition,
 				codingLength);
 	}
@@ -113,12 +117,12 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
 			EncoderChannel valueChannel, StringEncoder stringEncoder,
 			Context context) throws IOException {
-		writeValue(valueChannel, stringEncoder, context);
+		stringEncoder.writeValue(context, valueChannel, lastRCSValue);
+		// writeValue(valueChannel, stringEncoder, context);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, Context context)
-			throws IOException {
+			StringDecoder stringDecoder, Context context) throws IOException {
 		int index = valueChannel.decodeNBitUnsignedInteger(codingLength);
 
 		return getEnumerationValueAsCharArray(index);
@@ -128,7 +132,8 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
 			Context context) throws IOException {
-		return readValue(valueChannel, stringDecoder, context);	
+		return stringDecoder.readValue(context, valueChannel);
+		// return readValue(valueChannel, stringDecoder, context);
 	}
 
 }

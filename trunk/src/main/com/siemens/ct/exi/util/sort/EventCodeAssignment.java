@@ -23,7 +23,6 @@ import java.util.Comparator;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Event;
-import com.siemens.ct.exi.grammar.event.StartElementNS;
 
 /*
  * Helper Class for sorting EXI events 
@@ -51,11 +50,8 @@ public class EventCodeAssignment implements Comparator<Event> {
 				// sorted in schema order
 				return -1;
 			case START_ELEMENT_NS:
-				// sorted lexicographically by uri
-				StartElementNS seNS1 = (StartElementNS) o1;
-				StartElementNS seNS2 = (StartElementNS) o2;
-				return seNS1.getNamespaceURI().compareTo(
-						seNS2.getNamespaceURI());
+				// sorted in schema order
+				return -1;
 			}
 		}
 

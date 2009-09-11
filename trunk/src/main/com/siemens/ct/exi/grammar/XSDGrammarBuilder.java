@@ -46,14 +46,11 @@ import org.apache.xerces.xs.XSWildcard;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.AttributeGeneric;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.CharactersGeneric;
-import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
@@ -181,17 +178,17 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * ElementFragmentContent
 		 */
 		SchemaInformedRule content = new SchemaInformedElement();
-		content.addRule(new StartElementGeneric(), content); // SE (*)
+		content.addRule(START_ELEMENT_GENERIC, content); // SE (*)
 		content.addTerminalRule(END_ELEMENT); // EE
-		content.addRule(new CharactersGeneric(), content); // CH [untyped value]
+		content.addRule(CHARACTERS_GENERIC, content); // CH [untyped value]
 		/*
 		 * ElementFragmentStartTag
 		 */
 		SchemaInformedRule startTag = new SchemaInformedStartTag(content);
-		startTag.addRule(new AttributeGeneric(), startTag);// AT (*)
-		startTag.addRule(new StartElementGeneric(), content); // SE (*)
+		startTag.addRule(ATTRIBUTE_GENERIC, startTag);// AT (*)
+		startTag.addRule(START_ELEMENT_GENERIC, content); // SE (*)
 		startTag.addTerminalRule(END_ELEMENT); // EE
-		startTag.addRule(new CharactersGeneric(), content);// CH [untyped value]
+		startTag.addRule(CHARACTERS_GENERIC, content);// CH [untyped value]
 		/*
 		 * ElementFragmentTypeEmpty
 		 */
@@ -540,7 +537,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			// grammar G i generated above:
 			// G i, 0 :
 			// AT(*) G i, 0
-			rule.addRule(new AttributeGeneric(), rule);
+			rule.addRule(ATTRIBUTE_GENERIC, rule);
 		} else {
 			// AT(urix:*)
 			// Otherwise, that is, when {namespace constraint} is a
@@ -589,22 +586,22 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	public static TypeGrammar getUrTypeRule() {
 		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
-		urType1.addRule(new StartElementGeneric(), urType1);
-		urType1.addTerminalRule(new EndElement());
+		urType1.addRule(START_ELEMENT_GENERIC, urType1);
+		urType1.addTerminalRule(END_ELEMENT);
 		urType1.addRule(new CharactersGeneric(), urType1);
 
 		SchemaInformedRule urType0 = new SchemaInformedStartTag(urType1);
-		urType0.addRule(new AttributeGeneric(), urType0);
-		urType0.addRule(new StartElementGeneric(), urType1);
-		urType0.addTerminalRule(new EndElement());
+		urType0.addRule(ATTRIBUTE_GENERIC, urType0);
+		urType0.addRule(START_ELEMENT_GENERIC, urType1);
+		urType0.addTerminalRule(END_ELEMENT);
 		urType0.addRule(new CharactersGeneric(), urType1);
 		urType0.setTypeCastable(true);
 		urType0.setFirstElementRule();
 
 		// empty ur-Type
 		SchemaInformedRule emptyUrType0 = new SchemaInformedElement();
-		emptyUrType0.addRule(new AttributeGeneric(), emptyUrType0);
-		emptyUrType0.addTerminalRule(new EndElement());
+		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
+		emptyUrType0.addTerminalRule(END_ELEMENT);
 		// emptyUrType0.setFirstElementRule();
 
 		// nillable ?
@@ -739,22 +736,20 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			// The {content model} of a complex type definition is a single
 			// particle
-			ruleContent = handleParticle(ctd);
+			boolean isMixedContent = false;
+			ruleContent = handleParticle(ctd, isMixedContent);
 			break;
 		default:
 			assert (ctd.getContentType() == XSComplexTypeDefinition.CONTENTTYPE_MIXED);
 			// Represents a mixed content type
-
 			// The {content model} of a complex type definition is a single
 			// particle
-			// XSParticle xsParticleMixed = ctd.getParticle();
+			isMixedContent = true;
+			ruleContent = handleParticle(ctd, isMixedContent);
 
-			// content
-			ruleContent = handleParticle(ctd);
-
-			// mixed transitions
-			addMixedTransitions(ruleContent, new ArrayList<Rule>());
-			ruleContent.setLabel("MixedContent");
+//			// mixed transitions
+//			addMixedTransitions(ruleContent, new ArrayList<Rule>());
+//			ruleContent.setLabel("MixedContent");
 			break;
 		}
 
@@ -762,23 +757,23 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	}
 
-	protected void addMixedTransitions(Rule ruleMixedContent, List<Rule> handled) {
-		if (handled.contains(ruleMixedContent)) {
-			// abort
-			return;
-		}
-		handled.add(ruleMixedContent);
-
-		// mixed --> generic characters events
-		ruleMixedContent.addRule(new CharactersGeneric(), ruleMixedContent);
-
-		for (int i = 0; i < ruleMixedContent.getNumberOfEvents(); i++) {
-			Rule r = ruleMixedContent.lookFor(i).next;
-			if (!r.isTerminalRule()) {
-				addMixedTransitions(r, handled);
-			}
-		}
-	}
+//	protected void addMixedTransitions(Rule ruleMixedContent, List<Rule> handled) {
+//		if (handled.contains(ruleMixedContent)) {
+//			// abort
+//			return;
+//		}
+//		handled.add(ruleMixedContent);
+//
+//		// mixed --> generic characters events
+//		ruleMixedContent.addRule(new CharactersGeneric(), ruleMixedContent);
+//
+//		for (int i = 0; i < ruleMixedContent.getNumberOfEvents(); i++) {
+//			Rule r = ruleMixedContent.lookFor(i).next;
+//			if (!r.isTerminalRule()) {
+//				addMixedTransitions(r, handled);
+//			}
+//		}
+//	}
 
 	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {

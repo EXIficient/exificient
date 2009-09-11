@@ -24,7 +24,6 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Characters;
-import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -122,7 +121,7 @@ public class SchemaLessStartTag extends SchemaLessContent {
 
 	@Override
 	public void learnEndElement() {
-		addTerminalRule(new EndElement());
+		addTerminalRule(END_ELEMENT);
 	}
 
 	@Override

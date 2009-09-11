@@ -22,7 +22,6 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -47,7 +46,7 @@ public class SchemaInformedFragmentContent extends
 	public SchemaInformedFragmentContent(String label) {
 		super(label);
 		//		SE(*) --> FragmentContent
-		this.addRule(new StartElementGeneric(), this);
+		this.addRule(START_ELEMENT_GENERIC, this);
 		addTerminalRule(new EndDocument());
 	}
 
