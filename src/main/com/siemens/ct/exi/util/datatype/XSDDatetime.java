@@ -329,14 +329,14 @@ public class XSDDatetime {
 	}
 
 	/**
-	 * Returns time representation defined in the EXI format ((Hour * 60) +
-	 * Minutes) * 60 + seconds
+	 * Returns time representation defined in the EXI format ((Hour * 64) +
+	 * Minutes) * 64 + seconds
 	 */
 	public static int getTime(Calendar cal) {
 		int time = cal.get(Calendar.HOUR_OF_DAY);
-		time *= 60;
+		time *= 64;
 		time += cal.get(Calendar.MINUTE);
-		time *= 60;
+		time *= 64;
 		time += cal.get(Calendar.SECOND);
 		return time;
 	}
@@ -346,11 +346,11 @@ public class XSDDatetime {
 	 * time representation defined in EXI format
 	 */
 	public static void setTime(int time, Calendar cal) {
-		// ((Hour * 60) + Minutes) * 60 + seconds
-		int hour = time / (60 * 60);
-		time -= hour * (60 * 60);
-		int minute = time / 60;
-		time -= minute * 60; // second
+		// ((Hour * 64) + Minutes) * 64 + seconds
+		int hour = time / (64 * 64);
+		time -= hour * (64 * 64);
+		int minute = time / 64;
+		time -= minute * 64; // second
 		cal.set(Calendar.HOUR_OF_DAY, hour);
 		cal.set(Calendar.MINUTE, minute);
 		cal.set(Calendar.SECOND, time);
