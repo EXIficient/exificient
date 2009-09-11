@@ -47,6 +47,8 @@ import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSWildcard;
 
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.event.AttributeGeneric;
+import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -63,6 +65,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	private static final boolean DEBUG = false;
 
 	protected static final Event END_ELEMENT = new EndElement();
+	protected static final Event START_ELEMENT_GENERIC = new StartElementGeneric();
+	protected static final Event ATTRIBUTE_GENERIC = new AttributeGeneric();
+	protected static final Event CHARACTERS_GENERIC = new CharactersGeneric();
 
 	protected static final boolean forUPA = false;
 	
@@ -165,15 +170,20 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 
 	protected static void addNewState(Map<CMState, SchemaInformedRule> states,
-			CMState key) {
+			CMState key, boolean isMixedContent) {
 		SchemaInformedRule val = new SchemaInformedElement();
+		//	is end
 		if (key.end) {
 			val.addTerminalRule(END_ELEMENT);
+		}
+		// is mixed content
+		if(isMixedContent) {
+			val.addRule(CHARACTERS_GENERIC, val);
 		}
 		states.put(key, val);
 	}
 
-	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd)
+	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd, boolean isMixedContent)
 			throws EXIException {
 
 		XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd, forUPA);
@@ -189,9 +199,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 
 		Map<CMState, SchemaInformedRule> knownStates = new HashMap<CMState, SchemaInformedRule>();
-		addNewState(knownStates, startState);
+		addNewState(knownStates, startState, isMixedContent);
 		handleStateEntries(possibleElements, xscmVal, state, startState,
-				knownStates, ctd);
+				knownStates, isMixedContent);
 
 		return knownStates.get(startState);
 	}
@@ -214,7 +224,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	protected void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
 			Map<CMState, SchemaInformedRule> knownStates,
-			XSComplexTypeDefinition enclosingType) throws EXIException {
+			boolean isMixedContent) throws EXIException {
 		assert (knownStates.containsKey(startState));
 
 		for (XSObject xs : possibleElements) {
@@ -260,16 +270,16 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					if (i == 0) {
 						// first element tells the right way to proceed
 						isNewState = handleStateEntry(startState, knownStates,
-								xsEvent, nextState);
+								xsEvent, nextState, isMixedContent);
 					} else {
 						handleStateEntry(startState, knownStates, xsEvent,
-								nextState);
+								nextState, isMixedContent);
 					}
 				}
 
 				if (isNewState) {
 					handleStateEntries(nextPossibleElements, xscmVal, cstate,
-							nextState, knownStates, enclosingType);
+							nextState, knownStates, isMixedContent);
 				}
 
 			} else {
@@ -295,13 +305,13 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 					printTransition(startState, xs, nextState);
 
-					Event xsEvent = new StartElementGeneric();
+					Event xsEvent = START_ELEMENT_GENERIC;
 
 					boolean isNewState = handleStateEntry(startState,
-							knownStates, xsEvent, nextState);
+							knownStates, xsEvent, nextState, isMixedContent);
 					if (isNewState) {
 						handleStateEntries(nextPossibleElements, xscmVal,
-								cstate, nextState, knownStates, enclosingType);
+								cstate, nextState, knownStates, isMixedContent);
 					}
 
 				} else {
@@ -327,11 +337,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					for (int i = 0; i < sl.getLength(); i++) {
 						Event xsEvent = new StartElementNS(sl.item(i));
 						boolean isNewState = handleStateEntry(startState,
-								knownStates, xsEvent, nextState);
+								knownStates, xsEvent, nextState, isMixedContent);
 						if (isNewState) {
 							handleStateEntries(nextPossibleElements, xscmVal,
 									cstate, nextState, knownStates,
-									enclosingType);
+									isMixedContent);
 						}
 					}
 				}
@@ -354,14 +364,14 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 */
 	protected boolean handleStateEntry(CMState startState,
 			Map<CMState, SchemaInformedRule> knownStates, Event xsEvent,
-			CMState nextState) {
+			CMState nextState, boolean isMixedContent) {
 		Rule startRule = knownStates.get(startState);
 
 		if (knownStates.containsKey(nextState)) {
 			startRule.addRule(xsEvent, knownStates.get(nextState));
 			return false;
 		} else {
-			addNewState(knownStates, nextState);
+			addNewState(knownStates, nextState, isMixedContent);
 			startRule.addRule(xsEvent, knownStates.get(nextState));
 			return true;
 		}

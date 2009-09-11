@@ -37,6 +37,7 @@ import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 public abstract class AbstractRule implements Rule {
 	
@@ -44,8 +45,9 @@ public abstract class AbstractRule implements Rule {
 	static {
 		END_RULE.setLabel("<END>");
 	}
-
-	protected static final EndElement END_ELEMENT_EVENT = new EndElement();
+	
+	protected static final Event START_ELEMENT_GENERIC = new StartElementGeneric();
+	protected static final Event END_ELEMENT = new EndElement();
 
 	protected String label = null;
 

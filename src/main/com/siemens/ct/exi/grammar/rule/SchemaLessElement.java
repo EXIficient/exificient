@@ -48,7 +48,7 @@ public class SchemaLessElement extends SchemaLessContent {
 		super();
 
 		// EE on first level
-		addRule(END_ELEMENT_EVENT, END_RULE);
+		addRule(END_ELEMENT, END_RULE);
 	}
 
 	public int get2ndLevelEventCode(EventType eventType,

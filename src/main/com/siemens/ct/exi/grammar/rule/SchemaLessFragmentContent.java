@@ -23,7 +23,6 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 /**
  * TODO Description
@@ -45,7 +44,7 @@ public class SchemaLessFragmentContent extends AbstractSchemaLessRule {
 	public SchemaLessFragmentContent() {
 		super();
 		//	SE(*) --> FragmentContent
-		addRule(new StartElementGeneric(), this);
+		addRule(START_ELEMENT_GENERIC, this);
 		//	EE 
 		addTerminalRule(new EndDocument());
 	}

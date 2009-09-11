@@ -103,8 +103,4 @@ public enum EventType {
 	ENTITY_REFERENCE, // entity reference
 	COMMENT, // 
 	PROCESSING_INSTRUCTION,
-//	/*
-//	 * Utility event while creating grammars
-//	 */
-//	LAMBDA;
 }
