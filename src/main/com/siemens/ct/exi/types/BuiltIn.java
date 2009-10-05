@@ -71,6 +71,8 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  */
 
 public class BuiltIn {
+	
+	public static final int MAX_BOUNDED_NBIT_INTEGER_RANGE = 4096;
 
 	enum IntegerType {
 		INT, LONG, BIG_INTEGER
@@ -351,7 +353,7 @@ public class BuiltIn {
 		 */
 		Datatype datatype;
 
-		if (boundedRange.compareTo(BigInteger.valueOf(4095)) <= 0) {
+		if (boundedRange.compareTo(BigInteger.valueOf(MAX_BOUNDED_NBIT_INTEGER_RANGE)) <= 0) {
 			/*
 			 * When the bounded range of integer is 4095 or smaller as
 			 * determined by the values of minInclusiveXS2, minExclusiveXS2,
