@@ -48,10 +48,10 @@ public abstract class AbstractEvent implements Event {
 		return eventType.toString();
 	}
 
-//	@Override
-//	public int hashCode() {
-//		return eventType.ordinal();
-//	}
+	@Override
+	public int hashCode() {
+		return eventType.ordinal();
+	}
 
 	public boolean equals(Object obj) {
 		if (this == obj) {

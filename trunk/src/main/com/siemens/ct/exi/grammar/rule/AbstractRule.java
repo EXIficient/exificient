@@ -206,7 +206,10 @@ public abstract class AbstractRule implements Rule {
 		}
 
 		return false;
-
+	}
+	
+	public int hashCode() {
+		return super.hashCode();
 	}
 	
 	protected static boolean checkQualifiedName(QName c, String namespaceURI, String localName) {

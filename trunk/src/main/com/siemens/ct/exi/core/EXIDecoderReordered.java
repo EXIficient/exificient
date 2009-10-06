@@ -234,7 +234,19 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 				// reset byte position
 				resettableInputStream.reset();
-				resettableInputStream.skip(bytesRead);
+				long skipped = resettableInputStream.skip(bytesRead);
+				// handle the case where fewer bytes were skipped than requested 
+				if (skipped != bytesRead) {
+					do {
+						long skippedLoop = resettableInputStream.skip(bytesRead-skipped);
+						if ( skippedLoop <= 0 ) {
+							//	NOTE: If n is negative, no bytes are skipped
+							throw new IOException("[EXI] Byte skipping impossible on given input stream");
+						}
+						skipped += skippedLoop;
+						assert(skipped <= bytesRead);
+					} while( skipped < bytesRead);
+				}
 
 				// reset inflater
 				inflater.reset();
@@ -659,7 +671,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	/*
 	 * Pre-Read Entries
 	 */
-	class QNameEntry {
+	static class QNameEntry {
 //		final String namespaceURI;
 //		final String localName;
 		final QName context;
@@ -674,7 +686,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		}
 	}
 
-	class NamespaceEntry {
+	static class NamespaceEntry {
 		final String namespaceURI;
 		final String prefix;
 
@@ -684,7 +696,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		}
 	}
 
-	class DocTypeEntry {
+	static class DocTypeEntry {
 		final String name;
 		final String publicID;
 		final String systemID;
@@ -699,7 +711,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		}
 	}
 
-	class ProcessingEntry {
+	static class ProcessingEntry {
 		final String target;
 		final String data;
 

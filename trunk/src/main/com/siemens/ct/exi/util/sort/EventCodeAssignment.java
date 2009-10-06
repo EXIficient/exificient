@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.util.sort;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -27,9 +28,11 @@ import com.siemens.ct.exi.grammar.event.Event;
 /*
  * Helper Class for sorting EXI events 
  */
-public class EventCodeAssignment implements Comparator<Event> {
+public class EventCodeAssignment implements Comparator<Event>, Serializable {
 
-	protected static LexicographicSort lexSort = new LexicographicSort();
+	private static final long serialVersionUID = 7616132143378329230L;
+	
+	protected static final LexicographicSort lexSort = new LexicographicSort();
 
 	// see http://www.w3.org/TR/exi/#eventCodeAssignment
 	public int compare(Event o1, Event o2) {

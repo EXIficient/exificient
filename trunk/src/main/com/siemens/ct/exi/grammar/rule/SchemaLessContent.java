@@ -36,8 +36,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public abstract class SchemaLessContent extends AbstractSchemaLessRule {
-	protected static Map<FidelityOptions, List<EventType>> optionsStartTag;
-	protected static Map<FidelityOptions, List<EventType>> optionsChildContent;
+	protected static final Map<FidelityOptions, List<EventType>> optionsStartTag;
+	protected static final Map<FidelityOptions, List<EventType>> optionsChildContent;
 
 	static {
 		optionsStartTag = new HashMap<FidelityOptions, List<EventType>>();
