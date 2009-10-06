@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.xml.sax.helpers.NamespaceSupport;
 
@@ -51,7 +52,6 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 
 public abstract class AbstractEXICoder {
 	
-	
 	// factory
 	protected EXIFactory exiFactory;
 	protected Grammar grammar;
@@ -69,15 +69,15 @@ public abstract class AbstractEXICoder {
 	protected List<Rule> openRules;
 	
 	//	SE pool
-	protected Map<Context, StartElement> runtimeElements;	
+	protected Map<QName, StartElement> runtimeElements;	
 
 	// URI context
 	protected URIContext uriContext;
 	protected List<URIContext> uris;
 	
 	// Context (incl. stack)
-	protected Context elementContext;
-	protected List<Context> elementContextStack;
+	protected QName elementContext;
+	protected List<QName> elementContextStack;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
@@ -92,9 +92,9 @@ public abstract class AbstractEXICoder {
 		this.errorHandler = new DefaultErrorHandler();
 
 		// init once (runtime lists et cetera)
-		runtimeElements = new HashMap<Context, StartElement>();
+		runtimeElements = new HashMap<QName, StartElement>();
 		openRules = new ArrayList<Rule>();
-		elementContextStack = new ArrayList<Context>();
+		elementContextStack = new ArrayList<QName>();
 		uris = new ArrayList<URIContext>();
 	}
 
@@ -238,7 +238,7 @@ public abstract class AbstractEXICoder {
 	}
 
 	
-	protected void pushElementContext(Context context) {
+	protected void pushElementContext(QName context) {
 		elementContext = context;
 		// push context stack
 		elementContextStack.add(context);
@@ -276,15 +276,15 @@ public abstract class AbstractEXICoder {
 		StartElement nextSE = grammar.getGlobalElement(uri, localName);
 		if( nextSE == null) {
 			//	no global element --> runtime start element
-			//	TODO avoid creating StartElement
-			StartElement eventSE = new StartElement(uri, localName);
-			nextSE = runtimeElements.get(eventSE);
+			//	TODO avoid creating QName
+			QName qnameSE = new QName(uri, localName);
+			nextSE = runtimeElements.get(qnameSE);
 			if ( nextSE == null) {
 				//	create new start element and new runtime rule
-				nextSE = eventSE;
+				nextSE = new StartElement(qnameSE);
 				nextSE.setRule(new SchemaLessStartTag());
 				//	add element to runtime map
-				runtimeElements.put(nextSE, nextSE);
+				runtimeElements.put(qnameSE, nextSE);
 			}
 		}
 		
@@ -292,7 +292,7 @@ public abstract class AbstractEXICoder {
 	}
 
 	
-	protected NameContext getAttributeContext(final String namespaceURI,
+	protected QName getAttributeContext(final String namespaceURI,
 			final String localName) {
 		updateURIContext(namespaceURI);
 		Integer localNameID = uriContext.getLocalNameID(localName);		
@@ -301,7 +301,7 @@ public abstract class AbstractEXICoder {
 			localNameID = uriContext.getLocalNameID(localName);	
 		}
 
-		NameContext atContext = uriContext.getNameContext(localNameID);
+		QName atContext = uriContext.getNameContext(localNameID);
 		assert (atContext != null);
 		
 		return atContext;

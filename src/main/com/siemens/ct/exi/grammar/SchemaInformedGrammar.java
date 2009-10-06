@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -31,7 +33,6 @@ import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFragmentContent;
-import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.sort.LexicographicSort;
 
 /**
@@ -48,7 +49,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 	protected List<StartElement> globalElements; // subset of entire set of
 													// element
 
-	protected Map<ExpandedName, TypeGrammar> grammarTypes;
+	protected Map<QName, TypeGrammar> grammarTypes;
 
 	protected Attribute[] globalAttributes;
 
@@ -67,25 +68,26 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		initFragmentGrammar(fragmentElements);
 
 		// allocate memory
-		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
+		grammarTypes = new HashMap<QName, TypeGrammar>();
 		globalAttributes = new Attribute[0];
 	}
 
-	protected void setTypeGrammars(Map<ExpandedName, TypeGrammar> grammarTypes) {
+	protected void setTypeGrammars(Map<QName, TypeGrammar> grammarTypes) {
 		this.grammarTypes = grammarTypes;
 	}
 
 	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {
 		assert (namespaceURI != null && name != null);
 
-		ExpandedName en = new ExpandedName(namespaceURI, name);
+		QName en = new QName(namespaceURI, name);
 		return grammarTypes.get(en);
 	}
 
 	public StartElement getGlobalElement(String namespaceURI, String localName) {
 		for (StartElement globalElement : globalElements) {
-			if (LexicographicSort.compare(globalElement.getNamespaceURI(),
-					globalElement.getLocalName(), namespaceURI, localName) == 0) {
+			QName qname = globalElement.getQName();
+			if (LexicographicSort.compare(qname.getNamespaceURI(),
+					qname.getLocalPart(), namespaceURI, localName) == 0) {
 				return globalElement;
 			}
 		}
@@ -100,8 +102,9 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 
 	public Attribute getGlobalAttribute(String namespaceURI, String name) {
 		for (Attribute at : globalAttributes) {
-			if (namespaceURI.equals(at.getNamespaceURI())
-					&& name.equals(at.getLocalName())) {
+			QName qname = at.getQName();
+			if (namespaceURI.equals(qname.getNamespaceURI())
+					&& name.equals(qname.getLocalPart())) {
 				return at;
 			}
 		}

@@ -20,7 +20,8 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -50,7 +51,7 @@ public class LexicalTypeEncoder extends AbstractTypeEncoder {
 		return datatype.isValidRCS(value);
 	}
 	
-	public void writeValue(Context context, EncoderChannel valueChannel) throws IOException {
+	public void writeValue(QName context, EncoderChannel valueChannel) throws IOException {
 		lastDatatype.writeValueRCS(rcsDatatype, valueChannel, stringEncoder, context);
 	}
 }

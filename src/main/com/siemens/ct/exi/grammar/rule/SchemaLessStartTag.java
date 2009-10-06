@@ -20,6 +20,8 @@ package com.siemens.ct.exi.grammar.rule;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -126,7 +128,7 @@ public class SchemaLessStartTag extends SchemaLessContent {
 
 	@Override
 	public void learnAttribute(String uri, String localName) {
-		addRule(new Attribute(uri, localName), this);
+		addRule(new Attribute(new QName(uri, localName)), this);
 	}
 
 	@Override

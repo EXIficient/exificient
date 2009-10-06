@@ -20,15 +20,15 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -43,13 +43,13 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	protected String lastValidValue;
 
-	public RestrictedCharacterSetDatatype(ExpandedName datatypeIdentifier,
+	public RestrictedCharacterSetDatatype(QName datatypeIdentifier,
 			RestrictedCharacterSet rcs) {
 		this(datatypeIdentifier);
 		this.rcs = rcs;
 	}
 
-	public RestrictedCharacterSetDatatype(ExpandedName datatypeIdentifier) {
+	public RestrictedCharacterSetDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.RESTRICTED_CHARACTER_SET, datatypeIdentifier);
 	}
 
@@ -69,7 +69,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, Context context) throws IOException {
+			StringEncoder stringEncoder, QName context) throws IOException {
 
 		if (stringEncoder.isStringHit(context, lastValidValue)) {
 			stringEncoder.writeValue(context, valueChannel, lastValidValue);
@@ -107,7 +107,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, Context context) throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		char[] value;
 
 		int i = valueChannel.decodeUnsignedInteger();

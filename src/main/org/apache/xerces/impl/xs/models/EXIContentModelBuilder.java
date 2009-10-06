@@ -212,8 +212,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		if (elementPool.containsKey(elementDecl)) {
 			se = elementPool.get(elementDecl);
 		} else {
-			se = new StartElement(elementDecl.getNamespace(),
+			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(elementDecl.getNamespace(),
 					elementDecl.getName());
+			se = new StartElement(qname);
 			elementPool.put(elementDecl, se);
 		}
 		

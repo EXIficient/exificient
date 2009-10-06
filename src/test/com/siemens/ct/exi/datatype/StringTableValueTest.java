@@ -22,13 +22,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Test;
 
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -39,7 +38,7 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 	@Test
 	public void testStringTableValue0() throws IOException {
-		Context context = new StartElement("el", "");
+		QName context = new QName("el", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
@@ -85,9 +84,9 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 	@Test
 	public void testStringTableValue1() throws IOException {		
-		Context c1 = new StartElement("el1", "");
-		Context c2 = new StartElement("el2", "");
-		Context c3 = new StartElement("el3", "");
+		QName c1 = new QName("el1", "");
+		QName c2 = new QName("el2", "");
+		QName c3 = new QName("el3", "");
 		String val1 = "val1";
 		String val2 = "val2";
 		String val3 = "val3";
@@ -134,13 +133,13 @@ public class StringTableValueTest extends AbstractTestCase  {
 	@Test
 	public void testStringTableValue() throws IOException {
 
-		Context ca1 = new Attribute("at1", "");
+		QName ca1 = new QName("at1", "");
 
-		Context cex2 = new StartElement("elx2", "");
-		Context cex3 = new StartElement("elx3", "");
+		QName cex2 = new QName("elx2", "");
+		QName cex3 = new QName("elx3", "");
 		
-		Context cexx1 = new StartElement("elxx1", "");
-		Context cexx2 = new StartElement("elxx2", "");
+		QName cexx1 = new QName("elxx1", "");
+		QName cexx2 = new QName("elxx2", "");
 
 		String atCh1 = "at-ch1";
 		String atCh2 = "at-ch2";

@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 public class URIContext {
 	
 	public final String namespaceURI;
 	public final int id;
 
-	protected final List<NameContext> localNames;
+	protected final List<QName> localNames;
 	protected final Map<String, Integer> localNameIDs;
 	
 	protected final List<String> prefixes;
@@ -38,7 +40,7 @@ public class URIContext {
 		this.namespaceURI = namespaceURI;
 		this.id = id;
 		
-		localNames = new ArrayList<NameContext>();
+		localNames = new ArrayList<QName>();
 		localNameIDs = new HashMap<String, Integer>();
 		
 		prefixes = new ArrayList<String>();
@@ -50,7 +52,7 @@ public class URIContext {
 		return localNameIDs.get(localName);
 	}
 	
-	public NameContext getNameContext(final int localNameID) {
+	public QName getNameContext(final int localNameID) {
 		return localNames.get(localNameID);
 	}
 	
@@ -59,9 +61,8 @@ public class URIContext {
 	 */
 	public void addLocalName(final String localName) {
 		assert (!localNames.contains(localName));
-		int localNameID = localNames.size();
-		localNameIDs.put(localName, localNameID);
-		localNames.add(new NameContext(localNameID, localName, namespaceURI));
+		localNameIDs.put(localName, localNames.size());
+		localNames.add(new QName(namespaceURI, localName));
 	}
 
 	public int getLocalNameSize() {

@@ -58,14 +58,14 @@ public class GrammarTest extends TestCase {
 		assertTrue(root.getNumberOfEvents() == 1);
 		EventInformation er0 = root.lookFor(0);
 		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 
 		Rule a = er0.next;
 		// SE(b)
 		assertTrue(a.getNumberOfEvents() == 1);
 		EventInformation er1 = a.lookFor(0);
 		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("b"));
 		
 		Rule b = er1.next;
 		// SE(b)
@@ -92,21 +92,21 @@ public class GrammarTest extends TestCase {
 		assertTrue(root.getNumberOfEvents() == 1);
 		EventInformation er0 = root.lookFor(0);
 		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 
 		Rule a_1 = er0.next;
 		// SE(a)
 		assertTrue(a_1.getNumberOfEvents() == 1);
 		EventInformation er1 = a_1.lookFor(0);
 		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("a"));
 		
 		Rule a_2 = er1.next;
 		// SE(b)
 		assertTrue(a_2.getNumberOfEvents() == 1);
 		EventInformation er2 = a_2.lookFor(0);
 		assertTrue(er2.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er2.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) er2.event).getQName().getLocalPart().equals("b"));
 		
 		Rule b = er2.next;
 		// SE(b)
@@ -133,17 +133,17 @@ public class GrammarTest extends TestCase {
 		assertTrue(root.getNumberOfEvents() == 2);
 		EventInformation er0 = root.lookFor(0);
 		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 		EventInformation er1 = root.lookFor(1);
 		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("b"));
 
 		Rule a = er0.next;
 		// SE(A)
 		assertTrue(a.getNumberOfEvents() == 1);
 		EventInformation era1 = a.lookFor(0);
 		assertTrue(era1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era1.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) era1.event).getQName().getLocalPart().equals("b"));
 		
 		Rule b1 = er1.next;
 		// SE(B)
@@ -177,10 +177,10 @@ public class GrammarTest extends TestCase {
 		assertTrue(root.getNumberOfEvents() == 2);
 		EventInformation er0 = root.lookFor(0);
 		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 		EventInformation er1 = root.lookFor(1);
 		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("b"));
 
 		
 		Rule a = er0.next;
@@ -188,10 +188,10 @@ public class GrammarTest extends TestCase {
 		assertTrue(a.getNumberOfEvents() == 2);
 		EventInformation era1 = a.lookFor(0);
 		assertTrue(era1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era1.event).getLocalName().equals("a"));
+		assertTrue(((StartElement) era1.event).getQName().getLocalPart().equals("a"));
 		EventInformation era2 = a.lookFor(1);
 		assertTrue(era2.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era2.event).getLocalName().equals("b"));
+		assertTrue(((StartElement) era2.event).getQName().getLocalPart().equals("b"));
 		
 		Rule b1 = er1.next;
 		// SE(B)
@@ -205,11 +205,11 @@ public class GrammarTest extends TestCase {
 			assertTrue(x.getNumberOfEvents() == 2);
 			EventInformation x0 = x.lookFor(0);
 			assertTrue(x0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) x0.event).getLocalName().equals("a"));
+			assertTrue(((StartElement) x0.event).getQName().getLocalPart().equals("a"));
 			
 			EventInformation x1 = x.lookFor(1);
 			assertTrue(x1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) x1.event).getLocalName().equals("b"));
+			assertTrue(((StartElement) x1.event).getQName().getLocalPart().equals("b"));
 
 			x = er0.next;
 		}
@@ -242,7 +242,7 @@ public class GrammarTest extends TestCase {
 			assertTrue(c.getNumberOfEvents() == 2);
 			EventInformation er0 = c.lookFor(0);
 			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getLocalName().equals("c"));
+			assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("c"));
 			EventInformation er1 = c.lookFor(1);
 			assertTrue(er1.event.isEventType(EventType.END_ELEMENT));
 
@@ -269,10 +269,10 @@ public class GrammarTest extends TestCase {
 			assertTrue(rule.getNumberOfEvents() == 3);
 			EventInformation er0 = rule.lookFor(0);
 			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+			assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 			EventInformation er1 = rule.lookFor(1);
 			assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er1.event).getLocalName().equals("c"));
+			assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("c"));
 			EventInformation er2 = rule.lookFor(2);
 			assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
 		}
@@ -285,11 +285,11 @@ public class GrammarTest extends TestCase {
 				assertTrue(a.getNumberOfEvents() == 3);
 				EventInformation er0 = a.lookFor(0);
 				assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er0.event).getLocalName()
+				assertTrue(((StartElement) er0.event).getQName().getLocalPart()
 						.equals("a"));
 				EventInformation er1 = a.lookFor(1);
 				assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er1.event).getLocalName()
+				assertTrue(((StartElement) er1.event).getQName().getLocalPart()
 						.equals("c"));
 				EventInformation er2 = a.lookFor(2);
 				assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
@@ -307,11 +307,11 @@ public class GrammarTest extends TestCase {
 				assertTrue(c.getNumberOfEvents() == 3);
 				EventInformation er0 = c.lookFor(0);
 				assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er0.event).getLocalName()
+				assertTrue(((StartElement) er0.event).getQName().getLocalPart()
 						.equals("a"));
 				EventInformation er1 = c.lookFor(1);
 				assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er1.event).getLocalName()
+				assertTrue(((StartElement) er1.event).getQName().getLocalPart()
 						.equals("c"));
 				EventInformation er2 = c.lookFor(2);
 				assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
@@ -332,11 +332,11 @@ public class GrammarTest extends TestCase {
 					assertTrue(ac.getNumberOfEvents() == 3);
 					EventInformation er0 = ac.lookFor(0);
 					assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-					assertTrue(((StartElement) er0.event).getLocalName()
+					assertTrue(((StartElement) er0.event).getQName().getLocalPart()
 							.equals("a"));
 					EventInformation er1 = ac.lookFor(1);
 					assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-					assertTrue(((StartElement) er1.event).getLocalName()
+					assertTrue(((StartElement) er1.event).getQName().getLocalPart()
 							.equals("c"));
 					EventInformation er2 = ac.lookFor(2);
 					assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
@@ -368,15 +368,15 @@ public class GrammarTest extends TestCase {
 			
 			EventInformation er0 = rule.lookFor(0);
 			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getLocalName().equals("a"));
+			assertTrue(((StartElement) er0.event).getQName().getLocalPart().equals("a"));
 
 			EventInformation er1 = rule.lookFor(1);
 			assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er1.event).getLocalName().equals("b"));
+			assertTrue(((StartElement) er1.event).getQName().getLocalPart().equals("b"));
 			
 			EventInformation er2 = rule.lookFor(2);
 			assertTrue(er2.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er2.event).getLocalName().equals("c"));
+			assertTrue(((StartElement) er2.event).getQName().getLocalPart().equals("c"));
 			
 			EventInformation er3 = rule.lookFor(3);
 			assertTrue(er3.event.isEventType(EventType.END_ELEMENT));

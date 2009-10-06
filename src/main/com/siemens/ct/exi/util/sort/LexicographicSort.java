@@ -21,20 +21,24 @@ package com.siemens.ct.exi.util.sort;
 import java.util.Comparator;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.apache.xerces.xs.XSAttributeDeclaration;
 import org.apache.xerces.xs.XSAttributeUse;
 import org.apache.xerces.xs.XSElementDeclaration;
 
-import com.siemens.ct.exi.core.Context;
+import com.siemens.ct.exi.grammar.event.Attribute;
+import com.siemens.ct.exi.grammar.event.StartElement;
 
 /*
  * Helper Class for sorting element declarations, context et cetera
+ * 
+ * EXI#s lexical order: sorted first by qname's local-name then by qname's URI
  */
 public class LexicographicSort implements Comparator<Object> {
 
 	public int compare(Object o1, Object o2) {
-		String ns1, ns2, localName1, localName2;
+		// String ns1, ns2, localName1, localName2;
 		if (o1 instanceof XSElementDeclaration
 				&& o2 instanceof XSElementDeclaration) {
 			return compare((XSElementDeclaration) o1, (XSElementDeclaration) o2);
@@ -46,19 +50,22 @@ public class LexicographicSort implements Comparator<Object> {
 			// attribute declaration counts
 			return compare(((XSAttributeUse) o1).getAttrDeclaration(),
 					((XSAttributeUse) o2).getAttrDeclaration());
-		} else if (o1 instanceof Context && o2 instanceof Context) {
-			Context c1 = (Context) o1;
-			Context c2 = (Context) o2;
-			ns1 = c1.getNamespaceURI();
-			localName1 = c1.getLocalName();
-			ns2 = c2.getNamespaceURI();
-			localName2 = c2.getLocalName();
+		} else if (o1 instanceof QName && o2 instanceof QName) {
+			return compare((QName) o1, (QName) o2);
+		} else if (o1 instanceof StartElement && o2 instanceof StartElement) {
+			return compare(((StartElement) o1).getQName(), ((StartElement) o2)
+					.getQName());
+		} else if (o1 instanceof Attribute && o2 instanceof Attribute) {
+			return compare(((Attribute) o1).getQName(), ((Attribute) o2)
+					.getQName());
+			// } else if (o1 instanceof Context && o2 instanceof Context) {
+			// return compare((Context) o1, (Context) o2);
 		} else {
 			throw new RuntimeException(
 					"[EXI] Unsupported types of classes for sorting.");
 		}
 
-		return compare(ns1, localName1, ns2, localName2);
+		// return compare(ns1, localName1, ns2, localName2);
 	}
 
 	public int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
@@ -71,9 +78,9 @@ public class LexicographicSort implements Comparator<Object> {
 				.getName());
 	}
 
-	public int compare(Context c1, Context c2) {
-		return compare(c1.getNamespaceURI(), c1.getLocalName(), c2
-				.getNamespaceURI(), c2.getLocalName());
+	public int compare(QName q1, QName q2) {
+		return compare(q1.getNamespaceURI(), q1.getLocalPart(), q2
+				.getNamespaceURI(), q2.getLocalPart());
 	}
 
 	// sorted lexicographically by qname local-name, then by qname uri

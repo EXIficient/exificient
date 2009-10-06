@@ -21,8 +21,9 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -92,7 +93,7 @@ public class ListDatatype extends AbstractDatatype {
 	}
 	
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
 			/*
 			 * Needs to check AGAIN & writes to stream
@@ -113,7 +114,7 @@ public class ListDatatype extends AbstractDatatype {
 	}
 	
 	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException {
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException {
 		// length prefixed sequence of values
 		valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
 		
@@ -130,7 +131,7 @@ public class ListDatatype extends AbstractDatatype {
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, Context context)
+			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
 
@@ -147,7 +148,7 @@ public class ListDatatype extends AbstractDatatype {
 	@Override
 	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			Context context) throws IOException {
+			QName context) throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
 		
 		rcsDecoder.setRestrictedCharacterSet(rcs);

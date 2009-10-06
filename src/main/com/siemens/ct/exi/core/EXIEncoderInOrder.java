@@ -21,6 +21,8 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -56,13 +58,13 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 	}
 	
 	@Override
-	protected void writeValueTypeValid(Context valueContext)
+	protected void writeValueTypeValid(QName valueContext)
 			throws IOException {
 		typeEncoder.writeValue(valueContext, channel);
 	}
 
 	@Override
-	protected void writeValueAsString(Context valueContext, String value)
+	protected void writeValueAsString(QName valueContext, String value)
 			throws IOException {
 		typeEncoder.getStringEncoder().writeValue(valueContext, channel, value);
 	}

@@ -20,14 +20,14 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.XSDDouble;
 
 /**
@@ -43,7 +43,7 @@ public class DoubleDatatype extends AbstractDatatype {
 	
 	protected XSDDouble lastValidDouble = XSDDouble.newInstance();
 	
-	public DoubleDatatype(ExpandedName datatypeIdentifier) {
+	public DoubleDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.DOUBLE, datatypeIdentifier);
 		this.rcs = new XSDDoubleCharacterSet();
 	}
@@ -52,13 +52,13 @@ public class DoubleDatatype extends AbstractDatatype {
 		return lastValidDouble.parse(value);
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
 		valueChannel.encodeDouble(lastValidDouble.mantissa, lastValidDouble.exponent);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, Context context)
+			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		return valueChannel.decodeDoubleAsString();
 	}

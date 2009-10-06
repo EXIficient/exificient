@@ -29,9 +29,10 @@ package com.siemens.ct.exi.grammar.rule;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
@@ -208,8 +209,8 @@ public abstract class AbstractRule implements Rule {
 
 	}
 	
-	protected static boolean checkQualifiedName(Context c, String namespaceURI, String localName) {
-		return (c.getLocalName().equals(localName) && c.getNamespaceURI()
+	protected static boolean checkQualifiedName(QName c, String namespaceURI, String localName) {
+		return (c.getLocalPart().equals(localName) && c.getNamespaceURI()
 				.equals(namespaceURI));
 	}
 

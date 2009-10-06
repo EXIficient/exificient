@@ -244,7 +244,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			if (ei.event.isEventType(eventType)) {
 				switch(eventType) {
 				case START_ELEMENT:
-					if (checkQualifiedName((StartElement)ei.event, args[0], args[1])) {
+					if (checkQualifiedName(((StartElement)ei.event).getQName(), args[0], args[1])) {
 						return ei;
 					}
 					break;
@@ -254,7 +254,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 					}
 					break;
 				case ATTRIBUTE:
-					if (checkQualifiedName((Attribute)ei.event, args[0], args[1])) {
+					if (checkQualifiedName(((Attribute)ei.event).getQName(), args[0], args[1])) {
 						return ei;
 					}
 					break;

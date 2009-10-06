@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
@@ -29,14 +31,14 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected String lastValue;
 	protected Datatype lastDatatype;
 
-	protected List<Context> contextOrders;
-	protected Map<Context, ContextContainer> contexts;
+	protected List<QName> contextOrders;
+	protected Map<QName, ContextContainer> contexts;
 
 	public EXIEncoderReordered(EXIFactory exiFactory) {
 		super(exiFactory);
 
-		contextOrders = new ArrayList<Context>();
-		contexts = new HashMap<Context, ContextContainer>();
+		contextOrders = new ArrayList<QName>();
+		contexts = new HashMap<QName, ContextContainer>();
 	}
 
 	@Override
@@ -64,7 +66,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		return super.isTypeValid(datatype, value);
 	}
 
-	protected void updateContextValue(Context valueContext, String value, Datatype datatype) {
+	protected void updateContextValue(QName valueContext, String value, Datatype datatype) {
 		ContextContainer cc = contexts.get(valueContext);
 		if(cc == null) {
 			cc = new ContextContainer();
@@ -77,14 +79,14 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	}
 	
 	@Override
-	protected void writeValueTypeValid(Context valueContext)
+	protected void writeValueTypeValid(QName valueContext)
 			throws IOException {
 		// System.out.println("ValueType = " + lastValue + " " + this.context);
 		updateContextValue(valueContext, lastValue, lastDatatype);
 	}
 
 	@Override
-	public void writeValueAsString(Context valueContext, String value)
+	public void writeValueAsString(QName valueContext, String value)
 			throws IOException {
 		// System.out.println("ValueString = " + lastValue + " " +
 		// this.context);
@@ -121,7 +123,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 			// 1. structure stream already written
 			// 2. value channels in order
-			for (Context contextOrder : contextOrders) {
+			for (QName contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);
@@ -156,7 +158,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// (as a single stream )
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
-			for (Context contextOrder : contextOrders) {
+			for (QName contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);
@@ -175,7 +177,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			}
 
 			// all value channels having more than 100 values
-			for (Context contextOrder : contextOrders) {
+			for (QName contextOrder : contextOrders) {
 				// updating to right context
 				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(elementContext);

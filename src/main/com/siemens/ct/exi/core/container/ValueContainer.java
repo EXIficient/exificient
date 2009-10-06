@@ -18,15 +18,15 @@
 
 package com.siemens.ct.exi.core.container;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
 
 public class ValueContainer {
 	
-	public final Context context;
+	public final QName context;
 	public final int localValueID;
 	public final int globalValueID;
 
-	public ValueContainer(Context context, int localValueID, int globalValueID) {
+	public ValueContainer(QName context, int localValueID, int globalValueID) {
 		this.context = context;
 		this.localValueID = localValueID;
 		this.globalValueID = globalValueID;

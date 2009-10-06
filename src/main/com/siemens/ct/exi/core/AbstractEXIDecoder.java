@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
@@ -172,7 +173,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// partition
 			int n = MethodsBag.getCodingLength(uriContext.getLocalNameSize());
 			int localNameID = channel.decodeNBitUnsignedInteger(n);
-			localName = uriContext.getNameContext(localNameID).localName;
+			localName = uriContext.getNameContext(localNameID).getLocalPart();
 		}
 
 		return localName;
@@ -379,8 +380,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected Datatype decodeAttributeStructure() throws EXIException,
 			IOException {
 		Attribute at = ((Attribute) nextEvent);
-		this.attributeURI = at.getNamespaceURI();
-		this.attributeLocalName = at.getLocalName();
+		//	TODO use qname overall, without splitting information items
+		QName qname = at.getQName();
+		this.attributeURI = qname.getNamespaceURI();
+		this.attributeLocalName = qname.getLocalPart();
 		// handle attribute prefix
 		attributePrefix = decodeQNamePrefix(this.attributeURI);
 		// step forward in current rule (replace rule at the top)
@@ -412,8 +415,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// decodeAttributeStructure();
 
 		Attribute at = ((Attribute) nextEvent);
-		this.attributeURI = at.getNamespaceURI();
-		this.attributeLocalName = at.getLocalName();
+		//	TODO use qname overall, without splitting information items
+		QName qname = at.getQName();
+		this.attributeURI = qname.getNamespaceURI();
+		this.attributeLocalName = qname.getLocalPart();
 		// handle attribute prefix
 		attributePrefix = decodeQNamePrefix(this.attributeURI);
 		// step forward in current rule (replace rule at the top)

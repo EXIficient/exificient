@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
 import org.apache.xerces.xs.StringList;
@@ -58,7 +59,6 @@ import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.util.ExpandedName;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
 
 /**
@@ -71,104 +71,91 @@ import com.siemens.ct.exi.util.datatype.DatetimeType;
  */
 
 public class BuiltIn {
-	
+
 	public static final int MAX_BOUNDED_NBIT_INTEGER_RANGE = 4096;
 
 	enum IntegerType {
 		INT, LONG, BIG_INTEGER
 	}
 
-	// Binary
-	protected static final ExpandedName XSD_BASE64BINARY;
-	protected static final ExpandedName XSD_HEXBINARY;
-	// Boolean
-	public static final ExpandedName XSD_BOOLEAN;
-	// Date-Time
-	protected static final ExpandedName XSD_DATETIME;
-	protected static final ExpandedName XSD_TIME;
-	protected static final ExpandedName XSD_DATE;
-	protected static final ExpandedName XSD_GYEARMONTH;
-	protected static final ExpandedName XSD_GYEAR;
-	protected static final ExpandedName XSD_GMONTHDAY;
-	protected static final ExpandedName XSD_GDAY;
-	protected static final ExpandedName XSD_GMONTH;
-	// Decimal
-	protected static final ExpandedName XSD_DECIMAL;
-	// Float
-	protected static final ExpandedName XSD_FLOAT;
-	protected static final ExpandedName XSD_DOUBLE;
-	// Integer
-	protected static final ExpandedName XSD_INTEGER;
-	protected static final ExpandedName XSD_NON_NEGATIVE_INTEGER;
-	// String
-	protected static final ExpandedName XSD_STRING;
-	//	
-	protected static final ExpandedName XSD_ANY_SIMPLE_TYPE;
+	/*
+	 * Binary
+	 */
+	protected static final QName XSD_BASE64BINARY = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "base64Binary");
+	protected static final QName XSD_HEXBINARY = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "hexBinary");
+	/*
+	 * Boolean
+	 */
+	public static final QName XSD_BOOLEAN = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+	/*
+	 * Date-Time
+	 */
+	protected static final QName XSD_DATETIME = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime");
+	protected static final QName XSD_TIME = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "time");
+	protected static final QName XSD_DATE = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "date");
+	protected static final QName XSD_GYEARMONTH = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYearMonth");
+	protected static final QName XSD_GYEAR = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear");
+	protected static final QName XSD_GMONTHDAY = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonthDay");
+	protected static final QName XSD_GDAY = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay");
+	protected static final QName XSD_GMONTH = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth");
 
-	// default QName / BuiltInType / Datatype
-	public static final ExpandedName DEFAULT_VALUE_NAME;
-	public static final BuiltInType DEFAULT_BUILTIN;
-	public static final Datatype DEFAULT_DATATYPE;
-	public static final Datatype BOOLEAN_DATATYPE;
+	/*
+	 * Decimal
+	 */
+	protected static final QName XSD_DECIMAL = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+	/*
+	 * Float
+	 */
+	protected static final QName XSD_FLOAT = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "float");
+	protected static final QName XSD_DOUBLE = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "double");
+	/*
+	 * Integer
+	 */
+	protected static final QName XSD_INTEGER = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
+	protected static final QName XSD_NON_NEGATIVE_INTEGER = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger");
+	/*
+	 * String
+	 */
+	protected static final QName XSD_STRING = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+	//	
+	protected static final QName XSD_ANY_SIMPLE_TYPE = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
+
+	/*
+	 * default QName / BuiltInType / Datatype
+	 */
+	public static final QName DEFAULT_VALUE_NAME = XSD_STRING;
+	public static final BuiltInType DEFAULT_BUILTIN = BuiltInType.STRING;
+	public static final Datatype DEFAULT_DATATYPE = new StringDatatype(
+			DEFAULT_VALUE_NAME);
+	public static final Datatype BOOLEAN_DATATYPE = new StringDatatype(
+			XSD_BOOLEAN);
 
 	// built-In mapping
-	protected static Map<ExpandedName, ExpandedName> datatypeMapping;
+	protected static Map<QName, QName> datatypeMapping;
 
+	/*
+	 * Datatype mappings
+	 */
 	static {
-		/*
-		 * Datatype names
-		 */
-		// Binary
-		XSD_BASE64BINARY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"base64Binary");
-		XSD_HEXBINARY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"hexBinary");
-		// Boolean
-		XSD_BOOLEAN = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"boolean");
-		// Date-Time
-		XSD_DATETIME = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"dateTime");
-		XSD_TIME = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "time");
-		XSD_DATE = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "date");
-		XSD_GYEARMONTH = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"gYearMonth");
-		XSD_GYEAR = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"gYear");
-		XSD_GMONTHDAY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"gMonthDay");
-		XSD_GDAY = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay");
-		XSD_GMONTH = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"gMonth");
-		// Decimal
-		XSD_DECIMAL = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"decimal");
-		// Float
-		XSD_FLOAT = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"float");
-		XSD_DOUBLE = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"double");
-		// Integer
-		XSD_INTEGER = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"integer");
-		XSD_NON_NEGATIVE_INTEGER = new ExpandedName(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger");
-		// String
-		XSD_STRING = new ExpandedName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"string");
-		//	
-		XSD_ANY_SIMPLE_TYPE = new ExpandedName(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
-		// default
-		DEFAULT_VALUE_NAME = XSD_STRING;
-		DEFAULT_BUILTIN = BuiltInType.STRING;
-		DEFAULT_DATATYPE = new StringDatatype(DEFAULT_VALUE_NAME);
-		BOOLEAN_DATATYPE = new StringDatatype(XSD_BOOLEAN);
-
-		/*
-		 * Datatype mappings
-		 */
-		datatypeMapping = new HashMap<ExpandedName, ExpandedName>();
+		datatypeMapping = new HashMap<QName, QName>();
 		// Binary
 		datatypeMapping.put(XSD_BASE64BINARY, XSD_BASE64BINARY);
 		datatypeMapping.put(XSD_HEXBINARY, XSD_HEXBINARY);
@@ -186,7 +173,6 @@ public class BuiltIn {
 		// Decimal
 		datatypeMapping.put(XSD_DECIMAL, XSD_DECIMAL);
 		// Double/Float
-		// datatypeMapping.put(XSD_FLOAT, XSD_DOUBLE);
 		datatypeMapping.put(XSD_FLOAT, XSD_FLOAT);
 		datatypeMapping.put(XSD_DOUBLE, XSD_DOUBLE);
 		// Integer
@@ -233,11 +219,11 @@ public class BuiltIn {
 		return datatype;
 	}
 
-	private static ExpandedName getXMLSchemaDatatype(XSSimpleTypeDefinition std) {
+	private static QName getXMLSchemaDatatype(XSSimpleTypeDefinition std) {
 		// primitive
-		ExpandedName primitive = getPrimitive(std);
+		QName primitive = getPrimitive(std);
 
-		ExpandedName exiDatatypeID;
+		QName exiDatatypeID;
 
 		if (primitive.equals(XSD_DECIMAL)) {
 			// check whether on the "way up" (nonNegative) integer appears -->
@@ -266,7 +252,7 @@ public class BuiltIn {
 	}
 
 	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
-			ExpandedName datatypeID) {
+			QName datatypeID) {
 		/*
 		 * detect base integer type (e.g. int, long, BigInteger)
 		 */
@@ -353,7 +339,8 @@ public class BuiltIn {
 		 */
 		Datatype datatype;
 
-		if (boundedRange.compareTo(BigInteger.valueOf(MAX_BOUNDED_NBIT_INTEGER_RANGE)) <= 0) {
+		if (boundedRange.compareTo(BigInteger
+				.valueOf(MAX_BOUNDED_NBIT_INTEGER_RANGE)) <= 0) {
 			/*
 			 * When the bounded range of integer is 4095 or smaller as
 			 * determined by the values of minInclusiveXS2, minExclusiveXS2,
@@ -406,19 +393,19 @@ public class BuiltIn {
 		return datatype;
 	}
 
-	private static ExpandedName getName(XSTypeDefinition type) {
-		return new ExpandedName(type.getNamespace(), type.getName());
+	private static QName getName(XSTypeDefinition type) {
+		return new QName(type.getNamespace(), type.getName());
 	}
 
 	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std)
 			throws EXIException {
 		Datatype datatype;
 
-		ExpandedName schemaDatatype = getXMLSchemaDatatype(std);
+		QName schemaDatatype = getXMLSchemaDatatype(std);
 
-		ExpandedName datatypeID = null;
+		QName datatypeID = null;
 		if (!std.getAnonymous()) {
-			datatypeID = new ExpandedName(std.getNamespace(), std.getName());
+			datatypeID = new QName(std.getNamespace(), std.getName());
 		}
 
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
@@ -432,7 +419,7 @@ public class BuiltIn {
 				datatype = new BooleanDatatype(datatypeID);
 			}
 		} else if (XSD_DATETIME.equals(schemaDatatype)) {
-			ExpandedName primitive = BuiltIn.getPrimitive(std);
+			QName primitive = BuiltIn.getPrimitive(std);
 
 			if (XSD_DATETIME.equals(primitive)) {
 				datatype = new DatetimeDatatype(DatetimeType.dateTime,
@@ -529,23 +516,22 @@ public class BuiltIn {
 		return isBuiltInTypeFacet;
 	}
 
-	private static ExpandedName getPrimitive(XSSimpleTypeDefinition std) {
-		ExpandedName primitiveQName;
+	private static QName getPrimitive(XSSimpleTypeDefinition std) {
+		QName primitiveQName;
 		XSSimpleTypeDefinition primitiveType = std.getPrimitiveType();
 
 		if (primitiveType == null) {
 			// TODO correct ?
 			primitiveQName = XSD_ANY_SIMPLE_TYPE;
 		} else {
-			primitiveQName = new ExpandedName(primitiveType.getNamespace(),
+			primitiveQName = new QName(primitiveType.getNamespace(),
 					primitiveType.getName());
 		}
 
 		return primitiveQName;
 	}
 
-	private static ExpandedName getBuiltInOfPrimitiveMapping(
-			ExpandedName qnamePrimitive) {
+	private static QName getBuiltInOfPrimitiveMapping(QName qnamePrimitive) {
 		if (datatypeMapping.containsKey(qnamePrimitive)) {
 			return datatypeMapping.get(qnamePrimitive);
 		} else {

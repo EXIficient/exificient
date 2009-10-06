@@ -20,7 +20,8 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -44,7 +45,7 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 		rcsDatatype = new RestrictedCharacterSetDatatype(null);
 	}
 
-	public char[] readValue(Datatype datatype, Context context,
+	public char[] readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException {
 		datatype.getRestrictedCharacterSet();
 		return datatype.readValueRCS(rcsDatatype, valueChannel, stringDecoder, context);
