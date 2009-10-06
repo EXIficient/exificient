@@ -59,10 +59,11 @@ public class URIContext {
 	/*
 	 * LocalNames
 	 */
-	public void addLocalName(final String localName) {
-		assert (!localNames.contains(localName));
+	public QName addLocalName(final String localName) {
 		localNameIDs.put(localName, localNames.size());
-		localNames.add(new QName(namespaceURI, localName));
+		QName qname = new QName(namespaceURI, localName);
+		localNames.add(qname);
+		return qname;
 	}
 
 	public int getLocalNameSize() {

@@ -71,7 +71,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 	protected static final boolean forUPA = false;
 	
-	protected static LexicographicSort lexSort = new LexicographicSort();
+	protected static final LexicographicSort lexSort = new LexicographicSort();
 
 	protected SubstitutionGroupHandler subGroupHandler;
 
@@ -443,7 +443,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	/*
 	 * Internal Helper Class: CMState
 	 */
-	class CMState {
+	static class CMState {
 		protected final Vector<XSObject> states;
 		protected final boolean end;
 		protected int[] state;

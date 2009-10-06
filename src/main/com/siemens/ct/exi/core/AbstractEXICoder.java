@@ -63,7 +63,11 @@ public abstract class AbstractEXICoder {
 
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
-
+	
+	// Context (incl. stack)
+	protected QName elementContext;
+	protected List<QName> elementContextStack;
+	
 	// currentRule and rule stack when traversing the EXI document
 	protected Rule currentRule;
 	protected List<Rule> openRules;
@@ -74,10 +78,6 @@ public abstract class AbstractEXICoder {
 	// URI context
 	protected URIContext uriContext;
 	protected List<URIContext> uris;
-	
-	// Context (incl. stack)
-	protected QName elementContext;
-	protected List<QName> elementContextStack;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
@@ -295,13 +295,14 @@ public abstract class AbstractEXICoder {
 	protected QName getAttributeContext(final String namespaceURI,
 			final String localName) {
 		updateURIContext(namespaceURI);
+		
+		QName atContext;
 		Integer localNameID = uriContext.getLocalNameID(localName);		
 		if (localNameID == null) {
-			uriContext.addLocalName(localName);
-			localNameID = uriContext.getLocalNameID(localName);	
-		}
-
-		QName atContext = uriContext.getNameContext(localNameID);
+			atContext = uriContext.addLocalName(localName);
+		} else {
+			atContext = uriContext.getNameContext(localNameID);
+		}		
 		assert (atContext != null);
 		
 		return atContext;

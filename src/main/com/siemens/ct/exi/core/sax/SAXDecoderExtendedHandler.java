@@ -98,7 +98,6 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	@Override
 	protected void handleEntityReference() throws SAXException {
 		if (contentHandler instanceof LexicalHandler) {
-			LexicalHandler lh = (LexicalHandler) contentHandler;
 			String entityReferenceName = decoder.getEntityReferenceName();
 
 			if (disable_ouput_escaping) {
@@ -109,6 +108,8 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 				contentHandler.processingInstruction(
 						Result.PI_ENABLE_OUTPUT_ESCAPING, "");
 			} else {
+				LexicalHandler lh = (LexicalHandler) contentHandler;
+				
 				// start entity
 				lh.startEntity(entityReferenceName);
 

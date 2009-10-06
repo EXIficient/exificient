@@ -129,10 +129,10 @@ public class XSDDatetime {
 				throw new UnsupportedOperationException();
 			}
 			return true;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			return false;
-//			throw new XMLParsingException("'" + cal
-//					+ "' is valid datetime type (" + type + ")");
+		} catch (XMLParsingException e) {
+			return false;
 		}
 	}
 

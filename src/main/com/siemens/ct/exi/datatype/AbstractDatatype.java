@@ -67,11 +67,15 @@ public abstract class AbstractDatatype implements Datatype {
 
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
-			return (this.getDefaultBuiltInType() == ((Datatype) o)
+			return (defaultbuiltInType == ((Datatype) o)
 					.getDefaultBuiltInType());
 		} else {
 			return false;
 		}
+	}
+	
+	public int hashCode() {
+		return defaultbuiltInType.ordinal();
 	}
 	
 	public boolean isValidRCS(String value) {

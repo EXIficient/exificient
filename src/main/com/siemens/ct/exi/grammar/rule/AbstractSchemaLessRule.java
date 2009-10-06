@@ -114,21 +114,19 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String s = this.getLabel() + "//" + "\t";
+		StringBuffer sb = new StringBuffer (this.getLabel() + "//" + "\t");
 
 		if (this.isTerminalRule()) {
-			s += "<END_RULE>";
+			sb.append( "<END_RULE>");
 		} else {
-			s += "[";
-
+			sb.append("[");
 			for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
-				s += "," + lookFor(ec).event;
+				sb.append("," + lookFor(ec).event);
 			}
-
-			s += "]";
+			sb.append("]");
 		}
 
-		return s;
+		return sb.toString();
 	}
 	
 	

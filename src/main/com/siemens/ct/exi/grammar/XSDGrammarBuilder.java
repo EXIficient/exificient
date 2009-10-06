@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -76,8 +77,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	// avoids recursive element handling
 	protected Set<XSElementDeclaration> handledElements;
-	
-	//	pool for attribute-declaration of Attribute events
+
+	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
 	protected XSDGrammarBuilder() {
@@ -133,8 +134,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// create unique qname map
 		Map<QName, List<XSElementDeclaration>> namedElements = new HashMap<QName, List<XSElementDeclaration>>();
 		for (XSElementDeclaration elDecl : handledElements) {
-			QName en = new QName(elDecl.getNamespace(), elDecl
-					.getName());
+			QName en = new QName(elDecl.getNamespace(), elDecl.getName());
 			if (namedElements.containsKey(en)) {
 				namedElements.get(en).add(elDecl);
 			} else {
@@ -144,8 +144,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 		}
 
-		for (QName en : namedElements.keySet()) {
-			List<XSElementDeclaration> elements = namedElements.get(en);
+		Iterator<Entry<QName, List<XSElementDeclaration>>> iter = namedElements
+				.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<QName, List<XSElementDeclaration>> e = iter.next();
+			QName qname = e.getKey();
+			List<XSElementDeclaration> elements = e.getValue();
 			// If there is more than one element declared with the same qname,
 			// the qname is included only once.
 			assert (elements.size() >= 1);
@@ -157,8 +161,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				if (isSameGrammar(elements)) {
 					fragmentElements.add(getStartElement(elements.get(0)));
 				} else {
-					StartElement se = new StartElement(new QName(en.getNamespaceURI(), en
-							.getLocalPart()));
+					StartElement se = new StartElement(qname);
 					se
 							.setRule(getSchemaInformedElementFragmentGrammar(elements));
 					fragmentElements.add(se);
@@ -215,13 +218,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
-			String exMsg = "Problem occured while building XML Schema Model (XSModel)!";
+			StringBuffer sb = new StringBuffer("Problem occured while building XML Schema Model (XSModel)!");
 
 			for (int i = 0; i < schemaParsingErrors.size(); i++) {
-				exMsg += "\n. " + schemaParsingErrors.get(i);
+				sb.append("\n. " + schemaParsingErrors.get(i));
 			}
 
-			throw new EXIException(exMsg);
+			throw new EXIException(sb.toString());
 		}
 
 		// initialize grammars --> global element)
@@ -351,8 +354,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (int i = 0; i < types.getLength(); i++) {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
 
-			QName name = new QName(td.getNamespace(), td
-					.getName());
+			QName name = new QName(td.getNamespace(), td.getName());
 			TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
 
 			grammarTypes.put(name, typeGrammar);
@@ -420,17 +422,18 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return globalElements;
 	}
 
-	protected Attribute getAttribute(XSAttributeDeclaration attrDecl) throws EXIException {
+	protected Attribute getAttribute(XSAttributeDeclaration attrDecl)
+			throws EXIException {
 		// local name for string table pre-population
 		addLocalNameStringEntry(attrDecl.getNamespace(), attrDecl.getName());
-		
+
 		Attribute at;
 		if (attributePool.containsKey(attrDecl)) {
 			at = attributePool.get(attrDecl);
 		} else {
 			// AT datatype
 			XSSimpleTypeDefinition attrTypeDefinition = attrDecl
-			.getTypeDefinition();
+					.getTypeDefinition();
 			QName qNameType;
 			if (attrTypeDefinition.getAnonymous()) {
 				XSTypeDefinition tdBase = attrTypeDefinition.getBaseType();
@@ -444,14 +447,14 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				qNameType = new QName(attrTypeDefinition.getNamespace(),
 						attrTypeDefinition.getName());
 			}
-			
-			//	create new Attribute event
+
+			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
-			at = new Attribute(qname,
-					qNameType, BuiltIn.getDatatype(attrTypeDefinition));
+			at = new Attribute(qname, qNameType, BuiltIn
+					.getDatatype(attrTypeDefinition));
 			attributePool.put(attrDecl, at);
 		}
-		
+
 		return at;
 	}
 
@@ -748,9 +751,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			isMixedContent = true;
 			ruleContent = handleParticle(ctd, isMixedContent);
 
-//			// mixed transitions
-//			addMixedTransitions(ruleContent, new ArrayList<Rule>());
-//			ruleContent.setLabel("MixedContent");
+			// // mixed transitions
+			// addMixedTransitions(ruleContent, new ArrayList<Rule>());
+			// ruleContent.setLabel("MixedContent");
 			break;
 		}
 
@@ -758,23 +761,24 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	}
 
-//	protected void addMixedTransitions(Rule ruleMixedContent, List<Rule> handled) {
-//		if (handled.contains(ruleMixedContent)) {
-//			// abort
-//			return;
-//		}
-//		handled.add(ruleMixedContent);
-//
-//		// mixed --> generic characters events
-//		ruleMixedContent.addRule(new CharactersGeneric(), ruleMixedContent);
-//
-//		for (int i = 0; i < ruleMixedContent.getNumberOfEvents(); i++) {
-//			Rule r = ruleMixedContent.lookFor(i).next;
-//			if (!r.isTerminalRule()) {
-//				addMixedTransitions(r, handled);
-//			}
-//		}
-//	}
+	// protected void addMixedTransitions(Rule ruleMixedContent, List<Rule>
+	// handled) {
+	// if (handled.contains(ruleMixedContent)) {
+	// // abort
+	// return;
+	// }
+	// handled.add(ruleMixedContent);
+	//
+	// // mixed --> generic characters events
+	// ruleMixedContent.addRule(new CharactersGeneric(), ruleMixedContent);
+	//
+	// for (int i = 0; i < ruleMixedContent.getNumberOfEvents(); i++) {
+	// Rule r = ruleMixedContent.lookFor(i).next;
+	// if (!r.isTerminalRule()) {
+	// addMixedTransitions(r, handled);
+	// }
+	// }
+	// }
 
 	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {

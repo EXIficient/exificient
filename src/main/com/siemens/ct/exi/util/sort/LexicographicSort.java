@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.util.sort;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.xml.XMLConstants;
@@ -35,10 +36,11 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * 
  * EXI#s lexical order: sorted first by qname's local-name then by qname's URI
  */
-public class LexicographicSort implements Comparator<Object> {
+public class LexicographicSort implements Comparator<Object>, Serializable {
+
+	private static final long serialVersionUID = 5591893050060075221L;
 
 	public int compare(Object o1, Object o2) {
-		// String ns1, ns2, localName1, localName2;
 		if (o1 instanceof XSElementDeclaration
 				&& o2 instanceof XSElementDeclaration) {
 			return compare((XSElementDeclaration) o1, (XSElementDeclaration) o2);
@@ -58,27 +60,23 @@ public class LexicographicSort implements Comparator<Object> {
 		} else if (o1 instanceof Attribute && o2 instanceof Attribute) {
 			return compare(((Attribute) o1).getQName(), ((Attribute) o2)
 					.getQName());
-			// } else if (o1 instanceof Context && o2 instanceof Context) {
-			// return compare((Context) o1, (Context) o2);
 		} else {
 			throw new RuntimeException(
 					"[EXI] Unsupported types of classes for sorting.");
 		}
-
-		// return compare(ns1, localName1, ns2, localName2);
 	}
 
-	public int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
+	public static int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
 		return compare(e1.getNamespace(), e1.getName(), e2.getNamespace(), e2
 				.getName());
 	}
 
-	public int compare(XSAttributeDeclaration a1, XSAttributeDeclaration a2) {
+	public static int compare(XSAttributeDeclaration a1, XSAttributeDeclaration a2) {
 		return compare(a1.getNamespace(), a1.getName(), a2.getNamespace(), a2
 				.getName());
 	}
 
-	public int compare(QName q1, QName q2) {
+	public static int compare(QName q1, QName q2) {
 		return compare(q1.getNamespaceURI(), q1.getLocalPart(), q2
 				.getNamespaceURI(), q2.getLocalPart());
 	}

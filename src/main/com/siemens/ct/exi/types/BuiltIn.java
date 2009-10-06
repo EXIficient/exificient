@@ -149,7 +149,7 @@ public class BuiltIn {
 			XSD_BOOLEAN);
 
 	// built-In mapping
-	protected static Map<QName, QName> datatypeMapping;
+	protected static final Map<QName, QName> datatypeMapping;
 
 	/*
 	 * Datatype mappings
