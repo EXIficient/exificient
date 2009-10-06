@@ -21,11 +21,11 @@ package com.siemens.ct.exi.grammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaLessDocContent;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
+import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaLessDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
 
 /**

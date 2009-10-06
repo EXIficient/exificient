@@ -20,15 +20,15 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -43,7 +43,7 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 	
 	private int lastValidBooleanID;
 	
-	public BooleanPatternDatatype(ExpandedName datatypeIdentifier) {
+	public BooleanPatternDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.BOOLEAN_PATTERN, datatypeIdentifier);
 		this.rcs = new XSDBooleanCharacterSet();
 	}
@@ -66,13 +66,13 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 		return retValue;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context)
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
 	public char[] readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, Context context)
+			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
 		switch (booleanID) {

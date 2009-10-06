@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -46,14 +46,14 @@ public class DatatypeRespresentationMapTypeEncoder extends AbstractTypeEncoder {
 //	private DatatypeRepresentation lastPluggableEncoder;
 
 	
-	private Map<ExpandedName, DatatypeRepresentation> userDefinedDatatypeRepresentations;
+	private Map<QName, DatatypeRepresentation> userDefinedDatatypeRepresentations;
 
 
 	public DatatypeRespresentationMapTypeEncoder(StringEncoder stringEncoder) {
 		// super( true );
 		super(stringEncoder);
 
-		userDefinedDatatypeRepresentations = new HashMap<ExpandedName, DatatypeRepresentation>();
+		userDefinedDatatypeRepresentations = new HashMap<QName, DatatypeRepresentation>();
 
 		// hand over "same" string table
 		// defaultEncoder = new TypeEncoderTyped(exiFactory, this.stringTable);
@@ -84,7 +84,7 @@ public class DatatypeRespresentationMapTypeEncoder extends AbstractTypeEncoder {
 		throw new RuntimeException("TODO TyoeEncoder DatatypeRespresentationMap");
 	}
 	
-	public void writeValue(Context context, EncoderChannel valueChannel) throws IOException {
+	public void writeValue(QName context, EncoderChannel valueChannel) throws IOException {
 		throw new RuntimeException("TODO TyoeEncoder DatatypeRespresentationMap");
 	}
 

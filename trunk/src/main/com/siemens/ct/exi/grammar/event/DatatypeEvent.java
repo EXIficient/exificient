@@ -18,8 +18,9 @@
 
 package com.siemens.ct.exi.grammar.event;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -32,7 +33,7 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public interface DatatypeEvent extends Event {
 	
-	public ExpandedName getValueType();
+	public QName getValueType();
 
 	public Datatype getDatatype();
 

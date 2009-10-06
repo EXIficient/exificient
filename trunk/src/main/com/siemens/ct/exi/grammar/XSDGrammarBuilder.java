@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.apache.xerces.impl.xs.models.EXIContentModelBuilder;
 import org.apache.xerces.xs.StringList;
@@ -56,7 +57,6 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.types.BuiltIn;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -68,7 +68,7 @@ import com.siemens.ct.exi.util.ExpandedName;
  */
 public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
-	protected Map<ExpandedName, TypeGrammar> grammarTypes;
+	protected Map<QName, TypeGrammar> grammarTypes;
 
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
@@ -95,7 +95,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initOnce();
 
 		handledElements = new HashSet<XSElementDeclaration>();
-		grammarTypes = new HashMap<ExpandedName, TypeGrammar>();
+		grammarTypes = new HashMap<QName, TypeGrammar>();
 		schemaLocalNames = new HashMap<String, List<String>>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 	}
@@ -131,9 +131,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		List<StartElement> fragmentElements = new ArrayList<StartElement>();
 
 		// create unique qname map
-		Map<ExpandedName, List<XSElementDeclaration>> namedElements = new HashMap<ExpandedName, List<XSElementDeclaration>>();
+		Map<QName, List<XSElementDeclaration>> namedElements = new HashMap<QName, List<XSElementDeclaration>>();
 		for (XSElementDeclaration elDecl : handledElements) {
-			ExpandedName en = new ExpandedName(elDecl.getNamespace(), elDecl
+			QName en = new QName(elDecl.getNamespace(), elDecl
 					.getName());
 			if (namedElements.containsKey(en)) {
 				namedElements.get(en).add(elDecl);
@@ -144,7 +144,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 		}
 
-		for (ExpandedName en : namedElements.keySet()) {
+		for (QName en : namedElements.keySet()) {
 			List<XSElementDeclaration> elements = namedElements.get(en);
 			// If there is more than one element declared with the same qname,
 			// the qname is included only once.
@@ -157,8 +157,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				if (isSameGrammar(elements)) {
 					fragmentElements.add(getStartElement(elements.get(0)));
 				} else {
-					StartElement se = new StartElement(en.getNamespaceURI(), en
-							.getLocalName());
+					StartElement se = new StartElement(new QName(en.getNamespaceURI(), en
+							.getLocalPart()));
 					se
 							.setRule(getSchemaInformedElementFragmentGrammar(elements));
 					fragmentElements.add(se);
@@ -351,7 +351,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (int i = 0; i < types.getLength(); i++) {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
 
-			ExpandedName name = new ExpandedName(td.getNamespace(), td
+			QName name = new QName(td.getNamespace(), td
 					.getName());
 			TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
 
@@ -431,22 +431,23 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			// AT datatype
 			XSSimpleTypeDefinition attrTypeDefinition = attrDecl
 			.getTypeDefinition();
-			ExpandedName qNameType;
+			QName qNameType;
 			if (attrTypeDefinition.getAnonymous()) {
 				XSTypeDefinition tdBase = attrTypeDefinition.getBaseType();
 				if (tdBase.getName() == null) {
 					qNameType = BuiltIn.DEFAULT_VALUE_NAME;
 				} else {
-					qNameType = new ExpandedName(tdBase.getNamespace(), tdBase
+					qNameType = new QName(tdBase.getNamespace(), tdBase
 							.getName());
 				}
 			} else {
-				qNameType = new ExpandedName(attrTypeDefinition.getNamespace(),
+				qNameType = new QName(attrTypeDefinition.getNamespace(),
 						attrTypeDefinition.getName());
 			}
 			
 			//	create new Attribute event
-			at = new Attribute(attrDecl.getNamespace(), attrDecl.getName(),
+			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
+			at = new Attribute(qname,
 					qNameType, BuiltIn.getDatatype(attrTypeDefinition));
 			attributePool.put(attrDecl, at);
 		}
@@ -555,7 +556,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	}
 
 	protected TypeGrammar getTypeGrammar(String namespaceURI, String name) {
-		ExpandedName en = new ExpandedName(namespaceURI, name);
+		QName en = new QName(namespaceURI, name);
 		return grammarTypes.get(en);
 	}
 
@@ -778,11 +779,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {
 
-		ExpandedName nameValueType;
+		QName nameValueType;
 		if (std.getAnonymous()) {
-			nameValueType = new ExpandedName(null, "Anonymous");
+			nameValueType = new QName(null, "Anonymous");
 		} else {
-			nameValueType = new ExpandedName(std.getNamespace(), std.getName());
+			nameValueType = new QName(std.getNamespace(), std.getName());
 		}
 
 		Characters chSchemaValid = new Characters(nameValueType, BuiltIn

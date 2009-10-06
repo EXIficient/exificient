@@ -18,9 +18,10 @@
 
 package com.siemens.ct.exi.datatype;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -33,7 +34,7 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public class BinaryHexDatatype extends AbstractBinaryDatatype {
 
-	public BinaryHexDatatype(ExpandedName datatypeIdentifier) {
+	public BinaryHexDatatype(QName datatypeIdentifier) {
 		super(datatypeIdentifier, BuiltInType.BINARY_HEX);
 		this.rcs = new XSDHexBinaryCharacterSet();
 	}

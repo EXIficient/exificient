@@ -20,7 +20,7 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.util.ExpandedName;
+import javax.xml.namespace.QName;
 
 /**
  * TODO Description
@@ -34,7 +34,7 @@ import com.siemens.ct.exi.util.ExpandedName;
 public interface DatatypeRepresentation
 //extends DatatypeEncoder, DatatypeDecoder
 {
-	public ExpandedName getSchemaDatatype();
+	public QName getSchemaDatatype();
 
 	public void finish() throws IOException;
 }

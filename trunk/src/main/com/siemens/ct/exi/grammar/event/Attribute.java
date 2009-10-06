@@ -18,12 +18,10 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.core.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.types.BuiltIn;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -34,48 +32,31 @@ import com.siemens.ct.exi.util.ExpandedName;
  * @version 0.3.20081103
  */
 
-public class Attribute extends AbstractDatatypeEvent implements Context {
-	private String namespaceURI;
-	private String localName;
+public class Attribute extends AbstractDatatypeEvent {
+	protected QName qname;
 
-	public Attribute(String uri, String localName, ExpandedName valueType,
+	public Attribute(QName qname, QName valueType,
 			Datatype datatype) {
 		super(EventType.ATTRIBUTE, valueType, datatype);
-
-		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
-		this.localName = localName;
+		this.qname = qname;
 	}
 
-	public Attribute(String uri, String localName) {
-		this(uri, localName, BuiltIn.DEFAULT_VALUE_NAME,
+	public Attribute(QName qname) {
+		this(qname, BuiltIn.DEFAULT_VALUE_NAME,
 				BuiltIn.DEFAULT_DATATYPE);
 	}
-
-	public String getNamespaceURI() {
-		return namespaceURI;
-	}
-
-	public void setNamespaceURI(String namespaceURI) {
-		this.namespaceURI = namespaceURI;
-	}
-
-	public String getLocalName() {
-		return localName;
-	}
-
-	public void setLocalName(String localName) {
-		this.localName = localName;
+	
+	public QName getQName() {
+		return this.qname;
 	}
 
 	public String toString() {
-		return super.toString() + "(" + namespaceURI + ":" + localName + ")";
+		return super.toString() + "(" + qname.toString() + ")";
 	}
 
 	@Override
 	public int hashCode() {
-//		return (eventType.ordinal() ^ namespaceURI.hashCode() ^ localName
-//				.hashCode());
-		return (namespaceURI.hashCode() ^ localName.hashCode());
+		return qname.hashCode();
 	}
 
 	@Override
@@ -84,8 +65,7 @@ public class Attribute extends AbstractDatatypeEvent implements Context {
 			return true;
 		} else if (obj instanceof Attribute) {
 			Attribute otherAT = (Attribute) obj;
-			return (localName.equals(otherAT.localName) && namespaceURI
-					.equals(otherAT.namespaceURI));
+			return (qname.equals(otherAT.qname));
 		} else {
 			return false;
 		}

@@ -18,9 +18,10 @@
 
 package com.siemens.ct.exi.datatype;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -33,7 +34,7 @@ import com.siemens.ct.exi.util.ExpandedName;
 
 public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 
-	public BinaryBase64Datatype(ExpandedName datatypeIdentifier) {
+	public BinaryBase64Datatype(QName datatypeIdentifier) {
 		super(datatypeIdentifier, BuiltInType.BINARY_BASE64);
 		this.rcs = new XSDBase64CharacterSet();
 	}

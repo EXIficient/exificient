@@ -20,14 +20,14 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -42,13 +42,13 @@ public abstract class AbstractDatatype implements Datatype {
 	// default built-in datatype (no codec map used)
 	protected BuiltInType defaultbuiltInType;
 	// for codec map (pluggable codecs)
-	protected ExpandedName datatypeIdentifier;
+	protected QName datatypeIdentifier;
 	// restricted char set
 	protected RestrictedCharacterSet rcs;
 	protected String lastRCSValue;
 
 	public AbstractDatatype(BuiltInType builtInType,
-			ExpandedName datatypeIdentifier) {
+			QName datatypeIdentifier) {
 		this.defaultbuiltInType = builtInType;
 		this.datatypeIdentifier = datatypeIdentifier;
 	}
@@ -57,7 +57,7 @@ public abstract class AbstractDatatype implements Datatype {
 		return defaultbuiltInType;
 	}
 
-	public ExpandedName getDatatypeIdentifier() {
+	public QName getDatatypeIdentifier() {
 		return datatypeIdentifier;
 	}
 	
@@ -79,13 +79,13 @@ public abstract class AbstractDatatype implements Datatype {
 		return true;
 	}
 	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException {
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException {
 		rcsEncoder.setRestrictedCharacterSet(rcs);
 		rcsEncoder.isValid(lastRCSValue);
 		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
 	}
 	
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, Context context) throws IOException {
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException {
 		rcsDecoder.setRestrictedCharacterSet(rcs);
 		return rcsDecoder.readValue(valueChannel, stringDecoder, context);
 	}

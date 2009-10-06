@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIEncoder;
@@ -199,10 +200,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		return typeEncoder.isValid(datatype, value);
 	}
 
-	protected abstract void writeValueTypeValid(Context valueContext)
+	protected abstract void writeValueTypeValid(QName valueContext)
 			throws IOException;
 
-	protected abstract void writeValueAsString(Context valueContext,
+	protected abstract void writeValueAsString(QName valueContext,
 			String value) throws IOException;
 
 	/*
@@ -392,7 +393,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		replaceRuleAtTheTop(nextTopRule);
 //		if (TEST_NEW) {
 			// push context
-			pushElementContext(nextSE);
+			pushElementContext(nextSE.getQName());
 			// update and push element rule
 			pushElementRule(nextSE.getRule());
 //		} else {
@@ -613,7 +614,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			encodeQNamePrefix(uri, prefix);
 
 			// at context
-			NameContext atContext = getAttributeContext(uri, localName);
+			QName atContext = getAttributeContext(uri, localName);
 			// pushAttributeContext(uri, localName);
 			if (valid) {
 				// encode value type-aware

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
@@ -121,14 +122,16 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
-		this.elementURI = se.getNamespaceURI();
-		this.elementLocalName = se.getLocalName();
+		//	TODO avoid qname items hick hack
+		QName seQName = se.getQName();
+		this.elementURI = seQName.getNamespaceURI();
+		this.elementLocalName = seQName.getLocalPart();
 		// handle element prefixes
 		elementPrefix = decodeQNamePrefix(this.elementURI);
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(nextRule);
 		// push context
-		pushElementContext(se);
+		pushElementContext(se.getQName());
 		// update and push element rule
 		pushElementRule(se.getRule());
 	}
@@ -149,7 +152,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		StartElement nextSE = getGenericStartElement(elementURI,
 				elementLocalName);
 		// push context
-		pushElementContext(nextSE);
+		pushElementContext(nextSE.getQName());
 		// update and push element rule
 		pushElementRule(nextSE.getRule());
 	}
@@ -171,7 +174,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.getElementContentRule());
 		// push context
-		pushElementContext(nextSE);
+		pushElementContext(nextSE.getQName());
 		// update and push element rule
 		pushElementRule(nextSE.getRule());
 	}
@@ -191,7 +194,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// step forward in current rule (replace rule at the top)
 		replaceRuleAtTheTop(currentRule.getElementContentRule());
 		// push context
-		pushElementContext(nextSE);
+		pushElementContext(nextSE.getQName());
 		// update and push element rule
 		pushElementRule(nextSE.getRule());
 	}
@@ -223,7 +226,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	}
 
 	protected void readAttributeContent(Datatype dt) throws IOException {
-		NameContext atContext = getAttributeContext(attributeURI,
+		QName atContext = getAttributeContext(attributeURI,
 				attributeLocalName);
 		attributeValue = typeDecoder.readValue(dt, atContext, channel);
 	}
@@ -296,7 +299,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeEndElement() throws EXIException {
 		// set ee information before popping context
 		this.elementURI = elementContext.getNamespaceURI();
-		this.elementLocalName = elementContext.getLocalName();
+		this.elementLocalName = elementContext.getLocalPart();
 
 		// pop stack items
 		popElementContext();
@@ -306,7 +309,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeEndElementUndeclared() throws EXIException {
 		// set ee information before popping context
 		this.elementURI = elementContext.getNamespaceURI();
-		this.elementLocalName = elementContext.getLocalName();
+		this.elementLocalName = elementContext.getLocalPart();
 
 		// learn end-element event ?
 		currentRule.learnEndElement();

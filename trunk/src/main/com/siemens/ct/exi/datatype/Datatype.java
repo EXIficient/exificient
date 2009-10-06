@@ -20,14 +20,14 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.core.Context;
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -43,7 +43,7 @@ public interface Datatype {
 	public BuiltInType getDefaultBuiltInType();
 
 	// used for codec map
-	public ExpandedName getDatatypeIdentifier();
+	public QName getDatatypeIdentifier();
 	
 	/*
 	 * Encoder
@@ -51,20 +51,20 @@ public interface Datatype {
 	// type aware
 	public boolean isValid(String value);
 	
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException;
+	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 
 	// restricted character set 
 	public RestrictedCharacterSet getRestrictedCharacterSet();
 	
 	public boolean isValidRCS(String value);
 	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, Context context) throws IOException;
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 	
 	/*
 	 * Decoder
 	 */
-	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, Context context)
+	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, QName context)
 			throws IOException;
 	
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, Context context) throws IOException;
+	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException;
 }

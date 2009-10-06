@@ -18,8 +18,9 @@
 
 package com.siemens.ct.exi.grammar.event;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.util.ExpandedName;
 
 /**
  * TODO Description
@@ -33,18 +34,18 @@ import com.siemens.ct.exi.util.ExpandedName;
 public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 		DatatypeEvent {
 
-	private final ExpandedName valueType;
+	private final QName valueType;
 
 	private final Datatype datatype;
 
-	public AbstractDatatypeEvent(EventType eventType, ExpandedName valueType,
+	public AbstractDatatypeEvent(EventType eventType, QName valueType,
 			Datatype datatype) {
 		super(eventType);
 		this.valueType = valueType;
 		this.datatype = datatype;
 	}
 
-	public ExpandedName getValueType() {
+	public QName getValueType() {
 		return valueType;
 	}
 

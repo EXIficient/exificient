@@ -29,6 +29,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
@@ -82,15 +83,15 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	// store value events (qnames) in right order
 	// plus necessary information to reconstruct value channels
-	protected List<Context> valueQNames;
-	protected Map<Context, Integer> occurrences;
-	protected Map<Context, List<Datatype>> dataTypes;
+	protected List<QName> valueQNames;
+	protected Map<QName, Integer> occurrences;
+	protected Map<QName, List<Datatype>> dataTypes;
 
 	// Channel and Compression stuff
 	protected CodingMode codingMode;
 
 	// content values
-	protected Map<Context, PreReadValueContainer> contentValues;
+	protected Map<QName, PreReadValueContainer> contentValues;
 
 	protected List<char[]> xsiValues;
 	protected int xsiEntryIndex;
@@ -119,12 +120,12 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nsEntries = new ArrayList<NamespaceEntry>();
 		processingEntries = new ArrayList<ProcessingEntry>();
 		// value events
-		valueQNames = new ArrayList<Context>();
-		occurrences = new HashMap<Context, Integer>();
-		dataTypes = new HashMap<Context, List<Datatype>>();
+		valueQNames = new ArrayList<QName>();
+		occurrences = new HashMap<QName, Integer>();
+		dataTypes = new HashMap<QName, List<Datatype>>();
 
 		// content values
-		contentValues = new HashMap<Context, PreReadValueContainer>();
+		contentValues = new HashMap<QName, PreReadValueContainer>();
 
 		xsiValues = new ArrayList<char[]>();
 
@@ -306,7 +307,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				break;
 			case ATTRIBUTE:
 				Datatype dtAT = decodeAttributeStructure();
-				NameContext atContext = getAttributeContext(attributeURI,
+				QName atContext = getAttributeContext(attributeURI,
 						attributeLocalName);
 				attributeEntries.add(new QNameEntry(atContext, attributePrefix));
 				incrementValues(atContext, dtAT);
@@ -399,7 +400,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			if (cntValues <= Constants.MAX_NUMBER_OF_VALUES) {
 				// single compressed stream (included structure)
 				for (int i = 0; i < valueQNames.size(); i++) {
-					Context channelContext = valueQNames.get(i);
+					QName channelContext = valueQNames.get(i);
 					int occs = occurrences.get(channelContext);
 					List<Datatype> datatypes = dataTypes.get(channelContext);
 					setContentValues(channel, channelContext, occs, datatypes);
@@ -411,7 +412,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				if (areThereAnyLessEqualThan100(valueQNames, occurrences)) {
 					DecoderChannel bdcLessEqual100 = getNextChannel();
 					for (int i = 0; i < valueQNames.size(); i++) {
-						Context channelContext = valueQNames.get(i);
+						QName channelContext = valueQNames.get(i);
 						int occs = occurrences.get(channelContext);
 						if (occs <= Constants.MAX_NUMBER_OF_VALUES) {
 							List<Datatype> datatypes = dataTypes
@@ -424,7 +425,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 				// proper stream for greater100
 				for (int i = 0; i < valueQNames.size(); i++) {
-					Context channelContext = valueQNames.get(i);
+					QName channelContext = valueQNames.get(i);
 					int occs = occurrences.get(channelContext);
 					if (occs > Constants.MAX_NUMBER_OF_VALUES) {
 						DecoderChannel bdcGreater100 = getNextChannel();
@@ -441,7 +442,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	protected static boolean areThereAnyLessEqualThan100(
-			List<Context> qnames, Map<Context, Integer> occurrences) {
+			List<QName> qnames, Map<QName, Integer> occurrences) {
 		for (int i = 0; i < qnames.size(); i++) {
 			if (occurrences.get(qnames.get(i)) <= Constants.MAX_NUMBER_OF_VALUES) {
 				return true;
@@ -451,7 +452,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	protected void setContentValues(DecoderChannel bdc,
-			Context channelContext, int occs, List<Datatype> datatypes)
+			QName channelContext, int occs, List<Datatype> datatypes)
 			throws IOException {
 
 		assert (datatypes.size() == occs);
@@ -488,7 +489,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// nextEventType = eventTypes.get(currentEventIndex);
 	}
 
-	protected void incrementValues(Context valueContext, Datatype datatype) {
+	protected void incrementValues(QName valueContext, Datatype datatype) {
 		cntValues++;
 
 		if (valueQNames.contains(valueContext)) {
@@ -512,14 +513,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		QNameEntry se = elementEntries.get(elementEntryIndex++);
 
 		elementURI = se.context.getNamespaceURI();
-		elementLocalName = se.context.getLocalName();
+		elementLocalName = se.context.getLocalPart();
 		elementPrefix = se.prefix;
 
-//		if (TEST_NEW)  {
-			pushElementContext(se.context);
-//		} else  {
-//			pushElementContext(elementURI, elementLocalName);	
-//		}
+		// this.elementContext = se.context;
+		pushElementContext(se.context);
 	}
 
 	@Override
@@ -566,10 +564,10 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		QNameEntry at = attributeEntries.get(attributeEntryIndex++);
 
 		attributeURI = at.context.getNamespaceURI();
-		attributeLocalName = at.context.getLocalName();
+		attributeLocalName = at.context.getLocalPart();
 		attributePrefix = at.prefix;
 
-		NameContext atContext = getAttributeContext(attributeURI,
+		QName atContext = getAttributeContext(attributeURI,
 				attributeLocalName);
 		PreReadValueContainer vc = contentValues.get(atContext);
 		assert (vc != null);
@@ -664,11 +662,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	class QNameEntry {
 //		final String namespaceURI;
 //		final String localName;
-		final Context context;
+		final QName context;
 		final String prefix;
 
 		// public QNameEntry(String namespaceURI, String localName, String prefix) {
-		public QNameEntry(Context context, String prefix) {
+		public QNameEntry(QName context, String prefix) {
 			this.context = context;
 //			this.namespaceURI = namespaceURI;
 //			this.localName = localName;
