@@ -41,7 +41,16 @@ public class SchemaLessGrammar extends AbstractGrammar {
 	public SchemaLessGrammar() {
 		super(false);
 		
-		this.schemaEntries = new URIEntry[0];
+		grammarEntries = new GrammarURIEntry[3];
+
+		// "", empty string
+		grammarEntries[0] = getURIEntryForEmpty();
+
+		// "http://www.w3.org/XML/1998/namespace"
+		grammarEntries[1] = getURIEntryForXML();
+
+		// "http://www.w3.org/2001/XMLSchema-instance", xsi
+		grammarEntries[2] = getURIEntryForXSI();
 
 		init();
 	}

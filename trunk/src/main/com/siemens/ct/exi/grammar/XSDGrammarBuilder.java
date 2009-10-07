@@ -239,7 +239,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		// (sorted) schema URIs and localNames
 		String[] sortedURIs = initURITableEntries();
-		URIEntry[] schemaEntries = new URIEntry[sortedURIs.length];
+		GrammarURIEntry[] additionalSchemaEntries = new GrammarURIEntry[sortedURIs.length];
 		for (int i = 0; i < sortedURIs.length; i++) {
 			String uri = sortedURIs[i];
 
@@ -257,10 +257,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 
 			// add schema entry
-			schemaEntries[i] = new URIEntry(uri, localNamesArray, null);
+			additionalSchemaEntries[i] = new GrammarURIEntry(uri, localNamesArray, null);
 		}
 
-		SchemaInformedGrammar sig = new SchemaInformedGrammar(schemaEntries,
+		SchemaInformedGrammar sig = new SchemaInformedGrammar(additionalSchemaEntries,
 				fragmentElements, globalElements);
 
 		/*

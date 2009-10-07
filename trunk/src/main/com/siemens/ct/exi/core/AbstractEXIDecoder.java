@@ -128,7 +128,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	protected String readUri() throws IOException {
-		int nUri = MethodsBag.getCodingLength(uris.size() + 1); // numberEntries+1
+		int nUri = MethodsBag.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
 		int uriID = channel.decodeNBitUnsignedInteger(nUri);
 
 		String uri;
@@ -143,7 +143,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			uri = uris.get(uriID - 1).namespaceURI;
+			uri = runtimeURIEntries.get(uriID - 1).namespaceURI;
 			updateURIContext(uri);
 		}
 
@@ -151,7 +151,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	protected String readLocalName(String uri) throws IOException {
-
+		updateURIContext(uri);
 		int length = channel.decodeUnsignedInteger();
 
 		String localName;

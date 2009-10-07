@@ -39,7 +39,7 @@ public interface Grammar {
 
 	public Rule getBuiltInFragmentGrammar();
 
-	public URIEntry[] getSchemaEntries();
+	public GrammarURIEntry[] getGrammarEntries();
 	
 	public StartElement getGlobalElement(String namespaceURI, String localName);
 	

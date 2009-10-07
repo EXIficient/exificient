@@ -18,16 +18,34 @@
 
 package com.siemens.ct.exi.grammar;
 
-public class URIEntry {
+public class GrammarURIEntry {
 	
 	public final String uri;
 	public final String[] localNames;
 	public final String[] prefixes;
 	
-	public URIEntry(String uri, String[] localNames, String[] prefixes) {
+	public GrammarURIEntry(String uri, String[] localNames, String[] prefixes) {
+		assert(uri != null);
 		this.uri = uri;
-		this.localNames = localNames;
-		this.prefixes = prefixes;
+		
+		//	local-names
+		if (localNames == null) {
+			this.localNames = new String[0];
+		} else {
+			this.localNames = localNames;
+		}
+		
+		//	prefixes
+		if (prefixes == null) {
+			this.prefixes = new String[0];
+		} else {
+			this.prefixes = prefixes;
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return "{" + uri + "}(localNames#" + localNames.length + ", prefixes#" + prefixes.length +")";
 	}
 
 }

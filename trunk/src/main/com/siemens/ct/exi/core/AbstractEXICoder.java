@@ -24,18 +24,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.xml.sax.helpers.NamespaceSupport;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.URIEntry;
+import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
@@ -51,7 +49,7 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
  */
 
 public abstract class AbstractEXICoder {
-	
+
 	// factory
 	protected EXIFactory exiFactory;
 	protected Grammar grammar;
@@ -63,21 +61,21 @@ public abstract class AbstractEXICoder {
 
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
-	
+
 	// Context (incl. stack)
 	protected QName elementContext;
 	protected List<QName> elementContextStack;
-	
+
 	// currentRule and rule stack when traversing the EXI document
 	protected Rule currentRule;
 	protected List<Rule> openRules;
-	
-	//	SE pool
-	protected Map<QName, StartElement> runtimeElements;	
+
+	// SE pool
+	protected Map<QName, StartElement> runtimeElements;
 
 	// URI context
-	protected URIContext uriContext;
-	protected List<URIContext> uris;
+	protected RuntimeURIEntry uriContext;
+	protected List<RuntimeURIEntry> runtimeURIEntries;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
@@ -95,7 +93,22 @@ public abstract class AbstractEXICoder {
 		runtimeElements = new HashMap<QName, StartElement>();
 		openRules = new ArrayList<Rule>();
 		elementContextStack = new ArrayList<QName>();
-		uris = new ArrayList<URIContext>();
+		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
+		
+		// init URI entries for the first time
+		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
+		
+		for (GrammarURIEntry grammarEntry : grammarURIEntries) {
+			addURI(grammarEntry.uri);
+			// prefixes
+			for (String prefix : grammarEntry.prefixes) {
+				uriContext.addPrefix(prefix);
+			}
+			// local-names
+			for (String localName : grammarEntry.localNames) {
+				uriContext.addLocalName(localName);
+			}
+		}
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -115,7 +128,7 @@ public abstract class AbstractEXICoder {
 		initForEachRunContext();
 		// clear runtime rules
 		runtimeElements.clear();
-		
+
 		// possible root elements
 		if (exiFactory.isFragment()) {
 			// push stack with fragment grammar
@@ -127,101 +140,37 @@ public abstract class AbstractEXICoder {
 	}
 
 	protected void initForEachRunContext() {
-		uris.clear();
-		uriContext = null;
-
+		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
+		
 		/*
-		 * "", empty string
+		 * Remove entries from runtime lists that could have been added
+		 * from a previous coding step
 		 */
-		addURI(Constants.EMPTY_STRING);
-		uriContext.addPrefix(Constants.EMPTY_STRING);
-
-		/*
-		 * "http://www.w3.org/XML/1998/namespace"
-		 */
-		addURI(XMLConstants.XML_NS_URI);
-		uriContext.addPrefix(Constants.XML_PFX);
-		uriContext.addLocalName("space");
-		uriContext.addLocalName("lang");
-		uriContext.addLocalName("id");
-		uriContext.addLocalName("base");
-
-		/*
-		 * "http://www.w3.org/2001/XMLSchema-instance", xsi
-		 */
-		addURI(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-		uriContext.addPrefix(Constants.XSI_PFX);
-		uriContext.addLocalName("type");
-		uriContext.addLocalName("nil");
-
-		if (isSchemaInformed) {
-			/*
-			 * "http://www.w3.org/2001/XMLSchema", xsd
-			 */
-			addURI(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			uriContext.addLocalName("anyType");
-			uriContext.addLocalName("anySimpleType");
-			uriContext.addLocalName("string");
-			uriContext.addLocalName("normalizedString");
-			uriContext.addLocalName("token");
-			uriContext.addLocalName("language");
-			uriContext.addLocalName("Name");
-			uriContext.addLocalName("NCName");
-			uriContext.addLocalName("ID");
-			uriContext.addLocalName("IDREF");
-			uriContext.addLocalName("IDREFS");
-			uriContext.addLocalName("ENTITY");
-			uriContext.addLocalName("ENTITIES");
-			uriContext.addLocalName("NMTOKEN");
-			uriContext.addLocalName("NMTOKENS");
-			uriContext.addLocalName("duration");
-			uriContext.addLocalName("dateTime");
-			uriContext.addLocalName("time");
-			uriContext.addLocalName("date");
-			uriContext.addLocalName("gYearMonth");
-			uriContext.addLocalName("gYear");
-			uriContext.addLocalName("gMonthDay");
-			uriContext.addLocalName("gDay");
-			uriContext.addLocalName("gMonth");
-			uriContext.addLocalName("boolean");
-			uriContext.addLocalName("base64Binary");
-			uriContext.addLocalName("hexBinary");
-			uriContext.addLocalName("float");
-			uriContext.addLocalName("double");
-			uriContext.addLocalName("anyURI");
-			uriContext.addLocalName("QName");
-			uriContext.addLocalName("NOTATION");
-			uriContext.addLocalName("decimal");
-			uriContext.addLocalName("integer");
-			uriContext.addLocalName("nonPositiveInteger");
-			uriContext.addLocalName("negativeInteger");
-			uriContext.addLocalName("long");
-			uriContext.addLocalName("int");
-			uriContext.addLocalName("short");
-			uriContext.addLocalName("byte");
-			uriContext.addLocalName("nonNegativeInteger");
-			uriContext.addLocalName("positiveInteger");
-			uriContext.addLocalName("unsignedLong");
-			uriContext.addLocalName("unsignedInt");
-			uriContext.addLocalName("unsignedShort");
-			uriContext.addLocalName("unsignedByte");
-
-			/*
-			 * Schema URIs & LocalNames
-			 */
-			URIEntry[] schemaEntries = grammar.getSchemaEntries();
-			for (URIEntry schemaEntry : schemaEntries) {
-				String uri = schemaEntry.uri;
-				if (uri.equals(XMLConstants.NULL_NS_URI)) {
-					updateURIContext(uri);
-				} else {
-					addURI(schemaEntry.uri);
-				}
-				for (String localName : schemaEntry.localNames) {
-					uriContext.addLocalName(localName);
-				}
+		//	remove URIs 
+		assert(grammarURIEntries.length <= runtimeURIEntries.size() );
+		int uriSize;
+		while(grammarURIEntries.length < (uriSize = runtimeURIEntries.size())) {
+			runtimeURIEntries.remove(uriSize-1);
+		}
+		//	remove localNames & prefixes
+		for(int i=0;i<grammarURIEntries.length; i++) {
+			RuntimeURIEntry rue = runtimeURIEntries.get(i);
+			//	local-names
+			String[] grammarLocalNames = grammarURIEntries[i].localNames;
+			int localNameSize;
+			while(grammarLocalNames.length < (localNameSize = rue.getLocalNameSize() )) {
+				rue.removeLocalName(localNameSize-1);
+				// System.out.println("remove!!!");
+			}
+			// prefixes
+			String[] grammarPrefixes = grammarURIEntries[i].prefixes;
+			int prefixSize;
+			while(grammarPrefixes.length < (prefixSize = rue.getPrefixSize() )) {
+				rue.removePrefix(prefixSize-1);
 			}
 		}
+		
+		uriContext = runtimeURIEntries.get(0);
 	}
 
 	public NamespaceSupport getNamespaces() {
@@ -237,7 +186,6 @@ public abstract class AbstractEXICoder {
 		}
 	}
 
-	
 	protected void pushElementContext(QName context) {
 		elementContext = context;
 		// push context stack
@@ -268,69 +216,68 @@ public abstract class AbstractEXICoder {
 		assert (!openRules.isEmpty());
 		int size = openRules.size();
 		openRules.remove(size - 1);
+		//	update current rule
 		currentRule = openRules.get(size - 2);
 	}
-	
+
 	protected StartElement getGenericStartElement(String uri, String localName) {
-		//	is there a global element that should be used
+		// is there a global element that should be used
 		StartElement nextSE = grammar.getGlobalElement(uri, localName);
-		if( nextSE == null) {
-			//	no global element --> runtime start element
-			//	TODO avoid creating QName
+		if (nextSE == null) {
+			// no global element --> runtime start element
+			// TODO avoid creating QName
 			QName qnameSE = new QName(uri, localName);
 			nextSE = runtimeElements.get(qnameSE);
-			if ( nextSE == null) {
-				//	create new start element and new runtime rule
+			if (nextSE == null) {
+				// create new start element and new runtime rule
 				nextSE = new StartElement(qnameSE);
 				nextSE.setRule(new SchemaLessStartTag());
-				//	add element to runtime map
+				// add element to runtime map
 				runtimeElements.put(qnameSE, nextSE);
 			}
 		}
-		
+
 		return nextSE;
 	}
 
-	
 	protected QName getAttributeContext(final String namespaceURI,
 			final String localName) {
 		updateURIContext(namespaceURI);
 		
 		QName atContext;
-		Integer localNameID = uriContext.getLocalNameID(localName);		
+		Integer localNameID = uriContext.getLocalNameID(localName);
 		if (localNameID == null) {
 			atContext = uriContext.addLocalName(localName);
 		} else {
 			atContext = uriContext.getNameContext(localNameID);
-		}		
+		}
 		assert (atContext != null);
-		
+
 		return atContext;
 	}
-	
+
 	/*
 	 * URIs
 	 */
 	protected void updateURIContext(final String namespaceURI) {
 		if (uriContext.namespaceURI != namespaceURI) {
-			// uriContext = uris.get(namespaceURI);
-			for(URIContext uc: this.uris) {
+			// try to find right URI Entry
+			for (RuntimeURIEntry uc : this.runtimeURIEntries) {
 				if (uc.namespaceURI.equals(namespaceURI)) {
 					uriContext = uc;
 					return;
 				}
 			}
+			//	URI unknown so far
 			uriContext = null;
 		}
 	}
-	
+
 	protected void addURI(final String namespaceURI) {
 		// assert (!uris.containsKey(namespaceURI));
-		uriContext = new URIContext(namespaceURI, uris.size());
-		uris.add(uriContext);
+		uriContext = new RuntimeURIEntry(namespaceURI, runtimeURIEntries.size());
+		runtimeURIEntries.add(uriContext);
 	}
-
-
 
 	/*
 	 * 
