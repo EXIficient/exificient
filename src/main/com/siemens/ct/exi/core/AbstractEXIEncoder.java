@@ -115,11 +115,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	}
 
 	protected void writeUri(String uri) throws IOException {
-		int nUri = MethodsBag.getCodingLength(uris.size() + 1); // numberEntries+1
+		int nUri = MethodsBag.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
 
 		updateURIContext(uri);
 		if (uriContext == null) {
-			// string value was not found
+			// uri string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by uri encoded as string
 			channel.encodeNBitUnsignedInteger(0, nUri);
@@ -135,6 +135,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	protected void writeLocalName(String localName, String uri)
 			throws IOException {
+		// Note: URI context has to be known before writing localName
+		updateURIContext(uri);
+		assert(uriContext != null);
+		
+		// look for localNameID
 		Integer localNameID = uriContext.getLocalNameID(localName);
 
 		if (localNameID == null) {

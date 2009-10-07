@@ -107,8 +107,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// try to use "default" schema URI in default namespace
 		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
 			if (grammar.isSchemaInformed()) {
-				if (uris.size() > 4) {
-					URIContext uc = uris.get(4);
+				if (runtimeURIEntries.size() > 4) {
+					RuntimeURIEntry uc = runtimeURIEntries.get(4);
 					namespaces.declarePrefix("", uc.namespaceURI);
 				}
 				// else if (uris.size() == 4) {

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -55,14 +56,42 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 
 	protected Rule builtInFragmentGrammar;
 
-	protected SchemaInformedGrammar(URIEntry[] schemaEntries,
+	protected SchemaInformedGrammar(GrammarURIEntry[] additionalSchemaEntries,
 			List<StartElement> fragmentElements, List<StartElement> globalElements) {
 		super(true);
-
-		this.schemaEntries = schemaEntries;
+		
+		//	elements
 		this.globalElements = globalElements;
-		// this.namedElements = elements;
 
+		//	initialze grammar entries
+		boolean hasEmptyURIEntries = containsEmptyURI(additionalSchemaEntries);
+		int uriSize = hasEmptyURIEntries ? 4+additionalSchemaEntries.length-1 : 4+additionalSchemaEntries.length;
+		grammarEntries = new GrammarURIEntry[uriSize];
+
+		// "", empty string
+		if (hasEmptyURIEntries) {
+			assert(additionalSchemaEntries[0].uri.equals(Constants.EMPTY_STRING));
+			grammarEntries[0] = additionalSchemaEntries[0];
+		} else {
+			grammarEntries[0] = getURIEntryForEmpty();
+		}
+
+		// "http://www.w3.org/XML/1998/namespace"
+		grammarEntries[1] = getURIEntryForXML();
+
+		// "http://www.w3.org/2001/XMLSchema-instance", xsi
+		grammarEntries[2] = getURIEntryForXSI();
+		
+		// "http://www.w3.org/2001/XMLSchema", xsd
+		grammarEntries[3] = getURIEntryForXSD();
+		
+		//	*additional* URIs
+		int diff = hasEmptyURIEntries ? 3 : 4;
+		
+		for(int index=4; (index-diff)<additionalSchemaEntries.length; index++) {
+			grammarEntries[index] = additionalSchemaEntries[index-diff];
+		}
+		
 		// init document & fragment grammar
 		initDocumentGrammar();
 		initFragmentGrammar(fragmentElements);
@@ -74,6 +103,15 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 
 	protected void setTypeGrammars(Map<QName, TypeGrammar> grammarTypes) {
 		this.grammarTypes = grammarTypes;
+	}
+	
+	protected static boolean containsEmptyURI(GrammarURIEntry[] entries) {
+		for(int i=0;i<entries.length; i++) {
+			if(entries[i].uri.equals(Constants.EMPTY_STRING)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {

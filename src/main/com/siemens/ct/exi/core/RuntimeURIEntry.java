@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-public class URIContext {
+public class RuntimeURIEntry {
 	
 	public final String namespaceURI;
 	public final int id;
@@ -36,7 +36,7 @@ public class URIContext {
 	protected final List<String> prefixes;
 	protected final Map<String, Integer> prefixIDs;
 	
-	public URIContext(String namespaceURI, int id) {
+	public RuntimeURIEntry(String namespaceURI, int id) {
 		this.namespaceURI = namespaceURI;
 		this.id = id;
 		
@@ -65,6 +65,12 @@ public class URIContext {
 		localNames.add(qname);
 		return qname;
 	}
+	
+	public QName removeLocalName(final int localNameID) {
+		QName qname =localNames.remove(localNameID);
+		localNameIDs.remove(qname.getLocalPart());
+		return qname;
+	}
 
 	public int getLocalNameSize() {
 		return localNames.size();
@@ -80,11 +86,17 @@ public class URIContext {
 		prefixes.add(prefix);
 	}
 	
+	public String removePrefix(final int prefixID) {
+		String pfx =prefixes.remove(prefixID);
+		prefixIDs.remove(pfx);
+		return pfx;
+	}
+	
 	public Integer getPrefixID(String prefix) {
 		return prefixIDs.get(prefix);
 	}
 	
-	public String getPrefix(int prefixID) {
+	public String getPrefix(final int prefixID) {
 		return prefixes.get(prefixID);
 	}
 	

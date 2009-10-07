@@ -67,9 +67,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	 */
 	protected int leastAttributeEventCode = Constants.NOT_FOUND;
 	protected int numberDeviatedAttributes = 0;
-
-	// protected List<SchemaInformedRule> lambdaTransitions;
-
+	
 	public AbstractSchemaInformedRule() {
 		super();
 		init();
