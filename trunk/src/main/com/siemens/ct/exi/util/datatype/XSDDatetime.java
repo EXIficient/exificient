@@ -42,7 +42,7 @@ public class XSDDatetime {
 
 	public static final int TIMEZONE_OFFSET_IN_MINUTES = 840;
 
-	protected static final int MONTH_MULTIPLICATOR = 32;
+	public static final int MONTH_MULTIPLICATOR = 32;
 
 	private DatetimeType type;
 
@@ -389,112 +389,112 @@ public class XSDDatetime {
 		return revFracSecs;
 	}
 
-	public static void appendYear(StringBuilder sb, int year) {
-		if (year < 0) {
-			// leading minus
-			sb.append('-');
-			year = (-1) * year;
-		}
-		if (year > 999) {
-			sb.append(year);
-		} else if (year > 99) {
-			sb.append('0');
-			sb.append(year);
-		} else if (year > 9) {
-			sb.append("00");
-			sb.append(year);
-		} else {
-			sb.append("000");
-			sb.append(year);
-		}
-	}
+//	public static void appendYear(StringBuilder sb, int year) {
+//		if (year < 0) {
+//			// leading minus
+//			sb.append('-');
+//			year = (-1) * year;
+//		}
+//		if (year > 999) {
+//			sb.append(year);
+//		} else if (year > 99) {
+//			sb.append('0');
+//			sb.append(year);
+//		} else if (year > 9) {
+//			sb.append("00");
+//			sb.append(year);
+//		} else {
+//			sb.append("000");
+//			sb.append(year);
+//		}
+//	}
 
-	public static void appendMonth(StringBuilder sb, int monthDay) {
-		int month = monthDay / MONTH_MULTIPLICATOR;
-		assert ((monthDay - month * MONTH_MULTIPLICATOR) == 0);
+//	public static void appendMonth(StringBuilder sb, int monthDay) {
+//		int month = monthDay / MONTH_MULTIPLICATOR;
+//		assert ((monthDay - month * MONTH_MULTIPLICATOR) == 0);
+//
+//		appendHyphen2Digits(sb, month);
+//	}
+//
+//	public static void appendDay(StringBuilder sb, int day) {
+//		assert (day < 31); // day range 0-30
+//
+//		appendHyphen2Digits(sb, day);
+//	}
 
-		appendHyphen2Digits(sb, month);
-	}
+//	private static void appendHyphen2Digits(StringBuilder sb, int n) {
+//		if (n > 9) {
+//			sb.append("-" + n);
+//		} else {
+//			sb.append("-0" + n);
+//		}
+//	}
 
-	public static void appendDay(StringBuilder sb, int day) {
-		assert (day < 31); // day range 0-30
+//	public static void appendMonthDay(StringBuilder sb, int monthDay) {
+//		// monthDay: Month * 32 + Day
+//
+//		// month
+//		int month = monthDay / MONTH_MULTIPLICATOR;
+//		appendHyphen2Digits(sb, month);
+//		// day
+//		appendHyphen2Digits(sb, monthDay - (month * MONTH_MULTIPLICATOR));
+//	}
 
-		appendHyphen2Digits(sb, day);
-	}
+//	public static void appendTime(StringBuilder sb, int time) {
+//		// time = ( ( hour * 60) + minutes ) * 60 + seconds ;
+//		final int secHour = 60 * 60;
+//		final int secMinute = 60;
+//
+//		int hour = time / secHour;
+//		time -= hour * secHour;
+//		int minutes = time / secMinute;
+//		int seconds = time - minutes * secMinute;
+//
+//		sb.append(hour < 10 ? "0" + hour : hour);
+//		sb.append(':');
+//		sb.append(minutes < 10 ? "0" + minutes : minutes);
+//		sb.append(':');
+//		sb.append(seconds < 10 ? "0" + seconds : seconds);
+//	}
 
-	private static void appendHyphen2Digits(StringBuilder sb, int n) {
-		if (n > 9) {
-			sb.append("-" + n);
-		} else {
-			sb.append("-0" + n);
-		}
-	}
+//	public static void appendFractionalSeconds(StringBuilder sb, int fracSecs) {
+//		if (fracSecs > 0) {
+//			// append after reversing fracSecs
+//			sb.append('.');
+//			sb.append(new StringBuilder(fracSecs + "").reverse());
+//		}
+//	}
 
-	public static void appendMonthDay(StringBuilder sb, int monthDay) {
-		// monthDay: Month * 32 + Day
-
-		// month
-		int month = monthDay / MONTH_MULTIPLICATOR;
-		appendHyphen2Digits(sb, month);
-		// day
-		appendHyphen2Digits(sb, monthDay - (month * MONTH_MULTIPLICATOR));
-	}
-
-	public static void appendTime(StringBuilder sb, int time) {
-		// time = ( ( hour * 60) + minutes ) * 60 + seconds ;
-		final int secHour = 60 * 60;
-		final int secMinute = 60;
-
-		int hour = time / secHour;
-		time -= hour * secHour;
-		int minutes = time / secMinute;
-		int seconds = time - minutes * secMinute;
-
-		sb.append(hour < 10 ? "0" + hour : hour);
-		sb.append(':');
-		sb.append(minutes < 10 ? "0" + minutes : minutes);
-		sb.append(':');
-		sb.append(seconds < 10 ? "0" + seconds : seconds);
-	}
-
-	public static void appendFractionalSeconds(StringBuilder sb, int fracSecs) {
-		if (fracSecs > 0) {
-			// append after reversing fracSecs
-			sb.append('.');
-			sb.append(new StringBuilder(fracSecs + "").reverse());
-		}
-	}
-
-	public static void appendTimezone(StringBuilder sb, int tz) {
-
-		if (tz == 0) {
-			sb.append('Z');
-		} else {
-			// +/-
-			if (tz < 0) {
-				sb.append('-');
-				tz *= -1;
-			} else {
-				sb.append('+');
-			}
-			// hours
-			int hours = tz / 60;
-			if (hours > 9) {
-				sb.append(hours);
-			} else {
-				sb.append('0');
-				sb.append(hours);
-			}
-			sb.append(':');
-			int minutes = tz - (hours * 60);
-			if (minutes > 9) {
-				sb.append(minutes);
-			} else {
-				sb.append('0');
-				sb.append(minutes);
-			}
-		}
-
-	}
+//	public static void appendTimezone(StringBuilder sb, int tz) {
+//
+//		if (tz == 0) {
+//			sb.append('Z');
+//		} else {
+//			// +/-
+//			if (tz < 0) {
+//				sb.append('-');
+//				tz *= -1;
+//			} else {
+//				sb.append('+');
+//			}
+//			// hours
+//			int hours = tz / 60;
+//			if (hours > 9) {
+//				sb.append(hours);
+//			} else {
+//				sb.append('0');
+//				sb.append(hours);
+//			}
+//			sb.append(':');
+//			int minutes = tz - (hours * 60);
+//			if (minutes > 9) {
+//				sb.append(minutes);
+//			} else {
+//				sb.append('0');
+//				sb.append(minutes);
+//			}
+//		}
+//
+//	}
 
 }

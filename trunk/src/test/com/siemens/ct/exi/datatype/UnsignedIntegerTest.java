@@ -128,10 +128,10 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsCharacters(), s));
 	}
 
 	public void testUnsignedIntegerS1() throws IOException {
@@ -141,10 +141,10 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsCharacters(), s));
 	}
 
 	public void testUnsignedIntegerS329() throws IOException {
@@ -154,11 +154,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		char[] sDec = getBitDecoder().decodeUnsignedIntegerAsString();
+		char[] sDec = getBitDecoder().decodeUnsignedIntegerAsCharacters();
 		assertTrue(equals(sDec, s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsCharacters(), s));
 	}
 
 	public void testUnsignedIntegerS2147483647() throws IOException  {
@@ -168,10 +168,10 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerAsCharacters(), s));
 	}
 
 	public void testUnsignedLongS1() throws IOException {
@@ -181,10 +181,10 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedLongAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeUnsignedLongAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedLongAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeUnsignedLongAsCharacters(), s));
 	}
 
 	public void testUnsignedIntegerSBig1() throws IOException {
@@ -194,11 +194,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsCharacters();
 		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsCharacters(),
 				s));
 	}
 
@@ -213,11 +213,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsCharacters();
 		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsCharacters(),
 				s));
 	}
 
@@ -228,11 +228,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsCharacters();
 		assertTrue(s + "!=" + new String(s1), equals(s1, s));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsCharacters(),
 				s));
 	}
 
@@ -244,11 +244,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsString();
+		char[] s1 = getBitDecoder().decodeUnsignedBigIntegerAsCharacters();
 		assertTrue(s2 + "!=" + new String(s1), equals(s1, s2));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsString(),
+		assertTrue(equals(getByteDecoder().decodeUnsignedBigIntegerAsCharacters(),
 				s2));
 	}
 

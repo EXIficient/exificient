@@ -237,15 +237,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		char[] sDecoded;
+		String sDecoded;
 		// bit
-		sDecoded = datatype.readValue(getBitDecoder(), null, null);
-		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
-				sValue));
+		sDecoded = datatype.readValue(getBitDecoder(), null, null).toString();
+		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(getByteDecoder(), null, null);
-		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
-				sValue));
+		sDecoded = datatype.readValue(getByteDecoder(), null, null).toString();
+		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
 	public void testNBitUnsignedIntegerFacet3() throws IOException,
@@ -274,15 +272,13 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		char[] sDecoded;
+		String sDecoded;
 		// bit
-		sDecoded = datatype.readValue(getBitDecoder(), null, null);
-		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
-				sValue));
+		sDecoded = datatype.readValue(getBitDecoder(), null, null).toString();
+		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(getByteDecoder(), null, null);;
-		assertTrue(sValue + " != " + new String(sDecoded), equals(sDecoded,
-				sValue));
+		sDecoded = datatype.readValue(getByteDecoder(), null, null).toString();
+		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
 	public void testNBitUnsignedIntegerSequence() throws IOException {

@@ -34,7 +34,7 @@ import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFragmentContent;
-import com.siemens.ct.exi.util.sort.LexicographicSort;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
  * TODO Description
@@ -47,21 +47,24 @@ import com.siemens.ct.exi.util.sort.LexicographicSort;
 
 public class SchemaInformedGrammar extends AbstractGrammar {
 
-	protected List<StartElement> globalElements; // subset of entire set of
+	protected List<StartElement> sortedGlobalElements; // subset of entire set of
 													// element
 
+	protected Map<QName, StartElement> globalElements;
+
+	protected Map<QName, Attribute> globalAttributes;
+	
 	protected Map<QName, TypeGrammar> grammarTypes;
 
-	protected Attribute[] globalAttributes;
 
-	protected Rule builtInFragmentGrammar;
+	protected SchemaInformedRule builtInFragmentGrammar;
 
 	protected SchemaInformedGrammar(GrammarURIEntry[] additionalSchemaEntries,
-			List<StartElement> fragmentElements, List<StartElement> globalElements) {
+			List<StartElement> fragmentElements, List<StartElement> sortedGlobalElements) {
 		super(true);
 		
 		//	elements
-		this.globalElements = globalElements;
+		this.sortedGlobalElements = sortedGlobalElements;
 
 		//	initialze grammar entries
 		boolean hasEmptyURIEntries = containsEmptyURI(additionalSchemaEntries);
@@ -96,13 +99,11 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		initDocumentGrammar();
 		initFragmentGrammar(fragmentElements);
 
-		// allocate memory
-		grammarTypes = new HashMap<QName, TypeGrammar>();
-		globalAttributes = new Attribute[0];
-	}
-
-	protected void setTypeGrammars(Map<QName, TypeGrammar> grammarTypes) {
-		this.grammarTypes = grammarTypes;
+		// initialize map of global element
+		this.globalElements = new HashMap<QName, StartElement>();
+		for (StartElement globalElement : sortedGlobalElements) {
+			globalElements.put(globalElement.getQName(), globalElement);
+		}
 	}
 	
 	protected static boolean containsEmptyURI(GrammarURIEntry[] entries) {
@@ -113,40 +114,34 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		}
 		return false;
 	}
-
-	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {
-		assert (namespaceURI != null && name != null);
-
-		QName en = new QName(namespaceURI, name);
-		return grammarTypes.get(en);
-	}
-
-	public StartElement getGlobalElement(String namespaceURI, String localName) {
-		for (StartElement globalElement : globalElements) {
-			QName qname = globalElement.getQName();
-			if (LexicographicSort.compare(qname.getNamespaceURI(),
-					qname.getLocalPart(), namespaceURI, localName) == 0) {
+	
+	public StartElement getGlobalElement(QName qname) {
+		//	TODO build hash-map
+		for (StartElement globalElement : sortedGlobalElements) {
+			if(globalElement.getQName().equals(qname)) {
 				return globalElement;
 			}
 		}
 
 		return null;
 	}
-
-	protected void setGlobalAttributes(Attribute[] globalAttributes) {
+	
+	protected void setGlobalAttributes(Map<QName, Attribute> globalAttributes) {
 		assert (globalAttributes != null);
 		this.globalAttributes = globalAttributes;
 	}
 
-	public Attribute getGlobalAttribute(String namespaceURI, String name) {
-		for (Attribute at : globalAttributes) {
-			QName qname = at.getQName();
-			if (namespaceURI.equals(qname.getNamespaceURI())
-					&& name.equals(qname.getLocalPart())) {
-				return at;
-			}
-		}
-		return null;
+	public Attribute getGlobalAttribute(QName qname) {
+		return globalAttributes.get(qname);
+	}
+	
+	protected void setTypeGrammars(Map<QName, TypeGrammar> grammarTypes) {
+		assert (grammarTypes != null);
+		this.grammarTypes = grammarTypes;
+	}
+
+	public TypeGrammar getTypeGrammar(QName qname) {
+		return grammarTypes.get(qname);
 	}
 
 	protected void initDocumentGrammar() {
@@ -160,10 +155,10 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		// DocEnd rule
 		Rule builtInDocEndGrammar = new DocEnd("DocEnd");
 		// DocContent rule
-		Rule builtInDocContentGrammar = new SchemaInformedDocContent(
+		SchemaInformedRule builtInDocContentGrammar = new SchemaInformedDocContent(
 				builtInDocEndGrammar, "DocContent");
 		// DocContent rule & add global elements (sorted)
-		for (StartElement globalElement : globalElements) {
+		for (StartElement globalElement : sortedGlobalElements) {
 			builtInDocContentGrammar.addRule(globalElement,
 					builtInDocEndGrammar);
 		}
@@ -183,7 +178,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		/*
 		 * Fragment Content
 		 */
-		Rule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
+		SchemaInformedRule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
 				"FragmentContent");
 		for (StartElement namedElement : namedElements) {
 			builtInFragmentContentGrammar.addRule(namedElement,

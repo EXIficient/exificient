@@ -54,7 +54,6 @@ import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
-import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.util.sort.LexicographicSort;
@@ -169,7 +168,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		return super.createAllCM(particle);
 	}
 
-	protected static void addNewState(Map<CMState, SchemaInformedRule> states,
+	private static SchemaInformedRule addNewState(Map<CMState, SchemaInformedRule> states,
 			CMState key, boolean isMixedContent) {
 		SchemaInformedRule val = new SchemaInformedElement();
 		//	is end
@@ -181,6 +180,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			val.addRule(CHARACTERS_GENERIC, val);
 		}
 		states.put(key, val);
+		
+		return val;
 	}
 
 	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd, boolean isMixedContent)
@@ -222,7 +223,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 	
 
-	protected void handleStateEntries(Vector<XSObject> possibleElements,
+	private void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
 			Map<CMState, SchemaInformedRule> knownStates,
 			boolean isMixedContent) throws EXIException {
@@ -363,10 +364,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 * @param nextState
 	 * @return requires further processing of nextState
 	 */
-	protected boolean handleStateEntry(CMState startState,
+	private boolean handleStateEntry(CMState startState,
 			Map<CMState, SchemaInformedRule> knownStates, Event xsEvent,
 			CMState nextState, boolean isMixedContent) {
-		Rule startRule = knownStates.get(startState);
+		SchemaInformedRule startRule = knownStates.get(startState);
 
 		if (knownStates.containsKey(nextState)) {
 			startRule.addRule(xsEvent, knownStates.get(nextState));
@@ -389,7 +390,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 * @param el
 	 * @return
 	 */
-	protected List<XSElementDeclaration> getPossibleElementDeclarations(
+	private List<XSElementDeclaration> getPossibleElementDeclarations(
 			XSElementDeclaration el) {
 
 		List<XSElementDeclaration> listElements = new ArrayList<XSElementDeclaration>();
@@ -414,7 +415,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		return listElements;
 	}
 
-	protected static void printTransition(CMState startState, XSObject xs,
+	private static void printTransition(CMState startState, XSObject xs,
 			CMState nextState) {
 		if (DEBUG) {
 			System.out.println("\t" + startState + " --> " + xs + " --> "

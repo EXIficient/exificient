@@ -61,10 +61,14 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public byte[] decodeBinary() throws IOException {
 		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
-
-		for (int i = 0; i < length; i++) {
-			result[i] = (byte) is.read();
+		
+		int readBytes = is.read(result);
+		if(readBytes < length) {
+			//	special case: not all bytes are read 
+			while( (readBytes += is.read(result, readBytes, length-readBytes)) < length ) {
+			}
 		}
+		
 		return result;
 	}
 

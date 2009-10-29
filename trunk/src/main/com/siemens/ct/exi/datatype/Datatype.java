@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -63,8 +64,8 @@ public interface Datatype {
 	/*
 	 * Decoder
 	 */
-	public char[] readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, QName context)
+	public Value readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, QName context)
 			throws IOException;
 	
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException;
+	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException;
 }

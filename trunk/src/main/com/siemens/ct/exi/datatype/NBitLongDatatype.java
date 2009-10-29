@@ -29,6 +29,8 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -95,13 +97,13 @@ public class NBitLongDatatype extends AbstractDatatype {
 		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		// decode value
 		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
 		// add offset (lower bound)
-		return MethodsBag.itos( decodedValue + lowerBound );
+		return new StringValue(MethodsBag.itos( decodedValue + lowerBound ));
 	}
 
 }

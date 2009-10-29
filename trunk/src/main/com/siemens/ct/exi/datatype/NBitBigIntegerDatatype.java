@@ -29,7 +29,10 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.util.HugeInteger;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -42,7 +45,10 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class NBitBigIntegerDatatype extends AbstractDatatype {
 	protected final BigInteger lowerBound;
+	protected final HugeInteger hiLowerBound;
 	protected final BigInteger upperBound;
+	protected final HugeInteger hiUpperBound;
+	
 	protected final int numberOfBits4Range;
 	
 	private int valueToEncode;
@@ -52,24 +58,38 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 		super(BuiltInType.NBIT_BIG_INTEGER, datatypeIdentifier);
 		this.rcs = new XSDIntegerCharacterSet();
 
+		//	lower bound
 		this.lowerBound = lowerBound;
+		this.hiLowerBound = getHugeInteger(lowerBound);
+		// upper bound
 		this.upperBound = upperBound;
+		this.hiUpperBound = getHugeInteger(upperBound);
 
 		// calculate number of bits to represent range
 		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
 	}
-
-	public BigInteger getLowerBound() {
-		return lowerBound;
+	
+	protected static final HugeInteger getHugeInteger(BigInteger bi) {
+		if (bi.bitLength() <= 63) {
+			//	fits into long
+			return new HugeInteger(bi.longValue());
+		} else {
+			//	need to use BigInteger
+			return new HugeInteger(bi);
+		}
 	}
 
-	public BigInteger getUpperBound() {
-		return upperBound;
-	}
-
-	public int getNumberOfBits() {
-		return numberOfBits4Range;
-	}
+//	public BigInteger getLowerBound() {
+//		return lowerBound;
+//	}
+//
+//	public BigInteger getUpperBound() {
+//		return upperBound;
+//	}
+//
+//	public int getNumberOfBits() {
+//		return numberOfBits4Range;
+//	}
 	
 	public boolean isValid(String value) {
 		try {
@@ -96,13 +116,18 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
 	}
 	
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		// decode value
 		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
 		// add offset (lower bound)
-		return lowerBound.add(BigInteger.valueOf(decodedValue)).toString().toCharArray();
+		if (hiLowerBound.isLongValue) {
+			return new StringValue( MethodsBag.itos(hiLowerBound.longValue + decodedValue) );
+		} else {
+			//	not a very efficient way!!
+			return new StringValue(lowerBound.add(BigInteger.valueOf(decodedValue)).toString().toCharArray());	
+		}
 	}
 
 }

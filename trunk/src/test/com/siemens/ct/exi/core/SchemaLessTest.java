@@ -313,7 +313,7 @@ public class SchemaLessTest extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh1));
+			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -344,7 +344,7 @@ public class SchemaLessTest extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh1));
+			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -500,7 +500,7 @@ public class SchemaLessTest extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh1));
+			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -615,7 +615,7 @@ public class SchemaLessTest extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh2));
+			assertTrue(decoder.getAttributeValue().equals(atCh2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();

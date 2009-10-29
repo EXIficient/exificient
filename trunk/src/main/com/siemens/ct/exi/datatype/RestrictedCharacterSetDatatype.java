@@ -29,6 +29,8 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -106,9 +108,9 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		}
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
-		char[] value;
+		Value value;
 
 		int i = valueChannel.decodeUnsignedInteger();
 
@@ -128,7 +130,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			int numberOfBits = rcs.getCodingLength();
 			int size = rcs.size();
 
-			value = new char[slen];
+			value = new StringValue(new char[slen]);
+			char[] cValue = value.toCharacters();
 
 			for (int k = 0; k < slen; k++) {
 				int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);
@@ -140,8 +143,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 					codePoint = rcs.getCodePoint(code);
 				}
 
-				Character.toChars(codePoint, value, k);
-
+				Character.toChars(codePoint, cValue, k);
 			}
 
 			// After encoding the string value, it is added to both the

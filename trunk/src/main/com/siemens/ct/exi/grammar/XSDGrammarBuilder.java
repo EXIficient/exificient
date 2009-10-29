@@ -273,11 +273,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 */
 		XSNamedMap nm = xsModel
 				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
-		Attribute[] globalAttributes = new Attribute[nm.getLength()];
+		Map<QName, Attribute> globalAttributes = new HashMap<QName, Attribute>();
 		for (int i = 0; i < nm.getLength(); i++) {
 			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
 			Attribute at = getAttribute(atDecl);
-			globalAttributes[i] = at;
+			globalAttributes.put(at.getQName(), at);
 		}
 		sig.setGlobalAttributes(globalAttributes);
 
@@ -479,6 +479,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// EE
 		if (attributeWC != null) {
 			ruleStart.addTerminalRule(END_ELEMENT);
+			handleAttributeWildCard(attributeWC, ruleStart);
 		}
 
 		if (attributes != null && attributes.getLength() > 0) {
@@ -590,6 +591,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	public static TypeGrammar getUrTypeRule() {
 		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
+		urType1.setLabel("any");
 		urType1.addRule(START_ELEMENT_GENERIC, urType1);
 		urType1.addTerminalRule(END_ELEMENT);
 		urType1.addRule(new CharactersGeneric(), urType1);
@@ -751,34 +753,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			isMixedContent = true;
 			ruleContent = handleParticle(ctd, isMixedContent);
 
-			// // mixed transitions
-			// addMixedTransitions(ruleContent, new ArrayList<Rule>());
-			// ruleContent.setLabel("MixedContent");
 			break;
 		}
 
 		return ruleContent;
 
 	}
-
-	// protected void addMixedTransitions(Rule ruleMixedContent, List<Rule>
-	// handled) {
-	// if (handled.contains(ruleMixedContent)) {
-	// // abort
-	// return;
-	// }
-	// handled.add(ruleMixedContent);
-	//
-	// // mixed --> generic characters events
-	// ruleMixedContent.addRule(new CharactersGeneric(), ruleMixedContent);
-	//
-	// for (int i = 0; i < ruleMixedContent.getNumberOfEvents(); i++) {
-	// Rule r = ruleMixedContent.lookFor(i).next;
-	// if (!r.isTerminalRule()) {
-	// addMixedTransitions(r, handled);
-	// }
-	// }
-	// }
 
 	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {

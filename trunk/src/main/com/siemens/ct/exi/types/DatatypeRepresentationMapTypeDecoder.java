@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -58,7 +59,7 @@ public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder
 //				.getSchemaDatatype(), datatypeRepresentation);
 	}
 
-	public char[] readValue(Datatype datatype, QName context,
+	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException {
 		throw new RuntimeException("TODO TyoeEncoder DatatypeRespresentationMap");
 	}

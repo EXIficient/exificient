@@ -74,12 +74,12 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc), val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
 	}
 
 	@Test
@@ -122,12 +122,12 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc), val1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c2, bdc), val1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val3));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc), val3));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc), val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c2, bdc).toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val3));
 	}
 
 	@Test
@@ -187,16 +187,16 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc), atCh1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc), ch1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc), ch2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex3, bdc), ch3));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc), atCh2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc), ch1));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc), ch2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch2));
-		assertTrue(equals(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc), ch3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString().equals(atCh1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc).toString().equals(ch1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc).toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex3, bdc).toString().equals(ch3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString().equals(atCh2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc).toString().equals(ch1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc).toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch3));
 	}
 
 }

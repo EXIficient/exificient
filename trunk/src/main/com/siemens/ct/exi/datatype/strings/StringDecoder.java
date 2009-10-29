@@ -23,18 +23,19 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 public interface StringDecoder extends StringCoder {
 
-	public void addValue(QName context, char[] value);
+	public void addValue(QName context, Value value);
 
-	public char[] readValue(QName context, DecoderChannel channel)
+	public Value readValue(QName context, DecoderChannel channel)
 			throws IOException;
 
-	public char[] readValueLocalHit(QName context,
+	public Value readValueLocalHit(QName context,
 			DecoderChannel valueChannel) throws IOException;
 
-	public char[] readValueGlobalHit(QName context,
+	public Value readValueGlobalHit(QName context,
 			DecoderChannel valueChannel) throws IOException;
 
 }

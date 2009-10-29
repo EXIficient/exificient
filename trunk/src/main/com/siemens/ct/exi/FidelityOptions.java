@@ -132,28 +132,43 @@ public class FidelityOptions {
 			throws UnsupportedOption {
 		if (key.equals(FEATURE_STRICT)) {
 			if (decision) {
-				// no other features allowed
+				// no other features allowed (LEXICAL_VALUE is an exception)
+				boolean prevContainedLexVal = options
+						.contains(FEATURE_LEXICAL_VALUE);
 				options.clear();
+				if (prevContainedLexVal) {
+					options.add(FEATURE_LEXICAL_VALUE);
+				}
 
-				options.add(key);
+				options.add(FEATURE_STRICT);
 				isStrict = true;
 			} else {
 				// remove strict (if present)
 				options.remove(key);
 				isStrict = false;
 			}
+		} else if (key.equals(FEATURE_LEXICAL_VALUE)) {
+			//	LEXICAL_VALUE is special given that it does not affect grammars
+			if (decision) {
+				options.add(key);
+			} else {
+				// remove option (if present)
+				options.remove(key);
+			}
 		} else if (key.equals(FEATURE_COMMENT) || key.equals(FEATURE_PI)
 				|| key.equals(FEATURE_DTD) || key.equals(FEATURE_PREFIX)
-				|| key.equals(FEATURE_LEXICAL_VALUE) || key.equals(FEATURE_WS)
-				|| key.equals(FEATURE_SC)) {
+				|| key.equals(FEATURE_WS) || key.equals(FEATURE_SC)) {
 			if (decision) {
 				//	
 				if (isStrict()) {
-					throw new UnsupportedOption(
-							"StrictMode is exclusive and does not allow any other option.");
-				} else {
-					options.add(key);
+					options.remove(FEATURE_STRICT);
+					this.isStrict = false;
+					//	TODO inform user that STRICT mode is de-activated
+//					throw new UnsupportedOption(
+//							"StrictMode is exclusive and does not allow any other option.");
 				}
+				
+				options.add(key);
 			} else {
 				// remove option (if present)
 				options.remove(key);
@@ -176,13 +191,13 @@ public class FidelityOptions {
 	}
 
 	/**
-	 * Convenience method returning whether all fidelity options are turned off.
+	 * Convenience method returning whether all fidelity options that affect
+	 * grammars are turned off (e.g. Preserver.LEXICAL_VALUE is still allowed).
 	 * 
 	 * @return boolean whether strict mode is in play
 	 */
 	public boolean isStrict() {
 		return isStrict;
-		// return options.contains ( FEATURE_STRICT );
 	}
 
 	@Override

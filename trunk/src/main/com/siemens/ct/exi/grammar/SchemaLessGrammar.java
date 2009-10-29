@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -87,16 +89,16 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		return builtInFragmentGrammar;
 	}
 
-	public Attribute getGlobalAttribute(String namespaceURI, String name) {
+	public Attribute getGlobalAttribute(QName qname) {
 		return null;
 	}
 
-	public TypeGrammar getTypeGrammar(String namespaceURI, String name) {
+	public TypeGrammar getTypeGrammar(QName qname) {
 		// no type grammar available
 		return null;
 	}
 
-	public StartElement getGlobalElement(String namespaceURI, String localName) {
+	public StartElement getGlobalElement(QName qname) {
 		return null;
 	}
 }

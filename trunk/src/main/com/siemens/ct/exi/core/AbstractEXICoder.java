@@ -51,10 +51,11 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 public abstract class AbstractEXICoder {
 
 	// factory
-	protected EXIFactory exiFactory;
-	protected Grammar grammar;
-	protected boolean isSchemaInformed;
-	protected FidelityOptions fidelityOptions;
+	protected final EXIFactory exiFactory;
+	protected final Grammar grammar;
+	protected final boolean isSchemaInformed;
+	protected final FidelityOptions fidelityOptions;
+	protected final boolean preservePrefix;
 
 	// error handler
 	protected ErrorHandler errorHandler;
@@ -62,14 +63,13 @@ public abstract class AbstractEXICoder {
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
 
-	// Context (incl. stack)
-	protected QName elementContext;
-	protected List<QName> elementContextStack;
-
-	// currentRule and rule stack when traversing the EXI document
+	// element-context and rule (stack) while traversing the EXI document
+	protected ElementContext elementContext;
 	protected Rule currentRule;
-	protected List<Rule> openRules;
-
+	private ElementContext[] elementContextStack;
+	private int elementContextStackIndex;
+	public static final int INITIAL_STACK_SIZE = 16;
+	
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
 
@@ -82,6 +82,10 @@ public abstract class AbstractEXICoder {
 		this.grammar = exiFactory.getGrammar();
 		this.isSchemaInformed = grammar.isSchemaInformed();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
+		
+		// preserve prefixes
+		preservePrefix = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
 
 		// namespaces/prefixes
 		namespaces = new NamespaceSupport();
@@ -91,8 +95,7 @@ public abstract class AbstractEXICoder {
 
 		// init once (runtime lists et cetera)
 		runtimeElements = new HashMap<QName, StartElement>();
-		openRules = new ArrayList<Rule>();
-		elementContextStack = new ArrayList<QName>();
+		elementContextStack = new ElementContext[INITIAL_STACK_SIZE];
 		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
 		
 		// init URI entries for the first time
@@ -114,38 +117,31 @@ public abstract class AbstractEXICoder {
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
+	
+	public NamespaceSupport getNamespaces() {
+		return this.namespaces;
+	}
 
 	// re-init (rule stack etc)
 	protected void initForEachRun() throws EXIException, IOException {
-		// stack when traversing the EXI document
-		openRules.clear();
-		currentRule = null;
 		// namespaces/prefixes
 		namespaces.reset();
-		// (core) context
-		elementContextStack.clear();
-		elementContextStack.add(elementContext = null);
-		initForEachRunContext();
+		
 		// clear runtime rules
 		runtimeElements.clear();
-
-		// possible root elements
-		if (exiFactory.isFragment()) {
-			// push stack with fragment grammar
-			openRules.add(currentRule = grammar.getBuiltInFragmentGrammar());
-		} else {
-			// push stack with document grammar
-			openRules.add(currentRule = grammar.getBuiltInDocumentGrammar());
-		}
-	}
-
-	protected void initForEachRunContext() {
-		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
+		
+		// possible document/fragment grammar
+		currentRule = exiFactory.isFragment() ? grammar.getBuiltInFragmentGrammar() : grammar.getBuiltInDocumentGrammar();
+		
+		// (core) context
+		elementContextStackIndex = 0;
+		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(null, currentRule);
 		
 		/*
-		 * Remove entries from runtime lists that could have been added
+		 * Remove entries from runtime lists that may have been added
 		 * from a previous coding step
 		 */
+		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
 		//	remove URIs 
 		assert(grammarURIEntries.length <= runtimeURIEntries.size() );
 		int uriSize;
@@ -160,7 +156,6 @@ public abstract class AbstractEXICoder {
 			int localNameSize;
 			while(grammarLocalNames.length < (localNameSize = rue.getLocalNameSize() )) {
 				rue.removeLocalName(localNameSize-1);
-				// System.out.println("remove!!!");
 			}
 			// prefixes
 			String[] grammarPrefixes = grammarURIEntries[i].prefixes;
@@ -169,91 +164,55 @@ public abstract class AbstractEXICoder {
 				rue.removePrefix(prefixSize-1);
 			}
 		}
-		
 		uriContext = runtimeURIEntries.get(0);
 	}
 
-	public NamespaceSupport getNamespaces() {
-		return namespaces;
-	}
-
-	protected final void replaceRuleAtTheTop(Rule top) {
-		assert (!openRules.isEmpty());
-		assert (top != null);
-
-		if (top != currentRule) {
-			openRules.set(openRules.size() - 1, currentRule = top);
+	protected final void pushElement(StartElement se) {
+		// update "rule" item of current peak (for popElement() later on) 
+		elementContext.rule = currentRule;	
+		//	set "new" current-rule
+		currentRule = se.getRule();
+		//	create new stack item & push it
+		elementContext = new ElementContext(se.getQName(), currentRule);
+		if (elementContextStack.length == (++elementContextStackIndex)) {
+			//	extend array
+			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
+			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0, elementContextStack.length);
+			elementContextStack = elementContextStackNew;
 		}
-	}
-
-	protected void pushElementContext(QName context) {
-		elementContext = context;
-		// push context stack
-		elementContextStack.add(context);
-		// push NS context
+		elementContextStack[elementContextStackIndex] = elementContext;
+		// NS context
 		namespaces.pushContext();
 	}
 
-	protected final void popElementContext() {
-		// context stack
-		assert (!elementContextStack.isEmpty());
-		int sizeContext = elementContextStack.size();
-		elementContextStack.remove(sizeContext - 1);
-		elementContext = elementContextStack.get(sizeContext - 2);
-
+	protected final void popElement() {
+		assert (this.elementContextStackIndex > 0);
+		//	pop element from stack
+		elementContextStack[elementContextStackIndex--] = null;	// let gc do the rest
+		elementContext = elementContextStack[elementContextStackIndex];
+		// update current rule to new (old) element stack
+		currentRule = elementContext.rule;
 		// NS context
 		namespaces.popContext();
 	}
 
-	protected void pushElementRule(Rule r) {
-		currentRule = r;
-		// actually push the rule on the top of the stack
-		assert (currentRule != null);
-		openRules.add(currentRule);
-	}
-
-	protected final void popElementRule() {
-		assert (!openRules.isEmpty());
-		int size = openRules.size();
-		openRules.remove(size - 1);
-		//	update current rule
-		currentRule = openRules.get(size - 2);
-	}
-
-	protected StartElement getGenericStartElement(String uri, String localName) {
+	
+	protected StartElement getGenericStartElement(QName qname) {
 		// is there a global element that should be used
-		StartElement nextSE = grammar.getGlobalElement(uri, localName);
+		StartElement nextSE = grammar.getGlobalElement(qname);
 		if (nextSE == null) {
 			// no global element --> runtime start element
-			// TODO avoid creating QName
-			QName qnameSE = new QName(uri, localName);
-			nextSE = runtimeElements.get(qnameSE);
+			nextSE = runtimeElements.get(qname);
 			if (nextSE == null) {
 				// create new start element and new runtime rule
-				nextSE = new StartElement(qnameSE);
+				nextSE = new StartElement(qname);
 				nextSE.setRule(new SchemaLessStartTag());
 				// add element to runtime map
-				runtimeElements.put(qnameSE, nextSE);
+				runtimeElements.put(qname, nextSE);
 			}
 		}
 
 		return nextSE;
-	}
-
-	protected QName getAttributeContext(final String namespaceURI,
-			final String localName) {
-		updateURIContext(namespaceURI);
-		
-		QName atContext;
-		Integer localNameID = uriContext.getLocalNameID(localName);
-		if (localNameID == null) {
-			atContext = uriContext.addLocalName(localName);
-		} else {
-			atContext = uriContext.getNameContext(localNameID);
-		}
-		assert (atContext != null);
-
-		return atContext;
 	}
 
 	/*
@@ -286,5 +245,17 @@ public abstract class AbstractEXICoder {
 		errorHandler.warning(new EXIException(message + ", options="
 				+ fidelityOptions));
 		// System.err.println(message);
+	}
+	
+	static final class ElementContext {
+		final QName qname;
+		Rule rule;	// may be modified while coding
+		//	TODO prefix declarations
+		List<Object> prefixDeclarations; 
+
+		public ElementContext(QName qname, Rule rule) {
+			this.qname = qname;
+			this.rule = rule;
+		}
 	}
 }

@@ -29,6 +29,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.XSDDecimal;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -57,9 +58,9 @@ public class DecimalDatatype extends AbstractDatatype {
 		valueChannel.encodeDecimal(lastValidDecimal.isNegative(), lastValidDecimal.getIntegral(), lastValidDecimal.getReverseFractional());
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return valueChannel.decodeDecimalAsString();
+		return valueChannel.decodeDecimal();
 	}
 }

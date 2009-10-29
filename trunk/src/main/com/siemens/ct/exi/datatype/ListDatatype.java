@@ -29,6 +29,8 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.ListValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -45,8 +47,6 @@ public class ListDatatype extends AbstractDatatype {
 	
 	protected int numberOfEnumeratedTypes;
 	protected String lastValidValue;
-	
-	protected StringBuilder sResult;
 
 	public ListDatatype(Datatype listDatatype) {
 		super(BuiltInType.LIST, null);
@@ -59,7 +59,7 @@ public class ListDatatype extends AbstractDatatype {
 
 		this.listDatatype = listDatatype;
 		
-		sResult = new StringBuilder();
+		// sResult = new StringBuilder();
 	}
 
 	public Datatype getListDatatype() {
@@ -130,36 +130,72 @@ public class ListDatatype extends AbstractDatatype {
 		}
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
+		
 
-		sResult.setLength(0);
+//		char[][] itemValues = new char[len][];
+		
+//		int stringSize = 0;
 
+		Value[] values = new Value[len];
+		
 		for (int i = 0; i < len; i++) {
-			sResult.append(listDatatype.readValue(valueChannel, stringDecoder, context));
-			sResult.append(Constants.XSD_LIST_DELIM);
+			values[i] = listDatatype.readValue(valueChannel, stringDecoder, context);
+//			char[] itemValue  = listDatatype.readValue(valueChannel, stringDecoder, context).toCharacters();
+//			itemValues[i] = itemValue;
+//			stringSize += itemValue.length + 1;// value & delim
 		}
-
-		return sResult.toString().toCharArray();
+		
+		return new ListValue(values);
+		
+//		char[] ca = new char[stringSize];
+//		
+//		return getValue(ca , itemValues);
 	}
 	
+//	private static final Value getValue(char[] ca , char[][] itemValues) {
+//		int caIndex = 0;
+//		for (int i = 0; i < itemValues.length; i++) {
+//			char[] itemValue = itemValues[i];
+//			System.arraycopy(itemValue, 0, ca, caIndex, itemValue.length);
+//			caIndex += itemValue.length;
+//			ca[caIndex++] = Constants.XSD_LIST_DELIM_CHAR;
+//		}
+//
+//		return new StringValue(ca);
+//	}
+	
 	@Override
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
 			QName context) throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
 		
 		rcsDecoder.setRestrictedCharacterSet(rcs);
 		
-		sResult.setLength(0);
+		Value[] values = new Value[len];
 		
 		for (int i = 0; i < len; i++) {
-			sResult.append(rcsDecoder.readValue(valueChannel, stringDecoder, context));
-			sResult.append(Constants.XSD_LIST_DELIM);
+			values[i] = rcsDecoder.readValue(valueChannel, stringDecoder, context);
 		}
 		
-		return sResult.toString().toCharArray();
+		return new ListValue(values);
+		
+		
+//		char[][] itemValues = new char[len][];
+//		int stringSize = 0;
+//
+//		for (int i = 0; i < len; i++) {
+//			char[] itemValue  = rcsDecoder.readValue(valueChannel, stringDecoder, context).toCharacters();
+//			itemValues[i] = itemValue;
+//			stringSize += itemValue.length + 1;
+//		}
+//		
+//		char[] ca = new char[stringSize];
+//		
+//		return getValue(ca , itemValues);
 	}
 }
