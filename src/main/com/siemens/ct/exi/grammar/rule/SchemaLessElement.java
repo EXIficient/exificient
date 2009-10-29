@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -76,11 +77,7 @@ public class SchemaLessElement extends SchemaLessContent {
 	}
 
 	@Override
-	// public void learnStartElement(String uri, String localName) {
 	public void learnStartElement(StartElement se) {
-//		StartElement se = new StartElement(uri, localName);
-//		Rule next = getElementContentRule();
-		// addRule(new StartElement(uri, localName), this);
 		addRule(se, this);
 	}
 
@@ -90,7 +87,7 @@ public class SchemaLessElement extends SchemaLessContent {
 	 */
 
 	@Override
-	public void learnAttribute(String uri, String localName) {
+	public void learnAttribute(Attribute at) {
 		// this should never happen!
 		throw new IllegalArgumentException(
 				"ElementContent Rule cannot learn AT events");

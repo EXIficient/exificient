@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
+import com.siemens.ct.exi.grammar.event.Event;
+
 /**
  * TODO Description
  * 
@@ -28,8 +30,20 @@ package com.siemens.ct.exi.grammar.rule;
  */
 
 public interface SchemaInformedRule extends Rule {
+	
+//	/*
+//	 * 
+//	 */
+//	public void addRule(Event event, Rule rule);
+//
+//	public void addTerminalRule(Event event);
+	
+
+	public void addTerminalRule(Event event);
+	
+	
 	/*
-	 * first rule is different (namespace declaration, xsi:typ and xsi:nil)
+	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
 	 */
 	public void setFirstElementRule();
 
@@ -43,6 +57,13 @@ public interface SchemaInformedRule extends Rule {
 	 */
 	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
 
+	
+	/*
+	 * get empty type
+	 */
+	public Rule getTypeEmpty();
+	
+	
 	/*
 	 * Label
 	 */

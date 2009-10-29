@@ -29,6 +29,8 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.XSDFloat;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -57,9 +59,9 @@ public class FloatDatatype extends AbstractDatatype {
 		valueChannel.encodeFloat(lastValidFloat.mantissa, lastValidFloat.exponent);
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return valueChannel.decodeFloatAsString();
+		return new StringValue(valueChannel.decodeFloatAsCharacters());
 	}
 }

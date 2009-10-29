@@ -99,12 +99,12 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void startCDATA() throws SAXException {
 		// <![CDATA[
-		super.characters(Constants.CDATA_START.toCharArray(), 0, Constants.CDATA_START.length());
+		super.characters(Constants.CDATA_START_ARRAY, 0, Constants.CDATA_START_ARRAY.length);
 	}
 
 	public void endCDATA() throws SAXException {
 		// ]]>
-		super.characters(Constants.CDATA_END.toCharArray(), 0, Constants.CDATA_END.length());
+		super.characters(Constants.CDATA_END_ARRAY, 0, Constants.CDATA_END_ARRAY.length);
 	}
 
 	public void startDTD(String name, String publicId, String systemId)

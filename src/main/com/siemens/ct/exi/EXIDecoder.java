@@ -328,13 +328,13 @@ public interface EXIDecoder {
 	 * 
 	 * @return <code>String</code> for attribute value
 	 */
-	public char[] getAttributeValue();
+	public String getAttributeValue();
 
 	/**
 	 * Provides characters as well as significant/insignificant whitespace
 	 * characters
 	 * 
-	 * @return <code>String</code> for characters
+	 * @return <code>char[]</code> for characters
 	 */
 	// public String getCharacters();
 	public char[] getCharacters();
@@ -387,28 +387,6 @@ public interface EXIDecoder {
 	 * @return <code>NamespaceSupport</code> for prefix mapping
 	 */
 	public NamespaceSupport getNamespaces();
-	
-//	/**
-//	 * Returns qualified name for given information items
-//	 * 
-//	 * @return <code>String</code> for qname
-//	 */
-//	public String getQualifiedName(String attributeURI,
-//			String attributeLocalName, String pfx);
-	
-//	/**
-//	 * Provides URI of namespace declaration.
-//	 * 
-//	 * @return <code>String</code> for NS uri
-//	 */
-//	public String getNSUri();
-//
-//	/**
-//	 * Provides prefix of namespace declaration.
-//	 * 
-//	 * @return <code>String</code> for NS prefix
-//	 */
-//	public String getNSPrefix();
 
 	/**
 	 * Provides processing instructions target.

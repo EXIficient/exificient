@@ -20,6 +20,8 @@ package com.siemens.ct.exi.grammar;
 
 import java.io.ByteArrayInputStream;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.GrammarFactory;
@@ -52,7 +54,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getGlobalElement("", "root").getRule();
+		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -86,7 +88,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getGlobalElement("", "root").getRule();
+		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -127,7 +129,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getGlobalElement("", "root").getRule();
+		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -171,7 +173,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule root = g.getGlobalElement("", "root").getRule();
+		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -234,7 +236,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule c = g.getGlobalElement("", "root").getRule();
+		Rule c = g.getGlobalElement(new QName("", "root")).getRule();
 
 		// SE(c), EE
 		// maxOccurs = "0" --> same rule over and over again
@@ -262,7 +264,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule rule = g.getGlobalElement("", "root").getRule();
+		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
 
 		// SE(a), SE(c), EE
 		{
@@ -361,7 +363,7 @@ public class GrammarTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 
-		Rule rule = g.getGlobalElement("", "root").getRule();
+		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
 
 		{
 			assertTrue(rule.getNumberOfEvents() == 4);

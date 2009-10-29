@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -34,25 +35,11 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  */
 
 public interface Rule {
-	/*
-	 * end-rule
-	 */
-	public boolean isTerminalRule();
-	
-	/*
-	 * first-element
-	 */
-	public boolean isFirstElementRule();
 
 	/*
 	 * rule created according to schema information
 	 */
-	public boolean isSchemaRule();
-	
-	/*
-	 * get empty type
-	 */
-	public Rule getTypeEmpty();
+	public boolean isSchemaInformed();
 
 	/*
 	 * number of events
@@ -90,21 +77,20 @@ public interface Rule {
 	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	/*
-	 * 
+	 * TODO move to SchemaInformedRule 
 	 */
 	public void addRule(Event event, Rule rule);
 
-	public void addTerminalRule(Event event);
+	
 
 	/*
 	 * learning grammar
 	 */
-	// public void learnStartElement(String uri, String localName);
 	public void learnStartElement(StartElement se);
 
 	public void learnEndElement();
 
-	public void learnAttribute(String uri, String localName);
+	public void learnAttribute(Attribute at);
 
 	public void learnCharacters();
 
@@ -115,6 +101,7 @@ public interface Rule {
 	
 
 	/*
+	 * TODO move to SchemaInformedRule
 	 * Schema-deviated attributes
 	 */
 	public int getNumberOfSchemaDeviatedAttributes();
@@ -130,8 +117,14 @@ public interface Rule {
 	 * 
 	 */
 	
-	// for encoder
-	public EventInformation lookFor( EventType eventType, String ... args );
+	// for encoder	
+	public EventInformation lookForEvent( EventType eventType );
+	
+	public EventInformation lookForStartElement( String namespaceURI, String localName);
+	public EventInformation lookForStartElementNS( String namespaceURI );
+
+	public EventInformation lookForAttribute( String namespaceURI, String localName);
+	public EventInformation lookForAttributeNS( String namespaceURI );
 	
 	//	for decoder
 	public EventInformation lookFor( int eventCode );

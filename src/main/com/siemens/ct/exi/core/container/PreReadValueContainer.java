@@ -19,26 +19,28 @@
 
 package com.siemens.ct.exi.core.container;
 
+import com.siemens.ct.exi.values.Value;
+
 public class PreReadValueContainer {
 	
-	protected char[][] contentValues;
+	protected Value[] contentValues;
 	protected int index;
 	
-	public PreReadValueContainer(char[][] contentValues) {
+	public PreReadValueContainer(Value[] contentValues) {
 		setValues(contentValues);
 	}
 	
-	protected void setValues(char[][] contentValues) {
+	protected void setValues(Value[] contentValues) {
 		this.contentValues = contentValues;
 		this.index = 0; 
 	}
 	
-	public char[][] getValues() {
+	public Value[] getValues() {
 		return contentValues;
 	}
 	
 	
-	public char[] getNextContantValue() {
+	public Value getNextContantValue() {
 		return contentValues[index++];
 	}
 }

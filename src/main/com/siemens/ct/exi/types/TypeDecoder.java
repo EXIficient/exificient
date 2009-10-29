@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -37,7 +38,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 public interface TypeDecoder extends TypeCoder {
 
-	public char[] readValue(Datatype datatype, QName context,
+	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException;
 
 	/*

@@ -20,6 +20,8 @@ package com.siemens.ct.exi.grammar;
 
 import java.io.ByteArrayInputStream;
 
+import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.FidelityOptions;
@@ -75,8 +77,8 @@ public class EventCodeTest extends TestCase {
 		Grammar g = getGrammarFromSchemaAsString(schema);
 		
 		// Rule r = g.getNamedElement("", "optional").getUniqueRule();
-		Rule rRoot = g.getGlobalElement("", "root").getRule();
-		StartElement seOptional = (StartElement) rRoot.lookFor(EventType.START_ELEMENT, "", "optional").event;
+		Rule rRoot = g.getGlobalElement(new QName("", "root")).getRule();
+		StartElement seOptional = (StartElement) rRoot.lookForStartElement("", "optional").event;
 		Rule rOptional = seOptional.getRule();
 
 		// Sequence: atA, atB, SE(f), SE(e), SE(d), SE(c), SE(b), EE
@@ -86,23 +88,23 @@ public class EventCodeTest extends TestCase {
 		int eventCode = 0;
 
 		// AT( atA )
-		assertTrue(rOptional.lookFor(EventType.ATTRIBUTE, "", "atA").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForAttribute("", "atA").getEventCode() == eventCode++);
 		// AT( atB )
-		assertTrue(rOptional.lookFor(EventType.ATTRIBUTE, "", "atB").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForAttribute("", "atB").getEventCode() == eventCode++);
 		// SE( f )
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "f").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForStartElement("", "f").getEventCode() == eventCode++);
 		// SE( e )
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "e").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForStartElement("", "e").getEventCode() == eventCode++);
 		// SE( d )
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "d").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForStartElement("", "d").getEventCode() == eventCode++);
 		// SE( c )
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "c").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForStartElement("", "c").getEventCode() == eventCode++);
 		// SE( b )
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "b").getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForStartElement("", "b").getEventCode() == eventCode++);
 		// EE
-		assertTrue(rOptional.lookFor(EventType.END_ELEMENT).getEventCode() == eventCode++);
+		assertTrue(rOptional.lookForEvent(EventType.END_ELEMENT).getEventCode() == eventCode++);
 		// Unknown
-		assertTrue(rOptional.lookFor(EventType.START_ELEMENT, "", "unknown") == null);
+		assertTrue(rOptional.lookForStartElement("", "unknown") == null);
 	}
 
 	public void testEventCodeEXISpecExample() throws Exception {
@@ -126,9 +128,9 @@ public class EventCodeTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule Use_color_0 = g.getGlobalElement("", "product").getRule();
+		Rule Use_color_0 = g.getGlobalElement(new QName("", "product")).getRule();
 		// assertTrue(g.isGlobalElement("", "product"));
-		assertTrue(g.getGlobalElement("", "product") != null);
+		assertTrue(g.getGlobalElement(new QName("", "product")) != null);
 		
 		// default fidelity options
 		FidelityOptions fo = FidelityOptions.createDefault();
@@ -137,9 +139,9 @@ public class EventCodeTest extends TestCase {
 		// 1st level
 		assertTrue(Use_color_0.getNumberOfEvents() == 2);
 		// AT( color )
-		assertTrue(Use_color_0.lookFor(EventType.ATTRIBUTE, "", "color").getEventCode() == 0);
+		assertTrue(Use_color_0.lookForAttribute("", "color").getEventCode() == 0);
 		// AT( sku )
-		assertTrue(Use_color_0.lookFor(EventType.ATTRIBUTE, "", "sku").getEventCode() == 1);
+		assertTrue(Use_color_0.lookForAttribute("", "sku").getEventCode() == 1);
 		// 2nd level
 		assertTrue(Use_color_0.get2ndLevelCharacteristics(fo) == 7);
 		// EE 2.0
@@ -173,16 +175,16 @@ public class EventCodeTest extends TestCase {
 		// 1st level
 		assertTrue(Use_color_1.getNumberOfEvents() == 1);
 		// AT( sku )
-		assertTrue(Use_color_1.lookFor(EventType.ATTRIBUTE, "", "sku").getEventCode() == 0);
+		assertTrue(Use_color_1.lookForAttribute("", "sku").getEventCode() == 0);
 
 		// ### Use_sku_1 ###
 		Rule Use_sku_1 = Use_color_1.lookFor(0).next;
 		// 1st level
 		assertTrue(Use_sku_1.getNumberOfEvents() == 2);
 		// SE( description )
-		assertTrue(Use_sku_1.lookFor(EventType.START_ELEMENT, "", "description").getEventCode() == 0);
+		assertTrue(Use_sku_1.lookForStartElement("", "description").getEventCode() == 0);
 		// SE( quantity )
-		assertTrue(Use_sku_1.lookFor(EventType.START_ELEMENT, "", "quantity").getEventCode() == 1);
+		assertTrue(Use_sku_1.lookForStartElement("", "quantity").getEventCode() == 1);
 
 		// ### Term_description0_1 ###
 

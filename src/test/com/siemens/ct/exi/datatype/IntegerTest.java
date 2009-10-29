@@ -72,10 +72,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
 	}
 
 	public void testInteger1S() throws IOException {
@@ -87,10 +87,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
 	}
 
 	public void testIntegerM128S() throws IOException {
@@ -102,10 +102,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
 	}
 
 	// public void testIntegerSpace35S() throws IOException
@@ -135,10 +135,26 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeLong(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeLongAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeLongAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeLong(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeLongAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeLongAsCharacters(), s));
+	}
+
+
+	public void testIntegerBig2() throws IOException {
+		String s = "2137000000000000000000000000001";
+
+		BigInteger xmlInteger = new BigInteger(s);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBigInteger(xmlInteger);
+		bitEC.flush();
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
+		// Byte
+		getByteEncoder().encodeBigInteger(xmlInteger);
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
 	}
 	
 	public void testIntegerBig1() throws IOException {
@@ -150,26 +166,12 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
 	}
 
-	public void testIntegerBig2() throws IOException {
-		String s = "2137000000000000000000000000001";
-
-		BigInteger xmlInteger = new BigInteger(s);
-
-		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBigInteger(xmlInteger);
-		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
-		// Byte
-		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
-	}
 
 	public void testIntegerBig3() throws IOException {
 		String s = "-5153135115135135135135153153135135153";
@@ -180,10 +182,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsString(), s));
+		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsString(), s));
+		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
 	}
 
 	public void testIntegerSequence() throws IOException {

@@ -57,8 +57,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	protected AttributeList exiAttributes;
 
 	// prefix mappings
-	protected List<String> prefixMappingPfx;
-	protected List<String> prefixMappingURI;
+	protected List<PrefixMapping> prefixMappings;
 
 	public SAXEncoder(EXIFactory factory) {
 		this.encoder = factory.createEXIEncoder();
@@ -74,9 +73,8 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
 		}
 
-		// NS mappings
-		prefixMappingPfx = new ArrayList<String>();
-		prefixMappingURI = new ArrayList<String>();
+		// prefix to NS mappings
+		prefixMappings = new ArrayList<PrefixMapping>();
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -97,8 +95,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
-		prefixMappingPfx.add(prefix);
-		prefixMappingURI.add(uri);
+		prefixMappings.add(new PrefixMapping(prefix, uri));
 	}
 
 	// @Override
@@ -133,15 +130,15 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	}
 
 	protected void handleNamespaceDeclarations() throws EXIException, IOException {
-		assert (prefixMappingPfx.size() == prefixMappingURI.size());
+		int size = prefixMappings.size();
+		if ( size > 0) {
+			for (int i = 0; i < size; i++) {
+				PrefixMapping pm = prefixMappings.get(i);
+				encoder.encodeNamespaceDeclaration(pm.uri, pm.prefix);
+			}
 
-		for (int i = 0; i < prefixMappingPfx.size(); i++) {
-			encoder.encodeNamespaceDeclaration(prefixMappingURI.get(i),
-					prefixMappingPfx.get(i));
+			prefixMappings.clear();
 		}
-
-		prefixMappingPfx.clear();
-		prefixMappingURI.clear();
 	}
 
 	protected void handleAttributes(Attributes attributes) throws EXIException, IOException {
@@ -216,6 +213,15 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			throws SAXException {
 		sbChars.append(ch, start, length);
 		// new String(ch, start, length);
+	}
+	
+	static final class PrefixMapping {
+		final String prefix;
+		final String uri;
+		public PrefixMapping(String prefix, String uri) {
+			this.prefix = prefix;
+			this.uri= uri; 
+		}
 	}
 
 }

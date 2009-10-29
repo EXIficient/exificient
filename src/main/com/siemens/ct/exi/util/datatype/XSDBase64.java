@@ -30,8 +30,8 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
  */
 
 public class XSDBase64 {
-	static final byte UNKNOWN = -1;
-	static final char EQUAL_SIGN = '=';
+	// static final byte UNKNOWN = -1;
+	// static final char EQUAL_SIGN = '=';
 
 	byte[] bytes;
 	int length;
@@ -52,7 +52,7 @@ public class XSDBase64 {
 	}
 
 	// Mapping table from 6-bit nibbles to Base64 characters.
-	private static char[] map1 = new char[64];
+	public static final char[] map1 = new char[64];
 	static {
 		int i = 0;
 		for (char c = 'A'; c <= 'Z'; c++)
@@ -66,7 +66,7 @@ public class XSDBase64 {
 	}
 
 	// Mapping table from Base64 characters to 6-bit nibbles.
-	private static byte[] map2 = new byte[128];
+	private static final byte[] map2 = new byte[128];
 	static {
 		for (int i = 0; i < map2.length; i++)
 			map2[i] = -1;
@@ -104,10 +104,9 @@ public class XSDBase64 {
 
 		length = (iLen * 3) / 4;
 
-		if (bytes == null || bytes.length < length) {
-			// extend byte array
-			bytes = new byte[length];
-		}
+		//	create new byte array
+		//	TODO can we re-use old byte array
+		bytes = new byte[length];
 
 		int ip = 0;
 		int op = 0;
@@ -158,10 +157,11 @@ public class XSDBase64 {
 	 */
 	public static char[] encode(byte[] in) {
 		int iLen = in.length;
-
-		int oDataLen = (iLen * 4 + 2) / 3; // output length without padding
-		int oLen = ((iLen + 2) / 3) * 4; // output length including
-		// padding
+		// output length without padding
+		int oDataLen = (iLen * 4 + 2) / 3; 
+		// output length including padding
+		int oLen = ((iLen + 2) / 3) * 4;
+		
 		char[] out = new char[oLen];
 		int ip = 0;
 		int op = 0;

@@ -16,36 +16,35 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.grammar;
+package com.siemens.ct.exi.values;
 
-import javax.xml.namespace.QName;
-
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
-
-/**
- * TODO Description
- * 
- * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
- * 
- * @version 0.3.20080718
- */
-
-public interface Grammar {
+public class StringValue implements Value {
 	
-	public boolean isSchemaInformed();
-
-	public Rule getBuiltInDocumentGrammar();
-
-	public Rule getBuiltInFragmentGrammar();
-
-	public GrammarURIEntry[] getGrammarEntries();
+	public final char[] characters;
+	protected String sValue;
 	
-	public StartElement getGlobalElement(QName qname);
+	public StringValue(char[] ca) {
+		this.characters = ca;
+	}
 	
-	public Attribute getGlobalAttribute(QName qname);
+	public StringValue(String s) {
+		sValue = s;
+		this.characters = sValue.toCharArray();
+	}
 	
-	public TypeGrammar getTypeGrammar(QName qname);
+	public char[] toCharacters() {
+		return characters;
+	}
+	
+	public int getCharactersLength() {
+		return characters.length;
+	}
+	
+	@Override
+	public String toString() {
+		if (sValue == null) {
+			sValue = new String(characters);
+		}
+		return sValue;
+	}
 }

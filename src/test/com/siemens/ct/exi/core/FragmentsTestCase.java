@@ -124,7 +124,7 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh1));
+			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -157,7 +157,7 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at1.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh2));
+			assertTrue(decoder.getAttributeValue().equals(atCh2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -166,7 +166,7 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.getAttributeURI().equals(at2.getNamespaceURI()));
 			assertTrue(decoder.getAttributeLocalName().equals(
 					at2.getLocalPart()));
-			assertTrue(new String(decoder.getAttributeValue()).equals(atCh3));
+			assertTrue(decoder.getAttributeValue().equals(atCh3));
 
 			// decoder.inspectStream();
 			decoder.hasNext();

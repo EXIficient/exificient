@@ -145,6 +145,21 @@ public class SAXDecoder implements XMLReader {
 			assert (eventType == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 			contentHandler.startDocument();
+			
+			//	grammar prefix mapping 
+			NamespaceSupport namespaces = decoder.getNamespaces();
+			@SuppressWarnings("unchecked")
+			Enumeration<String> declaredPrefixes = namespaces
+					.getDeclaredPrefixes();
+			while (declaredPrefixes.hasMoreElements()) {
+				String pfx = declaredPrefixes.nextElement();
+				String uri = namespaces.getURI(pfx);
+				if (uri == null) {
+					uri = XMLConstants.NULL_NS_URI;
+				}
+				contentHandler.startPrefixMapping(pfx, uri);
+			}
+			
 
 			// DocContent
 			while (decoder.hasNext()) {
@@ -205,16 +220,19 @@ public class SAXDecoder implements XMLReader {
 		case NAMESPACE_DECLARATION:
 			// Note: Prefix declaration etc. is done internally
 			decoder.decodeNamespaceDeclaration();
-			// start prefix mapping
-			
 			parseStartTagContent();
 			break;
 		/* ELEMENT CONTENT EVENTS */
 		default:
 			// NO Attribute or NS events anymore --> start deferred element
 
+			// get qname as string
+			//	NOTE: getting qname needs to be done before starting prefix mapping 
+			// given that the qname may require a new qname
+			String qname = decoder.getElementQName();
+			
+			
 			//	TODO start prefix mapping differently!
-			// context prefixes
 			NamespaceSupport namespaces = decoder.getNamespaces();
 			@SuppressWarnings("unchecked")
 			Enumeration<String> declaredPrefixes = namespaces
@@ -229,7 +247,6 @@ public class SAXDecoder implements XMLReader {
 			}
 
 			// start so far deferred start element
-			String qname = decoder.getElementQName();
 			contentHandler.startElement(deferredStartElementUri,
 					deferredStartElementLocalName, qname, attributes);
 			
@@ -356,7 +373,7 @@ public class SAXDecoder implements XMLReader {
 			EXIException {
 
 		attributes.addAttribute(decoder.getAttributeURI(), decoder.getAttributeLocalName(),
-				decoder.getAttributeQName(), ATTRIBUTE_TYPE, new String(decoder.getAttributeValue()));
+				decoder.getAttributeQName(), ATTRIBUTE_TYPE, decoder.getAttributeValue());
 
 		// keep processing startTag events
 		parseStartTagContent();

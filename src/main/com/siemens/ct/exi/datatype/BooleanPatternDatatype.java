@@ -29,6 +29,8 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -71,21 +73,28 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
+		char[] ca;
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
 		switch (booleanID) {
 		case 0:
-			return Constants.XSD_BOOLEAN_FALSE_ARRAY;
+			ca = Constants.XSD_BOOLEAN_FALSE_ARRAY;
+			break;
 		case 1:
-			return Constants.XSD_BOOLEAN_0_ARRAY;
+			ca = Constants.XSD_BOOLEAN_0_ARRAY;
+			break;
 		case 2:
-			return Constants.XSD_BOOLEAN_TRUE_ARRAY;
+			ca = Constants.XSD_BOOLEAN_TRUE_ARRAY;
+			break;
 		case 3:
-			return Constants.XSD_BOOLEAN_1_ARRAY;
+			ca = Constants.XSD_BOOLEAN_1_ARRAY;
+			break;
+		default:
+			throw new RuntimeException("Error while decoding boolean pattern facet");
 		}
-
-		throw new RuntimeException("Error while decoding boolean pattern facet");
+		
+		return new StringValue(ca);
 	}
 }

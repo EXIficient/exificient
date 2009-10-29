@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -41,7 +42,7 @@ public class TypedTypeDecoder extends AbstractTypeDecoder {
 		super(stringDecoder);
 	}
 
-	public char[] readValue(Datatype datatype, QName context, DecoderChannel valueChannel)
+	public Value readValue(Datatype datatype, QName context, DecoderChannel valueChannel)
 			throws IOException {
 		return datatype.readValue(valueChannel, stringDecoder, context);
 	}

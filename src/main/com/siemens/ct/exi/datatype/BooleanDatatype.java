@@ -29,6 +29,8 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.XSDBoolean;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -57,9 +59,9 @@ public class BooleanDatatype extends AbstractDatatype {
 		valueChannel.encodeBoolean(lastValidBoolean);
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return valueChannel.decodeBooleanAsString();
+		return new StringValue(valueChannel.decodeBooleanAsCharacters());
 	}
 }

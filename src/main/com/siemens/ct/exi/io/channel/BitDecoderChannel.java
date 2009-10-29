@@ -62,12 +62,6 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 	public int decodeNBitUnsignedInteger(int n) throws IOException {
 		assert (n >= 0);
 		return (n == 0 ? 0 : istream.readBits(n));
-
-//		if (n == 0) {
-//			return 0;
-//		} else {
-//			return istream.readBits(n);
-//		}
 	}
 
 	/**
@@ -84,10 +78,9 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 	public byte[] decodeBinary() throws IOException {
 		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
-
-		for (int i = 0; i < length; i++) {
-			result[i] = (byte) istream.readBits(8);
-		}
+		
+		istream.read(result, 0, length);
+		
 		return result;
 	}
 

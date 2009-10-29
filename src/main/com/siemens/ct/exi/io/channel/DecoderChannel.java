@@ -19,11 +19,11 @@
 package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.values.DecimalValue;
 
 /**
  * TODO Description
@@ -48,7 +48,7 @@ public interface DecoderChannel {
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException;
 
-	public char[] decodeNBitUnsignedIntegerAsString(int n) throws IOException;
+	public char[] decodeNBitUnsignedIntegerAsCharacters(int n) throws IOException;
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit
@@ -56,21 +56,20 @@ public interface DecoderChannel {
 	 */
 	public boolean decodeBoolean() throws IOException;
 
-	public char[] decodeBooleanAsString() throws IOException;
+	public char[] decodeBooleanAsCharacters() throws IOException;
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
 	public byte[] decodeBinary() throws IOException;
 
-	public char[] decodeBinaryAsString() throws IOException;
+	public char[] decodeBinaryAsCharacters() throws IOException;
 
 	/**
 	 * Decode a string as a length-prefixed sequence of UCS codepoints, each of
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
-	// public String decodeString() throws IOException;
 	public char[] decodeString() throws IOException;
 
 	/**
@@ -80,9 +79,8 @@ public interface DecoderChannel {
 	 * 
 	 * @param length
 	 *            Length of the character sequence to read.
-	 * @return The character sequence as a string.
+	 * @return The character sequence
 	 */
-	// public String decodeStringOnly(int length) throws IOException;
 	public char[] decodeStringOnly(int length) throws IOException;
 
 	/**
@@ -97,11 +95,11 @@ public interface DecoderChannel {
 	
 	public BigInteger decodeUnsignedBigInteger() throws IOException;
 
-	public char[] decodeUnsignedIntegerAsString() throws IOException;
+	public char[] decodeUnsignedIntegerAsCharacters() throws IOException;
 	
-	public char[] decodeUnsignedLongAsString() throws IOException;
+	public char[] decodeUnsignedLongAsCharacters() throws IOException;
 	
-	public char[] decodeUnsignedBigIntegerAsString() throws IOException;
+	public char[] decodeUnsignedBigIntegerAsCharacters() throws IOException;
 
 	/**
 	 * Decode an arbitrary precision integer using a sign bit followed by a
@@ -115,11 +113,11 @@ public interface DecoderChannel {
 	
 	public BigInteger decodeBigInteger() throws IOException;
 
-	public char[] decodeIntegerAsString() throws IOException;
+	public char[] decodeIntegerAsCharacters() throws IOException;
 	
-	public char[] decodeLongAsString() throws IOException;
+	public char[] decodeLongAsCharacters() throws IOException;
 	
-	public char[] decodeBigIntegerAsString() throws IOException;
+	public char[] decodeBigIntegerAsCharacters() throws IOException;
 
 	/**
 	 * Decode a decimal represented as a Boolean sign followed by two Unsigned
@@ -129,9 +127,10 @@ public interface DecoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public BigDecimal decodeDecimal() throws IOException;
-
-	public char[] decodeDecimalAsString() throws IOException;
+	public DecimalValue decodeDecimal() throws IOException;
+	
+	// public BigDecimal decodeDecimal() throws IOException;
+	// public char[] decodeDecimalAsCharacters() throws IOException;
 
 	/**
 	 * Decode a Float represented as two consecutive Integers. The first Integer
@@ -140,11 +139,11 @@ public interface DecoderChannel {
 	 */
 	public float decodeFloat() throws IOException;
 
-	public char[] decodeFloatAsString() throws IOException;
+	public char[] decodeFloatAsCharacters() throws IOException;
 	
 	public double decodeDouble() throws IOException;
 
-	public char[] decodeDoubleAsString() throws IOException;
+	public char[] decodeDoubleAsCharacters() throws IOException;
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
@@ -152,6 +151,6 @@ public interface DecoderChannel {
 	 */
 	public Calendar decodeDateTime(DatetimeType type) throws IOException;
 
-	public char[] decodeDateTimeAsString(DatetimeType type) throws IOException;
+	public char[] decodeDateTimeAsCharacters(DatetimeType type) throws IOException;
 
 }

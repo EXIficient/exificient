@@ -34,6 +34,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EndElement;
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -67,13 +68,10 @@ public abstract class AbstractRule implements Rule {
 		addRule(event, END_RULE);
 	}
 
-	public final boolean isTerminalRule() {
-		return (this == END_RULE);
-	}
 	
-	public boolean isFirstElementRule() {
-		return false;
-	}
+//	public boolean isFirstElementRule() {
+//		return false;
+//	}
 
 	/*
 	 * Do NOT learn per default (non-Javadoc)
@@ -82,14 +80,13 @@ public abstract class AbstractRule implements Rule {
 	 * com.siemens.exi.grammar.rule.Rule#learnStartElement(javax.xml.namespace
 	 * .QName)
 	 */
-	// public void learnStartElement(String uri, String localName) {
 	public void learnStartElement(StartElement se) {
 	}
 
 	public void learnEndElement() {
 	}
 
-	public void learnAttribute(String uri, String localName) {
+	public void learnAttribute(Attribute at) {
 	}
 
 	public void learnCharacters() {

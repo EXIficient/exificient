@@ -16,13 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.grammar;
-
-import javax.xml.namespace.QName;
-
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
+package com.siemens.ct.exi.grammar.rule;
 
 /**
  * TODO Description
@@ -30,22 +24,22 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.3.20081008
  */
 
-public interface Grammar {
-	
-	public boolean isSchemaInformed();
+/*
+ * first rule is different (namespace declaration, xsi:type and xsi:nil)
+ */
+public interface StartSchemaInformedRule extends SchemaInformedRule {
 
-	public Rule getBuiltInDocumentGrammar();
+	/*
+	 * sets whether type is castable
+	 */
+	public void setTypeCastable(boolean hasNamedSubtypes);
 
-	public Rule getBuiltInFragmentGrammar();
+	/*
+	 * sets whether element is nillable
+	 */
+	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
 
-	public GrammarURIEntry[] getGrammarEntries();
-	
-	public StartElement getGlobalElement(QName qname);
-	
-	public Attribute getGlobalAttribute(QName qname);
-	
-	public TypeGrammar getTypeGrammar(QName qname);
 }

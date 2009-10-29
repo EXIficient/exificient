@@ -46,18 +46,18 @@ import com.siemens.ct.exi.util.sort.EventCodeAssignment;
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		SchemaInformedRule {
-	
-	//	contains all necessary event information including event-codes
+
+	// contains all necessary event information including event-codes
 	EventInformation[] containers = new EventInformation[0];
 
-	//	event code lengths
-	protected int codeLengthA;	//	1st level only
-	protected int codeLengthB;	//	2nd OR 3rd level
+	// event code lengths
+	protected int codeLengthA; // 1st level only
+	protected int codeLengthB; // 2nd OR 3rd level
 
-	//	subtype (xsi:type) OR nillable (xsi:nill) ?
+	// subtype (xsi:type) OR nillable (xsi:nill) ?
 	protected boolean isTypeCastable = false;
 	protected boolean isNillable = false;
-	//	EE present
+	// EE present
 	protected boolean hasEndElement = false;
 
 	protected SchemaInformedRule typeEmpty;
@@ -67,7 +67,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	 */
 	protected int leastAttributeEventCode = Constants.NOT_FOUND;
 	protected int numberDeviatedAttributes = 0;
-	
+
 	public AbstractSchemaInformedRule() {
 		super();
 		init();
@@ -78,11 +78,15 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		init();
 	}
 
+	protected final boolean isTerminalRule() {
+		return (this == END_RULE);
+	}
+
 	private void init() {
 		containers = new EventInformation[0];
 	}
 
-	public final boolean isSchemaRule() {
+	public final boolean isSchemaInformed() {
 		return true;
 	}
 
@@ -126,63 +130,75 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 			throw new IllegalArgumentException(
 					"EndRule can not have events attached");
 		}
-		
-		if (event.isEventType(EventType.END_ELEMENT)) {
-			hasEndElement = true;
-		}
 
-		// undecidable choice not allowed!!
-		for(int i=0; i<containers.length; i++) {
-			EventInformation ei = containers[i];
-			if(ei.event.equals(event)) {
-				if(ei.next != rule) {
-					throw new IllegalArgumentException(
-					"Same event " + event + " with indistinguishable 'next' rule");
+		// minor consistency check
+		// TODO more
+		if ((event.isEventType(EventType.END_ELEMENT) || event
+				.isEventType(EventType.ATTRIBUTE_GENERIC) || event
+				.isEventType(EventType.START_ELEMENT_GENERIC))
+				&& lookForEvent(event.getEventType()) != null) {
+			// has already event --> nothing to do
+			// System.err.println("Event " + event + " already present!");
+		} else {
+			if (event.isEventType(EventType.END_ELEMENT)) {
+				hasEndElement = true;
+			}
+
+			// undecidable choice not allowed!!
+			for (int i = 0; i < containers.length; i++) {
+				EventInformation ei = containers[i];
+				if (ei.event.equals(event)) {
+					if (ei.next != rule) {
+						throw new IllegalArgumentException("Same event "
+								+ event + " with indistinguishable 'next' rule");
+					}
 				}
 			}
+
+			// construct new array and update event-codes etc.
+			updateSortedEventRules(event, rule);
 		}
-		
-		// construct new array and update event-codes etc.
-		updateSortedEventRules(event, rule);
 	}
 
 	static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
-	
+
 	protected void updateSortedEventRules(Event newEvent, Rule newRule) {
-		//	create sorted event list
+		// create sorted event list
 		List<Event> sortedEvents = new ArrayList<Event>();
 		// Set<Event> sortedEvents = new TreeSet<Event>();
 		// add old events
-		for(EventInformation ei : containers) {
+		for (EventInformation ei : containers) {
 			sortedEvents.add(ei.event);
 		}
 		// add new event
 		sortedEvents.add(newEvent);
-		//	sort events
+		// sort events
 		Collections.sort(sortedEvents, eventCodeAss);
 
-		//	create new (sorted) container array
-		EventInformation[] newContainers = new EventInformation[sortedEvents.size()];
+		// create new (sorted) container array
+		EventInformation[] newContainers = new EventInformation[sortedEvents
+				.size()];
 		int eventCode = 0;
 		boolean newOneAdded = false;
-		
-		for(Event ev : sortedEvents) {
-			if(ev == newEvent) {
-				newContainers[eventCode] = new SchemaInformedEventInformation(newRule,
-						newEvent, eventCode);
+
+		for (Event ev : sortedEvents) {
+			if (ev == newEvent) {
+				newContainers[eventCode] = new SchemaInformedEventInformation(
+						newRule, newEvent, eventCode);
 				newOneAdded = true;
 			} else {
-				//	update event-code only
-				EventInformation oldEI = containers[newOneAdded ? eventCode - 1 : eventCode];
-				newContainers[eventCode] = new SchemaInformedEventInformation(oldEI.next,
-						oldEI.event, eventCode);
+				// update event-code only
+				EventInformation oldEI = containers[newOneAdded ? eventCode - 1
+						: eventCode];
+				newContainers[eventCode] = new SchemaInformedEventInformation(
+						oldEI.next, oldEI.event, eventCode);
 			}
 			eventCode++;
 		}
-		//	re-set *old* array
+		// re-set *old* array
 		containers = newContainers;
-		
-		//	calculate ahead of time two different first level code lengths
+
+		// calculate ahead of time two different first level code lengths
 		codeLengthA = MethodsBag.getCodingLength(getNumberOfEvents());
 		codeLengthB = MethodsBag.getCodingLength(getNumberOfEvents() + 1);
 
@@ -236,39 +252,99 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return this;
 	}
 
-	// for encoder
-	public EventInformation lookFor(EventType eventType, String ... args ) {
+	// // for encoder
+	// public EventInformation lookFor(EventType eventType, String... args) {
+	// for (EventInformation ei : containers) {
+	// if (ei.event.isEventType(eventType)) {
+	// switch (eventType) {
+	// case START_ELEMENT:
+	// if (checkQualifiedName(
+	// ((StartElement) ei.event).getQName(), args[0],
+	// args[1])) {
+	// return ei;
+	// }
+	// break;
+	// case START_ELEMENT_NS:
+	// if (((StartElementNS) ei.event).getNamespaceURI().equals(
+	// args[0])) {
+	// return ei;
+	// }
+	// break;
+	// case ATTRIBUTE:
+	// if (checkQualifiedName(((Attribute) ei.event).getQName(),
+	// args[0], args[1])) {
+	// return ei;
+	// }
+	// break;
+	// case ATTRIBUTE_NS:
+	// if (((AttributeNS) ei.event).getNamespaceURI().equals(
+	// args[0])) {
+	// return ei;
+	// }
+	// break;
+	// default:
+	// return ei;
+	// }
+	// }
+	// }
+	//
+	// // nothing found
+	// return null;
+	// }
+
+	public EventInformation lookForEvent(EventType eventType) {
 		for (EventInformation ei : containers) {
 			if (ei.event.isEventType(eventType)) {
-				switch(eventType) {
-				case START_ELEMENT:
-					if (checkQualifiedName(((StartElement)ei.event).getQName(), args[0], args[1])) {
-						return ei;
-					}
-					break;
-				case START_ELEMENT_NS:
-					if (((StartElementNS)ei.event).getNamespaceURI().equals(args[0])) {
-						return ei;
-					}
-					break;
-				case ATTRIBUTE:
-					if (checkQualifiedName(((Attribute)ei.event).getQName(), args[0], args[1])) {
-						return ei;
-					}
-					break;
-				case ATTRIBUTE_NS:
-					if (((AttributeNS)ei.event).getNamespaceURI().equals(args[0])) {
-						return ei;
-					}
-					break;
-				default:
-					return ei;
-				}
+				return ei;
 			}
 		}
+		return null; // not found
+	}
 
-		// nothing found
-		return null;
+	public EventInformation lookForStartElement(String namespaceURI,
+			String localName) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(EventType.START_ELEMENT)
+					&& checkQualifiedName(((StartElement) ei.event).getQName(),
+							namespaceURI, localName)) {
+				return ei;
+			}
+		}
+		return null; // not found
+	}
+
+	public EventInformation lookForStartElementNS(String namespaceURI) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(EventType.START_ELEMENT_NS)
+					&& ((StartElementNS) ei.event).getNamespaceURI().equals(
+							namespaceURI)) {
+				return ei;
+			}
+		}
+		return null; // not found
+	}
+
+	public EventInformation lookForAttribute(String namespaceURI,
+			String localName) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(EventType.ATTRIBUTE)
+					&& checkQualifiedName(((Attribute) ei.event).getQName(),
+							namespaceURI, localName)) {
+				return ei;
+			}
+		}
+		return null; // not found
+	}
+
+	public EventInformation lookForAttributeNS(String namespaceURI) {
+		for (EventInformation ei : containers) {
+			if (ei.event.isEventType(EventType.ATTRIBUTE_NS)
+					&& ((AttributeNS) ei.event).getNamespaceURI().equals(
+							namespaceURI)) {
+				return ei;
+			}
+		}
+		return null; // not found
 	}
 
 	// for decoder

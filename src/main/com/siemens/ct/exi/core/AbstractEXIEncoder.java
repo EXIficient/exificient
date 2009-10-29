@@ -20,7 +20,7 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -38,6 +38,7 @@ import com.siemens.ct.exi.grammar.event.DatatypeEvent;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeEncoder;
@@ -49,7 +50,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		EXIEncoder {
 
 	// prefix of previous start element (relevant for preserving prefixes)
-	protected boolean preservePrefix;
 	protected String sePrefix = null;
 
 	// to parse raw nil value
@@ -65,9 +65,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	public AbstractEXIEncoder(EXIFactory exiFactory) {
 		super(exiFactory);
 
-		// preserve prefixes
-		preservePrefix = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
 		// xsi:nil
 		nil = XSDBoolean.newInstance();
 
@@ -104,11 +101,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	 * Structure Channel
 	 */
 
-	protected void writeEventCode(int eventCode, int codeLength)
-			throws IOException {
-		channel.encodeNBitUnsignedInteger(eventCode, codeLength);
-	}
-
 	// PI, Comment, etc.
 	protected void writeString(String text) throws IOException {
 		channel.encodeString(text);
@@ -133,15 +125,17 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 
-	protected void writeLocalName(String localName, String uri)
+	protected QName writeLocalName(String localName, String uri)
 			throws IOException {
 		// Note: URI context has to be known before writing localName
 		updateURIContext(uri);
-		assert(uriContext != null);
-		
+		assert (uriContext != null);
+
 		// look for localNameID
 		Integer localNameID = uriContext.getLocalNameID(localName);
 
+		QName qname;
+		
 		if (localNameID == null) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
@@ -151,7 +145,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// After encoding the string value, it is added to the string
 			// table partition and assigned the next available compact
 			// identifier.
-			uriContext.addLocalName(localName);
+			qname = uriContext.addLocalName(localName);
 		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
@@ -161,7 +155,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			channel.encodeUnsignedInteger(0);
 			int n = MethodsBag.getCodingLength(uriContext.getLocalNameSize());
 			channel.encodeNBitUnsignedInteger(localNameID, n);
+			qname = uriContext.getNameContext(localNameID);
 		}
+		
+		return qname;
 	}
 
 	protected void writePrefix(String prefix, String uri) throws IOException {
@@ -186,15 +183,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		EventInformation ei;
 
 		// try to find declared AT(uri:localName)
-		ei = currentRule.lookFor(EventType.ATTRIBUTE, uri, localName);
+		ei = currentRule.lookForAttribute(uri, localName);
 
 		if (ei == null) {
 			// try to find declared AT(uri:*)
-			ei = currentRule.lookFor(EventType.ATTRIBUTE_NS, uri);
+			ei = currentRule.lookForAttributeNS(uri);
 
 			if (ei == null) {
 				// try to find declared AT(*), generic AT on first level
-				ei = currentRule.lookFor(EventType.ATTRIBUTE_GENERIC);
+				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
 			}
 		}
 
@@ -208,90 +205,103 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	protected abstract void writeValueTypeValid(QName valueContext)
 			throws IOException;
 
-	protected abstract void writeValueAsString(QName valueContext,
-			String value) throws IOException;
+	protected abstract void writeValueAsString(QName valueContext, String value)
+			throws IOException;
 
 	/*
 	 * Event-Codes
 	 */
 
 	protected void encode1stLevelEventCode(int pos) throws IOException {
-		writeEventCode(pos, currentRule
-				.get1stLevelEventCodeLength(fidelityOptions));
+		int codeLength = currentRule
+				.get1stLevelEventCodeLength(fidelityOptions);
+		if (codeLength > 0) {
+			channel.encodeNBitUnsignedInteger(pos, codeLength);
+		}
 	}
 
 	protected void encode2ndLevelEventCode(int pos) throws IOException {
 		// 1st level
-		writeEventCode(currentRule.getNumberOfEvents(), currentRule
+		channel.encodeNBitUnsignedInteger(currentRule.getNumberOfEvents(), currentRule
 				.get1stLevelEventCodeLength(fidelityOptions));
 
 		// 2nd level
 		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
 		assert (pos < ch2);
 
-		writeEventCode(pos, MethodsBag.getCodingLength(ch2));
+		channel.encodeNBitUnsignedInteger(pos, MethodsBag.getCodingLength(ch2));
 	}
 
 	protected void encode3rdLevelEventCode(int pos) throws IOException {
 		// 1st level
-		writeEventCode(currentRule.getNumberOfEvents(), currentRule
+		channel.encodeNBitUnsignedInteger(currentRule.getNumberOfEvents(), currentRule
 				.get1stLevelEventCodeLength(fidelityOptions));
 
 		// 2nd level
 		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
 		int ec2 = ch2 > 0 ? ch2 - 1 : 0; // any 2nd level events
-		writeEventCode(ec2, MethodsBag.getCodingLength(ch2));
+		channel.encodeNBitUnsignedInteger(ec2, MethodsBag.getCodingLength(ch2));
 
 		// 3rd level
 		int ch3 = currentRule.get3rdLevelCharacteristics(fidelityOptions);
 		assert (pos < ch3);
-		writeEventCode(pos, MethodsBag.getCodingLength(ch3));
+		channel.encodeNBitUnsignedInteger(pos, MethodsBag.getCodingLength(ch3));
 	}
 
-	protected void encodeQName(String uri, String localName) throws IOException {
+	protected QName encodeQName(String uri, String localName) throws IOException {
 		// encode expanded name (uri followed by localName)
 		writeUri(uri);
-		writeLocalName(localName, uri);
+		return writeLocalName(localName, uri);
 	}
 
 	protected void encodeQNamePrefix(String uri, String prefix)
 			throws IOException {
 		if (preservePrefix) {
-			@SuppressWarnings("unchecked")
-			Enumeration<String> prefixes4GivenURI = this.namespaces
-					.getPrefixes(uri);
+//			@SuppressWarnings("unchecked")
+//			Enumeration<String> prefixes4GivenURI = this.namespaces
+//					.getPrefixes(uri);
+			
 
-			if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
-				// default namespace
-			} else if (prefixes4GivenURI.hasMoreElements()) {
 
-				int numberOfPrefixes = 0;
-				int id = Constants.NOT_FOUND;
-
-				do {
-					if (prefixes4GivenURI.nextElement().equals(prefix)) {
-						id = numberOfPrefixes;
-					}
-					numberOfPrefixes++;
-				} while (prefixes4GivenURI.hasMoreElements());
-
-				if (numberOfPrefixes > 1) {
-					if (id == Constants.NOT_FOUND) {
-						// choose *one* prefix which gets modified by
-						// local-element-ns anyway ?
-						id = 0;
-					}
-					// overlapping URIs
-					writeEventCode(id, MethodsBag
-							.getCodingLength(numberOfPrefixes));
-				}
+			if (uri.equals(XMLConstants.NULL_NS_URI)) {
+				// default namespace --> DEFAULT_NS_PREFIX
+			// } else if (prefixes4GivenURI.hasMoreElements()) {
 			} else {
-				/*
-				 * If there are no prefixes specified for the URI of the QName
-				 * by preceding NS events in the EXI stream, the prefix is
-				 * undefined. An undefined prefix is represented using zero bits
-				 * (i.e., omitted).
-				 */
+				updateURIContext(uri);
+				List<String> prefixes = uriContext.prefixes;
+				int numberOfPrefixes = prefixes.size();
+				
+				if (numberOfPrefixes > 1) {
+						
+						int id = Constants.NOT_FOUND;
+						
+						for(int i=0; i<numberOfPrefixes; i++) {
+							if(prefixes.get(i).equals(prefix)) {
+								id = i;
+								i= numberOfPrefixes; // abort loop
+							}
+						}
+						
+						if (id == Constants.NOT_FOUND) {
+							// choose *one* prefix which gets modified by
+							// local-element-ns anyway ?
+							id = 0;
+						}
+						// overlapping URIs
+						channel.encodeNBitUnsignedInteger(id, MethodsBag
+								.getCodingLength(numberOfPrefixes));
+				} else {
+					/*
+					 * #1# Possibility
+					 * If there are no prefixes specified for the URI of the QName
+					 * by preceding NS events in the EXI stream, the prefix is
+					 * undefined. An undefined prefix is represented using zero bits
+					 * (i.e., omitted).
+					 * 
+					 * #1# Possibility
+					 * If there is only one prefix, the prefix is implicit
+					 */
+				}
 			}
 		}
 	}
@@ -303,7 +313,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 		initForEachRun();
 
-		EventInformation ei = currentRule.lookFor(EventType.START_DOCUMENT);
+		EventInformation ei = currentRule
+				.lookForEvent(EventType.START_DOCUMENT);
 
 		// Note: no EventCode needs to be written since there is only
 		// one choice
@@ -311,11 +322,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			throw new EXIException("No EXI Event found for startDocument");
 		}
 
-		replaceRuleAtTheTop(ei.next);
+		// update current rule
+		currentRule = ei.next;
 	}
 
 	public void encodeEndDocument() throws EXIException, IOException {
-		EventInformation ei = currentRule.lookFor(EventType.END_DOCUMENT);
+		EventInformation ei = currentRule.lookForEvent(EventType.END_DOCUMENT);
 
 		if (ei != null) {
 			// encode EventCode
@@ -336,33 +348,30 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 		Rule nextTopRule;
 
-//		boolean isGenericSE = true;
-
 		StartElement nextSE;
 
-		if ((ei = currentRule.lookFor(EventType.START_ELEMENT, uri, localName)) != null) {
+		if ((ei = currentRule.lookForStartElement(uri, localName)) != null) {
 			assert (ei.event.isEventType(EventType.START_ELEMENT));
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 			// qname implicit by SE(qname) event
-//			isGenericSE = false;
 			// next rule at the top
 			nextTopRule = ei.next;
-			//	next SE ...
+			// next SE ...
 			nextSE = (StartElement) ei.event;
-		} else if ((ei = currentRule.lookFor(EventType.START_ELEMENT_NS, uri)) != null) {
+		} else if ((ei = currentRule.lookForStartElementNS(uri)) != null) {
 			assert (ei.event.isEventType(EventType.START_ELEMENT_NS));
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 			// encode local-name only
-			writeLocalName(localName, uri);
+			QName qname = writeLocalName(localName, uri);
 			// next rule at the top
 			nextTopRule = ei.next;
-			//	next SE ...
-			nextSE = getGenericStartElement(uri, localName);
+			// next SE ...
+			nextSE = getGenericStartElement(qname);
 		} else {
 			// try SE(*), generic SE on first level
-			if ((ei = currentRule.lookFor(EventType.START_ELEMENT_GENERIC)) != null) {
+			if ((ei = currentRule.lookForEvent(EventType.START_ELEMENT_GENERIC)) != null) {
 				assert (ei.event.isEventType(EventType.START_ELEMENT_GENERIC));
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -385,33 +394,25 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				nextTopRule = currentRule.getElementContentRule();
 			}
 			// encode entire qualified name
-			encodeQName(uri, localName);
-			//	next SE ...
-			nextSE = getGenericStartElement(uri, localName);
+			QName qname = encodeQName(uri, localName);
+			// next SE ...
+			nextSE = getGenericStartElement(qname);
 			// learning for built-in grammar,
 			currentRule.learnStartElement(nextSE);
 		}
 
 		// prefix
 		encodeQNamePrefix(uri, prefix);
-		// step forward in current rule (replace rule at the top)
-		replaceRuleAtTheTop(nextTopRule);
-//		if (TEST_NEW) {
-			// push context
-			pushElementContext(nextSE.getQName());
-			// update and push element rule
-			pushElementRule(nextSE.getRule());
-//		} else {
-//			// push context
-//			pushElementContext(uri, localName);
-//			// update and push element rule
-//			pushElementRule(isGenericSE);
-//		}
+		// update current rule
+		currentRule = nextTopRule;
+		// push element
+		pushElement(nextSE);
 	}
 
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException, IOException {
-		namespaces.declarePrefix(prefix, uri);
+		 namespaces.declarePrefix(prefix, uri);
+		
 
 		if (preservePrefix) {
 			assert (sePrefix != null);
@@ -430,45 +431,55 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			channel.encodeBoolean(prefix.equals(sePrefix));
 			// writeBoolean(prefix.equals(sePrefix));
 		}
+//		else {
+//			updateURIContext(uri);
+//			if (uriContext != null && ! uriContext.prefixes.contains(prefix) ) {
+//				uriContext.addPrefix(prefix);	
+//			}
+//		}
 	}
 
 	public void encodeEndElement() throws EXIException, IOException {
 		// int ec = currentRule.get1stLevelEventCode(eventEE);
-		EventInformation ei = currentRule.lookFor(EventType.END_ELEMENT);
-
-		// Special case: SAX does not inform about empty ("") CH events
-		// --> if EE is not found check whether an empty CH event *helps*
-		if (ei == null && currentRule.lookFor(EventType.CHARACTERS) != null) {
-			// encode empty characters first
-			this.encodeCharacters(Constants.EMPTY_STRING);
-			// try the EE event once again
-			// ec = currentRule.get1stLevelEventCode(eventEE);
-			ei = currentRule.lookFor(EventType.END_ELEMENT);
-		}
+		EventInformation ei = currentRule.lookForEvent(EventType.END_ELEMENT);
 
 		if (ei != null) {
-			// encode EventCode
+			// encode EventCode (common case)
 			encode1stLevelEventCode(ei.getEventCode());
 		} else {
-			// Undeclared EE can be found on 2nd level
-			int ecEEundeclared = currentRule.get2ndLevelEventCode(
-					EventType.END_ELEMENT_UNDECLARED, fidelityOptions);
+			// Check special case: SAX does not inform about empty ("") CH
+			// events
+			// --> if EE is not found check whether an empty CH event *helps*
+			if (currentRule.lookForEvent(EventType.CHARACTERS) != null) {
+				// encode empty characters first
+				this.encodeCharacters(Constants.EMPTY_STRING);
+				// try the EE event once again
+				ei = currentRule.lookForEvent(EventType.END_ELEMENT);
+			}
 
-			if (ecEEundeclared == Constants.NOT_FOUND) {
-				// Note: should never happen except in strict mode
-				throw new EXIException("Unexpected EE {" + elementContext
-						+ ", " + exiFactory.toString());
+			if (ei != null) {
+				// encode EventCode
+				encode1stLevelEventCode(ei.getEventCode());
 			} else {
-				// encode [undeclared] event-code
-				encode2ndLevelEventCode(ecEEundeclared);
-				// learn end-element event ?
-				currentRule.learnEndElement();
+				// Undeclared EE can be found on 2nd level
+				int ecEEundeclared = currentRule.get2ndLevelEventCode(
+						EventType.END_ELEMENT_UNDECLARED, fidelityOptions);
+
+				if (ecEEundeclared == Constants.NOT_FOUND) {
+					// Note: should never happen except in strict mode
+					throw new EXIException("Unexpected EE {" + elementContext
+							+ ", " + exiFactory.toString());
+				} else {
+					// encode [undeclared] event-code
+					encode2ndLevelEventCode(ecEEundeclared);
+					// learn end-element event ?
+					currentRule.learnEndElement();
+				}
 			}
 		}
 
-		// pop the rule from the top of the stack
-		popElementContext();
-		popElementRule();
+		// pop element from stack
+		popElement();
 	}
 
 	public void encodeXsiType(String raw) throws EXIException, IOException {
@@ -480,15 +491,18 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// encode event-code, AT(xsi:type)
 			encode2ndLevelEventCode(ec2);
 
+			//	extract prefix
 			String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
+			//	retrieve uri
 			String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
-			String xsiTypeLocalName;
+			
 			/*
 			 * The value of each AT (xsi:type) event is represented as a QName .
 			 * If there is no namespace in scope for the specified qname prefix,
 			 * the QName uri is set to empty ("") and the QName localName is set
 			 * to the full lexical value of the QName, including the prefix.
 			 */
+			String xsiTypeLocalName;
 			if (xsiTypeURI == null) {
 				xsiTypeURI = XMLConstants.NULL_NS_URI;
 				xsiTypeLocalName = raw;
@@ -496,21 +510,22 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
 			}
 			// xsi:type "content" as qname
-			encodeQName(xsiTypeURI, xsiTypeLocalName);
+			QName xsiQName = encodeQName(xsiTypeURI, xsiTypeLocalName);
 			// prefix
 			encodeQNamePrefix(xsiTypeURI, xsiTypePrefix);
 
 			// lookup type-grammar
-			TypeGrammar tg = grammar.getTypeGrammar(xsiTypeURI,
-					xsiTypeLocalName);
+			TypeGrammar tg = grammar.getTypeGrammar(xsiQName);
 
 			// grammar exists ?
 			if (tg != null) {
 				// update grammar according to given xsi:type
-				replaceRuleAtTheTop(tg.getType());
+				currentRule = tg.getType();
 				// this.scopeTypeURI = xsiTypeURI;
 				// this.scopeTypeLocalName = xsiTypeLocalName;
 			}
+			
+			
 		} else {
 			// encode as any other attribute
 			encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
@@ -519,10 +534,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	}
 
 	public void encodeXsiNil(String rawNil) throws EXIException, IOException {
-		if (currentRule.isSchemaRule()) {
+		if (currentRule.isSchemaInformed()) {
+			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 			if (nil.parse(rawNil)) {
 				// schema-valid boolean
-				int ec2 = currentRule.get2ndLevelEventCode(
+				int ec2 = siCurrentRule.get2ndLevelEventCode(
 						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
 
 				if (ec2 != Constants.NOT_FOUND) {
@@ -530,7 +546,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					encode2ndLevelEventCode(ec2);
 				} else {
 					// encode event-code & qname
-					ec2 = currentRule.get2ndLevelEventCode(
+					ec2 = siCurrentRule.get2ndLevelEventCode(
 							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
 							fidelityOptions);
 					assert (ec2 != Constants.NOT_FOUND);
@@ -546,7 +562,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				channel.encodeBoolean(nil.getBoolean());
 
 				if (nil.getBoolean()) { // jump to typeEmpty
-					replaceRuleAtTheTop(currentRule.getTypeEmpty());
+					// update current rule
+					currentRule = siCurrentRule.getTypeEmpty();
 				}
 			} else {
 				// If the value is not a schema-valid Boolean, the
@@ -572,15 +589,19 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			EventType eventType = ei.event.getEventType();
 
 			Datatype datatype;
-
+			QName atContext;
+			
 			if (eventType == EventType.ATTRIBUTE) {
-				datatype = ((DatatypeEvent) (ei.event)).getDatatype();
+				Attribute at = (Attribute) (ei.event);
+				datatype = at.getDatatype();
+				atContext = at.getQName();
 			} else {
 				assert (eventType == EventType.ATTRIBUTE_NS || eventType == EventType.ATTRIBUTE_GENERIC);
 				// global attribute ?
-				Attribute globalAT = grammar.getGlobalAttribute(uri, localName);
-				datatype = globalAT == null ? BuiltIn.DEFAULT_DATATYPE
-						: globalAT.getDatatype();
+				//	TODO avoid qname creation
+				Attribute globalAT = grammar.getGlobalAttribute(new QName(uri, localName));
+				datatype = globalAT == null ? BuiltIn.DEFAULT_DATATYPE : globalAT.getDatatype();
+				atContext = null;
 			}
 
 			boolean valid = false;
@@ -599,28 +620,25 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// AT specialty: calculate 3rd level attribute event-code
 				int eventCode3 = ei.getEventCode()
 						- currentRule.getLeastAttributeEventCode();
-				writeEventCode(eventCode3, MethodsBag
+				channel.encodeNBitUnsignedInteger(eventCode3, MethodsBag
 						.getCodingLength(currentRule
 								.getNumberOfSchemaDeviatedAttributes()));
 			}
 
-			// EventType.ATTRIBUTE --> qname already known
+			// EventType.ATTRIBUTE  --> qname already known
 			if (eventType != EventType.ATTRIBUTE) {
 				if (eventType == EventType.ATTRIBUTE_NS) {
 					// encode localName only
-					writeLocalName(localName, uri);
+					atContext = writeLocalName(localName, uri);
 				} else {
 					assert (eventType == EventType.ATTRIBUTE_GENERIC);
 					// encode entire expanded name
-					encodeQName(uri, localName);
+					atContext = encodeQName(uri, localName);
 				}
 			}
 			// prefix ?
 			encodeQNamePrefix(uri, prefix);
-
-			// at context
-			QName atContext = getAttributeContext(uri, localName);
-			// pushAttributeContext(uri, localName);
+			
 			if (valid) {
 				// encode value type-aware
 				writeValueTypeValid(atContext);
@@ -628,8 +646,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// encode content as string
 				writeValueAsString(atContext, value);
 			}
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(ei.next);
+			// update current rule
+			currentRule = ei.next;
 		} else {
 			// Undeclared AT(*) can be found on 2nd level
 			int ecATundeclared = currentRule.get2ndLevelEventCode(
@@ -638,16 +656,16 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			if (ecATundeclared != Constants.NOT_FOUND) {
 				// encode event-code
 				encode2ndLevelEventCode(ecATundeclared);
-				// encode unexpected attribute & learn attribute
-				// event ?
-				encodeQName(uri, localName);
+				// encode unexpected attribute & learn attribute event ?
+				QName atQName = encodeQName(uri, localName);
 				// prefix
 				encodeQNamePrefix(uri, prefix);
 				// at context
 				// pushAttributeContext(uri, localName);
 				// value as string
-				writeValueAsString(getAttributeContext(uri, localName), value);
-				currentRule.learnAttribute(uri, localName);
+				// QName atQName = getAttributeContext(uri, localName);
+				writeValueAsString(atQName, value);
+				currentRule.learnAttribute(new Attribute(atQName));
 			} else {
 				// Warn encoder that the attribute is simply skipped
 				// Note: should never happen except in strict mode
@@ -669,25 +687,20 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			encode2ndLevelEventCode(ec2ATdeviated);
 			// encode 3rd level event-code
 			int eventCode3 = currentRule.getNumberOfSchemaDeviatedAttributes() - 1;
-			writeEventCode(eventCode3, MethodsBag.getCodingLength(currentRule
+			channel.encodeNBitUnsignedInteger(eventCode3, MethodsBag.getCodingLength(currentRule
 					.getNumberOfSchemaDeviatedAttributes()));
 			// qname
-			encodeQName(uri, localName);
+			QName atQname = encodeQName(uri, localName);
 			encodeQNamePrefix(uri, prefix);
 
-			// at context
-			// pushAttributeContext(uri, localName);
-
 			// encode content as string
-			writeValueAsString(getAttributeContext(uri, localName), value);
-
-			// popAttributeContext();
+			writeValueAsString(atQname, value);
 		}
 	}
 
 	public void encodeCharacters(String chars) throws EXIException, IOException {
 
-		EventInformation ei = currentRule.lookFor(EventType.CHARACTERS);
+		EventInformation ei = currentRule.lookForEvent(EventType.CHARACTERS);
 
 		// valid value and valid event-code ?
 		if (ei != null
@@ -696,20 +709,21 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// --> encode EventCode, schema-valid content plus grammar moves
 			// on
 			encode1stLevelEventCode(ei.getEventCode());
-			writeValueTypeValid(elementContext);
-			// step forward in current rule (replace rule at the top)
-			replaceRuleAtTheTop(ei.next);
+			writeValueTypeValid(elementContext.qname);
+			// update current rule
+			currentRule = ei.next;
 		} else {
 			// generic CH (on first level)
-			ei = currentRule.lookFor(EventType.CHARACTERS_GENERIC);
+			ei = currentRule.lookForEvent(EventType.CHARACTERS_GENERIC);
 
 			if (ei != null) {
 				// encode EventCode
 				encode1stLevelEventCode(ei.getEventCode());
 				// encode schema-invalid content as string plus moves on in
 				// grammar
-				replaceRuleAtTheTop(ei.next);
-				writeValueAsString(elementContext, chars);
+				// update current rule
+				currentRule = ei.next;
+				writeValueAsString(elementContext.qname, chars);
 			} else {
 				// Undeclared CH can be found on 2nd level
 				int ecCHundeclared = currentRule.get2ndLevelEventCode(
@@ -725,9 +739,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					// learn characters event ?
 					currentRule.learnCharacters();
 					// content as string
-					writeValueAsString(elementContext, chars);
-					// step forward in current rule
-					replaceRuleAtTheTop(currentRule.getElementContentRule());
+					writeValueAsString(elementContext.qname, chars);
+					// update current rule
+					currentRule = currentRule.getElementContentRule();
 				}
 			}
 		}
@@ -773,8 +787,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// encode CM content
 			writeString(new String(ch, start, length));
 
-			// step forward (if not alreay content rule)
-			replaceRuleAtTheTop(currentRule.getElementContentRule());
+			// update current rule
+			currentRule = currentRule.getElementContentRule();
 		}
 	}
 
@@ -790,8 +804,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			writeString(target);
 			writeString(data);
 
-			// step forward
-			replaceRuleAtTheTop(currentRule.getElementContentRule());
+			// update current rule
+			currentRule = currentRule.getElementContentRule();
 		}
 	}
 

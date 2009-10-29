@@ -30,6 +30,8 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -45,7 +47,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 	private int lastOrdinalPosition;
 
 	private StringList enumValuesSL;
-	private char[][] enumValuesCH;
+	private Value[] enumValuesCH;
 	private int codingLength;
 
 	public EnumerationDatatype(StringList enumValues) {
@@ -54,9 +56,9 @@ public class EnumerationDatatype extends AbstractDatatype {
 		this.rcs = null;
 
 		this.enumValuesSL = enumValues;
-		enumValuesCH = new char[enumValues.getLength()][];
+		enumValuesCH = new Value[enumValues.getLength()];
 		for (int i = 0; i < enumValues.getLength(); i++) {
-			enumValuesCH[i] = enumValues.item(i).toCharArray();
+			enumValuesCH[i] = new StringValue(enumValues.item(i).toCharArray());
 		}
 
 		this.codingLength = MethodsBag.getCodingLength(enumValues.getLength());
@@ -66,7 +68,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		return enumValuesSL.item(index);
 	}
 
-	public char[] getEnumerationValueAsCharArray(int index) {
+	public Value getEnumerationValueAsCharArray(int index) {
 		return enumValuesCH[index];
 	}
 
@@ -122,7 +124,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		// writeValue(valueChannel, stringEncoder, context);
 	}
 
-	public char[] readValue(DecoderChannel valueChannel,
+	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
 		int index = valueChannel.decodeNBitUnsignedInteger(codingLength);
 
@@ -131,7 +133,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 
 
 	@Override
-	public char[] readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
 			QName context) throws IOException {
 		return stringDecoder.readValue(context, valueChannel);

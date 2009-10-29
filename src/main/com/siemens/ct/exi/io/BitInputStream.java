@@ -107,6 +107,7 @@ final public class BitInputStream {
 		assert (n > 0);
 
 		readBuffer();
+		
 		if (n <= capacity) {
 			// buffer already holds all necessary bits
 			capacity -= n;
@@ -133,6 +134,48 @@ final public class BitInputStream {
 			}
 
 			return result;
+		}
+	}
+	public void read(byte b[], int off, int len) throws IOException {
+		int readBytes = 0;
+		
+		if ( len == 0) {
+			
+		} else if ( capacity == 0 ) {
+			// byte-aligned --> read all bytes at byte-border (at once?)
+			do {
+				readBytes += istream.read(b, readBytes, len-readBytes);
+			} while(readBytes < len);
+		} else {
+			int shift1 = BUFFER_CAPACITY - capacity;
+			int shift2 = capacity;
+				
+			// get all bits from current buffer
+			int currentResult = buffer & (0xff >> shift1);
+			
+			// read (len-1) full bytes at once
+			int lenMinusOne = len-1;
+			byte fullBytes [] = new byte[lenMinusOne];
+			
+			do {
+				readBytes += istream.read(fullBytes, readBytes, lenMinusOne-readBytes);
+			} while(readBytes < lenMinusOne);
+			
+			//	shift full bytes to result array taking into account interleaving
+			for(int i=0; i<lenMinusOne; i++) {
+				// Note: byte may be negative --> 0xff & byte
+				b[i] = (byte) ((currentResult << shift1) | ((0xff & fullBytes[i]) >>> shift2));
+				currentResult = fullBytes[i] & (0xff >> shift1);
+			}
+			
+			//	get ready for remaining trailing bits
+			capacity = 0;
+			readBuffer();
+
+			currentResult = (currentResult << shift1) | (buffer >>> shift2);
+			b[off+len-1] = (byte) currentResult;
+			
+			capacity = shift2;	// new (old) capacity
 		}
 	}
 

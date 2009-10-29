@@ -21,8 +21,6 @@ package com.siemens.ct.exi;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.xml.sax.helpers.NamespaceSupport;
-
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 
@@ -40,13 +38,6 @@ public interface EXIEncoder {
 			throws EXIException;
 
 	public void setErrorHandler(ErrorHandler errorHandler);
-
-	/**
-	 * Provides namespace support.
-	 * 
-	 * @return <code>NamespaceSupport</code> for prefix mapping
-	 */
-	public NamespaceSupport getNamespaces();
 
 	/**
 	 * Reports the beginning of a set of XML events
