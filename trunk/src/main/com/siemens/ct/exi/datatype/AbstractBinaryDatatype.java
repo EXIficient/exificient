@@ -28,7 +28,6 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.XSDBase64;
-import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -70,6 +69,6 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return new StringValue(valueChannel.decodeBinaryAsCharacters());
+		return valueChannel.decodeBinary();
 	}
 }

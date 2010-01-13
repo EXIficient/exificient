@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.siemens.ct.exi.io.BitInputStream;
+import com.siemens.ct.exi.values.BinaryValue;
 
 /**
  * Simple datatype decoder based on an underlying <code>BitInputStream</code>.
@@ -75,13 +76,13 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
-	public byte[] decodeBinary() throws IOException {
+	public BinaryValue decodeBinary() throws IOException {
 		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
 		
 		istream.read(result, 0, length);
 		
-		return result;
+		return new BinaryValue(result);
 	}
 
 }

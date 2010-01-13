@@ -85,5 +85,10 @@ public class SchemaInformedElement extends
 	public String toString() {
 		return "Element" + super.toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof SchemaInformedElement && super.equals(obj));
+	}
 
 }

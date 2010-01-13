@@ -35,10 +35,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(0);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeInteger() == 0);
+		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == 0);
 		// Byte
 		getByteEncoder().encodeInteger(0);
-		assertTrue(getByteDecoder().decodeInteger() == 0);
+		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == 0);
 	}
 
 	public void testInteger1() throws IOException {
@@ -46,10 +46,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(1);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeInteger() == 1);
+		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == 1);
 		// Byte
 		getByteEncoder().encodeInteger(1);
-		assertTrue(getByteDecoder().decodeInteger() == 1);
+		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == 1);
 	}
 
 	public void testIntegerMaxNegativeInteger() throws IOException {
@@ -57,10 +57,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(Integer.MIN_VALUE);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeInteger() == Integer.MIN_VALUE);
+		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == Integer.MIN_VALUE);
 		// Byte
 		getByteEncoder().encodeInteger(Integer.MIN_VALUE);
-		assertTrue(getByteDecoder().decodeInteger() == Integer.MIN_VALUE);
+		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == Integer.MIN_VALUE);
 	}
 
 	public void testInteger0S() throws IOException {
@@ -72,10 +72,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
 	}
 
 	public void testInteger1S() throws IOException {
@@ -87,10 +87,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
 	}
 
 	public void testIntegerM128S() throws IOException {
@@ -102,10 +102,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
 	}
 
 	// public void testIntegerSpace35S() throws IOException
@@ -135,10 +135,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeLong(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeLongAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeLongValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeLong(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeLongAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeLongValue().toCharacters(), s));
 	}
 
 
@@ -151,10 +151,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
 	}
 	
 	public void testIntegerBig1() throws IOException {
@@ -166,10 +166,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
 	}
 
 
@@ -182,10 +182,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeBigIntegerAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
 	}
 
 	public void testIntegerSequence() throws IOException {
@@ -200,8 +200,8 @@ public class IntegerTest extends AbstractTestCase {
 		DecoderChannel dcBit = getBitDecoder();
 		DecoderChannel dcByte = getByteDecoder();
 		for (int i = 0; i < 100000; i++) {
-			assertEquals(dcBit.decodeInteger(), i);
-			assertEquals(dcByte.decodeInteger(), i);
+			assertEquals(dcBit.decodeIntegerValue().toInteger(), i);
+			assertEquals(dcByte.decodeIntegerValue().toInteger(), i);
 		}
 	}
 

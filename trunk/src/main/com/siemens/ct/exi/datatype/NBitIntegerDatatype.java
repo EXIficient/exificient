@@ -29,7 +29,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -77,7 +77,6 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		try {
 			valueToEncode = Integer.parseInt(value);
 
-
 			// check lower & upper bound
 			if (valueToEncode >= lowerBound
 					&& valueToEncode <= upperBound) {
@@ -100,10 +99,16 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		// decode value
-		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
-		// add offset (lower bound)
-		return new StringValue(MethodsBag.itos( decodedValue + lowerBound ));
+		IntegerValue iv = valueChannel.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
+		if (lowerBound != 0) {
+			iv = new IntegerValue( iv.toInteger() + lowerBound );
+		}
+		return iv;
+		
+//		// decode value
+//		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
+//		// add offset (lower bound)
+//		return new StringValue(MethodsBag.itos( decodedValue + lowerBound ));
 	}
 
 }

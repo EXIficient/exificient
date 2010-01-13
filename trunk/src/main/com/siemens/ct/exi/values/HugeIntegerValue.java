@@ -16,32 +16,34 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.util;
+package com.siemens.ct.exi.values;
 
 import java.math.BigInteger;
 
-public final class HugeInteger {
-	public final boolean isLongValue;
-	public final BigInteger bigIntegerValue;
-	public final long longValue;
+import com.siemens.ct.exi.util.MethodsBag;
+
+public final class HugeIntegerValue extends AbstractValue {
 	
-	public HugeInteger(long l) {
+	public final boolean isLongValue;
+	public final long longValue;
+	public final BigInteger bigIntegerValue;
+	
+	public HugeIntegerValue(long l) {
 		this.longValue = l;
 		this.bigIntegerValue = null;
 		this.isLongValue = true;
 	}
-	public HugeInteger(BigInteger bi) {
+	public HugeIntegerValue(BigInteger bi) {
 		this.bigIntegerValue = bi;
 		this.longValue = -1;
 		this.isLongValue = false;
 	}
 	
-	public int getStringSize() {
-		return (isLongValue ? MethodsBag.getStringSize(longValue) : bigIntegerValue.toString().length());
-	}
-	
 	public char[] toCharacters() {
-		return (isLongValue ? MethodsBag.itos(longValue) : MethodsBag.itos(bigIntegerValue));
+		if (characters == null) {
+			characters = isLongValue ? MethodsBag.itos(longValue) : MethodsBag.itos(bigIntegerValue);
+		}
+		return characters;
 	}
 	
 	public char[] toReverseCharacters() {

@@ -30,7 +30,6 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
-import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -70,7 +69,7 @@ public class DatetimeDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return new StringValue(valueChannel.decodeDateTimeAsCharacters(datetimeType));
+		return valueChannel.decodeDateTimeValue(datetimeType);
 	}
 
 }

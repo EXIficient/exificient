@@ -40,7 +40,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -53,7 +53,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -66,7 +66,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -79,7 +79,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -92,7 +92,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -105,7 +105,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -118,7 +118,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f);
 		bitEC.flush();
-		float df = getBitDecoder().decodeFloat();
+		float df = getBitDecoder().decodeFloatValue().toFloat();
 
 		float diff = Math.abs(f-df);
 		assertTrue(diff < 0.000001);
@@ -135,11 +135,11 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(equals(sb, s));
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(equals(sB, s));
 	}
 
@@ -152,10 +152,10 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeFloatAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeFloatValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		assertTrue(equals(getByteDecoder().decodeFloatAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeFloatValue().toCharacters(), s));
 	}
 
 	public void testFloatMINF() throws IOException {
@@ -167,10 +167,10 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeFloatAsCharacters(), s));
+		assertTrue(equals(getBitDecoder().decodeFloatValue().toCharacters(), s));
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		assertTrue(equals(getByteDecoder().decodeFloatAsCharacters(), s));
+		assertTrue(equals(getByteDecoder().decodeFloatValue().toCharacters(), s));
 	}
 
 	public void testFloat0() throws IOException {
@@ -182,12 +182,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -201,12 +201,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -220,12 +220,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -239,12 +239,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -258,12 +258,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -277,12 +277,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -296,12 +296,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(f.mantissa, f.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeFloatAsCharacters();
+		char[] sb = getBitDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
-		char[] sB = getByteDecoder().decodeFloatAsCharacters();
+		char[] sB = getByteDecoder().decodeFloatValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -315,12 +315,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDouble(d.mantissa, d.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeDoubleAsCharacters();
+		char[] sb = getBitDecoder().decodeDoubleValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeDouble(d.mantissa, d.exponent);
-		char[] sB = getByteDecoder().decodeDoubleAsCharacters();
+		char[] sB = getByteDecoder().decodeDoubleValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -334,12 +334,12 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDouble(d.mantissa, d.exponent);
 		bitEC.flush();
-		char[] sb = getBitDecoder().decodeDoubleAsCharacters();
+		char[] sb = getBitDecoder().decodeDoubleValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sb)) == 0);
 		// Byte
 		getByteEncoder().encodeDouble(d.mantissa, d.exponent);
-		char[] sB = getByteDecoder().decodeDoubleAsCharacters();
+		char[] sB = getByteDecoder().decodeDoubleValue().toCharacters();
 		assertTrue(s + " != " + new String(sb), new BigDecimal(s).compareTo(new BigDecimal(
 				sB)) == 0);
 	}
@@ -351,7 +351,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDouble(d);
 		bitEC.flush();
-		double dd = getBitDecoder().decodeDouble();
+		double dd = getBitDecoder().decodeDoubleValue().toDouble();
 
 		double diff = Math.abs(d-dd);
 		assertTrue(diff < 0.00000000001);
@@ -364,7 +364,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDouble(d);
 		bitEC.flush();
-		double dd = getBitDecoder().decodeDouble();
+		double dd = getBitDecoder().decodeDoubleValue().toDouble();
 
 		double diff = Math.abs(d-dd);
 		assertTrue(diff < 0.00000000001);
@@ -377,7 +377,7 @@ public class FloatTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDouble(d);
 		bitEC.flush();
-		double dd = getBitDecoder().decodeDouble();
+		double dd = getBitDecoder().decodeDoubleValue().toDouble();
 
 		double diff = Math.abs(d-dd);
 		assertTrue(diff < 0.00000000001);

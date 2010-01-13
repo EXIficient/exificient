@@ -387,9 +387,9 @@ public class MethodsBag {
 		}
 	}
 	
-	public static void itos(int i, int leastIndex, char[] buf) {
+	public static void itos(int i, int leastExclIndex, char[] buf) {
 		assert(!(i == Integer.MIN_VALUE));
-		getChars(i, leastIndex, buf);
+		getChars(i, leastExclIndex, buf);
 	}
 	
 	public static char[] itos(long l) {
@@ -403,9 +403,9 @@ public class MethodsBag {
         }
 	}
 	
-	public static void itos(long l, int leastIndex, char[] buf) {
+	public static void itos(long l, int leastExclIndex, char[] buf) {
 		assert(!(l == Long.MIN_VALUE));
-		getChars(l, leastIndex, buf);
+		getChars(l, leastExclIndex, buf);
 	}
 	
 	public static char[] itos(BigInteger bi) {

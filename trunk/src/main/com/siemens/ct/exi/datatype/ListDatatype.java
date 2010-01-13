@@ -58,8 +58,6 @@ public class ListDatatype extends AbstractDatatype {
 		}
 
 		this.listDatatype = listDatatype;
-		
-		// sResult = new StringBuilder();
 	}
 
 	public Datatype getListDatatype() {
@@ -134,68 +132,29 @@ public class ListDatatype extends AbstractDatatype {
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
-		
-
-//		char[][] itemValues = new char[len][];
-		
-//		int stringSize = 0;
-
 		Value[] values = new Value[len];
 		
 		for (int i = 0; i < len; i++) {
 			values[i] = listDatatype.readValue(valueChannel, stringDecoder, context);
-//			char[] itemValue  = listDatatype.readValue(valueChannel, stringDecoder, context).toCharacters();
-//			itemValues[i] = itemValue;
-//			stringSize += itemValue.length + 1;// value & delim
 		}
 		
 		return new ListValue(values);
-		
-//		char[] ca = new char[stringSize];
-//		
-//		return getValue(ca , itemValues);
 	}
-	
-//	private static final Value getValue(char[] ca , char[][] itemValues) {
-//		int caIndex = 0;
-//		for (int i = 0; i < itemValues.length; i++) {
-//			char[] itemValue = itemValues[i];
-//			System.arraycopy(itemValue, 0, ca, caIndex, itemValue.length);
-//			caIndex += itemValue.length;
-//			ca[caIndex++] = Constants.XSD_LIST_DELIM_CHAR;
-//		}
-//
-//		return new StringValue(ca);
-//	}
+
 	
 	@Override
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
 			QName context) throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
+		Value[] values = new Value[len];
 		
 		rcsDecoder.setRestrictedCharacterSet(rcs);
-		
-		Value[] values = new Value[len];
 		
 		for (int i = 0; i < len; i++) {
 			values[i] = rcsDecoder.readValue(valueChannel, stringDecoder, context);
 		}
 		
 		return new ListValue(values);
-		
-		
-//		char[][] itemValues = new char[len][];
-//		int stringSize = 0;
-//
-//		for (int i = 0; i < len; i++) {
-//			char[] itemValue  = rcsDecoder.readValue(valueChannel, stringDecoder, context).toCharacters();
-//			itemValues[i] = itemValue;
-//			stringSize += itemValue.length + 1;
-//		}
-//		
-//		char[] ca = new char[stringSize];
-//		
-//		return getValue(ca , itemValues);
 	}
 }

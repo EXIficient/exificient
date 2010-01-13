@@ -129,6 +129,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
+		
 		super.initForEachRun();
 
 		// next event
@@ -182,6 +183,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// already
 		if (!(is instanceof BufferedInputStream)) {
 			this.is = new BufferedInputStream(is);
+		} else {
+			this.is = is;
 		}
 
 		// header
@@ -259,9 +262,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	protected void preReadStructure() throws EXIException, IOException {
 		boolean stillInitializing = true;
-
+		
 		while (stillInitializing) {
-
+			
 			// events.add(nextEvent); // add event to array list
 			// events.add(nextEventRule == null ? null :
 			// nextEventRule.event); // add event to array list

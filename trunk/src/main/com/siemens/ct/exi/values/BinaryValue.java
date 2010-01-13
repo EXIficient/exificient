@@ -18,19 +18,25 @@
 
 package com.siemens.ct.exi.values;
 
-public class StringValue extends AbstractValue {
-	
-	public StringValue(char[] ca) {
-		this.characters = ca;
+import com.siemens.ct.exi.util.datatype.XSDBase64;
+
+public class BinaryValue extends AbstractValue {
+
+	protected final byte[] bytes;
+
+	public BinaryValue(byte[] bytes) {
+		this.bytes = bytes;
 	}
 	
-	public StringValue(String s) {
-		sValue = s;
-		this.characters = sValue.toCharArray();
+	public byte[] toBytes() {
+		return bytes;
 	}
-	
+
 	public char[] toCharacters() {
+		if (characters == null) {
+			characters = XSDBase64.encode(bytes);
+		}
 		return characters;
 	}
-	
+
 }
