@@ -46,6 +46,8 @@ public interface SchemaInformedRule extends Rule {
 	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
 	 */
 	public void setFirstElementRule();
+	
+//	public boolean isFirstElementRule();
 
 	/*
 	 * sets whether type is castable

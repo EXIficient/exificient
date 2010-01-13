@@ -28,7 +28,6 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -66,6 +65,6 @@ public class IntegerDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return new StringValue(valueChannel.decodeIntegerAsCharacters());
+		return valueChannel.decodeIntegerValue();
 	}
 }

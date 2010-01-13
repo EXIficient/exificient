@@ -20,16 +20,17 @@ package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.TimeZone;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.util.HugeInteger;
-import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDBase64;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
+import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
+import com.siemens.ct.exi.values.DoubleValue;
+import com.siemens.ct.exi.values.FloatValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
+import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.LongValue;
 
 /**
  * TODO Description
@@ -45,16 +46,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	public AbstractDecoderChannel() {
 	}
 
-	public char[] decodeBinaryAsCharacters() throws IOException {
-		final byte[] b = decodeBinary();
-		return XSDBase64.encode(b);
-	}
-
-
-	public char[] decodeBooleanAsCharacters() throws IOException {
-		// return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE
-		// : Constants.DECODED_BOOLEAN_FALSE);
-		return (decodeBoolean() ? Constants.DECODED_BOOLEAN_TRUE : Constants.DECODED_BOOLEAN_FALSE);
+	public BooleanValue decodeBooleanValue() throws IOException {
+		return new BooleanValue(decodeBoolean() );
 	}
 
 	/**
@@ -80,14 +73,14 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 
 		for (int i = 0; i < length; i++) {
 			int codePoint = decodeUnsignedInteger();
-			
+
 			if (Character.isSupplementaryCodePoint(codePoint)) {
 				Character.toChars(codePoint, ca, i++);
 			} else {
 				ca[i] = (char) codePoint;
 			}
 		}
-		
+
 		return ca;
 	}
 
@@ -97,7 +90,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
 	 */
-	public int decodeInteger() throws IOException {
+	protected int decodeInteger() throws IOException {
 		if (decodeBoolean()) {
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
@@ -108,7 +101,11 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		}
 	}
 	
-	public long decodeLong() throws IOException {
+	public IntegerValue decodeIntegerValue() throws IOException {
+		return new IntegerValue(decodeInteger());
+	}
+
+	protected long decodeLong() throws IOException {
 		if (decodeBoolean()) {
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
@@ -119,56 +116,39 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		}
 	}
 	
-	public BigInteger decodeBigInteger() throws IOException {
+	public LongValue decodeLongValue() throws IOException {
+		return new LongValue (decodeLong());
+	}
+	
+
+
+	public HugeIntegerValue decodeHugeIntegerValue() throws IOException {
+		HugeIntegerValue bi;
 		if (decodeBoolean()) {
 			// For negative values, the Unsigned Integer holds the
 			// magnitude of the value minus 1
-			return decodeUnsignedBigInteger().add(BigInteger.ONE).negate();
+			bi = decodeUnsignedHugeIntegerValue();
+			if (bi.isLongValue) {
+				bi = new HugeIntegerValue(-(bi.longValue + 1L));
+			} else {
+				// TODO look for a more memory sensitive way !?
+				bi = new HugeIntegerValue( bi.bigIntegerValue.add(BigInteger.ONE).negate());
+			}
 		} else {
 			// positive
-			return decodeUnsignedBigInteger();
+			bi = decodeUnsignedHugeIntegerValue();
 		}
+		
+		return bi;
 	}
 
-	
-	public char[] decodeIntegerAsCharacters() throws IOException {
-		return MethodsBag.itos(decodeInteger());
-	}
-	
-	public char[] decodeLongAsCharacters() throws IOException {
-		return MethodsBag.itos(decodeLong());
-	}
-	
-	public char[] decodeBigIntegerAsCharacters() throws IOException {
-		if (decodeBoolean()) {
-			// For negative values, the Unsigned Integer holds the
-			// magnitude of the value minus 1
-			HugeInteger bi = decodeUnsignedHugeInteger();
-			if (bi.isLongValue) {
-				 return MethodsBag.itos(-(bi.longValue + 1L));
-			} else {
-				// TODO look for a more memory sensitive way !?
-				return bi.bigIntegerValue.add(BigInteger.ONE).negate().toString().toCharArray();
-			}
-		} else {
-			// positive
-			HugeInteger bi = decodeUnsignedHugeInteger();
-			if (bi.isLongValue) {
-				return MethodsBag.itos(bi.longValue);
-			} else {
-				// TODO look for a more memory sensitive way !?
-				return bi.bigIntegerValue.toString().toCharArray();
-			}
-		}
-	}
-	
-	protected HugeInteger decodeUnsignedHugeInteger() throws IOException {
+	public HugeIntegerValue decodeUnsignedHugeIntegerValue() throws IOException {
 		long lResult = 0L;
 		int mShift = 0;
 		int b;
-		
-		//	long == 64 bits
-		//	9 x 7 bits --> 63
+
+		// long == 64 bits
+		// 9 x 7 bits --> 63
 		int cntBytes = 0;
 		boolean isLongValue = true;
 
@@ -179,26 +159,26 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			}
 			b = decode();
 			cntBytes++;
-			lResult += ((long)(b & 127)) << mShift;
+			lResult += ((long) (b & 127)) << mShift;
 			mShift += 7;
 		} while ((b >>> 7) == 1);
-		
+
 		if (isLongValue) {
-			return new HugeInteger(lResult);
+			return new HugeIntegerValue(lResult);
 		} else {
-			//	keep on decoding
+			// keep on decoding
 			BigInteger bResult = BigInteger.valueOf(lResult);
 			BigInteger multiplier = BigInteger.ONE;
 			multiplier = multiplier.shiftLeft(7 * cntBytes);
-			
+
 			do {
 				b = decode();
 				bResult = bResult.add(multiplier.multiply(BigInteger
 						.valueOf(b & 127)));
 				multiplier = multiplier.shiftLeft(7);
 			} while ((b >>> 7) == 1);
-			
-			return new HugeInteger(bResult);
+
+			return new HugeIntegerValue(bResult);
 		}
 	}
 
@@ -235,52 +215,34 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		return result;
 	}
 	
-	public long decodeUnsignedLong() throws IOException {
+	public IntegerValue decodeUnsignedIntegerValue() throws IOException {
+		return new IntegerValue(decodeUnsignedInteger());
+	}
+
+	protected long decodeUnsignedLong() throws IOException {
 		long lResult = 0L;
 		int mShift = 0;
 		int b;
-		
+
 		do {
 			b = decode();
-			lResult += ((long)(b & 127)) << mShift;
+			lResult += ((long) (b & 127)) << mShift;
 			mShift += 7;
 		} while ((b >>> 7) == 1);
-		
+
 		return lResult;
 	}
 	
-	public BigInteger decodeUnsignedBigInteger() throws IOException {
-		int b;
-		BigInteger bResult = BigInteger.ZERO;
-		BigInteger multiplier = BigInteger.ONE;
-		
-		do {
-			b = decode();
-			bResult = bResult.add(multiplier.multiply(BigInteger
-					.valueOf(b & 127)));
-			multiplier = multiplier.shiftLeft(7);
-		} while ((b >>> 7) == 1);
-		
-		return bResult;
-	}
-
-	public char[] decodeUnsignedIntegerAsCharacters() throws IOException {
-		return MethodsBag.itos(decodeUnsignedInteger());
-	}
-	
-	public char[] decodeUnsignedLongAsCharacters() throws IOException {
-		return MethodsBag.itos(decodeUnsignedLong());
-	}
-	
-	public char[] decodeUnsignedBigIntegerAsCharacters() throws IOException {
-		return decodeUnsignedHugeInteger().toCharacters();
+	public LongValue decodeUnsignedLongValue() throws IOException {
+		return new LongValue(decodeUnsignedLong());
 	}
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer as string.
 	 */
-	public char[] decodeNBitUnsignedIntegerAsCharacters(int n) throws IOException {
-		return MethodsBag.itos(n);
+	public IntegerValue decodeNBitUnsignedIntegerValue(int n)
+			throws IOException {
+		return new IntegerValue(decodeNBitUnsignedInteger(n));
 	}
 
 	/**
@@ -291,370 +253,53 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public DecimalValue decodeDecimal() throws IOException {
+	public DecimalValue decodeDecimalValue() throws IOException {
 		boolean negative = decodeBoolean();
 
-		HugeInteger integral = decodeUnsignedHugeInteger();
-		HugeInteger revFractional = decodeUnsignedHugeInteger();
-		
+		HugeIntegerValue integral = decodeUnsignedHugeIntegerValue();
+		HugeIntegerValue revFractional = decodeUnsignedHugeIntegerValue();
+
 		return new DecimalValue(negative, integral, revFractional);
 	}
-	
-//	public BigDecimal decodeDecimal() throws IOException {
-//		// return new BigDecimal(decodeDecimalAsString());
-//		return new BigDecimal(decodeDecimalAsCharacters());
-//	}
-//
-//	public char[] decodeDecimalAsCharacters() throws IOException {
-//		boolean negative = decodeBoolean();
-//
-//		char[] integral = decodeUnsignedBigIntegerAsCharacters();
-//		HugeInteger hiFractional = decodeUnsignedHugeInteger();
-//		char[] fractional = hiFractional.isLongValue ? MethodsBag.itosReverse(hiFractional.longValue) :
-//			MethodsBag.itosReverse(hiFractional.bigIntegerValue);
-//		
-//		int aLen = (negative? 1 : 0) + integral.length + 1 + fractional.length;
-//		
-//		char[] caDecimal = new char[aLen];
-//		
-//		int cnt = 0;
-//		
-//		//	negative
-//		if (negative) {
-//			caDecimal[cnt++] = '-';
-//		}
-//		//	integral
-//		System.arraycopy(integral, 0, caDecimal, cnt, integral.length);
-//		cnt += integral.length;
-//		//	dot
-//		caDecimal[cnt++] = '.';
-//		//	fractional
-//		System.arraycopy(fractional, 0, caDecimal, cnt, fractional.length);
-//		
-//		return caDecimal;
-//	}
 
 	/**
 	 * Decode a Float represented as two consecutive Integers. The first Integer
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public float decodeFloat() throws IOException {
+	public FloatValue decodeFloatValue() throws IOException {
 		int iMantissa = decodeInteger();
 		int iExponent = decodeInteger();
-
-		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (iMantissa == -1) {
-				return Float.NEGATIVE_INFINITY;
-			} else if (iMantissa == 1) {
-				return Float.POSITIVE_INFINITY;
-			} else {
-				return Float.NaN;
-			}
-		} else {
-			return iMantissa * (float)(Math.pow(10, iExponent));
-		}
+		return new FloatValue(iMantissa, iExponent);
 	}
-	
-	public char[] decodeFloatAsCharacters() throws IOException {
-		int iMantissa = decodeInteger();
-		int iExponent = decodeInteger();
 
-		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (iMantissa == -1) {
-				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
-			} else if (iMantissa == 1) {
-				return Constants.FLOAT_INFINITY_CHARARRAY;
-			} else {
-				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
-			}
-		} else {
-			// return iMantissa + "E" + iExponent;
-			int sizeMantissa = MethodsBag.getStringSize(iMantissa);
-			int stringSize = sizeMantissa + 1 + MethodsBag.getStringSize(iExponent);
-			
-			char[] cFloat = new char[stringSize];
-			
-			MethodsBag.itos(iExponent, stringSize, cFloat);
-			cFloat[sizeMantissa] = 'E';
-			MethodsBag.itos(iMantissa, sizeMantissa, cFloat);
-
-			return cFloat;
-		}
-	}
-	
-	public double decodeDouble() throws IOException {
+	public DoubleValue decodeDoubleValue() throws IOException {
 		long lMantissa = decodeLong();
 		long lExponent = decodeLong();
-
-		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (lMantissa == -1L) {
-				return Float.NEGATIVE_INFINITY;
-			} else if (lMantissa == 1) {
-				return Float.POSITIVE_INFINITY;
-			} else {
-				return Float.NaN;
-			}
-		} else {
-			return lMantissa * (double)(Math.pow(10, lExponent));
-		}		
-	}
-	
-
-	public char[] decodeDoubleAsCharacters() throws IOException {
-		long lMantissa = decodeLong();
-		long lExponent = decodeLong();
-
-		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (lMantissa == -1) {
-				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
-			} else if (lMantissa == 1) {
-				return Constants.FLOAT_INFINITY_CHARARRAY;
-			} else {
-				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
-			}
-		} else {
-			// return iMantissa + "E" + iExponent;
-			int sizeMantissa = MethodsBag.getStringSize(lMantissa);
-			int stringSize = sizeMantissa + 1 + MethodsBag.getStringSize(lExponent);
-			
-			char[] cDouble = new char[stringSize];
-			
-			MethodsBag.itos(lExponent, stringSize, cDouble);
-			cDouble[sizeMantissa] = 'E';
-			MethodsBag.itos(lMantissa, sizeMantissa, cDouble);
-			
-			return cDouble;
-		}
+		return new DoubleValue(lMantissa, lExponent);
 	}
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public Calendar decodeDateTime(DatetimeType type) throws IOException {
-		Calendar cal = Calendar.getInstance();
-		cal.clear();
-		
-		switch (type) {
-		case gYear: // gYear Year, [Time-Zone]
-			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
-			decodeDateTimeTimezone(cal);
-			break;
-		case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-		case date: // date Year, MonthDay, [TimeZone]
-			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
-			XSDDatetime
-					.setMonthDay(
-							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
-							cal);
-			decodeDateTimeTimezone(cal);
-			break;
-		case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
-			// [TimeZone]
-			cal.set(Calendar.YEAR, decodeInteger() + XSDDatetime.YEAR_OFFSET);
-			XSDDatetime
-					.setMonthDay(
-							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
-							cal);
-			XSDDatetime.setTime(
-					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME),
-					cal);
-			decodeDateTimeFractionalSecs(cal);
-			decodeDateTimeTimezone(cal);
-			break;
-		case gMonth: // gMonth MonthDay, [TimeZone]
-		case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-		case gDay: // gDay MonthDay, [TimeZone]
-			XSDDatetime
-					.setMonthDay(
-							decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY),
-							cal);
-			decodeDateTimeTimezone(cal);
-			break;
-		case time: // time Time, [FractionalSecs], [TimeZone]
-			XSDDatetime.setTime(
-					decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME),
-					cal);
-			decodeDateTimeFractionalSecs(cal);
-			decodeDateTimeTimezone(cal);
-			break;
-		default:
-			throw new UnsupportedOperationException();
-		}
-
-		return cal;
-	}
-	
-	private static void appendTimezone(char[] ca, int index, int tz) {
-		if (tz == 0) {
-			// per default no 'Z'
-		} else {
-			// +/-
-			if (tz < 0) {
-				ca[index++] = '-';
-				tz *= -1;
-			} else {
-				ca[index++] = '+';
-			}
-			// hours
-			int hours = tz / 60;
-			index += appendTwoDigits(ca, index, hours);
-			//	:
-			ca[index++] = ':';
-			//	minutes
-			int minutes = tz - (hours * 60);
-			appendTwoDigits(ca, index, minutes);
-		}
-	}
-	
-	private static int appendFractionalSeconds(char[] ca, int index, int fracSecs, int sLen) {
-		if (fracSecs > 0) {
-			//	".123"
-			ca[index++] = '.';
-			// reverse fracSecs
-			int chars = MethodsBag.itosReverse(fracSecs, index, ca);
-			return chars+1;
-			
-//			char[] fracSecA = MethodsBag.itos(fracSecs);
-//			for(int i= fracSecA.length-1; i>=0; i--) {
-//				ca[index++] = fracSecA[i];
-//			}
-//			return (1+fracSecA.length);
-		} else {
-			return 0;
-		}
-	}
-	
-	private static int appendTwoDigits(char[] ca, int index, int i) {
-		if (i > 9) {
-			MethodsBag.itos(i, index+2, ca);
-			// index++;
-		} else {
-			ca[index++] = '0';
-			MethodsBag.itos(i, index+1, ca);
-		}
-		return 2;
-	}
-	
-	private static int appendYear(char[] ca, int index, int year) {
-		int sLen = 4;
-		
-		if (year < 0) {
-			ca[index] = '-';
-			index++;
-			year = -year;
-			sLen++;
-		}
-		
-		if (year > 999) {
-			MethodsBag.itos(year, index+4, ca);
-		} else if (year > 99) {
-			ca[index++] = '0';
-			MethodsBag.itos(year, index+3, ca);
-		} else if ( year > 9) {
-			ca[index++] = '0';
-			ca[index++] = '0';
-			MethodsBag.itos(year, index+2, ca);
-		} else {
-			ca[index++] = '0';
-			ca[index++] = '0';
-			ca[index++] = '0';
-			MethodsBag.itos(year, index+1, ca);
-		}
-		
-		return sLen;
-	}
-	
-	private static int appendMonth(char[] ca, int index, int monthDay) {
-		int month = monthDay / XSDDatetime.MONTH_MULTIPLICATOR;
-		assert ((monthDay - month * XSDDatetime.MONTH_MULTIPLICATOR) == 0);
-
-		// -MM
-		ca[index++] = '-';
-		return appendTwoDigits(ca, index, month) + 1;
-	}
-	
-	private static int appendMonthDay(char[] ca, int index, int monthDay) {
-		// monthDay: Month * 32 + Day
-		
-		// month & day
-		int month = monthDay /  XSDDatetime.MONTH_MULTIPLICATOR;
-		int day = monthDay - (month * XSDDatetime.MONTH_MULTIPLICATOR);
-		
-		//-MM-DD
-		ca[index++] = '-';
-		index += appendTwoDigits(ca, index, month);
-		ca[index++] = '-';
-		appendTwoDigits(ca, index, day);
-		
-		return 6;
-	}
-	
-	private static int appendDay(char[] ca, int index, int day) {
-		assert (day < 31); // day range 0-30
-		appendTwoDigits(ca, index, day);
-		return 2;
-	}
-	
-	private static int appendTime(char[] ca, int index, int time) {
-		// time = ( ( hour * 60) + minutes ) * 60 + seconds ;
-		final int secHour = 60 * 60;
-		final int secMinute = 60;
-
-		int hour = time / secHour;
-		time -= hour * secHour;
-		int minutes = time / secMinute;
-		int seconds = time - minutes * secMinute;
-
-		//  hh ':' mm ':' ss
-		index += appendTwoDigits(ca, index, hour);
-		ca[index++] = ':';
-		index += appendTwoDigits(ca, index, minutes);
-		ca[index++] = ':';
-		index += appendTwoDigits(ca, index, seconds);
-		
-		return 8;
-	}
-	
-
-	public char[] decodeDateTimeAsCharacters(DatetimeType type) throws IOException {
-		
-		int year, timeZone, time, fractionalSecs;
-		int index = 0;
-		char [] ca;
+	public DateTimeValue decodeDateTimeValue(DatetimeType type) throws IOException {
+		int year = 0, monthDay = 0, time = 0, fractionalSecs = 0, timeZone;
 
 		switch (type) {
 		case gYear: // Year, [Time-Zone]
 			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
 			timeZone = decodeDateTimeTimezone();
-			
-			ca = new char[(year < 0 ? 5 : 4) + (timeZone == 0 ? 0 : 6)];
-			
-			index += appendYear(ca, index, year);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case gYearMonth: // Year, MonthDay, [TimeZone]
 			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
-			int monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
+			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
 			timeZone = decodeDateTimeTimezone();
-			
-			ca = new char[(year < 0 ? 5 : 4) + 3 + (timeZone == 0 ? 0 : 6)];
-			
-			index += appendYear(ca, index, year);
-			index += appendMonth(ca, index, monthDay);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case date: // Year, MonthDay, [TimeZone]
 			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
 			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
 			timeZone = decodeDateTimeTimezone();
-
-			ca = new char[(year < 0 ? 5 : 4) + 6 + (timeZone == 0 ? 0 : 6)];
-			
-			index += appendYear(ca, index, year);
-			index += appendMonthDay(ca, index, monthDay);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case dateTime: // Year, MonthDay, Time, [FractionalSecs], [TimeZone]
 			// e.g. "0001-01-01T00:00:00.111+00:33";
@@ -663,96 +308,42 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			time = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME);
 			fractionalSecs = decodeDateTimeFractionalSecs();
 			timeZone = decodeDateTimeTimezone();
-			
-			int sizeFractionalSecs = fractionalSecs == 0 ? 0 : MethodsBag.getStringSize(fractionalSecs) + 1;
-			ca = new char[(year < 0 ? 5 : 4) + 6 + 9 + (sizeFractionalSecs) +(timeZone == 0 ? 0 : 6)];
-			
-			index += appendYear(ca, index, year);
-			index += appendMonthDay(ca, index, monthDay);
-			ca[index++] = 'T';
-			index += appendTime(ca, index, time);
-			index += appendFractionalSeconds(ca, index, fractionalSecs, sizeFractionalSecs-1);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case gMonth: // MonthDay, [TimeZone]
-			// e.g.  "--12"
+			// e.g. "--12"
 			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
 			timeZone = decodeDateTimeTimezone();
-			
-			ca = new char[1 + 3 + (timeZone == 0 ? 0 : 6)];
-			
-			ca[index++] = '-';
-			index += appendMonth(ca, index, monthDay);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case gMonthDay: // MonthDay, [TimeZone]
-			// e.g.  "--01-28"
+			// e.g. "--01-28"
 			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
 			timeZone = decodeDateTimeTimezone();
-			
-			ca = new char[1 + 6 + (timeZone == 0 ? 0 : 6)];
-			
-			ca[index++] = '-';
-			index += appendMonthDay(ca, index, monthDay);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case gDay: // MonthDay, [TimeZone]
 			// "---16";
 			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
 			timeZone = decodeDateTimeTimezone();
-			
-			ca = new char[3 + 2 + (timeZone == 0 ? 0 : 6)];
-			
-			ca[index++] = '-';
-			ca[index++] = '-';
-			ca[index++] = '-';
-			index += appendDay(ca, index, monthDay);
-			appendTimezone(ca, index, timeZone);
 			break;
 		case time: // Time, [FractionalSecs], [TimeZone]
 			// e.g. "12:34:56.135"
 			time = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME);
 			fractionalSecs = decodeDateTimeFractionalSecs();
 			timeZone = decodeDateTimeTimezone();
-			
-			sizeFractionalSecs = fractionalSecs == 0 ? 0 : MethodsBag.getStringSize(fractionalSecs) + 1;
-			ca = new char[ 8 + (sizeFractionalSecs) +(timeZone == 0 ? 0 : 6)];
-			
-			index += appendTime(ca, index, time);
-			index += appendFractionalSeconds(ca, index, fractionalSecs, sizeFractionalSecs-1);
-			appendTimezone(ca, index, timeZone);
 			break;
 		default:
 			throw new UnsupportedOperationException();
 		}
-		
-		return ca;
+
+		return new DateTimeValue(type, year, monthDay, time, fractionalSecs,
+				timeZone);
 	}
 
-	private void decodeDateTimeTimezone(Calendar cal) throws IOException {
-		int tz = 0;
-
-		if (decodeBoolean()) {
-			tz = XSDDatetime
-					.getTimeZoneInMillisecs(decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIMEZONE)
-							- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES);
-		}
-
-		TimeZone tzO = TimeZone.getTimeZone("GMT+00:00");
-		tzO.setRawOffset(tz);
-		cal.setTimeZone(tzO);
-	}
-	
 	private int decodeDateTimeTimezone() throws IOException {
 		return decodeBoolean() ? decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIMEZONE)
-					- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES : 0;
+				- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES
+				: 0;
 	}
 
-	private void decodeDateTimeFractionalSecs(Calendar cal) throws IOException {
-		cal.set(Calendar.MILLISECOND, decodeBoolean() ? decodeUnsignedInteger()
-				: 0);
-	}
-	
 	private int decodeDateTimeFractionalSecs() throws IOException {
 		return decodeBoolean() ? decodeUnsignedInteger() : 0;
 	}

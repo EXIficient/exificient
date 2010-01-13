@@ -22,6 +22,8 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.siemens.ct.exi.values.BinaryValue;
+
 /**
  * TODO Description
  * 
@@ -58,7 +60,7 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
-	public byte[] decodeBinary() throws IOException {
+	public BinaryValue decodeBinary() throws IOException {
 		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
 		
@@ -69,7 +71,7 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 			}
 		}
 		
-		return result;
+		return new BinaryValue(result);
 	}
 
 	/**

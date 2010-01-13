@@ -18,19 +18,32 @@
 
 package com.siemens.ct.exi.values;
 
-public class StringValue extends AbstractValue {
+
+/**
+ * TODO Description
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.3.20090128
+ */
+
+
+public abstract class AbstractValue implements Value {
+
+	protected char[] characters;
+	protected String sValue;
 	
-	public StringValue(char[] ca) {
-		this.characters = ca;
+	@Override
+	public String toString() {
+		if (sValue == null) {
+			sValue = new String(toCharacters());
+		}
+		return sValue;
 	}
 	
-	public StringValue(String s) {
-		sValue = s;
-		this.characters = sValue.toCharArray();
-	}
-	
-	public char[] toCharacters() {
-		return characters;
+	public int getCharactersLength() {
+		return toCharacters().length;
 	}
 	
 }

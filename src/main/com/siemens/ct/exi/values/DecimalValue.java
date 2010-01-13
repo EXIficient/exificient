@@ -20,64 +20,56 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigDecimal;
 
-import com.siemens.ct.exi.util.HugeInteger;
-public class DecimalValue implements Value {
-	
+
+public class DecimalValue extends AbstractValue {
+
 	protected final boolean negative;
-	protected final HugeInteger integral;
-	protected final HugeInteger revFractional;
-	
-	protected char[] characters;
-	protected String sValue;
-	
-	public DecimalValue(boolean negative, HugeInteger integral, HugeInteger revFractional) {
+	protected final HugeIntegerValue integral;
+	protected final HugeIntegerValue revFractional;
+
+	protected BigDecimal bd;
+
+	public DecimalValue(boolean negative, HugeIntegerValue integral,
+			HugeIntegerValue revFractional) {
 		this.negative = negative;
 		this.integral = integral;
 		this.revFractional = revFractional;
 	}
-	
-	public BigDecimal getBigDecimal() {
-		return new BigDecimal(toCharacters());
+
+	public BigDecimal toBigDecimal() {
+		if (bd == null) {
+			bd = new BigDecimal(toCharacters());
+		}
+		return bd;
 	}
 
 	public char[] toCharacters() {
 		if (characters == null) {
 			char[] caIntegral = integral.toCharacters();
 			char[] caFractional = revFractional.toReverseCharacters();
-			
-			int aLen = (negative? 1 : 0) + caIntegral.length + 1 + caFractional.length;
-			
+
+			int aLen = (negative ? 1 : 0) + caIntegral.length + 1
+					+ caFractional.length;
+
 			characters = new char[aLen];
-			
+
 			int cnt = 0;
-			
-			//	negative
+
+			// negative
 			if (negative) {
 				characters[cnt++] = '-';
 			}
-			//	integral
+			// integral
 			System.arraycopy(caIntegral, 0, characters, cnt, caIntegral.length);
 			cnt += caIntegral.length;
-			//	dot
+			// dot
 			characters[cnt++] = '.';
-			//	fractional
-			System.arraycopy(caFractional, 0, characters, cnt, caFractional.length);	
+			// fractional
+			System.arraycopy(caFractional, 0, characters, cnt,
+					caFractional.length);
 		}
-		
-		return characters;
-	}
-	
-	public int getCharactersLength() {
-		return toCharacters().length;
-	}
 
-	@Override
-	public String toString() {
-		if (sValue == null) {
-			sValue = new String(toCharacters());
-		}
-		
-		return sValue;
+		return characters;
 	}
 
 }

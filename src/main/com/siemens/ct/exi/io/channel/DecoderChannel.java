@@ -19,11 +19,17 @@
 package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Calendar;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.values.BinaryValue;
+import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
+import com.siemens.ct.exi.values.DoubleValue;
+import com.siemens.ct.exi.values.FloatValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
+import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.LongValue;
 
 /**
  * TODO Description
@@ -48,7 +54,7 @@ public interface DecoderChannel {
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException;
 
-	public char[] decodeNBitUnsignedIntegerAsCharacters(int n) throws IOException;
+	public IntegerValue decodeNBitUnsignedIntegerValue(int n) throws IOException;
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit
@@ -56,14 +62,12 @@ public interface DecoderChannel {
 	 */
 	public boolean decodeBoolean() throws IOException;
 
-	public char[] decodeBooleanAsCharacters() throws IOException;
+	public BooleanValue decodeBooleanValue() throws IOException;
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
-	public byte[] decodeBinary() throws IOException;
-
-	public char[] decodeBinaryAsCharacters() throws IOException;
+	public BinaryValue decodeBinary() throws IOException;
 
 	/**
 	 * Decode a string as a length-prefixed sequence of UCS codepoints, each of
@@ -90,16 +94,12 @@ public interface DecoderChannel {
 	 * store the integer's value.
 	 */
 	public int decodeUnsignedInteger() throws IOException;
-
-	public long decodeUnsignedLong() throws IOException;
 	
-	public BigInteger decodeUnsignedBigInteger() throws IOException;
-
-	public char[] decodeUnsignedIntegerAsCharacters() throws IOException;
+	public IntegerValue decodeUnsignedIntegerValue() throws IOException;
 	
-	public char[] decodeUnsignedLongAsCharacters() throws IOException;
+	public LongValue decodeUnsignedLongValue() throws IOException;
 	
-	public char[] decodeUnsignedBigIntegerAsCharacters() throws IOException;
+	public HugeIntegerValue decodeUnsignedHugeIntegerValue() throws IOException;
 
 	/**
 	 * Decode an arbitrary precision integer using a sign bit followed by a
@@ -107,18 +107,12 @@ public interface DecoderChannel {
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
 	 */
-	public int decodeInteger() throws IOException;
+	public IntegerValue decodeIntegerValue() throws IOException;
 	
-	public long decodeLong() throws IOException;
+	public LongValue decodeLongValue() throws IOException;
 	
-	public BigInteger decodeBigInteger() throws IOException;
-
-	public char[] decodeIntegerAsCharacters() throws IOException;
+	public HugeIntegerValue decodeHugeIntegerValue() throws IOException;
 	
-	public char[] decodeLongAsCharacters() throws IOException;
-	
-	public char[] decodeBigIntegerAsCharacters() throws IOException;
-
 	/**
 	 * Decode a decimal represented as a Boolean sign followed by two Unsigned
 	 * Integers. A sign value of zero (0) is used to represent positive Decimal
@@ -127,30 +121,21 @@ public interface DecoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public DecimalValue decodeDecimal() throws IOException;
-	
-	// public BigDecimal decodeDecimal() throws IOException;
-	// public char[] decodeDecimalAsCharacters() throws IOException;
+	public DecimalValue decodeDecimalValue() throws IOException;
 
 	/**
 	 * Decode a Float represented as two consecutive Integers. The first Integer
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public float decodeFloat() throws IOException;
-
-	public char[] decodeFloatAsCharacters() throws IOException;
-	
-	public double decodeDouble() throws IOException;
-
-	public char[] decodeDoubleAsCharacters() throws IOException;
+	public FloatValue decodeFloatValue() throws IOException;
+		
+	public DoubleValue decodeDoubleValue() throws IOException;
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public Calendar decodeDateTime(DatetimeType type) throws IOException;
-
-	public char[] decodeDateTimeAsCharacters(DatetimeType type) throws IOException;
+	public DateTimeValue decodeDateTimeValue(DatetimeType type) throws IOException;
 
 }

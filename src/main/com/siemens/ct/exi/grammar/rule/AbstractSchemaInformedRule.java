@@ -357,5 +357,9 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		throw new RuntimeException(
 				"Not allowed to set first element, only in StartTag");
 	}
+	
+//	public boolean isFirstElementRule() {
+//		return false;
+//	}
 
 }

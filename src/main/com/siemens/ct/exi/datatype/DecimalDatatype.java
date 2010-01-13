@@ -61,6 +61,6 @@ public class DecimalDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		return valueChannel.decodeDecimal();
+		return valueChannel.decodeDecimalValue();
 	}
 }

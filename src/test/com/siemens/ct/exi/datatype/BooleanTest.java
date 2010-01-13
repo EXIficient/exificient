@@ -56,11 +56,11 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanAsCharacters().equals(
+		assertTrue(getBitDecoder().decodeBooleanValue().toCharacters().equals(
 				Constants.DECODED_BOOLEAN_FALSE));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanAsCharacters().equals(
+		assertTrue(getByteDecoder().decodeBooleanValue().toCharacters().equals(
 				Constants.DECODED_BOOLEAN_FALSE));
 	}
 
@@ -103,11 +103,11 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanAsCharacters().equals(
+		assertTrue(getBitDecoder().decodeBooleanValue().toCharacters().equals(
 				Constants.DECODED_BOOLEAN_TRUE));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanAsCharacters().equals(
+		assertTrue(getByteDecoder().decodeBooleanValue().toCharacters().equals(
 				Constants.DECODED_BOOLEAN_TRUE));
 	}
 

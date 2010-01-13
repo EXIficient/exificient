@@ -29,9 +29,8 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.HugeInteger;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -45,9 +44,9 @@ import com.siemens.ct.exi.values.Value;
 
 public class NBitBigIntegerDatatype extends AbstractDatatype {
 	protected final BigInteger lowerBound;
-	protected final HugeInteger hiLowerBound;
+	protected final HugeIntegerValue hiLowerBound;
 	protected final BigInteger upperBound;
-	protected final HugeInteger hiUpperBound;
+	protected final HugeIntegerValue hiUpperBound;
 	
 	protected final int numberOfBits4Range;
 	
@@ -69,13 +68,13 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
 	}
 	
-	protected static final HugeInteger getHugeInteger(BigInteger bi) {
+	protected static final HugeIntegerValue getHugeInteger(BigInteger bi) {
 		if (bi.bitLength() <= 63) {
 			//	fits into long
-			return new HugeInteger(bi.longValue());
+			return new HugeIntegerValue(bi.longValue());
 		} else {
 			//	need to use BigInteger
-			return new HugeInteger(bi);
+			return new HugeIntegerValue(bi);
 		}
 	}
 
@@ -119,15 +118,26 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {
-		// decode value
 		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
-		// add offset (lower bound)
+		HugeIntegerValue hv;
 		if (hiLowerBound.isLongValue) {
-			return new StringValue( MethodsBag.itos(hiLowerBound.longValue + decodedValue) );
+			hv = new HugeIntegerValue( decodedValue + hiLowerBound.longValue);
 		} else {
-			//	not a very efficient way!!
-			return new StringValue(lowerBound.add(BigInteger.valueOf(decodedValue)).toString().toCharArray());	
+			// TODO look for an efficient way!!
+			hv = new HugeIntegerValue(lowerBound.add(BigInteger.valueOf(decodedValue)));
 		}
+		return hv;
+		
+		
+//		// decode value
+//		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
+//		// add offset (lower bound)
+//		if (hiLowerBound.isLongValue) {
+//			return new StringValue( MethodsBag.itos(hiLowerBound.longValue + decodedValue) );
+//		} else {
+//			//	not a very efficient way!!
+//			return new StringValue(lowerBound.add(BigInteger.valueOf(decodedValue)).toString().toCharArray());	
+//		}
 	}
 
 }

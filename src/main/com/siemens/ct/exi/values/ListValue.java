@@ -20,19 +20,21 @@ package com.siemens.ct.exi.values;
 
 import com.siemens.ct.exi.Constants;
 
-public class ListValue implements Value {
+public class ListValue extends AbstractValue {
 	
 	protected final Value[] values;
-	
-	protected char[] characters;
-	protected String sValue;
 	
 	public ListValue(Value[] values) {
 		this.values = values;
 	}
+	
+	public Value[] toValues() {
+		return values;
+	}
 
 	public char[] toCharacters() {
 		if (characters == null) {
+			//	TODO instead of copying twice the chars find a better way, e.g., toCharacters(array) 
 			//	calculate size
 			int size = values.length > 0 ? (values.length-1) : 0;	// (n-1) delimiters
 			for(int i=0; i<values.length; i++) {
@@ -53,19 +55,6 @@ public class ListValue implements Value {
 		}
 		
 		return characters;
-	}
-	
-	public int getCharactersLength() {
-		throw new RuntimeException("Not allowed to call ListValue Length");
-	}
-
-	@Override
-	public String toString() {
-		if (sValue == null) {
-			sValue = new String(toCharacters());
-		}
-		
-		return sValue;
 	}
 
 }

@@ -68,8 +68,11 @@ public class SchemaInformedStartTag extends
 	@Override
 	public void setFirstElementRule() {
 		this.isFirstElementRule = true;
-		
 	}
+	
+//	public boolean isFirstElementRule() {
+//		return isFirstElementRule;
+//	}
 
 	
 	@Override
@@ -170,6 +173,21 @@ public class SchemaInformedStartTag extends
 		//}
 		
 		return s + super.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SchemaInformedStartTag) {
+			SchemaInformedStartTag other = (SchemaInformedStartTag) obj;
+			if ( this.isFirstElementRule == other.isFirstElementRule && 
+					this.isTypeCastable == other.isTypeCastable && 
+					this.isNillable == other.isNillable && 
+					super.equals(other) ) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }

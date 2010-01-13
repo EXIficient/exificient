@@ -18,19 +18,25 @@
 
 package com.siemens.ct.exi.values;
 
-public class StringValue extends AbstractValue {
-	
-	public StringValue(char[] ca) {
-		this.characters = ca;
+import com.siemens.ct.exi.util.MethodsBag;
+
+public class LongValue extends AbstractValue {
+
+	protected final long val;
+
+	public LongValue(long val) {
+		this.val = val;
 	}
 	
-	public StringValue(String s) {
-		sValue = s;
-		this.characters = sValue.toCharArray();
+	public long toLong() {
+		return val;
 	}
-	
+
 	public char[] toCharacters() {
+		if (characters == null) {
+			characters = MethodsBag.itos(val);
+		}
 		return characters;
 	}
-	
+
 }
