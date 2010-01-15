@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.data;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
@@ -40,7 +42,7 @@ public class W3CTestCase extends AbstractTestCase {
 		// W3CTestCase.setConfigurationW3CXHTMLTransitional1();
 	}
 
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -90,6 +92,20 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		
+		// #7 (SelfContained)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		FidelityOptions scFo = FidelityOptions.createDefault();
+		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
+		QName[] scElements = new QName[1];
+		// scElements[0] = new QName("", "note"); // TODO AT following
+		scElements[0] = new QName("", "body");
+		testCaseOptions.lastElement().setSelfContainedElements(scElements);
+		testCaseOptions.lastElement().setFidelityOptions(scFo);
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+
 	}
 
 	@Test

@@ -222,6 +222,30 @@ public class SAXDecoder implements XMLReader {
 			decoder.decodeNamespaceDeclaration();
 			parseStartTagContent();
 			break;
+		/* SELF_CONTAINED */
+		case SELF_CONTAINED:
+			// TODO
+			System.err.println("TODO SELF_CONTAINED");
+			decoder.decodeStartFragmentSelfContained();
+			// parseStartTagContent();
+			decoder.hasNext();
+			eventType = decoder.next();
+			
+//			// save qualified-name for EE
+//			eeQualifiedNames.add(decoder.getElementQName());
+			String qname = decoder.getElementQName();
+			
+			// start so far deferred start element
+			contentHandler.startElement(deferredStartElementUri,
+					deferredStartElementLocalName, qname, attributes);
+			
+			// save qualified-name for EE
+			eeQualifiedNames.add(qname);
+			// clear information
+			attributes.clear();
+			
+			parseElementContent(eventType);
+			 break;
 		/* ELEMENT CONTENT EVENTS */
 		default:
 			// NO Attribute or NS events anymore --> start deferred element
@@ -229,7 +253,8 @@ public class SAXDecoder implements XMLReader {
 			// get qname as string
 			//	NOTE: getting qname needs to be done before starting prefix mapping 
 			// given that the qname may require a new qname
-			String qname = decoder.getElementQName();
+			// String
+			qname = decoder.getElementQName();
 			
 			
 			//	TODO start prefix mapping differently!
@@ -359,12 +384,15 @@ public class SAXDecoder implements XMLReader {
 		deferredStartElementUri = decoder.getElementURI();
 		deferredStartElementLocalName = decoder.getElementLocalName();
 
+		System.out.println(">> SE " + deferredStartElementLocalName);
+		
 		// start processing startTag events
 		parseStartTagContent();
 	}
 
 	protected void handleEndElement() throws SAXException, IOException {
 		// start sax end element
+		System.out.println("<< EE " + eeQualifiedNames.get(eeQualifiedNames.size() - 1));
 		contentHandler.endElement(decoder.getElementURI(), decoder.getElementLocalName(), eeQualifiedNames
 				.remove(eeQualifiedNames.size() - 1));
 	}
@@ -381,6 +409,9 @@ public class SAXDecoder implements XMLReader {
 
 	protected void handleCharacters() throws SAXException, IOException {
 		char[] chars = decoder.getCharacters();
+		
+		System.out.println(" --> CH " + new String(chars));
+		
 		contentHandler.characters(chars, 0, chars.length);
 	}
 

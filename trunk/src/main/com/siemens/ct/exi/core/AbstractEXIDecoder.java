@@ -587,10 +587,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return piData;
 	}
 
-	public void decodeEndFragmentSelfContained() throws EXIException,
-			IOException {
-		throw new RuntimeException("[EXI] SelfContained");
-	}
+//	public void decodeEndFragmentSelfContained() throws EXIException,
+//			IOException {
+//		throw new RuntimeException("[EXI] SelfContained");
+//	}
 
 	public void decodeStartFragmentSelfContained() throws EXIException,
 			IOException {

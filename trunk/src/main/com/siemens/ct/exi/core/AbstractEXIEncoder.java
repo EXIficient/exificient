@@ -404,9 +404,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		// prefix
 		encodeQNamePrefix(uri, prefix);
 		// update current rule
-		currentRule = nextTopRule;
+		// currentRule = nextTopRule;
 		// push element
-		pushElement(nextSE);
+		pushElement(nextSE, nextTopRule);
 	}
 
 	public void encodeNamespaceDeclaration(String uri, String prefix)
@@ -807,15 +807,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// update current rule
 			currentRule = currentRule.getElementContentRule();
 		}
-	}
-
-	public void encodeEndFragmentSelfContained() throws EXIException {
-		throw new RuntimeException("[EXI] SelfContained");
-	}
-
-	public int encodeStartFragmentSelfContained(String uri, String localName,
-			String prefix) throws EXIException {
-		throw new RuntimeException("[EXI] SelfContained");
 	}
 
 }

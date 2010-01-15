@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import javax.xml.namespace.QName;
+
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.api.sax.EXIWriter;
@@ -119,6 +121,19 @@ public interface EXIFactory {
 	 */
 	public void setDatatypeRepresentationMap(
 			DatatypeRepresentation[] datatypeRepresentations);
+
+	/**
+	 * Self-contained elements may be read independently from the rest of the
+	 * EXI body, allowing them to be indexed for random access. The
+	 * "selfContained" element MUST NOT appear in an EXI options document when
+	 * one of "compression", "pre-compression" or "strict" elements are present
+	 * in the same options document.
+	 * 
+	 * @param elements
+	 */
+	public void setSelfContainedElements(QName[] scElements);
+	
+	public boolean isSelfContainedElement(QName element);
 
 	/**
 	 * Returns an <code>EXIEncoder</code>

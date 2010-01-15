@@ -50,6 +50,12 @@ public interface DecoderChannel {
 	public int decode() throws IOException;
 
 	/**
+	 * Align to next byte-aligned boundary in the stream if it is not already at such a boundary
+	 * @throws IOException
+	 */
+	public void align() throws IOException;
+	
+	/**
 	 * Decodes and returns an n-bit unsigned integer.
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException;

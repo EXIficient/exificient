@@ -167,22 +167,39 @@ public abstract class AbstractEXICoder {
 		uriContext = runtimeURIEntries.get(0);
 	}
 
-	protected final void pushElement(StartElement se) {
+	protected final void pushElement(StartElement se, Rule contextRule) {
 		// update "rule" item of current peak (for popElement() later on) 
-		elementContext.rule = currentRule;	
+		// elementContext.rule = currentRule;
+		elementContext.rule = contextRule;
 		//	set "new" current-rule
 		currentRule = se.getRule();
 		//	create new stack item & push it
-		elementContext = new ElementContext(se.getQName(), currentRule);
-		if (elementContextStack.length == (++elementContextStackIndex)) {
-			//	extend array
+		pushElementContext(new ElementContext(se.getQName(), currentRule));
+		
+//		elementContext = new ElementContext(se.getQName(), currentRule);
+//		++elementContextStackIndex;
+//		// array needs to be extended?
+//		if (elementContextStack.length == elementContextStackIndex) {
+//			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
+//			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0, elementContextStack.length);
+//			elementContextStack = elementContextStackNew;
+//		}
+//		elementContextStack[elementContextStackIndex] = elementContext;
+		
+		// NS context
+		namespaces.pushContext();
+	}
+	
+	protected final void pushElementContext(ElementContext elementContext) {
+		this.elementContext = elementContext;
+		++elementContextStackIndex;
+		// array needs to be extended?
+		if (elementContextStack.length == elementContextStackIndex) {
 			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
 			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0, elementContextStack.length);
 			elementContextStack = elementContextStackNew;
 		}
 		elementContextStack[elementContextStackIndex] = elementContext;
-		// NS context
-		namespaces.pushContext();
 	}
 
 	protected final void popElement() {

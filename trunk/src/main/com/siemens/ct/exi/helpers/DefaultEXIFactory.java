@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.helpers;
 
+import javax.xml.namespace.QName;
+
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.CodingMode;
@@ -76,6 +78,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected FidelityOptions fidelityOptions;
 
 	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
+	protected QName[] scElements;
 
 	protected boolean exiBodyOnly = false; // default: false
 
@@ -110,6 +113,21 @@ public class DefaultEXIFactory implements EXIFactory {
 	public void setDatatypeRepresentationMap(
 			DatatypeRepresentation[] datatypeRepresentations) {
 		this.userDefinedDatatypeRepresentations = datatypeRepresentations;
+	}
+	
+	public void setSelfContainedElements(QName[] scElements) {
+		this.scElements = scElements;
+	}
+	
+	public boolean isSelfContainedElement(QName element) {
+		if (scElements != null && scElements.length > 0) {
+			for(QName qname : scElements) {
+				if(qname.equals(element)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void setGrammar(Grammar grammar) {
@@ -270,4 +288,5 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return typeDecoder;
 	}
+
 }
