@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.data.DeviationsTestCase;
 import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
@@ -43,6 +45,7 @@ public class QuickTestConfiguration {
 
 	// Options
 	public static FidelityOptions fidelityOptions;
+	public static QName[] selfContainedElements;
 	public static DatatypeRepresentation[] datatypeRepresentations;
 
 	public static void setXsdLocation(String xsdLocation) {
@@ -81,12 +84,25 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict ( );
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		//	TODO return value true or false
+
+		// self-contained elements
+		try {
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC,
+					true);
+			selfContainedElements = new QName[1];
+			// selfContainedElements[0] = new QName("", "note");
+			selfContainedElements[0] = new QName("", "body");
+		} catch (UnsupportedOption e) {
+			e.printStackTrace();
+		}
+		
+//		// preserve lexical values
 //		try {
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE,
+//					true);
 //		} catch (UnsupportedOption e) {
 //			e.printStackTrace();
 //		}

@@ -42,6 +42,12 @@ public interface EncoderChannel {
 	public OutputStream getOutputStream();
 
 	public void flush() throws IOException;
+	
+	/**
+	 * Align to next byte-aligned boundary in the stream if it is not already at such a boundary
+	 * @throws IOException
+	 */
+	public void align() throws IOException;
 
 	public void encode(int b) throws IOException;
 

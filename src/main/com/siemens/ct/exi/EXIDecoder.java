@@ -62,14 +62,14 @@ public interface EXIDecoder {
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeStartDocument() throws EXIException;
+	public void decodeStartDocument() throws EXIException, IOException;
 
 	/**
 	 * Finalizes the end of a set of XML events
 	 * 
 	 * @throws EXIException
 	 */
-	public void decodeEndDocument() throws EXIException;
+	public void decodeEndDocument() throws EXIException, IOException;
 
 	/**
 	 * Reads EXI start element.
@@ -139,13 +139,13 @@ public interface EXIDecoder {
 	 */
 	public void decodeEndElementUndeclared() throws EXIException, IOException;
 
-	/**
-	 * Reads an end element part of self-contained fragments
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeEndFragmentSelfContained() throws EXIException, IOException;
+//	/**
+//	 * Reads an end element part of self-contained fragments
+//	 * 
+//	 * @throws EXIException
+//	 * @throws IOException
+//	 */
+//	public void decodeEndFragmentSelfContained() throws EXIException, IOException;
 
 	/**
 	 * Parses xsi:nil attribute

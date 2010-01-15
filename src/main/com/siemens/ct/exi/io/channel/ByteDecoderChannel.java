@@ -48,6 +48,10 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public int decode() throws IOException {
 		return is.read();
 	}
+	
+	public void align() throws IOException {
+	}
+	
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the byte

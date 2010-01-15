@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.data;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.types.DatatypeRepresentation;
@@ -30,6 +32,7 @@ public class TestCaseOption {
 	private boolean xmlEqual;
 	private boolean schemaInformedOnly;
 	private DatatypeRepresentation[] datatypeRepresentations;
+	private QName[] scElements;
 
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -86,6 +89,14 @@ public class TestCaseOption {
 	public void setDatatypeRepresentations(
 			DatatypeRepresentation[] datatypeRepresentations) {
 		this.datatypeRepresentations = datatypeRepresentations;
+	}
+	
+	public void setSelfContainedElements(QName[] scElements) {
+		this.scElements = scElements;
+	}
+	
+	public QName[] getSelfContainedElements() {
+		return scElements;
 	}
 
 	@Override

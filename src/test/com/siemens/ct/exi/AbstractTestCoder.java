@@ -55,6 +55,7 @@ public abstract class AbstractTestCoder {
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
+		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
 
 		return ef;
 	}

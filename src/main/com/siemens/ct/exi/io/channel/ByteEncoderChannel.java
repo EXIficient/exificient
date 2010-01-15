@@ -48,6 +48,10 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 	public void flush() throws IOException {
 		os.flush();
 	}
+	
+	public void align() throws IOException {
+		//	already byte aligned
+	}
 
 	public void encode(int b) throws IOException {
 		os.write(b);

@@ -55,6 +55,10 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 	public void flush() throws IOException {
 		ostream.flush();
 	}
+	
+	public void align() throws IOException {
+		ostream.align();
+	}
 
 	public void encode(int b) throws IOException {
 		ostream.writeBits(b, 8);
