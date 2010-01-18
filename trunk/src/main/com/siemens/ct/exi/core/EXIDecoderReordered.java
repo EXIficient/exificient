@@ -91,7 +91,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected Map<QName, PreReadValueContainer> contentValues;
 
 	protected List<Value> xsiValues;
-	protected int xsiEntryIndex;
+	protected int xsiValueIndex;
+	protected List<String> xsiPrefixes;
+	protected int xsiPrefixIndex;
 
 	// deflate stuff
 	protected InputStream resettableInputStream;
@@ -123,6 +125,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		contentValues = new HashMap<QName, PreReadValueContainer>();
 
 		xsiValues = new ArrayList<Value>();
+		xsiPrefixes = new ArrayList<String>();
 
 		codingMode = exiFactory.getCodingMode();
 	}
@@ -167,7 +170,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// content values
 		contentValues.clear();
 		xsiValues.clear();
-		xsiEntryIndex = 0;
+		xsiValueIndex = 0;
+		xsiPrefixes.clear();
+		xsiPrefixIndex = 0;
 
 		// pre-read structure and afterwards pre-read content (values)
 		preReadStructure();
@@ -300,10 +305,14 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				nsEntries.add(new NamespaceEntry(nsURI, nsPrefix));
 				break;
 			case ATTRIBUTE_XSI_TYPE:
+				attributePrefix = decodeQNamePrefix(xsiTypeQName);
+				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiTypeStructure();
 				xsiValues.add(attributeValue);
 				break;
 			case ATTRIBUTE_XSI_NIL:
+				attributePrefix = decodeQNamePrefix(xsiNilQName);
+				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiNilStructure();
 				xsiValues.add(attributeValue);
 				break;
@@ -553,26 +562,18 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	@Override
 	public void decodeAttributeXsiNil() throws EXIException, IOException {
-//		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-//		attributeLocalName = Constants.XSI_NIL;
 		attributeQName = xsiNilQName;
 		
-		//	TODO change prefix mapping
-		attributePrefix = "xsi";
-
-		attributeValue = xsiValues.get(xsiEntryIndex++);
+		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
+		attributeValue = xsiValues.get(xsiValueIndex++);
 	}
 
 	@Override
 	public void decodeAttributeXsiType() throws EXIException, IOException {
-//		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-//		attributeLocalName = Constants.XSI_TYPE;
 		attributeQName = xsiTypeQName;
-		// TODO change prefix mapping
-		attributePrefix = "xsi";
-
-
-		attributeValue = xsiValues.get(xsiEntryIndex++);
+		
+		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
+		attributeValue = xsiValues.get(xsiValueIndex++);
 	}
 	
 	@Override
