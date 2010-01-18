@@ -92,9 +92,12 @@ public class QuickTestConfiguration {
 		try {
 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC,
 					true);
-			selfContainedElements = new QName[1];
-			// selfContainedElements[0] = new QName("", "note");
-			selfContainedElements[0] = new QName("", "body");
+//			selfContainedElements = new QName[1];
+//			selfContainedElements[0] = new QName("", "note");
+
+			selfContainedElements = new QName[2];
+			selfContainedElements[0] = new QName("", "note");
+			selfContainedElements[1] = new QName("", "body");
 		} catch (UnsupportedOption e) {
 			e.printStackTrace();
 		}

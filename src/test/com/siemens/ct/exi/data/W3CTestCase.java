@@ -96,15 +96,17 @@ public class W3CTestCase extends AbstractTestCase {
 		// #7 (SelfContained)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-		FidelityOptions scFo = FidelityOptions.createDefault();
-		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
-		QName[] scElements = new QName[1];
-		// scElements[0] = new QName("", "note"); // TODO AT following
-		scElements[0] = new QName("", "body");
+		FidelityOptions scFo = FidelityOptions.createAll();
+//		FidelityOptions scFo = FidelityOptions.createDefault();
+//		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
+		QName[] scElements = new QName[3];
+		scElements[0] = new QName("", "note");	//	notebook
+		scElements[1] = new QName("", "body");  //	notebook, nested
+		scElements[2] = new QName("http://www.foo.com", "person"); // XMLSample
 		testCaseOptions.lastElement().setSelfContainedElements(scElements);
 		testCaseOptions.lastElement().setFidelityOptions(scFo);
 		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setXmlEqual(true);
 
 	}
 

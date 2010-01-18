@@ -39,7 +39,6 @@ import com.siemens.ct.exi.grammar.event.EventType;
 
 public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 
-	// protected EXIDecoderInOrderSC decoder;
 	protected EXIDecoderInOrderSC scDecoder;
 
 	public EXIDecoderInOrderSC(EXIFactory exiFactory) {
@@ -47,7 +46,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		assert (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC));
 	}
 
-	// @Override
+	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
@@ -65,17 +64,18 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	public boolean hasNext() throws EXIException, IOException {
-		// return (scDecoder == null ? super.hasNext() : scDecoder.hasNext());
 		if ( scDecoder == null ) {
 			return super.hasNext();
 		} else {
 			boolean bool = scDecoder.hasNext();
-			if ( this.scDecoder.nextEventType == EventType.END_DOCUMENT ) {
-				System.out.println("End inner SC Fragment");
-				decodeEndDocument();
-				// this.nextEventType = EventType.END_DOCUMENT;
-				super.popElement();
-				// return true;
+			if ( this.scDecoder.nextEventType == EventType.END_DOCUMENT ) {		
+				scDecoder.decodeEndDocument();
+				// Skip to the next byte-aligned boundary in the stream if it is
+				// not already at such a boundary
+				this.channel.align();
+				// indicate that SC portion is over
+				scDecoder = null;
+				popElement();
 				return super.hasNext();
 			}
 			return bool;
@@ -98,14 +98,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		if (scDecoder == null) {
 			super.decodeEndDocument();
 		} else {
-			System.out.println("END INNER DOCUMENTE !??!?");			
-			scDecoder.decodeEndDocument();
-
-			// Skip to the next byte-aligned boundary in the stream if it is
-			// not already at such a boundary
-			this.channel.align();
-			// indicate that SC portion is over
-			scDecoder = null;
+			throw new RuntimeException("[EXI] SC not closed properly?");
 		}
 	}
 
@@ -144,53 +137,48 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 
 	public void decodeStartFragmentSelfContained() throws EXIException,
 			IOException {
-		System.out.println("SC decodeStartFragmentSelfContained");
+		if (scDecoder == null) {
+			//	SC Factory & Decoder
+			EXIFactory scEXIFactory = exiFactory.clone();
+			scEXIFactory.setEXIBodyOnly(true);
+			scEXIFactory.setFragment(true);
+			scDecoder = (EXIDecoderInOrderSC) scEXIFactory.createEXIDecoder();
+			scDecoder.channel = this.channel;
+			scDecoder.setErrorHandler(this.errorHandler);
+			scDecoder.initForEachRun();
 
-		// TODO duplicate factory
-		boolean fragment = exiFactory.isFragment();
-		if (fragment) {
-			scDecoder = (EXIDecoderInOrderSC) exiFactory.createEXIDecoder();
+			// Skip to the next byte-aligned boundary in the stream if it is not
+			// already at such a boundary
+			this.channel.align();
+
+			// Evaluate the sequence of events (SD, SE(qname), content, ED)
+			// according to the Fragment grammar
+			scDecoder.decodeStartDocument();
+			this.hasNext(); // decode next event
+			EventType et = this.next();
+			switch (et) {
+			case START_ELEMENT:
+				scDecoder.decodeStartElement();
+				break;
+			case START_ELEMENT_GENERIC:
+				scDecoder.decodeStartElementGeneric();
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				scDecoder.decodeStartElementGenericUndeclared();
+				break;
+			case START_ELEMENT_NS:
+				scDecoder.decodeStartElementNS();
+				break;
+			default:
+				throw new RuntimeException("[EXI] Unsupported EventType " + et
+						+ " in SelfContained Element");
+			}
 		} else {
-			exiFactory.setFragment(true);
-			scDecoder = (EXIDecoderInOrderSC) exiFactory.createEXIDecoder();
-			exiFactory.setFragment(false);
+			// 
+			scDecoder.decodeStartFragmentSelfContained();
 		}
-		// scEncoder.setOutput(os, true);
-		// scDecoder.is = this.os; // needs to be unequal null
-		scDecoder.channel = this.channel;
-		scDecoder.setErrorHandler(this.errorHandler);
-		scDecoder.initForEachRun();
+		
 
-		// Skip to the next byte-aligned boundary in the stream if it is not
-		// already at such a boundary
-		this.channel.align();
-
-		// Evaluate the sequence of events (SD, SE(qname), content, ED)
-		// according to the Fragment grammar
-		scDecoder.decodeStartDocument();
-		// TODO Fragment/Document grammar is set when startDoc is called!!
-		// scDecoder.encodeStartElementNoSC(uri, localName, prefix);
-
-		// decode "inner" element once again
-		this.hasNext(); // decode next event
-		EventType et = this.next();
-		switch (et) {
-		case START_ELEMENT:
-			scDecoder.decodeStartElement();
-			break;
-		case START_ELEMENT_GENERIC:
-			scDecoder.decodeStartElementGeneric();
-			break;
-		case START_ELEMENT_GENERIC_UNDECLARED:
-			scDecoder.decodeStartElementGenericUndeclared();
-			break;
-		case START_ELEMENT_NS:
-			scDecoder.decodeStartElementNS();
-			break;
-		default:
-			throw new RuntimeException("[EXI] Unsupported EventType " + et
-					+ " in SelfContained Element");
-		}
 	}
 
 	public void decodeEndElement() throws EXIException, IOException {
@@ -208,34 +196,6 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 			scDecoder.decodeEndElementUndeclared();
 		}
 	}
-
-//	public void decodeEndFragmentSelfContained() throws EXIException,
-//			IOException {
-//		System.err.println("TODO decodeEndFragmentSelfContained");
-//		
-////		QName qname = elementContext.qname;
-////		if (exiFactory.isSelfContainedElement(qname)) {
-////			// inner EE
-////			scEncoder.encodeEndElement();
-////			// end SC fragment
-////			scEncoder.encodeEndDocument();
-////			// Skip to the next byte-aligned boundary in the stream if it is
-////			// not already at such a boundary
-////			this.channel.align();
-////			// indicate that SC portion is over
-////			scEncoder = null;
-////		}
-////		System.out.println("<< SC " + qname);
-////
-////		// outer EE
-////		super.encodeEndElement();
-//		
-//		if (scDecoder == null) {
-//			super.decodeEndFragmentSelfContained();
-//		} else {
-//			scDecoder.decodeEndFragmentSelfContained();
-//		}
-//	}
 
 	public void decodeAttributeXsiNil() throws EXIException, IOException {
 		if (scDecoder == null) {
@@ -450,5 +410,4 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	public String getPIData() {
 		return (scDecoder == null ? super.getPIData() : scDecoder.getPIData());
 	}
-
 }

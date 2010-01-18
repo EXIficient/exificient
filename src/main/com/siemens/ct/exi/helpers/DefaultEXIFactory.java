@@ -288,5 +288,21 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return typeDecoder;
 	}
+	
+	@Override
+	public EXIFactory clone() {
+		// create new instance
+		EXIFactory copy = newInstance();
+		// shallow copy
+		copy.setCodingMode(this.codingMode);
+		copy.setDatatypeRepresentationMap(this.userDefinedDatatypeRepresentations);
+		copy.setEXIBodyOnly(this.exiBodyOnly);
+		copy.setFidelityOptions(this.fidelityOptions);
+		copy.setFragment(this.isFragment);
+		copy.setGrammar(this.grammar);
+		copy.setSelfContainedElements(this.scElements);
+		// return...
+		return copy;
+	}
 
 }

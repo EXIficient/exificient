@@ -231,6 +231,10 @@ public abstract class AbstractEXICoder {
 
 		return nextSE;
 	}
+	
+	protected QName getElementContextQName() {
+		return elementContextStack[elementContextStackIndex].qname;
+	}
 
 	/*
 	 * URIs

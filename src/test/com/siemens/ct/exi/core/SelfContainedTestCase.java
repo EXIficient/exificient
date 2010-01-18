@@ -87,7 +87,7 @@ public class SelfContainedTestCase extends TestCase {
 						pfx);
 				
 				offsetSC1 = baos.toByteArray().length;
-				System.out.println("SC_1: " + offsetSC1);
+				// System.out.println("SC_1: " + offsetSC1);
 				
 				encoder.encodeCharacters(s);
 				encoder.encodeEndElement();
@@ -97,7 +97,7 @@ public class SelfContainedTestCase extends TestCase {
 						pfx);
 				
 				offsetSC2 = baos.toByteArray().length;
-				System.out.println("SC_2: " + offsetSC2);
+				// System.out.println("SC_2: " + offsetSC2);
 				
 				encoder.encodeCharacters(s);
 				encoder.encodeEndElement();
@@ -147,17 +147,7 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
-				
-//				decoder.hasNext();
-//				assertTrue(decoder.next() == EventType.END_DOCUMENT);
-//				decoder.decodeEndDocument();
 			}
-			
-//			decoder.hasNext();
-//			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-//			decoder.decodeEndElementUndeclared();
-			
-			
 			
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
@@ -176,14 +166,7 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
-				
-//				decoder.hasNext();
-//				assertTrue(decoder.next() == EventType.END_DOCUMENT);
-//				decoder.decodeEndDocument();
 			}
-//			decoder.hasNext();
-//			assertTrue(decoder.next() == EventType.END_ELEMENT);
-//			decoder.decodeEndElement();
 						
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -194,12 +177,18 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 		
+		EXIFactory scEXIFactory = factory.clone();
+		scEXIFactory.setFragment(true);
+		scEXIFactory.setEXIBodyOnly(true);
+		
+		int MINUS_BYTE_OFFSET = 3;	// TODO why 3
+		
 		// decoder SC #1 
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIDecoder decoder = scEXIFactory.createEXIDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
-			is.skip(offsetSC1-3); //	TODO why minus 3 ?
-			decoder.setInputStream(is, true);
+			is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+			decoder.setInputStream(is, scEXIFactory.isEXIBodyOnly());
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -224,10 +213,10 @@ public class SelfContainedTestCase extends TestCase {
 		
 		// decoder SC #2
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIDecoder decoder = scEXIFactory.createEXIDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
-			is.skip(offsetSC2-3); //	TODO why minus 3 ?
-			decoder.setInputStream(is, true);
+			is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+			decoder.setInputStream(is, scEXIFactory.isEXIBodyOnly());
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
