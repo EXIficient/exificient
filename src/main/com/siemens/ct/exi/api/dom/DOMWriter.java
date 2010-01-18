@@ -148,7 +148,7 @@ public class DOMWriter {
 
 		// xsi:nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeXsiNil(exiAttributes.getXsiNil());
+			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
 		}
 
 		// AT

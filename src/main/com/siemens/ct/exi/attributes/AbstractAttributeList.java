@@ -63,6 +63,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	// xsi:nil
 	protected boolean hasXsiNil;
 	protected String xsiNil;
+	protected String xsiNilPrefix;
 
 	// attributes
 	protected List<String> attributeURI;
@@ -116,6 +117,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public String getXsiNil() {
 		return xsiNil;
 	}
+	
+	public String getXsiNilPrefix() {
+		return this.xsiNilPrefix;
+	}
 
 	/*
 	 * Attributes
@@ -140,9 +145,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 		return attributePrefix.get(index);
 	}
 
-	private void setXsiNil(String rawNil) {
+	private void setXsiNil(String rawNil, String xsiPrefix) {
 		hasXsiNil = true;
 		xsiNil = rawNil;
+		this.xsiNilPrefix = xsiPrefix;
 	}
 
 	public void parse(Attributes atts) {
@@ -165,7 +171,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 				}
 				// xsi:nil
 				else if (localName.equals(Constants.XSI_NIL)) {
-					setXsiNil(atts.getValue(i));
+					setXsiNil(atts.getValue(i), getPrefixOf(atts, i));
 				} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
 						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
 						&& !preserveSchemaLocation) {
@@ -209,7 +215,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 				}
 				// xsi:nil
 				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
-					setXsiNil(at.getNodeValue());
+					setXsiNil(at.getNodeValue(), at.getPrefix());
 				} else if ((at.getLocalName().equals(
 						Constants.XSI_SCHEMA_LOCATION) || at.getLocalName()
 						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
