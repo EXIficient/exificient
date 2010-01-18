@@ -38,7 +38,7 @@ import com.siemens.ct.exi.types.TypeEncoder;
  * @version 0.3.20090224
  */
 
-public interface EXIFactory {
+public interface EXIFactory extends Cloneable {
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
 	 * comments or DTDs).
@@ -186,4 +186,11 @@ public interface EXIFactory {
 	 * @see TypeDecoder
 	 */
 	public TypeDecoder createTypeDecoder();
+
+	/**
+	 * Returns a shallow copy of this EXI factory.
+	 * 
+	 * @return EXIFactory
+	 */
+	public EXIFactory clone();
 }

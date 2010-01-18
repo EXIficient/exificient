@@ -117,40 +117,39 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	@Override
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException {
+		QName qname;
 		// business as usual
-		super.encodeStartElement(uri, localName, prefix);
-		// start SC fragment ?
-		QName qname = elementContext.qname;
-		if (exiFactory.isSelfContainedElement(qname)) {
-			int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED, fidelityOptions);
-			encode2ndLevelEventCode(ec2);
+		if (scEncoder == null) {
+			super.encodeStartElement(uri, localName, prefix);
+			qname = elementContext.qname;
 			
-			System.out.println(">> SC " + qname);
-			//	TODO duplicate factory
-			boolean fragment = exiFactory.isFragment();
-			if (fragment) {
-				scEncoder = (EXIEncoderInOrderSC) exiFactory.createEXIEncoder();
-			} else {
-				exiFactory.setFragment(true);
-				scEncoder = (EXIEncoderInOrderSC) exiFactory.createEXIEncoder();
-				exiFactory.setFragment(false);
+			// start SC fragment ?
+			if (exiFactory.isSelfContainedElement(qname)) {
+				int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED, fidelityOptions);
+				encode2ndLevelEventCode(ec2);
+				
+				//	SC Factory & Encoder
+				EXIFactory scEXIFactory = exiFactory.clone();
+				scEXIFactory.setEXIBodyOnly(true);
+				scEXIFactory.setFragment(true);
+				scEncoder = (EXIEncoderInOrderSC) scEXIFactory.createEXIEncoder();
+				scEncoder.os = this.os; // needs to be unequal null
+				scEncoder.channel = this.channel;
+				scEncoder.setErrorHandler(this.errorHandler);
+
+				// Skip to the next byte-aligned boundary in the stream if it is not
+				// already at such a boundary
+				this.channel.align();
+
+				// Evaluate the sequence of events (SD, SE(qname), content, ED)
+				// according to the Fragment grammar
+				scEncoder.encodeStartDocument();
+				scEncoder.encodeStartElementNoSC(uri, localName, prefix);
+				// from now on content events are forwarded to the scEncoder
 			}
-			// scEncoder.setOutput(os, true);
-			scEncoder.os = this.os; // needs to be unequal null
-			scEncoder.channel = this.channel;
-			scEncoder.setErrorHandler(this.errorHandler);
-
-			// Skip to the next byte-aligned boundary in the stream if it is not
-			// already at such a boundary
-			this.channel.align();
-
-			// Evaluate the sequence of events (SD, SE(qname), content, ED)
-			// according to the Fragment grammar
-			scEncoder.encodeStartDocument();
-			// TODO Fragment/Document grammar is set when startDoc is called!!
-			scEncoder.encodeStartElementNoSC(uri, localName, prefix);
-
-			// from now on content events are forwarded to the scEncoder
+		} else {
+			scEncoder.encodeStartElement(uri, localName, prefix);
+			qname = scEncoder.elementContext.qname;
 		}
 	}
 	
@@ -164,10 +163,11 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		if (scEncoder == null) {
 			super.encodeEndElement();
 		} else {
-			QName qname = elementContext.qname;
-			if (exiFactory.isSelfContainedElement(qname)) {
-				// inner EE
-				scEncoder.encodeEndElement();
+			//	fetch qname before EE
+			QName qname = scEncoder.elementContext.qname;
+			// EE
+			scEncoder.encodeEndElement();
+			if ( getElementContextQName().equals(qname) ) {
 				// end SC fragment
 				scEncoder.encodeEndDocument();
 				// Skip to the next byte-aligned boundary in the stream if it is
@@ -175,11 +175,8 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 				this.channel.align();
 				// indicate that SC portion is over
 				scEncoder = null;
-				System.out.println("<< SC " + qname);
+				super.popElement();
 			}
-
-			// outer EE
-			// super.encodeEndElement();
 			
 			// NOTE: NO outer EE
 			// Spec says "Evaluate the sequence of events (SD, SE(qname), content, ED) .."
@@ -187,7 +184,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			// Sequence: <sc>foo</sc>
 			// --> SE(sc) --> SC --> SD --> SE(sc) --> CH --> EE --> ED
 			// content == SE(sc) --> CH --> EE
-			super.popElement();
+			
 		}
 	}
 
@@ -278,248 +275,4 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			scEncoder.encodeProcessingInstruction(target, data);
 		}
 	}
-
-	// final class SCEncodeState {
-	// final TypeEncoder typeEncoder;
-	// final Map<QName, StartElement> runtimeElements;
-	// final List<RuntimeURIEntry> runtimeURIEntries;
-	// final NamespaceSupport namespaces;
-	// public SCEncodeState(TypeEncoder typeEncoder, Map<QName, StartElement>
-	// runtimeElements, List<RuntimeURIEntry> runtimeURIEntries,
-	// NamespaceSupport namespaces) {
-	// this.typeEncoder = typeEncoder;
-	// this.runtimeElements = runtimeElements;
-	// this.runtimeURIEntries = runtimeURIEntries;
-	// this.namespaces = namespaces;
-	// }
-	// }
-	//	
-	// // selfContained fragment states
-	// protected List<SCEncodeState> scStates;
-	//
-	// public EXIEncoderInOrderSC(EXIFactory exiFactory) {
-	// super(exiFactory);
-	//
-	// // selfContained
-	// scStates = new ArrayList<SCEncodeState>();
-	// }
-	//	
-	// @Override
-	// protected void initForEachRun() throws EXIException, IOException {
-	// super.initForEachRun();
-	//
-	// // clear possibly remaining states
-	// scStates.clear();
-	// }
-	//
-	// @Override
-	// public void encodeStartElement(String uri, String localName, String
-	// prefix)
-	// throws EXIException, IOException {
-	// assert (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC));
-	// // business as usual
-	// super.encodeStartElement(uri, localName, prefix);
-	// // start SC fragment
-	// QName qname = elementContext.qname;
-	// if (exiFactory.isSelfContainedElement(qname)) {
-	// // System.out.println("SC Start " + qname);
-	//			
-	// // SC Fragment
-	// int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED,
-	// fidelityOptions);
-	// encode2ndLevelEventCode(ec2);
-	//			
-	// // 1. Save the string table, grammars and any
-	// // implementation-specific state learned while processing this EXI
-	// // Body
-	// SCEncodeState state = new SCEncodeState(typeEncoder, runtimeElements,
-	// runtimeURIEntries, namespaces);
-	// scStates.add(state);
-	//
-	// // 2. Initialize the string table, grammars and any
-	// // implementation-specific state learned while processing this EXI
-	// // Body to the state they held just prior to processing this EXI
-	// // Body.
-	// this.typeEncoder = exiFactory.createTypeEncoder();
-	// this.runtimeElements = new HashMap<QName, StartElement>();
-	// this.runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
-	// this.namespaces = new NamespaceSupport();
-	// uriContext = runtimeURIEntries.get(0);
-	//			
-	// this.namespaces.pushContext(); // necessary for popping later on
-	//
-	// // 3. Skip to the next byte-aligned boundary in the stream if it is
-	// // not already at such a boundary.
-	// channel.align();
-	//
-	// // 4. Let qname be the qname of the SE event immediately preceding
-	// // this SC event.
-	//
-	// // 5. Let content be the sequence of events following this SC event
-	// // that match the grammar for element qname, up to and including the
-	// // terminating EE event.
-	//
-	// // 6. Evaluate the sequence of events (SD, SE(qname), content, ED)
-	// // according to the Fragment grammar.
-	// Grammar grammarSC = exiFactory.getGrammar();
-	// Rule scFragmentRule = grammarSC.getBuiltInFragmentGrammar();
-	// EventInformation ei =
-	// scFragmentRule.lookForEvent(EventType.START_DOCUMENT);
-	//
-	// // Note: no EventCode needs to be written since there is only
-	// // one choice
-	// if (ei == null) {
-	// throw new EXIException("No EXI Event found for startDocument");
-	// }
-	//
-	// // update current rule
-	// currentRule = ei.next;
-	// // create new stack item & push it
-	// pushElementContext(new ElementContext(null, currentRule));
-	//			
-	// // encode "inner" element once again
-	// super.encodeStartElement(uri, localName, prefix);
-	//
-	// // System.out.println("SC _end_" );
-	// }
-	// }
-	//	
-	// @Override
-	// public void encodeEndElement() throws EXIException, IOException {
-	// QName qname = elementContext.qname;
-	// if (exiFactory.isSelfContainedElement(qname)) {
-	// System.out.println("SC End " + qname);
-	// // inner endElement
-	// super.encodeEndElement();
-	// // inner endDocument
-	// EventInformation ei = currentRule.lookForEvent(EventType.END_DOCUMENT);
-	// encode1stLevelEventCode(ei.getEventCode());
-	// this.popElement();
-	//
-	// // 7. Skip to the next byte-aligned boundary in the stream if it is
-	// // not already at such a boundary.
-	// channel.align();
-	//			
-	// // 8. Restore the string table, grammars and implementation-specific
-	// // state learned while processing this EXI Body to that saved in
-	// // step 1 above.
-	// assert(scStates.size() > 0);
-	// SCEncodeState state = scStates.remove(scStates.size()-1);
-	// this.typeEncoder = state.typeEncoder;
-	// this.runtimeElements = state.runtimeElements;
-	// this.runtimeURIEntries = state.runtimeURIEntries;
-	// this.namespaces = state.namespaces;
-	//			
-	// }
-	// // usual endElement
-	// super.encodeEndElement();
-	// }
-	//
-	// @Override
-	// public int encodeStartFragmentSelfContained(String uri, String localName,
-	// String prefix) throws EXIException {
-	// throw new RuntimeException("[EXI] SC");
-	// // try {
-	// // int skipBytesSC = -1;
-	// //
-	// // // SC Fragment
-	// // int ec2 = currentRule.get2ndLevelEventCode(
-	// // EventType.SELF_CONTAINED, fidelityOptions);
-	// //
-	// // if (ec2 == Constants.NOT_FOUND) {
-	// // // throw error
-	// // throw new EXIException(
-	// //
-	// "SelfContained fragments need to be supported by EXI's Options. Please revise your configuration.");
-	// // } else {
-	// //
-	// // this.encode2ndLevelEventCode(ec2);
-	// //
-	// // // 1. Save the string table, grammars, namespace prefixes and
-	// // // any
-	// // // implementation-specific state learned while processing this
-	// // // EXI
-	// // // Body.
-	// // // 2. Initialize the string table, grammars, namespace prefixes
-	// // // and
-	// // // any implementation-specific state learned while processing
-	// // // this
-	// // // EXI Body to the state they held just prior to processing this
-	// // // EXI
-	// // // Body.
-	// // // 3. Skip to the next byte-aligned boundary in the stream.
-	// // channel.flush();
-	// // // block.skipToNextByteBoundary();
-	// //
-	// // // TODO byte position
-	// //
-	// // // if (block.bytePositionSupported()) {
-	// // // skipBytesSC = block.getBytePosition();
-	// // // }
-	// //
-	// // // string tables
-	// // // TypeEncoder te = this.block.getTypeEncoder();
-	// // // scStringTables.add(typeEncoder.getStringTable());
-	// // // TODO create *just* string table and not whole TypeEncoder
-	// // // again
-	// // // typeEncoder.setStringTable(exiFactory.createTypeEncoder()
-	// // // .getStringTable());
-	// // // runtime-rules
-	// // scRuntimeDispatchers.add(this.runtimeDispatcher);
-	// // this.runtimeDispatcher = new HashMap<String, Map<String, Rule>>();
-	// // // TODO namespace prefixes
-	// //
-	// // // 4. Let qname be the qname of the SE event immediately
-	// // // preceding
-	// // // this SC event.
-	// // // 5. Let content be the sequence of events following this SC
-	// // // event
-	// // // that match the grammar for element qname, up to and including
-	// // // the
-	// // // terminating EE event.
-	// // // 6. Evaluate the sequence of events (SD, SE(qname), content,
-	// // // ED)
-	// // // according to the Fragment grammar.
-	// // replaceRuleAtTheTop(grammar.getBuiltInFragmentGrammar());
-	// // replaceRuleAtTheTop(currentRule.lookFor(eventSD).next);
-	// // encodeStartElement(uri, localName, prefix);
-	// // }
-	// //
-	// // return skipBytesSC;
-	// // } catch (IOException e) {
-	// // throw new EXIException(e);
-	// // }
-	//
-	// }
-	//
-	// @Override
-	// public void encodeEndFragmentSelfContained() throws EXIException {
-	// throw new RuntimeException("[EXI] SC");
-	// // try {
-	// // // close SC fragment
-	// // EventInformation ei = currentRule.lookFor(eventED);
-	// //
-	// // if (ei != null) {
-	// // // encode EventCode
-	// // this.encode1stLevelEventCode(ei.getEventCode());
-	// // } else {
-	// // throw new EXIException("No EXI Event found for endDocument");
-	// // }
-	// //
-	// // popElementContext();
-	// // popElementRule();
-	// //
-	// // // 7. Restore the string table, grammars, namespace prefixes and
-	// // // implementation-specific state learned while processing this EXI
-	// // // Body to that saved in step 1 above.
-	// // //TypeEncoder te = this.block.getTypeEncoder();
-	// // //
-	// // typeEncoder.setStringTable(scStringTables.remove(scStringTables.size()
-	// // - 1));
-	// // this.runtimeDispatcher = scRuntimeDispatchers
-	// // .remove(scRuntimeDispatchers.size() - 1);
-	// // } catch (IOException e) {
-	// // throw new EXIException(e);
-	// // }
-	// }
 }
