@@ -209,11 +209,11 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	}
 
 	@Override
-	public void encodeXsiNil(String nil) throws EXIException, IOException {
+	public void encodeXsiNil(String value, String pfx) throws EXIException, IOException {
 		if (scEncoder == null) {
-			super.encodeXsiNil(nil);
+			super.encodeXsiNil(value, pfx);
 		} else {
-			scEncoder.encodeXsiNil(nil);
+			scEncoder.encodeXsiNil(value, pfx);
 		}
 	}
 

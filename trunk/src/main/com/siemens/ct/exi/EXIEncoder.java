@@ -142,11 +142,12 @@ public interface EXIEncoder {
 	/**
 	 * Supplies an xsi:nil attribute.
 	 * 
-	 * @param nil
+	 * @param val
+	 * @param pfx
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeXsiNil(String nil) throws EXIException, IOException;
+	public void encodeXsiNil(String val, String pfx) throws EXIException, IOException;
 
 	/**
 	 * Supplies an xsi:type case.

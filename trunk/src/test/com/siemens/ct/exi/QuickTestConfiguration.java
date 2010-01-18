@@ -30,7 +30,7 @@ import com.siemens.ct.exi.types.DatatypeRepresentation;
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -84,23 +84,20 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createAll();
 
-		// self-contained elements
-		try {
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC,
-					true);
-//			selfContainedElements = new QName[1];
+//		// self-contained elements
+//		try {
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC,
+//					true);
+//			selfContainedElements = new QName[2];
 //			selfContainedElements[0] = new QName("", "note");
-
-			selfContainedElements = new QName[2];
-			selfContainedElements[0] = new QName("", "note");
-			selfContainedElements[1] = new QName("", "body");
-		} catch (UnsupportedOption e) {
-			e.printStackTrace();
-		}
+//			selfContainedElements[1] = new QName("", "body");
+//		} catch (UnsupportedOption e) {
+//			e.printStackTrace();
+//		}
 		
 //		// preserve lexical values
 //		try {

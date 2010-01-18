@@ -533,10 +533,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 
-	public void encodeXsiNil(String rawNil) throws EXIException, IOException {
+	public void encodeXsiNil(String value, String pfx) throws EXIException, IOException {
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
-			if (nil.parse(rawNil)) {
+			if (nil.parse(value)) {
 				// schema-valid boolean
 				int ec2 = siCurrentRule.get2ndLevelEventCode(
 						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
@@ -572,12 +572,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// encode invalid 2nd level AT event-code
 				encodeAttributeAnySchemaInvalid(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_NIL, "", rawNil);
+						Constants.XSI_NIL, pfx, value);
 			}
 		} else {
 			// encode as any other attribute
 			encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-					Constants.XSI_NIL, "", rawNil);
+					Constants.XSI_NIL, pfx, value);
 		}
 	}
 

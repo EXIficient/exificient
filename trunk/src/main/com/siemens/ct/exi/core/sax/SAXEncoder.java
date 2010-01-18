@@ -156,7 +156,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 
 		// 3. XSI-Nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeXsiNil(exiAttributes.getXsiNil());
+			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
 		}
 
 		// 4. Remaining Attributes

@@ -53,6 +53,8 @@ public interface AttributeList {
 	public boolean hasXsiNil();
 
 	public String getXsiNil();
+	
+	public String getXsiNilPrefix();
 
 	/*
 	 * Attributes
