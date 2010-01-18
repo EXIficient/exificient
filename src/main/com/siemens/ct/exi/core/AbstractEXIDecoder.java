@@ -332,7 +332,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		attributeValue = xsiNil ? XSD_BOOLEAN_TRUE_VALUE
 				: XSD_BOOLEAN_FALSE_VALUE;
-		attributePrefix = null;
+		// attributePrefix = null;
 	}
 
 	/*
