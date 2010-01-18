@@ -42,16 +42,18 @@ public class ListValue extends AbstractValue {
 			}
 			//	create array
 			characters = new char[size];
-			//	fill array
-			int caIndex = 0;
-			for(int i=0; i<(values.length-1); i++) {
-				char[] itemValue = values[i].toCharacters();
-				System.arraycopy(itemValue, 0, characters, caIndex, itemValue.length);
-				caIndex += itemValue.length;
-				characters[caIndex++] = Constants.XSD_LIST_DELIM_CHAR;
+			if (values.length > 0 ) {
+				//	fill array
+				int caIndex = 0;
+				for(int i=0; i<(values.length-1); i++) {
+					char[] itemValue = values[i].toCharacters();
+					System.arraycopy(itemValue, 0, characters, caIndex, itemValue.length);
+					caIndex += itemValue.length;
+					characters[caIndex++] = Constants.XSD_LIST_DELIM_CHAR;
+				}
+				char[] lastItemValue = values[values.length-1].toCharacters();
+				System.arraycopy(lastItemValue, 0, characters, caIndex, lastItemValue.length);	
 			}
-			char[] lastItemValue = values[values.length-1].toCharacters();
-			System.arraycopy(lastItemValue, 0, characters, caIndex, lastItemValue.length);
 		}
 		
 		return characters;
