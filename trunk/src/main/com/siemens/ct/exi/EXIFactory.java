@@ -129,10 +129,16 @@ public interface EXIFactory extends Cloneable {
 	 * one of "compression", "pre-compression" or "strict" elements are present
 	 * in the same options document.
 	 * 
-	 * @param elements
+	 * @param scElements
 	 */
 	public void setSelfContainedElements(QName[] scElements);
-	
+
+	/**
+	 * Returns boolean value telling whether a certain element is encoded as
+	 * selfContained fragment.
+	 * 
+	 * @param element
+	 */
 	public boolean isSelfContainedElement(QName element);
 
 	/**

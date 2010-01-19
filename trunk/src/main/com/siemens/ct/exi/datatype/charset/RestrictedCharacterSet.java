@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
-
 /**
  * If a string value is associated with a schema datatype and one or more of the
  * datatypes in its datatype hierarchy has one or more pattern facets, there may
@@ -46,7 +45,7 @@ public interface RestrictedCharacterSet {
 	 * Returns code for given code-point or <code>NOT_FOUND</code> == -1 for
 	 * invalid char.
 	 * 
-	 * @param c
+	 * @param codePoint
 	 *            character of interest
 	 * @return code
 	 */
