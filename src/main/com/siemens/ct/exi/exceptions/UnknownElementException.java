@@ -24,7 +24,7 @@ package com.siemens.ct.exi.exceptions;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081113
+ * @version 0.4.20081113
  */
 
 public class UnknownElementException extends EXIException {

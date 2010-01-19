@@ -31,7 +31,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20090422
+ * @version 0.4.20090422
  */
 
 public interface Rule {

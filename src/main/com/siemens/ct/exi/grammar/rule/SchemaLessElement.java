@@ -31,7 +31,7 @@ import com.siemens.ct.exi.types.BuiltIn;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080718
+ * @version 0.4.20080718
  */
 
 /*

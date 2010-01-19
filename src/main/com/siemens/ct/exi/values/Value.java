@@ -25,7 +25,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20090128
+ * @version 0.4.20090128
  */
 
 

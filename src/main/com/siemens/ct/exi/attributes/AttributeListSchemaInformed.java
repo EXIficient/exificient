@@ -26,7 +26,7 @@ import com.siemens.ct.exi.FidelityOptions;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20090324
+ * @version 0.4.20090324
  */
 
 public class AttributeListSchemaInformed extends AbstractAttributeList {

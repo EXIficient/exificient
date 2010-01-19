@@ -28,7 +28,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.2009101209
+ * @version 0.4.2009101209
  */
 
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag {

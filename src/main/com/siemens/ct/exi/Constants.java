@@ -26,7 +26,7 @@ import javax.xml.XMLConstants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20090324
+ * @version 0.4.20090324
  */
 
 public interface Constants {

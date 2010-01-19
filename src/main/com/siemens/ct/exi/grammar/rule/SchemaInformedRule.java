@@ -26,7 +26,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081008
+ * @version 0.4.20081008
  */
 
 public interface SchemaInformedRule extends Rule {

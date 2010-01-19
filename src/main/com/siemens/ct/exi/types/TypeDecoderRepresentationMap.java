@@ -25,7 +25,7 @@ package com.siemens.ct.exi.types;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081105
+ * @version 0.4.20081105
  */
 
 public interface TypeDecoderRepresentationMap extends TypeDecoder {

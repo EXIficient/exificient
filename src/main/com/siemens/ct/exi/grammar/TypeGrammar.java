@@ -29,7 +29,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20080822
+ * @version 0.4.20080822
  */
 
 public class TypeGrammar {
