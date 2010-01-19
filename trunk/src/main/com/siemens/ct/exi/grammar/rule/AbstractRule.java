@@ -24,7 +24,7 @@ package com.siemens.ct.exi.grammar.rule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081031
+ * @version 0.4.20081031
  */
 
 import java.util.List;

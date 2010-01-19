@@ -29,7 +29,7 @@ import com.siemens.ct.exi.types.BuiltInType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081112
+ * @version 0.4.20081112
  */
 
 public class BinaryBase64Datatype extends AbstractBinaryDatatype {

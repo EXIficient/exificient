@@ -42,7 +42,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081016
+ * @version 0.4.20081016
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar {

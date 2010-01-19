@@ -41,7 +41,7 @@ import com.siemens.ct.exi.EXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20090407
+ * @version 0.4.20090407
  */
 
 public class SAXDecoderExtendedHandler extends SAXDecoder implements

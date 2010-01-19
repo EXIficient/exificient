@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081010
+ * @version 0.4.20081010
  */
 
 public class BitOutputStream extends OutputStream {

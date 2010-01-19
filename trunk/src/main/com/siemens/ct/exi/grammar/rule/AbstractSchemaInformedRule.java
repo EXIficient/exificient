@@ -41,7 +41,7 @@ import com.siemens.ct.exi.util.sort.EventCodeAssignment;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081009
+ * @version 0.4.20081009
  */
 
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements

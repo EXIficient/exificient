@@ -26,7 +26,7 @@ import java.math.BigInteger;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.3.20081111
+ * @version 0.4.20081111
  */
 
 public class XSDDecimal {
