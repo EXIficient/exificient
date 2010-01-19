@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.foo.com xsi-type4.xsd" xmlns="http://www.foo.com">
+
+    <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tTriple">
+        <t>12345</t>
+        <phsA>123.456</phsA>
+        <phsB>234.567</phsB>
+        <phsC>345.678</phsC>
+    </v>
+
+    <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tBoolean">
+        <val>false</val>
+    </v>
+
+
+    <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tInteger">
+        <val>4321</val>
+    </v>
+
+    <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tDouble">
+        <val>12E12</val>
+    </v>
+</Message>
