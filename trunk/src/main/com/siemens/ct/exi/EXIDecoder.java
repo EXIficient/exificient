@@ -21,6 +21,8 @@ package com.siemens.ct.exi;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.namespace.QName;
+
 import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -114,7 +116,8 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartElementGenericUndeclared() throws EXIException, IOException;
+	public void decodeStartElementGenericUndeclared() throws EXIException,
+			IOException;
 
 	/**
 	 * Reads EXI a self-contained start element
@@ -122,7 +125,8 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartFragmentSelfContained() throws EXIException, IOException;
+	public void decodeStartFragmentSelfContained() throws EXIException,
+			IOException;
 
 	/**
 	 * Reads EXI end element
@@ -140,13 +144,14 @@ public interface EXIDecoder {
 	 */
 	public void decodeEndElementUndeclared() throws EXIException, IOException;
 
-//	/**
-//	 * Reads an end element part of self-contained fragments
-//	 * 
-//	 * @throws EXIException
-//	 * @throws IOException
-//	 */
-//	public void decodeEndFragmentSelfContained() throws EXIException, IOException;
+	// /**
+	// * Reads an end element part of self-contained fragments
+	// *
+	// * @throws EXIException
+	// * @throws IOException
+	// */
+	// public void decodeEndFragmentSelfContained() throws EXIException,
+	// IOException;
 
 	/**
 	 * Parses xsi:nil attribute
@@ -155,7 +160,7 @@ public interface EXIDecoder {
 	 * @throws IOException
 	 */
 	public void decodeAttributeXsiNil() throws EXIException, IOException;
-	
+
 	/**
 	 * Parses xsi:type attribute
 	 * 
@@ -163,7 +168,7 @@ public interface EXIDecoder {
 	 * @throws IOException
 	 */
 	public void decodeAttributeXsiType() throws EXIException, IOException;
-	
+
 	/**
 	 * Parses attribute
 	 * 
@@ -194,7 +199,8 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeAttributeAnyInvalidValue() throws EXIException, IOException;
+	public void decodeAttributeAnyInvalidValue() throws EXIException,
+			IOException;
 
 	/**
 	 * Parses expected generic attribute.
@@ -210,7 +216,8 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeAttributeGenericUndeclared() throws EXIException, IOException;
+	public void decodeAttributeGenericUndeclared() throws EXIException,
+			IOException;
 
 	/**
 	 * Parses namespace declaration retrieving associated URI and prefix.
@@ -242,7 +249,8 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeCharactersGenericUndeclared() throws EXIException, IOException;
+	public void decodeCharactersGenericUndeclared() throws EXIException,
+			IOException;
 
 	/**
 	 * Parses DOCTYPE with information items
@@ -275,54 +283,51 @@ public interface EXIDecoder {
 	 */
 	public void decodeProcessingInstruction() throws EXIException, IOException;
 
-
 	// ////////////////////////////////////////////////////////////////
 	//
 	// fetching values
 	// 
 	// ////////////////////////////////////////////////////////////////
-
+	
 	/**
-	 * Provides (last) element namespace.
+	 * Returns qualified name for (current) element 
 	 * 
-	 * @return <code>String</code> for element URI
+	 * @return <code>QName</code> for qname
 	 */
-	public String getElementURI();
+	public QName getElementQName();
 
 	/**
-	 * Provides (last) element local-name
+	 * Returns qualified name for element name as String
 	 * 
-	 * @return <code>String</code> for element name
-	 */
-	public String getElementLocalName();
-
-	/**
-	 * Returns qualified name for element name
+	 * <p>
+	 * QName ::= PrefixedName | UnprefixedName <br />
+	 * PrefixedName ::= Prefix ':' LocalPart <br />
+	 * UnprefixedName ::= LocalPart
+	 * </p>
 	 * 
 	 * @return <code>String</code> for qname
 	 */
-	public String getElementQName();
-
-	/**
-	 * Provides (last) attribute namespace
-	 * 
-	 * @return <code>String</code> for attribute URI
-	 */
-	public String getAttributeURI();
-
-	/**
-	 * Provides (last) attribute local-name
-	 * 
-	 * @return <code>String</code> for attribute name
-	 */
-	public String getAttributeLocalName();
+	public String getElementQNameAsString();
 
 	/**
 	 * Returns qualified name for (last) attribute
 	 * 
+	 * @return <code>QName</code> for qname
+	 */
+	public QName getAttributeQName();
+	
+	/**
+	 * Returns qualified name for (last) attribute as String
+	 * 
+	 * <p>
+	 * QName ::= PrefixedName | UnprefixedName <br />
+	 * PrefixedName ::= Prefix ':' LocalPart <br />
+	 * UnprefixedName ::= LocalPart
+	 * </p>
+	 * 
 	 * @return <code>String</code> for qname
 	 */
-	public String getAttributeQName();
+	public String getAttributeQNameAsString();
 
 	/**
 	 * Provides attribute value
@@ -338,7 +343,7 @@ public interface EXIDecoder {
 	 * @return <code>Value</code> for XML characters item
 	 */
 	public Value getCharactersValue();
-	
+
 	/**
 	 * Provides DOCTYPE name.
 	 * 

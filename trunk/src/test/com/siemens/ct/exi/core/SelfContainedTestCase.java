@@ -121,9 +121,7 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(root.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(root.getLocalPart()));
-
+			assertTrue(decoder.getElementQName().equals(root));
 			
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
