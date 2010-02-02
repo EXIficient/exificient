@@ -31,12 +31,18 @@ public class BinaryValue extends AbstractValue {
 	public byte[] toBytes() {
 		return bytes;
 	}
-
-	public char[] toCharacters() {
-		if (characters == null) {
-			characters = XSDBase64.encode(bytes);
+	
+	public int getCharactersLength() {
+		if (slen == -1) {
+			slen = XSDBase64.getCharactersLength(bytes);
 		}
-		return characters;
+		return slen;
+	}
+	
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		XSDBase64.encode(bytes, cbuffer, offset);
+		return cbuffer;	
 	}
 
 }

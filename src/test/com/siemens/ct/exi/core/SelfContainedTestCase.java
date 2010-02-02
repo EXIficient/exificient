@@ -128,7 +128,7 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(new String(decoder.getCharacters())));
+			assertTrue(s.equals(decoder.getCharactersValue().toString()));
 
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
@@ -142,7 +142,7 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 				decoder.decodeCharactersGenericUndeclared();
-				assertTrue(s.equals(new String(decoder.getCharacters())));
+				assertTrue(s.equals(decoder.getCharactersValue().toString()));
 				
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -161,7 +161,7 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 				decoder.decodeCharactersGenericUndeclared();
-				assertTrue(s.equals(new String(decoder.getCharacters())));
+				assertTrue(s.equals(decoder.getCharactersValue().toString()));
 				
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -200,7 +200,7 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(new String(decoder.getCharacters())));
+			assertTrue(s.equals(decoder.getCharactersValue().toString()));
 			
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -228,7 +228,7 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(new String(decoder.getCharacters())));
+			assertTrue(s.equals(decoder.getCharactersValue().toString()));
 			
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);

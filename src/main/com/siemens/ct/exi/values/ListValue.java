@@ -32,31 +32,51 @@ public class ListValue extends AbstractValue {
 		return values;
 	}
 
-	public char[] toCharacters() {
-		if (characters == null) {
-			//	TODO instead of copying twice the chars find a better way, e.g., toCharacters(array) 
-			//	calculate size
-			int size = values.length > 0 ? (values.length-1) : 0;	// (n-1) delimiters
-			for(int i=0; i<values.length; i++) {
-				size += values[i].getCharactersLength();
+	public int getCharactersLength() {
+		if (slen == -1) {
+			slen = values.length > 0 ? (values.length-1) : 0;	// (n-1) delimiters
+			int vlen = values.length;
+			for(int i=0; i<vlen; i++) {
+				slen += values[i].getCharactersLength();
 			}
-			//	create array
-			characters = new char[size];
-			if (values.length > 0 ) {
-				//	fill array
-				int caIndex = 0;
-				for(int i=0; i<(values.length-1); i++) {
-					char[] itemValue = values[i].toCharacters();
-					System.arraycopy(itemValue, 0, characters, caIndex, itemValue.length);
-					caIndex += itemValue.length;
-					characters[caIndex++] = Constants.XSD_LIST_DELIM_CHAR;
+		}
+		return slen;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {		
+		if (values.length > 0 ) {
+			//	fill buffer (except last item)
+			char[] cres;
+			Value iVal;
+			int vlenMinus1 = values.length-1;
+			for(int i=0; i<vlenMinus1; i++) {
+				iVal = values[i];
+				cres = iVal.toCharacters(cbuffer, offset);
+				if (cres != cbuffer) {
+					// characters were NOT written directly to buffer
+					//	"cres" contains characters --> copy
+					copyCharacters(cres, cbuffer, offset);
 				}
-				char[] lastItemValue = values[values.length-1].toCharacters();
-				System.arraycopy(lastItemValue, 0, characters, caIndex, lastItemValue.length);	
+				offset += iVal.getCharactersLength();
+				cbuffer[offset++] = Constants.XSD_LIST_DELIM_CHAR;
+			}
+			
+			// last item (no delimiter)
+			iVal = values[vlenMinus1];
+			cres = iVal.toCharacters(cbuffer, offset);
+			if (cres != cbuffer) {
+				// characters were NOT written directly to buffer
+				copyCharacters(cres, cbuffer, offset);
 			}
 		}
 		
-		return characters;
+		return cbuffer;
+	}
+	
+	private void copyCharacters(char[] src, char[] dest, int destOffset) {
+		// characters were NOT written directly to buffer
+		//	"cres" contains characters --> copy
+		System.arraycopy(src, 0, dest, destOffset, src.length);
 	}
 
 }

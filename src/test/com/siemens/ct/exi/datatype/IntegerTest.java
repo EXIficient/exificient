@@ -72,10 +72,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 	public void testInteger1S() throws IOException {
@@ -87,10 +87,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 	public void testIntegerM128S() throws IOException {
@@ -102,10 +102,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 	// public void testIntegerSpace35S() throws IOException
@@ -135,10 +135,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeLong(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeLongValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeLongValue().toString()));
 		// Byte
 		getByteEncoder().encodeLong(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeLongValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeLongValue().toString()));
 	}
 
 
@@ -151,10 +151,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
 	}
 	
 	public void testIntegerBig1() throws IOException {
@@ -166,10 +166,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
 	}
 
 
@@ -182,10 +182,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeHugeIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
 	}
 
 	public void testIntegerSequence() throws IOException {

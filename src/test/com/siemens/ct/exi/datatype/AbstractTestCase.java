@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -48,11 +47,6 @@ public abstract class AbstractTestCase extends TestCase {
 	public AbstractTestCase(String name) {
 		super(name);
 	}
-	
-	protected boolean equals(char[] ca, String s) {
-		return Arrays.equals(ca, s.toCharArray());
-	}
-	
 
 	/*
 	 * Bit - Mode

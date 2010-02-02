@@ -104,7 +104,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		currentRule = currentRule.lookFor(ec).next;
 
 		// try to use "default" schema URI in default namespace
-		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) && !exiFactory.isFragment()) {
 			if (grammar.isSchemaInformed()) {
 				if (runtimeURIEntries.size() > 4) {
 					RuntimeURIEntry uc = runtimeURIEntries.get(4);

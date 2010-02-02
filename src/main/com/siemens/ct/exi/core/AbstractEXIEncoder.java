@@ -426,14 +426,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 			// local-element-ns
 			channel.encodeBoolean(prefix.equals(sePrefix));
-			// writeBoolean(prefix.equals(sePrefix));
 		}
-		// else {
-		// updateURIContext(uri);
-		// if (uriContext != null && ! uriContext.prefixes.contains(prefix) ) {
-		// uriContext.addPrefix(prefix);
-		// }
-		// }
 	}
 
 	public void encodeEndElement() throws EXIException, IOException {
@@ -482,12 +475,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	public void encodeXsiType(String raw) throws EXIException, IOException {
 		int ec2 = currentRule.get2ndLevelEventCode(
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
-
+		
 		if (ec2 != Constants.NOT_FOUND) {
 			assert (currentRule.get2ndLevelEvent(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
-			// encode event-code, AT(xsi:type)
-			encode2ndLevelEventCode(ec2);
-
+			
 			// extract prefix
 			String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
 			// retrieve uri
@@ -506,22 +497,27 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			} else {
 				xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
 			}
-			// xsi:type "content" as qname
-			QName xsiQName = encodeQName(xsiTypeURI, xsiTypeLocalName);
-			// prefix
-			encodeQNamePrefix(xsiTypeURI, xsiTypePrefix);
 
-			// lookup type-grammar
+			QName xsiQName = new QName(xsiTypeURI, xsiTypeLocalName);
 			TypeGrammar tg = grammar.getTypeGrammar(xsiQName);
+			
+			// strip use-less xsi:type casts, e.g., if we deal already with
+			// the same type-grammar
+			// Note: Preserve lexical value requires type cast
+			if ( ( tg!= null && currentRule != tg.getType()) || fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+				// encode event-code, AT(xsi:type)
+				encode2ndLevelEventCode(ec2);
+				// xsi:type "content" as qname
+				encodeQName(xsiTypeURI, xsiTypeLocalName);
+				// prefix
+				encodeQNamePrefix(xsiTypeURI, xsiTypePrefix);
 
-			// grammar exists ?
-			if (tg != null) {
-				// update grammar according to given xsi:type
-				currentRule = tg.getType();
-				// this.scopeTypeURI = xsiTypeURI;
-				// this.scopeTypeLocalName = xsiTypeLocalName;
+				// grammar exists ?
+				if (tg != null) {
+					// update grammar according to given xsi:type
+					currentRule = tg.getType();
+				}
 			}
-
 		} else {
 			// encode as any other attribute
 			encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
@@ -535,34 +531,44 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 			if (nil.parse(value)) {
 				// schema-valid boolean
-				int ec2 = siCurrentRule.get2ndLevelEventCode(
-						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
+				boolean bnil = nil.getBoolean();
 
-				if (ec2 != Constants.NOT_FOUND) {
-					// encode event-code only
-					encode2ndLevelEventCode(ec2);
-					encodeQNamePrefix(
-							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx);
-				} else {
-					// encode event-code & qname
-					ec2 = siCurrentRule.get2ndLevelEventCode(
-							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-							fidelityOptions);
-					assert (ec2 != Constants.NOT_FOUND);
-					encode2ndLevelEventCode(ec2);
-					// qualified name
-					encodeQName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-							Constants.XSI_NIL);
-					encodeQNamePrefix(
-							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx);
-				}
+				// strip use-less xsi:nil values
+				if (bnil
+						|| fidelityOptions
+								.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+					int ec2 = siCurrentRule.get2ndLevelEventCode(
+							EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
 
-				// encode nil value as Boolean
-				channel.encodeBoolean(nil.getBoolean());
+					if (ec2 != Constants.NOT_FOUND) {
+						// encode event-code only
+						encode2ndLevelEventCode(ec2);
+						encodeQNamePrefix(
+								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+								pfx);
+					} else {
+						// encode event-code & qname
+						ec2 = siCurrentRule.get2ndLevelEventCode(
+								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+								fidelityOptions);
+						assert (ec2 != Constants.NOT_FOUND);
+						encode2ndLevelEventCode(ec2);
+						// qualified name
+						encodeQName(
+								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+								Constants.XSI_NIL);
+						encodeQNamePrefix(
+								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+								pfx);
+					}
 
-				if (nil.getBoolean()) { // jump to typeEmpty
-					// update current rule
-					currentRule = siCurrentRule.getTypeEmpty();
+					// encode nil value as Boolean
+					channel.encodeBoolean(bnil);
+
+					if (bnil) { // jump to typeEmpty
+						// update current rule
+						currentRule = siCurrentRule.getTypeEmpty();
+					}
 				}
 			} else {
 				// If the value is not a schema-valid Boolean, the

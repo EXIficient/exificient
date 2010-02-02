@@ -27,6 +27,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -358,14 +359,14 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 				.getAttributeQName());
 	}
 
-	public String getAttributeValue() {
+	public Value getAttributeValue() {
 		return (scDecoder == null ? super.getAttributeValue() : scDecoder
 				.getAttributeValue());
 	}
 
-	public char[] getCharacters() {
-		return (scDecoder == null ? super.getCharacters() : scDecoder
-				.getCharacters());
+	public Value getCharactersValue() {
+		return (scDecoder == null ? super.getCharactersValue() : scDecoder
+				.getCharactersValue());
 	}
 
 	public String getDocTypeName() {

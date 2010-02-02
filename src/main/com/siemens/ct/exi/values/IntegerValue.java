@@ -27,16 +27,30 @@ public class IntegerValue extends AbstractValue {
 	public IntegerValue(int val) {
 		this.val = val;
 	}
-	
+
 	public int toInteger() {
 		return val;
 	}
 
-	public char[] toCharacters() {
-		if (characters == null) {
-			characters = MethodsBag.itos(val);
+	public int getCharactersLength() {
+		if (slen == -1) {
+			if (val == Integer.MIN_VALUE) {
+				slen = MethodsBag.INTEGER_MIN_VALUE_CHARARRAY.length;
+			} else {
+				slen = MethodsBag.getStringSize(val);
+			}
 		}
-		return characters;
+		return slen;
+	}
+
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		if (val == Integer.MIN_VALUE) {
+			return MethodsBag.INTEGER_MIN_VALUE_CHARARRAY;
+		} else {
+			assert (cbuffer.length >= getCharactersLength());
+			MethodsBag.itos(val, offset + getCharactersLength(), cbuffer);
+			return cbuffer;	
+		}
 	}
 
 }

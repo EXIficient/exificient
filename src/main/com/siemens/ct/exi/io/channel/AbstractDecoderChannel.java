@@ -70,7 +70,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 */
 	public char[] decodeStringOnly(int length) throws IOException {
 		char[] ca = new char[length];
-
+		
 		for (int i = 0; i < length; i++) {
 			int codePoint = decodeUnsignedInteger();
 
@@ -80,7 +80,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 				ca[i] = (char) codePoint;
 			}
 		}
-
+		
 		return ca;
 	}
 

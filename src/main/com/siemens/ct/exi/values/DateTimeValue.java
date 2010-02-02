@@ -36,6 +36,8 @@ public class DateTimeValue extends AbstractValue {
 
 	protected Calendar cal;
 
+	int sizeFractionalSecs = -1;
+
 	public DateTimeValue(DatetimeType type, int year, int monthDay, int time,
 			int fractionalSecs, int timeZone) {
 		this.type = type;
@@ -88,84 +90,110 @@ public class DateTimeValue extends AbstractValue {
 		return cal;
 	}
 
-	public char[] toCharacters() {
-		if (characters == null) {
-			int index = 0;
+	public int getCharactersLength() {
+		if (slen == -1) {
 			switch (type) {
 			case gYear: // Year, [Time-Zone]
-				characters = new char[(year < 0 ? 5 : 4)
-						+ (timeZone == 0 ? 0 : 6)];
-				index += appendYear(characters, index, year);
-				appendTimezone(characters, index, timeZone);
+				slen = (year < 0 ? 5 : 4) + (timeZone == 0 ? 0 : 6);
 				break;
 			case gYearMonth: // Year, MonthDay, [TimeZone]
-				characters = new char[(year < 0 ? 5 : 4) + 3
-						+ (timeZone == 0 ? 0 : 6)];
-				index += appendYear(characters, index, year);
-				index += appendMonth(characters, index, monthDay);
-				appendTimezone(characters, index, timeZone);
+				slen = (year < 0 ? 5 : 4) + 3 + (timeZone == 0 ? 0 : 6);
 				break;
 			case date: // Year, MonthDay, [TimeZone]
-				characters = new char[(year < 0 ? 5 : 4) + 6
-						+ (timeZone == 0 ? 0 : 6)];
-				index += appendYear(characters, index, year);
-				index += appendMonthDay(characters, index, monthDay);
-				appendTimezone(characters, index, timeZone);
+				slen = (year < 0 ? 5 : 4) + 6 + (timeZone == 0 ? 0 : 6);
 				break;
 			case dateTime: // Year, MonthDay, Time, [FractionalSecs], [TimeZone]
 				// e.g. "0001-01-01T00:00:00.111+00:33";
-				int sizeFractionalSecs = fractionalSecs == 0 ? 0 : MethodsBag
+				sizeFractionalSecs = fractionalSecs == 0 ? 0 : MethodsBag
 						.getStringSize(fractionalSecs) + 1;
-				characters = new char[(year < 0 ? 5 : 4) + 6 + 9
-						+ (sizeFractionalSecs) + (timeZone == 0 ? 0 : 6)];
-				index += appendYear(characters, index, year);
-				index += appendMonthDay(characters, index, monthDay);
-				characters[index++] = 'T';
-				index += appendTime(characters, index, time);
-				index += appendFractionalSeconds(characters, index,
-						fractionalSecs, sizeFractionalSecs - 1);
-				appendTimezone(characters, index, timeZone);
+				slen = (year < 0 ? 5 : 4) + 6 + 9 + (sizeFractionalSecs)
+						+ (timeZone == 0 ? 0 : 6);
 				break;
 			case gMonth: // MonthDay, [TimeZone]
 				// e.g. "--12"
-				characters = new char[1 + 3 + (timeZone == 0 ? 0 : 6)];
-				characters[index++] = '-';
-				index += appendMonth(characters, index, monthDay);
-				appendTimezone(characters, index, timeZone);
+				slen = 1 + 3 + (timeZone == 0 ? 0 : 6);
 				break;
 			case gMonthDay: // MonthDay, [TimeZone]
 				// e.g. "--01-28"
-				characters = new char[1 + 6 + (timeZone == 0 ? 0 : 6)];
-				characters[index++] = '-';
-				index += appendMonthDay(characters, index, monthDay);
-				appendTimezone(characters, index, timeZone);
+				slen = 1 + 6 + (timeZone == 0 ? 0 : 6);
 				break;
 			case gDay: // MonthDay, [TimeZone]
 				// "---16";
-				characters = new char[3 + 2 + (timeZone == 0 ? 0 : 6)];
-				characters[index++] = '-';
-				characters[index++] = '-';
-				characters[index++] = '-';
-				index += appendDay(characters, index, monthDay);
-				appendTimezone(characters, index, timeZone);
+				slen = 3 + 2 + (timeZone == 0 ? 0 : 6);
 				break;
 			case time: // Time, [FractionalSecs], [TimeZone]
 				// e.g. "12:34:56.135"
 				sizeFractionalSecs = fractionalSecs == 0 ? 0 : MethodsBag
 						.getStringSize(fractionalSecs) + 1;
-				characters = new char[8 + (sizeFractionalSecs)
-						+ (timeZone == 0 ? 0 : 6)];
-				index += appendTime(characters, index, time);
-				index += appendFractionalSeconds(characters, index,
-						fractionalSecs, sizeFractionalSecs - 1);
-				appendTimezone(characters, index, timeZone);
+				slen = 8 + (sizeFractionalSecs) + (timeZone == 0 ? 0 : 6);
 				break;
 			default:
 				throw new UnsupportedOperationException();
 			}
 		}
+		return slen;
+	}
 
-		return characters;
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		switch (type) {
+		case gYear: // Year, [Time-Zone]
+			offset += appendYear(cbuffer, offset, year);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case gYearMonth: // Year, MonthDay, [TimeZone]
+			offset += appendYear(cbuffer, offset, year);
+			offset += appendMonth(cbuffer, offset, monthDay);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case date: // Year, MonthDay, [TimeZone]
+			offset += appendYear(cbuffer, offset, year);
+			offset += appendMonthDay(cbuffer, offset, monthDay);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case dateTime: // Year, MonthDay, Time, [FractionalSecs], [TimeZone]
+			// e.g. "0001-01-01T00:00:00.111+00:33";
+			offset += appendYear(cbuffer, offset, year);
+			offset += appendMonthDay(cbuffer, offset, monthDay);
+			cbuffer[offset++] = 'T';
+			offset += appendTime(cbuffer, offset, time);
+			assert (sizeFractionalSecs != -1);
+			offset += appendFractionalSeconds(cbuffer, offset, fractionalSecs,
+					sizeFractionalSecs - 1);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case gMonth: // MonthDay, [TimeZone]
+			// e.g. "--12"
+			cbuffer[offset++] = '-';
+			offset += appendMonth(cbuffer, offset, monthDay);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case gMonthDay: // MonthDay, [TimeZone]
+			// e.g. "--01-28"
+			cbuffer[offset++] = '-';
+			offset += appendMonthDay(cbuffer, offset, monthDay);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case gDay: // MonthDay, [TimeZone]
+			// "---16";
+			cbuffer[offset++] = '-';
+			cbuffer[offset++] = '-';
+			cbuffer[offset++] = '-';
+			offset += appendDay(cbuffer, offset, monthDay);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		case time: // Time, [FractionalSecs], [TimeZone]
+			// e.g. "12:34:56.135"
+			offset += appendTime(cbuffer, offset, time);
+			assert (sizeFractionalSecs != -1);
+			offset += appendFractionalSeconds(cbuffer, offset, fractionalSecs,
+					sizeFractionalSecs - 1);
+			appendTimezone(cbuffer, offset, timeZone);
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
+
+		return cbuffer;
 	}
 
 	private static void setTimezone(Calendar cal, int tz) {

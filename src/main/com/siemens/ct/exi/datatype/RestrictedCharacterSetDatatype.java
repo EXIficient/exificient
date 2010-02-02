@@ -130,8 +130,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			int numberOfBits = rcs.getCodingLength();
 			int size = rcs.size();
 
-			value = new StringValue(new char[slen]);
-			char[] cValue = value.toCharacters();
+			char[] cValue = new char[slen];
+			value = new StringValue(cValue);
 
 			for (int k = 0; k < slen; k++) {
 				int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);

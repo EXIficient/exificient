@@ -30,28 +30,25 @@ public class DOMRoundtrip extends XMLTestCase {
 
 	public void testSchemaNillable1() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		roundtrip("./data/schema/nillable1.xml", exiFactory);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	public void testW3CNotebook() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		roundtrip("./data/W3C/PrimerNotebook/notebook.xml", exiFactory);
 	}
 
 	public void testW3CEXIbyExample() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		roundtrip("./data/W3C/EXIbyExample/XMLSample.xml", exiFactory);
 	}
 
 	public void testW3CXMLSample() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+//		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		roundtrip("./data/W3C/XMLSample/XMLSample.xml", exiFactory);
 	}
 

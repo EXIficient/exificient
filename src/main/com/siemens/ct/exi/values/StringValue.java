@@ -20,17 +20,39 @@ package com.siemens.ct.exi.values;
 
 public class StringValue extends AbstractValue {
 	
+	protected char[] characters;
+	protected String sValue;
+	
 	public StringValue(char[] ca) {
 		this.characters = ca;
 	}
 	
 	public StringValue(String s) {
+		this(s.toCharArray());
 		sValue = s;
-		this.characters = sValue.toCharArray();
 	}
 	
-	public char[] toCharacters() {
-		return characters;
+	public int getCharactersLength() {
+		return characters.length;
 	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		// return internal char buffer to indicate that this should be used
+		return this.characters;
+	}
+	
+	@Override
+	public String toString() {
+		if (sValue == null) {
+			sValue = new String(characters);
+		}
+		return sValue;
+	}
+	
+	@Override
+	public String toString(char[] cbuffer, int offset) {
+		return toString();
+	}
+	
 	
 }

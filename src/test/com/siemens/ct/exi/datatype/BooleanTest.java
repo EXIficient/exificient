@@ -56,12 +56,12 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanValue().toCharacters().equals(
-				Constants.DECODED_BOOLEAN_FALSE));
+		assertTrue(getBitDecoder().decodeBooleanValue().toString().equals(
+				Constants.XSD_BOOLEAN_0));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanValue().toCharacters().equals(
-				Constants.DECODED_BOOLEAN_FALSE));
+		assertTrue(getByteDecoder().decodeBooleanValue().toString().equals(
+				Constants.XSD_BOOLEAN_0));
 	}
 
 	public void testBooleanFalse() throws IOException {
@@ -103,12 +103,12 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBoolean(bool);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanValue().toCharacters().equals(
-				Constants.DECODED_BOOLEAN_TRUE));
+		assertTrue(getBitDecoder().decodeBooleanValue().toString().equals(
+				Constants.XSD_BOOLEAN_1));
 		// Byte
 		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanValue().toCharacters().equals(
-				Constants.DECODED_BOOLEAN_TRUE));
+		assertTrue(getByteDecoder().decodeBooleanValue().toString().equals(
+				Constants.XSD_BOOLEAN_1));
 	}
 
 	public void testBooleanTrue() throws IOException {

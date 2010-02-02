@@ -24,8 +24,18 @@ public class BooleanValue extends AbstractValue {
 
 	protected final boolean bool;
 
+	protected char[] characters;
+	protected String sValue;
+	
 	public BooleanValue(boolean bool) {
 		this.bool = bool;
+		if (bool) {
+			characters = Constants.XSD_BOOLEAN_1_ARRAY;
+			sValue = Constants.XSD_BOOLEAN_1;
+		} else {
+			characters = Constants.XSD_BOOLEAN_0_ARRAY;
+			sValue = Constants.XSD_BOOLEAN_0;
+		}
 	}
 	
 	public BooleanValue(int boolID) {
@@ -58,13 +68,24 @@ public class BooleanValue extends AbstractValue {
 	public boolean toBoolean() {
 		return bool;
 	}
-
-	public char[] toCharacters() {
-		if (characters == null) {
-			characters = bool ? Constants.DECODED_BOOLEAN_TRUE
-					: Constants.DECODED_BOOLEAN_FALSE;
-		}
+	
+	public int getCharactersLength() {
+		return characters.length;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		// return internal char buffer to indicate that this should be used
 		return characters;
+	}
+	
+	@Override
+	public String toString() {
+		return sValue;
+	}
+	
+	@Override
+	public String toString(char[] cbuffer, int offset) {
+		return sValue;
 	}
 
 }

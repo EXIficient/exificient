@@ -45,23 +45,24 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 	}
 
 	public SaxToDomHandler(Document doc, DocumentFragment docFragment) {
-		document = doc;
+		this(doc);
 		currentNode = docFragment;
 	}
 
 	public void startElement(String uri, String name, String qName,
 			Attributes attrs) throws SAXException {
+
 		// create element
 		Element element = document.createElementNS(uri, qName);
 
 		// add attribute per attribute
 		for (int i = 0; i < attrs.getLength(); ++i) {
+			String value = attrs.getValue(i);
 			String ns_uri = attrs.getURI(i);
 			String qname = attrs.getQName(i);
-			String value = attrs.getValue(i);
 			Attr attr = document.createAttributeNS(ns_uri, qname);
-			attr.setValue(value);
 			element.setAttributeNodeNS(attr);
+			attr.setValue(value);
 		}
 
 		// add initially created element to tree, and adjust current node

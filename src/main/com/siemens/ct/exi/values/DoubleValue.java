@@ -26,6 +26,8 @@ public class DoubleValue extends AbstractValue {
 	protected final long lMantissa;
 	protected final long lExponent;
 
+	protected int slenMantissa = -1;
+
 	protected Double d;
 
 	public DoubleValue(long lMantissa, long lExponent) {
@@ -33,7 +35,7 @@ public class DoubleValue extends AbstractValue {
 		this.lExponent = lExponent;
 	}
 	
-	public double toDouble() {
+	public Double toDouble() {
 		if (d == null)  {
 			if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
 				if (lMantissa == -1L) {
@@ -49,31 +51,73 @@ public class DoubleValue extends AbstractValue {
 		}
 		return d;
 	}
-
-	public char[] toCharacters() {
-		if (characters == null) {
+	
+	public int getCharactersLength() {
+		if (slen == -1) {
 			if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
 				if (lMantissa == -1) {
-					characters = Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
+					slen = Constants.FLOAT_MINUS_INFINITY_CHARARRAY.length;
 				} else if (lMantissa == 1) {
-					characters = Constants.FLOAT_INFINITY_CHARARRAY;
+					slen = Constants.FLOAT_INFINITY_CHARARRAY.length;
 				} else {
-					characters = Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
+					slen = Constants.FLOAT_NOT_A_NUMBER_CHARARRAY.length;
 				}
 			} else {
-				// return iMantissa + "E" + iExponent;
-				int sizeMantissa = MethodsBag.getStringSize(lMantissa);
-				int stringSize = sizeMantissa + 1 + MethodsBag.getStringSize(lExponent);
-				
-				characters = new char[stringSize];
-				
-				MethodsBag.itos(lExponent, stringSize, characters);
-				characters[sizeMantissa] = 'E';
-				MethodsBag.itos(lMantissa, sizeMantissa, characters);
+				// iMantissa + "E" + iExponent;
+				slenMantissa = MethodsBag.getStringSize(lMantissa);
+				slen = slenMantissa + 1 + MethodsBag.getStringSize(lExponent);	
 			}
 		}
-
-		return characters;
+		return slen;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (lMantissa == -1) {
+				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
+			} else if (lMantissa == 1) {
+				return Constants.FLOAT_INFINITY_CHARARRAY;
+			} else {
+				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
+			}
+		} else {
+			MethodsBag.itos(lExponent, getCharactersLength(), cbuffer);
+			cbuffer[slenMantissa] = 'E';
+			MethodsBag.itos(lMantissa, slenMantissa, cbuffer);
+			
+			return cbuffer;	
+		}
+	}
+	
+	@Override
+	public String toString() {
+		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (lMantissa == -1) {
+				return Constants.FLOAT_MINUS_INFINITY;
+			} else if (lMantissa == 1) {
+				return Constants.FLOAT_INFINITY;
+			} else {
+				return Constants.FLOAT_NOT_A_NUMBER;
+			}
+		} else {
+			char[] cbuffer = new char[getCharactersLength()];
+			return new String(toCharacters(cbuffer, 0));	
+		}
+	}
+	
+	@Override
+	public String toString(char[] cbuffer, int offset) {
+		if (lExponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (lMantissa == -1) {
+				return Constants.FLOAT_MINUS_INFINITY;
+			} else if (lMantissa == 1) {
+				return Constants.FLOAT_INFINITY;
+			} else {
+				return Constants.FLOAT_NOT_A_NUMBER;
+			}
+		} else {
+			return super.toString(cbuffer, offset);
+		}
 	}
 
 }

@@ -49,7 +49,7 @@ public class DOMBuilder {
 
 	public DOMBuilder(EXIFactory factory) throws ParserConfigurationException {
 		this.factory = factory;
-
+		
 		// setup document builder etc.
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setNamespaceAware(true);

@@ -34,13 +34,8 @@ public class XSDBase64 {
 	// static final char EQUAL_SIGN = '=';
 
 	byte[] bytes;
-	int length;
-
+	
 	private XSDBase64() {
-	}
-
-	public int getLength() {
-		return length;
 	}
 
 	public byte[] getBytes() {
@@ -102,7 +97,7 @@ public class XSDBase64 {
 			iLen--;
 		}
 
-		length = (iLen * 3) / 4;
+		int length = (iLen * 3) / 4;
 
 		//	create new byte array
 		//	TODO can we re-use old byte array
@@ -156,15 +151,25 @@ public class XSDBase64 {
 	 * @return A character array with the Base64 encoded data.
 	 */
 	public static char[] encode(byte[] in) {
+		// output length including padding
+		int oLen = getCharactersLength(in);
+		char[] out = new char[oLen];
+		
+		encode(in, out, 0);
+		
+		return out;
+	}
+	
+	public static void encode(byte[] in, char[] out, int offset) {
+		assert(out.length >= offset + getCharactersLength(in) );
+		
 		int iLen = in.length;
 		// output length without padding
 		int oDataLen = (iLen * 4 + 2) / 3; 
-		// output length including padding
-		int oLen = ((iLen + 2) / 3) * 4;
 		
-		char[] out = new char[oLen];
-		int ip = 0;
-		int op = 0;
+		int ip = offset;
+		int op = offset;
+		
 		while (ip < iLen) {
 			int i0 = in[ip++] & 0xff;
 			int i1 = ip < iLen ? in[ip++] & 0xff : 0;
@@ -180,7 +185,11 @@ public class XSDBase64 {
 			out[op] = op < oDataLen ? map1[o3] : '=';
 			op++;
 		}
-		return out;
+	}
+	
+	public static int getCharactersLength(byte[] in) {
+		// output length including padding
+		return ((in.length + 2) / 3) * 4;
 	}
 
 }

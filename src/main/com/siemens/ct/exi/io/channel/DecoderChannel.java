@@ -92,7 +92,7 @@ public interface DecoderChannel {
 	 * @return The character sequence
 	 */
 	public char[] decodeStringOnly(int length) throws IOException;
-
+	
 	/**
 	 * Decode an arbitrary precision non negative integer using a sequence of
 	 * octets. The most significant bit of the last octet is set to zero to

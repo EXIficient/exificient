@@ -128,10 +128,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerS1() throws IOException {
@@ -141,10 +143,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerS329() throws IOException {
@@ -154,24 +158,27 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		char[] sDec = getBitDecoder().decodeUnsignedIntegerValue().toCharacters();
-		assertTrue(equals(sDec, s));
+		String sDec = getBitDecoder().decodeUnsignedIntegerValue().toString();
+		assertTrue(s.equals(sDec));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 	}
 
-	public void testUnsignedIntegerS2147483647() throws IOException  {
+	public void testUnsignedIntegerS2147483647() throws IOException {
 		String s = "2147483647";
 
 		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
 		getBitEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 		// Byte
 		getByteEncoder().encodeUnsignedInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedIntegerValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedLongS1() throws IOException {
@@ -181,10 +188,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(equals(getBitDecoder().decodeUnsignedLongValue().toCharacters(), s));
+		assertTrue(s.equals(getBitDecoder().decodeUnsignedLongValue()
+				.toString()));
 		// Byte
 		getByteEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedLongValue().toCharacters(), s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedLongValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerSBig1() throws IOException {
@@ -194,12 +203,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toCharacters();
-		assertTrue(s + "!=" + new String(s1), equals(s1, s));
+		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedHugeIntegerValue().toCharacters(),
-				s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerSBig2() throws IOException {
@@ -213,12 +222,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toCharacters();
-		assertTrue(s + "!=" + new String(s1), equals(s1, s));
+		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedHugeIntegerValue().toCharacters(),
-				s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerSBig3() throws IOException {
@@ -228,12 +237,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toCharacters();
-		assertTrue(s + "!=" + new String(s1), equals(s1, s));
+		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedHugeIntegerValue().toCharacters(),
-				s));
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerSBig4() throws IOException {
@@ -244,12 +253,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		char[] s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toCharacters();
-		assertTrue(s2 + "!=" + new String(s1), equals(s1, s2));
+		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		assertTrue(s2 + "!=" + s1, s2.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(equals(getByteDecoder().decodeUnsignedHugeIntegerValue().toCharacters(),
-				s2));
+		assertTrue(s2.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+				.toString()));
 	}
 
 	public void testUnsignedIntegerSFailure() throws IOException {
