@@ -80,8 +80,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(s1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(s1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(s1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -161,16 +160,13 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(root.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(root.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(root));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el1));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -185,8 +181,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el2));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -201,8 +196,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el3.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el3.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el3));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -217,8 +211,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(el2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el2));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -302,25 +295,20 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(root.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(root.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(root));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el1));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -335,15 +323,12 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el2));
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
 
 			// decoder.inspectStream();
@@ -479,9 +464,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(root.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(root.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(root));
 
 			/*
 			 * first el1
@@ -490,33 +473,26 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(elx1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(elxx1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(
-					elxx1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elxx1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -533,9 +509,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(elxx2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(
-					elxx2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elxx2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -557,9 +531,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(elx2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -576,9 +548,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(elx3.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx3.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx3));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -605,33 +575,26 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(el1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(el1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(el1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
 			decoder.decodeAttribute();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(elx1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(elxx1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(
-					elxx1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elxx1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -648,9 +611,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(elxx2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(
-					elxx2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elxx2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -672,9 +633,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(elx2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
@@ -691,9 +650,7 @@ public class SchemaLessTest extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(elx3.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName()
-					.equals(elx3.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(elx3));
 
 			// decoder.inspectStream();
 			decoder.hasNext();

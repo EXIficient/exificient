@@ -70,23 +70,27 @@ public class FragmentsTestCase extends TestCase {
 		{
 			EXIEncoder encoder = factory.createEXIEncoder();
 			encoder.setOutput(baos, factory.isEXIBodyOnly());
-			
-			String pfx = null;	//	unset according fidelity-options
+
+			String pfx = null; // unset according fidelity-options
 
 			encoder.encodeStartDocument();
 
-			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(), pfx);
-			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalPart(), pfx);
-			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalPart(), pfx,
-					atCh1);
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					pfx);
+			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalPart(),
+					pfx);
+			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalPart(),
+					pfx, atCh1);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();
-			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(), pfx);
-			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalPart(), pfx);
-			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalPart(), pfx,
-					atCh2);
-			encoder.encodeAttribute(at2.getNamespaceURI(), at2.getLocalPart(), pfx,
-					atCh3);
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					pfx);
+			encoder.encodeStartElement(s2.getNamespaceURI(), s2.getLocalPart(),
+					pfx);
+			encoder.encodeAttribute(at1.getNamespaceURI(), at1.getLocalPart(),
+					pfx, atCh2);
+			encoder.encodeAttribute(at2.getNamespaceURI(), at2.getLocalPart(),
+					pfx, atCh3);
 			encoder.encodeEndElement();
 			encoder.encodeEndElement();
 
@@ -103,27 +107,23 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 
-			//decoder.inspectStream();
+			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementURI().equals(s1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(s1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(s1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementURI().equals(s2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(s2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(s2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
 
 			// decoder.inspectStream();
@@ -140,32 +140,26 @@ public class FragmentsTestCase extends TestCase {
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(s1.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(s1.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(s1));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			decoder.decodeStartElement();
-			assertTrue(decoder.getElementURI().equals(s2.getNamespaceURI()));
-			assertTrue(decoder.getElementLocalName().equals(s2.getLocalPart()));
+			assertTrue(decoder.getElementQName().equals(s2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
 			decoder.decodeAttribute();
-			assertTrue(decoder.getAttributeURI().equals(at1.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at1.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh2));
 
 			// decoder.inspectStream();
 			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeURI().equals(at2.getNamespaceURI()));
-			assertTrue(decoder.getAttributeLocalName().equals(
-					at2.getLocalPart()));
+			assertTrue(decoder.getAttributeQName().equals(at2));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh3));
 
 			// decoder.inspectStream();

@@ -520,29 +520,21 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		}
 		return pfx;
 	}
-
-	public String getElementURI() {
-		return elementQName.getNamespaceURI();
+	
+	public QName getElementQName() {
+		return elementQName;
 	}
 
-	public String getElementLocalName() {
-		return elementQName.getLocalPart();
-	}
-
-	public String getElementQName() {
+	public String getElementQNameAsString() {
 		return getQualifiedName(elementQName,
 				elementPrefix);
 	}
 
-	public String getAttributeURI() {
-		return attributeQName.getNamespaceURI();
+	public QName getAttributeQName() {
+		return attributeQName;
 	}
-
-	public String getAttributeLocalName() {
-		return attributeQName.getLocalPart();
-	}
-
-	public String getAttributeQName() {
+	
+	public String getAttributeQNameAsString() {
 		return getQualifiedName(attributeQName,
 				attributePrefix);
 	}

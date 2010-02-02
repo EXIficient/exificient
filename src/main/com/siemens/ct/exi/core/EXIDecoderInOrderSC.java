@@ -21,6 +21,8 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.namespace.QName;
+
 import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.EXIFactory;
@@ -329,34 +331,24 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		}
 	}
 
-	public String getElementURI() {
-		return (scDecoder == null ? super.getElementURI() : scDecoder
-				.getElementURI());
-	}
-
-	public String getElementLocalName() {
-		return (scDecoder == null ? super.getElementLocalName() : scDecoder
-				.getElementLocalName());
-	}
-
-	public String getElementQName() {
+	public QName getElementQName() {
 		return (scDecoder == null ? super.getElementQName() : scDecoder
 				.getElementQName());
 	}
-
-	public String getAttributeURI() {
-		return (scDecoder == null ? super.getAttributeURI() : scDecoder
-				.getAttributeURI());
+	
+	public String getElementQNameAsString() {
+		return (scDecoder == null ? super.getElementQNameAsString() : scDecoder
+				.getElementQNameAsString());
 	}
 
-	public String getAttributeLocalName() {
-		return (scDecoder == null ? super.getAttributeLocalName() : scDecoder
-				.getAttributeLocalName());
-	}
-
-	public String getAttributeQName() {
+	public QName getAttributeQName() {
 		return (scDecoder == null ? super.getAttributeQName() : scDecoder
 				.getAttributeQName());
+	}
+	
+	public String getAttributeQNameAsString() {
+		return (scDecoder == null ? super.getAttributeQNameAsString() : scDecoder
+				.getAttributeQNameAsString());
 	}
 
 	public Value getAttributeValue() {
