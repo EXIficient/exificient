@@ -30,20 +30,17 @@ package com.siemens.ct.exi.values;
 
 
 public abstract class AbstractValue implements Value {
-
-	protected char[] characters;
-	protected String sValue;
+	
+	protected int slen = -1;
 	
 	@Override
 	public String toString() {
-		if (sValue == null) {
-			sValue = new String(toCharacters());
-		}
-		return sValue;
+		char[] cbuffer = new char[getCharactersLength()];
+		return new String(toCharacters(cbuffer, 0));
 	}
 	
-	public int getCharactersLength() {
-		return toCharacters().length;
+	public String toString(char[] cbuffer, int offset) {
+		return new String(toCharacters(cbuffer, offset), offset, getCharactersLength());
 	}
-	
+
 }

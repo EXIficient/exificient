@@ -31,12 +31,26 @@ public class LongValue extends AbstractValue {
 	public long toLong() {
 		return val;
 	}
-
-	public char[] toCharacters() {
-		if (characters == null) {
-			characters = MethodsBag.itos(val);
+	
+	public int getCharactersLength() {
+		if ( slen == -1 ) {
+			if (val == Long.MIN_VALUE) {
+				slen = MethodsBag.LONG_MIN_VALUE_CHARARRAY.length;
+			} else {
+				slen = MethodsBag.getStringSize(val);
+			}
 		}
-		return characters;
+		return slen;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		if (val == Long.MIN_VALUE) {
+			return MethodsBag.LONG_MIN_VALUE_CHARARRAY;
+		} else {
+			assert (cbuffer.length >= getCharactersLength());
+			MethodsBag.itos(val, offset + getCharactersLength(), cbuffer);
+			return cbuffer;	
+		}
 	}
 
 }

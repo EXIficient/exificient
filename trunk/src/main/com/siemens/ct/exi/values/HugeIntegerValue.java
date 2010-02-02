@@ -39,16 +39,52 @@ public final class HugeIntegerValue extends AbstractValue {
 		this.isLongValue = false;
 	}
 	
-	public char[] toCharacters() {
-		if (characters == null) {
-			characters = isLongValue ? MethodsBag.itos(longValue) : MethodsBag.itos(bigIntegerValue);
+	public int getCharactersLength() {
+		if (slen == -1 )  {
+			slen = isLongValue ? MethodsBag.getStringSize(longValue) : bigIntegerValue.toString().length();
 		}
-		return characters;
+		return slen;
 	}
 	
-	public char[] toReverseCharacters() {
-		return (isLongValue ? MethodsBag.itosReverse(longValue) :
-			MethodsBag.itosReverse(bigIntegerValue));
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		if (isLongValue) {
+			MethodsBag.itos(longValue, getCharactersLength()+offset, cbuffer);
+		} else {
+			//	TODO look for a more suitable way, big integer
+			char[] bi = bigIntegerValue.toString().toCharArray();
+			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+		}
+		
+		return cbuffer;
+	}
+	
+	public void toCharactersReverse(char[] cbuffer, int offset) {
+		if (isLongValue) {
+			MethodsBag.itosReverse(longValue, offset, cbuffer);
+		} else {
+			//	TODO look for a more suitable way, big integer
+			StringBuilder sb = new StringBuilder(bigIntegerValue.toString());
+			char[] bi = sb.reverse().toString().toCharArray();
+			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		if (isLongValue) {
+			return super.toString();
+		} else {
+			return bigIntegerValue.toString();
+		}
+	}
+	
+	@Override
+	public String toString(char[] cbuffer, int offset) {
+		if (isLongValue) {
+			return super.toString(cbuffer, offset);
+		} else {
+			return bigIntegerValue.toString();
+		}
 	}
 
 }

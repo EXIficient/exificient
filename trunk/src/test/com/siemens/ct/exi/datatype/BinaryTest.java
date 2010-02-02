@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.datatype.XSDBase64;
+import com.siemens.ct.exi.values.BinaryValue;
 
 public class BinaryTest extends AbstractTestCase {
 
@@ -41,11 +42,11 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		char[] d1 = getBitDecoder().decodeBinary().toCharacters();
-		assertTrue(equals(d1, src));
+		BinaryValue d1 = getBitDecoder().decodeBinary();
+		assertTrue(src.equals(d1.toString()));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getByteDecoder().decodeBinary().toString()));
 	}
 	
 	public void testHexBinaryAsString0FB7NotByteAligned() throws IOException {
@@ -62,8 +63,8 @@ public class BinaryTest extends AbstractTestCase {
 		bitEC.flush();
 		DecoderChannel bd = getBitDecoder();
 		bd.decodeNBitUnsignedInteger(2);
-		char[] d1 = bd.decodeBinary().toCharacters();
-		assertTrue(equals(d1, src));
+		BinaryValue d1 = bd.decodeBinary();
+		assertTrue(src.equals(d1.toString()));
 	}
 
 	public void testBase64BinaryAsString0() throws IOException {
@@ -77,10 +78,10 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getBitDecoder().decodeBinary().toString()));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getByteDecoder().decodeBinary().toString()));
 	}
 	
 	public void testBase64BinaryAsString0NotByteAligned() throws IOException {
@@ -97,7 +98,7 @@ public class BinaryTest extends AbstractTestCase {
 		bitEC.flush();
 		DecoderChannel bitDC = getBitDecoder();
 		assertTrue(bitDC.decodeNBitUnsignedInteger(6) == 34);
-		assertTrue(equals(bitDC.decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(bitDC.decodeBinary().toString()));
 	}
 
 	public void testBase64BinaryAsString1() throws IOException {
@@ -113,11 +114,11 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		char[] d1 = getBitDecoder().decodeBinary().toCharacters();
-		assertTrue(equals(d1, src));
+		BinaryValue d1 = getBitDecoder().decodeBinary();
+		assertTrue(src.equals(d1.toString()));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getByteDecoder().decodeBinary().toString()));
 	}
 	
 	public void testBase64BinaryAsString1NotByteAligned() throws IOException {
@@ -137,8 +138,8 @@ public class BinaryTest extends AbstractTestCase {
 		DecoderChannel bitDC = getBitDecoder();
 		bitDC.decodeNBitUnsignedInteger(3);
 //		bitDC.decodeNBitUnsignedInteger(7);
-		char[] d1 = bitDC.decodeBinary().toCharacters();
-		assertTrue(equals(d1, src));
+		BinaryValue d1 = bitDC.decodeBinary();
+		assertTrue(src.equals(d1.toString()));
 	}
 
 	public void testBase64BinaryAsString2() throws IOException {
@@ -152,10 +153,10 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		assertTrue(equals(getBitDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getBitDecoder().decodeBinary().toString()));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), src));
+		assertTrue(src.equals(getByteDecoder().decodeBinary().toString()));
 	}
 
 	public void testBase64BinarySpaces1() throws IOException {
@@ -171,11 +172,11 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		char[] d1 = getBitDecoder().decodeBinary().toCharacters();
-		assertTrue(equals(d1, s1 + s2));
+		BinaryValue d1 = getBitDecoder().decodeBinary();
+		assertTrue(d1.toString().equals(s1 + s2));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), s1 + s2));
+		assertTrue(getByteDecoder().decodeBinary().toString().equals(s1 + s2));
 	}
 
 	public void testBase64BinarySpaces2() throws IOException {
@@ -192,11 +193,11 @@ public class BinaryTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBinary(b64.getBytes());
 		bitEC.flush();
-		char[] d1 = getBitDecoder().decodeBinary().toCharacters();
-		assertTrue(equals(d1, s1 + s2));
+		BinaryValue d1 = getBitDecoder().decodeBinary();
+		assertTrue(d1.toString().equals(s1 + s2));
 		// Byte
 		getByteEncoder().encodeBinary(b64.getBytes());
-		assertTrue(equals(getByteDecoder().decodeBinary().toCharacters(), s1 + s2));
+		assertTrue(getByteDecoder().decodeBinary().toString().equals(s1 + s2));
 	}
 
 	public void testBinaryFailure() throws IOException {

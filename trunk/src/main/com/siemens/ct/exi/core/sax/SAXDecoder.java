@@ -43,6 +43,7 @@ import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -65,6 +66,9 @@ public class SAXDecoder implements XMLReader {
 	protected ErrorHandler errorHandler;
 
 	protected static final String ATTRIBUTE_TYPE = "CDATA";
+
+	final static int DEFAULT_CHAR_BUFFER_SIZE = 4096;
+	protected char[] cbuffer = new char[DEFAULT_CHAR_BUFFER_SIZE];
 
 	protected AttributesImpl attributes = new AttributesImpl();
 
@@ -145,8 +149,8 @@ public class SAXDecoder implements XMLReader {
 			assert (eventType == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 			contentHandler.startDocument();
-			
-			//	grammar prefix mapping 
+
+			// grammar prefix mapping
 			NamespaceSupport namespaces = decoder.getNamespaces();
 			@SuppressWarnings("unchecked")
 			Enumeration<String> declaredPrefixes = namespaces
@@ -159,7 +163,6 @@ public class SAXDecoder implements XMLReader {
 				}
 				contentHandler.startPrefixMapping(pfx, uri);
 			}
-			
 
 			// DocContent
 			while (decoder.hasNext()) {
@@ -226,18 +229,17 @@ public class SAXDecoder implements XMLReader {
 		case SELF_CONTAINED:
 			decoder.decodeStartFragmentSelfContained();
 			parseStartTagContent();
-			 break;
+			break;
 		/* ELEMENT CONTENT EVENTS */
 		default:
 			// NO Attribute or NS events anymore --> start deferred element
 
-			// get qname as string
-			//	NOTE: getting qname needs to be done before starting prefix mapping 
-			// given that the qname may require a new qname
+			// NOTE: getting qname needs to be done before starting prefix
+			// mapping given that the qname may require a new qname prefix.
+			// TODO empty string if no qualified name is necessary ?
 			String qname = decoder.getElementQName();
 			
-			
-			//	TODO start prefix mapping differently!
+			// TODO start prefix mapping differently!
 			NamespaceSupport namespaces = decoder.getNamespaces();
 			@SuppressWarnings("unchecked")
 			Enumeration<String> declaredPrefixes = namespaces
@@ -254,7 +256,7 @@ public class SAXDecoder implements XMLReader {
 			// start so far deferred start element
 			contentHandler.startElement(deferredStartElementUri,
 					deferredStartElementLocalName, qname, attributes);
-			
+
 			// save qualified-name for EE
 			eeQualifiedNames.add(qname);
 			// clear information
@@ -349,10 +351,19 @@ public class SAXDecoder implements XMLReader {
 
 	public void setFeature(String name, boolean value)
 			throws SAXNotRecognizedException, SAXNotSupportedException {
+		/*
+		 * All XMLReaders are required to support setting
+		 * http://xml.org/sax/features/namespaces to true and
+		 * http://xml.org/sax/features/namespace-prefixes to false. 
+		 */
+		// System.out.println("[EXIficient] setFeature " + name + " --> " +
+		// value);
 	}
 
 	public void setProperty(String name, Object value)
 			throws SAXNotRecognizedException, SAXNotSupportedException {
+		// System.out.println("[EXIficient] setProperty " + name + " --> " +
+		// value);
 	}
 
 	/*
@@ -363,31 +374,52 @@ public class SAXDecoder implements XMLReader {
 		// store new deferred start element
 		deferredStartElementUri = decoder.getElementURI();
 		deferredStartElementLocalName = decoder.getElementLocalName();
-		
+
 		// start processing startTag events
 		parseStartTagContent();
 	}
 
 	protected void handleEndElement() throws SAXException, IOException {
 		// start sax end element
-		contentHandler.endElement(decoder.getElementURI(), decoder.getElementLocalName(), eeQualifiedNames
+		contentHandler.endElement(decoder.getElementURI(), decoder
+				.getElementLocalName(), eeQualifiedNames
 				.remove(eeQualifiedNames.size() - 1));
 	}
 
 	protected void handleAttribute() throws SAXException, IOException,
 			EXIException {
+		Value val = decoder.getAttributeValue();
 
-		attributes.addAttribute(decoder.getAttributeURI(), decoder.getAttributeLocalName(),
-				decoder.getAttributeQName(), ATTRIBUTE_TYPE, decoder.getAttributeValue());
+		int slen = val.getCharactersLength();
+		if (slen > cbuffer.length) {
+			// need to create a new (expanded) buffer
+			cbuffer = new char[slen];
+		}
+
+		// TODO empty string if no qualified name is necessary
+
+		attributes.addAttribute(decoder.getAttributeURI(), decoder
+				.getAttributeLocalName(), decoder.getAttributeQName(), ATTRIBUTE_TYPE, val.toString(
+				cbuffer, 0));
 
 		// keep processing startTag events
 		parseStartTagContent();
 	}
 
 	protected void handleCharacters() throws SAXException, IOException {
-		char[] chars = decoder.getCharacters();
-		
-		contentHandler.characters(chars, 0, chars.length);
+		Value val = decoder.getCharactersValue();
+
+		int slen = val.getCharactersLength();
+		if (slen > cbuffer.length) {
+			// need to create a new (expanded) buffer
+			cbuffer = new char[slen];
+		}
+
+		// returns char array that contains value
+		// Note: can be a different array than the one passed
+		char[] sres = val.toCharacters(cbuffer, 0);
+
+		contentHandler.characters(sres, 0, slen);
 	}
 
 	/*

@@ -16,11 +16,11 @@ import com.siemens.ct.exi.values.Value;
 public class StringDecoderImpl implements StringDecoder {
 
 	// global values (all)
-	List<Value> globalValues;
+	protected List<Value> globalValues;
 
 	// local values (per context)
 	protected Map<QName, List<Value>> localValues;
-
+	
 	public StringDecoderImpl() {
 		globalValues = new ArrayList<Value>();
 		localValues = new HashMap<QName, List<Value>>();
@@ -45,7 +45,7 @@ public class StringDecoderImpl implements StringDecoder {
 			// not found in global value (and local value) partition
 			// ==> string literal is encoded as a String with the length
 			// incremented by two.
-			value = new StringValue(valueChannel.decodeStringOnly(i - 2));
+			value = new StringValue(valueChannel.decodeStringOnly(i - 2));			
 			// After encoding the string value, it is added to both the
 			// associated "local" value string table partition and the global
 			// value string table partition.

@@ -18,9 +18,9 @@
 
 package com.siemens.ct.exi.values;
 
-
 /**
- * TODO Description
+ * Value is a container concept encapsulating value items, e.g. String Values
+ * but also Integers, Floats etc.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -28,19 +28,47 @@ package com.siemens.ct.exi.values;
  * @version 0.4.20090128
  */
 
-
-/*
- *  Value is a container concept encapsulating value items, e.g. String Values
- *  but also Integers, Floats etc. 
- *  
- */
 public interface Value {
 
-	public char[] toCharacters();
-	
+	/**
+	 * Returns character array containing the vales represented as String
+	 * representation for XML
+	 * <p>
+	 * Note: can be a different array than the one passed (e.g., String values).
+	 * In those cases the array has exactly getCharactersLength() size
+	 * </p>
+	 * 
+	 * @param cbuffer
+	 * @param offset
+	 * @return string representation of value
+	 */
+	public char[] toCharacters(char[] cbuffer, int offset);
+
+	/**
+	 * Length of string representation
+	 * 
+	 * @return string length
+	 */
 	public int getCharactersLength();
-	
+
+	/**
+	 * Returns string representation by making use of the passed character
+	 * array.
+	 * 
+	 * @param cbuffer
+	 * @param offset
+	 * @return String representation
+	 */
+	public String toString(char[] cbuffer, int offset);
+
+	/**
+	 * Returns string representation. Please consider using toString(char[]
+	 * cbuffer, int offset).
+	 * 
+	 * @see String
+	 * @return String representation
+	 */
 	@Override
 	public String toString();
-	
+
 }

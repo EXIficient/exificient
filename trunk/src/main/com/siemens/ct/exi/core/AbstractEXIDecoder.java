@@ -547,12 +547,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				attributePrefix);
 	}
 
-	public String getAttributeValue() {
-		return attributeValue.toString();
+	public Value getAttributeValue() {
+		return attributeValue;
 	}
 
-	public char[] getCharacters() {
-		return characters.toCharacters();
+	public Value getCharactersValue() {
+		return characters;
 	}
 
 	public String getDocTypeName() {

@@ -25,6 +25,7 @@ import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * Internal EXI Decoder interface to transform an EXI stream back to XML Infoset
@@ -326,19 +327,18 @@ public interface EXIDecoder {
 	/**
 	 * Provides attribute value
 	 * 
-	 * @return <code>String</code> for attribute value
+	 * @return <code>Value</code> for attribute value
 	 */
-	public String getAttributeValue();
+	public Value getAttributeValue();
 
 	/**
 	 * Provides characters as well as significant/insignificant whitespace
 	 * characters
 	 * 
-	 * @return <code>char[]</code> for characters
+	 * @return <code>Value</code> for XML characters item
 	 */
-	// public String getCharacters();
-	public char[] getCharacters();
-
+	public Value getCharactersValue();
+	
 	/**
 	 * Provides DOCTYPE name.
 	 * 

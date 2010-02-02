@@ -35,9 +35,9 @@ public class W3CTestCase extends AbstractTestCase {
 	public static void setupQuickTest() {
 		// W3CTestCase.setConfigurationW3CXMLSample ( );
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx();
-		// W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
+		W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
 		// W3CTestCase.setConfigurationW3CEXIbyExample ( );
-		W3CTestCase.setConfigurationW3CPrimerNotebook();
+		// W3CTestCase.setConfigurationW3CPrimerNotebook();
 		// W3CTestCase.setConfigurationW3CXHTMLStrict1();
 		// W3CTestCase.setConfigurationW3CXHTMLTransitional1();
 	}

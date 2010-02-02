@@ -20,7 +20,6 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigDecimal;
 
-
 public class DecimalValue extends AbstractValue {
 
 	protected final boolean negative;
@@ -28,7 +27,7 @@ public class DecimalValue extends AbstractValue {
 	protected final HugeIntegerValue revFractional;
 
 	protected BigDecimal bd;
-
+	
 	public DecimalValue(boolean negative, HugeIntegerValue integral,
 			HugeIntegerValue revFractional) {
 		this.negative = negative;
@@ -38,38 +37,35 @@ public class DecimalValue extends AbstractValue {
 
 	public BigDecimal toBigDecimal() {
 		if (bd == null) {
-			bd = new BigDecimal(toCharacters());
+			char[] characters = new char[getCharactersLength()];
+			toCharacters(characters, 0);
+			bd = new BigDecimal(characters);
 		}
 		return bd;
 	}
-
-	public char[] toCharacters() {
-		if (characters == null) {
-			char[] caIntegral = integral.toCharacters();
-			char[] caFractional = revFractional.toReverseCharacters();
-
-			int aLen = (negative ? 1 : 0) + caIntegral.length + 1
-					+ caFractional.length;
-
-			characters = new char[aLen];
-
-			int cnt = 0;
-
-			// negative
-			if (negative) {
-				characters[cnt++] = '-';
-			}
-			// integral
-			System.arraycopy(caIntegral, 0, characters, cnt, caIntegral.length);
-			cnt += caIntegral.length;
-			// dot
-			characters[cnt++] = '.';
-			// fractional
-			System.arraycopy(caFractional, 0, characters, cnt,
-					caFractional.length);
+	
+	public int getCharactersLength() {
+		if (slen == -1) {
+			// +12.34 
+			slen = (negative ? 1 : 0) + integral.getCharactersLength() + 1 + revFractional.getCharactersLength();
 		}
-
-		return characters;
+		return slen;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		// negative
+		if (negative) {
+			cbuffer[offset++] = '-';
+		}
+		// integral
+		integral.toCharacters(cbuffer, offset);
+		offset += integral.getCharactersLength();
+		// dot
+		cbuffer[offset++] = '.';
+		// fractional
+		revFractional.toCharactersReverse(cbuffer, offset);
+		
+		return cbuffer;
 	}
 
 }

@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.util;
 
-import java.math.BigInteger;
 
 /**
  * TODO Description
@@ -137,8 +136,8 @@ public class MethodsBag {
 	// I N T E G E R  &  L O N G _ T O _ S T R I N G  Operations
 	//
 	/////////////////////////////////////////////////////////
-	final static char[] INTEGER_MIN_VALUE_CHARARRAY = "-2147483648".toCharArray();
-	final static char[] LONG_MIN_VALUE_CHARARRAY = "-9223372036854775808".toCharArray();
+	public final static char[] INTEGER_MIN_VALUE_CHARARRAY = "-2147483648".toCharArray();
+	public final static char[] LONG_MIN_VALUE_CHARARRAY = "-9223372036854775808".toCharArray();
 	
 	
 	final static char[] DigitOnes = { '0', '1', '2', '3', '4', '5', '6', '7',
@@ -198,6 +197,24 @@ public class MethodsBag {
     	return (l < 0) ? stringSize(-l) + 1 : stringSize(l);
     }
 
+	
+//	public static char[] itos(int i) {
+//		if (i == Integer.MIN_VALUE) {
+//			return INTEGER_MIN_VALUE_CHARARRAY;
+//		} else {
+//			int size = getStringSize(i);
+//			char[] buf = new char[size];
+//			itos(i, size, buf);
+//
+//			return buf;			
+//		}
+//	}
+	
+//	public static void itos(int i, int leastExclIndex, char[] buf) {
+//		assert(!(i == Integer.MIN_VALUE));
+//		getChars(i, leastExclIndex, buf);
+//	}
+	
 	/**
 	 * Places characters representing the integer i into the character array
 	 * buf. The characters are placed into the buffer backwards starting with
@@ -206,7 +223,9 @@ public class MethodsBag {
 	 * 
 	 * Will fail if i == Integer.MIN_VALUE
 	 */
-	final static void getChars(int i, int index, char[] buf) {
+	public final static void itos(int i, int index, char[] buf) {
+		assert(!(i == Integer.MIN_VALUE));
+		
 		int q, r;
 		char sign = 0;
 
@@ -240,41 +259,23 @@ public class MethodsBag {
 		}
 	}
 	
-	/**
-	 * Places characters representing the integer i into the character array
-	 * buf in reverse order. 
-	 * 
-	 * Will fail if i < 0 (zero)
-	 */
-	final static int getCharsReverse(int i, int index, char[] buf) {
-		assert( i>= 0);
-		int q, r;
-		int posChar = index;
-
-		// Generate two digits per iteration
-		while (i >= 65536) {
-			q = i / 100;
-			// really: r = i - (q * 100);
-			r = i - ((q << 6) + (q << 5) + (q << 2));
-			i = q;
-			buf[posChar++] = DigitOnes[r];
-			buf[posChar++] = DigitTens[r];
-		}
-
-		// Fall thru to fast mode for smaller numbers
-		// assert(i <= 65536, i);
-		for (;;) {
-			q = (i * 52429) >>> (16 + 3);
-			r = i - ((q << 3) + (q << 1)); // r = i-(q*10) ...
-			buf[posChar++] = digits[r];
-			i = q;
-			if (i == 0)
-				break;
-		}
-		
-		return (posChar-index);	// number of written chars
-	}
-
+	
+//	public static char[] itos(long l) {
+//        if (l == Long.MIN_VALUE) {
+//            return LONG_MIN_VALUE_CHARARRAY;
+//        } else {
+//        	int size = getStringSize(l);
+//            char[] buf = new char[size];
+//            itos(l, size, buf);
+//            return buf;        	
+//        }
+//	}
+	
+//	public static void itos(long l, int leastExclIndex, char[] buf) {
+//		assert(!(l == Long.MIN_VALUE));
+//		getChars(l, leastExclIndex, buf);
+//	}
+	
     /**
      * Places characters representing the integer i into the
      * character array buf. The characters are placed into
@@ -284,7 +285,9 @@ public class MethodsBag {
      *
      * Will fail if i == Long.MIN_VALUE
      */
-    final static void getChars(long i, int index, char[] buf) {
+    public final static void itos(long i, int index, char[] buf) {
+    	assert(!(i == Long.MIN_VALUE));
+    	
         long q;
         int r;
         char sign = 0;
@@ -329,6 +332,64 @@ public class MethodsBag {
             buf[--index] = sign;
         }
     }
+	
+//	public static char[] itos(BigInteger bi) {
+//		// TODO look for a more sensitive way !?
+//		return bi.toString().toCharArray();
+//	}
+
+//	public static char[] itosReverse(int i) {
+//    	int size = getStringSize(i);
+//        char[] buf = new char[size];
+//        getCharsReverse(i, 0, buf);
+//        return buf;
+//	}
+
+	
+//	public static void itosReverse(int i, int firstIndex, char[] buf) {
+//        getCharsReverse(i, firstIndex, buf);
+//	}
+	
+	/**
+	 * Places characters representing the integer i into the character array
+	 * buf in reverse order. 
+	 * 
+	 * Will fail if i < 0 (zero)
+	 */
+	public final static int itosReverse(int i, int index, char[] buf) {
+		assert( i>= 0);
+		int q, r;
+		int posChar = index;
+
+		// Generate two digits per iteration
+		while (i >= 65536) {
+			q = i / 100;
+			// really: r = i - (q * 100);
+			r = i - ((q << 6) + (q << 5) + (q << 2));
+			i = q;
+			buf[posChar++] = DigitOnes[r];
+			buf[posChar++] = DigitTens[r];
+		}
+
+		// Fall thru to fast mode for smaller numbers
+		// assert(i <= 65536, i);
+		for (;;) {
+			q = (i * 52429) >>> (16 + 3);
+			r = i - ((q << 3) + (q << 1)); // r = i-(q*10) ...
+			buf[posChar++] = digits[r];
+			i = q;
+			if (i == 0)
+				break;
+		}
+		
+		 return (posChar-index);	// number of written chars
+	}
+	
+	
+//	public static void itosReverse(long l, int firstIndex, char[] buf) {
+//        getCharsReverse(l, firstIndex, buf);
+//	}
+//	
     
     /**
      * Places characters representing the integer i into the
@@ -336,7 +397,7 @@ public class MethodsBag {
      *
      * Will fail if i < 0 (zero)
      */
-    final static void getCharsReverse(long i, int index, char[] buf) {
+    public final static void itosReverse(long i, int index, char[] buf) {
     	assert( i>= 0);
         long q;
         int r;
@@ -375,67 +436,19 @@ public class MethodsBag {
     }
 	
 	
-	public static char[] itos(int i) {
-		if (i == Integer.MIN_VALUE) {
-			return INTEGER_MIN_VALUE_CHARARRAY;
-		} else {
-			int size = getStringSize(i);
-			char[] buf = new char[size];
-			getChars(i, size, buf);
-
-			return buf;			
-		}
-	}
 	
-	public static void itos(int i, int leastExclIndex, char[] buf) {
-		assert(!(i == Integer.MIN_VALUE));
-		getChars(i, leastExclIndex, buf);
-	}
+//	public static char[] itosReverse(long l) {
+//    	int size = getStringSize(l);
+//        char[] buf = new char[size];
+//        getCharsReverse(l, 0, buf);
+//        return buf;
+//	}
 	
-	public static char[] itos(long l) {
-        if (l == Long.MIN_VALUE) {
-            return LONG_MIN_VALUE_CHARARRAY;
-        } else {
-        	int size = getStringSize(l);
-            char[] buf = new char[size];
-            getChars(l, size, buf);
-            return buf;        	
-        }
-	}
-	
-	public static void itos(long l, int leastExclIndex, char[] buf) {
-		assert(!(l == Long.MIN_VALUE));
-		getChars(l, leastExclIndex, buf);
-	}
-	
-	public static char[] itos(BigInteger bi) {
-		// TODO look for a more sensitive way !?
-		return bi.toString().toCharArray();
-	}
-
-	public static char[] itosReverse(int i) {
-    	int size = getStringSize(i);
-        char[] buf = new char[size];
-        getCharsReverse(i, 0, buf);
-        return buf;
-	}
-	
-	public static int itosReverse(int i, int firstIndex, char[] buf) {
-        return getCharsReverse(i, firstIndex, buf);
-	}
-	
-	public static char[] itosReverse(long l) {
-    	int size = getStringSize(l);
-        char[] buf = new char[size];
-        getCharsReverse(l, 0, buf);
-        return buf;
-	}
-	
-	public static char[] itosReverse(BigInteger bi) {
-		// TODO look for a more sensitive way !?
-		StringBuilder sb = new StringBuilder(bi.toString());
-		return sb.reverse().toString().toCharArray();
-	}
+//	public static char[] itosReverse(BigInteger bi) {
+//		// TODO look for a more sensitive way !?
+//		StringBuilder sb = new StringBuilder(bi.toString());
+//		return sb.reverse().toString().toCharArray();
+//	}
 	
 //	public static void main(String[] args) {
 //		// int i = 8710;
