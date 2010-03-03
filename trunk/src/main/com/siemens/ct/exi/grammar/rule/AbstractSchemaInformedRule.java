@@ -103,12 +103,16 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		this.isTypeCastable = isTypeCastable;
 	}
 
-	public void setNillable(boolean nil, SchemaInformedRule typeEmpty) {
+	public void setNillable(boolean nil) {
 		this.isNillable = nil;
+		// setTypeEmpty(typeEmpty);
+	}
+	
+	public void setTypeEmpty(SchemaInformedRule typeEmpty) {
 		this.typeEmpty = typeEmpty;
 	}
 
-	public Rule getTypeEmpty() {
+	public SchemaInformedRule getTypeEmpty() {
 		return this.typeEmpty;
 	}
 

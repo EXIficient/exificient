@@ -32,7 +32,6 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.DatatypeEvent;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -499,12 +498,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			}
 
 			QName xsiQName = new QName(xsiTypeURI, xsiTypeLocalName);
-			TypeGrammar tg = grammar.getTypeGrammar(xsiQName);
+			SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
 			
 			// strip use-less xsi:type casts, e.g., if we deal already with
 			// the same type-grammar
 			// Note: Preserve lexical value requires type cast
-			if ( ( tg!= null && currentRule != tg.getType()) || fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+			if ( ( tg!= null && currentRule != tg) || fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				// encode event-code, AT(xsi:type)
 				encode2ndLevelEventCode(ec2);
 				// xsi:type "content" as qname
@@ -515,7 +514,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// grammar exists ?
 				if (tg != null) {
 					// update grammar according to given xsi:type
-					currentRule = tg.getType();
+					currentRule = tg;
 				}
 			}
 		} else {
@@ -551,6 +550,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 						ec2 = siCurrentRule.get2ndLevelEventCode(
 								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
 								fidelityOptions);
+						
+						if (ec2 == Constants.NOT_FOUND && fidelityOptions.isStrict()) {
+							throw new EXIException("In STRICT mode deviations such as unexepcted xsi:nil's are not allowed!");
+						}
+						
 						assert (ec2 != Constants.NOT_FOUND);
 						encode2ndLevelEventCode(ec2);
 						// qualified name

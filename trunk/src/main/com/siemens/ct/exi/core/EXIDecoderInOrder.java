@@ -106,20 +106,18 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// try to use "default" schema URI in default namespace
 		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) && !exiFactory.isFragment()) {
 			if (grammar.isSchemaInformed()) {
-				if (runtimeURIEntries.size() > 4) {
-					RuntimeURIEntry uc = runtimeURIEntries.get(4);
-					namespaces.declarePrefix("", uc.namespaceURI);
-					
-					for(int i=5; i<runtimeURIEntries.size(); i++) {
-						uc = runtimeURIEntries.get(i);
-						@SuppressWarnings("unused")
-						String pfx = this.getUniquePrefix(uc.namespaceURI);
-						// namespaces.declarePrefix(pfx, uc.namespaceURI);
-					}
-				}
-				// else if (uris.size() == 4) {
-				// namespaces.declarePrefix("", "");
-				// }
+				//	TODO this optimization seems to cause troubles
+//				if (runtimeURIEntries.size() > 4) {
+//					RuntimeURIEntry uc = runtimeURIEntries.get(4);
+//					namespaces.declarePrefix("", uc.namespaceURI);
+//					
+//					for(int i=5; i<runtimeURIEntries.size(); i++) {
+//						uc = runtimeURIEntries.get(i);
+//						@SuppressWarnings("unused")
+//						String pfx = this.getUniquePrefix(uc.namespaceURI);
+//						// namespaces.declarePrefix(pfx, uc.namespaceURI);
+//					}
+//				}
 			}
 		}
 	}

@@ -54,7 +54,7 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 
 	protected Map<QName, Attribute> globalAttributes;
 	
-	protected Map<QName, TypeGrammar> grammarTypes;
+	protected Map<QName, SchemaInformedRule> grammarTypes;
 
 
 	protected SchemaInformedRule builtInFragmentGrammar;
@@ -135,12 +135,12 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		return globalAttributes.get(qname);
 	}
 	
-	protected void setTypeGrammars(Map<QName, TypeGrammar> grammarTypes) {
+	protected void setTypeGrammars(Map<QName, SchemaInformedRule> grammarTypes) {
 		assert (grammarTypes != null);
 		this.grammarTypes = grammarTypes;
 	}
 
-	public TypeGrammar getTypeGrammar(QName qname) {
+	public SchemaInformedRule getTypeGrammar(QName qname) {
 		return grammarTypes.get(qname);
 	}
 

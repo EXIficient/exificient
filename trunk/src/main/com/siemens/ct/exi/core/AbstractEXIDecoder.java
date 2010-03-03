@@ -33,7 +33,6 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.TypeGrammar;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
@@ -346,12 +345,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		xsiTypePrefix = decodeQNamePrefix(xsiTypeQName);
 		
 		// update grammar according to given xsi:type
-		TypeGrammar tg = grammar.getTypeGrammar(xsiTypeQName);
+		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
 
 		// grammar exists ?
 		if (tg != null) {
 			// update current rule
-			currentRule = tg.getType();
+			currentRule = tg;
 		}
 
 		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));

@@ -69,11 +69,14 @@ import com.siemens.ct.exi.types.BuiltIn;
  */
 public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
-	protected Map<QName, TypeGrammar> grammarTypes;
+	protected Map<QName, SchemaInformedRule> grammarTypes;
 
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
+	
+	// attribute wildcard namespaces
+	protected List<String> atWildcardNamespaces;
 
 	// avoids recursive element handling
 	protected Set<XSElementDeclaration> handledElements;
@@ -96,8 +99,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initOnce();
 
 		handledElements = new HashSet<XSElementDeclaration>();
-		grammarTypes = new HashMap<QName, TypeGrammar>();
+		grammarTypes = new HashMap<QName, SchemaInformedRule>();
 		schemaLocalNames = new HashMap<String, List<String>>();
+		atWildcardNamespaces = new ArrayList<String>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 	}
 
@@ -108,6 +112,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		handledElements.clear();
 		grammarTypes.clear();
 		schemaLocalNames.clear();
+		atWildcardNamespaces.clear();
 		attributePool.clear();
 	}
 
@@ -210,7 +215,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * used to serve as the TypeEmpty of the type in the process.
 		 */
 		startTag.setFirstElementRule();
-		startTag.setNillable(true, typeEmpty);
+		startTag.setNillable(true);
+		startTag.setTypeEmpty(typeEmpty);
 		startTag.setTypeCastable(true);
 
 		return startTag;
@@ -307,6 +313,14 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
+		
+		// any attribute namespaces
+		for(String atWildcardURI : this.atWildcardNamespaces) {
+			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI : atWildcardURI;
+			if (isNamespacesOfInterest(atWildcardURI)) {
+				sortedURIs.add(atWildcardURI);
+			}
+		}
 
 		// default namespace does not show up all the time ?
 		if (!sortedURIs.contains(XMLConstants.NULL_NS_URI)) {
@@ -355,9 +369,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
 
 			QName name = new QName(td.getNamespace(), td.getName());
-			TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
-
-			grammarTypes.put(name, typeGrammar);
+			SchemaInformedRule sir = translateTypeDefinitionToFSA(td);
+			
+			grammarTypes.put(name, sir);
 		}
 
 		// global elements
@@ -395,24 +409,20 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			XSTypeDefinition td = elementDecl.getTypeDefinition();
 			if (td.getAnonymous()) {
 				// create new type grammar for an anonymous type
-				TypeGrammar typeGrammar = translateTypeDefinitionToFSA(td);
-				elementRule = typeGrammar.getType();
-				elementRule.setNillable(elementDecl.getNillable(), typeGrammar
-						.getTypeEmpty());
+				elementRule = translateTypeDefinitionToFSA(td);
+				elementRule.setNillable(elementDecl.getNillable());
 			} else {
 				// fetch existing grammar from pre-processed type
-				TypeGrammar typeGrammar = getTypeGrammar(td.getNamespace(), td
+				elementRule = getTypeGrammar(td.getNamespace(), td
 						.getName());
-
-				elementRule = typeGrammar.getType();
 
 				// *duplicate* first productions to allow different behavior
 				// (e.g. property nillable is element dependent)
 				if (elementDecl.getNillable()) {
 					elementRule = elementRule.duplicate();
-					elementRule.setNillable(true, typeGrammar.getTypeEmpty());
+					elementRule.setNillable(true);
 				} else {
-					elementRule.setNillable(false, typeGrammar.getTypeEmpty());
+					elementRule.setNillable(false);
 				}
 			}
 
@@ -554,12 +564,17 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			// AT(urix : *) G i, 0
 			StringList sl = attributeWC.getNsConstraintList();
 			for (int k = 0; k < sl.getLength(); k++) {
-				rule.addRule(new AttributeNS(sl.item(k)), rule);
+				String namespace = sl.item(k);
+				rule.addRule(new AttributeNS(namespace), rule);
+				//	add attribute wildcard URI
+				if (!atWildcardNamespaces.contains(namespace)) {
+					atWildcardNamespaces.add(namespace);
+				}
 			}
 		}
 	}
 
-	protected TypeGrammar getTypeGrammar(String namespaceURI, String name) {
+	protected SchemaInformedRule getTypeGrammar(String namespaceURI, String name) {
 		QName en = new QName(namespaceURI, name);
 		return grammarTypes.get(en);
 	}
@@ -588,7 +603,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	public static TypeGrammar getUrTypeRule() {
+	public static SchemaInformedRule getUrTypeRule() {
 		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
 		urType1.setLabel("any");
@@ -611,9 +626,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// emptyUrType0.setFirstElementRule();
 
 		// nillable ?
-		urType0.setNillable(false, emptyUrType0);
+		urType0.setTypeEmpty(emptyUrType0);
+		urType0.setNillable(false);
 
-		return new TypeGrammar(urType0, emptyUrType0);
+		return urType0;
 	}
 
 	/**
@@ -627,7 +643,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * @return
 	 * @throws EXIException
 	 */
-	protected TypeGrammar translateTypeDefinitionToFSA(XSTypeDefinition td)
+	protected SchemaInformedRule translateTypeDefinitionToFSA(XSTypeDefinition td)
 			throws EXIException {
 		SchemaInformedRule type_i = null;
 		SchemaInformedRule typeEmpty_i = null;
@@ -638,9 +654,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
 							.getNamespace())) {
 				// ur-type
-				TypeGrammar urType = getUrTypeRule();
-				type_i = urType.type;
-				typeEmpty_i = urType.typeEmpty;
+				SchemaInformedRule urType = getUrTypeRule();
+				type_i = urType;
+				typeEmpty_i = urType.getTypeEmpty();
 			} else {
 				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
 
@@ -685,8 +701,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		type_i.setFirstElementRule();
+		type_i.setTypeEmpty(typeEmpty_i);
 
-		return new TypeGrammar(type_i, typeEmpty_i);
+		return type_i;
+		// return new TypeGrammar(type_i, typeEmpty_i);
 	}
 
 	protected boolean isTypeCastable(XSTypeDefinition td) {

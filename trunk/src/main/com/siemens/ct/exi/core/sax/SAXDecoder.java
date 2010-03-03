@@ -37,6 +37,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DeclHandler;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.NamespaceSupport;
 
@@ -63,7 +65,8 @@ public class SAXDecoder implements XMLReader {
 
 	protected ContentHandler contentHandler;
 	protected DTDHandler dtdHandler;
-
+	protected LexicalHandler lexicalHandler;
+	protected DeclHandler declarationHandler;
 	protected ErrorHandler errorHandler;
 
 	protected static final String ATTRIBUTE_TYPE = "CDATA";
@@ -89,11 +92,18 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * XML READER INTERFACE
 	 */
+	public void setContentHandler(ContentHandler handler) {
+		this.contentHandler = handler;
+	}
 
 	public ContentHandler getContentHandler() {
 		return this.contentHandler;
 	}
 
+	public void setDTDHandler(DTDHandler handler) {
+		this.dtdHandler = handler;
+	}
+	
 	public DTDHandler getDTDHandler() {
 		return this.dtdHandler;
 	}
@@ -102,18 +112,58 @@ public class SAXDecoder implements XMLReader {
 		return null;
 	}
 
+	public void setEntityResolver(EntityResolver resolver) {
+
+	}
+
+	public void setErrorHandler(ErrorHandler handler) {
+		this.errorHandler = handler;
+	}
+
 	public ErrorHandler getErrorHandler() {
 		return this.errorHandler;
 	}
 
+	/*
+	 * All XMLReaders are required to support setting
+	 * http://xml.org/sax/features/namespaces to true and
+	 * http://xml.org/sax/features/namespace-prefixes to false.
+	 */
 	public boolean getFeature(String name) throws SAXNotRecognizedException,
 			SAXNotSupportedException {
-		return false;
+		if ("http://xml.org/sax/features/namespaces".equals(name)) {
+			return true;
+		} else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setFeature(String name, boolean value)
+			throws SAXNotRecognizedException, SAXNotSupportedException {
+	}
+
+	public void setProperty(String name, Object value)
+			throws SAXNotRecognizedException, SAXNotSupportedException {
+		if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
+			this.lexicalHandler = (LexicalHandler) value;
+		} else if ("http://xml.org/sax/properties/declaration-handler"
+				.equals(name)) {
+			this.declarationHandler = (DeclHandler) value;
+		}
 	}
 
 	public Object getProperty(String name) throws SAXNotRecognizedException,
 			SAXNotSupportedException {
-		return null;
+		if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
+			return this.lexicalHandler;
+		} else if ("http://xml.org/sax/properties/declaration-handler"
+				.equals(name)) {
+			return this.declarationHandler;
+		} else {
+			return null;
+		}
 	}
 
 	public void parse(String systemId) throws IOException, SAXException {
@@ -304,39 +354,6 @@ public class SAXDecoder implements XMLReader {
 			throw new RuntimeException("Unexpected EXI Event '" + eventType
 					+ "' ");
 		}
-	}
-
-	public void setContentHandler(ContentHandler handler) {
-		this.contentHandler = handler;
-	}
-
-	public void setDTDHandler(DTDHandler handler) {
-		this.dtdHandler = handler;
-	}
-
-	public void setEntityResolver(EntityResolver resolver) {
-
-	}
-
-	public void setErrorHandler(ErrorHandler handler) {
-		this.errorHandler = handler;
-	}
-
-	public void setFeature(String name, boolean value)
-			throws SAXNotRecognizedException, SAXNotSupportedException {
-		/*
-		 * All XMLReaders are required to support setting
-		 * http://xml.org/sax/features/namespaces to true and
-		 * http://xml.org/sax/features/namespace-prefixes to false.
-		 */
-		// System.out.println("[EXIficient] setFeature " + name + " --> " +
-		// value);
-	}
-
-	public void setProperty(String name, Object value)
-			throws SAXNotRecognizedException, SAXNotSupportedException {
-		// System.out.println("[EXIficient] setProperty " + name + " --> " +
-		// value);
 	}
 
 	/*

@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
  * TODO Description
@@ -47,5 +48,5 @@ public interface Grammar {
 	
 	public Attribute getGlobalAttribute(QName qname);
 	
-	public TypeGrammar getTypeGrammar(QName qname);
+	public SchemaInformedRule getTypeGrammar(QName qname);
 }

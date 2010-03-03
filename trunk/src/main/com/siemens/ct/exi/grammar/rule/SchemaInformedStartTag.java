@@ -151,7 +151,8 @@ public class SchemaInformedStartTag extends
 
 		// nillable and type
 		clone.setTypeCastable(this.isTypeCastable);
-		clone.setNillable(this.isNillable, typeEmpty);
+		clone.setTypeEmpty(typeEmpty);
+		clone.setNillable(this.isNillable);
 		if (this.isFirstElementRule) {
 			clone.setFirstElementRule();	
 		}

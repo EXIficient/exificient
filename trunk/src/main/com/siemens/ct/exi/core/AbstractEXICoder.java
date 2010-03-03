@@ -176,16 +176,6 @@ public abstract class AbstractEXICoder {
 		//	create new stack item & push it
 		pushElementContext(new ElementContext(se.getQName(), currentRule));
 		
-//		elementContext = new ElementContext(se.getQName(), currentRule);
-//		++elementContextStackIndex;
-//		// array needs to be extended?
-//		if (elementContextStack.length == elementContextStackIndex) {
-//			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
-//			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0, elementContextStack.length);
-//			elementContextStack = elementContextStackNew;
-//		}
-//		elementContextStack[elementContextStackIndex] = elementContext;
-		
 		// NS context
 		namespaces.pushContext();
 	}
