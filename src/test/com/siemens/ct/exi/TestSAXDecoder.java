@@ -47,7 +47,6 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 
 	public void decodeTo(EXIFactory ef, InputStream exiDocument,
 			OutputStream xmlOutput) throws Exception {
-		
 		Transformer transformer = tf.newTransformer();
 		
 		if (ef.isFragment()) {

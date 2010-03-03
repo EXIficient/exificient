@@ -57,13 +57,17 @@ public interface SchemaInformedRule extends Rule {
 	/*
 	 * sets whether element is nillable
 	 */
-	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
+	public void setNillable(boolean nillable);
 
+	/*
+	 * set typeEmpty
+	 */
+	public void setTypeEmpty(SchemaInformedRule typeEmpty);
 	
 	/*
 	 * get empty type
 	 */
-	public Rule getTypeEmpty();
+	public SchemaInformedRule getTypeEmpty();
 	
 	
 	/*
