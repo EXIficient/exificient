@@ -51,6 +51,7 @@ public class UnsignedBigIntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			lastUnsignedInteger = new BigInteger(value);
 			return (lastUnsignedInteger.signum() != -1);
 		} catch (NumberFormatException e) {

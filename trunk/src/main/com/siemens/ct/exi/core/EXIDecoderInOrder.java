@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -48,6 +47,9 @@ import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
+	static final QName xsiNilQName = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
+	static final QName xsiTypeQName = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
+	
 	public EXIDecoderInOrder(EXIFactory exiFactory) {
 		super(exiFactory);
 	}
@@ -102,24 +104,6 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeStartDocument() throws EXIException {
 		// update current rule
 		currentRule = currentRule.lookFor(ec).next;
-
-		// try to use "default" schema URI in default namespace
-		if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) && !exiFactory.isFragment()) {
-			if (grammar.isSchemaInformed()) {
-				//	TODO this optimization seems to cause troubles
-//				if (runtimeURIEntries.size() > 4) {
-//					RuntimeURIEntry uc = runtimeURIEntries.get(4);
-//					namespaces.declarePrefix("", uc.namespaceURI);
-//					
-//					for(int i=5; i<runtimeURIEntries.size(); i++) {
-//						uc = runtimeURIEntries.get(i);
-//						@SuppressWarnings("unused")
-//						String pfx = this.getUniquePrefix(uc.namespaceURI);
-//						// namespaces.declarePrefix(pfx, uc.namespaceURI);
-//					}
-//				}
-			}
-		}
 	}
 
 	public void decodeStartElement() throws EXIException, IOException {
@@ -129,7 +113,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		//	store SE qname 
 		elementQName = se.getQName();
 		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(elementQName);
+		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		// push element
 		pushElement(se, nextRule);
 	}
@@ -138,11 +122,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		assert (nextEventType == EventType.START_ELEMENT_NS);
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
-		// this.elementURI = seNS.getNamespaceURI();
 		// decode local-name
-		elementQName = readLocalName(seNS.getNamespaceURI());
+		elementQName = qnameDatatype.readLocalName(seNS.getNamespaceURI(), channel);
 		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(elementQName);
+		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// push element
@@ -152,9 +135,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeStartElementGeneric() throws EXIException, IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
-		decodeStartElementExpandedName();
+		elementQName = qnameDatatype.readQName(channel);
 		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(elementQName);
+		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
@@ -168,9 +151,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
-		decodeStartElementExpandedName();
+		elementQName = qnameDatatype.readQName(channel);
 		// handle element prefixes
-		elementPrefix = decodeQNamePrefix(elementQName);
+		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// learn start-element ?
@@ -181,8 +164,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public void decodeNamespaceDeclaration() throws EXIException, IOException {
 		// prefix mapping
-		nsURI = readUri();
-		nsPrefix = readPrefix(nsURI);
+		nsURI = qnameDatatype.readUri(channel);
+		// nsPrefix = readPrefix(nsURI);
+		nsPrefix = qnameDatatype.readPrefix(nsURI, channel);
 		boolean local_element_ns = channel.decodeBoolean();
 		if (local_element_ns) {
 			this.elementPrefix = nsPrefix;
@@ -191,25 +175,19 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		namespaces.declarePrefix(nsPrefix, nsURI);
 	}
 
-	static final QName xsiNilQName = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
-	static final QName xsiTypeQName = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
-	
+
 	public void decodeAttributeXsiNil() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
-//		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-//		attributeLocalName = Constants.XSI_NIL;
 		attributeQName = xsiNilQName;
-		attributePrefix = decodeQNamePrefix(xsiNilQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(xsiNilQName, channel);
 		
 		decodeAttributeXsiNilStructure();
 	}
 
 	public void decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
-//		attributeURI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-//		attributeLocalName = Constants.XSI_TYPE;
 		attributeQName = xsiTypeQName;
-		attributePrefix = decodeQNamePrefix(xsiTypeQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
 		
 		decodeAttributeXsiTypeStructure();
 	}
@@ -241,7 +219,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 	public void decodeAttributeGeneric() throws EXIException, IOException {
 		// structure & content
-		readAttributeContent(decodeAttributeGenericStructure());
+		Datatype dt = decodeAttributeGenericStructure();
+		if (dt != null) {
+			readAttributeContent(dt);	
+		}
 	}
 
 	public void decodeAttributeGenericUndeclared() throws EXIException,

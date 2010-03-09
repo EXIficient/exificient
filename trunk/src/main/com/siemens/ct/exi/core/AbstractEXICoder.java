@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +29,10 @@ import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.QNameDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
@@ -62,6 +61,9 @@ public abstract class AbstractEXICoder {
 
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
+	
+	//	QName datatype (coder)
+	protected QNameDatatype qnameDatatype;
 
 	// element-context and rule (stack) while traversing the EXI document
 	protected ElementContext elementContext;
@@ -72,10 +74,6 @@ public abstract class AbstractEXICoder {
 	
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
-
-	// URI context
-	protected RuntimeURIEntry uriContext;
-	protected List<RuntimeURIEntry> runtimeURIEntries;
 
 	public AbstractEXICoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
@@ -89,29 +87,17 @@ public abstract class AbstractEXICoder {
 
 		// namespaces/prefixes
 		namespaces = new NamespaceSupport();
-
+		
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
 
 		// init once (runtime lists et cetera)
 		runtimeElements = new HashMap<QName, StartElement>();
 		elementContextStack = new ElementContext[INITIAL_STACK_SIZE];
-		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
-		
-		// init URI entries for the first time
-		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
-		
-		for (GrammarURIEntry grammarEntry : grammarURIEntries) {
-			addURI(grammarEntry.uri);
-			// prefixes
-			for (String prefix : grammarEntry.prefixes) {
-				uriContext.addPrefix(prefix);
-			}
-			// local-names
-			for (String localName : grammarEntry.localNames) {
-				uriContext.addLocalName(localName);
-			}
-		}
+	
+		// QName datatype (coder)
+		qnameDatatype = new QNameDatatype(null, namespaces, preservePrefix);
+		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -137,34 +123,7 @@ public abstract class AbstractEXICoder {
 		elementContextStackIndex = 0;
 		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(null, currentRule);
 		
-		/*
-		 * Remove entries from runtime lists that may have been added
-		 * from a previous coding step
-		 */
-		GrammarURIEntry[] grammarURIEntries = grammar.getGrammarEntries();
-		//	remove URIs 
-		assert(grammarURIEntries.length <= runtimeURIEntries.size() );
-		int uriSize;
-		while(grammarURIEntries.length < (uriSize = runtimeURIEntries.size())) {
-			runtimeURIEntries.remove(uriSize-1);
-		}
-		//	remove localNames & prefixes
-		for(int i=0;i<grammarURIEntries.length; i++) {
-			RuntimeURIEntry rue = runtimeURIEntries.get(i);
-			//	local-names
-			String[] grammarLocalNames = grammarURIEntries[i].localNames;
-			int localNameSize;
-			while(grammarLocalNames.length < (localNameSize = rue.getLocalNameSize() )) {
-				rue.removeLocalName(localNameSize-1);
-			}
-			// prefixes
-			String[] grammarPrefixes = grammarURIEntries[i].prefixes;
-			int prefixSize;
-			while(grammarPrefixes.length < (prefixSize = rue.getPrefixSize() )) {
-				rue.removePrefix(prefixSize-1);
-			}
-		}
-		uriContext = runtimeURIEntries.get(0);
+		qnameDatatype.initForEachRun();
 	}
 
 	protected final void pushElement(StartElement se, Rule contextRule) {
@@ -224,29 +183,6 @@ public abstract class AbstractEXICoder {
 	
 	protected QName getElementContextQName() {
 		return elementContextStack[elementContextStackIndex].qname;
-	}
-
-	/*
-	 * URIs
-	 */
-	protected void updateURIContext(final String namespaceURI) {
-		if (uriContext.namespaceURI != namespaceURI) {
-			// try to find right URI Entry
-			for (RuntimeURIEntry uc : this.runtimeURIEntries) {
-				if (uc.namespaceURI.equals(namespaceURI)) {
-					uriContext = uc;
-					return;
-				}
-			}
-			//	URI unknown so far
-			uriContext = null;
-		}
-	}
-
-	protected void addURI(final String namespaceURI) {
-		// assert (!uris.containsKey(namespaceURI));
-		uriContext = new RuntimeURIEntry(namespaceURI, runtimeURIEntries.size());
-		runtimeURIEntries.add(uriContext);
 	}
 
 	/*

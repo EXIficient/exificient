@@ -56,6 +56,7 @@ public class XSDDecimal {
 
 	public boolean parse(String decimal) {
 		try {
+			decimal = decimal.trim();
 			// --- handle sign
 			negative = false; // default
 

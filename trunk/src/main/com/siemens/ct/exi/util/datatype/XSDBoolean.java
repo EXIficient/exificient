@@ -45,6 +45,7 @@ public class XSDBoolean {
 	 * @return valid
 	 */
 	public boolean parse(String value) {
+		value = value.trim();
 		boolean validValue = true;
 		if (value.equals(Constants.XSD_BOOLEAN_0)
 				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {

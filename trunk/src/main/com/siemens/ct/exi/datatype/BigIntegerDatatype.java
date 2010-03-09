@@ -51,6 +51,7 @@ public class BigIntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			lastInteger = new BigInteger(value);
 			return true;
 		} catch (NumberFormatException e) {

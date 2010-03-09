@@ -21,7 +21,6 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -44,6 +43,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -116,81 +116,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		// clear string values etc.
 		typeDecoder.clear();
-		
-//		qualifiedNames.clear();
-	}
-
-	protected String readUri() throws IOException {
-		int nUri = MethodsBag.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
-		int uriID = channel.decodeNBitUnsignedInteger(nUri);
-
-		String uri;
-
-		if (uriID == 0) {
-			// string value was not found
-			// ==> zero (0) as an n-nit unsigned integer
-			// followed by uri encoded as string
-			uri = new String(channel.decodeString());
-			// after encoding string value is added to table
-			addURI(uri);
-		} else {
-			// string value found
-			// ==> value(i+1) is encoded as n-bit unsigned integer
-			uri = runtimeURIEntries.get(uriID - 1).namespaceURI;
-			updateURIContext(uri);
-		}
-
-		return uri;
-	}
-
-	protected QName readLocalName(String uri) throws IOException {
-		updateURIContext(uri);
-		int length = channel.decodeUnsignedInteger();
-
-		QName qname;
-		if (length > 0) {
-			// string value was not found in local partition
-			// ==> string literal is encoded as a String
-			// with the length of the string incremented by one
-			String localName = new String(channel.decodeStringOnly(length - 1));
-			// After encoding the string value, it is added to the string table
-			// partition and assigned the next available compact identifier.
-			qname = uriContext.addLocalName(localName);
-		} else {
-			// string value found in local partition
-			// ==> string value is represented as zero (0) encoded as an
-			// Unsigned Integer
-			// followed by an the compact identifier of the string value as an
-			// n-bit unsigned integer
-			// n is log2 m and m is the number of entries in the string table
-			// partition
-			int n = MethodsBag.getCodingLength(uriContext.getLocalNameSize());
-			int localNameID = channel.decodeNBitUnsignedInteger(n);
-			qname = uriContext.getNameContext(localNameID);
-		}
-
-		return qname;
-	}
-
-	protected String readPrefix(String uri) throws IOException {
-		String prefix;
-
-		int nPfx = MethodsBag.getCodingLength(uriContext.getPrefixSize() + 1); // n-bit
-		int pfxID = channel.decodeNBitUnsignedInteger(nPfx);
-		if (pfxID == 0) {
-			// string value was not found
-			// ==> zero (0) as an n-nit unsigned integer
-			// followed by pfx encoded as string
-			prefix = new String(channel.decodeString());
-			// after decoding pfx value is added to table
-			uriContext.addPrefix(prefix);
-		} else {
-			// string value found
-			// ==> value(i+1) is encoded as n-bit unsigned integer
-			prefix = uriContext.getPrefix(pfxID - 1);
-		}
-
-		return prefix;
 	}
 
 	protected void decodeEventCode() throws EXIException, IOException {
@@ -279,41 +204,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return channel.decodeNBitUnsignedInteger(MethodsBag.getCodingLength(ch3));
 	}
 
-	protected String decodeQNamePrefix(QName qname) throws EXIException, IOException {
-		if (preservePrefix) {
-			String prefix = null;
-			String uri = qname.getNamespaceURI();
-			if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
-				prefix = XMLConstants.NULL_NS_URI;
-			} else {			
-				updateURIContext(uri);
-				List<String> prefixes = uriContext.prefixes;
-				int numberOfPrefixes = prefixes.size();
-
-				if (numberOfPrefixes > 0) {
-					int id = 0;
-					if (numberOfPrefixes > 1 ) {
-						id = channel.decodeNBitUnsignedInteger(MethodsBag
-								.getCodingLength(numberOfPrefixes));
-					}
-					prefix = prefixes.get(id);
-				} else {
-					// no previous NS mapping in charge
-				}
-			
-			}
-			return prefix;
-		} else {
-			return null;
-		}
-	}
-
-	protected void decodeStartElementExpandedName() throws EXIException,
-			IOException {
-		// decode uri & local-name
-		this.elementQName = this.readLocalName(readUri());
-	}
-
 	/*
 	 * Handles and xsi:nil attributes
 	 */
@@ -339,10 +229,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	 */
 	protected void decodeAttributeXsiTypeStructure() throws EXIException,
 			IOException {
-		xsiTypeQName = readLocalName(readUri());
+		// xsiTypeQName = readLocalName(readUri());
+		// xsiTypeQName = readLocalName(qnameDatatype.readUri(channel));
+		xsiTypeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
 		
 		// handle type prefix
-		xsiTypePrefix = decodeQNamePrefix(xsiTypeQName);
+		xsiTypePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
 		
 		// update grammar according to given xsi:type
 		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
@@ -363,7 +255,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		//	qname 
 		attributeQName = at.getQName();
 		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(attributeQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 		// update current rule
 		currentRule = nextRule;
 		return at.getDatatype();
@@ -373,10 +265,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			IOException {
 		// AttributeEventNS
 		AttributeNS atNS = ((AttributeNS) nextEvent);
-		attributeQName = readLocalName(atNS.getNamespaceURI());
+		// attributeQName = readLocalName(atNS.getNamespaceURI());
+		attributeQName = qnameDatatype.readLocalName(atNS.getNamespaceURI(), channel);
 
 		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(attributeQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 
 		// update current rule
 		currentRule = nextRule;
@@ -391,7 +284,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		//	qname 
 		attributeQName = at.getQName();
 		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(attributeQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 		// update current rule
 		currentRule = nextRule;
 
@@ -404,17 +297,35 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
+	
+	QName xsiType = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+			Constants.XSI_TYPE);
+	
 	protected Datatype decodeAttributeGenericStructure() throws EXIException,
 			IOException {
 		// decode structure
 		decodeAttributeGenericStructureOnly();
 
-		// update current rule
-		currentRule = nextRule;
+		if(xsiType.equals(attributeQName)) {			
+			attributeValue = qnameDatatype.readValue(channel, null, null);
+			QName xsiType = ((QNameValue)attributeValue).toQName();
+			
+			SchemaInformedRule tg = grammar.getTypeGrammar(xsiType);
+			// grammar exists ?
+			if (tg != null) {
+				// update grammar according to given xsi:type
+				currentRule = tg;
+			}
+			
+			return null;
+		} else {
+			// update current rule
+			currentRule = nextRule;
 
-		Attribute globalAT = grammar.getGlobalAttribute(attributeQName);
-		
-		return (globalAT == null) ? BuiltIn.DEFAULT_DATATYPE : globalAT.getDatatype();
+			Attribute globalAT = grammar.getGlobalAttribute(attributeQName);
+			
+			return (globalAT == null) ? BuiltIn.DEFAULT_DATATYPE : globalAT.getDatatype();			
+		}
 	}
 
 	protected Datatype decodeAttributeGenericUndeclaredStructure()
@@ -431,10 +342,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	private void decodeAttributeGenericStructureOnly() throws EXIException,
 			IOException {
 		// decode uri & local-name
-		attributeQName = readLocalName(readUri());
+		attributeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
 
 		// handle attribute prefix
-		attributePrefix = decodeQNamePrefix(attributeQName);
+		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 	}
 
 	protected Datatype decodeCharactersStructureOnly() throws EXIException {
@@ -464,16 +375,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	
-//	Map<QName, String> qualifiedNames = new HashMap<QName, String>();
 	
 	protected String getQualifiedName(QName qname, String pfx) {
 		String localName = qname.getLocalPart();
 		String sqname;
 		
 		if (pfx == null) {
-//			if ( (sqname = qualifiedNames.get(qname)) != null) {
-//				return sqname;
-//			}
 			
 			String uri = qname.getNamespaceURI();
 			if (uri.equals(XMLConstants.NULL_NS_URI) || uri.equals(namespaces
@@ -491,8 +398,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 							: (pfx + Constants.COLON + localName);
 				}
 			}
-			
-//			qualifiedNames.put(qname, sqname);
 		} else {
 			sqname = pfx.length() == 0 ? localName
 					: (pfx + Constants.COLON + localName);
@@ -577,11 +482,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public String getPIData() {
 		return piData;
 	}
-
-//	public void decodeEndFragmentSelfContained() throws EXIException,
-//			IOException {
-//		throw new RuntimeException("[EXI] SelfContained");
-//	}
 
 	public void decodeStartFragmentSelfContained() throws EXIException,
 			IOException {

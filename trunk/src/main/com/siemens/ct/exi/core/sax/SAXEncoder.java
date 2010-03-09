@@ -70,7 +70,8 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 				FidelityOptions.FEATURE_WS)) {
 			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
 		} else {
-			charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
+			// charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
+			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
 		}
 
 		// prefix to NS mappings

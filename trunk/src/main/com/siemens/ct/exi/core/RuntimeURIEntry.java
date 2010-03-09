@@ -92,6 +92,10 @@ public class RuntimeURIEntry {
 		return pfx;
 	}
 	
+	public List<String> getPrefixes() {
+		return this.prefixes;
+	}
+	
 	public Integer getPrefixID(String prefix) {
 		return prefixIDs.get(prefix);
 	}

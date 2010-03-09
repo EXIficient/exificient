@@ -35,7 +35,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypeInteger();
-		// GeneralTestCase.setConfigurationDatatypeFloat();
+		GeneralTestCase.setConfigurationDatatypeFloat();
 		// GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
@@ -55,7 +55,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType();
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
-		GeneralTestCase.setConfigurationEntityReference1();
+		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
