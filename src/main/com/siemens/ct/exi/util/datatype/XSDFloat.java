@@ -42,6 +42,7 @@ public class XSDFloat {
 	}
 
 	public boolean parse(String s) {
+		s = s.trim();
 		if (s.length() == 0) {
 			return false;
 			// throw new XMLParsingException("Empty string while parsing float");

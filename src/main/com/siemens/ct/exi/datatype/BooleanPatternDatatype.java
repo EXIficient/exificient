@@ -51,6 +51,7 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
+		value = value.trim();
 		boolean retValue = true;
 		
 		if (value.equals(Constants.XSD_BOOLEAN_FALSE)) {

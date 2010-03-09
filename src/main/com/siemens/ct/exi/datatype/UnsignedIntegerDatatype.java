@@ -50,6 +50,7 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			lastUnsignedInteger = Integer.parseInt(value);
 			return (lastUnsignedInteger >= 0);
 		} catch (NumberFormatException e) {

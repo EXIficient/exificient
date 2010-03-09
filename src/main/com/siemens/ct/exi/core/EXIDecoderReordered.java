@@ -305,13 +305,13 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				nsEntries.add(new NamespaceEntry(nsURI, nsPrefix));
 				break;
 			case ATTRIBUTE_XSI_TYPE:
-				attributePrefix = decodeQNamePrefix(xsiTypeQName);
+				attributePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
 				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiTypeStructure();
 				xsiValues.add(attributeValue);
 				break;
 			case ATTRIBUTE_XSI_NIL:
-				attributePrefix = decodeQNamePrefix(xsiNilQName);
+				attributePrefix = qnameDatatype.decodeQNamePrefix(xsiNilQName, channel);
 				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiNilStructure();
 				xsiValues.add(attributeValue);
@@ -338,8 +338,15 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				break;
 			case ATTRIBUTE_GENERIC:
 				dtAT = decodeAttributeGenericStructure();
-				qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
-				incrementValues(attributeQName, dtAT);
+				if (dtAT == null) {
+					// xsi:type
+					eventTypes.set(eventTypes.size()-1, EventType.ATTRIBUTE_XSI_TYPE);
+					xsiValues.add(attributeValue);
+					xsiPrefixes.add("");	// TODO prefix
+				} else {
+					qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
+					incrementValues(attributeQName, dtAT);	
+				}
 				break;
 			case ATTRIBUTE_GENERIC_UNDECLARED:
 				dtAT = decodeAttributeGenericUndeclaredStructure();
@@ -466,14 +473,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 		for (int k = 0; k < occs; k++) {
 			Datatype dt = datatypes.get(k);
-//			if (dt == null) {
-//				assert (channelContext.getNamespaceURI()
-//						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-//				assert (decodedValues[k] != null);
-//			} else {
-				decodedValues[k] = typeDecoder.readValue(dt, channelContext,
+			decodedValues[k] = typeDecoder.readValue(dt, channelContext,
 						bdc);
-//			}
 		}
 
 		// set content value
@@ -482,17 +483,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	public boolean hasNext() {
-		// return ( events.size() > ( currentEventIndex ) );
-		// ED --> no next event
 		return (eventTypes.size() > (eventIndex + 1));
-		// return (events.size() > (eventIndex + 1));
-		// return (eventRules.size() > (currentEventIndex + 1));
 	}
 
 	public EventType next() throws EXIException {
-		// return eventTypes.get(currentEventIndex);
 		return (nextEventType = eventTypes.get(eventIndex++));
-		// nextEventType = eventTypes.get(currentEventIndex);
 	}
 
 	protected void incrementValues(QName valueContext, Datatype datatype) {
@@ -539,10 +534,6 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	
 	@Override
 	public void decodeEndElement() throws EXIException {
-//		int sizeContext = elementContextStack.size();
-//		elementContextStack.remove(sizeContext - 1);
-//		elementContext = elementContextStack.get(sizeContext - 2);
-		
 		QNameEntry ee = qnameEntries.get(qnameEntryIndex++);
 		this.elementQName = ee.context;
 	}

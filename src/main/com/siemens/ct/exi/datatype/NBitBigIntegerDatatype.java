@@ -92,6 +92,7 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			BigInteger bValueToEncode = new BigInteger(value);
 
 			// check lower & upper bound

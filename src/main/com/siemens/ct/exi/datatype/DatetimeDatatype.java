@@ -58,6 +58,7 @@ public class DatetimeDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
+		value = value.trim();
 		return lastValidDatetime.parse(value, datetimeType);
 	}
 

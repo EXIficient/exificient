@@ -83,6 +83,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 	// When the preserve.lexicalValues option is false, enumerated values are
 	// encoded as n-bit Unsigned Integers
 	public boolean isValid(String value) {
+		value = value.trim();
 		lastOrdinalPosition = -1;
 		int index = 0;
 		// while (index < lastEnumValues.getLength()) {

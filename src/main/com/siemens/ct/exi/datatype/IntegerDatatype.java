@@ -50,6 +50,7 @@ public class IntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			lastInteger = Integer.parseInt(value);
 			return true;
 		} catch (NumberFormatException e) {

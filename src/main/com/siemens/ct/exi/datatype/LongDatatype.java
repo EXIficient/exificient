@@ -50,6 +50,7 @@ public class LongDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			lastInteger = Long.parseLong(value);
 			return true;
 		} catch (NumberFormatException e) {

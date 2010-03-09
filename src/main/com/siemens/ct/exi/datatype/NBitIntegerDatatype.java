@@ -75,6 +75,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	
 	public boolean isValid(String value) {
 		try {
+			value = value.trim();
 			valueToEncode = Integer.parseInt(value);
 
 			// check lower & upper bound

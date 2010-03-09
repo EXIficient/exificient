@@ -51,5 +51,7 @@ public enum BuiltInType {
 	/* List */
 	LIST,
 	/* Restricted Character Set */
-	RESTRICTED_CHARACTER_SET;
+	RESTRICTED_CHARACTER_SET,
+	/* QName */
+	QNAME;
 }
