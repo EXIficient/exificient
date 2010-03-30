@@ -49,9 +49,6 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	// buffers the characters of the characters() callback
 	protected StringBuilder sbChars;
 
-//	// encodes collected char callbacks
-//	protected AbstractCharactersEncoder charEncoder;
-
 	// attributes
 	protected AttributeList exiAttributes;
 
@@ -61,17 +58,8 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public SAXEncoder(EXIFactory factory) {
 		this.encoder = factory.createEXIEncoder();
 
-		// initialize
+		// initialize char buffer
 		sbChars = new StringBuilder();
-
-//		// whitespace characters required ?
-//		if (factory.getFidelityOptions().isFidelityEnabled(
-//				FidelityOptions.FEATURE_WS)) {
-//			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
-//		} else {
-//			// charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
-//			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
-//		}
 
 		// prefix to NS mappings
 		prefixMappings = new ArrayList<PrefixMapping>();
