@@ -523,8 +523,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					// optional --> join top level events
 					for (int k = 0; k < ruleStart.getNumberOfEvents(); k++) {
 						EventInformation ei = ruleStart.lookFor(k);
-						if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC)) {
-							// AT(*) wilcard added before
+						if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC) || ei.event.isEventType(EventType.ATTRIBUTE_NS)) {
+							// AT(*) & AT(uri:*) wilcards added before
 						} else {
 							newCurrent.addRule(ei.event, ei.next);
 						}

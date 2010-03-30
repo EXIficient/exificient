@@ -59,6 +59,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	// xsi:type
 	protected boolean hasXsiType;
 	protected String xsiTypeRaw;
+	protected String xsiTypePrefix;
 
 	// xsi:nil
 	protected boolean hasXsiNil;
@@ -106,6 +107,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public String getXsiTypeRaw() {
 		return xsiTypeRaw;
 	}
+	
+	public String getXsiTypePrefix() {
+		return this.xsiTypePrefix;
+	}
 
 	/*
 	 * XSI-Nil
@@ -145,9 +150,15 @@ public abstract class AbstractAttributeList implements AttributeList {
 		return attributePrefix.get(index);
 	}
 
+	private void setXsiType(String rawType, String xsiPrefix) {
+		this.hasXsiType = true;
+		this.xsiTypeRaw = rawType;
+		this.xsiTypePrefix = xsiPrefix;
+	}
+	
 	private void setXsiNil(String rawNil, String xsiPrefix) {
-		hasXsiNil = true;
-		xsiNil = rawNil;
+		this.hasXsiNil = true;
+		this.xsiNil = rawNil;
 		this.xsiNilPrefix = xsiPrefix;
 	}
 
@@ -166,8 +177,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 				// xsi:type
 				if (localName.equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
-					hasXsiType = true;
-					xsiTypeRaw = atts.getValue(i);
+					setXsiType(atts.getValue(i), getPrefixOf(atts, i));
 				}
 				// xsi:nil
 				else if (localName.equals(Constants.XSI_NIL)) {
@@ -210,8 +220,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 				// xsi:type
 				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
 					// Note: prefix to uri mapping is done later on
-					hasXsiType = true;
-					xsiTypeRaw = at.getNodeValue();
+					setXsiType(at.getNodeValue(), at.getPrefix());
 				}
 				// xsi:nil
 				else if (at.getLocalName().equals(Constants.XSI_NIL)) {

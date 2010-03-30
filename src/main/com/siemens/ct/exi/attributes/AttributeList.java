@@ -46,6 +46,8 @@ public interface AttributeList {
 	public boolean hasXsiType();
 
 	public String getXsiTypeRaw();
+	
+	public String getXsiTypePrefix();
 
 	/*
 	 * XSI-Nil

@@ -152,7 +152,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
 
-			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw());
+			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
 		}
 
 		// 3. XSI-Nil

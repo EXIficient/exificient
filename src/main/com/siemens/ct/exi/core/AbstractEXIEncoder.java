@@ -340,7 +340,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		popElement();
 	}
 
-	public void encodeXsiType(String raw) throws EXIException, IOException {
+	public void encodeXsiType(String raw, String pfx) throws EXIException, IOException {
 		int ec2 = currentRule.get2ndLevelEventCode(
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
 
@@ -377,6 +377,10 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 							.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				// encode event-code, AT(xsi:type)
 				encode2ndLevelEventCode(ec2);
+				// prefix
+				qnameDatatype.encodeQNamePrefix(
+						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+						pfx, channel);
 				// xsi:type "content" as qname
 				qnameDatatype.encodeQName(xsiTypeURI, xsiTypeLocalName,
 						xsiTypePrefix, channel);

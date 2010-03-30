@@ -143,7 +143,7 @@ public class DOMWriter {
 
 		// xsi:type
 		if (exiAttributes.hasXsiType()) {
-			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw());
+			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
 		}
 
 		// xsi:nil
