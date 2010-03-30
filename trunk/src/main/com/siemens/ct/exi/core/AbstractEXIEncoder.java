@@ -270,7 +270,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// learning for built-in grammar,
 			currentRule.learnStartElement(nextSE);
 		}
-		
+
 		// push element
 		pushElement(nextSE, nextTopRule);
 	}
@@ -340,7 +340,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		popElement();
 	}
 
-	public void encodeXsiType(String raw, String pfx) throws EXIException, IOException {
+	public void encodeXsiType(String raw, String pfx) throws EXIException,
+			IOException {
 		int ec2 = currentRule.get2ndLevelEventCode(
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
 
@@ -379,8 +380,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				encode2ndLevelEventCode(ec2);
 				// prefix
 				qnameDatatype.encodeQNamePrefix(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						pfx, channel);
+						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx,
+						channel);
 				// xsi:type "content" as qname
 				qnameDatatype.encodeQName(xsiTypeURI, xsiTypeLocalName,
 						xsiTypePrefix, channel);
@@ -437,7 +438,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// strip use-less xsi:nil values
 				if (bnil
 						|| fidelityOptions
-								.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+								.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)
+						|| fidelityOptions
+								.isFidelityEnabled(FidelityOptions.FEATURE_XSI_NIL_FALSE)) {
 					int ec2 = siCurrentRule.get2ndLevelEventCode(
 							EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
 
