@@ -218,12 +218,12 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	}
 
 	@Override
-	public void encodeXsiType(String xsiTypeRaw) throws EXIException,
+	public void encodeXsiType(String xsiTypeRaw, String pfx) throws EXIException,
 			IOException {
 		if (scEncoder == null) {
-			super.encodeXsiType(xsiTypeRaw);
+			super.encodeXsiType(xsiTypeRaw, pfx);
 		} else {
-			scEncoder.encodeXsiType(xsiTypeRaw);
+			scEncoder.encodeXsiType(xsiTypeRaw, pfx);
 		}
 	}
 

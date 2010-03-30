@@ -153,6 +153,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 				EventInformation ei = containers[i];
 				if (ei.event.equals(event)) {
 					if (ei.next != rule) {
+					// if (rule.equals(ei.next)) {
 						throw new IllegalArgumentException("Same event "
 								+ event + " with indistinguishable 'next' rule");
 					}

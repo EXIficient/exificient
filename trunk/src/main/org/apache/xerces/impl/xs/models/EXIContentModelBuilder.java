@@ -18,6 +18,7 @@
 
 package org.apache.xerces.impl.xs.models;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,11 +105,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
 		try {
 			initEachRun();
-
+			
 			// load XSD schema & get XSModel
 			XMLSchemaLoader sl = new XMLSchemaLoader();
 			sl.setErrorHandler(this);
-
+			
 			SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
 
 			// set XSModel
@@ -127,13 +128,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 
 	public void loadGrammar(String xsdLocation) throws EXIException {
-		// XSD source
-		String publicId = null;
-		String systemId = xsdLocation;
-		String baseSystemId = null;
-		XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
-				baseSystemId);
-		loadGrammar(xsdSource);
+		File f = new File(xsdLocation);
+		if (f.exists()) {
+			// XSD source
+			String systemId = xsdLocation;
+			String publicId = null;
+			String baseSystemId = null;
+			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
+					baseSystemId);
+			loadGrammar(xsdSource);	
+		} else {
+			throw new EXIException("XML Schema document (" + xsdLocation + ") not found.");
+		}
 	}
 
 	public void loadGrammar(InputStream xsdInputStream) throws EXIException {
@@ -390,7 +396,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 * @param el
 	 * @return
 	 */
-	private List<XSElementDeclaration> getPossibleElementDeclarations(
+	protected List<XSElementDeclaration> getPossibleElementDeclarations(
 			XSElementDeclaration el) {
 
 		List<XSElementDeclaration> listElements = new ArrayList<XSElementDeclaration>();

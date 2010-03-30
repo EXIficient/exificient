@@ -152,12 +152,12 @@ public interface EXIEncoder {
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param xsiTypeRaw
-	 *            xsi:type value
+	 * @param xsiTypeRaw  xsi:type value
+	 * @param pfx
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeXsiType(String xsiTypeRaw) throws EXIException,
+	public void encodeXsiType(String xsiTypeRaw, String pfx) throws EXIException,
 			IOException;
 
 	/**
