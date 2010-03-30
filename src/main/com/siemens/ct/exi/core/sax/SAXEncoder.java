@@ -29,7 +29,6 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
@@ -50,8 +49,8 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	// buffers the characters of the characters() callback
 	protected StringBuilder sbChars;
 
-	// encodes collected char callbacks
-	protected AbstractCharactersEncoder charEncoder;
+//	// encodes collected char callbacks
+//	protected AbstractCharactersEncoder charEncoder;
 
 	// attributes
 	protected AttributeList exiAttributes;
@@ -65,14 +64,14 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		// initialize
 		sbChars = new StringBuilder();
 
-		// whitespace characters required ?
-		if (factory.getFidelityOptions().isFidelityEnabled(
-				FidelityOptions.FEATURE_WS)) {
-			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
-		} else {
-			// charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
-			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
-		}
+//		// whitespace characters required ?
+//		if (factory.getFidelityOptions().isFidelityEnabled(
+//				FidelityOptions.FEATURE_WS)) {
+//			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
+//		} else {
+//			// charEncoder = new CharactersEncoderWhitespaceLess(encoder, sbChars);
+//			charEncoder = new CharactersEncoderWhitespaceAware(encoder, sbChars);
+//		}
 
 		// prefix to NS mappings
 		prefixMappings = new ArrayList<PrefixMapping>();
@@ -116,7 +115,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 
 	protected void startElementPfx(String uri, String local, String prefix,
 			Attributes attributes) throws EXIException, IOException {
-		charEncoder.checkPendingChars();
+		checkPendingChars();
 
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
@@ -179,8 +178,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 
 	public void endDocument() throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
-
+			checkPendingChars();
 			encoder.encodeEndDocument();
 		} catch (Exception e) {
 			throw new SAXException("endDocument", e);
@@ -190,8 +188,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void processingInstruction(String target, String data)
 			throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
-
+			checkPendingChars();
 			encoder.encodeProcessingInstruction(target, data);
 		} catch (Exception e) {
 			throw new SAXException("processingInstruction", e);
@@ -201,7 +198,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	public void endElement(String uri, String local, String raw)
 			throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
+			checkPendingChars();
 			encoder.encodeEndElement();
 		} catch (Exception e) {
 
@@ -214,6 +211,13 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 			throws SAXException {
 		sbChars.append(ch, start, length);
 		// new String(ch, start, length);
+	}
+	
+	protected void checkPendingChars() throws EXIException, IOException {
+		if (sbChars.length() > 0) {
+			encoder.encodeCharacters(sbChars.toString());
+			sbChars.setLength(0);
+		}
 	}
 	
 	static final class PrefixMapping {

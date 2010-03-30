@@ -90,7 +90,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 */
 	public void comment(char[] ch, int start, int length) throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
+			checkPendingChars();
 			encoder.encodeComment(ch, start, length);
 		} catch (Exception e) {
 			throw new SAXException("comment", e);
@@ -110,7 +110,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	public void startDTD(String name, String publicId, String systemId)
 			throws SAXException {
 		try {
-			charEncoder.checkPendingChars();
+			checkPendingChars();
 			docTypeName = name;
 			docTypePublicID = publicId == null ? "" : publicId;
 			docTypeSystemID = systemId == null ? "" : systemId;
@@ -133,7 +133,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		try {
 			// &amp; --> name="amp"
 			if (preserveDTD) {
-				charEncoder.checkPendingChars();
+				checkPendingChars();
 				noEntityReference = false;
 			}
 		} catch (Exception e) {
