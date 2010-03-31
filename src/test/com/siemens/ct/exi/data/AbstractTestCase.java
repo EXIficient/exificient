@@ -72,7 +72,14 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setSelfContainedElements(tco.getSelfContainedElements());
 
 		// schema-informed grammar ?
-		if (tco.getSchemaLocation() != null) {
+		if (tco.getSchemaLocation() == null) {
+			// schema-less
+		} else if (tco.getSchemaLocation().length() == 0) {
+			// xsd-types informed
+			Grammar grammar = grammarFactory.createXSDTypesOnlyGrammar();
+			ef.setGrammar(grammar);
+		} else {
+			//	schema-informed
 			Grammar grammar = grammarFactory.createGrammar(tco
 					.getSchemaLocation());
 			ef.setGrammar(grammar);
@@ -161,7 +168,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		Document docControl = TestDOMEncoder.getDocument(control);
 		Document docTest = TestDOMEncoder.getDocument(test);
-		assertXMLEqual(ef.getCodingMode() + ", schema=" + ef.getGrammar().isSchemaInformed()+ " " + ef.getFidelityOptions().toString(), docControl, docTest);
+		assertXMLEqual(ef.getCodingMode() + ", schema="
+				+ ef.getGrammar().isSchemaInformed() + " "
+				+ ef.getFidelityOptions().toString(), docControl, docTest);
 		// assertXMLEqual(new InputSource(control), new InputSource(test));
 	}
 
@@ -184,7 +193,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 				// 1. SAX
 				_testOption(tco, API.SAX);
-				
+
 				// 2. DOM
 				_testOption(tco, API.DOM);
 

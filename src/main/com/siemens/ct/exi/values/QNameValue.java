@@ -43,6 +43,10 @@ public class QNameValue extends AbstractValue {
 		return qname;
 	}
 	
+	public String getPrefix()  {
+		return prefix;
+	}
+	
 	public int getCharactersLength() {
 		return sValue.length();
 	}

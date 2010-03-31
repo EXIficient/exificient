@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.xml.sax.helpers.NamespaceSupport;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.QNameDatatype;
@@ -71,6 +73,10 @@ public abstract class AbstractEXICoder {
 	private ElementContext[] elementContextStack;
 	private int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
+	
+	//	xsi:type
+	protected static final QName xsiType = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+			Constants.XSI_TYPE);
 	
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;

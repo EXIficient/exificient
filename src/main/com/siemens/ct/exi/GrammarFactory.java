@@ -45,6 +45,7 @@ public class GrammarFactory {
 		return new GrammarFactory();
 	}
 
+	/* schema file as location */
 	public Grammar createGrammar(String xsdLocation) throws EXIException {
 		if (xsdLocation == null || xsdLocation.equals("")) {
 			throw new EXIException("SchemaLocation not specified correctly!");
@@ -54,11 +55,19 @@ public class GrammarFactory {
 		}
 	}
 
+	/* schema file as input stream */
 	public Grammar createGrammar(InputStream is) throws EXIException {
 		grammarBuilder.loadGrammar(is);
 		return grammarBuilder.toGrammar();
 	}
+	
+	/* built-in XSD types only are available */
+	public Grammar createXSDTypesOnlyGrammar() throws EXIException {
+		grammarBuilder.loadXSDTypesOnlyGrammar();
+		return grammarBuilder.toGrammar();
+	}
 
+	/* no schema information at all */
 	public Grammar createSchemaLessGrammar() {
 		return new SchemaLessGrammar();
 	}
