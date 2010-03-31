@@ -10,7 +10,7 @@
     <float>0</float>
     <float>INF</float>
     <float>NaN </float>
-    <float>312321.4546</float>
+    <float>12321.4546</float>
     <double>-1E4</double>
     <double>1267.43233E12</double>
     <double>12.78e-2</double>
@@ -19,5 +19,5 @@
     <double>0</double>
     <double>INF</double>
     <double>NaN</double>
-    <double>12674123423.4323333312</double>
+    <double>12674123.432312</double>
 </root>

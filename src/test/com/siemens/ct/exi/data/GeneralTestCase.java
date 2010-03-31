@@ -35,8 +35,8 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypeInteger();
-		GeneralTestCase.setConfigurationDatatypeFloat();
-		// GeneralTestCase.setConfigurationDatatypes();
+		// GeneralTestCase.setConfigurationDatatypeFloat();
+		GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj ( );
