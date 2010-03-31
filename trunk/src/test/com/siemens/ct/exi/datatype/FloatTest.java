@@ -404,5 +404,50 @@ public class FloatTest extends AbstractTestCase {
 		assertFalse("Invalid float value '" + s + "' parsed successfully",
 				valid);
 	}
+	
+	public void testFloatInvalid3() {
+		String s = "E";
+
+		boolean valid = f.parse(s);
+		assertFalse("Invalid float value '" + s + "' parsed successfully",
+				valid);
+	}
+	
+	public void testFloatInvalid4() throws IOException {
+		//	too large mantissa
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		String s = "9223372036854775808E3";
+		boolean valid = f.parse(s);
+		assertFalse("Float Mantissa " + s + " too large", valid);
+	}
+	
+	public void testFloatInvalid5() throws IOException {
+		//	too large exponent
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		String s = "123E16384";
+		boolean valid = f.parse(s);
+		assertFalse("Float exponent" + s + " too large", valid);
+	}
+	
+	public void testDoubleInvalid1() throws IOException {
+		//	too large mantissa
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		String s = "-9223372036854775809E3";
+		boolean valid = d.parse(s);
+		assertFalse("Double Mantissa " + s + " too large", valid);
+	}
+	
+	public void testDoubleInvalid2() throws IOException {
+		//	too large exponent
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		String s = "123E-16384";
+		boolean valid = d.parse(s);
+		assertFalse("Double exponent" + s + " too large", valid);
+	}
+	
 
 }
