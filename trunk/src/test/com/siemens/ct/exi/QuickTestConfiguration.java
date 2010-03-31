@@ -85,17 +85,17 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 	}
 
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		// SchemaTestCase.setupQuickTest ( );
+		SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

@@ -45,7 +45,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaAttributeGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences1 ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences2 ( );
-		// SchemaTestCase.setConfigurationSchemaAll ( );
+		SchemaTestCase.setConfigurationSchemaAll ( );
 		// SchemaTestCase.setConfigurationSchemaAll2 ( );
 		// SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
@@ -58,7 +58,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
-		SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
+		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
 		// SchemaTestCase.setConfigurationSchemaAny1 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );

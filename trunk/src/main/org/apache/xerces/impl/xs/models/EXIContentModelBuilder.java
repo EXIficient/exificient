@@ -45,8 +45,11 @@ import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
 import org.apache.xerces.xs.XSModel;
+import org.apache.xerces.xs.XSModelGroup;
 import org.apache.xerces.xs.XSObject;
 import org.apache.xerces.xs.XSObjectList;
+import org.apache.xerces.xs.XSParticle;
+import org.apache.xerces.xs.XSTerm;
 import org.apache.xerces.xs.XSWildcard;
 
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -72,7 +75,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	protected static final Event CHARACTERS_GENERIC = new CharactersGeneric();
 
 	protected static final boolean forUPA = false;
-	
+
 	protected static final LexicographicSort lexSort = new LexicographicSort();
 
 	protected SubstitutionGroupHandler subGroupHandler;
@@ -85,7 +88,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	// elements that appear while processing
 	protected List<XSElementDeclaration> remainingElements;
 
-	//	pool for element-declaration of StartElement events
+	// pool for element-declaration of StartElement events
 	protected Map<XSElementDeclaration, StartElement> elementPool;
 
 	public EXIContentModelBuilder() {
@@ -107,11 +110,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
 		try {
 			initEachRun();
-			
+
 			// load XSD schema & get XSModel
 			XMLSchemaLoader sl = new XMLSchemaLoader();
 			sl.setErrorHandler(this);
-			
+
 			SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
 
 			// set XSModel
@@ -128,14 +131,14 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			throw new EXIException(e);
 		}
 	}
-	
+
 	public void loadXSDTypesOnlyGrammar() throws EXIException {
 		String emptySchema = "<schema xmlns='http://www.w3.org/2001/XMLSchema' /> ";
 		Reader r = new StringReader(emptySchema);
-		// String publicId, String systemId, String baseSystemId, Reader charStream, String encoding
-		XMLInputSource is = new XMLInputSource(null, null,  
-                null, r, null);
-		loadGrammar(is);	
+		// String publicId, String systemId, String baseSystemId, Reader
+		// charStream, String encoding
+		XMLInputSource is = new XMLInputSource(null, null, null, r, null);
+		loadGrammar(is);
 	}
 
 	public void loadGrammar(String xsdLocation) throws EXIException {
@@ -147,9 +150,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			String baseSystemId = null;
 			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 					baseSystemId);
-			loadGrammar(xsdSource);	
+			loadGrammar(xsdSource);
 		} else {
-			throw new EXIException("XML Schema document (" + xsdLocation + ") not found.");
+			throw new EXIException("XML Schema document (" + xsdLocation
+					+ ") not found.");
 		}
 	}
 
@@ -175,75 +179,102 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		// minOccurs: value can be 0 or 1
 		assert (particle.getMaxOccurs() == 1);
 		assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
-
-		// TODO simplified EXI all
-		// XSCMValidator valAll = super.createAllCM(particle);
-		// int[] state = valAll.startContentModel();
-		// @SuppressWarnings("unchecked")
-		// Vector<XSObject> possibleElements = valAll.whatCanGoHere(state);
-
-		return super.createAllCM(particle);
+		
+		throw new RuntimeException("All model group handling should not call createAllCM(...)");
+		// return super.createAllCM(particle);;
 	}
 
-	private static SchemaInformedRule addNewState(Map<CMState, SchemaInformedRule> states,
-			CMState key, boolean isMixedContent) {
+	private static SchemaInformedRule addNewState(
+			Map<CMState, SchemaInformedRule> states, CMState key,
+			boolean isMixedContent) {
 		SchemaInformedRule val = new SchemaInformedElement();
-		//	is end
+		// is end
 		if (key.end) {
 			val.addTerminalRule(END_ELEMENT);
 		}
 		// is mixed content
-		if(isMixedContent) {
+		if (isMixedContent) {
 			val.addRule(CHARACTERS_GENERIC, val);
 		}
 		states.put(key, val);
-		
+
 		return val;
 	}
 
-	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd, boolean isMixedContent)
-			throws EXIException {
+	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd,
+			boolean isMixedContent) throws EXIException {
 
-		XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd, forUPA);
+		XSTerm xsTerm = ctd.getParticle().getTerm();
+		XSModelGroup mg;
+		// special behaviour for xsd:all
+		if (xsTerm instanceof XSModelGroup
+				&& (mg = (XSModelGroup) xsTerm).getCompositor() == XSModelGroup.COMPOSITOR_ALL) {
+			// http://www.w3.org/TR/exi/#allGroupTerms
+			// The grammar can accept any sequence of the given {particles}
+			// in any order
+			SchemaInformedRule allRule = new SchemaInformedElement();
+			// EE
+			allRule.addTerminalRule(END_ELEMENT);
+			// particles
+			XSObjectList allParticles = mg.getParticles();
+			for (int i = 0; i < allParticles.getLength(); i++) {
+				XSObject o = allParticles.item(i);
+				assert (o instanceof XSParticle);
+				XSParticle xsp = (XSParticle) o;
+				XSTerm tt = xsp.getTerm();
+				// Note: xsd:all is allowed to contain elements only
+				if (XSConstants.ELEMENT_DECLARATION == tt.getType()) {
+					XSElementDeclaration el = (XSElementDeclaration) tt;
+					StartElement se = getStartElement(el);
+					allRule.addRule(se, allRule);
+				} else {
+					throw new RuntimeException(
+							"No XSElementDeclaration for xsd:all particle, " + tt);
+				}
+			}
 
-		int[] state = xscmVal.startContentModel();
-		@SuppressWarnings("unchecked")
-		Vector<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
-		boolean isEnd = xscmVal.endContentModel(state);
+			return allRule;
+		} else {
+			// complex types other than xsd:all model groups
+			XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd, forUPA);
 
-		CMState startState = new CMState(possibleElements, isEnd, state);
-		if (DEBUG) {
-			System.out.println("Start = " + startState);
+			int[] state = xscmVal.startContentModel();
+			@SuppressWarnings("unchecked")
+			Vector<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
+			boolean isEnd = xscmVal.endContentModel(state);
+
+			CMState startState = new CMState(possibleElements, isEnd, state);
+			if (DEBUG) {
+				System.out.println("Start = " + startState);
+			}
+
+			Map<CMState, SchemaInformedRule> knownStates = new HashMap<CMState, SchemaInformedRule>();
+			addNewState(knownStates, startState, isMixedContent);
+			handleStateEntries(possibleElements, xscmVal, state, startState,
+					knownStates, isMixedContent);
+
+			return knownStates.get(startState);
 		}
-
-		Map<CMState, SchemaInformedRule> knownStates = new HashMap<CMState, SchemaInformedRule>();
-		addNewState(knownStates, startState, isMixedContent);
-		handleStateEntries(possibleElements, xscmVal, state, startState,
-				knownStates, isMixedContent);
-
-		return knownStates.get(startState);
 	}
-	
 
 	protected StartElement getStartElement(XSElementDeclaration elementDecl) {
 		StartElement se;
 		if (elementPool.containsKey(elementDecl)) {
 			se = elementPool.get(elementDecl);
 		} else {
-			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(elementDecl.getNamespace(),
-					elementDecl.getName());
+			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(
+					elementDecl.getNamespace(), elementDecl.getName());
 			se = new StartElement(qname);
 			elementPool.put(elementDecl, se);
 		}
-		
+
 		return se;
 	}
-	
 
 	private void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
-			Map<CMState, SchemaInformedRule> knownStates,
-			boolean isMixedContent) throws EXIException {
+			Map<CMState, SchemaInformedRule> knownStates, boolean isMixedContent)
+			throws EXIException {
 		assert (knownStates.containsKey(startState));
 
 		for (XSObject xs : possibleElements) {
