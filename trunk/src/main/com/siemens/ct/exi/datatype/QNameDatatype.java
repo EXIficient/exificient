@@ -37,8 +37,6 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.xml.QNameUtilities;
-import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -151,32 +149,36 @@ public class QNameDatatype extends AbstractDatatype {
 	///////////////////////////////////////////////////
 
 	public boolean isValid(String value) {
-		// extract prefix
-		qnamePrefix = QNameUtilities.getPrefixPart(value);
-		// retrieve uri
-		qnameURI = namespaces.getURI(qnamePrefix);
-
-		/*
-		 * If there is no namespace in scope for the specified qname prefix, the
-		 * QName uri is set to empty ("") and the QName localName is set to the
-		 * full lexical value of the QName, including the prefix.
-		 */
-		if (qnameURI == null) {
-			qnameURI = XMLConstants.NULL_NS_URI;
-			qnameLocalName = value;
-		} else {
-			qnameLocalName = QNameUtilities.getLocalPart(value);
-		}
+		throw new RuntimeException("QNameDatatype isValid(...) should never be called");
 		
-		return true;
+//		// extract prefix
+//		qnamePrefix = QNameUtilities.getPrefixPart(value);
+//		// retrieve uri
+//		qnameURI = namespaces.getURI(qnamePrefix);
+//
+//		/*
+//		 * If there is no namespace in scope for the specified qname prefix, the
+//		 * QName uri is set to empty ("") and the QName localName is set to the
+//		 * full lexical value of the QName, including the prefix.
+//		 */
+//		if (qnameURI == null) {
+//			qnameURI = XMLConstants.NULL_NS_URI;
+//			qnameLocalName = value;
+//		} else {
+//			qnameLocalName = QNameUtilities.getLocalPart(value);
+//		}
+//		
+//		return true;
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		// encode expanded name (uri followed by localName)
-		writeUri(qnameURI, valueChannel);
-		writeLocalName(qnameLocalName, qnameURI, qnamePrefix,
-				valueChannel);
+		throw new RuntimeException("QNameDatatype writeValue(...) should never be called");
+		
+//		// encode expanded name (uri followed by localName)
+//		writeUri(qnameURI, valueChannel);
+//		writeLocalName(qnameLocalName, qnameURI, qnamePrefix,
+//				valueChannel);
 		
 	}
 
@@ -432,13 +434,15 @@ public class QNameDatatype extends AbstractDatatype {
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
-		QName qname = readQName(valueChannel);
-		String prefix = decodeQNamePrefix(qname, valueChannel);
-		if (prefix == null) {
-			prefix = namespaces.getPrefix(qname.getNamespaceURI());
-		}
+		throw new RuntimeException("QNameDatatype readValue(...) should never be called");
 		
-		return new QNameValue(qname, prefix);
+//		QName qname = readQName(valueChannel);
+//		String prefix = decodeQNamePrefix(qname, valueChannel);
+//		if (prefix == null) {
+//			prefix = namespaces.getPrefix(qname.getNamespaceURI());
+//		}
+//		
+//		return new QNameValue(qname, prefix);
 		
 //		if (prefix == null) {
 //			

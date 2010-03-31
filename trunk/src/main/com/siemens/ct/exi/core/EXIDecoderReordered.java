@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
@@ -40,6 +41,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -342,7 +344,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 					// xsi:type
 					eventTypes.set(eventTypes.size()-1, EventType.ATTRIBUTE_XSI_TYPE);
 					xsiValues.add(attributeValue);
-					xsiPrefixes.add("");	// TODO prefix
+					assert(attributeValue instanceof QNameValue);
+					xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));	// TODO prefix
 				} else {
 					qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
 					incrementValues(attributeQName, dtAT);	
@@ -350,8 +353,16 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				break;
 			case ATTRIBUTE_GENERIC_UNDECLARED:
 				dtAT = decodeAttributeGenericUndeclaredStructure();
-				qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
-				incrementValues(attributeQName, dtAT);
+				if (dtAT == null) {
+					// xsi:type
+					eventTypes.set(eventTypes.size()-1, EventType.ATTRIBUTE_XSI_TYPE);
+					xsiValues.add(attributeValue);
+					assert(attributeValue instanceof QNameValue);
+					xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));	// TODO prefix
+				} else {
+					qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
+					incrementValues(attributeQName, dtAT);	
+				}
 				break;
 			case CHARACTERS:
 				incrementValues(elementContext.qname, decodeCharactersStructureOnly());

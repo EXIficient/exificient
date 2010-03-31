@@ -228,7 +228,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeAttributeGenericUndeclared() throws EXIException,
 			IOException {
 		// structure & content
-		readAttributeContent(decodeAttributeGenericUndeclaredStructure());
+		Datatype dt = decodeAttributeGenericUndeclaredStructure();
+		if (dt != null) {
+			readAttributeContent(dt);	
+		}
 	}
 
 	public void decodeCharacters() throws EXIException, IOException {

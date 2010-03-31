@@ -43,7 +43,6 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -229,12 +228,11 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	 */
 	protected void decodeAttributeXsiTypeStructure() throws EXIException,
 			IOException {
-		// xsiTypeQName = readLocalName(readUri());
-		// xsiTypeQName = readLocalName(qnameDatatype.readUri(channel));
+		//	type qname & prefix
 		xsiTypeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
-		
-		// handle type prefix
 		xsiTypePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
+		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));
+		attributePrefix = null;
 		
 		// update grammar according to given xsi:type
 		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
@@ -244,10 +242,29 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			// update current rule
 			currentRule = tg;
 		}
-
-		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));
-		attributePrefix = null;
 	}
+	
+	
+//	private Datatype genericXsiType() throws IOException {
+////		attributeValue = qnameDatatype.readValue(channel, null, null);
+////		// QName xsiType = ((QNameValue)attributeValue).toQName();
+////		xsiTypeQName = ((QNameValue)attributeValue).toQName();
+//		
+//		//	type qname & prefix
+//		xsiTypeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
+//		xsiTypePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
+//		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));
+//		attributePrefix = null;
+//		
+//		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
+//		// grammar exists ?
+//		if (tg != null) {
+//			// update grammar according to given xsi:type
+//			currentRule = tg;
+//		}
+//		
+//		return null;
+//	}
 
 	protected Datatype decodeAttributeStructure() throws EXIException,
 			IOException {
@@ -296,10 +313,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		decodeAttributeGenericStructureOnly();
 		return BuiltIn.DEFAULT_DATATYPE;
 	}
-
-	
-	QName xsiType = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-			Constants.XSI_TYPE);
 	
 	protected Datatype decodeAttributeGenericStructure() throws EXIException,
 			IOException {
@@ -307,16 +320,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		decodeAttributeGenericStructureOnly();
 
 		if(xsiType.equals(attributeQName)) {			
-			attributeValue = qnameDatatype.readValue(channel, null, null);
-			QName xsiType = ((QNameValue)attributeValue).toQName();
-			
-			SchemaInformedRule tg = grammar.getTypeGrammar(xsiType);
-			// grammar exists ?
-			if (tg != null) {
-				// update grammar according to given xsi:type
-				currentRule = tg;
-			}
-			
+			// return genericXsiType();
+			decodeAttributeXsiTypeStructure();
 			return null;
 		} else {
 			// update current rule
@@ -332,7 +337,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			throws EXIException, IOException {
 
 		decodeAttributeGenericStructureOnly();
-
+		
+		if(xsiType.equals(attributeQName)) {	
+			//	TODO grammar learning ?
+			// return genericXsiType();
+			decodeAttributeXsiTypeStructure();
+			return null;
+		}
+		
 		// update grammar
 		currentRule.learnAttribute(new Attribute(attributeQName));
 

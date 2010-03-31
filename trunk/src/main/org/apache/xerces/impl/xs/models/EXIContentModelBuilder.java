@@ -20,6 +20,8 @@ package org.apache.xerces.impl.xs.models;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -125,6 +127,15 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}
+	}
+	
+	public void loadXSDTypesOnlyGrammar() throws EXIException {
+		String emptySchema = "<schema xmlns='http://www.w3.org/2001/XMLSchema' /> ";
+		Reader r = new StringReader(emptySchema);
+		// String publicId, String systemId, String baseSystemId, Reader charStream, String encoding
+		XMLInputSource is = new XMLInputSource(null, null,  
+                null, r, null);
+		loadGrammar(is);	
 	}
 
 	public void loadGrammar(String xsdLocation) throws EXIException {

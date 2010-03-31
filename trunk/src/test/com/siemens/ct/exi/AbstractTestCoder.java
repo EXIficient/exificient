@@ -62,11 +62,20 @@ public abstract class AbstractTestCoder {
 
 	protected EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
-		ef.setGrammar(getGrammar(QuickTestConfiguration.getXsdLocation()));
+		String xsdLocation = QuickTestConfiguration.getXsdLocation();
+		if (xsdLocation == null || xsdLocation.length() == 0) {
+			ef.setGrammar(getXSDTypesOnlyGrammar());
+		} else {
+			ef.setGrammar(getGrammar(xsdLocation));	
+		}
 
 		return ef;
 	}
 
+	public static Grammar getXSDTypesOnlyGrammar() throws EXIException {
+		return grammarFactory.createXSDTypesOnlyGrammar();
+	}
+	
 	public static Grammar getGrammar(String xsdLocation) throws EXIException {
 		return grammarFactory.createGrammar(xsdLocation);
 	}

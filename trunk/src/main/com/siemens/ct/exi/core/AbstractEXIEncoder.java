@@ -342,88 +342,74 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public void encodeXsiType(String raw, String pfx) throws EXIException,
 			IOException {
+		// extract prefix
+		String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
+		// retrieve uri
+		String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
+
+		/*
+		 * The value of each AT (xsi:type) event is represented as a QName . If
+		 * there is no namespace in scope for the specified qname prefix, the
+		 * QName uri is set to empty ("") and the QName localName is set to the
+		 * full lexical value of the QName, including the prefix.
+		 */
+		String xsiTypeLocalName;
+		if (xsiTypeURI == null) {
+			xsiTypeURI = XMLConstants.NULL_NS_URI;
+			xsiTypeLocalName = raw;
+		} else {
+			xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
+		}
+
+		QName xsiQName = new QName(xsiTypeURI, xsiTypeLocalName);
+		SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
+
 		int ec2 = currentRule.get2ndLevelEventCode(
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
 
 		if (ec2 != Constants.NOT_FOUND) {
 			assert (currentRule.get2ndLevelEvent(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
 
-			// extract prefix
-			String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
-			// retrieve uri
-			String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
-
-			/*
-			 * The value of each AT (xsi:type) event is represented as a QName .
-			 * If there is no namespace in scope for the specified qname prefix,
-			 * the QName uri is set to empty ("") and the QName localName is set
-			 * to the full lexical value of the QName, including the prefix.
-			 */
-			String xsiTypeLocalName;
-			if (xsiTypeURI == null) {
-				xsiTypeURI = XMLConstants.NULL_NS_URI;
-				xsiTypeLocalName = raw;
-			} else {
-				xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
-			}
-
-			QName xsiQName = new QName(xsiTypeURI, xsiTypeLocalName);
-			SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
-
-			// strip use-less xsi:type casts, e.g., if we deal already with
-			// the same type-grammar
-			// Note: Preserve lexical value requires type cast
-			if ((tg != null && currentRule != tg)
-					|| fidelityOptions
-							.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				// encode event-code, AT(xsi:type)
-				encode2ndLevelEventCode(ec2);
-				// prefix
-				qnameDatatype.encodeQNamePrefix(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx,
-						channel);
-				// xsi:type "content" as qname
-				qnameDatatype.encodeQName(xsiTypeURI, xsiTypeLocalName,
-						xsiTypePrefix, channel);
-
-				// grammar exists ?
-				if (tg != null) {
-					// update grammar according to given xsi:type
-					currentRule = tg;
-				}
-			}
+			// encode event-code, AT(xsi:type)
+			encode2ndLevelEventCode(ec2);
+			// prefix
+			qnameDatatype.encodeQNamePrefix(
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx, channel);
 		} else {
-			if (currentRule.isSchemaInformed()) {
-				QName xsiQName = new QName(XMLConstants.NULL_NS_URI, raw);
-				SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
+			// Note: cannot be encoded as any other attribute due to the
+			// different channels in compression mode
+			EventInformation ei = currentRule
+					.lookForEvent(EventType.ATTRIBUTE_GENERIC);
 
-				// Note: cannot be encodes as any other attribute due to the
-				// different channels in compression mode
-				EventInformation ei = currentRule
-						.lookForEvent(EventType.ATTRIBUTE_GENERIC);
-				if (ei == null) {
+			if (ei != null) {
+				encode1stLevelEventCode(ei.getEventCode());
+			} else {
+				ec2 = currentRule
+						.get2ndLevelEventCode(
+								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+								fidelityOptions);
+				if (ec2 != Constants.NOT_FOUND) {
+					// currentRule.learnAttribute(new Attribute(xsiType));
+					encode2ndLevelEventCode(ec2);
+				} else {
 					throw new EXIException("TypeCast " + raw
 							+ " not encodable!");
 				}
-				encode1stLevelEventCode(ei.getEventCode());
-				// qname
-				qnameDatatype.encodeQName(
-						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_TYPE, "", channel);
-				// qname typecast
-				qnameDatatype.isValid(raw);
-				qnameDatatype.writeValue(channel, null, null);
-
-				// grammar exists ?
-				if (tg != null) {
-					// update grammar according to given xsi:type
-					currentRule = tg;
-				}
-			} else {
-				// encode as any other attribute
-				encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_TYPE, "", raw);
 			}
+			// xsi:type as qname
+			qnameDatatype.encodeQName(
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+					Constants.XSI_TYPE, pfx, channel);
+		}
+
+		// xsi:type value "content" as qname
+		qnameDatatype.encodeQName(xsiTypeURI, xsiTypeLocalName, xsiTypePrefix,
+				channel);
+
+		// grammar exists ?
+		if (tg != null) {
+			// update grammar according to given xsi:type
+			currentRule = tg;
 		}
 	}
 
