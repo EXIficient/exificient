@@ -68,6 +68,14 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
 	}
 	
+	public int getNumberOfBits() {
+		return numberOfBits4Range;
+	}
+	
+	public BigInteger getLowerBound() {
+		return lowerBound;
+	}
+	
 	protected static final HugeIntegerValue getHugeInteger(BigInteger bi) {
 		if (bi.bitLength() <= 63) {
 			//	fits into long
