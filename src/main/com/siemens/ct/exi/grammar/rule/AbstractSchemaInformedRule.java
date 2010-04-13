@@ -66,7 +66,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	 * schema-deviated attributes
 	 */
 	protected int leastAttributeEventCode = Constants.NOT_FOUND;
-	protected int numberDeviatedAttributes = 0;
+	protected int numberOfDeclaredAttributes = 0;
 
 	public AbstractSchemaInformedRule() {
 		super();
@@ -116,8 +116,8 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return this.typeEmpty;
 	}
 
-	public int getNumberOfSchemaDeviatedAttributes() {
-		return numberDeviatedAttributes;
+	public int getNumberOfDeclaredAttributes() {
+		return numberOfDeclaredAttributes;
 	}
 
 	public int getLeastAttributeEventCode() {
@@ -207,9 +207,9 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		codeLengthA = MethodsBag.getCodingLength(getNumberOfEvents());
 		codeLengthB = MethodsBag.getCodingLength(getNumberOfEvents() + 1);
 
-		// reset least-attribute & number of deviated attributes
+		// reset number of declared attributes and least attribute event-code
 		leastAttributeEventCode = Constants.NOT_FOUND;
-		numberDeviatedAttributes = 0;
+		numberOfDeclaredAttributes = 0;
 
 		for (int i = 0; i < containers.length; i++) {
 			EventInformation er = containers[i];
@@ -218,13 +218,14 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 					// set least attribute
 					leastAttributeEventCode = i;
 				}
-				// count all AT (qname) [schema-invalid value]
-				numberDeviatedAttributes++;
+				// count all AT (qname)
+				numberOfDeclaredAttributes++;
 			}
-
 		}
-		// add AT (*) [schema-invalid value]
-		numberDeviatedAttributes++;
+		
+		
+//		// add AT (*) [schema-invalid value]
+//		numberOfDeclaredAttributes++;
 	}
 
 	public void joinRules(Rule rule) {

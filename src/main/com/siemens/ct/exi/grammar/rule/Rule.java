@@ -104,7 +104,7 @@ public interface Rule {
 	 * TODO move to SchemaInformedRule
 	 * Schema-deviated attributes
 	 */
-	public int getNumberOfSchemaDeviatedAttributes();
+	public int getNumberOfDeclaredAttributes();
 
 	public int getLeastAttributeEventCode();
 

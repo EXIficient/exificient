@@ -145,7 +145,7 @@ public class BuiltIn {
 	public static final BuiltInType DEFAULT_BUILTIN = BuiltInType.STRING;
 	public static final Datatype DEFAULT_DATATYPE = new StringDatatype(
 			DEFAULT_VALUE_NAME);
-	public static final Datatype BOOLEAN_DATATYPE = new StringDatatype(
+	public static final Datatype BOOLEAN_DATATYPE = new BooleanDatatype(
 			XSD_BOOLEAN);
 
 	// built-In mapping

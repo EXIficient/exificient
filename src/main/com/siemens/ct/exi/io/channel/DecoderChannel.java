@@ -21,7 +21,6 @@ package com.siemens.ct.exi.io.channel;
 import java.io.IOException;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.values.BinaryValue;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
@@ -73,7 +72,7 @@ public interface DecoderChannel {
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
-	public BinaryValue decodeBinary() throws IOException;
+	public byte[] decodeBinary() throws IOException;
 
 	/**
 	 * Decode a string as a length-prefixed sequence of UCS codepoints, each of

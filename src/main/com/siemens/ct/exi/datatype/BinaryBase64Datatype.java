@@ -18,10 +18,18 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
+import org.apache.xerces.impl.dv.util.Base64;
+
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.BinaryBase64Value;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -37,6 +45,23 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 	public BinaryBase64Datatype(QName datatypeIdentifier) {
 		super(datatypeIdentifier, BuiltInType.BINARY_BASE64);
 		this.rcs = new XSDBase64CharacterSet();
+	}
+	
+	/*
+	 * Encoder
+	 */
+	public boolean isValid(String value) {
+		bytes = Base64.decode(value);
+		return (bytes != null);
+	}
+	
+	/*
+	 * Decoder
+	 */
+	public Value readValue(DecoderChannel valueChannel,
+			StringDecoder stringDecoder, QName context)
+			throws IOException {
+		return new BinaryBase64Value(valueChannel.decodeBinary());
 	}
 
 }

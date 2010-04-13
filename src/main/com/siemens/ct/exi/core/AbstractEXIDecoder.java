@@ -40,9 +40,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -57,7 +57,10 @@ import com.siemens.ct.exi.values.Value;
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		EXIDecoder {
-
+	
+	static final Value XSD_BOOLEAN_TRUE_VALUE = new StringValue(Constants.XSD_BOOLEAN_TRUE_ARRAY);
+	static final Value XSD_BOOLEAN_FALSE_VALUE = new StringValue(Constants.XSD_BOOLEAN_FALSE_ARRAY);
+	
 	// next event
 	protected Event nextEvent;
 	protected Rule nextRule;
@@ -67,7 +70,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	// decoder stream
 	protected InputStream is;
 	protected DecoderChannel channel;
-	// protected DecoderBlock block;
 
 	// Type Decoder (including string decoder etc.)
 	protected TypeDecoder typeDecoder;
@@ -166,19 +168,19 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		int ec3AT;
 		try {
 			ec3AT = channel.decodeNBitUnsignedInteger(MethodsBag.getCodingLength(sir
-					.getNumberOfSchemaDeviatedAttributes()));
+					.getNumberOfDeclaredAttributes()+1));
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 
-		if (ec3AT < (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
+		if (ec3AT < (sir.getNumberOfDeclaredAttributes())) {
 			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode();
 			EventInformation ei = currentRule.lookFor(ec);
 			nextEvent = ei.event;
 			nextRule = ei.next;
 			// nextEventRule = currentRule.get1stLevelEventRule(ec);
-		} else if (ec3AT == (sir.getNumberOfSchemaDeviatedAttributes() - 1)) {
+		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
 			// ANY deviated attribute (no qname present)
 			nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
 		} else {
@@ -206,15 +208,16 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	/*
 	 * Handles and xsi:nil attributes
 	 */
-	static final Value XSD_BOOLEAN_TRUE_VALUE = new StringValue(Constants.XSD_BOOLEAN_TRUE_ARRAY);
-	static final Value XSD_BOOLEAN_FALSE_VALUE = new StringValue(Constants.XSD_BOOLEAN_FALSE_ARRAY);
-	
 	protected void decodeAttributeXsiNilStructure() throws EXIException,
 			IOException {
-		xsiNil = channel.decodeBoolean();
+		Value v = booleanDatatype.readValue(channel, typeDecoder.getStringDecoder(), XSI_NIL);
+		assert(v instanceof BooleanValue);
+		BooleanValue bv = (BooleanValue) v;
+		xsiNil = bv.toBoolean();
+		// xsiNil = channel.decodeBoolean();
 
-		if (xsiNil && currentRule.isSchemaInformed()) { // jump to typeEmpty
-			// replaceRuleAtTheTop(((SchemaInformedRule)currentRule).getTypeEmpty());
+		if (xsiNil && currentRule.isSchemaInformed()) {
+			// jump to typeEmpty
 			currentRule = ((SchemaInformedRule)currentRule).getTypeEmpty();
 		}
 
@@ -243,28 +246,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			currentRule = tg;
 		}
 	}
-	
-	
-//	private Datatype genericXsiType() throws IOException {
-////		attributeValue = qnameDatatype.readValue(channel, null, null);
-////		// QName xsiType = ((QNameValue)attributeValue).toQName();
-////		xsiTypeQName = ((QNameValue)attributeValue).toQName();
-//		
-//		//	type qname & prefix
-//		xsiTypeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
-//		xsiTypePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
-//		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));
-//		attributePrefix = null;
-//		
-//		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
-//		// grammar exists ?
-//		if (tg != null) {
-//			// update grammar according to given xsi:type
-//			currentRule = tg;
-//		}
-//		
-//		return null;
-//	}
 
 	protected Datatype decodeAttributeStructure() throws EXIException,
 			IOException {
@@ -278,84 +259,40 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return at.getDatatype();
 	}
 
-	protected Datatype decodeAttributeNSStructure() throws EXIException,
+	protected void decodeAttributeNSStructure() throws EXIException,
 			IOException {
 		// AttributeEventNS
 		AttributeNS atNS = ((AttributeNS) nextEvent);
-		// attributeQName = readLocalName(atNS.getNamespaceURI());
 		attributeQName = qnameDatatype.readLocalName(atNS.getNamespaceURI(), channel);
-
-		// handle attribute prefix
-		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
-
-		// update current rule
-		currentRule = nextRule;
-
-		// return atNS;
-		return BuiltIn.DEFAULT_DATATYPE;
-	}
-
-	protected Datatype decodeAttributeInvalidValueStructure()
-			throws EXIException, IOException {
-		Attribute at = ((Attribute) nextEvent);
-		//	qname 
-		attributeQName = at.getQName();
 		// handle attribute prefix
 		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 		// update current rule
 		currentRule = nextRule;
-
-		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
-	protected Datatype decodeAttributeAnyInvalidValueStructure()
+	protected void decodeAttributeAnyInvalidValueStructure()
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
-		return BuiltIn.DEFAULT_DATATYPE;
 	}
-	
-	protected Datatype decodeAttributeGenericStructure() throws EXIException,
-			IOException {
+
+	protected void decodeAttributeGenericStructure() throws EXIException,
+				IOException {
 		// decode structure
 		decodeAttributeGenericStructureOnly();
-
-		if(xsiType.equals(attributeQName)) {			
-			// return genericXsiType();
-			decodeAttributeXsiTypeStructure();
-			return null;
-		} else {
-			// update current rule
-			currentRule = nextRule;
-
-			Attribute globalAT = grammar.getGlobalAttribute(attributeQName);
-			
-			return (globalAT == null) ? BuiltIn.DEFAULT_DATATYPE : globalAT.getDatatype();			
-		}
+		// update current rule
+		currentRule = nextRule;
 	}
 
-	protected Datatype decodeAttributeGenericUndeclaredStructure()
-			throws EXIException, IOException {
-
+	protected void decodeAttributeGenericUndeclaredStructure() throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
-		
-		if(xsiType.equals(attributeQName)) {	
-			//	TODO grammar learning ?
-			// return genericXsiType();
-			decodeAttributeXsiTypeStructure();
-			return null;
-		}
-		
 		// update grammar
 		currentRule.learnAttribute(new Attribute(attributeQName));
-
-		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
 	private void decodeAttributeGenericStructureOnly() throws EXIException,
 			IOException {
 		// decode uri & local-name
 		attributeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
-
 		// handle attribute prefix
 		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
 	}
@@ -367,26 +304,22 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return ((Characters) nextEvent).getDatatype();
 	}
 
-	protected Datatype decodeCharactersGenericStructureOnly()
+	protected void decodeCharactersGenericStructureOnly()
 			throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC);
 		// update current rule
 		currentRule = nextRule;
-		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
-	protected Datatype decodeCharactersGenericUndeclaredStructureOnly()
+	protected void decodeCharactersGenericUndeclaredStructureOnly()
 			throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
 		// learn character event ?
 		currentRule.learnCharacters();
 		// update current rule
 		currentRule = currentRule.getElementContentRule();
-		return BuiltIn.DEFAULT_DATATYPE;
 
 	}
-
-	
 	
 	protected String getQualifiedName(QName qname, String pfx) {
 		String localName = qname.getLocalPart();

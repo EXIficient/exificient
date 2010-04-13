@@ -22,13 +22,13 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -42,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class BooleanDatatype extends AbstractDatatype {
 	
-	protected XSDBoolean lastValidBoolean = XSDBoolean.newInstance();
+	protected boolean bool;
 	
 	public BooleanDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.BOOLEAN, datatypeIdentifier);
@@ -50,12 +50,29 @@ public class BooleanDatatype extends AbstractDatatype {
 	}
 
 	public boolean isValid(String value) {
-		return lastValidBoolean.parse(value);
+		value = value.trim();
+		boolean validValue = true;
+		if (value.equals(Constants.XSD_BOOLEAN_0)
+				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {
+			bool = false;
+			
+		} else if (value.equals(Constants.XSD_BOOLEAN_1)
+				|| value.equals(Constants.XSD_BOOLEAN_TRUE)) {
+			bool = true;
+		} else {
+			validValue = false;
+		}
+		return validValue;
 	}
 
+	public boolean getBoolean() {
+		return bool;
+	}
+	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeBoolean(lastValidBoolean);
+		valueChannel.encodeBoolean(bool);
+		// valueChannel.encodeBoolean(lastValidBoolean);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

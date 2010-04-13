@@ -19,7 +19,6 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.types.BuiltIn;
 
 public class EXIEncoderReordered extends AbstractEXIEncoder {
 
@@ -77,21 +76,23 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		cc.addValue(value, datatype);
 		blockValues++;
 	}
-	
-	@Override
-	protected void writeValueTypeValid(QName valueContext)
-			throws IOException {
-		// System.out.println("ValueType = " + lastValue + " " + this.context);
-		updateContextValue(valueContext, lastValue, lastDatatype);
-	}
 
 	@Override
-	public void writeValueAsString(QName valueContext, String value)
-			throws IOException {
-		// System.out.println("ValueString = " + lastValue + " " +
-		// this.context);
-		updateContextValue(valueContext, value, BuiltIn.DEFAULT_DATATYPE);
+	protected void writeValue(QName valueContext) throws IOException {
+		updateContextValue(valueContext, lastValue, lastDatatype);
 	}
+	
+//	@Override
+//	protected void writeValueTypeValid(QName valueContext)
+//			throws IOException {
+//		updateContextValue(valueContext, lastValue, lastDatatype);
+//	}
+//
+//	@Override
+//	public void writeValueAsString(QName valueContext, String value)
+//			throws IOException {
+//		updateContextValue(valueContext, value, BuiltIn.DEFAULT_DATATYPE);
+//	}
 
 	protected OutputStream getStream() {
 		if (codingMode == CodingMode.COMPRESSION) {

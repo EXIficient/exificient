@@ -25,7 +25,6 @@ import java.math.BigInteger;
 import java.util.Calendar;
 
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
 
 /**
@@ -60,8 +59,6 @@ public interface EncoderChannel {
 	 * and true value is encode as bit (byte) 1.
 	 */
 	public void encodeBoolean(boolean b) throws IOException;
-
-	public void encodeBoolean(XSDBoolean b) throws IOException;
 
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.
