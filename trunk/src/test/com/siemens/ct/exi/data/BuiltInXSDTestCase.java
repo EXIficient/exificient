@@ -31,6 +31,7 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 
 	public static void setupQuickTest() {
 		setConfigurationBuiltInXSDIntVal ( );
+		// setConfigurationBuiltInXSDFloatVal ( );
 	}
 
 	protected void setUp() {

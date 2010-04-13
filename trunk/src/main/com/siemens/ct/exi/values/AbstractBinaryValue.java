@@ -18,13 +18,12 @@
 
 package com.siemens.ct.exi.values;
 
-import com.siemens.ct.exi.util.datatype.XSDBase64;
-
-public class BinaryValue extends AbstractValue {
+abstract public class AbstractBinaryValue extends AbstractValue {
 
 	protected final byte[] bytes;
+	protected String sValue;
 
-	public BinaryValue(byte[] bytes) {
+	public AbstractBinaryValue(byte[] bytes) {
 		this.bytes = bytes;
 	}
 	
@@ -32,17 +31,25 @@ public class BinaryValue extends AbstractValue {
 		return bytes;
 	}
 	
+	abstract protected void init();
+	
 	public int getCharactersLength() {
 		if (slen == -1) {
-			slen = XSDBase64.getCharactersLength(bytes);
+			init();
 		}
 		return slen;
 	}
 	
-	
 	public char[] toCharacters(char[] cbuffer, int offset) {
-		XSDBase64.encode(bytes, cbuffer, offset);
-		return cbuffer;	
+		return sValue.toCharArray();
+	}
+	
+	@Override
+	public String toString() {
+		if (slen == -1) {
+			init();
+		}
+		return sValue;
 	}
 
 }

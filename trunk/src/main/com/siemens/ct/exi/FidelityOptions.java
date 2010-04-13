@@ -45,10 +45,7 @@ public class FidelityOptions {
 
 	/* attribute schemaLocation (also noNamespaceSchemaLocation) is preserved */
 	public static final String FEATURE_XSI_SCHEMALOCATION = "PRESERVE_XSI_SCHEMALOCATION";
-
-	/* redundant xsi:nil="false" attribute is preserved */
-	public static final String FEATURE_XSI_NIL_FALSE = "PRESERVE_XSI_NIL_FALSE";
-
+	
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
@@ -118,7 +115,6 @@ public class FidelityOptions {
 		fo.options.add(FEATURE_SC);
 
 		fo.options.add(FEATURE_XSI_SCHEMALOCATION);
-		fo.options.add(FEATURE_XSI_NIL_FALSE);
 
 		return fo;
 	}
@@ -137,18 +133,13 @@ public class FidelityOptions {
 		if (key.equals(FEATURE_STRICT)) {
 			if (decision) {
 				// no other features allowed
-				// (LEXICAL_VALUE & XSI_NIL_FALSE are exceptions)
+				// (LEXICAL_VALUE is an exception)
 				boolean prevContainedLexVal = options
 						.contains(FEATURE_LEXICAL_VALUE);
-				boolean prevContainedXsiNilFalse = options
-						.contains(FEATURE_XSI_NIL_FALSE);
 
 				options.clear();
 				if (prevContainedLexVal) {
 					options.add(FEATURE_LEXICAL_VALUE);
-				}
-				if (prevContainedXsiNilFalse) {
-					options.add(FEATURE_XSI_NIL_FALSE);
 				}
 				options.add(FEATURE_STRICT);
 
@@ -158,10 +149,8 @@ public class FidelityOptions {
 				options.remove(key);
 				isStrict = false;
 			}
-		} else if (key.equals(FEATURE_LEXICAL_VALUE)
-				|| key.equals(FEATURE_XSI_NIL_FALSE)) {
-			// LEXICAL_VALUE & XSI_NIL_FALSE is special given that those do not
-			// affect grammars
+		} else if (key.equals(FEATURE_LEXICAL_VALUE) ) {
+			// LEXICAL_VALUE is special --> does affect grammars
 			if (decision) {
 				options.add(key);
 			} else {

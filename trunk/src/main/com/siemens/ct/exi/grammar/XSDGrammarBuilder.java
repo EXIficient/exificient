@@ -74,7 +74,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
-	
+
 	// attribute wildcard namespaces
 	protected List<String> atWildcardNamespaces;
 
@@ -224,7 +224,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
-			StringBuffer sb = new StringBuffer("Problem occured while building XML Schema Model (XSModel)!");
+			StringBuffer sb = new StringBuffer(
+					"Problem occured while building XML Schema Model (XSModel)!");
 
 			for (int i = 0; i < schemaParsingErrors.size(); i++) {
 				sb.append("\n. " + schemaParsingErrors.get(i));
@@ -263,11 +264,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 
 			// add schema entry
-			additionalSchemaEntries[i] = new GrammarURIEntry(uri, localNamesArray, null);
+			additionalSchemaEntries[i] = new GrammarURIEntry(uri,
+					localNamesArray, null);
 		}
 
-		SchemaInformedGrammar sig = new SchemaInformedGrammar(additionalSchemaEntries,
-				fragmentElements, globalElements);
+		SchemaInformedGrammar sig = new SchemaInformedGrammar(
+				additionalSchemaEntries, fragmentElements, globalElements);
 
 		/*
 		 * type grammar
@@ -313,10 +315,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
-		
+
 		// any attribute namespaces
-		for(String atWildcardURI : this.atWildcardNamespaces) {
-			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI : atWildcardURI;
+		for (String atWildcardURI : this.atWildcardNamespaces) {
+			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
+					: atWildcardURI;
 			if (isNamespacesOfInterest(atWildcardURI)) {
 				sortedURIs.add(atWildcardURI);
 			}
@@ -370,7 +373,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			QName name = new QName(td.getNamespace(), td.getName());
 			SchemaInformedRule sir = translateTypeDefinitionToFSA(td);
-			
+
 			grammarTypes.put(name, sir);
 		}
 
@@ -413,8 +416,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				elementRule.setNillable(elementDecl.getNillable());
 			} else {
 				// fetch existing grammar from pre-processed type
-				elementRule = getTypeGrammar(td.getNamespace(), td
-						.getName());
+				elementRule = getTypeGrammar(td.getNamespace(), td.getName());
 
 				// *duplicate* first productions to allow different behavior
 				// (e.g. property nillable is element dependent)
@@ -442,30 +444,31 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			at = attributePool.get(attrDecl);
 		} else {
 			// AT datatype
-			XSSimpleTypeDefinition attrTypeDefinition = attrDecl
-					.getTypeDefinition();
-			QName qNameType;
-			if (attrTypeDefinition.getAnonymous()) {
-				XSTypeDefinition tdBase = attrTypeDefinition.getBaseType();
-				if (tdBase.getName() == null) {
-					qNameType = BuiltIn.DEFAULT_VALUE_NAME;
-				} else {
-					qNameType = new QName(tdBase.getNamespace(), tdBase
-							.getName());
-				}
-			} else {
-				qNameType = new QName(attrTypeDefinition.getNamespace(),
-						attrTypeDefinition.getName());
-			}
-
+			XSSimpleTypeDefinition td = attrDecl.getTypeDefinition();
+			QName qNameType = getQNameForValueType(td);
 			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
-			at = new Attribute(qname, qNameType, BuiltIn
-					.getDatatype(attrTypeDefinition));
+			at = new Attribute(qname, qNameType, BuiltIn.getDatatype(td));
 			attributePool.put(attrDecl, at);
 		}
 
 		return at;
+	}
+
+	protected QName getQNameForValueType(XSSimpleTypeDefinition typeDefinition) {
+		QName qNameType;
+		if (typeDefinition.getAnonymous()) {
+			XSTypeDefinition tdBase = typeDefinition.getBaseType();
+			if (tdBase.getName() == null) {
+				qNameType = BuiltIn.DEFAULT_VALUE_NAME;
+			} else {
+				qNameType = new QName(tdBase.getNamespace(), tdBase.getName());
+			}
+		} else {
+			qNameType = new QName(typeDefinition.getNamespace(), typeDefinition
+					.getName());
+		}
+		return qNameType;
 	}
 
 	protected SchemaInformedRule handleAttributes(
@@ -523,7 +526,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					// optional --> join top level events
 					for (int k = 0; k < ruleStart.getNumberOfEvents(); k++) {
 						EventInformation ei = ruleStart.lookFor(k);
-						if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC) || ei.event.isEventType(EventType.ATTRIBUTE_NS)) {
+						if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC)
+								|| ei.event.isEventType(EventType.ATTRIBUTE_NS)) {
 							// AT(*) & AT(uri:*) wilcards added before
 						} else {
 							newCurrent.addRule(ei.event, ei.next);
@@ -566,7 +570,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			for (int k = 0; k < sl.getLength(); k++) {
 				String namespace = sl.item(k);
 				rule.addRule(new AttributeNS(namespace), rule);
-				//	add attribute wildcard URI
+				// add attribute wildcard URI
 				if (!atWildcardNamespaces.contains(namespace)) {
 					atWildcardNamespaces.add(namespace);
 				}
@@ -643,8 +647,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * @return
 	 * @throws EXIException
 	 */
-	protected SchemaInformedRule translateTypeDefinitionToFSA(XSTypeDefinition td)
-			throws EXIException {
+	protected SchemaInformedRule translateTypeDefinitionToFSA(
+			XSTypeDefinition td) throws EXIException {
 		SchemaInformedRule type_i = null;
 		SchemaInformedRule typeEmpty_i = null;
 

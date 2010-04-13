@@ -31,6 +31,7 @@ import org.xml.sax.helpers.NamespaceSupport;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.datatype.QNameDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
@@ -50,7 +51,11 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
  */
 
 public abstract class AbstractEXICoder {
-
+	
+	// xsi:type & nil
+	static final QName XSI_NIL = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
+	static final QName XSI_TYPE = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
+	
 	// factory
 	protected final EXIFactory exiFactory;
 	protected final Grammar grammar;
@@ -64,8 +69,9 @@ public abstract class AbstractEXICoder {
 	// namespaces/prefixes
 	protected NamespaceSupport namespaces;
 	
-	//	QName datatype (coder)
+	//	QName and Boolean datatype (coder)
 	protected QNameDatatype qnameDatatype;
+	protected BooleanDatatype booleanDatatype;
 
 	// element-context and rule (stack) while traversing the EXI document
 	protected ElementContext elementContext;
@@ -73,10 +79,6 @@ public abstract class AbstractEXICoder {
 	private ElementContext[] elementContextStack;
 	private int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
-	
-	//	xsi:type
-	protected static final QName xsiType = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-			Constants.XSI_TYPE);
 	
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
@@ -104,6 +106,8 @@ public abstract class AbstractEXICoder {
 		// QName datatype (coder)
 		qnameDatatype = new QNameDatatype(null, namespaces, preservePrefix);
 		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
+		// Boolean datatype
+		booleanDatatype = new BooleanDatatype(null);
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {

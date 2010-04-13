@@ -20,116 +20,146 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
+import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.Value;
 
 public class BooleanTest extends AbstractTestCase {
-
-	XSDBoolean bool = XSDBoolean.newInstance();
-
+	
 	public BooleanTest(String testName) {
 		super(testName);
 	}
 
 	public void testBoolean0() throws IOException {
 		String s = "0";
-		boolean valid = bool.parse(s);
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
-
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
+		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBoolean() == false);
+		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val1.toString()));
 		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBoolean() == false);
+		bool.writeValue(getByteEncoder(), null, null);
+		Value val2 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val2.toString()));
 	}
-
-	public void testBoolean00() throws IOException {
-		String s = "0";
-		boolean valid = bool.parse(s);
-		assertTrue(valid);
-
-		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
-		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanValue().toString().equals(
-				Constants.XSD_BOOLEAN_0));
-		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanValue().toString().equals(
-				Constants.XSD_BOOLEAN_0));
-	}
-
-	public void testBooleanFalse() throws IOException {
-		String s = "false";
-		boolean valid = bool.parse(s);
-		assertTrue(valid);
-
-		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
-		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBoolean() == false);
-		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBoolean() == false);
-	}
-
+	
 	public void testBoolean1() throws IOException {
 		String s = "1";
-		boolean valid = bool.parse(s);
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
-
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
+		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBoolean() == true);
+		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val1.toString()));
 		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBoolean() == true);
+		bool.writeValue(getByteEncoder(), null, null);
+		Value val2 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val2.toString()));
 	}
-
-	public void testBoolean11() throws IOException {
-		String s = "1";
-		boolean valid = bool.parse(s);
+	
+	public void testBooleanFalse() throws IOException {
+		String s = "false";
+		boolean v = false;
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
-
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
+		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBooleanValue().toString().equals(
-				Constants.XSD_BOOLEAN_1));
+		BooleanValue val1 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		assertTrue(v == val1.toBoolean());
 		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBooleanValue().toString().equals(
-				Constants.XSD_BOOLEAN_1));
+		bool.writeValue(getByteEncoder(), null, null);
+		BooleanValue val2 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		assertTrue(v == val2.toBoolean() );
 	}
-
+	
 	public void testBooleanTrue() throws IOException {
 		String s = "true";
-		boolean valid = bool.parse(s);
+		boolean v = true;
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
-
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeBoolean(bool);
+		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeBoolean() == true);
+		BooleanValue val1 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		assertTrue(v == val1.toBoolean());
 		// Byte
-		getByteEncoder().encodeBoolean(bool);
-		assertTrue(getByteDecoder().decodeBoolean() == true);
+		bool.writeValue(getByteEncoder(), null, null);
+		BooleanValue val2 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		assertTrue(v == val2.toBoolean());
 	}
-
-	public void testBooleanFailure() throws IOException {
-		String s = "trueX";
-		boolean isValid = bool.parse(s);
-		assertFalse(isValid);
+	
+	public void testBooleanFalsePatternFalse() throws IOException {
+		String s = "false";
+		
+		Datatype bool = new BooleanPatternDatatype(null);
+		boolean valid =  bool.isValid(s);
+		assertTrue(valid);
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bool.writeValue(bitEC, null, null);
+		bitEC.flush();
+		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val1.toString()));
+		// Byte
+		bool.writeValue(getByteEncoder(), null, null);
+		Value val2 = bool.readValue(getByteDecoder(), null, null);
+		assertTrue(s.equals(val2.toString()));
+	}
+	
+	public void testBooleanTruePatternFalse() throws IOException {
+		String s = "true";
+		
+		Datatype bool = new BooleanPatternDatatype(null);
+		boolean valid =  bool.isValid(s);
+		assertTrue(valid);
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bool.writeValue(bitEC, null, null);
+		bitEC.flush();
+		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		assertTrue(s.equals(val1.toString()));
+		// Byte
+		bool.writeValue(getByteEncoder(), null, null);
+		Value val2 = bool.readValue(getByteDecoder(), null, null);
+		assertTrue(s.equals(val2.toString()));
+	}
+	
+	public void testBooleanFailure1() throws IOException {
+		String s = "00";
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
+		assertFalse(valid);
+	}
+	
+	public void testBooleanFailure2() throws IOException {
+		String s = "fAlse";
+		
+		Datatype bool = new BooleanDatatype(null);
+		boolean valid =  bool.isValid(s);
+		assertFalse(valid);
 	}
 
 }

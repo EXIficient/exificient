@@ -41,7 +41,6 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
@@ -49,9 +48,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	// prefix of previous start element (relevant for preserving prefixes)
 	protected String sePrefix = null;
-
-	// to parse raw nil value
-	protected XSDBoolean nil;
 
 	// OutputStream & Channel
 	protected EncoderChannel channel;
@@ -62,10 +58,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public AbstractEXIEncoder(EXIFactory exiFactory) {
 		super(exiFactory);
-
-		// xsi:nil
-		nil = XSDBoolean.newInstance();
-
+		
 		// init once
 		typeEncoder = exiFactory.createTypeEncoder();
 	}
@@ -104,34 +97,11 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		channel.encodeString(text);
 	}
 
-	protected EventInformation lookForAttribute(String uri, String localName) {
-		EventInformation ei;
-
-		// try to find declared AT(uri:localName)
-		ei = currentRule.lookForAttribute(uri, localName);
-
-		if (ei == null) {
-			// try to find declared AT(uri:*)
-			ei = currentRule.lookForAttributeNS(uri);
-
-			if (ei == null) {
-				// try to find declared AT(*), generic AT on first level
-				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
-			}
-		}
-
-		return ei;
-	}
-
 	protected boolean isTypeValid(Datatype datatype, String value) {
 		return typeEncoder.isValid(datatype, value);
 	}
 
-	protected abstract void writeValueTypeValid(QName valueContext)
-			throws IOException;
-
-	protected abstract void writeValueAsString(QName valueContext, String value)
-			throws IOException;
+	protected abstract void writeValue(QName valueContext) throws IOException;
 
 	/*
 	 * Event-Codes
@@ -231,7 +201,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 			// encode local-name only
-			// QName qname = writeLocalName(localName, uri);
 			QName qname = qnameDatatype.writeLocalName(localName, uri, prefix,
 					channel);
 			// next rule at the top
@@ -342,6 +311,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public void encodeXsiType(String raw, String pfx) throws EXIException,
 			IOException {
+
 		// extract prefix
 		String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
 		// retrieve uri
@@ -389,8 +359,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 								EventType.ATTRIBUTE_GENERIC_UNDECLARED,
 								fidelityOptions);
 				if (ec2 != Constants.NOT_FOUND) {
-					// currentRule.learnAttribute(new Attribute(xsiType));
 					encode2ndLevelEventCode(ec2);
+					currentRule.learnAttribute(new Attribute(XSI_TYPE));
 				} else {
 					throw new EXIException("TypeCast " + raw
 							+ " not encodable!");
@@ -417,49 +387,63 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			IOException {
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
-			if (nil.parse(value)) {
+			
+			// if (nil.parse(value)) {
+			if (booleanDatatype.isValid(value)) {
 				// schema-valid boolean
-				boolean bnil = nil.getBoolean();
+				int ec2 = siCurrentRule.get2ndLevelEventCode(
+						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
 
-				// strip use-less xsi:nil values
-				if (bnil
-						|| fidelityOptions
-								.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)
-						|| fidelityOptions
-								.isFidelityEnabled(FidelityOptions.FEATURE_XSI_NIL_FALSE)) {
-					int ec2 = siCurrentRule.get2ndLevelEventCode(
-							EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
+				if (ec2 != Constants.NOT_FOUND) {
+					// encode event-code only
+					encode2ndLevelEventCode(ec2);
+					// prefix
+					qnameDatatype.encodeQNamePrefix(
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+							pfx, channel);
 
-					if (ec2 != Constants.NOT_FOUND) {
-						// encode event-code only
-						encode2ndLevelEventCode(ec2);
-						// prefix
-						qnameDatatype.encodeQNamePrefix(
-								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-								pfx, channel);
+					// encode nil value as Boolean
+					booleanDatatype.writeValue(channel, typeEncoder.getStringEncoder(), XSI_NIL);
 
+					if (booleanDatatype.getBoolean()) { // jump to typeEmpty
+						// update current rule
+						currentRule = siCurrentRule.getTypeEmpty();
+					}
+				} else {
+					EventInformation ei = currentRule
+							.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+					if (ei != null) {
+						encode1stLevelEventCode(ei.getEventCode());
+						// qname & prefix
+						qnameDatatype
+								.encodeQName(
+										XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+										Constants.XSI_NIL, pfx, channel);
 						// encode nil value as Boolean
-						channel.encodeBoolean(bnil);
 
-						if (bnil) { // jump to typeEmpty
+						booleanDatatype.writeValue(channel, typeEncoder.getStringEncoder(), XSI_NIL);
+						
+						if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 							// update current rule
 							currentRule = siCurrentRule.getTypeEmpty();
 						}
 					} else {
-						// try to encode xsi:nil as *normal* attribute
-						encodeAttribute(
-								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-								Constants.XSI_NIL, pfx, value);
+						throw new EXIException("Attribute xsi=nil='"
+								+ value + "' cannot be encoded!");
 					}
 				}
 			} else {
 				// If the value is not a schema-valid Boolean, the
-				// AT (xsi:nil) event is represented by the AT(*)
-				// [schema-invalid value] terminal
-				// encode invalid 2nd level AT event-code
-				encodeAttributeAnySchemaInvalid(
+				// AT (xsi:nil) event is represented by
+				// the AT (*) [untyped value] terminal
+				encodeSchemaInvalidAttributeEventCode(currentRule
+						.getNumberOfDeclaredAttributes());
+				qnameDatatype.encodeQName(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_NIL, pfx, value);
+						Constants.XSI_NIL, pfx, channel);
+				Datatype datatype = BuiltIn.DEFAULT_DATATYPE;
+				isTypeValid(datatype, value);
+				writeValue(XSI_NIL);
 			}
 		} else {
 			// encode as any other attribute
@@ -468,132 +452,165 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 
+	protected void encodeSchemaInvalidAttributeEventCode(int eventCode3)
+			throws IOException {
+		// schema-invalid AT
+		int ec2ATdeviated = currentRule.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
+		encode2ndLevelEventCode(ec2ATdeviated);
+		// encode 3rd level event-code
+		// AT specialty: calculate 3rd level attribute event-code
+		// int eventCode3 = ei.getEventCode()
+		// - currentRule.getLeastAttributeEventCode();
+		channel.encodeNBitUnsignedInteger(eventCode3,
+				MethodsBag.getCodingLength(currentRule
+						.getNumberOfDeclaredAttributes() + 1));
+	}
+
 	public void encodeAttribute(final String uri, final String localName,
 			String prefix, String value) throws EXIException, IOException {
-		EventInformation ei = this.lookForAttribute(uri, localName);
+//		if (localName.equals("aJ4M2")) {
+//			System.out.println("dasdasda");
+//		}
 
-		if (ei != null) {
-			EventType eventType = ei.event.getEventType();
+		EventInformation ei;
+		Datatype datatype;
+		QName atContext;
+		Rule next;
 
-			Datatype datatype;
-			QName atContext;
-
-			if (eventType == EventType.ATTRIBUTE) {
-				Attribute at = (Attribute) (ei.event);
-				datatype = at.getDatatype();
-				atContext = at.getQName();
-			} else {
-				assert (eventType == EventType.ATTRIBUTE_NS || eventType == EventType.ATTRIBUTE_GENERIC);
-
-				if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(uri)
-						&& Constants.XSI_TYPE.equals(localName)) {
-					// If qname is xsi:type, let target-type be the value of the
-					// xsi:type attribute and assign it the QName datatype
-					// representation
-					datatype = this.qnameDatatype;
-					atContext = null;
-				} else {
-					// global attribute ?
-					// TODO avoid qname creation
-					Attribute globalAT = grammar.getGlobalAttribute(new QName(
-							uri, localName));
-					datatype = globalAT == null ? BuiltIn.DEFAULT_DATATYPE
-							: globalAT.getDatatype();
-					atContext = null;
-				}
-			}
-
-			boolean valid = false;
-
-			// encode event-code
+		if ((ei = currentRule.lookForAttribute(uri, localName)) != null) {
+			// declared AT(uri:localName)
+			Attribute at = (Attribute) (ei.event);
+			atContext = at.getQName();
+			datatype = at.getDatatype();
+			next = ei.next;
 			if (isTypeValid(datatype, value)) {
-				// schema-valid
-				valid = true;
 				encode1stLevelEventCode(ei.getEventCode());
+				qnameDatatype.encodeQNamePrefix(uri, prefix, channel);
 			} else {
-				// schema-invalid AT
-				int ec2ATdeviated = currentRule.get2ndLevelEventCode(
-						EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
-				encode2ndLevelEventCode(ec2ATdeviated);
-				// encode 3rd level event-code
 				// AT specialty: calculate 3rd level attribute event-code
 				int eventCode3 = ei.getEventCode()
 						- currentRule.getLeastAttributeEventCode();
-				channel.encodeNBitUnsignedInteger(eventCode3, MethodsBag
-						.getCodingLength(currentRule
-								.getNumberOfSchemaDeviatedAttributes()));
-			}
-
-			// EventType.ATTRIBUTE --> qname already known
-			if (eventType == EventType.ATTRIBUTE) {
-				// qname implicit by AT(qname) event, prefix only missing
+				encodeSchemaInvalidAttributeEventCode(eventCode3);
 				qnameDatatype.encodeQNamePrefix(uri, prefix, channel);
-			} else {
-				if (eventType == EventType.ATTRIBUTE_NS) {
-					// encode localName only
-					atContext = qnameDatatype.writeLocalName(localName, uri,
-							prefix, channel);
+				datatype = BuiltIn.DEFAULT_DATATYPE;
+				isTypeValid(datatype, value);
+			}
+		} else if ((ei = currentRule.lookForAttributeNS(uri)) != null
+				|| (ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC)) != null) {
+			// declared AT(uri:*) OR declared AT(*)
+			atContext = new QName(uri, localName);
+			next = ei.next;
+			/*
+			 * If a global attribute definition exists for qname, let
+			 * global-type be the datatype of the global attribute.
+			 */
+			Attribute globalAT = grammar.getGlobalAttribute(atContext);
+			if (globalAT != null) {
+				datatype = globalAT.getDatatype();
+				if (isTypeValid(datatype, value)) {
+					/*
+					 * If the attribute value can be represented using the
+					 * datatype representation associated with global-type, it
+					 * SHOULD be represented using the datatype representation
+					 * associated with global-type (see 7. Representing Event
+					 * Content).
+					 */
+					encode1stLevelEventCode(ei.getEventCode());
 				} else {
-					assert (eventType == EventType.ATTRIBUTE_GENERIC);
-					// encode entire expanded name
-					atContext = qnameDatatype.encodeQName(uri, localName,
-							prefix, channel);
+					/*
+					 * If the attribute value is not represented using the
+					 * datatype representation associated with global-type,
+					 * represent the attribute event using the AT (*) [untyped
+					 * value] terminal (see 8.5.4.4 Undeclared Productions).
+					 */
+					// AT (*) [untyped value] Element i, j n.(m+1).(x)
+					// x represents the number of attributes declared in the
+					// schema for this context
+					encodeSchemaInvalidAttributeEventCode(currentRule
+							.getNumberOfDeclaredAttributes());
+					datatype = BuiltIn.DEFAULT_DATATYPE;
+					isTypeValid(datatype, value);
 				}
+			} else {
+				// NO global attribute
+				encode1stLevelEventCode(ei.getEventCode());
+				datatype = BuiltIn.DEFAULT_DATATYPE;
+				isTypeValid(datatype, value);
+			}
+			// qname
+			if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC)) {
+				qnameDatatype.encodeQName(uri, localName, prefix, channel);
+			} else {
+				assert (ei.event.isEventType(EventType.ATTRIBUTE_NS));
+				qnameDatatype.writeLocalName(localName, uri, prefix, channel);
 			}
 
-			if (valid) {
-				// encode value type-aware
-				writeValueTypeValid(atContext);
-			} else {
-				// encode content as string
-				writeValueAsString(atContext, value);
-			}
-			// update current rule
-			currentRule = ei.next;
 		} else {
 			// Undeclared AT(*) can be found on 2nd level
+			next = currentRule;
+
 			int ecATundeclared = currentRule.get2ndLevelEventCode(
 					EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions);
 
-			if (ecATundeclared != Constants.NOT_FOUND) {
+			if (ecATundeclared == Constants.NOT_FOUND) {
+				assert (fidelityOptions.isStrict());
+				throw new EXIException("Attribute '" + localName
+						+ "' cannot be encoded!");
+			}
+			assert (ecATundeclared != Constants.NOT_FOUND);
+
+			Attribute globalAT;
+			if (currentRule.isSchemaInformed()
+					&& (globalAT = grammar.getGlobalAttribute(new QName(uri,
+							localName))) != null) {
+				datatype = globalAT.getDatatype();
+				if (isTypeValid(datatype, value)) {
+					/*
+					 * If the attribute value can be represented using the
+					 * datatype representation associated with global-type, it
+					 * SHOULD be represented using the datatype representation
+					 * associated with global-type (see 7. Representing Event
+					 * Content).
+					 */
+					// encode event-code
+					encode2ndLevelEventCode(ecATundeclared);
+				} else {
+					/*
+					 * If the attribute value is not represented using the
+					 * datatype representation associated with global-type,
+					 * represent the attribute event using the AT (*) [untyped
+					 * value] terminal (see 8.5.4.4 Undeclared Productions).
+					 */
+					encodeSchemaInvalidAttributeEventCode(currentRule
+							.getNumberOfDeclaredAttributes());
+					datatype = BuiltIn.DEFAULT_DATATYPE;
+					isTypeValid(datatype, value);
+				}
+				atContext = qnameDatatype.encodeQName(uri, localName, prefix,
+						channel);
+			} else {
+				// schema-less
 				// encode event-code
 				encode2ndLevelEventCode(ecATundeclared);
 				// encode unexpected attribute & learn attribute event ?
-				QName atQName = qnameDatatype.encodeQName(uri, localName,
-						prefix, channel);
-				writeValueAsString(atQName, value);
-				currentRule.learnAttribute(new Attribute(atQName));
-			} else {
-				// Warn encoder that the attribute is simply skipped
-				// Note: should never happen except in strict mode
-				assert (fidelityOptions.isStrict());
-				throwWarning("Skip AT " + localName);
+				atContext = qnameDatatype.encodeQName(uri, localName, prefix,
+						channel);
+				currentRule.learnAttribute(new Attribute(atContext));
+				// datatype value
+				datatype = BuiltIn.DEFAULT_DATATYPE;
+				isTypeValid(datatype, value);
 			}
 		}
-	}
 
-	protected void encodeAttributeAnySchemaInvalid(final String uri,
-			final String localName, final String prefix, String value)
-			throws IOException {
-		if (fidelityOptions.isStrict()) {
-			throwWarning("Prune AT" + localName);
-		} else {
-			// encode schema-invalid value AT
-			int ec2ATdeviated = currentRule.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
-			encode2ndLevelEventCode(ec2ATdeviated);
-			// encode 3rd level event-code
-			int eventCode3 = currentRule.getNumberOfSchemaDeviatedAttributes() - 1;
-			channel.encodeNBitUnsignedInteger(eventCode3, MethodsBag
-					.getCodingLength(currentRule
-							.getNumberOfSchemaDeviatedAttributes()));
-			// qname
-			QName atQName = qnameDatatype.encodeQName(uri, localName, prefix,
-					channel);
+		// so far: event-code has been written & datatype is settled
+		// the actual value is still missing
+		assert (datatype != null);
+		assert (atContext != null);
+		writeValue(atContext);
 
-			// encode content as string
-			writeValueAsString(atQName, value);
-		}
+		// update current rule
+		currentRule = next;
 	}
 
 	public void encodeCharacters(String chars) throws EXIException, IOException {
@@ -607,7 +624,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			// --> encode EventCode, schema-valid content plus grammar moves
 			// on
 			encode1stLevelEventCode(ei.getEventCode());
-			writeValueTypeValid(elementContext.qname);
+			writeValue(elementContext.qname);
 			// update current rule
 			currentRule = ei.next;
 		} else {
@@ -617,11 +634,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			if (ei != null) {
 				// encode EventCode
 				encode1stLevelEventCode(ei.getEventCode());
-				// encode schema-invalid content as string plus moves on in
-				// grammar
+				// encode schema-invalid content as string
+				isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
+				writeValue(elementContext.qname);
+				// writeValueAsString(elementContext.qname, chars);
 				// update current rule
 				currentRule = ei.next;
-				writeValueAsString(elementContext.qname, chars);
 			} else {
 				// Note: Do we really want to encode any whitespace characters?
 				String trim = chars.trim();
@@ -642,7 +660,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 						// learn characters event ?
 						currentRule.learnCharacters();
 						// content as string
-						writeValueAsString(elementContext.qname, chars);
+						// writeValueAsString(elementContext.qname, chars);
+						isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
+						writeValue(elementContext.qname);
 						// update current rule
 						currentRule = currentRule.getElementContentRule();
 					}

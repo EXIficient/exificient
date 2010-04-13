@@ -27,7 +27,6 @@ import java.util.Calendar;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDBoolean;
 import com.siemens.ct.exi.util.datatype.XSDDatetime;
 
 /**
@@ -47,11 +46,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeBinary(byte[] b) throws IOException {
 		encodeUnsignedInteger(b.length);
 		encode(b, 0, b.length);
-	}
-
-	public void encodeBoolean(XSDBoolean b) throws IOException,
-			IllegalArgumentException {
-		encodeBoolean(b.getBoolean());
 	}
 
 	/**

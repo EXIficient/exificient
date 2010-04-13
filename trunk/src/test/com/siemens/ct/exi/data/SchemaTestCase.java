@@ -45,13 +45,13 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaAttributeGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences1 ( );
 		// SchemaTestCase.setConfigurationSchemaOccurrences2 ( );
-		SchemaTestCase.setConfigurationSchemaAll ( );
+		// SchemaTestCase.setConfigurationSchemaAll ( );
 		// SchemaTestCase.setConfigurationSchemaAll2 ( );
 		// SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
-		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
+		SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
@@ -59,6 +59,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
 		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
+		// SchemaTestCase.setConfigurationGlobalAttribute1();
 		// SchemaTestCase.setConfigurationSchemaAny0 ( );
 		// SchemaTestCase.setConfigurationSchemaAny1 ( );
 		// SchemaTestCase.setConfigurationSchemaEnumeration ( );
@@ -70,6 +71,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationAttributeSpace ( );
 		// SchemaTestCase.setConfigurationBooleanPattern();
 		// SchemaTestCase.setConfigurationPattern1();
+		// SchemaTestCase.setConfigurationSchemaVehicle();
 	}
 
 	protected void setUp() {
@@ -660,6 +662,22 @@ public class SchemaTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/schema/anyAttributes.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/anyAttributes.exi");
 	}
+	
+	
+	@Test
+	public void testGlobalAttribute1() throws Exception {
+		// set up configuration
+		setConfigurationGlobalAttribute1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationGlobalAttribute1() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/globalAttribute.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/globalAttribute1.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/globalAttribute1.xml.exi");
+	}
 
 	@Test
 	public void testSchemaAny0() throws Exception {
@@ -797,4 +815,5 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/schema/pattern.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/pattern.xml.exi");
 	}
+
 }
