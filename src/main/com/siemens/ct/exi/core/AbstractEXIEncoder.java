@@ -469,10 +469,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public void encodeAttribute(final String uri, final String localName,
 			String prefix, String value) throws EXIException, IOException {
-//		if (localName.equals("aJ4M2")) {
-//			System.out.println("dasdasda");
-//		}
-
 		EventInformation ei;
 		Datatype datatype;
 		QName atContext;
