@@ -64,6 +64,13 @@ public class BooleanDatatype extends AbstractDatatype {
 		}
 		return validValue;
 	}
+	
+	@Override
+	public boolean isValidRCS(String value) {
+		// Note: boolean really needs to do a check since it can be used for xsi:nil
+		super.isValidRCS(value);
+		return isValid(value);
+	}
 
 	public boolean getBoolean() {
 		return bool;

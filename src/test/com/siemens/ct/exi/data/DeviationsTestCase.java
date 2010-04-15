@@ -36,9 +36,9 @@ public class DeviationsTestCase extends AbstractTestCase {
 		// DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype2 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype3();
-		// DeviationsTestCase.setConfigurationDeviationXsiType( );
+		DeviationsTestCase.setConfigurationDeviationXsiType( );
 		// DeviationsTestCase.setConfigurationDeviationXsiNil();
-		DeviationsTestCase.setConfigurationDeviationGlobalAttribute1();
+		// DeviationsTestCase.setConfigurationDeviationGlobalAttribute1();
 	}
 
 	protected void setUp() {

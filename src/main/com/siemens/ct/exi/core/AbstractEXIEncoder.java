@@ -41,7 +41,6 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		EXIEncoder {
@@ -311,27 +310,12 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public void encodeXsiType(String raw, String pfx) throws EXIException,
 			IOException {
-
-		// extract prefix
-		String xsiTypePrefix = QNameUtilities.getPrefixPart(raw);
-		// retrieve uri
-		String xsiTypeURI = namespaces.getURI(xsiTypePrefix);
-
 		/*
-		 * The value of each AT (xsi:type) event is represented as a QName . If
-		 * there is no namespace in scope for the specified qname prefix, the
-		 * QName uri is set to empty ("") and the QName localName is set to the
-		 * full lexical value of the QName, including the prefix.
+		 * The value of each AT (xsi:type) event is represented as a QName.
 		 */
-		String xsiTypeLocalName;
-		if (xsiTypeURI == null) {
-			xsiTypeURI = XMLConstants.NULL_NS_URI;
-			xsiTypeLocalName = raw;
-		} else {
-			xsiTypeLocalName = QNameUtilities.getLocalPart(raw);
-		}
-
-		QName xsiQName = new QName(xsiTypeURI, xsiTypeLocalName);
+		typeEncoder.isValid(qnameDatatype, raw);
+		
+		QName xsiQName = qnameDatatype.getQName();
 		SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
 
 		int ec2 = currentRule.get2ndLevelEventCode(
@@ -373,9 +357,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 
 		// xsi:type value "content" as qname
-		qnameDatatype.encodeQName(xsiTypeURI, xsiTypeLocalName, xsiTypePrefix,
-				channel);
-
+		typeEncoder.writeValue(XSI_TYPE, channel);
+		
 		// grammar exists ?
 		if (tg != null) {
 			// update grammar according to given xsi:type
@@ -388,8 +371,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 			
-			// if (nil.parse(value)) {
-			if (booleanDatatype.isValid(value)) {
+			if (typeEncoder.isValid(booleanDatatype, value)) {
 				// schema-valid boolean
 				int ec2 = siCurrentRule.get2ndLevelEventCode(
 						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
@@ -403,8 +385,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 							pfx, channel);
 
 					// encode nil value as Boolean
-					booleanDatatype.writeValue(channel, typeEncoder.getStringEncoder(), XSI_NIL);
-
+					typeEncoder.writeValue(XSI_NIL, channel);
+					
 					if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 						// update current rule
 						currentRule = siCurrentRule.getTypeEmpty();
@@ -419,9 +401,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 								.encodeQName(
 										XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 										Constants.XSI_NIL, pfx, channel);
+						
 						// encode nil value as Boolean
-
-						booleanDatatype.writeValue(channel, typeEncoder.getStringEncoder(), XSI_NIL);
+						typeEncoder.writeValue(XSI_NIL, channel);
 						
 						if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 							// update current rule

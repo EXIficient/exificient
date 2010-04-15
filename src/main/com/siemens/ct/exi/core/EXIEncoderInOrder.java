@@ -62,18 +62,5 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 			throws IOException {
 		typeEncoder.writeValue(valueContext, channel);
 	}
-	
-//	@Override
-//	protected void writeValueTypeValid(QName valueContext)
-//			throws IOException {
-//		typeEncoder.writeValue(valueContext, channel);
-//	}
-//
-//	@Override
-//	protected void writeValueAsString(QName valueContext, String value)
-//			throws IOException {
-//		typeEncoder.getStringEncoder().writeValue(valueContext, channel, value);
-//	}
-
 
 }
