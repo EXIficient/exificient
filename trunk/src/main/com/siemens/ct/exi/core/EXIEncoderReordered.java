@@ -81,18 +81,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected void writeValue(QName valueContext) throws IOException {
 		updateContextValue(valueContext, lastValue, lastDatatype);
 	}
-	
-//	@Override
-//	protected void writeValueTypeValid(QName valueContext)
-//			throws IOException {
-//		updateContextValue(valueContext, lastValue, lastDatatype);
-//	}
-//
-//	@Override
-//	public void writeValueAsString(QName valueContext, String value)
-//			throws IOException {
-//		updateContextValue(valueContext, value, BuiltIn.DEFAULT_DATATYPE);
-//	}
 
 	protected OutputStream getStream() {
 		if (codingMode == CodingMode.COMPRESSION) {

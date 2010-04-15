@@ -43,7 +43,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.BooleanValue;
-import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -57,9 +57,6 @@ import com.siemens.ct.exi.values.Value;
 
 public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		EXIDecoder {
-	
-	static final Value XSD_BOOLEAN_TRUE_VALUE = new StringValue(Constants.XSD_BOOLEAN_TRUE_ARRAY);
-	static final Value XSD_BOOLEAN_FALSE_VALUE = new StringValue(Constants.XSD_BOOLEAN_FALSE_ARRAY);
 	
 	// next event
 	protected Event nextEvent;
@@ -80,9 +77,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected QName attributeQName;
 	protected String attributePrefix;
 	protected Value attributeValue;
-	protected QName xsiTypeQName;
-	protected String xsiTypePrefix;
-	protected boolean xsiNil;
 	protected Value characters;
 	protected String docTypeName;
 	protected String docTypePublicID;
@@ -210,20 +204,22 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	 */
 	protected void decodeAttributeXsiNilStructure() throws EXIException,
 			IOException {
-		Value v = booleanDatatype.readValue(channel, typeDecoder.getStringDecoder(), XSI_NIL);
-		assert(v instanceof BooleanValue);
-		BooleanValue bv = (BooleanValue) v;
-		xsiNil = bv.toBoolean();
-		// xsiNil = channel.decodeBoolean();
+		attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
+		boolean xsiNil;
+		
+		if (attributeValue instanceof BooleanValue) {
+			BooleanValue bv = (BooleanValue) attributeValue;
+			xsiNil = bv.toBoolean();	
+		} else {
+			// parse string value again (lexical value mode)
+			booleanDatatype.isValid(attributeValue.toString());
+			xsiNil = booleanDatatype.getBoolean();
+		}
 
 		if (xsiNil && currentRule.isSchemaInformed()) {
 			// jump to typeEmpty
 			currentRule = ((SchemaInformedRule)currentRule).getTypeEmpty();
 		}
-
-		attributeValue = xsiNil ? XSD_BOOLEAN_TRUE_VALUE
-				: XSD_BOOLEAN_FALSE_VALUE;
-		// attributePrefix = null;
 	}
 
 	/*
@@ -232,10 +228,17 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void decodeAttributeXsiTypeStructure() throws EXIException,
 			IOException {
 		//	type qname & prefix
-		xsiTypeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
-		xsiTypePrefix = qnameDatatype.decodeQNamePrefix(xsiTypeQName, channel);
-		attributeValue = new StringValue(getQualifiedName(xsiTypeQName, xsiTypePrefix));
-		attributePrefix = null;
+		QName xsiTypeQName;
+		attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE, channel);
+		
+		if (attributeValue instanceof QNameValue) {
+			QNameValue qnv = (QNameValue) attributeValue;
+			xsiTypeQName = qnv.toQName();
+		} else {
+			// parse string value again (lexical value mode)
+			qnameDatatype.isValid(attributeValue.toString());
+			xsiTypeQName = qnameDatatype.getQName();
+		}
 		
 		// update grammar according to given xsi:type
 		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);

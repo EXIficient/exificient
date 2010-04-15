@@ -48,7 +48,7 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 
 	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException {
-		datatype.getRestrictedCharacterSet();
+		// datatype.getRestrictedCharacterSet();
 		return datatype.readValueRCS(rcsDatatype, valueChannel, stringDecoder, context);
 	}
 }

@@ -51,9 +51,9 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
-		SchemaTestCase.setConfigurationSchemaNillable1 ( );
+		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
-		// SchemaTestCase.setConfigurationSchemaXsiType();
+		SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );

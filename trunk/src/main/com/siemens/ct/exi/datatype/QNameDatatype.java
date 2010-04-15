@@ -37,6 +37,8 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
+import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -50,8 +52,9 @@ import com.siemens.ct.exi.values.Value;
 
 public class QNameDatatype extends AbstractDatatype {
 
-	protected String qnameURI;
-	protected String qnameLocalName;
+//	protected String qnameURI;
+//	protected String qnameLocalName;
+	protected QName qname;
 	protected String qnamePrefix;
 	
 	protected NamespaceSupport namespaces;
@@ -148,38 +151,47 @@ public class QNameDatatype extends AbstractDatatype {
 	
 	///////////////////////////////////////////////////
 
-	public boolean isValid(String value) {
-		throw new RuntimeException("QNameDatatype isValid(...) should never be called");
+	public boolean isValid(String value) {		
+		// extract prefix
+		qnamePrefix = QNameUtilities.getPrefixPart(value);
+		// retrieve uri
+		String qnameURI = namespaces.getURI(qnamePrefix);
+
+		/*
+		 * If there is no namespace in scope for the specified qname prefix, the
+		 * QName uri is set to empty ("") and the QName localName is set to the
+		 * full lexical value of the QName, including the prefix.
+		 */
+		String qnameLocalName;
+		if (qnameURI == null) {
+			qnameURI = XMLConstants.NULL_NS_URI;
+			qnameLocalName = value;
+		} else {
+			qnameLocalName = QNameUtilities.getLocalPart(value);
+		}
 		
-//		// extract prefix
-//		qnamePrefix = QNameUtilities.getPrefixPart(value);
-//		// retrieve uri
-//		qnameURI = namespaces.getURI(qnamePrefix);
-//
-//		/*
-//		 * If there is no namespace in scope for the specified qname prefix, the
-//		 * QName uri is set to empty ("") and the QName localName is set to the
-//		 * full lexical value of the QName, including the prefix.
-//		 */
-//		if (qnameURI == null) {
-//			qnameURI = XMLConstants.NULL_NS_URI;
-//			qnameLocalName = value;
-//		} else {
-//			qnameLocalName = QNameUtilities.getLocalPart(value);
-//		}
-//		
-//		return true;
+		qname = new QName(qnameURI, qnameLocalName);
+		return true;
+	}
+	
+	@Override
+	public boolean isValidRCS(String value) {
+		// Note: boolean really needs to do a check since it can be used for xsi:nil
+		super.isValidRCS(value);
+		return isValid(value);
+	}
+	
+	public QName getQName() {
+		return qname;
 	}
 
+	public String getPrefix() {
+		return qnamePrefix;
+	}
+	
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		throw new RuntimeException("QNameDatatype writeValue(...) should never be called");
-		
-//		// encode expanded name (uri followed by localName)
-//		writeUri(qnameURI, valueChannel);
-//		writeLocalName(qnameLocalName, qnameURI, qnamePrefix,
-//				valueChannel);
-		
+		encodeQName(qname.getNamespaceURI(), qname.getLocalPart(), qnamePrefix, valueChannel);
 	}
 
 	public QName encodeQName(String uri, String localName, String prefix,
@@ -434,25 +446,14 @@ public class QNameDatatype extends AbstractDatatype {
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
-		throw new RuntimeException("QNameDatatype readValue(...) should never be called");
-		
-//		QName qname = readQName(valueChannel);
-//		String prefix = decodeQNamePrefix(qname, valueChannel);
-//		if (prefix == null) {
-//			prefix = namespaces.getPrefix(qname.getNamespaceURI());
-//		}
-//		
-//		return new QNameValue(qname, prefix);
-		
-//		if (prefix == null) {
-//			
-//		} else {
-//			return prefix.length() > 0 ? prefix + ":" + qname.getLocalPart() : qname.getLocalPart();
-//		}
-//		
-//		
-//		System.err.println("TODO QNameDatatype " + qname);
-//		return null;
-//		// return valueChannel.decodeBooleanValue();
+		qname = readQName(valueChannel);
+		String prefix;
+		if (preservePrefix) {
+			prefix = decodeQNamePrefix(qname, valueChannel);
+		} else {
+			prefix = namespaces.getPrefix(qname.getNamespaceURI());
+		}
+
+		return new QNameValue(qname, prefix);
 	}
 }
