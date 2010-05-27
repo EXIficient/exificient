@@ -28,7 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.datatype.XSDDecimal;
+import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -41,26 +41,40 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class DecimalDatatype extends AbstractDatatype {
-	
-	private XSDDecimal lastValidDecimal = XSDDecimal.newInstance();
-	
+
+	protected DecimalValue lastValidDecimal;
+
 	public DecimalDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.DECIMAL, datatypeIdentifier);
 		this.rcs = new XSDDecimalCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
-		return lastValidDecimal.parse(value);
+		lastValidDecimal = DecimalValue.parse(value);
+		return (lastValidDecimal != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof DecimalValue) {
+			lastValidDecimal = ((DecimalValue) value);
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		return lastValidDecimal;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeDecimal(lastValidDecimal.isNegative(), lastValidDecimal.getIntegral(), lastValidDecimal.getReverseFractional());
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeDecimal(lastValidDecimal.negative,
+				lastValidDecimal.integral, lastValidDecimal.revFractional);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeDecimalValue();
 	}
 }

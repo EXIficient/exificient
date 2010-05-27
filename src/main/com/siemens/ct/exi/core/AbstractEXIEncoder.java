@@ -630,8 +630,14 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 							fidelityOptions);
 
 					if (ecCHundeclared == Constants.NOT_FOUND) {
-						// skip characters & throw warning
-						throwWarning("Skip CH: '" + chars + "'");
+						if (exiFactory.isFragment() && trim.length() == 0) {
+							// skip empty characters in "outer" fragment element throw warning
+							throwWarning("Skip CH: '" + chars + "'");
+						} else {
+							assert (fidelityOptions.isStrict());
+							throw new EXIException("Characters '" + chars
+										+ "' cannot be encoded!");	
+						}
 					} else {
 						// encode [undeclared] event-code
 						encode2ndLevelEventCode(ecCHundeclared);

@@ -18,37 +18,17 @@
 
 package com.siemens.ct.exi.values;
 
-import org.apache.xerces.impl.dv.util.HexBin;
+abstract public class AbstractIntegerValue extends AbstractValue {
 
-public class BinaryHexValue extends AbstractBinaryValue {
 
-	public BinaryHexValue(byte[] bytes) {
-		super(bytes);
-	}
-
-	public static byte[] parse(String val) {
-		return HexBin.decode(val);
-	}
-
-	protected void initString() {
-		sValue = HexBin.encode(bytes);
-		slen = sValue.length();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof BinaryHexValue) {
-			return _equals(((BinaryHexValue) o).bytes);
-		} else if (o instanceof String) {
-			byte[] b = BinaryHexValue.parse((String) o);
-			if (b == null) {
-				return false;
-			} else {
-				return _equals(b);
-			}
-		} else {
-			return false;
+	protected static String getAdjustedValue(String value) {
+		// trim leading and trailing whitespaces
+		value = value.trim();
+		// remove leading sign '+'
+		if (value.length() > 0 && value.charAt(0) == '+') {
+			value = value.substring(1);
 		}
+		return value;
 	}
 
 }

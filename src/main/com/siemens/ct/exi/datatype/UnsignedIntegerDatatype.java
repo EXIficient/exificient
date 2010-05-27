@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -41,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class UnsignedIntegerDatatype extends AbstractDatatype {
 	
-	private int lastUnsignedInteger;
+	protected IntegerValue lastUnsignedInteger;
 	
 	public UnsignedIntegerDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.UNSIGNED_INTEGER, datatypeIdentifier);
@@ -49,18 +50,30 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			lastUnsignedInteger = Integer.parseInt(value);
-			return (lastUnsignedInteger >= 0);
-		} catch (NumberFormatException e) {
+		lastUnsignedInteger = IntegerValue.parse(value);
+		if (lastUnsignedInteger != null) {
+			return (lastUnsignedInteger.toInteger() >= 0);
+		} else {
 			return false;
 		}
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof IntegerValue) {
+			lastUnsignedInteger = ((IntegerValue) value);
+			return (lastUnsignedInteger.toInteger() >= 0);			
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		return lastUnsignedInteger;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeUnsignedInteger(lastUnsignedInteger);
+		valueChannel.encodeUnsignedInteger(lastUnsignedInteger.toInteger());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

@@ -46,10 +46,10 @@ public class NBitLongDatatype extends AbstractDatatype {
 	protected final long upperBound;
 	protected final int numberOfBits4Range;
 
-	private int valueToEncode;
-	
-	public NBitLongDatatype(QName datatypeIdentifier,
-			long lowerBound, long upperBound, int boundedRange) {
+	protected LongValue validValue;
+
+	public NBitLongDatatype(QName datatypeIdentifier, long lowerBound,
+			long upperBound) {
 		super(BuiltInType.NBIT_LONG, datatypeIdentifier);
 		this.rcs = new XSDIntegerCharacterSet();
 
@@ -57,7 +57,8 @@ public class NBitLongDatatype extends AbstractDatatype {
 		this.upperBound = upperBound;
 
 		// calculate number of bits to represent range
-		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
+		numberOfBits4Range = MethodsBag.getCodingLength((int) (upperBound
+				- lowerBound + 1));
 	}
 
 	public long getLowerBound() {
@@ -71,49 +72,57 @@ public class NBitLongDatatype extends AbstractDatatype {
 	public int getNumberOfBits() {
 		return numberOfBits4Range;
 	}
-	
-	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			long lValueToEncode = Long.parseLong(value);
 
-			// check lower & upper bound
-			if (lValueToEncode >= lowerBound
-					&& lValueToEncode <= upperBound) {
-				// retrieve offset & update value
-				lValueToEncode -= lowerBound;
-				assert(lValueToEncode <= Integer.MAX_VALUE);
-				valueToEncode = (int) lValueToEncode;
-				return true;
-			} else {
-				return false;
-			}
-		} catch (NumberFormatException e) {
+	public boolean isValid(String value) {
+		validValue = LongValue.parse(value);
+
+		if (validValue == null) {
+			return false;
+		} else {
+			return checkBounds();
+		}
+	}
+
+	// check lower & upper bound
+	protected boolean checkBounds() {
+		long lValue = validValue.toLong();
+		if (lValue >= lowerBound && lValue <= upperBound) {
+			return true;
+		} else {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
+	public boolean isValid(Value value) {
+		if (value instanceof LongValue) {
+			validValue = ((LongValue) value);
+			return checkBounds();
+		} else {
+			return false;
+		}
+	}
+
+	public Value getValue() {
+		return validValue;
+	}
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(
+				(int) (validValue.toLong() - lowerBound), numberOfBits4Range);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
-		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
+			StringDecoder stringDecoder, QName context) throws IOException {
+		int decodedValue = valueChannel
+				.decodeNBitUnsignedInteger(numberOfBits4Range);
 		LongValue lv;
 		if (lowerBound == 0) {
-			lv = new LongValue( decodedValue );
+			lv = new LongValue(decodedValue);
 		} else {
-			lv = new LongValue( decodedValue + lowerBound );
+			lv = new LongValue(decodedValue + lowerBound);
 		}
 		return lv;
-		
-//		// decode value
-//		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
-//		// add offset (lower bound)
-//		return new StringValue(MethodsBag.itos( decodedValue + lowerBound ));
 	}
 
 }

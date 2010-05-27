@@ -20,12 +20,10 @@ package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
 
-import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDDatetime;
+import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
 
 /**
  * TODO Description
@@ -37,13 +35,15 @@ import com.siemens.ct.exi.util.datatype.XSDDatetime;
  */
 
 public interface EncoderChannel {
-	
+
 	public OutputStream getOutputStream();
 
 	public void flush() throws IOException;
-	
+
 	/**
-	 * Align to next byte-aligned boundary in the stream if it is not already at such a boundary
+	 * Align to next byte-aligned boundary in the stream if it is not already at
+	 * such a boundary
+	 * 
 	 * @throws IOException
 	 */
 	public void align() throws IOException;
@@ -86,12 +86,13 @@ public interface EncoderChannel {
 	 * store the integer's value.
 	 */
 	public void encodeUnsignedInteger(int n) throws IOException;
-	
+
 	public void encodeUnsignedLong(long l) throws IOException;
 
 	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
-	
-//	public void encodeUnsignedInteger(XSDInteger i) throws IOException;
+
+	public void encodeUnsignedHugeInteger(HugeIntegerValue hi)
+			throws IOException;
 
 	/**
 	 * Encode an arbitrary precision integer using a sign bit followed by a
@@ -104,8 +105,8 @@ public interface EncoderChannel {
 	public void encodeLong(long l) throws IOException;
 
 	public void encodeBigInteger(BigInteger bi) throws IOException;
-
-//	public void encodeInteger(XSDInteger xmlInteger) throws IOException;
+	
+	public void encodeHugeInteger(HugeIntegerValue hi) throws IOException;
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -115,31 +116,23 @@ public interface EncoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public void encodeDecimal(BigDecimal decimal) throws IOException;
-
-	public void encodeDecimal(boolean negative, BigInteger integral, BigInteger reverseFraction) throws IOException;
-
-	// public void encodeDecimal ( String decimal ) throws IOException;
+	public void encodeDecimal(boolean negative, HugeIntegerValue integral,
+			HugeIntegerValue reverseFraction) throws IOException;
 
 	/**
-	 * Encode a Double represented as two consecutive Integers. The first
-	 * Integer represents the mantissa of the floating point number and the
-	 * second Integer represents the 10-based exponent of the floating point
-	 * number
+	 * Encode a Float represented as two consecutive Integers. The first Integer
+	 * represents the mantissa of the floating point number and the second
+	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public void encodeFloat(float f) throws IOException;
+	public void encodeFloat(long mantissa, long exponent) throws IOException;
 
-	public void encodeFloat(int mantissa, int exponent) throws IOException;
-	
-	public void encodeDouble(double d) throws IOException;
-	
-	public void encodeDouble(long mantissa, long exponent) throws IOException;
-	
-	
-	
-	public void encodeDateTime(Calendar cal, DatetimeType type)
-			throws IOException;
-
-	public void encodeDateTime(XSDDatetime cal) throws IOException;
+	/**
+	 * The Date-Time datatype representation is a sequence of values
+	 * representing the individual components of the Date-Time
+	 * 
+	 * @param cal
+	 * @throws IOException
+	 */
+	public void encodeDateTime(DateTimeValue cal) throws IOException;
 
 }

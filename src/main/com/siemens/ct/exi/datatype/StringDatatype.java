@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -51,6 +52,19 @@ public class StringDatatype extends AbstractDatatype {
 	public boolean isValid(String value) {
 		lastValue = value;
 		return true;
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof StringValue) {
+			lastValue = ((StringValue) value).toString();
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		return new StringValue(lastValue);
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)

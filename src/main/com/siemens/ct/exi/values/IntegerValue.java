@@ -20,14 +20,23 @@ package com.siemens.ct.exi.values;
 
 import com.siemens.ct.exi.util.MethodsBag;
 
-public class IntegerValue extends AbstractValue {
+public class IntegerValue extends AbstractIntegerValue {
 
 	protected final int val;
 
 	public IntegerValue(int val) {
 		this.val = val;
 	}
-
+	
+	public static IntegerValue parse(String value) {
+		try {
+			value = getAdjustedValue(value);
+			return new IntegerValue(Integer.parseInt(value));
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+	
 	public int toInteger() {
 		return val;
 	}
@@ -50,6 +59,22 @@ public class IntegerValue extends AbstractValue {
 			assert (cbuffer.length >= getCharactersLength());
 			MethodsBag.itos(val, offset + getCharactersLength(), cbuffer);
 			return cbuffer;	
+		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof IntegerValue) {
+			return (val == ((IntegerValue)o).val);
+		} else if (o instanceof String ) {
+			IntegerValue i = IntegerValue.parse((String) o);
+			if (i== null) {
+				return false;
+			} else {
+				return (val == i.val);
+			}
+		} else {
+			return false;	
 		}
 	}
 

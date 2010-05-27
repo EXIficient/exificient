@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import javax.xml.namespace.QName;
 
@@ -29,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -42,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class BigIntegerDatatype extends AbstractDatatype {
 	
-	protected BigInteger lastInteger;
+	protected HugeIntegerValue lastInteger;
 	
 	public BigIntegerDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.BIG_INTEGER, datatypeIdentifier);
@@ -50,18 +50,26 @@ public class BigIntegerDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			lastInteger = new BigInteger(value);
-			return true;
-		} catch (NumberFormatException e) {
+		lastInteger = HugeIntegerValue.parse(value);
+		return (lastInteger != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof HugeIntegerValue) {
+			lastInteger = (HugeIntegerValue) value;
+			return true;			
+		} else {
 			return false;
 		}
+	}
+	
+	public Value getValue() {
+		return lastInteger;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeBigInteger(lastInteger);
+		valueChannel.encodeHugeInteger(lastInteger);
 	}
 
 	

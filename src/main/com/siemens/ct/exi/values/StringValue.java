@@ -54,5 +54,10 @@ public class StringValue extends AbstractValue {
 		return toString();
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		return toString().equals(o.toString());
+	}
+	
 	
 }

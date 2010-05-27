@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.AbstractBinaryValue;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -43,6 +45,15 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 			BuiltInType binaryType) {
 		super(binaryType, datatypeIdentifier);
 		assert(binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof AbstractBinaryValue) {
+			bytes = ((AbstractBinaryValue) value).toBytes();
+			return true;			
+		} else {
+			return false;
+		}
 	}
 	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)

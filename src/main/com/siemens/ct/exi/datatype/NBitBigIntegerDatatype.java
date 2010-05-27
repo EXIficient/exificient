@@ -43,110 +43,93 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class NBitBigIntegerDatatype extends AbstractDatatype {
-	protected final BigInteger lowerBound;
+
 	protected final HugeIntegerValue hiLowerBound;
-	protected final BigInteger upperBound;
 	protected final HugeIntegerValue hiUpperBound;
-	
+
 	protected final int numberOfBits4Range;
-	
-	private int valueToEncode;
+
+	protected HugeIntegerValue lastValidValue;
 
 	public NBitBigIntegerDatatype(QName datatypeIdentifier,
-			BigInteger lowerBound, BigInteger upperBound, int boundedRange) {
+			BigInteger lowerBound, BigInteger upperBound) {
 		super(BuiltInType.NBIT_BIG_INTEGER, datatypeIdentifier);
 		this.rcs = new XSDIntegerCharacterSet();
 
-		//	lower bound
-		this.lowerBound = lowerBound;
-		this.hiLowerBound = getHugeInteger(lowerBound);
+		// lower bound
+		this.hiLowerBound = HugeIntegerValue.parse(lowerBound);
 		// upper bound
-		this.upperBound = upperBound;
-		this.hiUpperBound = getHugeInteger(upperBound);
+		this.hiUpperBound = HugeIntegerValue.parse(upperBound);
 
 		// calculate number of bits to represent range
-		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
+		numberOfBits4Range = MethodsBag.getCodingLength(upperBound.subtract(
+				lowerBound).add(BigInteger.ONE).intValue());
 	}
-	
+
 	public int getNumberOfBits() {
 		return numberOfBits4Range;
 	}
-	
-	public BigInteger getLowerBound() {
-		return lowerBound;
-	}
-	
-	protected static final HugeIntegerValue getHugeInteger(BigInteger bi) {
-		if (bi.bitLength() <= 63) {
-			//	fits into long
-			return new HugeIntegerValue(bi.longValue());
-		} else {
-			//	need to use BigInteger
-			return new HugeIntegerValue(bi);
-		}
+
+	public HugeIntegerValue getLowerBound() {
+		return hiLowerBound;
 	}
 
-//	public BigInteger getLowerBound() {
-//		return lowerBound;
-//	}
-//
-//	public BigInteger getUpperBound() {
-//		return upperBound;
-//	}
-//
-//	public int getNumberOfBits() {
-//		return numberOfBits4Range;
-//	}
-	
 	public boolean isValid(String value) {
 		try {
-			value = value.trim();
-			BigInteger bValueToEncode = new BigInteger(value);
+			lastValidValue = HugeIntegerValue.parse(value);
 
-			// check lower & upper bound
-			if (bValueToEncode.compareTo(lowerBound) >= 0 
-					&& bValueToEncode.compareTo(upperBound) <= 0 ) {
-				// retrieve offset & update value
-				bValueToEncode = bValueToEncode.subtract(lowerBound);
-				assert(bValueToEncode.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0);
-				valueToEncode = bValueToEncode.intValue();
-				return true;
-			} else {
+			if (lastValidValue == null) {
 				return false;
+			} else {
+				return checkBounds();
 			}
 		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
+	// check lower & upper bound
+	protected boolean checkBounds() {
+		if (lastValidValue.compareTo(hiLowerBound) >= 0
+				&& lastValidValue.compareTo(hiUpperBound) <= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
-	
+
+	public boolean isValid(Value value) {
+		if (value instanceof HugeIntegerValue) {
+			lastValidValue = ((HugeIntegerValue) value);
+			return checkBounds();
+		} else {
+			return false;
+		}
+	}
+
+	public Value getValue() {
+		return lastValidValue;
+	}
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(lastValidValue.subtract(
+				hiLowerBound).toInteger(), numberOfBits4Range);
+	}
+
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
-		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
+			StringDecoder stringDecoder, QName context) throws IOException {
+		int decodedValue = valueChannel
+				.decodeNBitUnsignedInteger(numberOfBits4Range);
+
 		HugeIntegerValue hv;
 		if (hiLowerBound.isLongValue) {
-			hv = new HugeIntegerValue( decodedValue + hiLowerBound.longValue);
+			hv = new HugeIntegerValue(decodedValue + hiLowerBound.longValue);
 		} else {
 			// TODO look for an efficient way!!
-			hv = new HugeIntegerValue(lowerBound.add(BigInteger.valueOf(decodedValue)));
+			hv = hiLowerBound.add(new HugeIntegerValue(decodedValue));
 		}
 		return hv;
-		
-		
-//		// decode value
-//		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
-//		// add offset (lower bound)
-//		if (hiLowerBound.isLongValue) {
-//			return new StringValue( MethodsBag.itos(hiLowerBound.longValue + decodedValue) );
-//		} else {
-//			//	not a very efficient way!!
-//			return new StringValue(lowerBound.add(BigInteger.valueOf(decodedValue)).toString().toCharArray());	
-//		}
 	}
 
 }

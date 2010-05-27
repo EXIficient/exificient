@@ -28,8 +28,8 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDDatetime;
+import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -42,24 +42,37 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class DatetimeDatatype extends AbstractDatatype {
-	DatetimeType datetimeType;
+	DateTimeType datetimeType;
 	
-	private XSDDatetime lastValidDatetime = XSDDatetime.newInstance();
+	private DateTimeValue lastValidDatetime;
 
-	public DatetimeDatatype(DatetimeType dateType,
+	public DatetimeDatatype(DateTimeType dateType,
 			QName datatypeIdentifier) {
 		super(BuiltInType.DATETIME, datatypeIdentifier);
 		this.rcs = new XSDDateTimeCharacterSet();
 		this.datetimeType = dateType;
 	}
 
-	public DatetimeType getDatetimeType() {
+	public DateTimeType getDatetimeType() {
 		return datetimeType;
 	}
 	
 	public boolean isValid(String value) {
-		value = value.trim();
-		return lastValidDatetime.parse(value, datetimeType);
+		lastValidDatetime = DateTimeValue.parse(value, datetimeType);
+		return (lastValidDatetime != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof DateTimeValue) {
+			lastValidDatetime = ((DateTimeValue) value);
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		return lastValidDatetime;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)

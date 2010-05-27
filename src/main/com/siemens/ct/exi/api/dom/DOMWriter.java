@@ -58,6 +58,9 @@ public class DOMWriter {
 	protected boolean preserveWhitespaces;
 	protected boolean preserveComments;
 	protected boolean preservePIs;
+	
+	//	collect char events (e.g. textA CM textB --> textA+textB if CM is not preserved)
+	protected StringBuilder sbChars;
 
 	public DOMWriter(EXIFactory factory) {
 		this.factory = factory;
@@ -66,6 +69,9 @@ public class DOMWriter {
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
+		
+		// characters
+		sbChars = new StringBuilder();
 
 		// preserve options
 		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
@@ -172,23 +178,23 @@ public class DOMWriter {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {
 			case Node.ELEMENT_NODE:
+				checkPendingChars();
 				encodeNode(n);
 				break;
 			case Node.ATTRIBUTE_NODE:
 				break;
 			case Node.TEXT_NODE:
-				String value = n.getNodeValue();
-				if (preserveWhitespaces || (value = value.trim()).length() > 0) {
-					encoder.encodeCharacters(value);
-				}
+				sbChars.append(n.getNodeValue());
 				break;
 			case Node.COMMENT_NODE:
 				if (preserveComments) {
+					checkPendingChars();
 					String c = n.getNodeValue();
 					encoder.encodeComment(c.toCharArray(), 0, c.length());
 				}
 				break;
 			case Node.DOCUMENT_TYPE_NODE:
+				checkPendingChars();
 				DocumentType dt = (DocumentType) n;
 				String publicID = dt.getPublicId() == null ? "" : dt
 						.getPublicId();
@@ -199,14 +205,17 @@ public class DOMWriter {
 				encoder.encodeDocType(dt.getName(), publicID, systemID, text);
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
+				// checkPendingChars();
 				// TODO ER
 				break;
 			case Node.CDATA_SECTION_NODE:
+				checkPendingChars();
 				String cdata = n.getNodeValue();
 				encoder.encodeCharacters(Constants.CDATA_START + cdata + Constants.CDATA_END);
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {
+					checkPendingChars();
 					ProcessingInstruction pi = (ProcessingInstruction) n;
 					encoder.encodeProcessingInstruction(pi.getTarget(), pi
 							.getData());
@@ -218,6 +227,14 @@ public class DOMWriter {
 				// throw new EXIException("Unknown NodeType? " +
 				// n.getNodeType());
 			}
+		}
+		checkPendingChars();
+	}
+	
+	protected void checkPendingChars() throws EXIException, IOException {
+		if (sbChars.length() > 0) {
+			encoder.encodeCharacters(sbChars.toString());
+			sbChars.setLength(0);
 		}
 	}
 }

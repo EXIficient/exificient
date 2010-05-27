@@ -21,11 +21,10 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDDatetime;
+import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.values.DateTimeValue;
 
 public class DatetimeTest extends AbstractTestCase {
-	protected XSDDatetime datetime = XSDDatetime.newInstance();
 
 	public DatetimeTest(String testName) {
 		super(testName);
@@ -36,25 +35,27 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeGYear0() throws IOException {
 		String s = "2007";
-		DatetimeType type = DatetimeType.gYear;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYear;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv1 = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv1.toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
-		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv2 = getByteDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv2.toString()));
 	}
 
 	public void testDatetimeGYear1() throws IOException {
 		String s = "-0007";
-		DatetimeType type = DatetimeType.gYear;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYear;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -68,26 +69,26 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGYear2() throws IOException {
 		String s = "2001Z";
-		String sRes = "2001";
-		DatetimeType type = DatetimeType.gYear;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYear;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(sRes.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv1 = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv1.toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
-		assertTrue(sRes.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
 
 	public void testDatetimeGYear3() throws IOException {
 		String s = "2001+05:00";
-		DatetimeType type = DatetimeType.gYear;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYear;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -104,9 +105,9 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeGYearMonth0() throws IOException {
 		String s = "1999-10";
-		DatetimeType type = DatetimeType.gYearMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -120,9 +121,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGYearMonth1() throws IOException {
 		String s = "2007-10";
-		DatetimeType type = DatetimeType.gYearMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -136,9 +137,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGYearMonth2() throws IOException {
 		String s = "1999-10-12:11";
-		DatetimeType type = DatetimeType.gYearMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -152,9 +153,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGYearMonth3() throws IOException {
 		String s = "1809-10+00:33";
-		DatetimeType type = DatetimeType.gYearMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -165,15 +166,34 @@ public class DatetimeTest extends AbstractTestCase {
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
+	
+	public void testDatetimeGYearMonth4() throws IOException {
+		String s = "1809-02Z";
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		DateTimeValue dtv = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv.toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
+	
+	
 
 	/*
 	 * date
 	 */
 	public void testDatetimeDate0() throws IOException {
 		String s = "2002-10-11+13:00";
-		DatetimeType type = DatetimeType.date;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.date;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -187,9 +207,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeDate1() throws IOException {
 		String s = "0100-10-11-00:50";
-		DatetimeType type = DatetimeType.date;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.date;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -206,49 +226,52 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeDateTime0() throws IOException {
 		String s = "0001-01-01T01:03:12";
-		DatetimeType type = DatetimeType.dateTime;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv1 = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv1.toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		DateTimeValue dtv2 = getByteDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv2.toString()));
+	}
+
+	public void testDatetimeDateTime1() throws IOException {
+		String s = "2005-01-01T00:00:00Z";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		DateTimeValue dtv1 = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv1.toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
 
-	public void testDatetimeDateTime1() throws IOException {
-		String s = "2005-01-01T00:00:00Z";
-		String sRes = "2005-01-01T00:00:00";
-		DatetimeType type = DatetimeType.dateTime;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
-
-		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDateTime(datetime);
-		bitEC.flush();
-		assertTrue(sRes.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
-		// Byte
-		getByteEncoder().encodeDateTime(datetime);
-		assertTrue(sRes.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
-	}
-
 	public void testDatetimeDateTime2() throws IOException {
 		String s = "1979-01-01T00:00:00.0120";
 		String sRes = "1979-01-01T00:00:00.012";
-		DatetimeType type = DatetimeType.dateTime;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(sRes.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv1 = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(sRes.equals(dtv1.toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(sRes.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
@@ -256,9 +279,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeDateTime3() throws IOException {
 		String s = "0001-01-01T00:00:00.111+00:33";
-		DatetimeType type = DatetimeType.dateTime;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -275,9 +298,9 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeGMonth0() throws IOException {
 		String s = "--12";
-		DatetimeType type = DatetimeType.gMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -291,19 +314,18 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGMonth1() throws IOException {
 		String s = "--07Z";
-		String sRes = "--07";
-		DatetimeType type = DatetimeType.gMonth;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(sRes.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
-		assertTrue(sRes.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
 
 	/*
@@ -311,9 +333,9 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeGMonthDay0() throws IOException {
 		String s = "--01-28";
-		DatetimeType type = DatetimeType.gMonthDay;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gMonthDay;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -327,10 +349,10 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGMonthDay1() throws IOException {
 		String s = "--10-17+00:00";
-		String sRes = "--10-17";
-		DatetimeType type = DatetimeType.gMonthDay;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		String sRes = "--10-17Z";
+		DateTimeType type = DateTimeType.gMonthDay;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -347,9 +369,9 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeGDay0() throws IOException {
 		String s = "---16";
-		DatetimeType type = DatetimeType.gDay;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.gDay;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -366,9 +388,9 @@ public class DatetimeTest extends AbstractTestCase {
 	 */
 	public void testDatetimeTime0() throws IOException {
 		String s = "12:34:56";
-		DatetimeType type = DatetimeType.time;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.time;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -382,9 +404,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeTime1() throws IOException {
 		String s = "12:34:56.135";
-		DatetimeType type = DatetimeType.time;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.time;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -398,15 +420,16 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeTime2() throws IOException {
 		String s = "12:34:56.135-12:56";
-		DatetimeType type = DatetimeType.time;
-		boolean valid = datetime.parse(s, type);
-		assertTrue(valid);
+		DateTimeType type = DateTimeType.time;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeDateTime(datetime);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		DateTimeValue dtv = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv.toString()));
 		// Byte
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
@@ -414,9 +437,9 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeFail1() throws IOException {
 		String s = "12:34:XXX";
-		DatetimeType type = DatetimeType.time;
-		boolean valid = datetime.parse(s, type);
-		assertFalse(valid);
+		DateTimeType type = DateTimeType.time;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertFalse(datetime != null);
 	}
 
 }

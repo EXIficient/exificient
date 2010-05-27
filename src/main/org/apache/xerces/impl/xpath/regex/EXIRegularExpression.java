@@ -66,11 +66,16 @@ public class EXIRegularExpression extends RegularExpression {
 		set = new HashSet<Integer>();
 		isRestrictedSet = true;
 		// analyze set
-		handleToken(this.tokentree, set);
+		handleToken(this.tokentree);
 	}
 
+	protected void addChar(int cp) {
+		// TODO detect whether we deal with a BMP character only and it is part
+		// of
+		// Unicode 3.1.0
+		set.add(cp);
+	}
 
-	// TODO detect whether we have ONLY BMP characters
 	public boolean isEntireSetOfXMLCharacters() {
 		return !(isRestrictedSet && set.size() <= MAX_NUMBER_OF_CHARACTERS);
 	}
@@ -79,9 +84,9 @@ public class EXIRegularExpression extends RegularExpression {
 		return set;
 	}
 
-	protected void handleToken(Token t, Set<Integer> s) {
+	protected void handleToken(Token t) {
 		// abort processing
-		if (!isRestrictedSet || s.size() > MAX_NUMBER_OF_CHARACTERS) {
+		if (!isRestrictedSet || set.size() > MAX_NUMBER_OF_CHARACTERS) {
 			return;
 		}
 		switch (t.type) {
@@ -99,13 +104,13 @@ public class EXIRegularExpression extends RegularExpression {
 		case Token.CHAR_SEPARATOR:
 		case Token.CHAR_SYMBOL:
 			CharToken cht = (CharToken) t;
-			s.add(cht.getChar());
+			addChar(cht.getChar());
 			break;
 		case Token.STRING:
 			StringToken st = (StringToken) t;
 			String str = st.getString();
 			for (int i = 0; i < str.length(); i++) {
-				s.add(str.codePointAt(i));
+				addChar(str.codePointAt(i));
 			}
 			break;
 		case Token.RANGE:
@@ -118,7 +123,7 @@ public class EXIRegularExpression extends RegularExpression {
 					return;
 				}
 				for (int codePoint = ranges[k]; codePoint <= ranges[k + 1]; codePoint++) {
-					s.add(codePoint);
+					addChar(codePoint);
 				}
 			}
 			break;
@@ -130,21 +135,21 @@ public class EXIRegularExpression extends RegularExpression {
 				Vector children = ut.children;
 				for (int i = 0; i < children.size(); i++) {
 					Token subToken = (Token) children.get(i);
-					handleToken(subToken, s);
+					handleToken(subToken);
 				}
 			} else {
 				assert (t instanceof ConcatToken);
 				ConcatToken cot = (ConcatToken) t;
-				handleToken(cot.child, s);
+				handleToken(cot.child);
 			}
 			break;
 		case Token.CLOSURE:
 			ClosureToken clt = (ClosureToken) t; // "[0-9]{3}" or ".*" or ...
-			handleToken(clt.child, s);
+			handleToken(clt.child);
 			break;
 		case Token.PAREN:
 			ParenToken pt = (ParenToken) t;// (X) or (?:X)
-			handleToken(pt.child, s);
+			handleToken(pt.child);
 			break;
 		case Token.EMPTY:
 			break;

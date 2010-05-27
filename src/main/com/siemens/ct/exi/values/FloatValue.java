@@ -18,105 +18,324 @@
 
 package com.siemens.ct.exi.values;
 
+import java.io.IOException;
+
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.util.MethodsBag;
 
 public class FloatValue extends AbstractValue {
 
-	protected final int iMantissa;
-	protected final int iExponent;
+	public final long mantissa;
+	public final long exponent;
 
 	protected int slenMantissa = -1;
-	
-	protected Float f;
 
-	public FloatValue(int iMantissa, int iExponent) {
-		this.iMantissa = iMantissa;
-		this.iExponent = iExponent;
+	protected Double f;
+
+	public FloatValue(long mantissa, long exponent) {
+		this.mantissa = mantissa;
+		this.exponent = exponent;
 	}
-	
+
+	public static FloatValue parse(String value) {
+		try {
+			long sMantissa, sExponent;
+			value = value.trim();
+			if (value.length() == 0) {
+				return null;
+			} else if (value.equals(Constants.FLOAT_INFINITY)) {
+				sMantissa = Constants.FLOAT_MANTISSA_INFINITY;
+				sExponent = Constants.FLOAT_SPECIAL_VALUES;
+			} else if (value.equals(Constants.FLOAT_MINUS_INFINITY)) {
+				sMantissa = Constants.FLOAT_MANTISSA_MINUS_INFINITY;
+				sExponent = Constants.FLOAT_SPECIAL_VALUES;
+			} else if (value.equals(Constants.FLOAT_NOT_A_NUMBER)) {
+				sMantissa = Constants.FLOAT_MANTISSA_NOT_A_NUMBER;
+				sExponent = Constants.FLOAT_SPECIAL_VALUES;
+			} else {
+				char[] chars = value.toCharArray();
+
+				int decimalDigits = 0;
+				int len = chars.length;
+				int pos = 0;
+				sMantissa = 0;
+				sExponent = 0;
+				char c;
+				boolean negative = false;
+				boolean negativeExponent = false;
+
+				// status: detecting sign
+				if ((c = chars[pos]) == '+') {
+					pos++;
+				} else if (c == '-') {
+					negative = true;
+					pos++;
+				}
+
+				// status: parsing mantissa before decimal point
+				while (pos < len && (c = chars[pos++]) != '.' && c != 'e'
+						&& c != 'E') {
+					if (c == '0') {
+						sMantissa = 10 * sMantissa;
+					} else if (c > '0' && c <= '9') {
+						sMantissa = 10 * sMantissa + (c - '0');
+					} else {
+						return null;
+					}
+				}
+
+				// status: parsing mantissa after decimal point
+				if (c == '.') {
+					while (pos < len && (c = chars[pos++]) != 'e' && c != 'E') {
+						if (c == '0') {
+							sMantissa = 10 * sMantissa;
+							decimalDigits++;
+						} else if (c > '0' && c <= '9') {
+							sMantissa = 10 * sMantissa + (c - '0');
+							decimalDigits++;
+						} else {
+							return null;
+						}
+					}
+				}
+
+				// status: parsing exponent after e or E
+				if (c == 'e' || c == 'E') {
+					// status: checking sign of exponent
+					if ((c = chars[pos]) == '-') {
+						negativeExponent = true;
+						pos++;
+					} else if (c == '+') {
+						pos++;
+					}
+
+					while (pos < len) {
+						// c = s.charAt ( pos++ );
+						c = chars[pos++];
+
+						if (c >= '0' && c <= '9') {
+							sExponent = 10 * sExponent + (c - '0');
+						} else {
+							return null;
+						}
+					}
+
+					if (negativeExponent) {
+						sExponent = -sExponent;
+					}
+				}
+
+				// check whether whole string has been parsed successfully
+				if (pos != len) {
+					return null;
+				}
+
+				// adjust exponent and mantissa
+				sExponent -= decimalDigits;
+
+				// overflow
+				if (sMantissa < 0) {
+					return null;
+				}
+
+				if (negative) {
+					sMantissa = -sMantissa;
+				}
+
+				// too large ranges
+				if (sMantissa <= Constants.FLOAT_MANTISSA_MIN_RANGE
+						|| sMantissa >= Constants.FLOAT_MANTISSA_MAX_RANGE
+						|| sExponent <= Constants.FLOAT_EXPONENT_MIN_RANGE
+						|| sExponent >= Constants.FLOAT_EXPONENT_MAX_RANGE) {
+					return null;
+				}
+
+				// always encode zero as 0E0
+				if (sMantissa == 0) {
+					sExponent = 0;
+				}
+			}
+
+			return new FloatValue(sMantissa, sExponent);
+		} catch (Exception e) {
+			// e.g. out-of-bound exception
+			return null;
+		}
+	}
+
+	public static FloatValue parse(float f) throws IOException {
+		int sMantissa, sExponent;
+		// infinity & not a number
+		if (Float.isInfinite(f) || Float.isNaN(f)) {
+			// exponent value is -(2^14),
+			// . the mantissa value 1 represents INF,
+			// . the mantissa value -1 represents -INF
+			// . any other mantissa value represents NaN
+			if (Float.isNaN(f)) {
+				sMantissa = Constants.FLOAT_MANTISSA_NOT_A_NUMBER; // m
+			} else if (f < 0) {
+				sMantissa = Constants.FLOAT_MANTISSA_MINUS_INFINITY; // m
+			} else {
+				sMantissa = Constants.FLOAT_MANTISSA_INFINITY; // m
+			}
+			// exponent (special value)
+			sExponent = Constants.FLOAT_SPECIAL_VALUES; // e == -(2^14)
+		} else {
+			/*
+			 * floating-point according to the IEEE 754 floating-point
+			 * "single format" bit layout.
+			 */
+			sExponent = 0;
+			while (f - (int) f != 0.0f) {
+				f *= 10;
+				sExponent--;
+			}
+			sMantissa = (int) f;
+		}
+		return new FloatValue(sMantissa, sExponent);
+	}
+
+	public static FloatValue parse(double d) throws IOException {
+		long sMantissa, sExponent;
+		// infinity & not a number
+		if (Double.isInfinite(d) || Double.isNaN(d)) {
+			// exponent value is -(2^14),
+			// . the mantissa value 1 represents INF,
+			// . the mantissa value -1 represents -INF
+			// . any other mantissa value represents NaN
+			if (Double.isNaN(d)) {
+				sMantissa = Constants.FLOAT_MANTISSA_NOT_A_NUMBER; // m
+			} else if (d < 0) {
+				sMantissa = Constants.FLOAT_MANTISSA_MINUS_INFINITY; // m
+			} else {
+				sMantissa = Constants.FLOAT_MANTISSA_INFINITY; // m
+			}
+			// exponent (special value)
+			sExponent = Constants.FLOAT_SPECIAL_VALUES; // e == -(2^14)
+		} else {
+			/*
+			 * floating-point according to the IEEE 754 floating-point
+			 * "double format" bit layout.
+			 */
+			sExponent = 0;
+			while (d - (long) d != 0.0d) {
+				d *= 10;
+				sExponent--;
+			}
+			sMantissa = (long) d;
+		}
+		return new FloatValue(sMantissa, sExponent);
+	}
+
 	public Float toFloat() {
-		if (f == null)  {
-			if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-				if (iMantissa == -1) {
-					f = Float.NEGATIVE_INFINITY;
-				} else if (iMantissa == 1) {
-					f = Float.POSITIVE_INFINITY;
+		if (f == null) {
+			toDouble();
+		}
+		return f.floatValue();
+	}
+
+	public Double toDouble() {
+		if (f == null) {
+			if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
+				if (mantissa == -1L) {
+					f = Double.NEGATIVE_INFINITY;
+				} else if (mantissa == 1) {
+					f = Double.POSITIVE_INFINITY;
 				} else {
-					f = Float.NaN;
+					f = Double.NaN;
 				}
 			} else {
-				f = iMantissa * (float)(Math.pow(10, iExponent));
+				f = mantissa * (double) (Math.pow(10, exponent));
 			}
 		}
 		return f;
 	}
-	
+
 	public int getCharactersLength() {
 		if (slen == -1) {
-			if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-				if (iMantissa == -1) {
+			if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
+				if (mantissa == -1) {
 					slen = Constants.FLOAT_MINUS_INFINITY_CHARARRAY.length;
-				} else if (iMantissa == 1) {
+				} else if (mantissa == 1) {
 					slen = Constants.FLOAT_INFINITY_CHARARRAY.length;
 				} else {
 					slen = Constants.FLOAT_NOT_A_NUMBER_CHARARRAY.length;
 				}
 			} else {
 				// iMantissa + "E" + iExponent;
-				slenMantissa = MethodsBag.getStringSize(iMantissa);
-				slen = slenMantissa + 1 + MethodsBag.getStringSize(iExponent);	
+				slenMantissa = MethodsBag.getStringSize(mantissa);
+				slen = slenMantissa + 1 + MethodsBag.getStringSize(exponent);
 			}
 		}
 		return slen;
 	}
-	
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
-		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (iMantissa == -1) {
+		if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (mantissa == -1) {
 				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
-			} else if (iMantissa == 1) {
+			} else if (mantissa == 1) {
 				return Constants.FLOAT_INFINITY_CHARARRAY;
 			} else {
 				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
 			}
 		} else {
-			MethodsBag.itos(iExponent, getCharactersLength(), cbuffer);
+			MethodsBag.itos(exponent, getCharactersLength(), cbuffer);
 			cbuffer[slenMantissa] = 'E';
-			MethodsBag.itos(iMantissa, slenMantissa, cbuffer);
-			
-			return cbuffer;			
+			MethodsBag.itos(mantissa, slenMantissa, cbuffer);
+
+			return cbuffer;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (iMantissa == -1) {
+		if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (mantissa == -1) {
 				return Constants.FLOAT_MINUS_INFINITY;
-			} else if (iMantissa == 1) {
+			} else if (mantissa == 1) {
 				return Constants.FLOAT_INFINITY;
 			} else {
 				return Constants.FLOAT_NOT_A_NUMBER;
 			}
 		} else {
 			char[] cbuffer = new char[getCharactersLength()];
-			return new String(toCharacters(cbuffer, 0));	
+			return new String(toCharacters(cbuffer, 0));
 		}
 	}
-	
+
 	@Override
 	public String toString(char[] cbuffer, int offset) {
-		if (iExponent == Constants.FLOAT_SPECIAL_VALUES) {
-			if (iMantissa == -1) {
+		if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
+			if (mantissa == -1) {
 				return Constants.FLOAT_MINUS_INFINITY;
-			} else if (iMantissa == 1) {
+			} else if (mantissa == 1) {
 				return Constants.FLOAT_INFINITY;
 			} else {
 				return Constants.FLOAT_NOT_A_NUMBER;
 			}
 		} else {
 			return super.toString(cbuffer, offset);
+		}
+	}
+
+	protected final boolean _equals(FloatValue o) {
+		return (mantissa == o.mantissa && exponent == o.exponent);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof FloatValue) {
+			return _equals((FloatValue) o);
+		} else if (o instanceof String) {
+			FloatValue f = FloatValue.parse((String) o);
+			if (f == null) {
+				return false;
+			} else {
+				return _equals(f);	
+			}
+		} else {
+			return false;
 		}
 	}
 

@@ -20,11 +20,10 @@ package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.util.datatype.DatetimeType;
 import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
-import com.siemens.ct.exi.values.DoubleValue;
 import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.IntegerValue;
@@ -134,13 +133,11 @@ public interface DecoderChannel {
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
 	public FloatValue decodeFloatValue() throws IOException;
-		
-	public DoubleValue decodeDoubleValue() throws IOException;
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public DateTimeValue decodeDateTimeValue(DatetimeType type) throws IOException;
+	public DateTimeValue decodeDateTimeValue(DateTimeType type) throws IOException;
 
 }

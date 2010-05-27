@@ -18,37 +18,15 @@
 
 package com.siemens.ct.exi.values;
 
-import org.apache.xerces.impl.dv.util.HexBin;
+/**
+ * TODO Description
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.4.20080718
+ */
 
-public class BinaryHexValue extends AbstractBinaryValue {
-
-	public BinaryHexValue(byte[] bytes) {
-		super(bytes);
-	}
-
-	public static byte[] parse(String val) {
-		return HexBin.decode(val);
-	}
-
-	protected void initString() {
-		sValue = HexBin.encode(bytes);
-		slen = sValue.length();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof BinaryHexValue) {
-			return _equals(((BinaryHexValue) o).bytes);
-		} else if (o instanceof String) {
-			byte[] b = BinaryHexValue.parse((String) o);
-			if (b == null) {
-				return false;
-			} else {
-				return _equals(b);
-			}
-		} else {
-			return false;
-		}
-	}
-
+public enum DateTimeType {
+	gYear, gYearMonth, date, dateTime, gMonth, gMonthDay, gDay, time;
 }

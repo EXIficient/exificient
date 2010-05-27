@@ -49,8 +49,12 @@ public interface Datatype {
 	/*
 	 * Encoder
 	 */
-	// type aware
 	public boolean isValid(String value);
+	public boolean isValid(Value value);
+	
+	
+	// if value is valid
+	public Value getValue();
 	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 

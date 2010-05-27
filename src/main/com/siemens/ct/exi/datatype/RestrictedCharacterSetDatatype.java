@@ -69,6 +69,21 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		lastValidValue = value;
 		return true;
 	}
+	
+	
+	public boolean isValid(Value value) {
+		if (value instanceof StringValue) {
+			lastValidValue = ((StringValue) value).toString();
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public Value getValue() {
+		return new StringValue(lastValidValue);
+	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

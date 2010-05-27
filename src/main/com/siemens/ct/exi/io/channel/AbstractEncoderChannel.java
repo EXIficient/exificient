@@ -19,15 +19,11 @@
 package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.Calendar;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDDatetime;
+import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
 
 /**
  * TODO Description
@@ -64,7 +60,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeStringOnly(final String s) throws IOException {
 		for (int i = 0; i < s.length(); i++) {
 			final char ch = s.charAt(i);
-			
+
 			// Is this a UTF-16 surrogate pair?
 			if (Character.isHighSurrogate(ch)) {
 				encodeUnsignedInteger(Character.toCodePoint(ch, s.charAt(++i)));
@@ -93,7 +89,6 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-
 	public void encodeLong(long l) throws IOException {
 		// signalize sign
 		if (l < 0) {
@@ -112,6 +107,14 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		} else {
 			encodeBoolean(false); // positive
 			encodeUnsignedBigInteger(bi);
+		}
+	}
+	
+	public void encodeHugeInteger(HugeIntegerValue hi) throws IOException {
+		if (hi.isLongValue) {
+			encodeLong(hi.longValue);
+		} else {
+			encodeBigInteger(hi.bigIntegerValue);
 		}
 	}
 
@@ -188,6 +191,14 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		// 0XXXXXXX
 		encode(0 | bi.intValue());
 	}
+	
+	public void encodeUnsignedHugeInteger(HugeIntegerValue hi) throws IOException {
+		if (hi.isLongValue) {
+			encodeUnsignedLong(hi.longValue);
+		} else {
+			encodeUnsignedBigInteger(hi.bigIntegerValue);
+		}
+	}
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -197,228 +208,73 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public void encodeDecimal(BigDecimal decimal) throws IOException {
-		// detect whether decimal value is negative
-		if (decimal.signum() < 0) {
-			// negative
-			decimal = decimal.abs();
-			encodeBoolean(true);
-		} else {
-			// positive
-			encodeBoolean(false);
-		}
 
-		// integral portion
-		BigDecimal integral = decimal.setScale(0, RoundingMode.FLOOR);
-		encodeUnsignedBigInteger(integral.toBigInteger());
-
-		// fractional portion (reverse order)
-		BigDecimal fractional = integral.signum() < 0 ? decimal.add(integral)
-				: decimal.subtract(integral);
-		fractional = fractional.movePointRight(decimal.scale());
-		StringBuilder sb = new StringBuilder(fractional.toBigInteger()
-				.toString());
-		sb = sb.reverse();
-		int length = sb.length();
-		for (int i = 0; i < (decimal.scale() - length); i++) {
-			sb.append('0');
-		}
-		encodeUnsignedBigInteger(new BigInteger(sb.toString()));
-	}
-
-	public void encodeDecimal(boolean negative, BigInteger integral,
-			BigInteger reverseFraction) throws IOException, RuntimeException {
+	public void encodeDecimal(boolean negative, HugeIntegerValue integral,
+			HugeIntegerValue reverseFraction) throws IOException, RuntimeException {
 		// sign, integral, reverse fractional
 		encodeBoolean(negative);
-		encodeUnsignedBigInteger(integral);
-		encodeUnsignedBigInteger(reverseFraction);
+		encodeUnsignedHugeInteger(integral);
+		encodeUnsignedHugeInteger(reverseFraction);
 	}
 
 	/**
-	 * Encode a Double represented as two consecutive Integers. The first
+	 * Encode a Float represented as two consecutive Integers. The first
 	 * Integer represents the mantissa of the floating point number and the
 	 * second Integer represents the 10-based exponent of the floating point
 	 * number
 	 */
-	public void encodeFloat(float f) throws IOException {
-		// infinity & not a number
-		if (Float.isInfinite(f) || Float.isNaN(f)) {
-			// exponent value is -(2^14),
-			// . the mantissa value 1 represents INF,
-			// . the mantissa value -1 represents -INF
-			// . any other mantissa value represents NaN
-			if (Float.isNaN(f)) {
-				encodeInteger(Constants.FLOAT_MANTISSA_NOT_A_NUMBER); // m
-			} else if (f < 0) {
-				encodeInteger(Constants.FLOAT_MANTISSA_MINUS_INFINITY); // m
-			} else {
-				encodeInteger(Constants.FLOAT_MANTISSA_INFINITY); // m
-			}
-			// exponent (special value)
-			encodeInteger(Constants.FLOAT_SPECIAL_VALUES); // e == -(2^14)
-		} else {
-			/*
-			 * floating-point according to the IEEE 754 floating-point
-			 * "single format" bit layout.
-			 */
-			int exponent = 0;
-			while (f - (int) f != 0.0f) {
-				f *= 10;
-				exponent--;
-			}
-			int mantissa = (int) f;
-
-			encodeFloat(mantissa, exponent);
-		}
-	}
-
-	public void encodeFloat(int mantissa, int exponent) throws IOException {
-		// encode mantissa and exponent
-		encodeInteger(mantissa);
-		encodeInteger(exponent);
-	}
-
-	public void encodeDouble(double d) throws IOException {
-		// infinity & not a number
-		if (Double.isInfinite(d) || Double.isNaN(d)) {
-			// exponent value is -(2^14),
-			// . the mantissa value 1 represents INF,
-			// . the mantissa value -1 represents -INF
-			// . any other mantissa value represents NaN
-			if (Double.isNaN(d)) {
-				encodeLong(Constants.FLOAT_MANTISSA_NOT_A_NUMBER); // m
-			} else if (d < 0) {
-				encodeLong(Constants.FLOAT_MANTISSA_MINUS_INFINITY); // m
-			} else {
-				encodeLong(Constants.FLOAT_MANTISSA_INFINITY); // m
-			}
-			// exponent (special value)
-			encodeLong(Constants.FLOAT_SPECIAL_VALUES); // e == -(2^14)
-		} else {
-			/*
-			 * floating-point according to the IEEE 754 floating-point
-			 * "double format" bit layout.
-			 */
-			long exponent = 0;
-			while (d - (long) d != 0.0d) {
-				d *= 10;
-				exponent--;
-			}
-			long mantissa = (long) d;
-
-			encodeDouble(mantissa, exponent);
-		}
-	}
-
-	public void encodeDouble(long mantissa, long exponent) throws IOException {
+	public void encodeFloat(long mantissa, long exponent) throws IOException {
 		// encode mantissa and exponent
 		encodeLong(mantissa);
 		encodeLong(exponent);
 	}
 
-	/**
-	 * Encode Date-Time as a sequence of values representing the individual
-	 * components of the Date-Time.
-	 */
-	public void encodeDateTime(Calendar cal, DatetimeType type)
-			throws IOException {
-		switch (type) {
-		case gYear: // gYear Year, [Time-Zone]
-		case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-		case date: // date Year, MonthDay, [TimeZone]
-			encodeInteger(cal.get(Calendar.YEAR) - XSDDatetime.YEAR_OFFSET);
-			encodeNBitUnsignedInteger(XSDDatetime.getMonthDay(cal),
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeDateTimeTimezone(XSDDatetime.getTimeZoneInMinutesOffset(cal));
+
+
+	public void encodeDateTime(DateTimeValue datetime) throws IOException {
+		switch (datetime.type) {
+		case gYear: // Year, [Time-Zone]
+			encodeInteger(datetime.year);
 			break;
-		case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
+		case gYearMonth: // Year, MonthDay, [TimeZone]
+		case date: // Year, MonthDay, [TimeZone]
+			encodeInteger(datetime.year);
+			encodeNBitUnsignedInteger(datetime.monthDay,
+					DateTimeValue.NUMBER_BITS_MONTHDAY);
+			break;
+		case dateTime: // Year, MonthDay, Time, [FractionalSecs],
 			// [TimeZone]
-			encodeInteger(cal.get(Calendar.YEAR) - XSDDatetime.YEAR_OFFSET);
-			encodeNBitUnsignedInteger(XSDDatetime.getMonthDay(cal),
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeNBitUnsignedInteger(XSDDatetime.getTime(cal),
-					XSDDatetime.NUMBER_BITS_TIME);
-			encodeDateTimeFractionalSecs(XSDDatetime
-					.getFractionalSecondsReverse(cal.get(Calendar.MILLISECOND)));
-			encodeDateTimeTimezone(XSDDatetime.getTimeZoneInMinutesOffset(cal));
+			encodeInteger(datetime.year);
+			encodeNBitUnsignedInteger(datetime.monthDay,
+					DateTimeValue.NUMBER_BITS_MONTHDAY);
+			// Note: *no* break;
+		case time: // Time, [FractionalSecs], [TimeZone]
+			this.encodeNBitUnsignedInteger(datetime.time,
+					DateTimeValue.NUMBER_BITS_TIME);
+			if (datetime.presenceFractionalSecs) {
+				encodeBoolean(true);
+				encodeUnsignedInteger(datetime.fractionalSecs);
+			} else {
+				encodeBoolean(false);
+			}
 			break;
-		case gMonth: // gMonth MonthDay, [TimeZone]
-		case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-		case gDay: // gDay MonthDay, [TimeZone]
-			encodeNBitUnsignedInteger(XSDDatetime.getMonthDay(cal),
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeDateTimeTimezone(XSDDatetime.getTimeZoneInMinutesOffset(cal));
-			break;
-		case time: // time Time, [FractionalSecs], [TimeZone]
-			this.encodeNBitUnsignedInteger(XSDDatetime.getTime(cal),
-					XSDDatetime.NUMBER_BITS_TIME);
-			encodeDateTimeFractionalSecs(XSDDatetime
-					.getFractionalSecondsReverse(cal.get(Calendar.MILLISECOND)));
-			encodeDateTimeTimezone(XSDDatetime.getTimeZoneInMinutesOffset(cal));
+		case gMonth: // MonthDay, [TimeZone]
+		case gMonthDay: // MonthDay, [TimeZone]
+		case gDay: // MonthDay, [TimeZone]
+			encodeNBitUnsignedInteger(datetime.monthDay,
+					DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		default:
 			throw new UnsupportedOperationException();
 		}
-	}
-
-	public void encodeDateTime(XSDDatetime datetime) throws IOException {
-		switch (datetime.getDatetimeType()) {
-		case gYear: // gYear Year, [Time-Zone]
-			encodeInteger(datetime.iYear);
-			encodeDateTimeTimezone(datetime.iTZMinutes);
-			break;
-		case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-		case date: // date Year, MonthDay, [TimeZone]
-			encodeInteger(datetime.iYear);
-			encodeNBitUnsignedInteger(datetime.iMonthDay,
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeDateTimeTimezone(datetime.iTZMinutes);
-			break;
-		case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
-			// [TimeZone]
-			encodeInteger(datetime.iYear);
-			encodeNBitUnsignedInteger(datetime.iMonthDay,
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeNBitUnsignedInteger(datetime.iTime,
-					XSDDatetime.NUMBER_BITS_TIME);
-			encodeDateTimeFractionalSecs(datetime.iFractionalSecs);
-			encodeDateTimeTimezone(datetime.iTZMinutes);
-			break;
-		case gMonth: // gMonth MonthDay, [TimeZone]
-		case gMonthDay: // gMonthDay MonthDay, [TimeZone]
-		case gDay: // gDay MonthDay, [TimeZone]
-			encodeNBitUnsignedInteger(datetime.iMonthDay,
-					XSDDatetime.NUMBER_BITS_MONTHDAY);
-			encodeDateTimeTimezone(datetime.iTZMinutes);
-			break;
-		case time: // time Time, [FractionalSecs], [TimeZone]
-			this.encodeNBitUnsignedInteger(datetime.iTime,
-					XSDDatetime.NUMBER_BITS_TIME);
-			encodeDateTimeFractionalSecs(datetime.iFractionalSecs);
-			encodeDateTimeTimezone(datetime.iTZMinutes);
-			break;
-		default:
-			throw new UnsupportedOperationException();
-		}
-	}
-
-	private void encodeDateTimeTimezone(int tzMinutes) throws IOException {
-		if (tzMinutes != 0) {
+		// [TimeZone]
+		if (datetime.presenceTimezone) {
 			encodeBoolean(true);
-			encodeNBitUnsignedInteger(tzMinutes,
-					XSDDatetime.NUMBER_BITS_TIMEZONE);
+			encodeNBitUnsignedInteger(datetime.timezone,
+					DateTimeValue.NUMBER_BITS_TIMEZONE);
 		} else {
 			encodeBoolean(false);
 		}
 	}
 
-	private void encodeDateTimeFractionalSecs(int reverseFracSecs)
-			throws IOException {
-		if (reverseFracSecs != 0) {
-			encodeBoolean(true);
-			encodeUnsignedInteger(reverseFracSecs);
-		} else {
-			encodeBoolean(false);
-		}
-	}
 }

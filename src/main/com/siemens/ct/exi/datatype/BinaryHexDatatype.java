@@ -22,8 +22,6 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.apache.xerces.impl.dv.util.HexBin;
-
 import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -46,18 +44,18 @@ public class BinaryHexDatatype extends AbstractBinaryDatatype {
 		super(datatypeIdentifier, BuiltInType.BINARY_HEX);
 		this.rcs = new XSDHexBinaryCharacterSet();
 	}
-	
-	/*
-	 * Encoder
-	 */
+
 	public boolean isValid(String value) {
-		bytes = HexBin.decode(value.trim());
+		value = value.trim();
+		bytes = BinaryHexValue.parse(value);
 		return (bytes != null);
 	}
 
-	/*
-	 * Decoder
-	 */
+	
+	public Value getValue() {
+		return new BinaryHexValue(bytes);
+	}
+	
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)
 			throws IOException {

@@ -21,12 +21,10 @@ package com.siemens.ct.exi.io.channel;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import com.siemens.ct.exi.util.datatype.DatetimeType;
-import com.siemens.ct.exi.util.datatype.XSDDatetime;
 import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
-import com.siemens.ct.exi.values.DoubleValue;
 import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.IntegerValue;
@@ -268,84 +266,65 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
 	public FloatValue decodeFloatValue() throws IOException {
-		int iMantissa = decodeInteger();
-		int iExponent = decodeInteger();
-		return new FloatValue(iMantissa, iExponent);
-	}
-
-	public DoubleValue decodeDoubleValue() throws IOException {
-		long lMantissa = decodeLong();
-		long lExponent = decodeLong();
-		return new DoubleValue(lMantissa, lExponent);
+		long mantissa = decodeLong();
+		long exponent = decodeLong();
+		return new FloatValue(mantissa, exponent);
 	}
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public DateTimeValue decodeDateTimeValue(DatetimeType type) throws IOException {
-		int year = 0, monthDay = 0, time = 0, fractionalSecs = 0, timeZone;
+	public DateTimeValue decodeDateTimeValue(DateTimeType type) throws IOException {
+		int year = 0, monthDay = 0, time = 0, fractionalSecs = 0;
+		boolean presenceFractionalSecs = false;
 
 		switch (type) {
 		case gYear: // Year, [Time-Zone]
-			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
-			timeZone = decodeDateTimeTimezone();
+			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
 			break;
 		case gYearMonth: // Year, MonthDay, [TimeZone]
-			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			timeZone = decodeDateTimeTimezone();
+			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		case date: // Year, MonthDay, [TimeZone]
-			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			timeZone = decodeDateTimeTimezone();
+			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		case dateTime: // Year, MonthDay, Time, [FractionalSecs], [TimeZone]
 			// e.g. "0001-01-01T00:00:00.111+00:33";
-			year = decodeInteger() + XSDDatetime.YEAR_OFFSET;
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			time = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME);
-			fractionalSecs = decodeDateTimeFractionalSecs();
-			timeZone = decodeDateTimeTimezone();
+			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
+			// Note: *no* break;
+		case time: // Time, [FractionalSecs], [TimeZone]
+			// e.g. "12:34:56.135"
+			time = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_TIME);
+			presenceFractionalSecs = decodeBoolean(); 
+			fractionalSecs = presenceFractionalSecs ? decodeUnsignedInteger() : 0;
 			break;
 		case gMonth: // MonthDay, [TimeZone]
 			// e.g. "--12"
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			timeZone = decodeDateTimeTimezone();
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		case gMonthDay: // MonthDay, [TimeZone]
 			// e.g. "--01-28"
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			timeZone = decodeDateTimeTimezone();
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		case gDay: // MonthDay, [TimeZone]
 			// "---16";
-			monthDay = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_MONTHDAY);
-			timeZone = decodeDateTimeTimezone();
-			break;
-		case time: // Time, [FractionalSecs], [TimeZone]
-			// e.g. "12:34:56.135"
-			time = decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIME);
-			fractionalSecs = decodeDateTimeFractionalSecs();
-			timeZone = decodeDateTimeTimezone();
+			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		default:
 			throw new UnsupportedOperationException();
 		}
 
-		return new DateTimeValue(type, year, monthDay, time, fractionalSecs,
-				timeZone);
-	}
-
-	private int decodeDateTimeTimezone() throws IOException {
-		return decodeBoolean() ? decodeNBitUnsignedInteger(XSDDatetime.NUMBER_BITS_TIMEZONE)
-				- XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES
+		boolean presenceTimezone = decodeBoolean();
+		int timeZone =  presenceTimezone ? decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_TIMEZONE)
+				- DateTimeValue.TIMEZONE_OFFSET_IN_MINUTES
 				: 0;
-	}
-
-	private int decodeDateTimeFractionalSecs() throws IOException {
-		return decodeBoolean() ? decodeUnsignedInteger() : 0;
+		
+		return new DateTimeValue(type, year, monthDay, time, presenceFractionalSecs, fractionalSecs,
+				presenceTimezone, timeZone);
 	}
 
 }
