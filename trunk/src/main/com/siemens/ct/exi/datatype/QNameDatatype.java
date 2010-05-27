@@ -52,8 +52,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class QNameDatatype extends AbstractDatatype {
 
-//	protected String qnameURI;
-//	protected String qnameLocalName;
 	protected QName qname;
 	protected String qnamePrefix;
 	
@@ -172,6 +170,21 @@ public class QNameDatatype extends AbstractDatatype {
 		
 		qname = new QName(qnameURI, qnameLocalName);
 		return true;
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof QNameValue) {
+			QNameValue qv = ((QNameValue) value);
+			qname = qv.toQName();
+			qnamePrefix = qv.getPrefix();
+			return true;		
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		return new QNameValue(qname, qnamePrefix);
 	}
 	
 	@Override

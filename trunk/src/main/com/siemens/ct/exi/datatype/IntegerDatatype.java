@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -40,32 +41,39 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class IntegerDatatype extends AbstractDatatype {
-	
-	private int lastInteger;
-	
+
+	private IntegerValue lastInteger;
+
 	public IntegerDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.INTEGER, datatypeIdentifier);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			lastInteger = Integer.parseInt(value);
-			return true;
-		} catch (NumberFormatException e) {
+		lastInteger = IntegerValue.parse(value);
+		return (lastInteger != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof IntegerValue) {
+			lastInteger = ((IntegerValue) value);
+			return true;			
+		} else {
 			return false;
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeInteger(lastInteger);
+	public Value getValue() {
+		return lastInteger;
+	}
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeInteger(lastInteger.toInteger());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeIntegerValue();
 	}
 }

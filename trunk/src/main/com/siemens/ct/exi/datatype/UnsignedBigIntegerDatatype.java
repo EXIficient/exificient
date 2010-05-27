@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import javax.xml.namespace.QName;
 
@@ -29,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -42,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class UnsignedBigIntegerDatatype extends AbstractDatatype {
 	
-	private BigInteger lastUnsignedInteger;
+	private HugeIntegerValue lastUnsignedInteger;
 	
 	public UnsignedBigIntegerDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.UNSIGNED_BIG_INTEGER, datatypeIdentifier);
@@ -50,18 +50,26 @@ public class UnsignedBigIntegerDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			lastUnsignedInteger = new BigInteger(value);
-			return (lastUnsignedInteger.signum() != -1);
-		} catch (NumberFormatException e) {
+		lastUnsignedInteger = HugeIntegerValue.parse(value);
+		return (lastUnsignedInteger != null && lastUnsignedInteger.isPositive());
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof HugeIntegerValue) {
+			lastUnsignedInteger = ((HugeIntegerValue) value);
+			return (lastUnsignedInteger.isPositive());			
+		} else {
 			return false;
 		}
+	}
+	
+	public Value getValue() {
+		return lastUnsignedInteger;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeUnsignedBigInteger(lastUnsignedInteger);
+		valueChannel.encodeUnsignedHugeInteger(lastUnsignedInteger);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

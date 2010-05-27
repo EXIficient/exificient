@@ -19,6 +19,8 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
@@ -42,15 +44,16 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class ListDatatype extends AbstractDatatype {
-	
+
 	private Datatype listDatatype;
-	
-	protected int numberOfEnumeratedTypes;
-	protected String lastValidValue;
+
+	protected List<Value> values;
 
 	public ListDatatype(Datatype listDatatype) {
 		super(BuiltInType.LIST, null);
-		
+
+		values = new ArrayList<Value>();
+
 		this.rcs = listDatatype.getRestrictedCharacterSet();
 
 		if (listDatatype.getDefaultBuiltInType() == BuiltInType.LIST) {
@@ -63,65 +66,73 @@ public class ListDatatype extends AbstractDatatype {
 	public Datatype getListDatatype() {
 		return listDatatype;
 	}
-	
+
 	public boolean isValid(String value) {
 		// iterate over all tokens
 		StringTokenizer st = new StringTokenizer(value,
 				Constants.XSD_LIST_DELIM);
-		numberOfEnumeratedTypes = 0;
+		values.clear();
 
 		while (st.hasMoreTokens()) {
-			if (!listDatatype.isValid(st.nextToken())) {
+			if (listDatatype.isValid(st.nextToken())) {
+				values.add(listDatatype.getValue());
+			} else {
 				// invalid --> abort process
 				return false;
 			}
-			numberOfEnumeratedTypes++;
 		}
-
-		lastValidValue = value;
 		return true;
 	}
 	
+	public boolean isValid(Value value) {
+		if (value instanceof ListValue) {
+			values = ((ListValue) value).toValues();
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+
+	public Value getValue() {
+		return new ListValue(values);
+	}
+
 	@Override
 	public boolean isValidRCS(String value) {
-		StringTokenizer st = new StringTokenizer(value,
-				Constants.XSD_LIST_DELIM);
-		numberOfEnumeratedTypes = st.countTokens();
 		return super.isValidRCS(value);
 	}
-	
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-			/*
-			 * Needs to check AGAIN & writes to stream
-			 */
-			// length prefixed sequence of values
-			valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
-
-			// iterate over all tokens
-			StringTokenizer st = new StringTokenizer(lastValidValue,
-					Constants.XSD_LIST_DELIM);
-
-			while (st.hasMoreTokens()) {
-				// Note: assumption that is valid (was already checked!)
-				//	Nevertheless isValid method needs to be called!
-				listDatatype.isValid(st.nextToken());
-				listDatatype.writeValue(valueChannel, stringEncoder, context);
-			}
-	}
-	
-	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException {
-		// length prefixed sequence of values
-		valueChannel.encodeUnsignedInteger(numberOfEnumeratedTypes);
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		
+		// length prefixed sequence of values
+		valueChannel.encodeUnsignedInteger(values.size());
+
 		// iterate over all tokens
+		for(Value v : values) {
+			boolean valid = listDatatype.isValid(v);
+			if (!valid){
+				throw new RuntimeException("ListValue is not valid, " + v);
+			}
+			listDatatype.writeValue(valueChannel, stringEncoder, context);
+		}
+	}
+
+	@Override
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+			EncoderChannel valueChannel, StringEncoder stringEncoder,
+			QName context) throws IOException {
+		
 		StringTokenizer st = new StringTokenizer(this.lastRCSValue,
 				Constants.XSD_LIST_DELIM);
-
-		rcsEncoder.setRestrictedCharacterSet(rcs);
 		
+		// length prefixed sequence of values
+		valueChannel.encodeUnsignedInteger(st.countTokens());
+
+		// iterate over all tokens
+		rcsEncoder.setRestrictedCharacterSet(rcs);
+
 		while (st.hasMoreTokens()) {
 			rcsEncoder.isValid(st.nextToken());
 			rcsEncoder.writeValue(valueChannel, stringEncoder, context);
@@ -129,32 +140,32 @@ public class ListDatatype extends AbstractDatatype {
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
-		Value[] values = new Value[len];
-		
+		List<Value> values = new ArrayList<Value>(len);
+
 		for (int i = 0; i < len; i++) {
-			values[i] = listDatatype.readValue(valueChannel, stringDecoder, context);
+			values.add(listDatatype.readValue(valueChannel, stringDecoder,
+					context));
 		}
-		
+
 		return new ListValue(values);
 	}
 
-	
 	@Override
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,
 			QName context) throws IOException {
 		int len = valueChannel.decodeUnsignedInteger();
-		Value[] values = new Value[len];
-		
+		List<Value> values = new ArrayList<Value>(len);
+
 		rcsDecoder.setRestrictedCharacterSet(rcs);
-		
+
 		for (int i = 0; i < len; i++) {
-			values[i] = rcsDecoder.readValue(valueChannel, stringDecoder, context);
+			values.add(rcsDecoder.readValue(valueChannel, stringDecoder,
+					context));
 		}
-		
+
 		return new ListValue(values);
 	}
 }

@@ -31,11 +31,11 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		return bytes;
 	}
 	
-	abstract protected void init();
+	abstract protected void initString();
 	
 	public int getCharactersLength() {
 		if (slen == -1) {
-			init();
+			initString();
 		}
 		return slen;
 	}
@@ -44,10 +44,22 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		return sValue.toCharArray();
 	}
 	
+	protected final boolean _equals(byte[] oBytes) {
+		if (bytes.length == oBytes.length) {
+			for(int i=0; i<bytes.length; i++) {
+				if (bytes[i] != oBytes[i]){
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String toString() {
 		if (slen == -1) {
-			init();
+			initString();
 		}
 		return sValue;
 	}

@@ -42,7 +42,6 @@ import com.siemens.ct.exi.datatype.BooleanPatternDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
-import com.siemens.ct.exi.datatype.DoubleDatatype;
 import com.siemens.ct.exi.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.IntegerDatatype;
@@ -59,7 +58,8 @@ import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -186,7 +186,7 @@ public class BuiltIn {
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
 			throws EXIException {
 		Datatype datatype = null;
-
+		
 		// is list ?
 		if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
 			XSSimpleTypeDefinition listSTD = std.getItemType();
@@ -205,11 +205,30 @@ public class BuiltIn {
 					XSMultiValueFacet enumer = (XSMultiValueFacet) facet;
 					if (enumer.getFacetKind() == XSSimpleTypeDefinition.FACET_ENUMERATION) {
 						StringList enumList = enumer.getLexicalFacetValues();
-						// // TODO enumeration not type-castable !?
-						// ExpandedName datatypeIdentifier = null;
-						// BuiltInType enumDatatype = null;
-						datatype = new EnumerationDatatype(enumList);
+						// TODO enumeration not type-castable !?
+						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
+								.getBaseType();
+						Datatype dtEnumValues = getDatatype(stdEnum);
+
+						Value[] values = new Value[enumList.getLength()];
+						
+						/*  */
+						for(int k=0; k<enumList.getLength(); k++) {
+							String sEnumValue = enumList.item(k);
+							boolean valid = dtEnumValues.isValid(sEnumValue);
+							if (!valid) {
+								throw new RuntimeException("No valid enumeration value '" + sEnumValue + "', " + stdEnum);
+							}
+							values[k] = dtEnumValues.getValue();
+						}
+						datatype = new EnumerationDatatype(values);
 					}
+					// else {
+					// System.err.println("XSMultiValueFacet " +
+					// enumer.getFacetKind());
+					// // throw new RuntimeException("XSMultiValueFacet " +
+					// enumer.getFacetKind());
+					// }
 				}
 			}
 		} else {
@@ -327,7 +346,7 @@ public class BuiltIn {
 			// max positive
 			if (min.compareTo(BigInteger.ZERO) == -1) {
 				// min negative
-				boundedRange = max.add(min.abs());
+				boundedRange = max.add(min.abs()).add(BigInteger.ONE);
 			} else {
 				// min positive
 				boundedRange = max.abs().subtract(min).add(BigInteger.ONE);
@@ -348,15 +367,20 @@ public class BuiltIn {
 			 * Integer representation.
 			 */
 			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new NBitBigIntegerDatatype(datatypeID, min, max,
-						boundedRange.intValue());
+				assert (max.subtract(min).add(BigInteger.ONE)
+						.equals(boundedRange));
+				datatype = new NBitBigIntegerDatatype(datatypeID, min, max);
 			} else if (intType == IntegerType.LONG) {
+				assert ((max.longValue() - min.longValue() + 1) == boundedRange
+						.intValue());
 				datatype = new NBitLongDatatype(datatypeID, min.longValue(),
-						max.longValue(), boundedRange.intValue());
+						max.longValue());
 			} else {
 				assert ((intType == IntegerType.INT));
+				assert ((max.intValue() - min.intValue() + 1) == boundedRange
+						.intValue());
 				datatype = new NBitIntegerDatatype(datatypeID, min.intValue(),
-						max.intValue(), boundedRange.intValue());
+						max.intValue());
 			}
 		} else if (min.signum() >= 0) {
 			/*
@@ -422,33 +446,34 @@ public class BuiltIn {
 			QName primitive = BuiltIn.getPrimitive(std);
 
 			if (XSD_DATETIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.dateTime,
+				datatype = new DatetimeDatatype(DateTimeType.dateTime,
 						datatypeID);
 			} else if (XSD_TIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.time, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.time, datatypeID);
 			} else if (XSD_DATE.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.date, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.date, datatypeID);
 			} else if (XSD_GYEARMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.gYearMonth,
+				datatype = new DatetimeDatatype(DateTimeType.gYearMonth,
 						datatypeID);
 			} else if (XSD_GYEAR.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.gYear, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gYear, datatypeID);
 			} else if (XSD_GMONTHDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.gMonthDay,
+				datatype = new DatetimeDatatype(DateTimeType.gMonthDay,
 						datatypeID);
 			} else if (XSD_GDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.gDay, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gDay, datatypeID);
 			} else if (XSD_GMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DatetimeType.gMonth, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gMonth, datatypeID);
 			} else {
 				throw new RuntimeException();
 			}
 		} else if (XSD_DECIMAL.equals(schemaDatatype)) {
 			datatype = new DecimalDatatype(datatypeID);
 		} else if (XSD_FLOAT.equals(schemaDatatype)) {
-			datatype = new FloatDatatype(datatypeID);
+			// datatype = new FloatDatatype(datatypeID);
+			datatype = new FloatDatatype(BuiltInType.FLOAT, datatypeID);
 		} else if (XSD_DOUBLE.equals(schemaDatatype)) {
-			datatype = new DoubleDatatype(datatypeID);
+			datatype = new FloatDatatype(BuiltInType.DOUBLE, datatypeID);
 		} else if (XSD_INTEGER.equals(schemaDatatype)) {
 			// returns integer type (nbit, unsigned, int) according to facets
 			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);

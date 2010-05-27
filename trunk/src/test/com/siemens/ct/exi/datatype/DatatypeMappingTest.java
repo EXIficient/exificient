@@ -28,7 +28,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.datatype.DatetimeType;
+import com.siemens.ct.exi.values.DateTimeType;
 
 public class DatatypeMappingTest extends AbstractTestCase {
 	public DatatypeMappingTest(String testName) {
@@ -129,7 +129,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatetimeDatatype dtd = (DatetimeDatatype) dt;
-		assertTrue(DatetimeType.dateTime == dtd.getDatetimeType());
+		assertTrue(DateTimeType.dateTime == dtd.getDatetimeType());
 	}
 
 	public void testDateTime2() throws Exception {
@@ -147,7 +147,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatetimeDatatype dtd = (DatetimeDatatype) dt;
-		assertTrue(DatetimeType.gDay == dtd.getDatetimeType());
+		assertTrue(DateTimeType.gDay == dtd.getDatetimeType());
 	}
 
 	public void testFloat1() throws Exception {
@@ -416,6 +416,25 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Enumeration", "");
 
 		assertTrue(BuiltInType.ENUMERATION == dt.getDefaultBuiltInType());
+	}
+	
+	public void testEnumeration2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='Enumeration'>"
+				+ "    <xs:restriction base='xs:integer'>"
+				+ "      <xs:enumeration value='0'/>"
+				+ "      <xs:enumeration value='1'/>"
+				+ "      <xs:enumeration value='2'/>"
+				+ "      <xs:enumeration value='3'/>" +
+				// et cetera
+				"    </xs:restriction>" + "  </xs:simpleType>" + "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Enumeration", "");
+		
+		assertTrue(BuiltInType.ENUMERATION == dt.getDefaultBuiltInType());
+		assertTrue(dt.isValid("+0"));
+
 	}
 
 	public void testList1() throws Exception {

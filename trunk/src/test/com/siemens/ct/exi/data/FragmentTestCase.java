@@ -34,8 +34,8 @@ public class FragmentTestCase extends AbstractTestCase {
 
 		// FragmentTestCase.setConfigurationFragment1 ( );
 		// FragmentTestCase.setConfigurationFragment2();
-		// FragmentTestCase.setConfigurationFragment3a ( );
-		FragmentTestCase.setConfigurationFragment3b ( );
+		FragmentTestCase.setConfigurationFragment3a ( );
+		// FragmentTestCase.setConfigurationFragment3b ( );
 	}
 
 	protected void setUp() {

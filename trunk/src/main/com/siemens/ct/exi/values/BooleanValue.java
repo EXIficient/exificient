@@ -26,7 +26,7 @@ public class BooleanValue extends AbstractValue {
 
 	protected char[] characters;
 	protected String sValue;
-	
+
 	public BooleanValue(boolean bool) {
 		this.bool = bool;
 		if (bool) {
@@ -37,7 +37,7 @@ public class BooleanValue extends AbstractValue {
 			sValue = Constants.XSD_BOOLEAN_0;
 		}
 	}
-	
+
 	public BooleanValue(int boolID) {
 		switch (boolID) {
 		case 0:
@@ -61,31 +61,61 @@ public class BooleanValue extends AbstractValue {
 			bool = true;
 			break;
 		default:
-			throw new RuntimeException("Error while decoding boolean pattern facet");
+			throw new RuntimeException(
+					"Error while decoding boolean pattern facet");
 		}
 	}
-	
+
+	public static Boolean parse(String value) {
+		value = value.trim();
+		if (value.equals(Constants.XSD_BOOLEAN_0)
+				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {
+			return Boolean.FALSE;
+		} else if (value.equals(Constants.XSD_BOOLEAN_1)
+				|| value.equals(Constants.XSD_BOOLEAN_TRUE)) {
+			return Boolean.TRUE;
+		} else {
+			return null;
+		}
+	}
+
 	public boolean toBoolean() {
 		return bool;
 	}
-	
+
 	public int getCharactersLength() {
 		return characters.length;
 	}
-	
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
 		// return internal char buffer to indicate that this should be used
 		return characters;
 	}
-	
+
 	@Override
 	public String toString() {
 		return sValue;
 	}
-	
+
 	@Override
 	public String toString(char[] cbuffer, int offset) {
 		return sValue;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof BooleanValue) {
+			return (bool == ((BooleanValue) o).bool);
+		} else if (o instanceof String) {
+			Boolean b = BooleanValue.parse((String) o);
+			if (b == null) {
+				return false;
+			} else {
+				return (bool == b);
+			}
+		} else {
+			return false;
+		}
 	}
 
 }

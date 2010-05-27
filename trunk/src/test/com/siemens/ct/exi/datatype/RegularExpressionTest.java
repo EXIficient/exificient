@@ -18,9 +18,11 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+
 
 import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
 import org.junit.Test;
@@ -28,13 +30,53 @@ import org.junit.Test;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.Value;
 
-public class RegularExpressionTest extends TestCase {
+public class RegularExpressionTest extends AbstractTestCase {
 
 	static final int codePoint(char c) {
 		assert (!Character.isHighSurrogate(c));
 		return (int) c;
+	}
+	
+	public void testPattern23() throws EXIException {
+		// ([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+
+		String regex = "\\p{Lm}";
+		
+//		Character.isLetter(codePoint)
+		
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		Set<Integer> codePoints = re.getCodePoints();
+		// <!-- 3.1.0 46 Chars -->
+		//  <!-- 3.2.0 48 Chars -->
+        // <!-- 6.0.0d2 202 Chars -->
+		assertTrue(codePoints.size() == 46);
+	}
+	
+	
+	public void testNonBMP() throws Exception {
+		// char c = 0xDC00; // \uDC00
+		Character.isLetter(0x2F81A);
+		// EXIRegularExpression re = new EXIRegularExpression("&#x10FFF");
+		EXIRegularExpression re = new EXIRegularExpression("\u10FFF");
+		
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+	
+	@Test
+	public void testRangeSpecialChars() throws Exception {
+		// UnicodeData-3.1.0: 03D7 .. 03DA (2 chars)
+		// UnicodeData-3.2.0: 03D7 .. 03DA (4 chars, 03D8 & 03D9)
+		EXIRegularExpression re = new EXIRegularExpression("[\u03D7-\u03DA]");
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 2);
 	}
 
 	@Test
@@ -358,6 +400,40 @@ public class RegularExpressionTest extends TestCase {
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
+	
+	
+	public void testPattern24() throws EXIException, IOException {
+		// --0\d --0\d --0\d --0\d --\d1 --0\d --0\d
+		String regex = "--0\\d --0\\d --0\\d --0\\d --\\d1 --0\\d --0\\d";
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		
+		String s = "--00 --00 --00 --00 --01 --00 --00";
+
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(re.getCodePoints());
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null, rcs);
+		
+		boolean valid = rcsDatatype.isValid(s);
+		assertTrue(valid);
+		
+		StringEncoder stringEncoder = new StringEncoderImpl();
+		StringDecoder stringDecoder = new StringDecoderImpl();
+		QName context = new QName("bla");
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		rcsDatatype.writeValue(bitEC, stringEncoder, context);
+		bitEC.flush();
+		Value v1 = rcsDatatype.readValue(getBitDecoder(), stringDecoder, context);
+		assertTrue(s.equals(v1.toString()));
+		
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		rcsDatatype.writeValue(byteEC, stringEncoder, context);
+		Value v2 = rcsDatatype.readValue(getByteDecoder(), stringDecoder, context);
+		assertTrue(s.equals(v2.toString()));
+	}
+
 
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");
@@ -448,6 +524,7 @@ public class RegularExpressionTest extends TestCase {
 		// assertTrue(codePoints.contains(codePoint('â')));
 		// assertTrue(codePoints.contains(codePoint('ß')));
 	}
+
 
 	public void testUnrestricted1() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression(".*");

@@ -52,6 +52,16 @@
                         <xs:list itemType="xs:date"/>
                     </xs:simpleType>
                 </xs:element>
+                <xs:element name="listBytes"  minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:byte"/>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="listFloats"  minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:float"/>
+                    </xs:simpleType>
+                </xs:element>
                 <!-- Built-in Type: String -->
                 <xs:element name="string"  type="xs:string" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="normalizedString"  type="xs:normalizedString" minOccurs="0" maxOccurs="unbounded" />
@@ -81,7 +91,7 @@
                 
 
                 <!-- Built-in Type: Enumeration -->
-                <xs:element name="car" minOccurs="0" maxOccurs="unbounded" >
+                <xs:element name="enumStrings" minOccurs="0" maxOccurs="unbounded" >
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:enumeration value="Audi"/>
@@ -90,6 +100,24 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>
+
+                <xs:element name="enumInts" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:integer">
+                            <xs:enumeration value="0"/>
+                            <xs:enumeration value="1"/>
+                            <xs:enumeration value="2"/>
+                            <xs:enumeration value="3"/>
+                            <xs:enumeration value="4"/>
+                            <xs:enumeration value="5"/>
+                            <xs:enumeration value="6"/>
+                            <xs:enumeration value="7"/>
+                            <xs:enumeration value="8"/>
+                            <xs:enumeration value="9"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                
             </xs:sequence>
         </xs:complexType>
     </xs:element>

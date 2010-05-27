@@ -42,15 +42,15 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class NBitIntegerDatatype extends AbstractDatatype {
-	
-	private int valueToEncode;
-	
+
+	protected IntegerValue validValue;
+
 	protected final int lowerBound;
 	protected final int upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitIntegerDatatype(QName datatypeIdentifier,
-			int lowerBound, int upperBound, int boundedRange) {
+	public NBitIntegerDatatype(QName datatypeIdentifier, int lowerBound,
+			int upperBound) {
 		super(BuiltInType.NBIT_INTEGER, datatypeIdentifier);
 		this.rcs = new XSDIntegerCharacterSet();
 
@@ -58,7 +58,9 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		this.upperBound = upperBound;
 
 		// calculate number of bits to represent range
-		numberOfBits4Range = MethodsBag.getCodingLength(boundedRange);
+		assert (upperBound >= lowerBound);
+		numberOfBits4Range = MethodsBag.getCodingLength(upperBound - lowerBound
+				+ 1);
 	}
 
 	public int getLowerBound() {
@@ -72,44 +74,55 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	public int getNumberOfBits() {
 		return numberOfBits4Range;
 	}
-	
-	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			valueToEncode = Integer.parseInt(value);
 
-			// check lower & upper bound
-			if (valueToEncode >= lowerBound
-					&& valueToEncode <= upperBound) {
-				// retrieve offset & update value
-				valueToEncode -= lowerBound;
-				return true;
-			} else {
-				return false;
-			}
-		} catch (NumberFormatException e) {
+	public boolean isValid(String value) {
+		validValue = IntegerValue.parse(value);
+
+		if (validValue == null) {
+			return false;
+		} else {
+			return checkBounds();
+		}
+	}
+	
+	// check lower & upper bound
+	protected boolean checkBounds() {
+		int iValidValue = validValue.toInteger();
+		if (iValidValue >= lowerBound && iValidValue <= upperBound) {
+			return true;
+		} else {
 			return false;
 		}
 	}
-
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeNBitUnsignedInteger(valueToEncode, numberOfBits4Range);
+	
+	public boolean isValid(Value value) {
+		if (value instanceof IntegerValue) {
+			validValue = ((IntegerValue) value);
+			return checkBounds();		
+		} else {
+			return false;
+		}
 	}
 	
+	
+	public Value getValue() {
+		return validValue;
+	}
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeNBitUnsignedInteger(validValue.toInteger()-lowerBound,
+				numberOfBits4Range);
+	}
+
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
-		IntegerValue iv = valueChannel.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
+			StringDecoder stringDecoder, QName context) throws IOException {
+		IntegerValue iv = valueChannel
+				.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
 		if (lowerBound != 0) {
-			iv = new IntegerValue( iv.toInteger() + lowerBound );
+			iv = new IntegerValue(iv.toInteger() + lowerBound);
 		}
 		return iv;
-		
-//		// decode value
-//		int decodedValue = valueChannel.decodeNBitUnsignedInteger(numberOfBits4Range);
-//		// add offset (lower bound)
-//		return new StringValue(MethodsBag.itos( decodedValue + lowerBound ));
 	}
 
 }

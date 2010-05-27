@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.LongValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -41,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class LongDatatype extends AbstractDatatype {
 	
-	private long lastInteger;
+	private LongValue lastLong;
 	
 	public LongDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.LONG, datatypeIdentifier);
@@ -49,18 +50,26 @@ public class LongDatatype extends AbstractDatatype {
 	}
 	
 	public boolean isValid(String value) {
-		try {
-			value = value.trim();
-			lastInteger = Long.parseLong(value);
-			return true;
-		} catch (NumberFormatException e) {
+		lastLong = LongValue.parse(value);
+		return(lastLong != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof LongValue) {
+			lastLong = ((LongValue) value);
+			return true;			
+		} else {
 			return false;
 		}
+	}
+	
+	public Value getValue() {
+		return lastLong;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeLong(lastInteger);
+		valueChannel.encodeLong(lastLong.toLong());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

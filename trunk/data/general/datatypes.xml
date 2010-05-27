@@ -35,7 +35,7 @@
     <gYearMonth>1999-10Z</gYearMonth>
     <gYearMonth>1999-10-12:11</gYearMonth>
     <gYearMonth>1999-10+00:33</gYearMonth>
-   
+    <gYearMonth>1809-02Z</gYearMonth>
     
     <gYear>2007</gYear>
     <gYear>-0007</gYear>
@@ -55,6 +55,8 @@
     <decimal>+100000.00</decimal>
     <decimal>210</decimal>
     <decimal>12678967.543233999999999999999999</decimal>
+    <decimal>.234</decimal>
+    <decimal>-.1</decimal>
 
     <!-- Built-in Type: Float -->
     <float>-1E4</float>
@@ -66,6 +68,7 @@
     <float>INF</float>
     <float>NaN </float>
     <float>145345.66</float>
+    <float>562949953421312</float>
     <double>-1E4</double>
     <double>1267.43233E12</double>
     <double>12.78e-2</double>
@@ -100,6 +103,9 @@
     <!-- Built-in Type: List -->
     <intValues>100 34 56 -23 1567</intValues>
     <listDates>2077-12-12 1999-01-02</listDates>
+    <listBytes>+1 0 127 -127</listBytes>
+    <listBytes></listBytes>
+    <listFloats>1e4 -10000 5.234e-2</listFloats>
     
     <!-- Built-in Type: String  -->
     <string>ss ss </string>
@@ -128,6 +134,12 @@
     <duration>-P1347M</duration>
     
     <!-- Built-in Type: Enumeration -->
-    <car>BMW</car>
+    <enumStrings>BMW</enumStrings>
+    <enumInts>-0</enumInts>
+    <enumInts>+1</enumInts>
+    <enumInts>+1</enumInts>
+    <enumInts>2</enumInts>
+    <enumInts>8</enumInts>
+    <enumInts>9</enumInts>
     
 </root>

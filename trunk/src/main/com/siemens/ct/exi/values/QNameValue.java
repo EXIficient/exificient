@@ -67,5 +67,14 @@ public class QNameValue extends AbstractValue {
 	public String toString(char[] cbuffer, int offset) {
 		return sValue;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof QNameValue) {
+			return qname.equals((QNameValue)o);
+		} else {
+			return false;	
+		}
+	}
 
 }

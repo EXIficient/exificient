@@ -21,14 +21,34 @@ package com.siemens.ct.exi.values;
 import org.apache.xerces.impl.dv.util.Base64;
 
 public class BinaryBase64Value extends AbstractBinaryValue {
-	
+
 	public BinaryBase64Value(byte[] bytes) {
 		super(bytes);
 	}
-	
-	protected void init() {
+
+	public static byte[] parse(String val) {
+		return Base64.decode(val);
+	}
+
+	protected void initString() {
 		sValue = Base64.encode(bytes);
 		slen = sValue.length();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof BinaryBase64Value) {
+			return _equals(((BinaryBase64Value) o).bytes);
+		} else if (o instanceof String) {
+			byte[] b = BinaryBase64Value.parse((String) o);
+			if (b == null) {
+				return false;
+			} else {
+				return _equals(b);
+			}
+		} else {
+			return false;
+		}
 	}
 
 }

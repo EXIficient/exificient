@@ -44,6 +44,7 @@ import com.siemens.ct.exi.values.Value;
 public class BooleanPatternDatatype extends AbstractDatatype {
 	
 	private int lastValidBooleanID;
+	private boolean lastValidBoolean;
 	
 	public BooleanPatternDatatype(QName datatypeIdentifier) {
 		super(BuiltInType.BOOLEAN_PATTERN, datatypeIdentifier);
@@ -56,17 +57,37 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 		
 		if (value.equals(Constants.XSD_BOOLEAN_FALSE)) {
 			lastValidBooleanID = 0;
+			lastValidBoolean = false;
 		} else if (value.equals(Constants.XSD_BOOLEAN_0)) {
 			lastValidBooleanID = 1;
+			lastValidBoolean = false;
 		} else if (value.equals(Constants.XSD_BOOLEAN_TRUE)) {
 			lastValidBooleanID = 2;
+			lastValidBoolean = true;
 		} else if (value.equals(Constants.XSD_BOOLEAN_1)) {
 			lastValidBooleanID = 3;
+			lastValidBoolean = true;
 		} else {
 			retValue = false;
 		}
 
 		return retValue;
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof BooleanValue) {
+			lastValidBoolean = ((BooleanValue) value).toBoolean();
+			// TODO not fully correct
+			lastValidBooleanID = lastValidBoolean ? 2 : 0;
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	
+	public Value getValue() {
+		return new BooleanValue(lastValidBoolean);
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)

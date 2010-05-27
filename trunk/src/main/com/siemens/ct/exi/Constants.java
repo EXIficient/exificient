@@ -94,8 +94,8 @@ public interface Constants {
 	public static final int FLOAT_MANTISSA_MINUS_INFINITY = -1;
 	public static final int FLOAT_MANTISSA_NOT_A_NUMBER = 0;
 	
-	public static final int FLOAT_EXPONENT_MIN_RANGE = -16383;	// - (2^14-1) 
-	public static final int FLOAT_EXPONENT_MAX_RANGE = 16383;	// 2^14-1
+	public static final long FLOAT_EXPONENT_MIN_RANGE = -16383;	// - (2^14-1) 
+	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383;	// 2^14-1
 	public static final long FLOAT_MANTISSA_MIN_RANGE = -9223372036854775808L;	// - (2^63)
 	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L;	// 2^63-1
 

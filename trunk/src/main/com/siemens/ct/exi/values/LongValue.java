@@ -20,12 +20,21 @@ package com.siemens.ct.exi.values;
 
 import com.siemens.ct.exi.util.MethodsBag;
 
-public class LongValue extends AbstractValue {
+public class LongValue extends AbstractIntegerValue {
 
 	protected final long val;
 
 	public LongValue(long val) {
 		this.val = val;
+	}
+	
+	public static LongValue parse(String value) {
+		try {
+			value = getAdjustedValue(value);
+			return new LongValue(Long.parseLong(value));
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 	
 	public long toLong() {
@@ -50,6 +59,22 @@ public class LongValue extends AbstractValue {
 			assert (cbuffer.length >= getCharactersLength());
 			MethodsBag.itos(val, offset + getCharactersLength(), cbuffer);
 			return cbuffer;	
+		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof LongValue) {
+			return (val == ((LongValue)o).val);
+		} else if (o instanceof String ) {
+			LongValue l = LongValue.parse((String) o);
+			if (l== null) {
+				return false;
+			} else {
+				return (val == l.val);
+			}
+		} else {
+			return false;	
 		}
 	}
 

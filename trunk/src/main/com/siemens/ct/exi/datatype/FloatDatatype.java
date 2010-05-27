@@ -28,7 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.util.datatype.XSDFloat;
+import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -42,15 +42,30 @@ import com.siemens.ct.exi.values.Value;
 
 public class FloatDatatype extends AbstractDatatype {
 	
-	protected XSDFloat lastValidFloat = XSDFloat.newInstance();
+	protected FloatValue lastValidFloat;
 	
-	public FloatDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.FLOAT, datatypeIdentifier);
+	public FloatDatatype(BuiltInType builtInType, QName datatypeIdentifier) {
+		super(builtInType, datatypeIdentifier);
 		this.rcs = new XSDDoubleCharacterSet();
 	}
 	
 	public boolean isValid(String value) {
-		return lastValidFloat.parse(value);
+		lastValidFloat = FloatValue.parse(value);
+		return (lastValidFloat != null);
+	}
+	
+	public boolean isValid(Value value) {
+		if (value instanceof FloatValue) {
+			lastValidFloat = ((FloatValue) value);
+			return true;			
+		} else {
+			return false;
+		}
+	}
+	
+	public Value getValue() {
+		// return new DoubleValue(mantissa, exponent);
+		return lastValidFloat;
 	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
