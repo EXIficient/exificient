@@ -28,6 +28,35 @@ public class EnumerationTest extends AbstractTestCase {
 	public EnumerationTest(String testName) {
 		super(testName);
 	}
+	
+	public void testEnumerationUnion1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='union'>"
+				+ "    <xs:union memberTypes='xs:integer xs:time'/>"
+				+ "  </xs:simpleType>"
+				+ ""
+				+ "  <xs:simpleType name='Enumeration'>"
+				+ "    <xs:restriction base='union'>"
+				+ "      <xs:enumeration value='10'/>"
+				+ "      <xs:enumeration value='12:32:00'/>"
+				+ "      <xs:enumeration value='588'/>"
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Enumeration", "");
+
+		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+
+		assertTrue(dt.isValid("+10"));
+		assertTrue(dt.isValid("12:32:00"));
+		assertTrue(dt.isValid("+588"));
+
+		assertFalse(dt.isValid("00"));
+		assertFalse(dt.isValid("12:32:12"));
+	}
 
 	public void testEnumerationInteger1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
@@ -51,14 +80,15 @@ public class EnumerationTest extends AbstractTestCase {
 		assertFalse(dt.isValid("+4"));
 		assertFalse(dt.isValid("-3"));
 	}
-	
+
 	public void testEnumerationFloat1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='Enumeration'>"
 				+ "    <xs:restriction base='xs:float'>"
 				+ "      <xs:enumeration value='1.5'/>"
 				+ "      <xs:enumeration value='25'/>"
-				+ "   </xs:restriction>" + "  </xs:simpleType>" + "</xs:schema>";
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
@@ -74,5 +104,63 @@ public class EnumerationTest extends AbstractTestCase {
 		assertFalse(dt.isValid("00"));
 		assertFalse(dt.isValid("bla"));
 	}
+
+	public void testEnumerationFloat2() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='Enumeration'>"
+				+ "    <xs:restriction base='xs:float'>"
+				+ "      <xs:enumeration value='1.0'/>"
+				+ "      <xs:enumeration value='30.000'/>"
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Enumeration", "");
+
+		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+
+		assertTrue(dt.isValid("1.000"));
+		assertTrue(dt.isValid("1.0e0"));
+		assertTrue(dt.isValid("3E1"));
+
+		assertFalse(dt.isValid("00"));
+		assertFalse(dt.isValid("bla"));
+	}
+
+	public void testEnumerationGMonthDay1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='Enumeration'>"
+				+ "    <xs:restriction base='xs:gMonthDay'>"
+				+ "      <xs:enumeration value='--01-01'/>"
+				+ "      <xs:enumeration value='--05-01'/>"
+				+ "      <xs:enumeration value='--05-08'/>"
+				+ "      <xs:enumeration value='--07-14'/>"
+				+ "      <xs:enumeration value='--08-15'/>"
+				+ "      <xs:enumeration value='--11-01'/>"
+				+ "      <xs:enumeration value='--11-11'/>"
+				+ "      <xs:enumeration value='--12-25'/>"
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Enumeration", "");
+
+		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+
+		assertTrue(dt.isValid("--01-01"));
+		assertTrue(dt.isValid("--05-01"));
+		assertTrue(dt.isValid("--07-14"));
+		assertTrue(dt.isValid("--11-11"));
+		assertTrue(dt.isValid("--12-25"));
+
+		assertFalse(dt.isValid("00"));
+		assertFalse(dt.isValid("bla"));
+	}
+
+
 
 }
