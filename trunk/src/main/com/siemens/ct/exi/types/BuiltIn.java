@@ -186,7 +186,7 @@ public class BuiltIn {
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
 			throws EXIException {
 		Datatype datatype = null;
-		
+
 		// is list ?
 		if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
 			XSSimpleTypeDefinition listSTD = std.getItemType();
@@ -208,19 +208,50 @@ public class BuiltIn {
 						// TODO enumeration not type-castable !?
 						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
 								.getBaseType();
-						Datatype dtEnumValues = getDatatype(stdEnum);
-
+						
 						Value[] values = new Value[enumList.getLength()];
 						
-						/*  */
-						for(int k=0; k<enumList.getLength(); k++) {
-							String sEnumValue = enumList.item(k);
-							boolean valid = dtEnumValues.isValid(sEnumValue);
-							if (!valid) {
-								throw new RuntimeException("No valid enumeration value '" + sEnumValue + "', " + stdEnum);
+						if (stdEnum.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
+							XSObjectList unionMemberTypes = stdEnum.getMemberTypes();
+							
+							for (int k = 0; k < enumList.getLength(); k++) {
+								String sEnumValue = enumList.item(k);
+								
+								Datatype dtEnumValues = null;
+								boolean valid = false;
+								int j = 0;
+								
+								while(!valid && j< unionMemberTypes.getLength())  {
+									XSSimpleTypeDefinition stdEnumUnion = (XSSimpleTypeDefinition) unionMemberTypes
+									.item(j);
+									dtEnumValues = getDatatype(stdEnumUnion);
+									valid = dtEnumValues.isValid(sEnumValue);
+									
+									j++;
+								}
+
+								if (!valid) {
+									throw new RuntimeException(
+											"No valid enumeration value '"
+													+ sEnumValue + "', " + stdEnum);
+								}
+								values[k] = dtEnumValues.getValue();
 							}
-							values[k] = dtEnumValues.getValue();
+						} else {
+							Datatype dtEnumValues = getDatatype(stdEnum);
+							
+							for (int k = 0; k < enumList.getLength(); k++) {
+								String sEnumValue = enumList.item(k);
+								boolean valid = dtEnumValues.isValid(sEnumValue);
+								if (!valid) {
+									throw new RuntimeException(
+											"No valid enumeration value '"
+													+ sEnumValue + "', " + stdEnum);
+								}
+								values[k] = dtEnumValues.getValue();
+							}
 						}
+						
 						datatype = new EnumerationDatatype(values);
 					}
 					// else {

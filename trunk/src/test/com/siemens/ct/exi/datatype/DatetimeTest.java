@@ -99,6 +99,22 @@ public class DatetimeTest extends AbstractTestCase {
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
+	
+	public void testDatetimeGYear4() throws IOException {
+		String s = "2009-13:59";
+		DateTimeType type = DateTimeType.gYear;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
 
 	/*
 	 * gYearMonth
@@ -292,6 +308,23 @@ public class DatetimeTest extends AbstractTestCase {
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
+	
+	public void testDatetimeDateTime4() throws IOException {
+		String s = "2009-04-01T12:34:56Z";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		DateTimeValue dtv = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(s.equals(dtv.toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
 
 	/*
 	 * gMonth
@@ -314,6 +347,22 @@ public class DatetimeTest extends AbstractTestCase {
 
 	public void testDatetimeGMonth1() throws IOException {
 		String s = "--07Z";
+		DateTimeType type = DateTimeType.gMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		assertTrue(s.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
+	
+	public void testDatetimeGMonth2() throws IOException {
+		String s = "--07+12:34";
 		DateTimeType type = DateTimeType.gMonth;
 		DateTimeValue datetime = DateTimeValue.parse(s, type);
 		assertTrue(datetime != null);

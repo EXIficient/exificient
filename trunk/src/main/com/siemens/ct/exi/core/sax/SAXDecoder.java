@@ -411,9 +411,10 @@ public class SAXDecoder implements XMLReader {
 
 		// TODO empty string if no qualified name is necessary
 		QName atQName = decoder.getAttributeQName();
+		String sVal = val.toString(cbuffer, 0);
 		attributes.addAttribute(atQName.getNamespaceURI(), atQName
 				.getLocalPart(), decoder.getAttributeQNameAsString(),
-				ATTRIBUTE_TYPE, val.toString(cbuffer, 0));
+				ATTRIBUTE_TYPE, sVal);
 
 		// keep processing startTag events
 		parseStartTagContent();

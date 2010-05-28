@@ -280,9 +280,9 @@ public class FloatValue extends AbstractValue {
 				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
 			}
 		} else {
-			MethodsBag.itos(exponent, getCharactersLength(), cbuffer);
-			cbuffer[slenMantissa] = 'E';
-			MethodsBag.itos(mantissa, slenMantissa, cbuffer);
+			MethodsBag.itos(exponent, offset + getCharactersLength(), cbuffer);
+			cbuffer[offset + slenMantissa] = 'E';
+			MethodsBag.itos(mantissa, offset + slenMantissa, cbuffer);
 
 			return cbuffer;
 		}
@@ -320,7 +320,29 @@ public class FloatValue extends AbstractValue {
 	}
 
 	protected final boolean _equals(FloatValue o) {
-		return (mantissa == o.mantissa && exponent == o.exponent);
+		// e.g. 10E-1 vs. 1000E-3
+		if (mantissa == o.mantissa && exponent == o.exponent) {
+			return true;
+		} else {
+			
+			if (exponent > o.exponent) {
+				// e.g. 234E2 vs. 2340E1
+				long diff = exponent - o.exponent;
+				long eMantissa = mantissa;
+				for(int i=0; i<diff; i++) {
+					eMantissa *= 10;
+				}
+				return (eMantissa == o.mantissa );
+			} else {
+				// e.g. 30E0 vs. 3E1
+				long diff = o.exponent - exponent;
+				long eMantissa = o.mantissa;
+				for(int i=0; i<diff; i++) {
+					eMantissa *= 10;
+				}
+				return (mantissa == eMantissa );
+			}
+		}
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class DateTimeValue extends AbstractValue {
 	// Date-Time, Year Offset from 2000
 	public static final int YEAR_OFFSET = 2000;
 
-	public static final int TIMEZONE_OFFSET_IN_MINUTES = 840;
+	public static final int TIMEZONE_OFFSET_IN_MINUTES = 896; // ( = 14 * 64)
 
 	public static final int MONTH_MULTIPLICATOR = 32;
 
@@ -242,7 +242,7 @@ public class DateTimeValue extends AbstractValue {
 		return month * MONTH_MULTIPLICATOR + day;
 	}
 
-	// Time ((Hour * 60) + Minutes) * 60 + seconds
+	// Time ((Hour * 64) + Minutes) * 64 + seconds
 	protected static int parseTime(StringBuilder sb) throws XMLParsingException {
 		// hour
 		int hour = Integer.parseInt(sb.substring(0, 2));
@@ -260,54 +260,8 @@ public class DateTimeValue extends AbstractValue {
 		int seconds = Integer.parseInt(sb.substring(0, 2));
 		sb.delete(0, 2);
 
-		return ((hour * 60) + minutes) * 60 + seconds;
+		return ((hour * 64) + minutes) * 64 + seconds;
 	}
-
-//	// lexical representation of a timezone: (('+' | '-') hh ':' mm) | 'Z',
-//	// where
-//	// * hh is a two-digit numeral (with leading zeros as required) that
-//	// represents the hours,
-//	// * mm is a two-digit numeral that represents the minutes,
-//	// * '+' indicates a nonnegative duration,
-//	// * '-' indicates a nonpositive duration.
-//	//
-//	// TimeZone 	TZHours * 64 + TZMinutes (896 = 14 * 64)
-//	protected static Integer parseTimezoneInMinutesOffset(StringBuilder sb)
-//			throws XMLParsingException {
-//
-//		// plus, minus, Z or nothing ?
-//		if (sb.length() == 0) {
-//			// presenceTimeZone = false;
-//			// timezone = 0;
-//			return null;
-//		} else if (sb.length() == 1 && sb.charAt(0) == 'Z') {
-//			sb.delete(0, 1);
-//			// presenceTimeZone = true;
-//			// timezone = XSDDatetime.TIMEZONE_OFFSET_IN_MINUTES;
-//			return TIMEZONE_OFFSET_IN_MINUTES;
-//		} else {
-//			// presenceTimeZone = true;
-//			int multiplicator;
-//			if (sb.charAt(0) == '+') {
-//				multiplicator = 1;
-//			} else if (sb.charAt(0) == '-') {
-//				multiplicator = -1;
-//			} else {
-//				throw new XMLParsingException(
-//						"Unexpected character while parsing");
-//			}
-//
-//			// hours
-//			int hours = Integer.parseInt(sb.substring(1, 3));
-//			// colon
-//			assert (sb.charAt(3) == ':');
-//			// minutes
-//			int minutes = Integer.parseInt(sb.substring(4, 6));
-//
-//			return (multiplicator) * (hours * 64 + minutes)
-//					+ TIMEZONE_OFFSET_IN_MINUTES;
-//		}
-//	}
 
 	private static int countDigits(StringBuilder sb) {
 		int length = sb.length();
@@ -551,10 +505,11 @@ public class DateTimeValue extends AbstractValue {
 			default:
 				throw new UnsupportedOperationException();
 			}
-		}
-		// [TimeZone]
-		if (presenceTimezone) {
-			slen += timezone == 0 ? 1 : 6;
+			
+			// [TimeZone]
+			if (presenceTimezone) {
+				slen += timezone == 0 ? 1 : 6;
+			}
 		}
 
 		return slen;
@@ -732,9 +687,9 @@ public class DateTimeValue extends AbstractValue {
 	}
 
 	private static int appendTime(char[] ca, int index, int time) {
-		// time = ( ( hour * 60) + minutes ) * 60 + seconds ;
-		final int secHour = 60 * 60;
-		final int secMinute = 60;
+		// time = ( ( hour * 64) + minutes ) * 64 + seconds ;
+		final int secHour = 64 * 64;
+		final int secMinute = 64;
 
 		int hour = time / secHour;
 		time -= hour * secHour;
@@ -775,7 +730,12 @@ public class DateTimeValue extends AbstractValue {
 			return _equals((DateTimeValue) o);
 		} else if (o instanceof String) {
 			// TODO right type assumption 
-			return false;
+			DateTimeValue d = DateTimeValue.parse((String)o, type);
+			if (d == null) {
+				return false;
+			} else {
+				return _equals(d);	
+			}
 		} else {
 			return false;
 		}
