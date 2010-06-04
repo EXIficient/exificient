@@ -108,12 +108,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		createdPrefixes.clear();
 		createdPfxCnt = 1;
+		
+		openElement = false;
 
 		// clear string values etc.
 		typeDecoder.clear();
 	}
 
-	protected void decodeEventCode() throws EXIException, IOException {
+	protected final void decodeEventCode() throws EXIException, IOException {
 		// 1st level
 		int codeLength = currentRule.get1stLevelEventCodeLength(fidelityOptions);
 		ec = codeLength > 0 ? channel.decodeNBitUnsignedInteger(codeLength) : 0;
@@ -154,6 +156,31 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				}
 			}
 		}
+		
+//		if ( nextEventType == EventType.START_ELEMENT || nextEventType == EventType.START_ELEMENT_GENERIC ||
+//				nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED || nextEventType == EventType.START_ELEMENT_NS ||
+//				nextEventType == EventType.END_ELEMENT || nextEventType == EventType.END_ELEMENT_UNDECLARED ||
+//				nextEventType == EventType.CHARACTERS || nextEventType == EventType.CHARACTERS_GENERIC ||
+//				nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED ||
+//				nextEventType == EventType.COMMENT || nextEventType == EventType.PROCESSING_INSTRUCTION ||
+//				nextEventType == EventType.ENTITY_REFERENCE  ) {
+		if (nextEventType != EventType.NAMESPACE_DECLARATION && nextEventType != EventType.START_DOCUMENT ) {
+			finalizeOpenElement();
+		}
+	}
+	
+
+	boolean openElement;
+	
+	protected void finalizeOpenElement() {
+		// qname as string
+		if (openElement) {
+			String sqname = getQualifiedName(elementQName,
+					elementPrefix);
+			setQNameAsString(sqname);
+			
+			openElement = false;
+		}		
 	}
 
 	protected void updateInvalidValueAttribute() throws EXIException {
@@ -377,9 +404,16 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return elementQName;
 	}
 
-	public String getElementQNameAsString() {
-		return getQualifiedName(elementQName,
-				elementPrefix);
+	public String getStartElementQNameAsString() {
+//		String sqname = getQualifiedName(elementQName,
+//				elementPrefix);
+//		setQNameAsString(sqname);
+//		return sqname;
+		return getQNameAsString();
+	}
+	
+	public String getEndElementQNameAsString() {
+		return getQNameAsString();
 	}
 
 	public QName getAttributeQName() {

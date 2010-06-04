@@ -100,8 +100,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// update current rule
 		currentRule = currentRule.lookFor(ec).next;
 	}
-
+	
 	public void decodeStartElement() throws EXIException, IOException {
+		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
@@ -111,9 +112,11 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		// push element
 		pushElement(se, nextRule);
+		openElement = true;
 	}
 
 	public void decodeStartElementNS() throws EXIException, IOException {
+		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT_NS);
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
@@ -126,9 +129,11 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// push element
 		pushElement(nextSE, nextRule);
+		openElement = true;
 	}
 
 	public void decodeStartElementGeneric() throws EXIException, IOException {
+		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
 		elementQName = qnameDatatype.readQName(channel);
@@ -141,10 +146,12 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		currentRule.learnStartElement(nextSE);
 		// push element
 		pushElement(nextSE, nextRule.getElementContentRule());
+		openElement = true;
 	}
 
 	public void decodeStartElementGenericUndeclared() throws EXIException,
 			IOException {
+		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
 		elementQName = qnameDatatype.readQName(channel);
@@ -156,6 +163,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		currentRule.learnStartElement(nextSE);
 		// push element
 		pushElement(nextSE, currentRule.getElementContentRule());
+		openElement = true;
 	}
 
 	public void decodeNamespaceDeclaration() throws EXIException, IOException {

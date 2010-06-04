@@ -336,9 +336,15 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 				.getElementQName());
 	}
 	
-	public String getElementQNameAsString() {
-		return (scDecoder == null ? super.getElementQNameAsString() : scDecoder
-				.getElementQNameAsString());
+	public String getStartElementQNameAsString() {
+		return (scDecoder == null ? super.getStartElementQNameAsString() : scDecoder
+				.getStartElementQNameAsString());
+	}
+	
+	
+	public String getEndElementQNameAsString() {
+		return (scDecoder == null ? super.getEndElementQNameAsString() : scDecoder
+				.getEndElementQNameAsString());
 	}
 
 	public QName getAttributeQName() {
