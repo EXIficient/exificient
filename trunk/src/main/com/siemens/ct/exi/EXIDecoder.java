@@ -297,7 +297,7 @@ public interface EXIDecoder {
 	public QName getElementQName();
 
 	/**
-	 * Returns qualified name for element name as String
+	 * Returns qualified name for start element name as String
 	 * 
 	 * <p>
 	 * QName ::= PrefixedName | UnprefixedName <br />
@@ -307,7 +307,16 @@ public interface EXIDecoder {
 	 * 
 	 * @return <code>String</code> for qname
 	 */
-	public String getElementQNameAsString();
+	public String getStartElementQNameAsString();
+	
+	/**
+	 * Returns qualified name for end element name as String
+	 * (the one previously created for SE event)
+	 * 
+	 * @see getStartElementQNameAsString()
+	 * @return <code>String</code> for qname
+	 */
+	public String getEndElementQNameAsString();
 
 	/**
 	 * Returns qualified name for (last) attribute

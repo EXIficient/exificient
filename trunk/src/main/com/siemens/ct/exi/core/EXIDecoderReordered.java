@@ -78,6 +78,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	// processing instructions
 	protected List<ProcessingEntry> processingEntries;
 	protected int processingEntryIndex;
+	
+	String elementQNameAsString;
+	List<String> endElementQNames;
 
 	// count value items
 	protected int blockValues;
@@ -132,6 +135,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 		xsiValues = new ArrayList<Value>();
 		xsiPrefixes = new ArrayList<String>();
+		
+		endElementQNames = new ArrayList<String>();
 
 		codingMode = exiFactory.getCodingMode();
 	}
@@ -160,6 +165,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nsEntryIndex = 0;
 		processingEntries.clear();
 		processingEntryIndex = 0;
+		
+		endElementQNames.clear();
 		
 		stillNoEndOfDocument = true;
 		
@@ -314,6 +321,33 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			qnameEntries.add(new QNameEntry(attributeQName, attributePrefix));
 			incrementValues(attributeQName, dt);
 		}
+	}
+	
+	@Override
+	protected void finalizeOpenElement() {
+		// qname as string
+		if (openElement) {
+			super.finalizeOpenElement();
+			
+			String qname = super.getStartElementQNameAsString();
+			QNameEntry qne = qnameEntries.get(qnameEntries.size()-1);
+			// System.out.println("dsada");
+			qne.sqname = qname;
+		}		
+	}
+	
+
+	@Override
+	public String getStartElementQNameAsString() {
+		// return null;
+		return elementQNameAsString;
+	}
+	
+	@Override
+	public String getEndElementQNameAsString() {
+		// return elementQNameAsString;
+		// remove last item
+		return endElementQNames.remove(endElementQNames.size()-1);
 	}
 	
 	protected void preReadBlockStructure() throws EXIException, IOException {
@@ -593,13 +627,15 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	@Override
 	public void decodeStartDocument() {
 	}
-
+	
 	@Override
 	public void decodeStartElement() {
 		QNameEntry se = qnameEntries.get(qnameEntryIndex++);
 		this.elementQName = se.context;
 
 		elementPrefix = se.prefix;
+		elementQNameAsString = se.sqname;
+		endElementQNames.add(elementQNameAsString);
 	}
 
 	@Override
@@ -747,6 +783,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	static class QNameEntry {
 		final QName context;
 		final String prefix;
+		
+		String sqname;
 
 		public QNameEntry(QName context, String prefix) {
 			this.context = context;

@@ -21,9 +21,7 @@ package com.siemens.ct.exi.core.sax;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -76,17 +74,18 @@ public class SAXDecoder implements XMLReader {
 
 	protected AttributesImpl attributes = new AttributesImpl();
 
-	protected List<String> eeQualifiedNames;
+	// protected List<String> eeQualifiedNames;
+	protected String endElementQNameAsString;
 
 	public SAXDecoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
 		this.decoder = exiFactory.createEXIDecoder();
-		eeQualifiedNames = new ArrayList<String>();
+		// eeQualifiedNames = new ArrayList<String>();
 	}
 
 	protected void initForEachRun() {
 		// ee list
-		eeQualifiedNames.clear();
+		// eeQualifiedNames.clear();
 	}
 
 	/*
@@ -312,10 +311,14 @@ public class SAXDecoder implements XMLReader {
 			break;
 		/* END ELEMENT */
 		case END_ELEMENT:
+			// Note: get qname before popping EE event
+			endElementQNameAsString = decoder.getEndElementQNameAsString();
 			decoder.decodeEndElement();
 			handleEndElement();
 			break;
 		case END_ELEMENT_UNDECLARED:
+			// Note: get qname before popping EE event
+			endElementQNameAsString = decoder.getEndElementQNameAsString();
 			decoder.decodeEndElementUndeclared();
 			handleEndElement();
 			break;
@@ -365,8 +368,9 @@ public class SAXDecoder implements XMLReader {
 		// NOTE: getting qname needs to be done before starting prefix
 		// mapping given that the qname may require a new qname prefix.
 		// TODO empty string if no qualified name is necessary ?
-		String qname = decoder.getElementQNameAsString();
+		String qname = decoder.getStartElementQNameAsString();
 
+		
 		// TODO start prefix mapping differently!
 		NamespaceSupport namespaces = decoder.getNamespaces();
 		@SuppressWarnings("unchecked")
@@ -385,18 +389,26 @@ public class SAXDecoder implements XMLReader {
 		contentHandler.startElement(seQName.getNamespaceURI(), seQName
 				.getLocalPart(), qname, attributes);
 
-		// save qualified-name for EE
-		eeQualifiedNames.add(qname);
-		// clear information
+		// // save qualified-name for EE
+		// eeQualifiedNames.add(qname);
+		
+		// clear AT information
 		attributes.clear();
 	}
 
-	protected void handleEndElement() throws SAXException, IOException {
+	protected void handleEndElement() throws SAXException, IOException {		
 		QName eeQName = decoder.getElementQName();
+		
+//		String qname = eeQualifiedNames.remove(eeQualifiedNames
+//				.size() - 1);
+//		if (! qname.equals(endElementQNameAsString)) {
+//			System.out.println(endElementQNameAsString + " vs. " + qname);	
+//			throw new RuntimeException("QName!!");
+//		}
+		
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(), eeQName
-				.getLocalPart(), eeQualifiedNames.remove(eeQualifiedNames
-				.size() - 1));
+				.getLocalPart(), endElementQNameAsString);
 	}
 
 	protected void handleAttribute() throws SAXException, IOException,

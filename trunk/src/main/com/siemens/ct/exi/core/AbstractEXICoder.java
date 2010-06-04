@@ -194,6 +194,14 @@ public abstract class AbstractEXICoder {
 	protected QName getElementContextQName() {
 		return elementContextStack[elementContextStackIndex].qname;
 	}
+	
+	protected void setQNameAsString(String sqname) {
+		elementContextStack[elementContextStackIndex].sqname = sqname; 
+	}
+	
+	protected String getQNameAsString() {
+		return elementContextStack[elementContextStackIndex].sqname;
+	}
 
 	/*
 	 * 
@@ -206,6 +214,7 @@ public abstract class AbstractEXICoder {
 	
 	static final class ElementContext {
 		final QName qname;
+		public String sqname;
 		Rule rule;	// may be modified while coding
 		//	TODO prefix declarations
 		List<Object> prefixDeclarations; 
