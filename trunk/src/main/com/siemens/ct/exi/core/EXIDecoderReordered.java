@@ -58,9 +58,9 @@ import com.siemens.ct.exi.values.Value;
 public class EXIDecoderReordered extends EXIDecoderInOrder {
 	// store appearing event-types in right order
 	protected List<EventType> eventTypes;
-	protected int eventIndex;
+	protected int eventTypeIndex;
 
-	// elements, attributes, characters and end-elements
+	// elements, attributes, characters, end elements
 	protected List<QNameEntry> qnameEntries;
 	protected int qnameEntryIndex;
 	// docTypes
@@ -68,10 +68,10 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected int docTypeEntryIndex;
 	// entity references
 	protected List<String> entityReferences;
-	protected int currentEntityReferenceIndex;
+	protected int entityReferenceIndex;
 	// comments
 	protected List<char[]> comments;
-	protected int commentsIndex;
+	protected int commentIndex;
 	// namespaces
 	protected List<NamespaceEntry> nsEntries;
 	protected int nsEntryIndex;
@@ -80,7 +80,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected int processingEntryIndex;
 
 	// count value items
-	protected int cntValues;
+	protected int blockValues;
+
+	boolean stillNoEndOfDocument = true;
 
 	// store value events (qnames) in right order
 	// plus necessary information to reconstruct value channels
@@ -143,27 +145,39 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nextEvent = null;
 		nextEventType = EventType.START_DOCUMENT;
 
-		// events
-		eventTypes.clear();
-		eventIndex = 0;
-
 		// qname entries
 		qnameEntries.clear();
 		qnameEntryIndex = 0;
-
+		
 		// misc
 		docTypeEntries.clear();
 		docTypeEntryIndex = 0;
 		entityReferences.clear();
-		currentEntityReferenceIndex = 0;
+		entityReferenceIndex = 0;
 		comments.clear();
-		commentsIndex = 0;
+		commentIndex = 0;
 		nsEntries.clear();
 		nsEntryIndex = 0;
 		processingEntries.clear();
 		processingEntryIndex = 0;
+		
+		stillNoEndOfDocument = true;
+		
+		// initialize block
+		initBlock();
+
+		// pre-read first block structure and afterwards pre-read content (values)
+		preReadBlockStructure();
+		preReadBlockContent();
+	}
+	
+	protected void initBlock() {
 		// count value items
-		cntValues = 0;
+		blockValues = 0;
+
+		// events
+		eventTypes.clear();
+		eventTypeIndex = 0;
 
 		// contains value events (qnames) in right order
 		// plus necessary information to reconstruct value channels
@@ -177,10 +191,6 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		xsiValueIndex = 0;
 		xsiPrefixes.clear();
 		xsiPrefixIndex = 0;
-
-		// pre-read structure and afterwards pre-read content (values)
-		preReadStructure();
-		preReadContent();
 	}
 
 	@Override
@@ -305,11 +315,14 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			incrementValues(attributeQName, dt);
 		}
 	}
+	
+	protected void preReadBlockStructure() throws EXIException, IOException {
 
-	protected void preReadStructure() throws EXIException, IOException {
-		boolean stillInitializing = true;
-
-		while (stillInitializing) {
+		boolean stillBlockReadable = true;
+		
+		// TODO where does data go that come in between a block !?
+		while (stillNoEndOfDocument && stillBlockReadable) {
+			
 			// add event to array list
 			eventTypes.add(nextEventType);
 
@@ -419,7 +432,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				break;
 			case END_DOCUMENT:
 				super.decodeEndDocument();
-				stillInitializing = false;
+				stillNoEndOfDocument = false;
 				continue;
 			case DOC_TYPE:
 				super.decodeDocType();
@@ -441,15 +454,25 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			default:
 				throw new RuntimeException("Unknown Event " + nextEventType);
 			}
-
-			// decode next EventCode
-			decodeEventCode();
+			
+			//	still events in this block ?
+			if (blockValues == exiFactory.getBlockSize()) {
+				// NO events any more
+				stillBlockReadable = false;
+			} else {
+				// decode next EventCode
+				decodeEventCode();		
+			}
+			
 		}
+		
+		// System.out.println("No more blockvalues " +  blockValues + " after " + qnameEntries.get(qnameEntries.size()-1).context );
+		
 	}
 
-	protected void preReadContent() throws EXIException {
+	protected void preReadBlockContent() throws EXIException {
 		try {
-			if (cntValues <= Constants.MAX_NUMBER_OF_VALUES) {
+			if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 				// single compressed stream (included structure)
 				for (int i = 0; i < valueQNames.size(); i++) {
 					QName channelContext = valueQNames.get(i);
@@ -488,6 +511,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 					}
 				}
 			}
+			
+			// System.out.println("Block read finished");
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -518,17 +543,40 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		contentValues.put(channelContext, new PreReadValueContainer(
 				decodedValues));
 	}
+	
+	protected Value getNextContentValue(QName qname) throws EXIException, IOException {
+		assert (contentValues.get(qname) != null);
+		Value v = contentValues.get(qname).getNextContantValue();
+		
+		if ( stillNoEndOfDocument &&  --blockValues == 0 ) {
+			// read next block
+			// System.out.println("TODO 0, read next block");
+			// System.out.println("Next Value " + blockValues + " \t " + v + " after " + qname);
+			
+			initBlock();
+			
+			channel = getNextChannel();
+			
+			// decode next EventCode
+			decodeEventCode();	
+			
+			preReadBlockStructure();
+			preReadBlockContent();
+		}
+
+		return v;
+	}
 
 	public boolean hasNext() {
-		return (eventTypes.size() > (eventIndex + 1));
+		return (eventTypes.size() > (eventTypeIndex + 1));
 	}
 
 	public EventType next() throws EXIException {
-		return (nextEventType = eventTypes.get(eventIndex++));
+		return (nextEventType = eventTypes.get(eventTypeIndex++));
 	}
 
 	protected void incrementValues(QName valueContext, Datatype datatype) {
-		cntValues++;
+		blockValues++;
 
 		if (valueQNames.contains(valueContext)) {
 			occurrences.put(valueContext, occurrences.get(valueContext) + 1);
@@ -605,15 +653,16 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public void decodeAttribute() throws EXIException {
+	public void decodeAttribute() throws EXIException, IOException {
 		QNameEntry at = qnameEntries.get(qnameEntryIndex++);
 
 		attributeQName = at.context;
 		attributePrefix = at.prefix;
 
-		PreReadValueContainer vc = contentValues.get(attributeQName);
-		assert (vc != null);
-		attributeValue = vc.getNextContantValue();
+//		PreReadValueContainer vc = contentValues.get(attributeQName);
+//		assert (vc != null);
+//		attributeValue = vc.getNextContantValue();
+		attributeValue = getNextContentValue(attributeQName);
 	}
 
 	@Override
@@ -644,12 +693,13 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public void decodeCharacters() throws EXIException {
+	public void decodeCharacters() throws EXIException, IOException {
 		QNameEntry ch = qnameEntries.get(qnameEntryIndex++);
 
-		PreReadValueContainer vc = contentValues.get(ch.context);
-		assert (vc != null);
-		characters = vc.getNextContantValue();
+		// PreReadValueContainer vc = contentValues.get(ch.context);
+		// assert (vc != null);
+		// characters = vc.getNextContantValue();
+		characters = getNextContentValue(ch.context);
 	}
 
 	@Override
@@ -677,11 +727,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	public void decodeEntityReference() throws EXIException {
 		entityReferenceName = entityReferences
-				.get(currentEntityReferenceIndex++);
+				.get(entityReferenceIndex++);
 	}
 
 	public void decodeComment() throws EXIException {
-		comment = comments.get(commentsIndex++);
+		comment = comments.get(commentIndex++);
 	}
 
 	public void decodeProcessingInstruction() throws EXIException {

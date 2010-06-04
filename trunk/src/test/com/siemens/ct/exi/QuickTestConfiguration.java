@@ -47,6 +47,7 @@ public class QuickTestConfiguration {
 
 	// Options
 	public static FidelityOptions fidelityOptions;
+	public static int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 	public static QName[] selfContainedElements;
 	public static DatatypeRepresentation[] datatypeRepresentations;
 
@@ -77,20 +78,28 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
 		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		// fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createAll();
 	}
-
+	
+	// ///////////////////////////////////////////////////
+	// OTHER OPTIONS
+	static {
+		// blockSize = 5000;
+		// blockSize = 9013;
+		blockSize = 200;
+	}
+	
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {

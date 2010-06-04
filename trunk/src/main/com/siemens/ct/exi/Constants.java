@@ -77,6 +77,7 @@ public interface Constants {
 	 * Maximal Number of Values (per Block / Channel)
 	 */
 	public static final int MAX_NUMBER_OF_VALUES = 100;
+	public static final int DEFAULT_BLOCK_SIZE = 1000000;
 
 	/*
 	 * Float & Double Values

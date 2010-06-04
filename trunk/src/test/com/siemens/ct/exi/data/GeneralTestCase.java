@@ -39,7 +39,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
-		// GeneralTestCase.setConfigurationRandj ( );
+		// GeneralTestCase.setConfigurationRandj();
 		// GeneralTestCase.setConfigurationPurchaseOrder ( );
 		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest1Pfx ( );
@@ -55,11 +55,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType();
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
-		GeneralTestCase.setConfigurationEntityReference1();
+		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
-		// GeneralTestCase.setConfigurationStringTable2 ( );
+		GeneralTestCase.setConfigurationStringTable2 ( );
 	}
 
 	protected void setUp() {
@@ -70,7 +70,7 @@ public class GeneralTestCase extends AbstractTestCase {
 				FidelityOptions.createDefault());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
-		
+
 		// #2
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
@@ -86,7 +86,6 @@ public class GeneralTestCase extends AbstractTestCase {
 				FidelityOptions.createDefault());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
-		
 
 		// #4
 		testCaseOptions.add(new TestCaseOption());
@@ -129,6 +128,27 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+
+		// #9 BlockSize
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		testCaseOptions.lastElement().setBlockSize(200);
+		
+		// #9 BlockSize
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		testCaseOptions.lastElement().setBlockSize(200);
+		
 	}
 
 	@Test
@@ -192,7 +212,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/unbounded.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/unbounded.exi");
 	}
-	
+
 	@Test
 	public void testDatatypeInteger() throws Exception {
 		// set up configuration
@@ -203,9 +223,12 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationDatatypeInteger() {
-		QuickTestConfiguration.setXsdLocation("./data/general/datatypeInteger.xsd");
-		QuickTestConfiguration.setXmlLocation("./data/general/datatypeInteger.xml");
-		QuickTestConfiguration.setExiLocation("./out/general/datatypeInteger.exi");
+		QuickTestConfiguration
+				.setXsdLocation("./data/general/datatypeInteger.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/datatypeInteger.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/datatypeInteger.exi");
 	}
 
 	@Test
@@ -218,11 +241,14 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationDatatypeFloat() {
-		QuickTestConfiguration.setXsdLocation("./data/general/datatypeFloat.xsd");
-		QuickTestConfiguration.setXmlLocation("./data/general/datatypeFloat.xml");
-		QuickTestConfiguration.setExiLocation("./out/general/datatypeFloat.exi");
+		QuickTestConfiguration
+				.setXsdLocation("./data/general/datatypeFloat.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/datatypeFloat.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/datatypeFloat.exi");
 	}
-	
+
 	@Test
 	public void testDatatypes() throws Exception {
 		// set up configuration
@@ -382,7 +408,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/test1.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/test1.exi");
 	}
-	
+
 	@Test
 	public void testXMLTest1Pfx() throws Exception {
 		// set up configuration
@@ -397,7 +423,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/test1_pfx.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/test1_pfx.exi");
 	}
-	
 
 	@Test
 	public void testXMLTest2() throws Exception {
@@ -530,10 +555,11 @@ public class GeneralTestCase extends AbstractTestCase {
 
 	public static void setConfigurationEntityReference1() {
 		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
-		QuickTestConfiguration.setXmlLocation("./data/general/entityReference1.xml");
-		QuickTestConfiguration.setExiLocation("./out/general/entityReference1.xml.exi");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/entityReference1.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/entityReference1.xml.exi");
 	}
-	
 
 	@Test
 	public void XtestCData1() throws Exception {
@@ -550,7 +576,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/cdata1.xml.exi");
 	}
 
-	
 	@Test
 	public void testPatterns() throws Exception {
 		// set up configuration
@@ -565,7 +590,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/patterns.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/patterns.xml.exi");
 	}
-	
+
 	@Test
 	public void testStringTable1() throws Exception {
 		// set up configuration
@@ -576,11 +601,14 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationStringTable1() {
-		QuickTestConfiguration.setXsdLocation("./data/general/stringTable1.xsd");
-		QuickTestConfiguration.setXmlLocation("./data/general/stringTable1.xml");
-		QuickTestConfiguration.setExiLocation("./out/general/stringTable1.xml.exi");
+		QuickTestConfiguration
+				.setXsdLocation("./data/general/stringTable1.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/stringTable1.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/stringTable1.xml.exi");
 	}
-	
+
 	@Test
 	public void testStringTable2() throws Exception {
 		// set up configuration
@@ -591,9 +619,12 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationStringTable2() {
-		QuickTestConfiguration.setXsdLocation("./data/general/stringTable2.xsd");
-		QuickTestConfiguration.setXmlLocation("./data/general/stringTable2.xml");
-		QuickTestConfiguration.setExiLocation("./out/general/stringTable2.xml.exi");
+		QuickTestConfiguration
+				.setXsdLocation("./data/general/stringTable2.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/stringTable2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/stringTable2.xml.exi");
 	}
 
 }

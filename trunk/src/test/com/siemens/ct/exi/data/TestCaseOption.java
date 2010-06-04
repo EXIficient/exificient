@@ -33,6 +33,7 @@ public class TestCaseOption {
 	private boolean schemaInformedOnly;
 	private DatatypeRepresentation[] datatypeRepresentations;
 	private QName[] scElements;
+	private int blockSize = -1;
 
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -99,6 +100,14 @@ public class TestCaseOption {
 		return scElements;
 	}
 
+	public void setBlockSize(int blockSize) {
+		this.blockSize = blockSize;
+	}
+	
+	public int getBlockSize() {
+		return blockSize;
+	}
+
 	@Override
 	public String toString() {
 		String s = new String();
@@ -112,6 +121,10 @@ public class TestCaseOption {
 		s += "codingMode=" + codingMode + ", ";
 		// fidelityOptions
 		s += "fidelityOptions=" + getFidelityOptions().toString();
+		// blockSize
+		if (blockSize >= 0) {
+			s += ",bs=" + blockSize;	
+		}		
 
 		return s;
 	}

@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
@@ -81,6 +82,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected QName[] scElements;
 
 	protected boolean exiBodyOnly = false; // default: false
+	
+	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE; // default: 1,000,000
 
 	protected DefaultEXIFactory() {
 	}
@@ -166,6 +169,17 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public boolean isEXIBodyOnly() {
 		return exiBodyOnly;
+	}
+	
+	public void setBlockSize(int blockSize) {
+		if (blockSize < 0) {
+			throw new RuntimeException("EXI's blockSize has the be a positive number!");
+		}
+		this.blockSize = blockSize;
+	}
+	
+	public int getBlockSize() {
+		return blockSize;
 	}
 
 	public EXIEncoder createEXIEncoder() {
