@@ -70,6 +70,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setFragment(tco.isFragments());
 		ef.setDatatypeRepresentationMap(tco.getDatatypeRepresentations());
 		ef.setSelfContainedElements(tco.getSelfContainedElements());
+		if (tco.getBlockSize() >= 0) {
+			ef.setBlockSize(tco.getBlockSize());	
+		}
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {

@@ -112,6 +112,23 @@ public interface EXIFactory extends Cloneable {
 	public boolean isEXIBodyOnly();
 
 	/**
+	 * The default blockSize is intentionally large (1,000,000) but can be
+	 * reduced for processing large documents on devices with limited memory.
+	 * 
+	 * @param blockSize
+	 */
+	public void setBlockSize(int blockSize);
+
+	/**
+	 * The blockSize option specifies the block size used for EXI compression.
+	 * When the "blockSize" element is absent in the EXI Options document, the
+	 * default blocksize of 1,000,000 is used.
+	 * 
+	 * @return blockSize
+	 */
+	public int getBlockSize();
+
+	/**
 	 * By default, each typed value in an EXI stream is represented by the
 	 * associated built-in EXI datatype representation. However, EXI processors
 	 * MAY provide the capability to specify different built-in EXI datatype

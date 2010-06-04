@@ -44,6 +44,10 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
+		initBlock();
+	}
+	
+	protected void initBlock() {
 		blockValues = 0;
 		contextOrders.clear();
 		contexts.clear();
@@ -65,7 +69,10 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		return super.isTypeValid(datatype, value);
 	}
 
-	protected void updateContextValue(QName valueContext, String value, Datatype datatype) {
+
+	@Override
+	protected void writeValue(QName valueContext) throws IOException {
+		
 		ContextContainer cc = contexts.get(valueContext);
 		if(cc == null) {
 			cc = new ContextContainer();
@@ -73,13 +80,22 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			contextOrders.add(valueContext);
 		}
 		
-		cc.addValue(value, datatype);
-		blockValues++;
-	}
+		cc.addValue(lastValue, lastDatatype);
+		// blockValues++;
+		
 
-	@Override
-	protected void writeValue(QName valueContext) throws IOException {
-		updateContextValue(valueContext, lastValue, lastDatatype);
+		// TODO new block directly after value or where does data go in between two blocks !?
+		if (++blockValues == exiFactory.getBlockSize() ) {
+			// blockValues larger than set blockSize
+			// System.out.println("new block " + blockValues + " after " + valueContext + " = " + lastValue);
+			
+			// close this block and setup new one
+			closeBlock();
+			initBlock();
+			channel = new ByteEncoderChannel(getStream());
+		}
+		
+		
 	}
 
 	protected OutputStream getStream() {
@@ -92,16 +108,8 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			return os;
 		}
 	}
-
-	protected void finalizeStream() throws IOException {
-		if (codingMode == CodingMode.COMPRESSION) {
-			deflater.finish();
-		}
-		// else nothing to do
-	}
-
-	@Override
-	public void flush() throws IOException {
+	
+	protected void closeBlock() throws IOException {
 		/*
 		 * If the block contains at most 100 values, the block will contain only
 		 * 1 compressed stream containing the structure channel followed by all
@@ -113,8 +121,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// 1. structure stream already written
 			// 2. value channels in order
 			for (QName contextOrder : contextOrders) {
-//				// updating to right context
-//				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
@@ -148,8 +154,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
 			for (QName contextOrder : contextOrders) {
-//				// updating to right context
-//				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
@@ -167,8 +171,6 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 
 			// all value channels having more than 100 values
 			for (QName contextOrder : contextOrders) {
-//				// updating to right context
-//				elementContext = contextOrder;
 				ContextContainer cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
@@ -184,7 +186,20 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				}
 			}
 		}
+	}
 
+	protected void finalizeStream() throws IOException {
+		if (codingMode == CodingMode.COMPRESSION) {
+			deflater.finish();
+		}
+		// else nothing to do
+	}
+
+	@Override
+	public void flush() throws IOException {
+		// close remaining block
+		closeBlock();
+		
 		// finalize document
 		os.flush();
 	}
