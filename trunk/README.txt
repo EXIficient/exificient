@@ -44,7 +44,7 @@ http://exificient.sourceforge.net/.
 CHANGES from version 0.4:
 -------------------------------------------------------------------------
 * Simplified all model group
-* Support for EXI's blockSize used when compressing
+* Support for EXI's blockSize when compressing
 
 -------------------------------------------------------------------------
 CHANGES from version 0.3:
