@@ -72,20 +72,20 @@ public class SAXDecoder implements XMLReader {
 	final static int DEFAULT_CHAR_BUFFER_SIZE = 4096;
 	protected char[] cbuffer = new char[DEFAULT_CHAR_BUFFER_SIZE];
 
-	protected AttributesImpl attributes = new AttributesImpl();
+	protected AttributesImpl attributes;
+	boolean deferredStartElement;
 
-	// protected List<String> eeQualifiedNames;
 	protected String endElementQNameAsString;
 
 	public SAXDecoder(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
 		this.decoder = exiFactory.createEXIDecoder();
-		// eeQualifiedNames = new ArrayList<String>();
+		attributes = new AttributesImpl();
 	}
 
 	protected void initForEachRun() {
-		// ee list
-		// eeQualifiedNames.clear();
+		attributes.clear();
+		deferredStartElement = false;
 	}
 
 	/*
@@ -102,7 +102,7 @@ public class SAXDecoder implements XMLReader {
 	public void setDTDHandler(DTDHandler handler) {
 		this.dtdHandler = handler;
 	}
-	
+
 	public DTDHandler getDTDHandler() {
 		return this.dtdHandler;
 	}
@@ -132,7 +132,8 @@ public class SAXDecoder implements XMLReader {
 			SAXNotSupportedException {
 		if ("http://xml.org/sax/features/namespaces".equals(name)) {
 			return true;
-		} else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)){
+		} else if ("http://xml.org/sax/features/namespace-prefixes"
+				.equals(name)) {
 			return true;
 		} else {
 			return false;
@@ -187,182 +188,190 @@ public class SAXDecoder implements XMLReader {
 			// init
 			initForEachRun();
 
-			// Start "Document"
-			boolean hasNext = decoder.hasNext();
-			assert (hasNext);
-			EventType eventType = decoder.next();
-			assert (eventType == EventType.START_DOCUMENT);
-			decoder.decodeStartDocument();
-			contentHandler.startDocument();
-
-			// grammar prefix mapping
-			NamespaceSupport namespaces = decoder.getNamespaces();
-			@SuppressWarnings("unchecked")
-			Enumeration<String> declaredPrefixes = namespaces
-					.getDeclaredPrefixes();
-			while (declaredPrefixes.hasMoreElements()) {
-				String pfx = declaredPrefixes.nextElement();
-				String uri = namespaces.getURI(pfx);
-				if (uri == null) {
-					uri = XMLConstants.NULL_NS_URI;
-				}
-				contentHandler.startPrefixMapping(pfx, uri);
-			}
-
-			// DocContent
-			while (decoder.hasNext()) {
-				eventType = decoder.next();
-				parseElementContent(eventType);
-			}
-
-			// End "Document"
-			decoder.decodeEndDocument();
-			contentHandler.endDocument();
+			// process EXI events
+			parseEXIEvents();
 
 		} catch (EXIException e) {
 			throw new SAXException("EXI", e);
 		}
 	}
 
-	protected void parseStartTagContent() throws IOException, EXIException,
+	protected void parseEXIEvents() throws IOException, EXIException,
 			SAXException {
-
-		decoder.hasNext();
+		
+		// Start "Document"
+		boolean hasNext = decoder.hasNext();
+		assert (hasNext);
 		EventType eventType = decoder.next();
+		assert (eventType == EventType.START_DOCUMENT);
+		decoder.decodeStartDocument();
+		contentHandler.startDocument();
 
-		switch (eventType) {
-		/* ATTRIBUTES */
-		case ATTRIBUTE:
-			decoder.decodeAttribute();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_NS:
-			decoder.decodeAttributeNS();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_XSI_NIL:
-			decoder.decodeAttributeXsiNil();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_XSI_TYPE:
-			decoder.decodeAttributeXsiType();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_INVALID_VALUE:
-			decoder.decodeAttributeInvalidValue();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_ANY_INVALID_VALUE:
-			decoder.decodeAttributeAnyInvalidValue();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_GENERIC:
-			decoder.decodeAttributeGeneric();
-			handleAttribute();
-			break;
-		case ATTRIBUTE_GENERIC_UNDECLARED:
-			decoder.decodeAttributeGenericUndeclared();
-			handleAttribute();
-			break;
-		/* NAMESPACE DECLARATION */
-		case NAMESPACE_DECLARATION:
-			// Note: Prefix declaration etc. is done internally
-			decoder.decodeNamespaceDeclaration();
-			parseStartTagContent();
-			break;
-		/* SELF_CONTAINED */
-		case SELF_CONTAINED:
-			decoder.decodeStartFragmentSelfContained();
-			parseStartTagContent();
-			break;
-		/* ELEMENT CONTENT EVENTS */
-		default:
-			// NO Attribute or NS events anymore --> start deferred element
-			handleStartElement();
-
-			// process elementContent event
-			parseElementContent(eventType);
+		// grammar prefix mapping
+		NamespaceSupport namespaces = decoder.getNamespaces();
+		@SuppressWarnings("unchecked")
+		Enumeration<String> declaredPrefixes = namespaces
+				.getDeclaredPrefixes();
+		while (declaredPrefixes.hasMoreElements()) {
+			String pfx = declaredPrefixes.nextElement();
+			String uri = namespaces.getURI(pfx);
+			if (uri == null) {
+				uri = XMLConstants.NULL_NS_URI;
+			}
+			contentHandler.startPrefixMapping(pfx, uri);
 		}
-	}
+		
+		while (decoder.hasNext()) {
+			eventType = decoder.next();
+			
+			if (deferredStartElement) {
+				switch (eventType) {
+				/* ELEMENT CONTENT EVENTS */
+				case START_ELEMENT:
+				case START_ELEMENT_NS:
+				case START_ELEMENT_GENERIC:
+				case START_ELEMENT_GENERIC_UNDECLARED:
+				case END_ELEMENT:
+				case END_ELEMENT_UNDECLARED:
+				case CHARACTERS:
+				case CHARACTERS_GENERIC:
+				case CHARACTERS_GENERIC_UNDECLARED:
+				case DOC_TYPE:
+				case ENTITY_REFERENCE:
+				case COMMENT:
+				case PROCESSING_INSTRUCTION:
+					// No Attribute or NS event --> start deferred element
+					handleDeferredStartElement();
+					deferredStartElement = false;
+				}
+			}
+			
 
-	protected void parseElementContent(EventType eventType) throws IOException,
-			EXIException, SAXException {
-		switch (eventType) {
-		/* START ELEMENT */
-		case START_ELEMENT:
-			decoder.decodeStartElement();
-			// defer start element and process startTag events
-			parseStartTagContent();
-			break;
-		case START_ELEMENT_NS:
-			decoder.decodeStartElementNS();
-			// defer start element and process startTag events
-			parseStartTagContent();
-			break;
-		case START_ELEMENT_GENERIC:
-			decoder.decodeStartElementGeneric();
-			// defer start element and process startTag events
-			parseStartTagContent();
-			break;
-		case START_ELEMENT_GENERIC_UNDECLARED:
-			decoder.decodeStartElementGenericUndeclared();
-			// defer start element and process startTag events
-			parseStartTagContent();
-			break;
-		/* END ELEMENT */
-		case END_ELEMENT:
-			// Note: get qname before popping EE event
-			endElementQNameAsString = decoder.getEndElementQNameAsString();
-			decoder.decodeEndElement();
-			handleEndElement();
-			break;
-		case END_ELEMENT_UNDECLARED:
-			// Note: get qname before popping EE event
-			endElementQNameAsString = decoder.getEndElementQNameAsString();
-			decoder.decodeEndElementUndeclared();
-			handleEndElement();
-			break;
-		/* CHARACTERS */
-		case CHARACTERS:
-			decoder.decodeCharacters();
-			handleCharacters();
-			break;
-		case CHARACTERS_GENERIC:
-			decoder.decodeCharactersGeneric();
-			handleCharacters();
-			break;
-		case CHARACTERS_GENERIC_UNDECLARED:
-			decoder.decodeCharactersGenericUndeclared();
-			handleCharacters();
-			break;
-		/* MISC */
-		case DOC_TYPE:
-			decoder.decodeDocType();
-			handleDocType();
-			break;
-		case ENTITY_REFERENCE:
-			decoder.decodeEntityReference();
-			handleEntityReference();
-			break;
-		case COMMENT:
-			decoder.decodeComment();
-			handleComment();
-			break;
-		case PROCESSING_INSTRUCTION:
-			decoder.decodeProcessingInstruction();
-			contentHandler.processingInstruction(decoder.getPITarget(), decoder
-					.getPIData());
-			break;
-		default:
-			throw new RuntimeException("Unexpected EXI Event '" + eventType
-					+ "' ");
+			switch (eventType) {
+			/* ATTRIBUTES */
+			case ATTRIBUTE:
+				decoder.decodeAttribute();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_NS:
+				decoder.decodeAttributeNS();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_XSI_NIL:
+				decoder.decodeAttributeXsiNil();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_XSI_TYPE:
+				decoder.decodeAttributeXsiType();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_INVALID_VALUE:
+				decoder.decodeAttributeInvalidValue();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_ANY_INVALID_VALUE:
+				decoder.decodeAttributeAnyInvalidValue();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_GENERIC:
+				decoder.decodeAttributeGeneric();
+				handleAttribute();
+				break;
+			case ATTRIBUTE_GENERIC_UNDECLARED:
+				decoder.decodeAttributeGenericUndeclared();
+				handleAttribute();
+				break;
+			/* NAMESPACE DECLARATION */
+			case NAMESPACE_DECLARATION:
+				// Note: Prefix declaration etc. is done internally
+				decoder.decodeNamespaceDeclaration();
+				break;
+			/* SELF_CONTAINED */
+			case SELF_CONTAINED:
+				decoder.decodeStartFragmentSelfContained();
+				break;
+			/* ELEMENT CONTENT EVENTS */
+			/* START ELEMENT */
+			case START_ELEMENT:
+				decoder.decodeStartElement();
+				// defer start element and keep on processing 
+				deferredStartElement = true;
+				break;
+			case START_ELEMENT_NS:
+				decoder.decodeStartElementNS();
+				// defer start element and keep on processing 
+				deferredStartElement = true;
+				break;
+			case START_ELEMENT_GENERIC:
+				decoder.decodeStartElementGeneric();
+				// defer start element and keep on processing 
+				deferredStartElement = true;
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				decoder.decodeStartElementGenericUndeclared();
+				// defer start element and keep on processing 
+				deferredStartElement = true;
+				break;
+			/* END ELEMENT */
+			case END_ELEMENT:
+				// Note: get qname before popping EE event
+				endElementQNameAsString = decoder.getEndElementQNameAsString();
+				decoder.decodeEndElement();
+				handleEndElement();
+				break;
+			case END_ELEMENT_UNDECLARED:
+				// Note: get qname before popping EE event
+				endElementQNameAsString = decoder.getEndElementQNameAsString();
+				decoder.decodeEndElementUndeclared();
+				handleEndElement();
+				break;
+			/* CHARACTERS */
+			case CHARACTERS:
+				decoder.decodeCharacters();
+				handleCharacters();
+				break;
+			case CHARACTERS_GENERIC:
+				decoder.decodeCharactersGeneric();
+				handleCharacters();
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				decoder.decodeCharactersGenericUndeclared();
+				handleCharacters();
+				break;
+			/* MISC */
+			case DOC_TYPE:
+				decoder.decodeDocType();
+				handleDocType();
+				break;
+			case ENTITY_REFERENCE:
+				decoder.decodeEntityReference();
+				handleEntityReference();
+				break;
+			case COMMENT:
+				decoder.decodeComment();
+				handleComment();
+				break;
+			case PROCESSING_INSTRUCTION:
+				decoder.decodeProcessingInstruction();
+				contentHandler.processingInstruction(decoder.getPITarget(),
+						decoder.getPIData());
+				break;
+			default:
+				throw new RuntimeException("Unexpected EXI Event '" + eventType
+						+ "' ");
+			}
 		}
+		
+
+		// End "Document"
+		decoder.decodeEndDocument();
+		contentHandler.endDocument();
 	}
 
 	/*
 	 * SAX Content Handler
 	 */
-	protected void handleStartElement() throws SAXException, IOException,
+	protected void handleDeferredStartElement() throws SAXException, IOException,
 			EXIException {
 
 		// NOTE: getting qname needs to be done before starting prefix
@@ -370,7 +379,6 @@ public class SAXDecoder implements XMLReader {
 		// TODO empty string if no qualified name is necessary ?
 		String qname = decoder.getStartElementQNameAsString();
 
-		
 		// TODO start prefix mapping differently!
 		NamespaceSupport namespaces = decoder.getNamespaces();
 		@SuppressWarnings("unchecked")
@@ -389,23 +397,13 @@ public class SAXDecoder implements XMLReader {
 		contentHandler.startElement(seQName.getNamespaceURI(), seQName
 				.getLocalPart(), qname, attributes);
 
-		// // save qualified-name for EE
-		// eeQualifiedNames.add(qname);
-		
 		// clear AT information
 		attributes.clear();
 	}
 
-	protected void handleEndElement() throws SAXException, IOException {		
+	protected void handleEndElement() throws SAXException, IOException {
 		QName eeQName = decoder.getElementQName();
-		
-//		String qname = eeQualifiedNames.remove(eeQualifiedNames
-//				.size() - 1);
-//		if (! qname.equals(endElementQNameAsString)) {
-//			System.out.println(endElementQNameAsString + " vs. " + qname);	
-//			throw new RuntimeException("QName!!");
-//		}
-		
+
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(), eeQName
 				.getLocalPart(), endElementQNameAsString);
@@ -427,9 +425,6 @@ public class SAXDecoder implements XMLReader {
 		attributes.addAttribute(atQName.getNamespaceURI(), atQName
 				.getLocalPart(), decoder.getAttributeQNameAsString(),
 				ATTRIBUTE_TYPE, sVal);
-
-		// keep processing startTag events
-		parseStartTagContent();
 	}
 
 	protected void handleCharacters() throws SAXException, IOException {
