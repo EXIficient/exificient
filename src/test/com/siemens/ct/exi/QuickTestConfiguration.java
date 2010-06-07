@@ -32,7 +32,7 @@ import com.siemens.ct.exi.types.DatatypeRepresentation;
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -105,8 +105,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
