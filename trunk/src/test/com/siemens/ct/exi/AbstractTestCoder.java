@@ -55,6 +55,12 @@ public abstract class AbstractTestCoder {
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
 		ef.setBlockSize(QuickTestConfiguration.blockSize);
+		if (QuickTestConfiguration.valueMaxLength != Constants.DEFAULT_VALUE_MAX_LENGTH) {
+			ef.setValueMaxLength(QuickTestConfiguration.valueMaxLength);
+		}
+		if (QuickTestConfiguration.valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+			ef.setValuePartitionCapacity(QuickTestConfiguration.valuePartitionCapacity);
+		}		
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
 

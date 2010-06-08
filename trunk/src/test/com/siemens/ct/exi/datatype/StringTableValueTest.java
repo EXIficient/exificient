@@ -26,7 +26,12 @@ import javax.xml.namespace.QName;
 
 import org.junit.Test;
 
+import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.datatype.strings.BoundedStringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.BoundedStringEncoderImpl;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -34,7 +39,7 @@ import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.StringTypeDecoder;
 import com.siemens.ct.exi.types.StringTypeEncoder;
 
-public class StringTableValueTest extends AbstractTestCase  {
+public class StringTableValueTest extends AbstractTestCase {
 
 	@Test
 	public void testStringTableValue0() throws IOException {
@@ -74,16 +79,22 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, context, bdc)
+				.toString().equals(val3));
 	}
 
 	@Test
-	public void testStringTableValue1() throws IOException {		
+	public void testStringTableValue1() throws IOException {
 		QName c1 = new QName("el1", "");
 		QName c2 = new QName("el2", "");
 		QName c3 = new QName("el3", "");
@@ -122,12 +133,18 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c2, bdc).toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString().equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString()
+				.equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString()
+				.equals(val2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c2, bdc).toString()
+				.equals(val1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString()
+				.equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c1, bdc).toString()
+				.equals(val3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, c3, bdc).toString()
+				.equals(val3));
 	}
 
 	@Test
@@ -137,7 +154,7 @@ public class StringTableValueTest extends AbstractTestCase  {
 
 		QName cex2 = new QName("elx2", "");
 		QName cex3 = new QName("elx3", "");
-		
+
 		QName cexx1 = new QName("elxx1", "");
 		QName cexx2 = new QName("elxx2", "");
 
@@ -153,7 +170,6 @@ public class StringTableValueTest extends AbstractTestCase  {
 		 * Encode
 		 */
 		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
-		tes.setStringEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, atCh1);
@@ -187,16 +203,168 @@ public class StringTableValueTest extends AbstractTestCase  {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString().equals(atCh1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc).toString().equals(ch1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc).toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex3, bdc).toString().equals(ch3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString().equals(atCh2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc).toString().equals(ch1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc).toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc).toString().equals(ch3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString()
+				.equals(atCh1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc)
+				.toString().equals(ch1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc)
+				.toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc)
+				.toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex3, bdc)
+				.toString().equals(ch3));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, ca1, bdc).toString()
+				.equals(atCh2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx1, bdc)
+				.toString().equals(ch1));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cexx2, bdc)
+				.toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc)
+				.toString().equals(ch2));
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, cex2, bdc)
+				.toString().equals(ch3));
+	}
+
+	@Test
+	public void testStringTableValueMaxLength1() throws IOException {
+
+		QName qa = new QName("a", "");
+		QName qb = new QName("b", "");
+
+		String s3 = "123";
+		String s4 = "1234";
+		String s5 = "12345";
+		String s6 = "123456";
+		String s7 = "1234567";
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		int valueMaxLength = 5;
+		int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
+
+		Datatype dt = BuiltIn.DEFAULT_DATATYPE;
+		/*
+		 * Encode
+		 */
+		StringEncoder se = new BoundedStringEncoderImpl(valueMaxLength,
+				valuePartitionCapacity);
+		StringTypeEncoder tes = new StringTypeEncoder(se);
+		BitEncoderChannel bec = new BitEncoderChannel(baos);
+
+
+		// a: 123
+		tes.isValid(dt, s3);
+		tes.writeValue(qa, bec);
+		// b: 1234
+		tes.isValid(dt, s4);
+		tes.writeValue(qb, bec);
+		// a: 12345
+		tes.isValid(dt, s5);
+		tes.writeValue(qa, bec);
+		// b: 123456 /* to large */
+		assertFalse(se.isStringHit(qb, s6));
+		tes.isValid(dt, s6);
+		tes.writeValue(qb, bec);
+		// a: 1234567 /* to large */
+		assertFalse(se.isStringHit(qa, s7));
+		tes.isValid(dt, s7);
+		tes.writeValue(qa, bec);
+
+		bec.flush();
+		baos.flush();
+
+		/*
+		 * Decode
+		 */
+		StringDecoder sd = new BoundedStringDecoderImpl(valueMaxLength,
+				valuePartitionCapacity);
+		StringTypeDecoder ddl = new StringTypeDecoder(sd);
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				baos.toByteArray()));
+
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s3));
+		assertTrue(ddl.readValue(dt, qb, bdc).toString().equals(s4));
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s5));
+		assertTrue(ddl.readValue(dt, qb, bdc).toString().equals(s6));
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s7));
+	}
+	
+	@Test
+	public void testStringTableValuePartitionCapacity() throws IOException {
+
+		QName qa = new QName("a", "");
+		QName qb = new QName("b", "");
+		QName qc = new QName("c", "");
+
+		String s1 = "1";
+		String s2 = "12";
+		String s3 = "123";
+		String s4 = "1234";
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
+		int valuePartitionCapacity = 3;
+
+		Datatype dt = BuiltIn.DEFAULT_DATATYPE;
+		/*
+		 * Encode
+		 */
+		StringEncoder se = new BoundedStringEncoderImpl(valueMaxLength,
+				valuePartitionCapacity);
+		StringTypeEncoder tes = new StringTypeEncoder(se);
+		BitEncoderChannel bec = new BitEncoderChannel(baos);
+
+
+		// a: 1
+		tes.isValid(dt, s1);
+		tes.writeValue(qa, bec); // ["1"{a}]
+		// b: 12
+		tes.isValid(dt, s2);
+		tes.writeValue(qb, bec);  // ["1"{a},"12"{b}]
+		// a: 123
+		tes.isValid(dt, s3);
+		tes.writeValue(qa, bec); // ["1"{a},"12"{b},"123"{a}]
+		// c: 123 /* global hit */
+		tes.isValid(dt, s3);
+		tes.writeValue(qc, bec); // ["1","12","123"]
+		// c: 1234
+		tes.isValid(dt, s4);
+		tes.writeValue(qc, bec); // ["1234","12","123"]
+		// a: 1 /* no local hit due to valuePartitionCapacity*/
+		assertFalse(se.isStringHit(qa, s1));
+		tes.isValid(dt, s1);
+		tes.writeValue(qa, bec);	 // ["1234","1","123"]
+		// c: 1 /* no local hit due to valuePartitionCapacity*/
+		assertTrue(se.isStringHit(qc, s4));
+		assertTrue(se.isStringHit(qa, s1));
+		assertTrue(se.isStringHit(qc, s3));
+		assertFalse(se.isStringHit(qc, s2));
+		tes.isValid(dt, s2);
+		tes.writeValue(qc, bec); 	 // ["1234","1","12"]
+		assertTrue(se.isStringHit(qc, s4));
+		assertTrue(se.isStringHit(qa, s1));
+		assertTrue(se.isStringHit(qc, s2));
+		
+		bec.flush();
+		baos.flush();
+
+		/*
+		 * Decode
+		 */
+		StringTypeDecoder ddl = new StringTypeDecoder(
+				new BoundedStringDecoderImpl(valueMaxLength,
+						valuePartitionCapacity));
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				baos.toByteArray()));
+
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s1));
+		assertTrue(ddl.readValue(dt, qb, bdc).toString().equals(s2));
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s3));
+		assertTrue(ddl.readValue(dt, qc, bdc).toString().equals(s3)); /* global hit */
+		assertTrue(ddl.readValue(dt, qc, bdc).toString().equals(s4)); /* replaces values */
+		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s1)); /* no local hit*/
+		assertTrue(ddl.readValue(dt, qc, bdc).toString().equals(s2)); /* no local hit*/
 	}
 
 }

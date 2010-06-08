@@ -157,13 +157,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			}
 		}
 		
-//		if ( nextEventType == EventType.START_ELEMENT || nextEventType == EventType.START_ELEMENT_GENERIC ||
-//				nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED || nextEventType == EventType.START_ELEMENT_NS ||
-//				nextEventType == EventType.END_ELEMENT || nextEventType == EventType.END_ELEMENT_UNDECLARED ||
-//				nextEventType == EventType.CHARACTERS || nextEventType == EventType.CHARACTERS_GENERIC ||
-//				nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED ||
-//				nextEventType == EventType.COMMENT || nextEventType == EventType.PROCESSING_INSTRUCTION ||
-//				nextEventType == EventType.ENTITY_REFERENCE  ) {
 		if (nextEventType != EventType.NAMESPACE_DECLARATION && nextEventType != EventType.START_DOCUMENT ) {
 			finalizeOpenElement();
 		}

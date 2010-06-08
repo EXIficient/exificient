@@ -48,6 +48,9 @@ public class QuickTestConfiguration {
 	// Options
 	public static FidelityOptions fidelityOptions;
 	public static int blockSize = Constants.DEFAULT_BLOCK_SIZE;
+	public static int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
+	public static int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
+	
 	public static QName[] selfContainedElements;
 	public static DatatypeRepresentation[] datatypeRepresentations;
 
@@ -87,17 +90,17 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
-		// fidelityOptions = FidelityOptions.createStrict();
+		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 	}
 	
 	// ///////////////////////////////////////////////////
 	// OTHER OPTIONS
 	static {
-		// blockSize = 5000;
 		// blockSize = 9013;
-		// blockSize = 200;
+		// valueMaxLength = 8;
+		valuePartitionCapacity = 16;
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -105,8 +108,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

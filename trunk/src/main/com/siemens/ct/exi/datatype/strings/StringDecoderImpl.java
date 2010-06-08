@@ -45,11 +45,17 @@ public class StringDecoderImpl implements StringDecoder {
 			// not found in global value (and local value) partition
 			// ==> string literal is encoded as a String with the length
 			// incremented by two.
-			value = new StringValue(valueChannel.decodeStringOnly(i - 2));			
-			// After encoding the string value, it is added to both the
-			// associated "local" value string table partition and the global
-			// value string table partition.
-			addValue(context, value);
+			int L = i - 2;
+			value = new StringValue(valueChannel.decodeStringOnly(L));
+			/*
+			 * If length L is greater than zero the string S is added 
+			 */
+			if (L > 0) {
+				// After encoding the string value, it is added to both the
+				// associated "local" value string table partition and the global
+				// value string table partition.
+				addValue(context, value);	
+			}
 			break;
 		}
 
@@ -79,6 +85,7 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
 		// local
+		// updateLocalValues(context, value);
 		List<Value> lvs = localValues.get(context);
 		if (lvs == null) {
 			lvs = new ArrayList<Value>();
@@ -87,6 +94,16 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!lvs.contains(value));
 		lvs.add(value);
 	}
+	
+//	protected void updateLocalValues(QName context, Value value) {
+//		List<Value> lvs = localValues.get(context);
+//		if (lvs == null) {
+//			lvs = new ArrayList<Value>();
+//			localValues.put(context, lvs);
+//		}
+//		assert (!lvs.contains(value));
+//		lvs.add(value);
+//	}
 
 	public void clear() {
 		globalValues.clear();

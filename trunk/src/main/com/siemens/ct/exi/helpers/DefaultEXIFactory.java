@@ -40,6 +40,8 @@ import com.siemens.ct.exi.core.sax.SAXDecoder;
 import com.siemens.ct.exi.core.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.core.sax.SAXEncoder;
 import com.siemens.ct.exi.core.sax.SAXEncoderExtendedHandler;
+import com.siemens.ct.exi.datatype.strings.BoundedStringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.BoundedStringEncoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -81,9 +83,17 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
 	protected QName[] scElements;
 
-	protected boolean exiBodyOnly = false; // default: false
-	
-	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE; // default: 1,000,000
+	/* default: false */
+	protected boolean exiBodyOnly = false;
+
+	/* default: 1,000,000 */
+	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE;
+
+	/* default: -1 == unbounded */
+	protected int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
+
+	/* default: -1 == unbounded */
+	protected int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 
 	protected DefaultEXIFactory() {
 	}
@@ -117,15 +127,15 @@ public class DefaultEXIFactory implements EXIFactory {
 			DatatypeRepresentation[] datatypeRepresentations) {
 		this.userDefinedDatatypeRepresentations = datatypeRepresentations;
 	}
-	
+
 	public void setSelfContainedElements(QName[] scElements) {
 		this.scElements = scElements;
 	}
-	
+
 	public boolean isSelfContainedElement(QName element) {
 		if (scElements != null && scElements.length > 0) {
-			for(QName qname : scElements) {
-				if(qname.equals(element)) {
+			for (QName qname : scElements) {
+				if (qname.equals(element)) {
 					return true;
 				}
 			}
@@ -170,16 +180,33 @@ public class DefaultEXIFactory implements EXIFactory {
 	public boolean isEXIBodyOnly() {
 		return exiBodyOnly;
 	}
-	
+
 	public void setBlockSize(int blockSize) {
 		if (blockSize < 0) {
-			throw new RuntimeException("EXI's blockSize has the be a positive number!");
+			throw new RuntimeException(
+					"EXI's blockSize has the be a positive number!");
 		}
 		this.blockSize = blockSize;
 	}
-	
+
 	public int getBlockSize() {
 		return blockSize;
+	}
+
+	public void setValueMaxLength(int valueMaxLength) {
+		this.valueMaxLength = valueMaxLength;
+	}
+
+	public int getValueMaxLength() {
+		return valueMaxLength;
+	}
+
+	public void setValuePartitionCapacity(int valuePartitionCapacity) {
+		this.valuePartitionCapacity = valuePartitionCapacity;
+	}
+
+	public int getValuePartitionCapacity() {
+		return valuePartitionCapacity;
 	}
 
 	public EXIEncoder createEXIEncoder() {
@@ -231,9 +258,16 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public TypeEncoder createTypeEncoder() {
-		//	string encoder
-		StringEncoder stringEncoder = new StringEncoderImpl();
-		
+		// string encoder
+		StringEncoder stringEncoder;
+		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
+				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+			stringEncoder = new BoundedStringEncoderImpl(getValueMaxLength(),
+					getValuePartitionCapacity());
+		} else {
+			stringEncoder = new StringEncoderImpl();
+		}
+
 		TypeEncoder typeEncoder;
 
 		// create new type encoder
@@ -245,7 +279,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			} else {
 				if (userDefinedDatatypeRepresentations != null
 						&& userDefinedDatatypeRepresentations.length > 0) {
-					DatatypeRespresentationMapTypeEncoder enc = new DatatypeRespresentationMapTypeEncoder(stringEncoder);
+					DatatypeRespresentationMapTypeEncoder enc = new DatatypeRespresentationMapTypeEncoder(
+							stringEncoder);
 
 					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
 						enc
@@ -268,10 +303,16 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public TypeDecoder createTypeDecoder() {
-		
-		//	string Decoder
-		StringDecoder stringDecoder = new StringDecoderImpl();
-		
+		// string Decoder
+		StringDecoder stringDecoder;
+		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
+				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+			stringDecoder = new BoundedStringDecoderImpl(getValueMaxLength(),
+					getValuePartitionCapacity());
+		} else {
+			stringDecoder = new StringDecoderImpl();
+		}
+
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
@@ -282,7 +323,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			} else {
 				if (userDefinedDatatypeRepresentations != null
 						&& userDefinedDatatypeRepresentations.length > 0) {
-					TypeDecoderRepresentationMap dec = new DatatypeRepresentationMapTypeDecoder(stringDecoder);
+					TypeDecoderRepresentationMap dec = new DatatypeRepresentationMapTypeDecoder(
+							stringDecoder);
 
 					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
 						dec
@@ -302,14 +344,15 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return typeDecoder;
 	}
-	
+
 	@Override
 	public EXIFactory clone() {
 		// create new instance
 		EXIFactory copy = newInstance();
 		// shallow copy
 		copy.setCodingMode(this.codingMode);
-		copy.setDatatypeRepresentationMap(this.userDefinedDatatypeRepresentations);
+		copy
+				.setDatatypeRepresentationMap(this.userDefinedDatatypeRepresentations);
 		copy.setEXIBodyOnly(this.exiBodyOnly);
 		copy.setFidelityOptions(this.fidelityOptions);
 		copy.setFragment(this.isFragment);
