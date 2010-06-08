@@ -58,7 +58,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 * 
 	 */
 	public void encodeStringOnly(final String s) throws IOException {
-		for (int i = 0; i < s.length(); i++) {
+		final int len = s.length();
+		for (int i = 0; i<len; i++) {
 			final char ch = s.charAt(i);
 
 			// Is this a UTF-16 surrogate pair?

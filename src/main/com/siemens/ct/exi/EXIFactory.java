@@ -129,6 +129,52 @@ public interface EXIFactory extends Cloneable {
 	public int getBlockSize();
 
 	/**
+	 * The valueMaxLength option specifies the maximum length of value content
+	 * items to be considered for addition to the string table. The default
+	 * value "unbounded" is assumed when the "valueMaxLength" element is absent
+	 * in the EXI Options document.
+	 * <p>
+	 * See {@link http://www.w3.org/TR/exi/#key-valueMaxLengthOption}
+	 * </p>
+	 * 
+	 * @param valueMaxLength
+	 *            the maximum string length of value content items to be
+	 *            considered for addition to the string table
+	 */
+	public void setValueMaxLength(int valueMaxLength);
+
+	/**
+	 * The default value "unbounded" is assumed when the "valueMaxLength"
+	 * element is absent.
+	 * 
+	 * @return value OR negative for unbounded
+	 */
+	public int getValueMaxLength();
+
+	/**
+	 * The valuePartitionCapacity option specifies the maximum number of value
+	 * content items in the string table at any given time. The default value
+	 * "unbounded" is assumed when the "valuePartitionCapacity" element is
+	 * absent.
+	 * 
+	 * <p>
+	 * See {@link http://www.w3.org/TR/exi/#key-valuePartitionCapacityOption}
+	 * </p>
+	 * 
+	 * @param valuePartitionCapacity
+	 *            the total capacity of value partitions in a string table
+	 */
+	public void setValuePartitionCapacity(int valuePartitionCapacity);
+
+	/**
+	 * The default value "unbounded" is assumed when the
+	 * "valuePartitionCapacity" element is absent
+	 * 
+	 * @return value OR negative for unbounded
+	 */
+	public int getValuePartitionCapacity();
+
+	/**
 	 * By default, each typed value in an EXI stream is represented by the
 	 * associated built-in EXI datatype representation. However, EXI processors
 	 * MAY provide the capability to specify different built-in EXI datatype

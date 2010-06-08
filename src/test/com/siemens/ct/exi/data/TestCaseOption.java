@@ -21,6 +21,7 @@ package com.siemens.ct.exi.data;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.types.DatatypeRepresentation;
 
@@ -33,7 +34,9 @@ public class TestCaseOption {
 	private boolean schemaInformedOnly;
 	private DatatypeRepresentation[] datatypeRepresentations;
 	private QName[] scElements;
-	private int blockSize = -1;
+	private int blockSize = Constants.DEFAULT_BLOCK_SIZE;
+	private int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
+	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -107,6 +110,23 @@ public class TestCaseOption {
 	public int getBlockSize() {
 		return blockSize;
 	}
+	
+	public void setValueMaxLength(int valueMaxLength) {
+		this.valueMaxLength = valueMaxLength;
+	}
+	
+	public int getValueMaxLength() {
+		return valueMaxLength;
+	}
+	
+	public void setValuePartitionCapacity(int valuePartitionCapacity) {
+		this.valuePartitionCapacity = valuePartitionCapacity;
+	}
+	
+	public int getValuePartitionCapacity() {
+		return valuePartitionCapacity;
+	}
+	
 
 	@Override
 	public String toString() {
@@ -122,9 +142,17 @@ public class TestCaseOption {
 		// fidelityOptions
 		s += "fidelityOptions=" + getFidelityOptions().toString();
 		// blockSize
-		if (blockSize >= 0) {
-			s += ",bs=" + blockSize;	
-		}		
+		if (blockSize != Constants.DEFAULT_BLOCK_SIZE) {
+			s += ",bs=" + blockSize;
+		}
+		//  valueMaxLength
+		if (valueMaxLength != Constants.DEFAULT_VALUE_MAX_LENGTH) {
+			s += ",vml=" + valueMaxLength;
+		}
+		// valuePartitionCapacity
+		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY ) {
+			s += ",vpc=" + valuePartitionCapacity;
+		}
 
 		return s;
 	}

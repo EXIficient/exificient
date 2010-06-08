@@ -78,6 +78,12 @@ public interface Constants {
 	 */
 	public static final int MAX_NUMBER_OF_VALUES = 100;
 	public static final int DEFAULT_BLOCK_SIZE = 1000000;
+	
+	/*
+	 * StringTable settings
+	 */
+	public static final int DEFAULT_VALUE_MAX_LENGTH = -1; // unbounded
+	public static final int DEFAULT_VALUE_PARTITON_CAPACITY = -1; // unbounded
 
 	/*
 	 * Float & Double Values

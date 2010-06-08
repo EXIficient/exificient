@@ -107,7 +107,16 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFidelityOptions(scFo);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
-
+		
+		// #8 valuePartitionCapacity
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(true);
+		testCaseOptions.lastElement().setValuePartitionCapacity(9);
+		
 	}
 
 	@Test
