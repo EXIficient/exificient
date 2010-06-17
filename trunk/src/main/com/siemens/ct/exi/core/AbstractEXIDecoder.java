@@ -20,7 +20,6 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +69,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	// decoder stream
 	protected InputStream is;
 	protected DecoderChannel channel;
+	
+	// namespaces/prefixes
+	Map<String, String> uriToPrefix;
+	protected int createdPfxCnt;
 
 	// Type Decoder (including string decoder etc.)
 	protected TypeDecoder typeDecoder;
@@ -92,18 +95,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String piTarget;
 	protected String piData;
 
-	// namespaces/prefixes
-	protected Map<String, String> createdPrefixes;
-	protected int createdPfxCnt;
-	// protected boolean openElement;
-	
-	Map<String, String> uriToPrefix;
-	public static final boolean NEW_PFX = true;
-
 	public AbstractEXIDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
-
-		createdPrefixes = new HashMap<String, String>();
+		
+		// namespaces/prefixes
 		uriToPrefix =  new HashMap<String, String>();
 
 		// init once
@@ -114,19 +109,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 		
-		// NS prefixes
+		// namespaces/prefixes
 		initPrefixes();
-		
-//		openElement = false;
 
 		// clear string values etc.
 		typeDecoder.clear();
 	}
 	
-	protected void initPrefixes() {
-		createdPrefixes.clear();
-		createdPfxCnt = 1;
-		
+	protected void initPrefixes() {		
 		uriToPrefix.clear();
 		// default NS
 		uriToPrefix.put(XMLConstants.NULL_NS_URI, XMLConstants.DEFAULT_NS_PREFIX);
@@ -202,41 +192,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 //			finalizeOpenElement();
 //		}
 	}
-	
-	@Override
-	public String getPrefix(String uri) {
-		if (NEW_PFX) {
-			return uriToPrefix.get(uri);
-		} else {
-			return namespaces.getPrefix(uri);	
-		}
-	}
 
-	@Override
-	public String getURI(String prefix) {
-		if (NEW_PFX) {
-			// System.err.println("getURI(String prefix)");
-			// check all stack items expect last one (reverse order)
-			for(int i=elementContextStackIndex; i>0; i--) {
-				ElementContext ec = elementContextStack[i];
-				if(ec.prefixDeclarations != null) {
-					for(PrefixMapping pm : ec.prefixDeclarations) {
-						if(pm.pfx.equals(prefix)) {
-							return pm.uri;
-						}
-					}
-				}
-			}
-			return null;
-		} else {
-			return namespaces.getURI(prefix);	
-		}
-	}
-	
-	public void initNamespaceSupport() {
-		// handle remaining pfx mapping for element, elementPrefix
-		checkPrefixMapping(elementQName.getNamespaceURI());
-	}
 	
 	public List<PrefixMapping> getPrefixDeclarations() {
 		// handle remaining pfx mapping for element
@@ -440,119 +396,36 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 	
 	
-	protected void declarePrefix(String pfx, String uri) {
-		if (elementContext.prefixDeclarations == null) {
-			elementContext.prefixDeclarations = new ArrayList<PrefixMapping>();
+	protected String getQualifiedName(QName qname, String pfx) {
+		if (pfx == null) {
+			assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
+			pfx = checkPrefixMapping(qname.getNamespaceURI());
 		}
-		elementContext.prefixDeclarations.add(new PrefixMapping(pfx, uri));	
+		
+		String localName = qname.getLocalPart();
+		return pfx.length() == 0 ? localName
+				: (pfx + Constants.COLON + localName);	
+	}
+
+	
+	protected final String checkPrefixMapping(String uri) {
+		assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
+		String pfx = uriToPrefix.get(uri);
+		if (pfx == null) {
+			pfx = "ns" + createdPfxCnt++;
+			uriToPrefix.put(uri, pfx);
+			declarePrefix(pfx, uri);
+		}
+		
+		return pfx;
 	}
 	
-	protected void undeclarePrefixes() {
+	protected final void undeclarePrefixes() {
 		if (elementContext.prefixDeclarations != null) {
 			for(PrefixMapping pm : elementContext.prefixDeclarations) {
 				uriToPrefix.remove(pm.uri);
 			}
 		}
-	}
-	
-	protected String getQualifiedName(QName qname, String pfx) {
-		String localName = qname.getLocalPart();
-		String sqname;
-		
-		if (NEW_PFX) {
-			if (pfx == null) {
-				assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
-				pfx = checkPrefixMapping(qname.getNamespaceURI());
-			}
-			sqname = pfx.length() == 0 ? localName
-					: (pfx + Constants.COLON + localName);
-			
-		} else {
-			if (pfx == null) {
-				String uri = qname.getNamespaceURI();
-				if (uri.equals(XMLConstants.NULL_NS_URI) || uri.equals(namespaces
-						.getURI(XMLConstants.DEFAULT_NS_PREFIX)) ) {
-					// default namespace
-					pfx = XMLConstants.DEFAULT_NS_PREFIX;
-					sqname = localName;
-				} else {
-					if ((pfx = namespaces.getPrefix(uri)) == null) {
-						// create unique prefix a la ns1, ns2, .. etc
-						pfx = createUniquePrefix(uri);
-						namespaces.declarePrefix(pfx, uri);
-						sqname = pfx + Constants.COLON + localName;
-					} else {
-						sqname = pfx.length() == 0 ? localName
-								: (pfx + Constants.COLON + localName);
-					}
-				}
-			} else {
-				sqname = pfx.length() == 0 ? localName
-						: (pfx + Constants.COLON + localName);
-			}
-		}
-	
-		return sqname;
-	}
-
-	
-	protected final String checkPrefixMapping(String uri) {
-		String pfx;
-		if (NEW_PFX) {
-//			if (pfx == null) {
-				assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
-
-				pfx = uriToPrefix.get(uri);
-				if (pfx == null) {
-					pfx = "ns" + createdPfxCnt++;
-					uriToPrefix.put(uri, pfx);
-					declarePrefix(pfx, uri);
-				}
-//			}
-			// Note: Prefix declaration already done with NS event
-//			else {
-//				// is this necessary? NS event done already ?
-//				namespaces.declarePrefix(pfx, uri);
-//			}
-		} else {
-//			if (pfx == null) {
-				if (XMLConstants.NULL_NS_URI.equals(uri)) {
-					pfx = XMLConstants.DEFAULT_NS_PREFIX;
-				} else {
-					pfx = namespaces.getPrefix(uri);
-					if (pfx == null) {
-						pfx = this.createUniquePrefix(uri);;
-					}
-				}
-				namespaces.declarePrefix(pfx, uri);
-//			}
-			// Note: Prefix declaration already done with NS event
-//			else {
-//				// is this necessary? NS event done already ?
-//				namespaces.declarePrefix(pfx, uri);
-//			}
-		}
-		
-		return pfx;
-	}
-	
-	protected String createUniquePrefix(String uri) {
-		String pfx;
-		if ((pfx = createdPrefixes.get(uri)) != null) {
-			// *re-use* previously created prefix
-//			if (namespaces.getPrefix(uri) == null) {
-//				// add to namespace context, if not already
-//				namespaces.declarePrefix(pfx, uri);
-//			}
-		} else {
-			do {
-				pfx = "ns" + createdPfxCnt++;
-			} while (namespaces.getURI(pfx) != null);
-
-//			namespaces.declarePrefix(pfx, uri);
-			createdPrefixes.put(uri, pfx);
-		}
-		return pfx;
 	}
 	
 	public QName getElementQName() {
@@ -563,12 +436,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		String sqname = getQualifiedName(elementQName, elementPrefix);
 		setQNameAsString(sqname);
 		return sqname;
-		
-////		String sqname = getQualifiedName(elementQName,
-////				elementPrefix);
-////		setQNameAsString(sqname);
-////		return sqname;
-//		return getQNameAsString();
 	}
 	
 	public String getEndElementQNameAsString() {

@@ -466,7 +466,8 @@ public class QNameDatatype extends AbstractDatatype {
 		if (preservePrefix) {
 			prefix = decodeQNamePrefix(qname, valueChannel);
 		} else {
-			prefix = namespaces.getPrefix(qname.getNamespaceURI());
+			// prefix = namespaces.getPrefix(qname.getNamespaceURI());
+			prefix = null;
 		}
 
 		return new QNameValue(qname, prefix);
