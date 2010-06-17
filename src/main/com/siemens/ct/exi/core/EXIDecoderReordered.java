@@ -53,7 +53,7 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.4.20090414
  */
 
-public class EXIDecoderReordered extends EXIDecoderInOrder {
+public class EXIDecoderReordered extends AbstractEXIDecoder {
 	// store appearing event-types in right order
 	protected List<EventType> eventTypes;
 	protected int eventTypeIndex;
