@@ -20,7 +20,9 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -29,6 +31,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
@@ -92,11 +95,16 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	// namespaces/prefixes
 	protected Map<String, String> createdPrefixes;
 	protected int createdPfxCnt;
+	// protected boolean openElement;
+	
+	Map<String, String> uriToPrefix;
+	public static final boolean NEW_PFX = true;
 
-	public AbstractEXIDecoder(EXIFactory exiFactory) {
+	public AbstractEXIDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		createdPrefixes = new HashMap<String, String>();
+		uriToPrefix =  new HashMap<String, String>();
 
 		// init once
 		typeDecoder = exiFactory.createTypeDecoder();
@@ -105,14 +113,25 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
-
-		createdPrefixes.clear();
-		createdPfxCnt = 1;
 		
-		openElement = false;
+		// NS prefixes
+		initPrefixes();
+		
+//		openElement = false;
 
 		// clear string values etc.
 		typeDecoder.clear();
+	}
+	
+	protected void initPrefixes() {
+		createdPrefixes.clear();
+		createdPfxCnt = 1;
+		
+		uriToPrefix.clear();
+		// default NS
+		uriToPrefix.put(XMLConstants.NULL_NS_URI, XMLConstants.DEFAULT_NS_PREFIX);
+		// "http://www.w3.org/XML/1998/namespace"
+		uriToPrefix.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
 	}
 
 	protected final void decodeEventCode() throws EXIException, IOException {
@@ -157,24 +176,90 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			}
 		}
 		
-		if (nextEventType != EventType.NAMESPACE_DECLARATION && nextEventType != EventType.START_DOCUMENT ) {
-			finalizeOpenElement();
+//		if (openElement) {
+//			switch (nextEventType) {
+//			/* ELEMENT CONTENT EVENTS */
+//			case START_ELEMENT:
+//			case START_ELEMENT_NS:
+//			case START_ELEMENT_GENERIC:
+//			case START_ELEMENT_GENERIC_UNDECLARED:
+//			case END_ELEMENT:
+//			case END_ELEMENT_UNDECLARED:
+//			case CHARACTERS:
+//			case CHARACTERS_GENERIC:
+//			case CHARACTERS_GENERIC_UNDECLARED:
+//			case DOC_TYPE:
+//			case ENTITY_REFERENCE:
+//			case COMMENT:
+//			case PROCESSING_INSTRUCTION:
+//				// handle pfx mapping for element
+//				checkPrefixMapping(elementPrefix, elementQName.getNamespaceURI());
+//				openElement = false;
+//			}
+//		}
+		
+//		if (nextEventType != EventType.NAMESPACE_DECLARATION && nextEventType != EventType.START_DOCUMENT ) {
+//			finalizeOpenElement();
+//		}
+	}
+	
+	@Override
+	public String getPrefix(String uri) {
+		if (NEW_PFX) {
+			return uriToPrefix.get(uri);
+		} else {
+			return namespaces.getPrefix(uri);	
+		}
+	}
+
+	@Override
+	public String getURI(String prefix) {
+		if (NEW_PFX) {
+			// System.err.println("getURI(String prefix)");
+			// check all stack items expect last one (reverse order)
+			for(int i=elementContextStackIndex; i>0; i--) {
+				ElementContext ec = elementContextStack[i];
+				if(ec.prefixDeclarations != null) {
+					for(PrefixMapping pm : ec.prefixDeclarations) {
+						if(pm.pfx.equals(prefix)) {
+							return pm.uri;
+						}
+					}
+				}
+			}
+			return null;
+		} else {
+			return namespaces.getURI(prefix);	
 		}
 	}
 	
-
-	boolean openElement;
-	
-	protected void finalizeOpenElement() {
-		// qname as string
-		if (openElement) {
-			String sqname = getQualifiedName(elementQName,
-					elementPrefix);
-			setQNameAsString(sqname);
-			
-			openElement = false;
-		}		
+	public void initNamespaceSupport() {
+		// handle remaining pfx mapping for element, elementPrefix
+		checkPrefixMapping(elementQName.getNamespaceURI());
 	}
+	
+	public List<PrefixMapping> getPrefixDeclarations() {
+		// handle remaining pfx mapping for element
+		if (elementPrefix == null) {
+			checkPrefixMapping(elementQName.getNamespaceURI());	
+		}
+		
+		return elementContext.prefixDeclarations;
+	}
+	
+
+//	boolean openElement;
+//	
+//	protected void finalizeOpenElement() {
+//		// qname as string
+//		if (openElement) {
+//			String sqname = getQualifiedName(elementQName,
+//					elementPrefix);
+//			setQNameAsString(sqname);
+//			
+//			openElement = false;
+//		}		
+//	}
 
 	protected void updateInvalidValueAttribute() throws EXIException {
 		SchemaInformedRule sir = (SchemaInformedRule) currentRule;
@@ -277,10 +362,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		attributeQName = at.getQName();
 		// handle attribute prefix
 		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
+		if (attributePrefix == null) {
+			attributePrefix = checkPrefixMapping(attributeQName.getNamespaceURI());	
+		}
 		// update current rule
 		currentRule = nextRule;
 		return at.getDatatype();
 	}
+
 
 	protected void decodeAttributeNSStructure() throws EXIException,
 			IOException {
@@ -289,6 +378,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		attributeQName = qnameDatatype.readLocalName(atNS.getNamespaceURI(), channel);
 		// handle attribute prefix
 		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
+		if (attributePrefix == null) {
+			attributePrefix = checkPrefixMapping(attributeQName.getNamespaceURI());	
+		}
 		// update current rule
 		currentRule = nextRule;
 	}
@@ -318,6 +410,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		attributeQName = qnameDatatype.readLocalName(qnameDatatype.readUri(channel), channel);
 		// handle attribute prefix
 		attributePrefix = qnameDatatype.decodeQNamePrefix(attributeQName, channel);
+		if (attributePrefix == null) {
+			attributePrefix = checkPrefixMapping(attributeQName.getNamespaceURI());	
+		}
 	}
 
 	protected Datatype decodeCharactersStructureOnly() throws EXIException {
@@ -344,50 +439,117 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	}
 	
+	
+	protected void declarePrefix(String pfx, String uri) {
+		if (elementContext.prefixDeclarations == null) {
+			elementContext.prefixDeclarations = new ArrayList<PrefixMapping>();
+		}
+		elementContext.prefixDeclarations.add(new PrefixMapping(pfx, uri));	
+	}
+	
+	protected void undeclarePrefixes() {
+		if (elementContext.prefixDeclarations != null) {
+			for(PrefixMapping pm : elementContext.prefixDeclarations) {
+				uriToPrefix.remove(pm.uri);
+			}
+		}
+	}
+	
 	protected String getQualifiedName(QName qname, String pfx) {
 		String localName = qname.getLocalPart();
 		String sqname;
 		
-		if (pfx == null) {
-			
-			String uri = qname.getNamespaceURI();
-			if (uri.equals(XMLConstants.NULL_NS_URI) || uri.equals(namespaces
-					.getURI(XMLConstants.DEFAULT_NS_PREFIX)) ) {
-				// default namespace
-				pfx = XMLConstants.DEFAULT_NS_PREFIX;
-				sqname = localName;
-			} else {
-				if ((pfx = namespaces.getPrefix(uri)) == null) {
-					// create unique prefix a la ns1, ns2, .. etc
-					pfx = getUniquePrefix(uri);
-					sqname = pfx + Constants.COLON + localName;
-				} else {
-					sqname = pfx.length() == 0 ? localName
-							: (pfx + Constants.COLON + localName);
-				}
+		if (NEW_PFX) {
+			if (pfx == null) {
+				assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
+				pfx = checkPrefixMapping(qname.getNamespaceURI());
 			}
-		} else {
 			sqname = pfx.length() == 0 ? localName
 					: (pfx + Constants.COLON + localName);
+			
+		} else {
+			if (pfx == null) {
+				String uri = qname.getNamespaceURI();
+				if (uri.equals(XMLConstants.NULL_NS_URI) || uri.equals(namespaces
+						.getURI(XMLConstants.DEFAULT_NS_PREFIX)) ) {
+					// default namespace
+					pfx = XMLConstants.DEFAULT_NS_PREFIX;
+					sqname = localName;
+				} else {
+					if ((pfx = namespaces.getPrefix(uri)) == null) {
+						// create unique prefix a la ns1, ns2, .. etc
+						pfx = createUniquePrefix(uri);
+						namespaces.declarePrefix(pfx, uri);
+						sqname = pfx + Constants.COLON + localName;
+					} else {
+						sqname = pfx.length() == 0 ? localName
+								: (pfx + Constants.COLON + localName);
+					}
+				}
+			} else {
+				sqname = pfx.length() == 0 ? localName
+						: (pfx + Constants.COLON + localName);
+			}
 		}
 	
 		return sqname;
 	}
 
-	protected String getUniquePrefix(String uri) {
+	
+	protected final String checkPrefixMapping(String uri) {
+		String pfx;
+		if (NEW_PFX) {
+//			if (pfx == null) {
+				assert(!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
+
+				pfx = uriToPrefix.get(uri);
+				if (pfx == null) {
+					pfx = "ns" + createdPfxCnt++;
+					uriToPrefix.put(uri, pfx);
+					declarePrefix(pfx, uri);
+				}
+//			}
+			// Note: Prefix declaration already done with NS event
+//			else {
+//				// is this necessary? NS event done already ?
+//				namespaces.declarePrefix(pfx, uri);
+//			}
+		} else {
+//			if (pfx == null) {
+				if (XMLConstants.NULL_NS_URI.equals(uri)) {
+					pfx = XMLConstants.DEFAULT_NS_PREFIX;
+				} else {
+					pfx = namespaces.getPrefix(uri);
+					if (pfx == null) {
+						pfx = this.createUniquePrefix(uri);;
+					}
+				}
+				namespaces.declarePrefix(pfx, uri);
+//			}
+			// Note: Prefix declaration already done with NS event
+//			else {
+//				// is this necessary? NS event done already ?
+//				namespaces.declarePrefix(pfx, uri);
+//			}
+		}
+		
+		return pfx;
+	}
+	
+	protected String createUniquePrefix(String uri) {
 		String pfx;
 		if ((pfx = createdPrefixes.get(uri)) != null) {
 			// *re-use* previously created prefix
-			if (namespaces.getPrefix(uri) == null) {
-				// add to namespace context, if not already
-				namespaces.declarePrefix(pfx, uri);
-			}
+//			if (namespaces.getPrefix(uri) == null) {
+//				// add to namespace context, if not already
+//				namespaces.declarePrefix(pfx, uri);
+//			}
 		} else {
 			do {
 				pfx = "ns" + createdPfxCnt++;
 			} while (namespaces.getURI(pfx) != null);
 
-			namespaces.declarePrefix(pfx, uri);
+//			namespaces.declarePrefix(pfx, uri);
 			createdPrefixes.put(uri, pfx);
 		}
 		return pfx;
@@ -398,11 +560,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	public String getStartElementQNameAsString() {
-//		String sqname = getQualifiedName(elementQName,
-//				elementPrefix);
-//		setQNameAsString(sqname);
-//		return sqname;
-		return getQNameAsString();
+		String sqname = getQualifiedName(elementQName, elementPrefix);
+		setQNameAsString(sqname);
+		return sqname;
+		
+////		String sqname = getQualifiedName(elementQName,
+////				elementPrefix);
+////		setQNameAsString(sqname);
+////		return sqname;
+//		return getQNameAsString();
 	}
 	
 	public String getEndElementQNameAsString() {

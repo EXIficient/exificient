@@ -49,9 +49,8 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	protected final int upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitIntegerDatatype(QName datatypeIdentifier, int lowerBound,
-			int upperBound) {
-		super(BuiltInType.NBIT_INTEGER, datatypeIdentifier);
+	public NBitIntegerDatatype(int lowerBound, int upperBound, QName schemaType) {
+		super(BuiltInType.NBIT_INTEGER, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
 		this.lowerBound = lowerBound;
@@ -84,7 +83,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 			return checkBounds();
 		}
 	}
-	
+
 	// check lower & upper bound
 	protected boolean checkBounds() {
 		int iValidValue = validValue.toInteger();
@@ -94,25 +93,24 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			validValue = ((IntegerValue) value);
-			return checkBounds();		
+			return checkBounds();
 		} else {
 			return false;
 		}
 	}
-	
-	
+
 	public Value getValue() {
 		return validValue;
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		valueChannel.encodeNBitUnsignedInteger(validValue.toInteger()-lowerBound,
-				numberOfBits4Range);
+		valueChannel.encodeNBitUnsignedInteger(validValue.toInteger()
+				- lowerBound, numberOfBits4Range);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

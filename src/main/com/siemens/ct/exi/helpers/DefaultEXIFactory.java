@@ -18,9 +18,12 @@
 
 package com.siemens.ct.exi.helpers;
 
+import java.io.OutputStream;
+
 import javax.xml.namespace.QName;
 
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
@@ -29,7 +32,6 @@ import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.core.EXIDecoderInOrder;
 import com.siemens.ct.exi.core.EXIDecoderInOrderSC;
 import com.siemens.ct.exi.core.EXIDecoderReordered;
@@ -46,16 +48,15 @@ import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.types.DatatypeRepresentation;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
-import com.siemens.ct.exi.types.DatatypeRespresentationMapTypeEncoder;
+import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
 import com.siemens.ct.exi.types.LexicalTypeDecoder;
 import com.siemens.ct.exi.types.LexicalTypeEncoder;
 import com.siemens.ct.exi.types.StringTypeDecoder;
 import com.siemens.ct.exi.types.StringTypeEncoder;
 import com.siemens.ct.exi.types.TypeDecoder;
-import com.siemens.ct.exi.types.TypeDecoderRepresentationMap;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.types.TypedTypeDecoder;
 import com.siemens.ct.exi.types.TypedTypeEncoder;
@@ -80,7 +81,10 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected FidelityOptions fidelityOptions;
 
-	protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
+	protected QName[] dtrMapTypes;
+	protected QName[] dtrMapRepresentations;
+	// protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
+
 	protected QName[] scElements;
 
 	/* default: false */
@@ -115,7 +119,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		return factory;
 	}
 
-	public void setFidelityOptions(FidelityOptions fidelityOptions) {
+	public void setFidelityOptions(FidelityOptions fidelityOptions)  {
 		this.fidelityOptions = fidelityOptions;
 	}
 
@@ -123,9 +127,18 @@ public class DefaultEXIFactory implements EXIFactory {
 		return fidelityOptions;
 	}
 
-	public void setDatatypeRepresentationMap(
-			DatatypeRepresentation[] datatypeRepresentations) {
-		this.userDefinedDatatypeRepresentations = datatypeRepresentations;
+	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations) {
+		if (dtrMapTypes == null || dtrMapRepresentations == null
+				|| dtrMapTypes.length != dtrMapRepresentations.length
+				|| dtrMapTypes.length == 0) {
+			// un-set dtrMap
+			this.dtrMapTypes = null;
+			this.dtrMapRepresentations = null;
+		} else {
+			this.dtrMapTypes = dtrMapTypes;
+			this.dtrMapRepresentations = dtrMapRepresentations;
+		}
 	}
 
 	public void setSelfContainedElements(QName[] scElements) {
@@ -209,7 +222,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		return valuePartitionCapacity;
 	}
 
-	public EXIEncoder createEXIEncoder() {
+	public EXIEncoder createEXIEncoder() throws EXIException {
 		if (codingMode.usesRechanneling()) {
 			return new EXIEncoderReordered(this);
 		} else {
@@ -221,19 +234,19 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public EXIWriter createEXIWriter() {
+	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return new SAXEncoderExtendedHandler(this);
+			return new SAXEncoderExtendedHandler(this, os);
 		} else {
-			return new SAXEncoder(this);
+			return new SAXEncoder(this, os);
 		}
 	}
 
-	public EXIDecoder createEXIDecoder() {
+	public EXIDecoder createEXIDecoder() throws EXIException {
 		if (codingMode.usesRechanneling()) {
 			return new EXIDecoderReordered(this);
 		} else {
@@ -245,7 +258,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public XMLReader createEXIReader() {
+	public XMLReader createEXIReader() throws EXIException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
@@ -257,7 +270,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public TypeEncoder createTypeEncoder() {
+	public TypeEncoder createTypeEncoder() throws EXIException {
 		// string encoder
 		StringEncoder stringEncoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
@@ -277,14 +290,15 @@ public class DefaultEXIFactory implements EXIFactory {
 				// use restricted characters sets
 				typeEncoder = new LexicalTypeEncoder(stringEncoder);
 			} else {
-				if (userDefinedDatatypeRepresentations != null
-						&& userDefinedDatatypeRepresentations.length > 0) {
-					DatatypeRespresentationMapTypeEncoder enc = new DatatypeRespresentationMapTypeEncoder(
+				if (dtrMapTypes != null) {
+					DatatypeRepresentationMapTypeEncoder enc = new DatatypeRepresentationMapTypeEncoder(
 							stringEncoder);
 
-					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
-						enc
-								.registerDatatypeRepresentation(userDefinedDatatypeRepresentations[i]);
+					assert(dtrMapTypes.length == dtrMapRepresentations.length);
+					for(int i=0; i<dtrMapTypes.length; i++) {
+						QName type = dtrMapTypes[i];
+						QName representations = dtrMapRepresentations[i];
+						enc.registerDatatypeRepresentation(type, representations);
 					}
 
 					typeEncoder = enc;
@@ -293,7 +307,6 @@ public class DefaultEXIFactory implements EXIFactory {
 					typeEncoder = new TypedTypeEncoder(stringEncoder);
 				}
 			}
-
 		} else {
 			// use strings only
 			typeEncoder = new StringTypeEncoder(stringEncoder);
@@ -302,7 +315,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		return typeEncoder;
 	}
 
-	public TypeDecoder createTypeDecoder() {
+	public TypeDecoder createTypeDecoder() throws EXIException {
 		// string Decoder
 		StringDecoder stringDecoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
@@ -321,14 +334,15 @@ public class DefaultEXIFactory implements EXIFactory {
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				typeDecoder = new LexicalTypeDecoder(stringDecoder);
 			} else {
-				if (userDefinedDatatypeRepresentations != null
-						&& userDefinedDatatypeRepresentations.length > 0) {
-					TypeDecoderRepresentationMap dec = new DatatypeRepresentationMapTypeDecoder(
+				if (dtrMapTypes != null) {
+					DatatypeRepresentationMapTypeDecoder dec = new DatatypeRepresentationMapTypeDecoder(
 							stringDecoder);
-
-					for (int i = 0; i < userDefinedDatatypeRepresentations.length; i++) {
-						dec
-								.registerDatatypeRepresentation(userDefinedDatatypeRepresentations[i]);
+					
+					assert(dtrMapTypes.length == dtrMapRepresentations.length);
+					for(int i=0; i<dtrMapTypes.length; i++) {
+						QName type = dtrMapTypes[i];
+						QName representations = dtrMapRepresentations[i];
+						dec.registerDatatypeRepresentation(type, representations);
 					}
 
 					typeDecoder = dec;
@@ -350,14 +364,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		// create new instance
 		EXIFactory copy = newInstance();
 		// shallow copy
-		copy.setCodingMode(this.codingMode);
-		copy
-				.setDatatypeRepresentationMap(this.userDefinedDatatypeRepresentations);
-		copy.setEXIBodyOnly(this.exiBodyOnly);
-		copy.setFidelityOptions(this.fidelityOptions);
-		copy.setFragment(this.isFragment);
-		copy.setGrammar(this.grammar);
-		copy.setSelfContainedElements(this.scElements);
+		copy.setCodingMode(codingMode);
+		copy.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
+		copy.setEXIBodyOnly(exiBodyOnly);
+		copy.setFidelityOptions(fidelityOptions);
+		copy.setFragment(isFragment);
+		copy.setGrammar(grammar);
+		copy.setSelfContainedElements(scElements);
 		// return...
 		return copy;
 	}

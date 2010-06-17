@@ -41,10 +41,10 @@ import com.siemens.ct.exi.values.Value;
 
 public interface Datatype {
 	// if no codec map is used
-	public BuiltInType getDefaultBuiltInType();
+	public BuiltInType getBuiltInType();
 
-	// used for codec map
-	public QName getDatatypeIdentifier();
+	// used for dtr map
+	public QName getSchemaType();
 	
 	/*
 	 * Encoder
@@ -58,6 +58,8 @@ public interface Datatype {
 	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 
+//	public void finish() throws IOException;
+	
 	// restricted character set 
 	public RestrictedCharacterSet getRestrictedCharacterSet();
 	

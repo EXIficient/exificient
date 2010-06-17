@@ -23,6 +23,8 @@ import java.io.OutputStream;
 
 import javax.xml.transform.sax.SAXResult;
 
+import org.xml.sax.ext.DefaultHandler2;
+
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -37,46 +39,17 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  */
 
 public class EXIResult extends SAXResult {
-	protected OutputStream os;
 
-	protected EXIFactory exiFactory;
-
-	public EXIResult(OutputStream os) throws IOException {
+	public EXIResult(OutputStream os) throws IOException, EXIException {
 		// use default exi-factory
 		this(os, DefaultEXIFactory.newInstance());
 	}
 
-	public EXIResult(OutputStream os, EXIFactory exiFactory) throws IOException {
-		this.os = os;
-		this.exiFactory = exiFactory;
-
-		init();
-	}
-
-	protected void init() throws IOException {
-		// create new sax encoder
-		EXIWriter saxEncoder = exiFactory.createEXIWriter();
-		try {
-			saxEncoder.setOutput(os, exiFactory.isEXIBodyOnly());
-		} catch (EXIException e) {
-			throw new IOException(e.getMessage());
-			// TODO Java 1.5 does not support Throwable as parameter
-			// throw new IOException(e);
-		}
-
+	public EXIResult(OutputStream os, EXIFactory exiFactory) throws IOException, EXIException {
+		DefaultHandler2 saxEncoder = exiFactory.createEXIWriter(os);
 		// set internal states
 		setHandler(saxEncoder);
 		setLexicalHandler(saxEncoder);
-	}
-
-	public OutputStream getOutputStream() {
-		return os;
-	}
-
-	public void setOutputStream(OutputStream os) throws IOException {
-		this.os = os;
-
-		init();
 	}
 
 }

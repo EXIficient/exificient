@@ -65,7 +65,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 
 	protected EXIEncoderInOrderSC scEncoder;
 
-	public EXIEncoderInOrderSC(EXIFactory exiFactory) {
+	public EXIEncoderInOrderSC(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
 

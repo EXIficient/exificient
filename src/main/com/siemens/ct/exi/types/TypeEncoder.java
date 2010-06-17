@@ -23,7 +23,6 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
@@ -44,17 +43,5 @@ public interface TypeEncoder extends TypeCoder {
 
 	public void writeValue(QName context, EncoderChannel valueChannel)
 			throws IOException;
-			
-	/*
-	 * Flush
-	 */
-	public void finish() throws IOException;
-
-	/*
-	 * String Encoder
-	 */
-	public void setStringEncoder(StringEncoder stringEncoder);
-
-	public StringEncoder getStringEncoder();
 
 }

@@ -40,8 +40,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class BinaryHexDatatype extends AbstractBinaryDatatype {
 
-	public BinaryHexDatatype(QName datatypeIdentifier) {
-		super(datatypeIdentifier, BuiltInType.BINARY_HEX);
+	public BinaryHexDatatype(QName schemaType) {
+		super(BuiltInType.BINARY_HEX, schemaType);
 		this.rcs = new XSDHexBinaryCharacterSet();
 	}
 

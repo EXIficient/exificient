@@ -64,7 +64,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Binary", "");
 
-		assertTrue(BuiltInType.BINARY_BASE64 == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BINARY_BASE64 == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_BASE64BINARY == dt.getDatatypeIdentifier());
 	}
 
@@ -79,7 +79,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Binary", "");
 
-		assertTrue(BuiltInType.BINARY_HEX == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BINARY_HEX == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_HEXBINARY == dt.getDatatypeIdentifier());
 	}
 
@@ -94,7 +94,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Boolean", "");
 
-		assertTrue(BuiltInType.BOOLEAN == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BOOLEAN == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_BOOLEAN == dt.getDatatypeIdentifier());
 	}
 
@@ -110,7 +110,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Boolean01", "");
 
-		assertTrue(BuiltInType.BOOLEAN_PATTERN == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BOOLEAN_PATTERN == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_BOOLEAN == dt.getDatatypeIdentifier());
 	}
 
@@ -125,7 +125,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"DateTime", "");
 
-		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.DATETIME == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatetimeDatatype dtd = (DatetimeDatatype) dt;
@@ -143,7 +143,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"DateTime", "");
 
-		assertTrue(BuiltInType.DATETIME == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.DATETIME == dt.getBuiltInType());
 		// assertTrue(BuiltIn.XSD_DATETIME == dt.getDatatypeIdentifier());
 
 		DatetimeDatatype dtd = (DatetimeDatatype) dt;
@@ -161,7 +161,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Float", "");
 
-		assertTrue(BuiltInType.FLOAT == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.FLOAT == dt.getBuiltInType());
 	}
 
 	public void testDouble1() throws Exception {
@@ -175,7 +175,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Double", "");
 
-		assertTrue(BuiltInType.DOUBLE == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.DOUBLE == dt.getBuiltInType());
 	}
 
 	public void testInteger1() throws Exception {
@@ -189,7 +189,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.BIG_INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BIG_INTEGER == dt.getBuiltInType());
 	}
 
 	public void testInteger2() throws Exception {
@@ -203,7 +203,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.INTEGER == dt.getBuiltInType());
 	}
 
 	public void testInteger3() throws Exception {
@@ -217,7 +217,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.BIG_INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.BIG_INTEGER == dt.getBuiltInType());
 	}
 
 	public void testInteger4() throws Exception {
@@ -231,7 +231,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
-		assertTrue(BuiltInType.LONG == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.LONG == dt.getBuiltInType());
 	}
 
 	public void testUnsignedInteger1() throws Exception {
@@ -246,7 +246,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(BuiltInType.UNSIGNED_BIG_INTEGER == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testUnsignedInteger2() throws Exception {
@@ -260,7 +260,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"UnsignedInteger", "");
 
-		assertTrue(BuiltInType.UNSIGNED_LONG == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.UNSIGNED_LONG == dt.getBuiltInType());
 	}
 
 	public void testUnsignedInteger3() throws Exception {
@@ -275,7 +275,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_LONG == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testUnsignedInteger4() throws Exception {
@@ -290,7 +290,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testUnsignedIntegerFacet1() throws Exception {
@@ -306,7 +306,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_BIG_INTEGER == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testUnsignedIntegerFacet2() throws Exception {
@@ -322,7 +322,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_LONG == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testUnsignedIntegerFacet3() throws Exception {
@@ -338,7 +338,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testNBitInteger1() throws Exception {
@@ -352,7 +352,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.NBIT_INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.NBIT_INTEGER == dt.getBuiltInType());
 	}
 
 	public void testNBitIntegerFacet1() throws Exception {
@@ -368,7 +368,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.NBIT_BIG_INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.NBIT_BIG_INTEGER == dt.getBuiltInType());
 	}
 
 	public void testNBitIntegerFacet2() throws Exception {
@@ -384,7 +384,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.NBIT_LONG == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.NBIT_LONG == dt.getBuiltInType());
 	}
 
 	public void testNBitIntegerFacet3() throws Exception {
@@ -400,7 +400,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
 
-		assertTrue(BuiltInType.NBIT_INTEGER == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.NBIT_INTEGER == dt.getBuiltInType());
 	}
 
 	public void testEnumeration1() throws Exception {
@@ -415,7 +415,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(BuiltInType.ENUMERATION == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.ENUMERATION == dt.getBuiltInType());
 	}
 	
 	public void testEnumeration2() throws Exception {
@@ -432,7 +432,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 		
-		assertTrue(BuiltInType.ENUMERATION == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.ENUMERATION == dt.getBuiltInType());
 		assertTrue(dt.isValid("+0"));
 
 	}
@@ -447,12 +447,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"ListInt", "");
 
-		assertTrue(BuiltInType.LIST == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.LIST == dt.getBuiltInType());
 
 		ListDatatype dtl = (ListDatatype) dt;
 
 		assertTrue(BuiltInType.INTEGER == dtl.getListDatatype()
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testRestrictedCharSet1() throws Exception {
@@ -468,7 +468,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Letter", "");
 
 		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 	
 	public void testRestrictedCharSet2() throws Exception {
@@ -485,7 +485,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"myLanguage", "");
 
 		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 	
 	public void testRestrictedCharSet3() throws Exception {
@@ -502,7 +502,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"myLanguage", "");
 
 		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 	
 	public void testRestrictedCharSet4() throws Exception {
@@ -522,7 +522,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"myLanguage", "");
 
 		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getDefaultBuiltInType());
+				.getBuiltInType());
 	}
 
 	public void testNoRestrictedCharSet1() throws Exception {
@@ -536,7 +536,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Foo", "");
 
-		assertTrue(BuiltInType.STRING == dt.getDefaultBuiltInType());
+		assertTrue(BuiltInType.STRING == dt.getBuiltInType());
 	}
 
 	public void testNoRestrictedCharSet2() throws Exception {
@@ -555,7 +555,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"myLanguage", "");
 
-		assertTrue("" + dt.getDefaultBuiltInType(), BuiltInType.STRING == dt.getDefaultBuiltInType());
+		assertTrue("" + dt.getBuiltInType(), BuiltInType.STRING == dt.getBuiltInType());
 	}
 
 }

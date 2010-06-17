@@ -34,12 +34,11 @@ import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.DateTimeType;
-import com.siemens.ct.exi.values.Value;
 
 /**
  * TODO Description
@@ -47,26 +46,27 @@ import com.siemens.ct.exi.values.Value;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081105
+ * @version 0.4.20080718
  */
 
-public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder
+public class DatatypeRepresentationMapTypeEncoder extends AbstractTypeEncoder
 		implements DatatypeRepresentationMap {
 	
-	// fallback type decoder
-	protected TypedTypeDecoder defaultDecoder;
+	// fallback type encoder
+	protected TypedTypeEncoder defaultEncoder;
 
 	protected Map<QName, Datatype> dtrMap;
+	
+	protected Datatype recentDtrDataype;
 
-	public DatatypeRepresentationMapTypeDecoder(StringDecoder stringDecoder) {
-		super(stringDecoder);
+	public DatatypeRepresentationMapTypeEncoder(StringEncoder stringEncoder) {
+		super(stringEncoder);
 
 		dtrMap = new HashMap<QName, Datatype>();
-		
-		// hand over "same" string table
-		defaultDecoder = new TypedTypeDecoder(stringDecoder);
-	}
 
+		// hand over "same" string table
+		defaultEncoder = new TypedTypeEncoder(stringEncoder);
+	}
 
 	public void registerDatatypeRepresentation(QName type, QName representation)
 			throws EXIException {
@@ -129,16 +129,23 @@ public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder
 		}
 	}
 
-	public Value readValue(Datatype datatype, QName context,
-			DecoderChannel valueChannel) throws IOException {
+	public boolean isValid(Datatype datatype, String value) {
 		QName schemaType = datatype.getSchemaType();
-		Datatype recentDtrDataype = dtrMap.get(schemaType);
+		recentDtrDataype = dtrMap.get(schemaType);
 		if (recentDtrDataype == null) {
-			return defaultDecoder.readValue(datatype, context, valueChannel);
+			return defaultEncoder.isValid(datatype, value);
 		} else {
-			return recentDtrDataype.readValue(valueChannel, stringDecoder, context);
+			return recentDtrDataype.isValid(value);
 		}
 	}
 
+	public void writeValue(QName context, EncoderChannel valueChannel)
+			throws IOException {
+		if (recentDtrDataype == null) {
+			defaultEncoder.writeValue(context, valueChannel);
+		} else {
+			recentDtrDataype.writeValue(valueChannel, stringEncoder, context);
+		}
+	}
 
 }

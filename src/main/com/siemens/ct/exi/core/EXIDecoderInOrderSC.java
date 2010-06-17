@@ -44,7 +44,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 
 	protected EXIDecoderInOrderSC scDecoder;
 
-	public EXIDecoderInOrderSC(EXIFactory exiFactory) {
+	public EXIDecoderInOrderSC(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 		assert (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC));
 	}

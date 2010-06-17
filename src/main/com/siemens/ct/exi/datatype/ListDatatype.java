@@ -49,14 +49,14 @@ public class ListDatatype extends AbstractDatatype {
 
 	protected List<Value> values;
 
-	public ListDatatype(Datatype listDatatype) {
-		super(BuiltInType.LIST, null);
+	public ListDatatype(Datatype listDatatype, QName schemaType) {
+		super(BuiltInType.LIST, schemaType);
 
 		values = new ArrayList<Value>();
 
 		this.rcs = listDatatype.getRestrictedCharacterSet();
 
-		if (listDatatype.getDefaultBuiltInType() == BuiltInType.LIST) {
+		if (listDatatype.getBuiltInType() == BuiltInType.LIST) {
 			throw new IllegalArgumentException();
 		}
 

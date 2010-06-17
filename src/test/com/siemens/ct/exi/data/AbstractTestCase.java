@@ -68,7 +68,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setCodingMode(tco.getCodingMode());
 		ef.setFidelityOptions(tco.getFidelityOptions());
 		ef.setFragment(tco.isFragments());
-		ef.setDatatypeRepresentationMap(tco.getDatatypeRepresentations());
+		ef.setDatatypeRepresentationMap(tco.getDtrMapTypes(), tco.getDtrMapRepresentations());
 		ef.setSelfContainedElements(tco.getSelfContainedElements());
 		if (tco.getBlockSize() >= 0) {
 			ef.setBlockSize(tco.getBlockSize());
@@ -120,7 +120,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 	}
 
 	protected void decode(EXIFactory ef, InputStream exiDocument, API api,
-			boolean checkValidity) throws Exception {
+			boolean checkXMLEqual) throws Exception {
 		try {
 			// decoded XML
 			ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
@@ -130,15 +130,15 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			testDecoder.decodeTo(ef, exiDocument, xmlOutput);
 			xmlOutput.flush();
 
-			// check XML validity
-			if (checkValidity) {
+			// check XML validity OR equal
+			InputStream test = new ByteArrayInputStream(xmlOutput
+					.toByteArray());
+			if (checkXMLEqual) {
 				InputStream control = new FileInputStream(
 						QuickTestConfiguration.getXmlLocation());
-				InputStream test = new ByteArrayInputStream(xmlOutput
-						.toByteArray());
-
-				checkXMLValidity(ef, control, test);
-
+				checkXMLEqual(ef, control, test);
+			} else {
+				checkXMLValid(ef, test);
 			}
 		} catch (Exception e) {
 			throw new Exception("Decode " + api, e);
@@ -162,7 +162,26 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		}
 	}
 
-	protected void checkXMLValidity(EXIFactory ef, InputStream control,
+	protected void checkXMLValid(EXIFactory ef, 
+			InputStream test) throws Exception {
+		if (ef.isFragment()) {
+			// surround with root element for equality check
+			test = FragmentUtilities.getSurroundingRootInputStream(test);
+		}
+		
+		// try to read stream and create DOM
+		try {
+			@SuppressWarnings("unused")
+			Document docTest = TestDOMEncoder.getDocument(test);
+		} catch (Exception e) {
+			throw new Exception("Not able to create DOM. " + ef.getCodingMode() + ", schema="
+					+ ef.getGrammar().isSchemaInformed() + " "
+					+ ef.getFidelityOptions().toString(), e);
+		}
+		// assertXMLValid(new InputSource(test));
+	}
+	
+	protected void checkXMLEqual(EXIFactory ef, InputStream control,
 			InputStream test) throws IOException, ParserConfigurationException,
 			SAXException {
 		if (ef.isFragment()) {

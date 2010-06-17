@@ -55,7 +55,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	// Type Encoder (including string encoder etc.)
 	protected TypeEncoder typeEncoder;
 
-	public AbstractEXIEncoder(EXIFactory exiFactory) {
+	public AbstractEXIEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 		
 		// init once
@@ -79,11 +79,21 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 			EXIHeader.write(os);
 		}
 	}
+	
+	@Override
+	public String getPrefix(String uri) {
+		return namespaces.getPrefix(uri);
+	}
+
+	@Override
+	public String getURI(String prefix) {
+		return namespaces.getURI(prefix);
+	}
 
 	/*
 	 * Stream
 	 */
-	protected void flush() throws IOException {
+	public void flush() throws IOException {
 		channel.flush();
 	}
 
@@ -173,7 +183,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 
 		// flush chunk(s) to bit/byte output stream
-		flush();
+//		flush();
 	}
 
 	public void encodeStartElement(String uri, String localName, String prefix)

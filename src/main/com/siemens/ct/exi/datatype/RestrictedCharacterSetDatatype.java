@@ -45,14 +45,13 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	protected String lastValidValue;
 
-	public RestrictedCharacterSetDatatype(QName datatypeIdentifier,
-			RestrictedCharacterSet rcs) {
-		this(datatypeIdentifier);
+	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs, QName schemaType) {
+		this(schemaType);
 		this.rcs = rcs;
 	}
 
-	public RestrictedCharacterSetDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.RESTRICTED_CHARACTER_SET, datatypeIdentifier);
+	public RestrictedCharacterSetDatatype(QName schemaType) {
+		super(BuiltInType.RESTRICTED_CHARACTER_SET, schemaType);
 	}
 
 	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {
@@ -69,18 +68,16 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		lastValidValue = value;
 		return true;
 	}
-	
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof StringValue) {
 			lastValidValue = ((StringValue) value).toString();
-			return true;			
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
-	
+
 	public Value getValue() {
 		return new StringValue(lastValidValue);
 	}

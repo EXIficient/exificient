@@ -104,6 +104,7 @@ public class SelfContainedTestCase extends TestCase {
 			}
 			encoder.encodeEndElement();	//	root
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 		
 		

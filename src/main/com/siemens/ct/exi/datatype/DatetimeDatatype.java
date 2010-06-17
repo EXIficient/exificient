@@ -46,9 +46,8 @@ public class DatetimeDatatype extends AbstractDatatype {
 	
 	private DateTimeValue lastValidDatetime;
 
-	public DatetimeDatatype(DateTimeType dateType,
-			QName datatypeIdentifier) {
-		super(BuiltInType.DATETIME, datatypeIdentifier);
+	public DatetimeDatatype(DateTimeType dateType, QName schemaType) {
+		super(BuiltInType.DATETIME, schemaType);
 		this.rcs = new XSDDateTimeCharacterSet();
 		this.datetimeType = dateType;
 	}

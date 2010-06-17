@@ -35,6 +35,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import com.siemens.ct.exi.exceptions.EXIException;
 
 public class TestSAXDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
@@ -58,13 +61,23 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 	}
 	
 	protected void decodeTo(EXIFactory ef, InputStream exiDocument,
-			OutputStream xmlOutput, Transformer transformer) throws TransformerException, ParserConfigurationException, SAXException, IOException {
+			OutputStream xmlOutput, Transformer transformer) throws TransformerException, ParserConfigurationException, SAXException, IOException, EXIException {
 		
 		InputSource is = new InputSource(exiDocument);
-		SAXSource exiSource = new SAXSource(is);
-		exiSource.setXMLReader(ef.createEXIReader());
+		XMLReader exiReader = ef.createEXIReader();
+		
+//		ContentHandler ch = null;
+//		exiReader.setContentHandler(ch);
+//		exiReader.parse(is);
+//		
+//		SAXParserFactory spf = SAXParserFactory.newInstance();
+//		SAXParser sp = spf.newSAXParser();
+//		DefaultHandler dh = new DefaultEXIHandler(ef);
+//		sp.parse(exiDocument, dh);
 		
 		Result result = new StreamResult(xmlOutput);
+		SAXSource exiSource = new SAXSource(is);
+		exiSource.setXMLReader(exiReader);
 		transformer.transform(exiSource, result);
 	}
 

@@ -18,6 +18,9 @@
 
 package com.siemens.ct.exi.types;
 
+import javax.xml.namespace.QName;
+
+import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
  * TODO Description
@@ -28,7 +31,15 @@ package com.siemens.ct.exi.types;
  * @version 0.4.20081105
  */
 
-public interface TypeDecoderRepresentationMap extends TypeDecoder {
-	public void registerDatatypeRepresentation(
-			DatatypeRepresentation datatypeRepresentation);
+public interface DatatypeRepresentationMap {
+	
+	/**
+	 * TODO 
+	 * 
+	 * @param type
+	 * @param representation
+	 * @throws EXIException
+	 */
+	public void registerDatatypeRepresentation(QName type, QName representation)
+			throws EXIException;
 }

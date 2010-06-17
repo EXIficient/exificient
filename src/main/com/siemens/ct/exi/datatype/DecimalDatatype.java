@@ -44,8 +44,8 @@ public class DecimalDatatype extends AbstractDatatype {
 
 	protected DecimalValue lastValidDecimal;
 
-	public DecimalDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.DECIMAL, datatypeIdentifier);
+	public DecimalDatatype(QName schemaType) {
+		super(BuiltInType.DECIMAL, schemaType);
 		this.rcs = new XSDDecimalCharacterSet();
 	}
 

@@ -30,6 +30,17 @@ import javax.xml.XMLConstants;
  */
 
 public interface Constants {
+
+	/**
+	 * <p>
+	 * W3C EXI Namespace URI
+	 * </p>
+	 * 
+	 * <p>
+	 * Defined to be "<code>http://www.w3.org/2009/exi</code>".
+	 */
+	public static final String W3C_EXI_NS_URI = "http://www.w3.org/2009/exi";
+
 	public static final String EMPTY_STRING = "";
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
@@ -44,7 +55,7 @@ public interface Constants {
 
 	public static final String XSD_LIST_DELIM = " ";
 	public static final char XSD_LIST_DELIM_CHAR = ' ';
-	
+
 	public static final String CDATA_START = "<![CDATA[";
 	public static final char[] CDATA_START_ARRAY = CDATA_START.toCharArray();
 	public static final String CDATA_END = "]]>";
@@ -70,15 +81,13 @@ public interface Constants {
 	public static final char[] DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_0_ARRAY;
 
 	public static final int NOT_FOUND = -1;
-	
 
 	/*
-	 * Block & Channel settings
-	 * Maximal Number of Values (per Block / Channel)
+	 * Block & Channel settings Maximal Number of Values (per Block / Channel)
 	 */
 	public static final int MAX_NUMBER_OF_VALUES = 100;
 	public static final int DEFAULT_BLOCK_SIZE = 1000000;
-	
+
 	/*
 	 * StringTable settings
 	 */
@@ -91,19 +100,23 @@ public interface Constants {
 	public static final String FLOAT_INFINITY = "INF";
 	public static final String FLOAT_MINUS_INFINITY = "-INF";
 	public static final String FLOAT_NOT_A_NUMBER = "NaN";
-	
-	public static final char[] FLOAT_INFINITY_CHARARRAY = FLOAT_INFINITY.toCharArray();
-	public static final char[] FLOAT_MINUS_INFINITY_CHARARRAY = FLOAT_MINUS_INFINITY.toCharArray();
-	public static final char[] FLOAT_NOT_A_NUMBER_CHARARRAY = FLOAT_NOT_A_NUMBER.toCharArray();
-	
+
+	public static final char[] FLOAT_INFINITY_CHARARRAY = FLOAT_INFINITY
+			.toCharArray();
+	public static final char[] FLOAT_MINUS_INFINITY_CHARARRAY = FLOAT_MINUS_INFINITY
+			.toCharArray();
+	public static final char[] FLOAT_NOT_A_NUMBER_CHARARRAY = FLOAT_NOT_A_NUMBER
+			.toCharArray();
+
 	public static final int FLOAT_SPECIAL_VALUES = -16384; // -(2^14)
 	public static final int FLOAT_MANTISSA_INFINITY = 1;
 	public static final int FLOAT_MANTISSA_MINUS_INFINITY = -1;
 	public static final int FLOAT_MANTISSA_NOT_A_NUMBER = 0;
-	
-	public static final long FLOAT_EXPONENT_MIN_RANGE = -16383;	// - (2^14-1) 
-	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383;	// 2^14-1
-	public static final long FLOAT_MANTISSA_MIN_RANGE = -9223372036854775808L;	// - (2^63)
-	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L;	// 2^63-1
+
+	public static final long FLOAT_EXPONENT_MIN_RANGE = -16383; // - (2^14-1)
+	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383; // 2^14-1
+	public static final long FLOAT_MANTISSA_MIN_RANGE = -9223372036854775808L; // -
+																				// (2^63)
+	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L; // 2^63-1
 
 }

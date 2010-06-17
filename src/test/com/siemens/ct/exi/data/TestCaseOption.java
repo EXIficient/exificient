@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.types.DatatypeRepresentation;
 
 public class TestCaseOption {
 	private CodingMode codingMode;
@@ -32,7 +31,8 @@ public class TestCaseOption {
 	private String schemaLocation;
 	private boolean xmlEqual;
 	private boolean schemaInformedOnly;
-	private DatatypeRepresentation[] datatypeRepresentations;
+	private QName[] dtrTypes;
+	private QName[] dtrRepresentations;
 	private QName[] scElements;
 	private int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 	private int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
@@ -86,13 +86,17 @@ public class TestCaseOption {
 		this.schemaInformedOnly = schemaInformedOnly;
 	}
 
-	public DatatypeRepresentation[] getDatatypeRepresentations() {
-		return datatypeRepresentations;
+	public QName[] getDtrMapTypes() {
+		return dtrTypes;
 	}
 
-	public void setDatatypeRepresentations(
-			DatatypeRepresentation[] datatypeRepresentations) {
-		this.datatypeRepresentations = datatypeRepresentations;
+	public QName[] getDtrMapRepresentations() {
+		return dtrRepresentations;
+	}
+	
+	public void setDtrMap(QName[] dtrTypes, QName[] dtrRepresentations) {
+		this.dtrTypes = dtrTypes;
+		this.dtrRepresentations = dtrRepresentations;
 	}
 	
 	public void setSelfContainedElements(QName[] scElements) {

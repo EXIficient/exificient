@@ -33,7 +33,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected List<QName> contextOrders;
 	protected Map<QName, ContextContainer> contexts;
 
-	public EXIEncoderReordered(EXIFactory exiFactory) {
+	public EXIEncoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		contextOrders = new ArrayList<QName>();
@@ -84,10 +84,10 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		// blockValues++;
 		
 
-		// TODO new block directly after value or where does data go in between two blocks !?
+		// new block goes directly after value 
 		if (++blockValues == exiFactory.getBlockSize() ) {
 			// blockValues larger than set blockSize
-			// System.out.println("new block " + blockValues + " after " + valueContext + " = " + lastValue);
+			// System.out.println("new block " + blockValues + " after " + valueContext + " = '" + lastValue + "'");
 			
 			// close this block and setup new one
 			closeBlock();

@@ -47,7 +47,7 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("+10"));
@@ -72,7 +72,7 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("+0"));
@@ -93,7 +93,7 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid(" 1.5"));
@@ -118,7 +118,7 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("1.000"));
@@ -148,7 +148,7 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("--01-01"));

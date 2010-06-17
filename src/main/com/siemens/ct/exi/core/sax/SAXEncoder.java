@@ -29,7 +29,6 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.EXIEncoder;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.api.sax.EXIWriter;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -43,7 +42,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @version 0.4.20090414
  */
 
-public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
+public class SAXEncoder extends DefaultHandler2 {
 	protected EXIEncoder encoder;
 
 	// buffers the characters of the characters() callback
@@ -55,7 +54,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 	// prefix mappings
 	protected List<PrefixMapping> prefixMappings;
 
-	public SAXEncoder(EXIFactory factory) {
+	public SAXEncoder(EXIFactory factory, OutputStream os) throws EXIException {
 		this.encoder = factory.createEXIEncoder();
 
 		// initialize char buffer
@@ -67,12 +66,16 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
+		
+		// encoder output
+		encoder.setOutput(os, factory.isEXIBodyOnly());
+		
 	}
 
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException {
-		encoder.setOutput(os, exiBodyOnly);
-	}
+//	public void setOutput(OutputStream os, boolean exiBodyOnly)
+//			throws EXIException {
+//		encoder.setOutput(os, exiBodyOnly);
+//	}
 
 	/*
 	 * ======================================================================
@@ -168,6 +171,7 @@ public class SAXEncoder extends DefaultHandler2 implements EXIWriter {
 		try {
 			checkPendingChars();
 			encoder.encodeEndDocument();
+			encoder.flush();
 		} catch (Exception e) {
 			throw new SAXException("endDocument", e);
 		}

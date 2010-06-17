@@ -45,8 +45,8 @@ public class EnumerationDatatype extends AbstractDatatype {
 	protected Value[] enumValues;
 	protected int lastValidIndex;
 
-	public EnumerationDatatype(Value[] enumValues) {
-		super(BuiltInType.ENUMERATION, null);
+	public EnumerationDatatype(Value[] enumValues, QName schemaType) {
+		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;
 		this.rcs = null;

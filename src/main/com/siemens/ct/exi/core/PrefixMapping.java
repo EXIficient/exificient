@@ -16,25 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.types;
+package com.siemens.ct.exi.core;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
-/**
- * TODO Description
- * 
- * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
- * 
- * @version 0.4.20080718
- */
-
-public interface DatatypeRepresentation
-//extends DatatypeEncoder, DatatypeDecoder
-{
-	public QName getSchemaDatatype();
-
-	public void finish() throws IOException;
+public final class PrefixMapping {
+	
+	public final String pfx;
+	public final String uri;
+	
+	public PrefixMapping(String pfx, String uri) {
+		this.pfx = pfx;
+		this.uri = uri;
+	}
 }

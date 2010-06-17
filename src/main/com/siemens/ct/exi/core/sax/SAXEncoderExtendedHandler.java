@@ -18,12 +18,15 @@
 
 package com.siemens.ct.exi.core.sax;
 
+import java.io.OutputStream;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
@@ -47,8 +50,8 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	protected String docTypeText;
 	protected boolean noEntityReference;
 
-	public SAXEncoderExtendedHandler(EXIFactory factory) {
-		super(factory);
+	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os) throws EXIException {
+		super(factory, os);
 
 		preserveDTD = factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_DTD);

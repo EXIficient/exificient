@@ -49,7 +49,7 @@ public class DOMBuilder {
 
 	public DOMBuilder(EXIFactory factory) throws ParserConfigurationException {
 		this.factory = factory;
-		
+
 		// setup document builder etc.
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setNamespaceAware(true);
@@ -69,6 +69,8 @@ public class DOMBuilder {
 					docFragment);
 
 			XMLReader reader = factory.createEXIReader();
+			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
+					true);
 			reader.setContentHandler(s2dHandler);
 
 			reader.parse(new InputSource(is));
@@ -88,6 +90,8 @@ public class DOMBuilder {
 			SaxToDomHandler s2dHandler = new SaxToDomHandler(document);
 
 			XMLReader reader = factory.createEXIReader();
+			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
+					true);
 			reader.setContentHandler(s2dHandler);
 			reader.setDTDHandler(s2dHandler);
 

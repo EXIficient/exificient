@@ -41,9 +41,8 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 
 	protected byte[] bytes;
 
-	public AbstractBinaryDatatype(QName datatypeIdentifier,
-			BuiltInType binaryType) {
-		super(binaryType, datatypeIdentifier);
+	public AbstractBinaryDatatype(BuiltInType binaryType, QName schemaType) {
+		super(binaryType, schemaType);
 		assert(binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
 	}
 	

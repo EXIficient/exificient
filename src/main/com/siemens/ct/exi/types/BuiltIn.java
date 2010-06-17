@@ -186,6 +186,9 @@ public class BuiltIn {
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
 			throws EXIException {
 		Datatype datatype = null;
+		
+		// used for dtr map
+		QName schemaType = getSchemaType(std);
 
 		// is list ?
 		if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
@@ -193,7 +196,7 @@ public class BuiltIn {
 
 			Datatype dtList = getDatatype(listSTD);
 
-			datatype = new ListDatatype(dtList);
+			datatype = new ListDatatype(dtList, schemaType);
 		}
 		// is enumeration ?
 		else if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
@@ -252,7 +255,7 @@ public class BuiltIn {
 							}
 						}
 						
-						datatype = new EnumerationDatatype(values);
+						datatype = new EnumerationDatatype(values, schemaType);
 					}
 					// else {
 					// System.err.println("XSMultiValueFacet " +
@@ -263,7 +266,7 @@ public class BuiltIn {
 				}
 			}
 		} else {
-			datatype = getDatatypeOfType(std);
+			datatype = getDatatypeOfType(std, schemaType);
 		}
 
 		return datatype;
@@ -300,9 +303,18 @@ public class BuiltIn {
 
 		return exiDatatypeID;
 	}
+	
+	private static QName getSchemaType(XSSimpleTypeDefinition std) {
+		// used for dtr map
+		QName schemaType = null;
+		if (!std.getAnonymous()) {
+			schemaType = new QName(std.getNamespace(), std.getName());
+		}
+		
+		return schemaType;
+	}
 
-	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
-			QName datatypeID) {
+	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std, QName schemaType) {
 		/*
 		 * detect base integer type (e.g. int, long, BigInteger)
 		 */
@@ -400,18 +412,18 @@ public class BuiltIn {
 			if (intType == IntegerType.BIG_INTEGER) {
 				assert (max.subtract(min).add(BigInteger.ONE)
 						.equals(boundedRange));
-				datatype = new NBitBigIntegerDatatype(datatypeID, min, max);
+				datatype = new NBitBigIntegerDatatype(min, max, schemaType);
 			} else if (intType == IntegerType.LONG) {
 				assert ((max.longValue() - min.longValue() + 1) == boundedRange
 						.intValue());
-				datatype = new NBitLongDatatype(datatypeID, min.longValue(),
-						max.longValue());
+				datatype = new NBitLongDatatype(min.longValue(),
+						max.longValue(), schemaType);
 			} else {
 				assert ((intType == IntegerType.INT));
 				assert ((max.intValue() - min.intValue() + 1) == boundedRange
 						.intValue());
-				datatype = new NBitIntegerDatatype(datatypeID, min.intValue(),
-						max.intValue());
+				datatype = new NBitIntegerDatatype(min.intValue(),
+						max.intValue(), schemaType);
 			}
 		} else if (min.signum() >= 0) {
 			/*
@@ -424,24 +436,24 @@ public class BuiltIn {
 			 * greater than -1.
 			 */
 			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new UnsignedBigIntegerDatatype(datatypeID);
+				datatype = new UnsignedBigIntegerDatatype(schemaType);
 			} else if (intType == IntegerType.LONG) {
-				datatype = new UnsignedLongDatatype(datatypeID);
+				datatype = new UnsignedLongDatatype(schemaType);
 			} else {
 				assert ((intType == IntegerType.INT));
-				datatype = new UnsignedIntegerDatatype(datatypeID);
+				datatype = new UnsignedIntegerDatatype(schemaType);
 			}
 		} else {
 			/*
 			 * Otherwise, use Integer representation.
 			 */
 			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new BigIntegerDatatype(datatypeID);
+				datatype = new BigIntegerDatatype(schemaType);
 			} else if (intType == IntegerType.LONG) {
-				datatype = new LongDatatype(datatypeID);
+				datatype = new LongDatatype(schemaType);
 			} else {
 				assert ((intType == IntegerType.INT));
-				datatype = new IntegerDatatype(datatypeID);
+				datatype = new IntegerDatatype(schemaType);
 			}
 		}
 
@@ -452,62 +464,54 @@ public class BuiltIn {
 		return new QName(type.getNamespace(), type.getName());
 	}
 
-	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std)
+	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std, QName schemaType)
 			throws EXIException {
 		Datatype datatype;
-
+		
+		// 
 		QName schemaDatatype = getXMLSchemaDatatype(std);
 
-		QName datatypeID = null;
-		if (!std.getAnonymous()) {
-			datatypeID = new QName(std.getNamespace(), std.getName());
-		}
-
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {
-			datatype = new BinaryBase64Datatype(datatypeID);
+			datatype = new BinaryBase64Datatype(schemaType);
 		} else if (XSD_HEXBINARY.equals(schemaDatatype)) {
-			datatype = new BinaryHexDatatype(datatypeID);
+			datatype = new BinaryHexDatatype(schemaType);
 		} else if (XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-				datatype = new BooleanPatternDatatype(datatypeID);
+				datatype = new BooleanPatternDatatype(schemaType);
 			} else {
-				datatype = new BooleanDatatype(datatypeID);
+				datatype = new BooleanDatatype(schemaType);
 			}
 		} else if (XSD_DATETIME.equals(schemaDatatype)) {
 			QName primitive = BuiltIn.getPrimitive(std);
 
 			if (XSD_DATETIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.dateTime,
-						datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.dateTime, schemaType);
 			} else if (XSD_TIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.time, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.time, schemaType);
 			} else if (XSD_DATE.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.date, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.date, schemaType);
 			} else if (XSD_GYEARMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gYearMonth,
-						datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gYearMonth, schemaType);
 			} else if (XSD_GYEAR.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gYear, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gYear, schemaType);
 			} else if (XSD_GMONTHDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gMonthDay,
-						datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gMonthDay, schemaType);
 			} else if (XSD_GDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gDay, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gDay, schemaType);
 			} else if (XSD_GMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gMonth, datatypeID);
+				datatype = new DatetimeDatatype(DateTimeType.gMonth, schemaType);
 			} else {
 				throw new RuntimeException();
 			}
 		} else if (XSD_DECIMAL.equals(schemaDatatype)) {
-			datatype = new DecimalDatatype(datatypeID);
+			datatype = new DecimalDatatype(schemaType);
 		} else if (XSD_FLOAT.equals(schemaDatatype)) {
-			// datatype = new FloatDatatype(datatypeID);
-			datatype = new FloatDatatype(BuiltInType.FLOAT, datatypeID);
+			datatype = new FloatDatatype(BuiltInType.FLOAT, schemaType);
 		} else if (XSD_DOUBLE.equals(schemaDatatype)) {
-			datatype = new FloatDatatype(BuiltInType.DOUBLE, datatypeID);
+			datatype = new FloatDatatype(BuiltInType.DOUBLE, schemaType);
 		} else if (XSD_INTEGER.equals(schemaDatatype)) {
 			// returns integer type (nbit, unsigned, int) according to facets
-			datatype = BuiltIn.getIntegerDatatype(std, datatypeID);
+			datatype = BuiltIn.getIntegerDatatype(std, schemaType);
 		} else {
 			// XSD_STRING with or without pattern
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
@@ -515,7 +519,7 @@ public class BuiltIn {
 
 				if (isBuiltInTypeFacet(std, sl.getLength())) {
 					// *normal* string
-					datatype = new StringDatatype(datatypeID);
+					datatype = new StringDatatype(schemaType);
 				} else {
 					// analyze most-derived datatype facet only
 					String regexPattern = sl.item(0);
@@ -524,17 +528,16 @@ public class BuiltIn {
 
 					if (re.isEntireSetOfXMLCharacters()) {
 						// *normal* string
-						datatype = new StringDatatype(datatypeID);
+						datatype = new StringDatatype(schemaType);
 					} else {
 						// restricted char set
 						RestrictedCharacterSet rcs = new CodePointCharacterSet(
 								re.getCodePoints());
-						datatype = new RestrictedCharacterSetDatatype(
-								datatypeID, rcs);
+						datatype = new RestrictedCharacterSetDatatype(rcs, schemaType);
 					}
 				}
 			} else {
-				datatype = new StringDatatype(datatypeID);
+				datatype = new StringDatatype(schemaType);
 			}
 		}
 

@@ -20,11 +20,13 @@ package com.siemens.ct.exi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.xml.sax.helpers.NamespaceSupport;
 
+import com.siemens.ct.exi.core.PrefixMapping;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
@@ -288,9 +290,9 @@ public interface EXIDecoder {
 	// fetching values
 	// 
 	// ////////////////////////////////////////////////////////////////
-	
+
 	/**
-	 * Returns qualified name for (current) element 
+	 * Returns qualified name for (current) element
 	 * 
 	 * @return <code>QName</code> for qname
 	 */
@@ -308,10 +310,10 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for qname
 	 */
 	public String getStartElementQNameAsString();
-	
+
 	/**
-	 * Returns qualified name for end element name as String
-	 * (the one previously created for SE event)
+	 * Returns qualified name for end element name as String (the one previously
+	 * created for SE event)
 	 * 
 	 * @see getStartElementQNameAsString()
 	 * @return <code>String</code> for qname
@@ -324,7 +326,7 @@ public interface EXIDecoder {
 	 * @return <code>QName</code> for qname
 	 */
 	public QName getAttributeQName();
-	
+
 	/**
 	 * Returns qualified name for (last) attribute as String
 	 * 
@@ -394,9 +396,26 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for comment text
 	 */
 	public char[] getComment();
+	
+	/**
+	 * Prefix declarations for given context (element)
+	 * 
+	 * @return list or null if no mappings are available 
+	 */
+	public List<PrefixMapping> getPrefixDeclarations();
+	
+	/**
+	 * Initializes namespace support. Needs to be done before actually
+	 * retrieving getDeclaredPrefixes() for a context.
+	 */
+	public void initNamespaceSupport();
 
 	/**
 	 * Provides namespace support.
+	 * <p>
+	 * Note: initNamespaceSupport() has to be called for the context ahead of
+	 * time
+	 * </p>
 	 * 
 	 * @return <code>NamespaceSupport</code> for prefix mapping
 	 */
