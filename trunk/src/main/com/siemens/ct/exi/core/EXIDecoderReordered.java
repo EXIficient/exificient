@@ -28,9 +28,7 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
@@ -60,7 +58,10 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected List<EventType> eventTypes;
 	protected int eventTypeIndex;
 
-	// elements, attributes, characters, end elements
+	// elements and end elements
+	protected List<ElementEntry> elementEntries;
+	protected int elementEntryIndex;	
+	// attributes and character value entries 
 	protected List<QNameEntry> qnameEntries;
 	protected int qnameEntryIndex;
 	// docTypes
@@ -86,6 +87,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	protected int blockValues;
 
 	boolean stillNoEndOfDocument = true;
+	
+	ElementContext lastBlockElementContext;
 
 	// store value events (qnames) in right order
 	// plus necessary information to reconstruct value channels
@@ -112,11 +115,13 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	protected boolean firstChannel;
 
-	public EXIDecoderReordered(EXIFactory exiFactory) {
+	public EXIDecoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		// events
 		eventTypes = new ArrayList<EventType>();
+		// element entries
+		elementEntries = new ArrayList<ElementEntry>();
 		// qname entries
 		qnameEntries = new ArrayList<QNameEntry>();
 		// misc
@@ -150,6 +155,9 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nextEvent = null;
 		nextEventType = EventType.START_DOCUMENT;
 
+		// element entries
+		elementEntries.clear();
+		elementEntryIndex = 0;		
 		// qname entries
 		qnameEntries.clear();
 		qnameEntryIndex = 0;
@@ -169,6 +177,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		endElementQNames.clear();
 		
 		stillNoEndOfDocument = true;
+		lastBlockElementContext = null;
 		
 		// initialize block
 		initBlock();
@@ -295,12 +304,13 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			// xsi:type
 			eventTypes.set(eventTypes.size() - 1, EventType.ATTRIBUTE_XSI_TYPE);
 			// value content
-			decodeAttributeXsiTypeStructure();
+			decodeAttributeXsiTypeStructure();			
 			xsiValues.add(attributeValue);
 			assert (attributeValue instanceof QNameValue);
+//			attributePrefix = qnameDatatype.decodeQNamePrefix(XSI_TYPE, channel);
 			// TODO prefix
-			xsiPrefixes.add(namespaces
-					.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+			xsiPrefixes.add(attributePrefix);
+//			xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 		} else if (XSI_NIL.equals(attributeQName)
 				&& currentRule.isSchemaInformed()) {
 			// xsi:nil
@@ -309,8 +319,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			decodeAttributeXsiNilStructure();
 			xsiValues.add(attributeValue);
 			// TODO prefix
-			xsiPrefixes.add(namespaces
-					.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+			xsiPrefixes.add(attributePrefix);
+			// xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 		} else {
 			// global attribute or default datatype
 			Attribute globalAT;
@@ -323,39 +333,52 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		}
 	}
 	
-	@Override
-	protected void finalizeOpenElement() {
-		// qname as string
-		if (openElement) {
-			super.finalizeOpenElement();
-			
-			String qname = super.getStartElementQNameAsString();
-			QNameEntry qne = qnameEntries.get(qnameEntries.size()-1);
-			// System.out.println("dsada");
-			qne.sqname = qname;
-		}		
-	}
-	
-
-	@Override
-	public String getStartElementQNameAsString() {
-		// return null;
-		return elementQNameAsString;
-	}
-	
-	@Override
-	public String getEndElementQNameAsString() {
-		// return elementQNameAsString;
-		// remove last item
-		return endElementQNames.remove(endElementQNames.size()-1);
-	}
 	
 	protected void preReadBlockStructure() throws EXIException, IOException {
 
 		boolean stillBlockReadable = true;
+		boolean deferredStartElement = false;
 		
-		// TODO where does data go that come in between a block !?
+		if (lastBlockElementContext != null) {
+			this.elementContext = lastBlockElementContext;
+		}
+		
+		QName startBlockElementQName = this.elementQName;
+		String startBlockElementPrefix = this.elementPrefix;
+		
 		while (stillNoEndOfDocument && stillBlockReadable) {
+			
+			if (deferredStartElement) {
+				switch (nextEventType) {
+				/* ATTRIBUTE EVENTS that come after NS */
+				case ATTRIBUTE:
+				case ATTRIBUTE_INVALID_VALUE:
+				case ATTRIBUTE_ANY_INVALID_VALUE:
+				case ATTRIBUTE_GENERIC:
+				case ATTRIBUTE_NS:
+				case ATTRIBUTE_GENERIC_UNDECLARED:
+				/* ELEMENT CONTENT EVENTS */
+				case START_ELEMENT:
+				case START_ELEMENT_NS:
+				case START_ELEMENT_GENERIC:
+				case START_ELEMENT_GENERIC_UNDECLARED:
+				case END_ELEMENT:
+				case END_ELEMENT_UNDECLARED:
+				case CHARACTERS:
+				case CHARACTERS_GENERIC:
+				case CHARACTERS_GENERIC_UNDECLARED:
+				case DOC_TYPE:
+				case ENTITY_REFERENCE:
+				case COMMENT:
+				case PROCESSING_INSTRUCTION:
+					// No Attribute or NS event --> start deferred element with prefix
+					if (elementPrefix == null) {
+						elementPrefix = checkPrefixMapping(elementContext.qname.getNamespaceURI());	
+					}
+					elementEntries.add(new ElementEntry(elementContext, elementPrefix));
+					deferredStartElement = false;
+				}
+			}			
 			
 			// add event to array list
 			eventTypes.add(nextEventType);
@@ -366,23 +389,19 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				break;
 			case START_ELEMENT:
 				super.decodeStartElement();
-				qnameEntries.add(new QNameEntry(elementContext.qname,
-						elementPrefix));
+				deferredStartElement = true;
 				break;
 			case START_ELEMENT_NS:
 				super.decodeStartElementNS();
-				qnameEntries.add(new QNameEntry(elementContext.qname,
-						elementPrefix));
+				deferredStartElement = true;
 				break;
 			case START_ELEMENT_GENERIC:
 				super.decodeStartElementGeneric();
-				qnameEntries.add(new QNameEntry(elementContext.qname,
-						elementPrefix));
+				deferredStartElement = true;
 				break;
 			case START_ELEMENT_GENERIC_UNDECLARED:
 				super.decodeStartElementGenericUndeclared();
-				qnameEntries.add(new QNameEntry(elementContext.qname,
-						elementPrefix));
+				deferredStartElement = true;
 				break;
 			case NAMESPACE_DECLARATION:
 				super.decodeNamespaceDeclaration();
@@ -424,10 +443,6 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				decodeAttributeNSStructure();
 				// special cases
 				handleSpecialAttributeCases();
-
-				// qnameEntries.add(new QNameEntry(attributeQName,
-				// attributePrefix));
-				// incrementValues(attributeQName, BuiltIn.DEFAULT_DATATYPE);
 				break;
 			case ATTRIBUTE_GENERIC:
 				// structure
@@ -442,8 +457,8 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				handleSpecialAttributeCases();
 				break;
 			case CHARACTERS:
-				incrementValues(elementContext.qname,
-						decodeCharactersStructureOnly());
+				incrementValues(elementContext.qname,decodeCharactersStructureOnly());
+				// incrementValues(elementQName,decodeCharactersStructureOnly());
 				qnameEntries.add(new QNameEntry(elementContext.qname, null));
 				break;
 			case CHARACTERS_GENERIC:
@@ -457,12 +472,18 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				qnameEntries.add(new QNameEntry(elementContext.qname, null));
 				break;
 			case END_ELEMENT:
+				if (elementPrefix == null) {
+					elementPrefix = checkPrefixMapping(elementContext.qname.getNamespaceURI());	
+				}
+				elementEntries.add(new ElementEntry(elementContext, elementPrefix));
 				super.decodeEndElement();
-				qnameEntries.add(new QNameEntry(elementQName, elementPrefix));
 				break;
 			case END_ELEMENT_UNDECLARED:
+				if (elementPrefix == null) {
+					elementPrefix = checkPrefixMapping(elementContext.qname.getNamespaceURI());	
+				}
+				elementEntries.add(new ElementEntry(elementContext, elementPrefix));
 				super.decodeEndElementUndeclared();
-				qnameEntries.add(new QNameEntry(elementQName, elementPrefix));
 				break;
 			case END_DOCUMENT:
 				super.decodeEndDocument();
@@ -493,6 +514,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			if (blockValues == exiFactory.getBlockSize()) {
 				// NO events any more
 				stillBlockReadable = false;
+				
+				lastBlockElementContext = this.elementContext;
+				
+				// Note: NS mapping has be done before opening a new blocl
+				assert(deferredStartElement == false);
 			} else {
 				// decode next EventCode
 				decodeEventCode();		
@@ -500,8 +526,11 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 			
 		}
 		
-		// System.out.println("No more blockvalues " +  blockValues + " after " + qnameEntries.get(qnameEntries.size()-1).context );
-		
+		// System.out.println("No more blockvalues " +  blockValues + " after " + qnameEntries.get(qnameEntries.size()-1) );
+		this.elementContext = lastBlockElementContext;
+		this.elementQName = startBlockElementQName;
+		this.elementPrefix = startBlockElementPrefix;
+
 	}
 
 	protected void preReadBlockContent() throws EXIException {
@@ -578,31 +607,45 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 				decodedValues));
 	}
 	
+	private final void setupNewBlock() throws IOException, EXIException {
+		// System.out.println("TODO 0, read next block");
+		// System.out.println("Next Value " + blockValues + " \t " + v + " after " + qname);
+		
+		initBlock();
+		
+		channel = getNextChannel();
+		
+		// decode next EventCode
+		decodeEventCode();	
+		
+		preReadBlockStructure();
+		preReadBlockContent();
+	}
+	
 	protected Value getNextContentValue(QName qname) throws EXIException, IOException {
+//		if ( stillNoEndOfDocument &&  blockValues == 0 ) {
+//			// read next block
+//			setupNewBlock();
+//		}
+		blockValues--;
+		
 		assert (contentValues.get(qname) != null);
 		Value v = contentValues.get(qname).getNextContantValue();
-		
-		if ( stillNoEndOfDocument &&  --blockValues == 0 ) {
-			// read next block
-			// System.out.println("TODO 0, read next block");
-			// System.out.println("Next Value " + blockValues + " \t " + v + " after " + qname);
-			
-			initBlock();
-			
-			channel = getNextChannel();
-			
-			// decode next EventCode
-			decodeEventCode();	
-			
-			preReadBlockStructure();
-			preReadBlockContent();
-		}
 
+//		if ( stillNoEndOfDocument &&  --blockValues == 0 ) {
+//			// read next block
+//			setupNewBlock();
+//		}
+		
 		return v;
 	}
 
-	public boolean hasNext() {
-		return (eventTypes.size() > (eventTypeIndex + 1));
+	public boolean hasNext() throws IOException, EXIException {
+		if (stillNoEndOfDocument && blockValues == 0) {
+			// read next block
+			setupNewBlock();
+		}
+		return (stillNoEndOfDocument || eventTypes.size() > (eventTypeIndex + 1));
 	}
 
 	public EventType next() throws EXIException {
@@ -626,50 +669,104 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	@Override
 	public void decodeStartDocument() {
+		if(NEW_PFX) {
+			// re-set namespaces
+			this.initPrefixes();
+		} else {
+			// re-set namespaces
+			namespaces.reset();	
+		}
 	}
 	
+//	@Override
+//	public List<PrefixMapping> getPrefixDeclarations() {
+//		// handle remaining pfx mapping for element
+//		checkPrefixMapping(elementQName.getNamespaceURI());
+//		return elementContext.prefixDeclarations;
+//	}
+	
 	@Override
-	public void decodeStartElement() {
-		QNameEntry se = qnameEntries.get(qnameEntryIndex++);
-		this.elementQName = se.context;
-
-		elementPrefix = se.prefix;
-		elementQNameAsString = se.sqname;
-		endElementQNames.add(elementQNameAsString);
+	public void decodeStartElement() throws IOException, EXIException {
+		
+		ElementEntry se = elementEntries.get(elementEntryIndex++);
+		this.elementContext = se.context;
+		this.elementQName = elementContext.qname;
+		this.elementPrefix = se.prefix;
+		
+		// NS context
+		if(NEW_PFX) {
+			
+		} else {
+			namespaces.pushContext();	
+		}
 	}
 
 	@Override
-	public void decodeStartElementNS() {
+	public void decodeStartElementNS() throws IOException, EXIException {
 		decodeStartElement();
 	}
 
 	@Override
-	public void decodeStartElementGeneric() {
+	public void decodeStartElementGeneric() throws IOException, EXIException {
 		decodeStartElement();
 	}
 
 	@Override
-	public void decodeStartElementGenericUndeclared() {
+	public void decodeStartElementGenericUndeclared() throws IOException, EXIException {
 		decodeStartElement();
 	}
+	
+
+	@Override
+	public String getStartElementQNameAsString() {
+		String sqname = getQualifiedName(elementQName, elementPrefix);
+		
+//		String qname = super.getStartElementQNameAsString();
+		endElementQNames.add(sqname);
+		return sqname;
+//		// return null;
+//		return elementQNameAsString;
+	}
+	
 
 	@Override
 	public void decodeEndElement() throws EXIException {
-		QNameEntry ee = qnameEntries.get(qnameEntryIndex++);
-		this.elementQName = ee.context;
+		ElementEntry ee = elementEntries.get(elementEntryIndex++);
+		this.elementContext = ee.context;
+		this.elementQName = elementContext.qname;
+		
+		// NS context
+		if(NEW_PFX) {
+			undeclarePrefixes();
+		} else {
+			namespaces.popContext();	
+		}
 	}
 
 	@Override
 	public void decodeEndElementUndeclared() throws EXIException {
 		decodeEndElement();
 	}
+	
+	
+	@Override
+	public String getEndElementQNameAsString() {
+		// return elementQNameAsString;
+		// remove last item
+		return endElementQNames.remove(endElementQNames.size()-1);
+	}
 
 	public void decodeNamespaceDeclaration() throws EXIException {
 		NamespaceEntry ns = nsEntries.get(nsEntryIndex++);
 		nsURI = ns.namespaceURI;
 		nsPrefix = ns.prefix;
-
-		namespaces.declarePrefix(nsPrefix, nsURI);
+		
+		// NS
+		if (NEW_PFX) {
+			this.declarePrefix(nsPrefix, nsURI);
+		} else {
+			namespaces.declarePrefix(nsPrefix, nsURI);	
+		}
 	}
 
 	@Override
@@ -692,12 +789,13 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	public void decodeAttribute() throws EXIException, IOException {
 		QNameEntry at = qnameEntries.get(qnameEntryIndex++);
 
-		attributeQName = at.context;
+		attributeQName = at.qname;
 		attributePrefix = at.prefix;
+		
+		if (attributePrefix == null) {
+			attributePrefix = checkPrefixMapping(attributeQName.getNamespaceURI());	
+		}
 
-//		PreReadValueContainer vc = contentValues.get(attributeQName);
-//		assert (vc != null);
-//		attributeValue = vc.getNextContantValue();
 		attributeValue = getNextContentValue(attributeQName);
 	}
 
@@ -735,7 +833,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		// PreReadValueContainer vc = contentValues.get(ch.context);
 		// assert (vc != null);
 		// characters = vc.getNextContantValue();
-		characters = getNextContentValue(ch.context);
+		characters = getNextContentValue(ch.qname);
 	}
 
 	@Override
@@ -780,14 +878,28 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 	/*
 	 * Pre-Read Entries
 	 */
+	static class ElementEntry {
+		final ElementContext context;
+		final String prefix;
+		
+		String sqname;
+		public ElementEntry(ElementContext context, String prefix) {
+			this.context = context;
+			this.prefix = prefix;
+		}
+//		public ElementEntry(ElementContext context) {
+//			this.context = context;
+//			// this.prefix = prefix;
+//		}
+	}
 	static class QNameEntry {
-		final QName context;
+		final QName qname;
 		final String prefix;
 		
 		String sqname;
 
-		public QNameEntry(QName context, String prefix) {
-			this.context = context;
+		public QNameEntry(QName qname, String prefix) {
+			this.qname = qname;
 			this.prefix = prefix;
 		}
 	}

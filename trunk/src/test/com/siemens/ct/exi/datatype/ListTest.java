@@ -33,7 +33,7 @@ public class ListTest extends AbstractTestCase {
 
 	public void testListInteger1() throws IOException {
 		String s = "100 34 56 -23 1567";
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null));
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
@@ -55,8 +55,7 @@ public class ListTest extends AbstractTestCase {
 	public void testListNBit1() throws IOException {
 		String s = "+1 0 127 -127";
 		String sRes = "1 0 127 -127";
-		ListDatatype ldtInteger = new ListDatatype(new NBitIntegerDatatype(
-				null, -128, 127));
+		ListDatatype ldtInteger = new ListDatatype(new NBitIntegerDatatype(-128, 127, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
@@ -98,7 +97,7 @@ public class ListTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"List", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.LIST);
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("  --12-25  --08-15  --01-01  --07-14   "));
@@ -116,7 +115,7 @@ public class ListTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"List", "");
 
-		assertTrue(dt.getDefaultBuiltInType() == BuiltInType.LIST);
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
 		assertTrue(dt.isValid("  1e4 -10000 5.234e-2   "));

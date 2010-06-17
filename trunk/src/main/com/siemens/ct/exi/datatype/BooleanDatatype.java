@@ -44,8 +44,8 @@ public class BooleanDatatype extends AbstractDatatype {
 	
 	protected Boolean bool;
 	
-	public BooleanDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.BOOLEAN, datatypeIdentifier);
+	public BooleanDatatype(QName schemaType) {
+		super(BuiltInType.BOOLEAN, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
 	}
 

@@ -32,6 +32,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 
 /**
@@ -45,7 +46,7 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
-	public EXIDecoderInOrder(EXIFactory exiFactory) {
+	public EXIDecoderInOrder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
 
@@ -76,6 +77,13 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 
 		initForEachRun();
 	}
+	
+	public void setChannel(DecoderChannel decoderChannel) throws EXIException, IOException {
+		this.channel = decoderChannel;
+		// this.is = decoderChannel.geInputStream();
+		
+		initForEachRun();
+	}
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
@@ -101,8 +109,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		currentRule = currentRule.lookFor(ec).next;
 	}
 	
+	
 	public void decodeStartElement() throws EXIException, IOException {
-		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
@@ -112,11 +120,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		elementPrefix = qnameDatatype.decodeQNamePrefix(elementQName, channel);
 		// push element
 		pushElement(se, nextRule);
-		openElement = true;
 	}
-
+	
 	public void decodeStartElementNS() throws EXIException, IOException {
-		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT_NS);
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
@@ -129,11 +135,9 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// push element
 		pushElement(nextSE, nextRule);
-		openElement = true;
 	}
 
 	public void decodeStartElementGeneric() throws EXIException, IOException {
-		assert (openElement == false);
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
 		elementQName = qnameDatatype.readQName(channel);
@@ -145,13 +149,12 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		// learn start-element ?
 		currentRule.learnStartElement(nextSE);
 		// push element
-		pushElement(nextSE, nextRule.getElementContentRule());
-		openElement = true;
+		pushElement(nextSE, nextRule.getElementContentRule());;
 	}
 
+	
 	public void decodeStartElementGenericUndeclared() throws EXIException,
-			IOException {
-		assert (openElement == false);
+	IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
 		elementQName = qnameDatatype.readQName(channel);
@@ -163,9 +166,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		currentRule.learnStartElement(nextSE);
 		// push element
 		pushElement(nextSE, currentRule.getElementContentRule());
-		openElement = true;
 	}
-
+	
 	public void decodeNamespaceDeclaration() throws EXIException, IOException {
 		// prefix mapping
 		nsURI = qnameDatatype.readUri(channel);
@@ -175,9 +177,14 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		if (local_element_ns) {
 			this.elementPrefix = nsPrefix;
 		}
-
-		namespaces.declarePrefix(nsPrefix, nsURI);
+		// NS
+		if (NEW_PFX) {
+			declarePrefix(nsPrefix, nsURI);
+		} else {
+			namespaces.declarePrefix(nsPrefix, nsURI);	
+		}
 	}
+	
 
 	public void decodeAttributeXsiNil() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
@@ -283,7 +290,8 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeEndElement() throws EXIException, IOException {
 		// save ee information before popping context
 		elementQName = elementContext.qname;
-
+		// NS
+		undeclarePrefixes();
 		// pop element
 		popElement();
 	}
@@ -291,10 +299,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 	public void decodeEndElementUndeclared() throws EXIException, IOException {
 		// save ee information before popping context
 		elementQName = elementContext.qname;
-
+		// NS
+		undeclarePrefixes();
 		// learn end-element event ?
 		currentRule.learnEndElement();
-
 		// pop element
 		popElement();
 	}

@@ -28,6 +28,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * TODO Description
@@ -40,7 +41,7 @@ import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 
 public class EXIEncoderInOrder extends AbstractEXIEncoder {
 
-	public EXIEncoderInOrder(EXIFactory exiFactory) {
+	public EXIEncoderInOrder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
 
@@ -50,11 +51,16 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 		super.setOutput(os, exiBodyOnly);
 
 		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
-			channel = new BitEncoderChannel(os);
+			setChannel( new BitEncoderChannel(os));
 		} else {
 			assert (exiFactory.getCodingMode() == CodingMode.BYTE_PACKED);
-			channel = new ByteEncoderChannel(os);
+			setChannel( new ByteEncoderChannel(os));
 		}
+	}
+	
+	public void setChannel(EncoderChannel encoderChannel) {
+		this.channel = encoderChannel;
+		this.os = encoderChannel.getOutputStream();
 	}
 
 	@Override

@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.BuiltInXSDTestCase;
@@ -27,7 +28,6 @@ import com.siemens.ct.exi.data.GeneralTestCase;
 import com.siemens.ct.exi.data.SchemaTestCase;
 import com.siemens.ct.exi.data.W3CTestCase;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.types.DatatypeRepresentation;
 
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -52,7 +52,9 @@ public class QuickTestConfiguration {
 	public static int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	
 	public static QName[] selfContainedElements;
-	public static DatatypeRepresentation[] datatypeRepresentations;
+	
+	public static QName[] dtrMapTypes;
+	public static QName[] dtrMapRepresentations;
 
 	public static void setXsdLocation(String xsdLocation) {
 		XSD_FILE_LOCATION = xsdLocation;
@@ -90,8 +92,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 	}
 	
@@ -99,16 +101,22 @@ public class QuickTestConfiguration {
 	// OTHER OPTIONS
 	static {
 		// blockSize = 9013;
+		// blockSize = 200;
 		// valueMaxLength = 8;
-		valuePartitionCapacity = 16;
+		// valuePartitionCapacity = 16;
+//		dtrMapTypes = new QName[1];
+//		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+//		dtrMapRepresentations = new QName[1];
+//		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
+//		assert(dtrMapTypes.length == dtrMapRepresentations.length);
 	}
 	
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		// SchemaTestCase.setupQuickTest ( );
+		SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

@@ -25,9 +25,8 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.xml.sax.helpers.NamespaceSupport;
-
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.core.AbstractEXICoder;
 import com.siemens.ct.exi.core.RuntimeURIEntry;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -55,7 +54,8 @@ public class QNameDatatype extends AbstractDatatype {
 	protected QName qname;
 	protected String qnamePrefix;
 	
-	protected NamespaceSupport namespaces;
+//	protected NamespaceSupport namespaces;
+	protected AbstractEXICoder namespaces;
 	protected final boolean preservePrefix;
 
 	// Grammar entries
@@ -65,8 +65,9 @@ public class QNameDatatype extends AbstractDatatype {
 	protected RuntimeURIEntry uriContext;
 	protected List<RuntimeURIEntry> runtimeURIEntries;
 
-	public QNameDatatype(QName datatypeIdentifier, NamespaceSupport namespaces, boolean preservePrefix) {
-		super(BuiltInType.QNAME, datatypeIdentifier);
+	// public QNameDatatype(NamespaceSupport namespaces, boolean preservePrefix, QName schemaType) {
+	public QNameDatatype(AbstractEXICoder namespaces, boolean preservePrefix, QName schemaType) {
+		super(BuiltInType.QNAME, schemaType);
 		this.rcs = new XSDStringCharacterSet();
 		//
 		this.namespaces = namespaces;
@@ -403,9 +404,9 @@ public class QNameDatatype extends AbstractDatatype {
 	}
 	
 	public String decodeQNamePrefix(QName qname, DecoderChannel channel) throws IOException {
+		String uri = qname.getNamespaceURI();
 		if (preservePrefix) {
 			String prefix = null;
-			String uri = qname.getNamespaceURI();
 			if (uri.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
 				prefix = XMLConstants.NULL_NS_URI;
 			} else {			
@@ -426,6 +427,7 @@ public class QNameDatatype extends AbstractDatatype {
 					prefix = prefixes.get(id);
 				} else {
 					// no previous NS mapping in charge
+					// Note: should only happen for SE events where NS appears afterwards
 				}
 			
 			}

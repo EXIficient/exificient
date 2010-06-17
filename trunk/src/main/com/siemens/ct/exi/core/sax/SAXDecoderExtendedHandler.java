@@ -33,6 +33,7 @@ import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
  * TODO Description
@@ -53,7 +54,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	// default =!= true
 	protected static final boolean disable_ouput_escaping = true;
 
-	public SAXDecoderExtendedHandler(EXIFactory exiFactory) {
+	public SAXDecoderExtendedHandler(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		entities = new HashMap<String, String>();

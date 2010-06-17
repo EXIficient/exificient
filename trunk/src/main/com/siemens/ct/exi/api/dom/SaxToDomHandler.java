@@ -53,14 +53,17 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 			Attributes attrs) throws SAXException {
 
 		// create element
+//		Element element = document.createElement(name);
 		Element element = document.createElementNS(uri, qName);
-
+		
 		// add attribute per attribute
 		for (int i = 0; i < attrs.getLength(); ++i) {
 			String value = attrs.getValue(i);
 			String ns_uri = attrs.getURI(i);
+//			String localName = attrs.getLocalName(i);
 			String qname = attrs.getQName(i);
 			Attr attr = document.createAttributeNS(ns_uri, qname);
+//			Attr attr = document.createAttribute(name);
 			element.setAttributeNodeNS(attr);
 			attr.setValue(value);
 		}

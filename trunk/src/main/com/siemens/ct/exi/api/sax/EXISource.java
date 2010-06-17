@@ -23,6 +23,7 @@ import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 /**
@@ -37,18 +38,18 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 public class EXISource extends SAXSource {
 	EXIFactory exiFactory;
 
-	public EXISource() {
+	public EXISource() throws EXIException {
 		// use default exi-factory
 		this(DefaultEXIFactory.newInstance());
 	}
 
-	public EXISource(EXIFactory exiFactory) {
+	public EXISource(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
 
 		init();
 	}
 
-	protected void init() {
+	protected void init() throws EXIException {
 		// create sax decoder
 		XMLReader xmlReader = exiFactory.createEXIReader();
 

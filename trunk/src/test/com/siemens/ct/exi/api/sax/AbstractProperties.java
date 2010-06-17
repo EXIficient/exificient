@@ -17,6 +17,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractProperties extends XMLTestCase {
@@ -30,7 +31,7 @@ public abstract class AbstractProperties extends XMLTestCase {
 	}
 
 	protected String decodeEXIToXML(InputStream isEXI) throws IOException,
-			SAXException, TransformerException {
+			SAXException, TransformerException, EXIException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
 		

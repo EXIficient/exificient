@@ -44,8 +44,8 @@ public class StringDatatype extends AbstractDatatype {
 	
 	protected String lastValue;
 	
-	public StringDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.STRING, datatypeIdentifier);
+	public StringDatatype(QName schemaType) {
+		super(BuiltInType.STRING, schemaType);
 		this.rcs = new XSDStringCharacterSet();
 	}
 	

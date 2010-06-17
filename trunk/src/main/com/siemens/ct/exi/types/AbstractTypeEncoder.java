@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.types;
 
-import java.io.IOException;
-
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 
 /**
@@ -40,22 +38,7 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 		this.stringEncoder = stringEncoder;
 	}
 	
-	public void finish() throws IOException {
-	}
-	
 	public void clear() {
 		stringEncoder.clear();
 	}
-
-	/*
-	 * 
-	 */
-	public void setStringEncoder(StringEncoder stringEncoder) {
-		this.stringEncoder = stringEncoder;
-	}
-
-	public StringEncoder getStringEncoder() {
-		return stringEncoder;
-	}
-
 }

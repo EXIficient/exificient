@@ -62,7 +62,7 @@ public class DOMWriter {
 	//	collect char events (e.g. textA CM textB --> textA+textB if CM is not preserved)
 	protected StringBuilder sbChars;
 
-	public DOMWriter(EXIFactory factory) {
+	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 		this.encoder = factory.createEXIEncoder();
 
@@ -94,6 +94,7 @@ public class DOMWriter {
 		encodeChildNodes(doc.getChildNodes());
 
 		encoder.encodeEndDocument();
+		encoder.flush();
 	}
 
 	public void encodeFragment(DocumentFragment docFragment)
@@ -101,6 +102,7 @@ public class DOMWriter {
 		encoder.encodeStartDocument();
 		encodeChildNodes(docFragment.getChildNodes());
 		encoder.encodeEndDocument();
+		encoder.flush();
 	}
 
 	public void encode(Node n) throws EXIException, IOException {
@@ -112,6 +114,7 @@ public class DOMWriter {
 			encoder.encodeStartDocument();
 			encodeNode(n);
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 	}
 

@@ -40,8 +40,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 
-	public BinaryBase64Datatype(QName datatypeIdentifier) {
-		super(datatypeIdentifier, BuiltInType.BINARY_BASE64);
+	public BinaryBase64Datatype(QName schemaType) {
+		super(BuiltInType.BINARY_BASE64, schemaType);
 		this.rcs = new XSDBase64CharacterSet();
 	}
 

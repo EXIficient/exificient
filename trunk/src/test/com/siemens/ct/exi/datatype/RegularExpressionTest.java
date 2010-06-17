@@ -411,7 +411,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String s = "--00 --00 --00 --00 --01 --00 --00";
 
 		RestrictedCharacterSet rcs = new CodePointCharacterSet(re.getCodePoints());
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null, rcs);
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(rcs, null);
 		
 		boolean valid = rcsDatatype.isValid(s);
 		assertTrue(valid);

@@ -46,8 +46,8 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 	private int lastValidBooleanID;
 	private boolean lastValidBoolean;
 	
-	public BooleanPatternDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.BOOLEAN_PATTERN, datatypeIdentifier);
+	public BooleanPatternDatatype(QName schemaType) {
+		super(BuiltInType.BOOLEAN_PATTERN, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
 	}
 	

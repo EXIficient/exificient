@@ -199,7 +199,7 @@ public class FidelityOptions {
 	 * 
 	 * @return boolean whether strict mode is in play
 	 */
-	public boolean isStrict() {
+	public final boolean isStrict() {
 		return isStrict;
 	}
 

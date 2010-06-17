@@ -41,41 +41,42 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class FloatDatatype extends AbstractDatatype {
-	
+
 	protected FloatValue lastValidFloat;
-	
-	public FloatDatatype(BuiltInType builtInType, QName datatypeIdentifier) {
-		super(builtInType, datatypeIdentifier);
+
+	public FloatDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.FLOAT || builtInType == BuiltInType.DOUBLE);
 		this.rcs = new XSDDoubleCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		lastValidFloat = FloatValue.parse(value);
 		return (lastValidFloat != null);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof FloatValue) {
 			lastValidFloat = ((FloatValue) value);
-			return true;			
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public Value getValue() {
 		// return new DoubleValue(mantissa, exponent);
 		return lastValidFloat;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
-		valueChannel.encodeFloat(lastValidFloat.mantissa, lastValidFloat.exponent);
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
+		valueChannel.encodeFloat(lastValidFloat.mantissa,
+				lastValidFloat.exponent);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeFloatValue();
 	}
 }

@@ -44,8 +44,8 @@ public class UnsignedBigIntegerDatatype extends AbstractDatatype {
 	
 	private HugeIntegerValue lastUnsignedInteger;
 	
-	public UnsignedBigIntegerDatatype(QName datatypeIdentifier) {
-		super(BuiltInType.UNSIGNED_BIG_INTEGER, datatypeIdentifier);
+	public UnsignedBigIntegerDatatype(QName schemaType) {
+		super(BuiltInType.UNSIGNED_BIG_INTEGER, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 	

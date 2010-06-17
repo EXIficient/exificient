@@ -34,9 +34,21 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  */
 
 public interface EXIEncoder {
+	
 	public void setOutput(OutputStream os, boolean exiBodyOnly)
 			throws EXIException;
 
+	/**
+	 * Flushes (possibly) remaining bit(s) to output stream
+	 * 
+	 * @throws IOException
+	 */
+	public void flush() throws IOException;
+	
+	/**
+	 * 
+	 * @param errorHandler
+	 */
 	public void setErrorHandler(ErrorHandler errorHandler);
 
 	/**

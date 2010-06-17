@@ -64,6 +64,7 @@ public class SchemaLessTest extends TestCase {
 					pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 
 		// decoder
@@ -144,6 +145,7 @@ public class SchemaLessTest extends TestCase {
 
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 
 		baos.flush();
@@ -279,6 +281,7 @@ public class SchemaLessTest extends TestCase {
 
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 
 		baos.flush();
@@ -446,6 +449,7 @@ public class SchemaLessTest extends TestCase {
 
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 
 		baos.flush();

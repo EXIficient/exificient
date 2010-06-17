@@ -18,13 +18,15 @@
 
 package com.siemens.ct.exi;
 
+import java.io.OutputStream;
+
 import javax.xml.namespace.QName;
 
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
 
-import com.siemens.ct.exi.api.sax.EXIWriter;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.types.DatatypeRepresentation;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.types.TypeEncoder;
 
@@ -45,6 +47,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 * @param fidelityOptions
 	 *            new fidelity options
+	 * @throws EXIException 
 	 * @see FidelityOptions
 	 */
 	public void setFidelityOptions(FidelityOptions fidelityOptions);
@@ -182,8 +185,8 @@ public interface EXIFactory extends Cloneable {
 	 * specific schema datatypes. This capability is called Datatype
 	 * Representation Map.
 	 */
-	public void setDatatypeRepresentationMap(
-			DatatypeRepresentation[] datatypeRepresentations);
+	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations);
 
 	/**
 	 * Self-contained elements may be read independently from the rest of the
@@ -208,33 +211,37 @@ public interface EXIFactory extends Cloneable {
 	 * Returns an <code>EXIEncoder</code>
 	 * 
 	 * @return encoder using the previously set coding options.
+	 * @throws EXIException 
 	 * 
 	 */
-	public EXIEncoder createEXIEncoder();
+	public EXIEncoder createEXIEncoder() throws EXIException;
 
 	/**
-	 * Returns an <code>EXIWriter</code>
+	 * Returns an <code>DefaultHandler2</code>
 	 * 
 	 * @return writer using the previously set coding options.
+	 * @throws EXIException 
 	 * 
 	 */
-	public EXIWriter createEXIWriter();
+	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException;
 
 	/**
 	 * Returns an <code>EXIDecoder</code>
 	 * 
 	 * @return decoder using the previously set coding options.
+	 * @throws EXIException 
 	 * 
 	 */
-	public EXIDecoder createEXIDecoder();
+	public EXIDecoder createEXIDecoder() throws EXIException;
 
 	/**
 	 * Returns an <code>EXIReader</code>
 	 * 
 	 * @return reader using the previously set coding options.
+	 * @throws EXIException 
 	 * 
 	 */
-	public XMLReader createEXIReader();
+	public XMLReader createEXIReader() throws EXIException;
 
 	/**
 	 * Returns an EXI <code>TypeEncoder</code> according coding options such as
@@ -242,9 +249,10 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type encoder according given EXI options
+	 * @throws EXIException 
 	 * @see TypeEncoder
 	 */
-	public TypeEncoder createTypeEncoder();
+	public TypeEncoder createTypeEncoder() throws EXIException;
 
 	/**
 	 * Returns an EXI <code>TypeDecoder</code> according coding options such as
@@ -252,9 +260,10 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type decoder according given EXI options
+	 * @throws EXIException 
 	 * @see TypeDecoder
 	 */
-	public TypeDecoder createTypeDecoder();
+	public TypeDecoder createTypeDecoder() throws EXIException;
 
 	/**
 	 * Returns a shallow copy of this EXI factory.

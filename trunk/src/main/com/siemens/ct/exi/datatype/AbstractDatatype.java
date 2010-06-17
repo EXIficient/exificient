@@ -40,26 +40,30 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public abstract class AbstractDatatype implements Datatype {
-	// default built-in datatype (no codec map used)
-	protected BuiltInType defaultbuiltInType;
-	// for codec map (pluggable codecs)
-	protected QName datatypeIdentifier;
+	// default built-in datatype (no dtr map used)
+	protected final BuiltInType builtInType;
+	
+	// for codec map
+	protected final QName schemaType;
+	
 	// restricted char set
 	protected RestrictedCharacterSet rcs;
 	protected String lastRCSValue;
 
-	public AbstractDatatype(BuiltInType builtInType,
-			QName datatypeIdentifier) {
-		this.defaultbuiltInType = builtInType;
-		this.datatypeIdentifier = datatypeIdentifier;
+	public AbstractDatatype(BuiltInType builtInType, QName schemaType) {
+		this.builtInType = builtInType;
+		this.schemaType = schemaType;
+	}
+	
+//	public void finish() throws IOException {
+//	}
+
+	public BuiltInType getBuiltInType() {
+		return builtInType;
 	}
 
-	public BuiltInType getDefaultBuiltInType() {
-		return defaultbuiltInType;
-	}
-
-	public QName getDatatypeIdentifier() {
-		return datatypeIdentifier;
+	public QName getSchemaType() {
+		return schemaType;
 	}
 	
 	public RestrictedCharacterSet getRestrictedCharacterSet() {
@@ -68,15 +72,15 @@ public abstract class AbstractDatatype implements Datatype {
 
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
-			return (defaultbuiltInType == ((Datatype) o)
-					.getDefaultBuiltInType());
+			return (builtInType == ((Datatype) o)
+					.getBuiltInType());
 		} else {
 			return false;
 		}
 	}
 	
 	public int hashCode() {
-		return defaultbuiltInType.ordinal();
+		return builtInType.ordinal();
 	}
 	
 	public boolean isValidRCS(String value) {
@@ -96,6 +100,6 @@ public abstract class AbstractDatatype implements Datatype {
 	}
 
 	public String toString() {
-		return defaultbuiltInType.toString();
+		return builtInType.toString();
 	}
 }

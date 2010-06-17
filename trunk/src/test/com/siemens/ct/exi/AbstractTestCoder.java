@@ -63,6 +63,7 @@ public abstract class AbstractTestCoder {
 		}		
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
+		ef.setDatatypeRepresentationMap(QuickTestConfiguration.dtrMapTypes, QuickTestConfiguration.dtrMapRepresentations);
 
 		return ef;
 	}

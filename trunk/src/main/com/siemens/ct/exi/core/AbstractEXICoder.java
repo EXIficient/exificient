@@ -76,8 +76,8 @@ public abstract class AbstractEXICoder {
 	// element-context and rule (stack) while traversing the EXI document
 	protected ElementContext elementContext;
 	protected Rule currentRule;
-	private ElementContext[] elementContextStack;
-	private int elementContextStackIndex;
+	protected ElementContext[] elementContextStack;
+	protected int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
 	
 	// SE pool
@@ -104,11 +104,17 @@ public abstract class AbstractEXICoder {
 		elementContextStack = new ElementContext[INITIAL_STACK_SIZE];
 	
 		// QName datatype (coder)
-		qnameDatatype = new QNameDatatype(null, namespaces, preservePrefix);
+		// qnameDatatype = new QNameDatatype(namespaces, preservePrefix, null);
+		qnameDatatype = new QNameDatatype(this, preservePrefix, null);
 		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
 	}
+	
+	abstract public String getPrefix(String uri);
+
+	abstract public String getURI(String prefix);
+	
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
@@ -144,7 +150,6 @@ public abstract class AbstractEXICoder {
 		currentRule = se.getRule();
 		//	create new stack item & push it
 		pushElementContext(new ElementContext(se.getQName(), currentRule));
-		
 		// NS context
 		namespaces.pushContext();
 	}
@@ -217,7 +222,7 @@ public abstract class AbstractEXICoder {
 		public String sqname;
 		Rule rule;	// may be modified while coding
 		//	TODO prefix declarations
-		List<Object> prefixDeclarations; 
+		List<PrefixMapping> prefixDeclarations; 
 
 		public ElementContext(QName qname, Rule rule) {
 			this.qname = qname;

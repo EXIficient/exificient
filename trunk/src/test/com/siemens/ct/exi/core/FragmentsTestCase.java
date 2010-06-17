@@ -95,6 +95,7 @@ public class FragmentsTestCase extends TestCase {
 			encoder.encodeEndElement();
 
 			encoder.encodeEndDocument();
+			encoder.flush();
 		}
 
 		// decoder
