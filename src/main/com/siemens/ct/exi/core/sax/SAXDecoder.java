@@ -21,10 +21,8 @@ package com.siemens.ct.exi.core.sax;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.xml.sax.ContentHandler;
@@ -39,12 +37,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.core.AbstractEXIDecoder;
 import com.siemens.ct.exi.core.PrefixMapping;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -408,25 +404,7 @@ public class SAXDecoder implements XMLReader {
 		}
 		
 		if (namespaces) {
-			if (AbstractEXIDecoder.NEW_PFX) {
-				startPrefixMappings(decoder.getPrefixDeclarations());
-			} else {
-				decoder.initNamespaceSupport();
-				
-				// TODO start prefix mapping differently!
-				NamespaceSupport namespaces = decoder.getNamespaces();
-				@SuppressWarnings("unchecked")
-				Enumeration<String> declaredPrefixes = namespaces.getDeclaredPrefixes();
-				while (declaredPrefixes.hasMoreElements()) {
-					String pfx = declaredPrefixes.nextElement();
-					String uri = namespaces.getURI(pfx);
-					if (uri == null) {
-						uri = XMLConstants.NULL_NS_URI;
-					}
-					// System.out.println("pfx->uri: " + pfx + " -> " + uri);
-					contentHandler.startPrefixMapping(pfx, uri);
-				}				
-			}
+			startPrefixMappings(decoder.getPrefixDeclarations());
 		}
 
 		/*

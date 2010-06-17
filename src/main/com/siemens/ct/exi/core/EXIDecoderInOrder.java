@@ -178,11 +178,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 			this.elementPrefix = nsPrefix;
 		}
 		// NS
-		if (NEW_PFX) {
-			declarePrefix(nsPrefix, nsURI);
-		} else {
-			namespaces.declarePrefix(nsPrefix, nsURI);	
-		}
+		declarePrefix(nsPrefix, nsURI);
 	}
 	
 

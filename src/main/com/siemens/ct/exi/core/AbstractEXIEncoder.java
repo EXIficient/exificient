@@ -80,15 +80,15 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 	}
 	
-	@Override
-	public String getPrefix(String uri) {
-		return namespaces.getPrefix(uri);
-	}
-
-	@Override
-	public String getURI(String prefix) {
-		return namespaces.getURI(prefix);
-	}
+//	@Override
+//	public String getPrefix(String uri) {
+//		return namespaces.getPrefix(uri);
+//	}
+//
+//	@Override
+//	public String getURI(String prefix) {
+//		return namespaces.getURI(prefix);
+//	}
 
 	/*
 	 * Stream
@@ -255,7 +255,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException, IOException {
-		namespaces.declarePrefix(prefix, uri);
+		declarePrefix(prefix, uri);
 
 		if (preservePrefix) {
 			assert (sePrefix != null);

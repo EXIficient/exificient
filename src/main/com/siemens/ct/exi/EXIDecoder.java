@@ -24,8 +24,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.xml.sax.helpers.NamespaceSupport;
-
 import com.siemens.ct.exi.core.PrefixMapping;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -398,28 +396,11 @@ public interface EXIDecoder {
 	public char[] getComment();
 	
 	/**
-	 * Prefix declarations for given context (element)
+	 * Prefix declarations for current context (element)
 	 * 
 	 * @return list or null if no mappings are available 
 	 */
 	public List<PrefixMapping> getPrefixDeclarations();
-	
-	/**
-	 * Initializes namespace support. Needs to be done before actually
-	 * retrieving getDeclaredPrefixes() for a context.
-	 */
-	public void initNamespaceSupport();
-
-	/**
-	 * Provides namespace support.
-	 * <p>
-	 * Note: initNamespaceSupport() has to be called for the context ahead of
-	 * time
-	 * </p>
-	 * 
-	 * @return <code>NamespaceSupport</code> for prefix mapping
-	 */
-	public NamespaceSupport getNamespaces();
 
 	/**
 	 * Provides processing instructions target.

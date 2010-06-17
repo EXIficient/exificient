@@ -19,14 +19,13 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-
-import org.xml.sax.helpers.NamespaceSupport;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
@@ -65,9 +64,6 @@ public abstract class AbstractEXICoder {
 
 	// error handler
 	protected ErrorHandler errorHandler;
-
-	// namespaces/prefixes
-	protected NamespaceSupport namespaces;
 	
 	//	QName and Boolean datatype (coder)
 	protected QNameDatatype qnameDatatype;
@@ -92,9 +88,6 @@ public abstract class AbstractEXICoder {
 		// preserve prefixes
 		preservePrefix = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-
-		// namespaces/prefixes
-		namespaces = new NamespaceSupport();
 		
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
@@ -110,25 +103,13 @@ public abstract class AbstractEXICoder {
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
 	}
-	
-	abstract public String getPrefix(String uri);
-
-	abstract public String getURI(String prefix);
-	
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
 	
-	public NamespaceSupport getNamespaces() {
-		return this.namespaces;
-	}
-
 	// re-init (rule stack etc)
-	protected void initForEachRun() throws EXIException, IOException {
-		// namespaces/prefixes
-		namespaces.reset();
-		
+	protected void initForEachRun() throws EXIException, IOException {		
 		// clear runtime rules
 		runtimeElements.clear();
 		
@@ -141,6 +122,33 @@ public abstract class AbstractEXICoder {
 		
 		qnameDatatype.initForEachRun();
 	}
+	
+	protected final void declarePrefix(String pfx, String uri) {
+		if (elementContext.prefixDeclarations == null) {
+			elementContext.prefixDeclarations = new ArrayList<PrefixMapping>();
+		}
+		elementContext.prefixDeclarations.add(new PrefixMapping(pfx, uri));	
+	}
+	
+//	// just works for decoder
+//	public final String getPrefix(String uri) {
+//		return uriToPrefix.get(uri);
+//	}
+
+	public final String getURI(String prefix) {
+		// check all stack items expect last one (in reverse order)
+		for(int i=elementContextStackIndex; i>0; i--) {
+			ElementContext ec = elementContextStack[i];
+			if(ec.prefixDeclarations != null) {
+				for(PrefixMapping pm : ec.prefixDeclarations) {
+					if(pm.pfx.equals(prefix)) {
+						return pm.uri;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	protected final void pushElement(StartElement se, Rule contextRule) {
 		// update "rule" item of current peak (for popElement() later on) 
@@ -150,8 +158,6 @@ public abstract class AbstractEXICoder {
 		currentRule = se.getRule();
 		//	create new stack item & push it
 		pushElementContext(new ElementContext(se.getQName(), currentRule));
-		// NS context
-		namespaces.pushContext();
 	}
 	
 	protected final void pushElementContext(ElementContext elementContext) {
@@ -173,8 +179,6 @@ public abstract class AbstractEXICoder {
 		elementContext = elementContextStack[elementContextStackIndex];
 		// update current rule to new (old) element stack
 		currentRule = elementContext.rule;
-		// NS context
-		namespaces.popContext();
 	}
 
 	

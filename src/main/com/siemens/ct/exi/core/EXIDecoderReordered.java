@@ -669,36 +669,22 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 
 	@Override
 	public void decodeStartDocument() {
-		if(NEW_PFX) {
-			// re-set namespaces
-			this.initPrefixes();
-		} else {
-			// re-set namespaces
-			namespaces.reset();	
-		}
+		// re-set namespaces
+		initPrefixes();
 	}
 	
-//	@Override
-//	public List<PrefixMapping> getPrefixDeclarations() {
-//		// handle remaining pfx mapping for element
-//		checkPrefixMapping(elementQName.getNamespaceURI());
-//		return elementContext.prefixDeclarations;
-//	}
+	@Override
+	protected void initPrefixes() {
+		super.initPrefixes();
+		createdPfxCnt = 1;
+	}
 	
 	@Override
 	public void decodeStartElement() throws IOException, EXIException {
-		
 		ElementEntry se = elementEntries.get(elementEntryIndex++);
 		this.elementContext = se.context;
 		this.elementQName = elementContext.qname;
 		this.elementPrefix = se.prefix;
-		
-		// NS context
-		if(NEW_PFX) {
-			
-		} else {
-			namespaces.pushContext();	
-		}
 	}
 
 	@Override
@@ -736,11 +722,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		this.elementQName = elementContext.qname;
 		
 		// NS context
-		if(NEW_PFX) {
-			undeclarePrefixes();
-		} else {
-			namespaces.popContext();	
-		}
+		undeclarePrefixes();
 	}
 
 	@Override
@@ -762,11 +744,7 @@ public class EXIDecoderReordered extends EXIDecoderInOrder {
 		nsPrefix = ns.prefix;
 		
 		// NS
-		if (NEW_PFX) {
-			this.declarePrefix(nsPrefix, nsURI);
-		} else {
-			namespaces.declarePrefix(nsPrefix, nsURI);	
-		}
+		this.declarePrefix(nsPrefix, nsURI);
 	}
 
 	@Override

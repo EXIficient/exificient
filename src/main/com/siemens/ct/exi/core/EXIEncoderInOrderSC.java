@@ -265,7 +265,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			scEncoder.encodeComment(ch, start, length);
 		}
 	}
-
+	
 	@Override
 	public void encodeProcessingInstruction(String target, String data)
 			throws EXIException, IOException {
