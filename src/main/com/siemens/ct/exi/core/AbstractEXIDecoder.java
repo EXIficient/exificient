@@ -305,6 +305,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			IOException {
 		attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL,
 				channel);
+		checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 		boolean xsiNil;
 
 		if (attributeValue instanceof BooleanValue) {
@@ -331,10 +332,15 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		QName xsiTypeQName;
 		attributeValue = typeDecoder
 				.readValue(qnameDatatype, XSI_TYPE, channel);
+		checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
+			String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
+			if (qnv.getPrefix() == null ) {
+				attributeValue = new QNameValue(qnv.toQName(), pfx);
+			}
 		} else {
 			// parse string value again (lexical value mode)
 			qnameDatatype.isValid(attributeValue.toString());

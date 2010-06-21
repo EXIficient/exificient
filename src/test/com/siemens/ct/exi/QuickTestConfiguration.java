@@ -114,12 +114,12 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest ( );
+		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
-		// DeviationsTestCase.setupQuickTest();
+		DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}
 

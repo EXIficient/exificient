@@ -36,9 +36,10 @@ public class DeviationsTestCase extends AbstractTestCase {
 		// DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype2 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype3();
-		DeviationsTestCase.setConfigurationDeviationXsiType( );
+		// DeviationsTestCase.setConfigurationDeviationXsiType( );
 		// DeviationsTestCase.setConfigurationDeviationXsiNil();
 		// DeviationsTestCase.setConfigurationDeviationGlobalAttribute1();
+		DeviationsTestCase.setConfigurationDeviationInvalidQName();
 	}
 
 	protected void setUp() {
@@ -208,6 +209,25 @@ public class DeviationsTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/deviations/globalAttributeDev1.xml");
 		QuickTestConfiguration
 				.setExiLocation("./out/deviations/globalAttributeDev1.xml.exi");
+	}
+	
+	
+	@Test
+	public void testDeviationInvalidQName() throws Exception {
+		// set up configuration
+		setConfigurationDeviationInvalidQName();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationDeviationInvalidQName() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/deviations/invalidQName.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/deviations/invalidQName.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/deviations/invalidQName.xml.exi");
 	}
 
 }
