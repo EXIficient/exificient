@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:foo">
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="el_a"/>
+                <xs:element name="el_b"/>
+                <xs:element name="el_c"/>
+                <xs:element name="el_d"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name="subInt">
+        <xs:restriction base="xs:int"></xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

@@ -324,6 +324,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		 * The value of each AT (xsi:type) event is represented as a QName.
 		 */
 		typeEncoder.isValid(qnameDatatype, raw);
+		// boolean valid = typeEncoder.isValid(qnameDatatype, raw);
+		// System.out.println("Valid " + raw + ": " + valid);
 		
 		QName xsiQName = qnameDatatype.getQName();
 		SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
