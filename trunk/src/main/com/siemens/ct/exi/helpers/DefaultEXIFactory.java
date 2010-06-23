@@ -221,8 +221,18 @@ public class DefaultEXIFactory implements EXIFactory {
 	public int getValuePartitionCapacity() {
 		return valuePartitionCapacity;
 	}
+	
+	protected void doSanityCheck() throws EXIException {
+		// some consistency checks
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) && codingMode.usesRechanneling()) {
+			throw new EXIException("(Pre-)Compression and selfContained elements cannot work together");
+		}
+		// blockSize in NON compression mode? Just ignore it!
+	}
 
 	public EXIEncoder createEXIEncoder() throws EXIException {
+		doSanityCheck();
+		
 		if (codingMode.usesRechanneling()) {
 			return new EXIEncoderReordered(this);
 		} else {
@@ -247,6 +257,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public EXIDecoder createEXIDecoder() throws EXIException {
+		doSanityCheck();
+		
 		if (codingMode.usesRechanneling()) {
 			return new EXIDecoderReordered(this);
 		} else {

@@ -50,6 +50,10 @@ public abstract class AbstractDatatype implements Datatype {
 	protected RestrictedCharacterSet rcs;
 	protected String lastRCSValue;
 
+	public AbstractDatatype() {
+		this(null, null);
+	}
+	
 	public AbstractDatatype(BuiltInType builtInType, QName schemaType) {
 		this.builtInType = builtInType;
 		this.schemaType = schemaType;

@@ -118,6 +118,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException {
 		QName qname;
+		
 		// business as usual
 		if (scEncoder == null) {
 			super.encodeStartElement(uri, localName, prefix);
@@ -128,29 +129,36 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 				int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
 				
-				//	SC Factory & Encoder
-				EXIFactory scEXIFactory = exiFactory.clone();
-				scEXIFactory.setEXIBodyOnly(true);
-				scEXIFactory.setFragment(true);
-				scEncoder = (EXIEncoderInOrderSC) scEXIFactory.createEXIEncoder();
-				scEncoder.os = this.os; // needs to be unequal null
-				scEncoder.channel = this.channel;
-				scEncoder.setErrorHandler(this.errorHandler);
-
 				// Skip to the next byte-aligned boundary in the stream if it is not
 				// already at such a boundary
 				this.channel.align();
-
-				// Evaluate the sequence of events (SD, SE(qname), content, ED)
-				// according to the Fragment grammar
-				scEncoder.encodeStartDocument();
-				scEncoder.encodeStartElementNoSC(uri, localName, prefix);
-				// from now on content events are forwarded to the scEncoder
+				
+				// start SC element
+				this.encodeStartElementSC(uri, localName, prefix);
 			}
 		} else {
 			scEncoder.encodeStartElement(uri, localName, prefix);
 			qname = scEncoder.elementContext.qname;
 		}
+	}
+	
+	protected void encodeStartElementSC(String uri, String localName, String prefix)
+	throws EXIException, IOException {
+		//	SC Factory & Encoder
+		EXIFactory scEXIFactory = exiFactory.clone();
+		scEXIFactory.setEXIBodyOnly(true);
+		scEXIFactory.setFragment(true);
+		scEncoder = (EXIEncoderInOrderSC) scEXIFactory.createEXIEncoder();
+		scEncoder.os = this.os; // needs to be unequal null
+		scEncoder.channel = this.channel;
+		scEncoder.setErrorHandler(this.errorHandler);
+
+		// Evaluate the sequence of events (SD, SE(qname), content, ED)
+		// according to the Fragment grammar
+		scEncoder.encodeStartDocument();
+		// NO SC again
+		scEncoder.encodeStartElementNoSC(uri, localName, prefix);
+		// from now on events are forwarded to the scEncoder
 	}
 	
 	protected void encodeStartElementNoSC(String uri, String localName, String prefix)

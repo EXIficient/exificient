@@ -45,13 +45,13 @@ public class FidelityOptions {
 
 	/* attribute schemaLocation (also noNamespaceSchemaLocation) is preserved */
 	public static final String FEATURE_XSI_SCHEMALOCATION = "PRESERVE_XSI_SCHEMALOCATION";
-	
+
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
 	 */
 	public static final String FEATURE_LEXICAL_VALUE = "PRESERVE_LEXICAL_VALUES";
-	public static final String FEATURE_WS = "PRESERVE_WHITESPACES";
+	// public static final String FEATURE_WS = "PRESERVE_WHITESPACES";
 
 	/* Enable the use of self contained elements in the EXI stream */
 	public static final String FEATURE_SC = "SELF_CONTAINED";
@@ -96,8 +96,12 @@ public class FidelityOptions {
 	}
 
 	/**
-	 * Creates fidelity options using the maximum compatibility mode, e.g.
+	 * Creates fidelity options using the maximum XML compatibility mode, e.g.
 	 * preserving unsignificant whitespaces.
+	 * <p>
+	 * Note: Per default SelfContained Element support is not set to TRUE. It
+	 * cannot work together with (Pre-)Compression!
+	 * </p>
 	 * 
 	 * @return default fidelity options
 	 */
@@ -110,9 +114,8 @@ public class FidelityOptions {
 		fo.options.add(FEATURE_PREFIX);
 		fo.options.add(FEATURE_LEXICAL_VALUE);
 
-		fo.options.add(FEATURE_WS);
-
-		fo.options.add(FEATURE_SC);
+		// fo.options.add(FEATURE_WS);
+		// fo.options.add(FEATURE_SC);
 
 		fo.options.add(FEATURE_XSI_SCHEMALOCATION);
 
@@ -149,7 +152,7 @@ public class FidelityOptions {
 				options.remove(key);
 				isStrict = false;
 			}
-		} else if (key.equals(FEATURE_LEXICAL_VALUE) ) {
+		} else if (key.equals(FEATURE_LEXICAL_VALUE)) {
 			// LEXICAL_VALUE is special --> does affect grammars
 			if (decision) {
 				options.add(key);
@@ -159,7 +162,7 @@ public class FidelityOptions {
 			}
 		} else if (key.equals(FEATURE_COMMENT) || key.equals(FEATURE_PI)
 				|| key.equals(FEATURE_DTD) || key.equals(FEATURE_PREFIX)
-				|| key.equals(FEATURE_WS) || key.equals(FEATURE_SC)
+				|| key.equals(FEATURE_SC)
 				|| key.equals(FEATURE_XSI_SCHEMALOCATION)) {
 			if (decision) {
 				//	

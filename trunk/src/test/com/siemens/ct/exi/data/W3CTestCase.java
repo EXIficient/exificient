@@ -38,8 +38,8 @@ public class W3CTestCase extends AbstractTestCase {
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
 		// W3CTestCase.setConfigurationW3CEXIbyExample ( );
 		// W3CTestCase.setConfigurationW3CPrimerNotebook();
-		W3CTestCase.setConfigurationW3CXHTMLStrict1();
-		// W3CTestCase.setConfigurationW3CXHTMLTransitional1();
+		// W3CTestCase.setConfigurationW3CXHTMLStrict1();
+		W3CTestCase.setConfigurationW3CXHTMLTransitional1();
 	}
 
 	protected void setUp() throws Exception {
@@ -97,8 +97,7 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		FidelityOptions scFo = FidelityOptions.createAll();
-//		FidelityOptions scFo = FidelityOptions.createDefault();
-//		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
+		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
 		QName[] scElements = new QName[3];
 		scElements[0] = new QName("", "note");	//	notebook
 		scElements[1] = new QName("", "body");  //	notebook, nested
@@ -230,6 +229,7 @@ public class W3CTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/xhtml/www.w3.org.htm.exi");
 	}
+
 	
 	@Test
 	public void testW3CXHTMLTransitional1() throws Exception {
@@ -239,6 +239,7 @@ public class W3CTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
+	
 
 	public static void setConfigurationW3CXHTMLTransitional1() {
 		QuickTestConfiguration

@@ -401,7 +401,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		// check entire SE pool
-		Iterator<XSElementDeclaration> iterSE = elementPool.keySet().iterator();
+		// Note: copy due to ConcurrentModificationException !?
+		// Iterator<XSElementDeclaration> iterSE =
+		// elementPool.keySet().iterator();
+		Iterator<XSElementDeclaration> iterSE = (new HashMap<XSElementDeclaration, StartElement>(
+				elementPool)).keySet().iterator();
 		while (iterSE.hasNext()) {
 			XSElementDeclaration elementDecl = iterSE.next();
 			StartElement se = elementPool.get(elementDecl);
