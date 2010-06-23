@@ -69,7 +69,6 @@ public class SAXEncoder extends DefaultHandler2 {
 		
 		// encoder output
 		encoder.setOutput(os, factory.isEXIBodyOnly());
-		
 	}
 
 //	public void setOutput(OutputStream os, boolean exiBodyOnly)

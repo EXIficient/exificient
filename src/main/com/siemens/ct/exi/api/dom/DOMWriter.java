@@ -74,8 +74,8 @@ public class DOMWriter {
 		sbChars = new StringBuilder();
 
 		// preserve options
-		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
-				FidelityOptions.FEATURE_WS);
+//		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
+//				FidelityOptions.FEATURE_WS);
 		preserveComments = factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_COMMENT);
 		preservePIs = factory.getFidelityOptions().isFidelityEnabled(

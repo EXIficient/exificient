@@ -130,6 +130,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				XMLConstants.DEFAULT_NS_PREFIX);
 		// "http://www.w3.org/XML/1998/namespace"
 		uriToPrefix.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+		// "http://www.w3.org/1999/xhtml"
+		uriToPrefix.put("http://www.w3.org/1999/xhtml", "");
 	}
 
 	public void setInputStream(InputStream is, boolean exiBodyOnly)
@@ -305,7 +307,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			IOException {
 		attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL,
 				channel);
-		checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+		if (!preservePrefix) {
+			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);	
+		}
 		boolean xsiNil;
 
 		if (attributeValue instanceof BooleanValue) {
@@ -332,7 +336,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		QName xsiTypeQName;
 		attributeValue = typeDecoder
 				.readValue(qnameDatatype, XSI_TYPE, channel);
-		checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+		if (!preservePrefix) {
+			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);	
+		}
 
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;

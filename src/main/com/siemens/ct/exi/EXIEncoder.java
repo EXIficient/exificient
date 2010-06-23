@@ -74,35 +74,17 @@ public interface EXIEncoder {
 	 * Provides access to the namespace URI, local name , and prefix
 	 * representation of the start tag.
 	 * </p>
-	 * 
+	 *  
 	 * @param uri
 	 * @param localName
 	 * @param prefix
 	 *            (can be null according to fidelity options)
+	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException;
-
-//	/**
-//	 * Supplies the start of a self-contained element. Self contained elements
-//	 * may be read independently from the rest of the EXI body, allowing them to
-//	 * be indexed for random access.
-//	 * 
-//	 * <p>
-//	 * Provides access to the namespace URI, and local name of the start tag.
-//	 * </p>
-//	 * 
-//	 * @param uri
-//	 * @param localName
-//	 * @return byte where the selfContained fragments starts or -1 if not
-//	 *         retrievable
-//	 * @throws EXIException
-//	 * @throws IOException
-//	 */
-//	public int encodeStartFragmentSelfContained(String uri, String localName,
-//			String prefix) throws EXIException, IOException;
 
 	/**
 	 * Supplies the end tag of an element.
