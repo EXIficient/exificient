@@ -18,9 +18,13 @@
 
 package com.siemens.ct.exi.data;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 
@@ -168,6 +172,15 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
+		
+		// #12 dtr map
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		QName[] dtrTypes = {new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer")};
+		QName[] dtrRepresentations = {new QName(Constants.W3C_EXI_NS_URI, "string")};
+		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes, dtrRepresentations);
 		
 	}
 

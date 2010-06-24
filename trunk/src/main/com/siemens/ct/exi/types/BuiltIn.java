@@ -309,11 +309,11 @@ public class BuiltIn {
 		// Note: if type is anonymous the "closest" type is used as schema-type
 		String name, uri;
 		if (std.getAnonymous()) {
-			XSTypeDefinition baseType;
+			XSTypeDefinition baseType = std;
 			do {
-				baseType = std.getBaseType();
+				baseType = baseType.getBaseType();
 			}
-			while ( baseType == null);
+			while ( baseType == null || baseType.getAnonymous());
 			uri = baseType.getNamespace();
 			name = baseType.getName();
 		} else {
