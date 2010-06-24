@@ -20,6 +20,7 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -36,6 +37,7 @@ import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.DateTimeType;
@@ -49,26 +51,46 @@ import com.siemens.ct.exi.values.DateTimeType;
  * @version 0.4.20080718
  */
 
-public class DatatypeRepresentationMapTypeEncoder extends AbstractTypeEncoder
-		implements DatatypeRepresentationMap {
+public class DatatypeRepresentationMapTypeEncoder extends AbstractTypeEncoder {
 	
 	// fallback type encoder
 	protected TypedTypeEncoder defaultEncoder;
+	
+	protected final Grammar grammar;
 
 	protected Map<QName, Datatype> dtrMap;
 	
 	protected Datatype recentDtrDataype;
 
-	public DatatypeRepresentationMapTypeEncoder(StringEncoder stringEncoder) {
+	public DatatypeRepresentationMapTypeEncoder(StringEncoder stringEncoder, QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
 		super(stringEncoder);
+		this.grammar = grammar;
+		assert(dtrMapTypes.length == dtrMapRepresentations.length);
 
 		dtrMap = new HashMap<QName, Datatype>();
+				
+		// detect all subtypes and map datatype representation
+		for(int i=0; i<dtrMapTypes.length; i++) {
+			Datatype datatypeRep = getDatatypeRepresentation(dtrMapRepresentations[i]);
+			registerDatatype(datatypeRep, dtrMapTypes[i]);
+		}
 
 		// hand over "same" string table
 		defaultEncoder = new TypedTypeEncoder(stringEncoder);
 	}
 
-	public void registerDatatypeRepresentation(QName type, QName representation)
+	protected void registerDatatype(Datatype representation, QName type) {
+		dtrMap.put(type, representation);
+		List<QName> subtypes = grammar.getSimpleTypeSubtypes(type);
+		if (subtypes != null) {
+			for(QName subtype : subtypes) {
+				registerDatatype(representation, subtype);
+			}
+		}
+	}
+	
+	protected Datatype getDatatypeRepresentation(QName representation)
 			throws EXIException {
 		try {
 			// find datatype for given representation
@@ -122,8 +144,8 @@ public class DatatypeRepresentationMapTypeEncoder extends AbstractTypeEncoder
 					throw new Exception("[EXI] no Datatype instance");
 				}
 			}
-
-			dtrMap.put(type, datatype);
+			
+			return datatype;
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}

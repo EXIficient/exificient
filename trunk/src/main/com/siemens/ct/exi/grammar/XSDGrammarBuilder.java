@@ -275,7 +275,34 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * type grammar
 		 */
 		sig.setTypeGrammars(grammarTypes);
-
+		
+		/*
+		 * Simple sub-type hierarchy
+		 */
+		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
+		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
+		while(iterTypes.hasNext()) {
+			QName typeQName = iterTypes.next();
+			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName.getLocalPart(), typeQName.getNamespaceURI());
+			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE && !td.getAnonymous() ) {
+				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
+				XSTypeDefinition baseType = td.getBaseType();
+				if (baseType == null) {
+					// http://www.w3.org/2001/XMLSchema,anySimpleType
+				} else {
+					QName baseTypeQName = getQNameForType(baseType);
+					List<QName> sub = subtypes.get(baseTypeQName);
+					if (sub == null) {
+						sub = new ArrayList<QName>();
+						subtypes.put(baseTypeQName, sub);
+					}
+					sub.add(getQNameForType(td));	
+					// System.out.println( td + " instance of "  + baseTypeQName);	
+				}
+			}
+		}
+		sig.setSimpleTypeSubtypes(subtypes);
+		
 		/*
 		 * global attributes
 		 */
@@ -449,7 +476,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		} else {
 			// AT datatype
 			XSSimpleTypeDefinition td = attrDecl.getTypeDefinition();
-			QName qNameType = getQNameForValueType(td);
+			QName qNameType = getQNameForType(td);
 			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
 			at = new Attribute(qname, qNameType, BuiltIn.getDatatype(td));
@@ -459,7 +486,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return at;
 	}
 
-	protected QName getQNameForValueType(XSSimpleTypeDefinition typeDefinition) {
+	protected QName getQNameForType(XSTypeDefinition typeDefinition) {
 		QName qNameType;
 		if (typeDefinition.getAnonymous()) {
 			XSTypeDefinition tdBase = typeDefinition.getBaseType();

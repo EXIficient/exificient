@@ -25,6 +25,7 @@ import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -35,6 +36,14 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		super(testName);
 	}
 
+	protected static Grammar getGrammarFor(String schemaAsString) throws EXIException {
+		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
+				.getBytes());
+		xsdGB.loadGrammar(bais);
+		return xsdGB.toGrammar();
+	}
+	
 	protected static Datatype getSimpleDatatypeFor(String schemaAsString,
 			String typeName, String typeURI) throws EXIException {
 		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();

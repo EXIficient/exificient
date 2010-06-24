@@ -55,7 +55,9 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 	protected Map<QName, Attribute> globalAttributes;
 	
 	protected Map<QName, SchemaInformedRule> grammarTypes;
-
+	
+	/* (direct) simple sub-types for given qname */
+	protected Map<QName, List<QName>> subtypes;
 
 	protected SchemaInformedRule builtInFragmentGrammar;
 
@@ -142,6 +144,15 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 
 	public SchemaInformedRule getTypeGrammar(QName qname) {
 		return grammarTypes.get(qname);
+	}
+	
+	
+	protected void setSimpleTypeSubtypes(Map<QName, List<QName>> subtypes) {
+		this.subtypes = subtypes;
+	}
+	
+	public List<QName> getSimpleTypeSubtypes(QName type) {
+		return subtypes.get(type);
 	}
 
 	protected void initDocumentGrammar() {
