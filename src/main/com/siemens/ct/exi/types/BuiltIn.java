@@ -306,12 +306,22 @@ public class BuiltIn {
 	
 	private static QName getSchemaType(XSSimpleTypeDefinition std) {
 		// used for dtr map
-		QName schemaType = null;
-		if (!std.getAnonymous()) {
-			schemaType = new QName(std.getNamespace(), std.getName());
+		// Note: if type is anonymous the "closest" type is used as schema-type
+		String name, uri;
+		if (std.getAnonymous()) {
+			XSTypeDefinition baseType;
+			do {
+				baseType = std.getBaseType();
+			}
+			while ( baseType == null);
+			uri = baseType.getNamespace();
+			name = baseType.getName();
+		} else {
+			uri = std.getNamespace();
+			name = std.getName();
 		}
 		
-		return schemaType;
+		return new QName(uri, name);
 	}
 
 	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std, QName schemaType) {

@@ -33,9 +33,6 @@ import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
-/**
- * @author MCH07690
- */
 public abstract class AbstractTestCase extends TestCase {
 
 	private ByteArrayOutputStream bitBaos;

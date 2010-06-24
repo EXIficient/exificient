@@ -303,17 +303,9 @@ public class DefaultEXIFactory implements EXIFactory {
 				typeEncoder = new LexicalTypeEncoder(stringEncoder);
 			} else {
 				if (dtrMapTypes != null) {
-					DatatypeRepresentationMapTypeEncoder enc = new DatatypeRepresentationMapTypeEncoder(
-							stringEncoder);
-
 					assert(dtrMapTypes.length == dtrMapRepresentations.length);
-					for(int i=0; i<dtrMapTypes.length; i++) {
-						QName type = dtrMapTypes[i];
-						QName representations = dtrMapRepresentations[i];
-						enc.registerDatatypeRepresentation(type, representations);
-					}
-
-					typeEncoder = enc;
+					typeEncoder = new DatatypeRepresentationMapTypeEncoder(
+							stringEncoder, dtrMapTypes, dtrMapRepresentations, grammar);
 				} else {
 					// use default type encoders
 					typeEncoder = new TypedTypeEncoder(stringEncoder);
@@ -347,17 +339,9 @@ public class DefaultEXIFactory implements EXIFactory {
 				typeDecoder = new LexicalTypeDecoder(stringDecoder);
 			} else {
 				if (dtrMapTypes != null) {
-					DatatypeRepresentationMapTypeDecoder dec = new DatatypeRepresentationMapTypeDecoder(
-							stringDecoder);
-					
 					assert(dtrMapTypes.length == dtrMapRepresentations.length);
-					for(int i=0; i<dtrMapTypes.length; i++) {
-						QName type = dtrMapTypes[i];
-						QName representations = dtrMapRepresentations[i];
-						dec.registerDatatypeRepresentation(type, representations);
-					}
-
-					typeDecoder = dec;
+					typeDecoder = new DatatypeRepresentationMapTypeDecoder(
+							stringDecoder, dtrMapTypes, dtrMapRepresentations, grammar);
 				} else {
 					// use default type decoders
 					typeDecoder = new TypedTypeDecoder(stringDecoder);

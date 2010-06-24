@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -49,4 +51,12 @@ public interface Grammar {
 	public Attribute getGlobalAttribute(QName qname);
 	
 	public SchemaInformedRule getTypeGrammar(QName qname);
+	
+	/**
+	 * Returns (direct) simple types in type hierarchy
+	 * 
+	 * @param type
+	 * @return list of named sub-types or null
+	 */
+	public List<QName> getSimpleTypeSubtypes(QName type);
 }
