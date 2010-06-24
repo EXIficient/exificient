@@ -71,7 +71,7 @@ public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder
 	public void registerDatatypeRepresentation(QName type, QName representation)
 			throws EXIException {
 		try {
-			// find datatype for the given representation
+			// find datatype for given representation
 			Datatype datatype = null;
 			if (Constants.W3C_EXI_NS_URI.equals(representation
 					.getNamespaceURI())) {

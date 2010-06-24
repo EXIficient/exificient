@@ -116,6 +116,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
+		ec = 0;
+		
 		// namespaces/prefixes
 		initPrefixes();
 

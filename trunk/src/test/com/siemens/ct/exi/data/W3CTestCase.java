@@ -39,7 +39,8 @@ public class W3CTestCase extends AbstractTestCase {
 		// W3CTestCase.setConfigurationW3CEXIbyExample ( );
 		// W3CTestCase.setConfigurationW3CPrimerNotebook();
 		// W3CTestCase.setConfigurationW3CXHTMLStrict1();
-		W3CTestCase.setConfigurationW3CXHTMLTransitional1();
+		// W3CTestCase.setConfigurationW3CXHTMLTransitional1();
+		W3CTestCase.setConfigurationW3CXsdWsdl1();
 	}
 
 	protected void setUp() throws Exception {
@@ -248,6 +249,26 @@ public class W3CTestCase extends AbstractTestCase {
 				.setXmlLocation("./data/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm");
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm.exi");
+	}
+	
+	
+	@Test
+	public void testW3CXsdWsdl1() throws Exception {
+		// set up configuration
+		setConfigurationW3CXsdWsdl1();
+
+		// execute test
+		_test();
+	}
+	
+
+	public static void setConfigurationW3CXsdWsdl1() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/W3C/xsd/XMLSchema.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/W3C/xsd/wsdl.xsd");
+		QuickTestConfiguration
+				.setExiLocation("./out/W3C/xsd/wsdl.xsd.exi");
 	}
 
 }
