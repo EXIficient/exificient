@@ -31,13 +31,13 @@ public class TestCaseOption {
 	private String schemaLocation;
 	private boolean xmlEqual;
 	private boolean schemaInformedOnly;
-	private QName[] dtrTypes;
-	private QName[] dtrRepresentations;
 	private QName[] scElements;
 	private int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 	private int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
-
+	private QName[] dtrMapTypes;
+	private QName[] dtrMapRepresentations;
+	
 	public CodingMode getCodingMode() {
 		return codingMode;
 	}
@@ -87,16 +87,17 @@ public class TestCaseOption {
 	}
 
 	public QName[] getDtrMapTypes() {
-		return dtrTypes;
+		return dtrMapTypes;
 	}
 
 	public QName[] getDtrMapRepresentations() {
-		return dtrRepresentations;
+		return dtrMapRepresentations;
 	}
 	
-	public void setDtrMap(QName[] dtrTypes, QName[] dtrRepresentations) {
-		this.dtrTypes = dtrTypes;
-		this.dtrRepresentations = dtrRepresentations;
+	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations) {
+		this.dtrMapTypes = dtrMapTypes;
+		this.dtrMapRepresentations = dtrMapRepresentations;
 	}
 	
 	public void setSelfContainedElements(QName[] scElements) {
