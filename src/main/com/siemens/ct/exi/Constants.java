@@ -40,7 +40,36 @@ public interface Constants {
 	 * Defined to be "<code>http://www.w3.org/2009/exi</code>".
 	 */
 	public static final String W3C_EXI_NS_URI = "http://www.w3.org/2009/exi";
-
+	
+	/**
+	 * Initial Entries in String Table Partitions
+	 */
+	/* "", empty string */
+	public static final String[] PREFIXES_EMPTY = { "" };
+	public static final String[] LOCAL_NAMES_EMPTY = { };
+	/* "http://www.w3.org/XML/1998/namespace" */
+	public static String[] PREFIXES_XML = { "xml" };
+	public static String[] LOCAL_NAMES_XML = { "base", "id", "lang", "space" };
+	/* "http://www.w3.org/2001/XMLSchema-instance", xsi */
+	public static String[] PREFIXES_XSI = { "xsi" };
+	public static String[] LOCAL_NAMES_XSI = { "nil", "type" };
+	/* "http://www.w3.org/2001/XMLSchema", xsd */
+	public static String[] PREFIXES_XSD = {};
+	public static String[] LOCAL_NAMES_XSD = { "ENTITIES", "ENTITY", "ID", "IDREF",
+			"IDREFS", "NCName", "NMTOKEN", "NMTOKENS", "NOTATION",
+			"Name", "QName", "anySimpleType", "anyType", "anyURI",
+			"base64Binary", "boolean", "byte", "date", "dateTime",
+			"decimal", "double", "duration", "float", "gDay", "gMonth",
+			"gMonthDay", "gYear", "gYearMonth", "hexBinary", "int",
+			"integer", "language", "long", "negativeInteger",
+			"nonNegativeInteger", "nonPositiveInteger",
+			"normalizedString", "positiveInteger", "short", "string",
+			"time", "token", "unsignedByte", "unsignedInt",
+			"unsignedLong", "unsignedShort" };
+	
+	/**
+	 * 
+	 */
 	public static final String EMPTY_STRING = "";
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";

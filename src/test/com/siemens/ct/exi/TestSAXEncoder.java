@@ -110,6 +110,13 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 	}
 
 	public static void main(String[] args) throws Exception {
+//		int cp = 0x2000B;
+//		StringBuffer sb = new StringBuffer();
+//		sb.appendCodePoint(cp);
+//		String s = sb.toString();
+//		System.out.println(s + ": " + s.length());
+//		char[] c = s.toCharArray();
+		
 
 		// EXI output stream
 		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration

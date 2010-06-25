@@ -26,21 +26,11 @@ public class GrammarURIEntry {
 	
 	public GrammarURIEntry(String uri, String[] localNames, String[] prefixes) {
 		assert(uri != null);
+		assert(localNames != null);
+		assert(prefixes != null);
 		this.uri = uri;
-		
-		//	local-names
-		if (localNames == null) {
-			this.localNames = new String[0];
-		} else {
-			this.localNames = localNames;
-		}
-		
-		//	prefixes
-		if (prefixes == null) {
-			this.prefixes = new String[0];
-		} else {
-			this.prefixes = prefixes;
-		}
+		this.localNames = localNames;
+		this.prefixes = prefixes;
 	}
 	
 	@Override

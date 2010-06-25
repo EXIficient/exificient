@@ -111,9 +111,28 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		handledElements.clear();
 		grammarTypes.clear();
-		schemaLocalNames.clear();
 		atWildcardNamespaces.clear();
 		attributePool.clear();
+
+		schemaLocalNames.clear();
+		// "", empty string
+		for (String localName : Constants.LOCAL_NAMES_EMPTY) {
+			addLocalNameStringEntry(XMLConstants.NULL_NS_URI, localName);
+		}
+		// "http://www.w3.org/XML/1998/namespace"
+		for (String localName : Constants.LOCAL_NAMES_XML) {
+			addLocalNameStringEntry(XMLConstants.XML_NS_URI, localName);
+		}
+		// "http://www.w3.org/2001/XMLSchema-instance", xsi
+		for (String localName : Constants.LOCAL_NAMES_XSI) {
+			addLocalNameStringEntry(
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, localName);
+		}
+		// "http://www.w3.org/2001/XMLSchema", xsd
+		for (String localName : Constants.LOCAL_NAMES_XSD) {
+			addLocalNameStringEntry(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+					localName);
+		}
 	}
 
 	protected boolean isSameGrammar(List<XSElementDeclaration> elements) {
@@ -244,12 +263,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		Collections.sort(globalElements, lexSort);
 		Collections.sort(fragmentElements, lexSort);
 
-		// (sorted) schema URIs and localNames
-		String[] sortedURIs = initURITableEntries();
-		GrammarURIEntry[] additionalSchemaEntries = new GrammarURIEntry[sortedURIs.length];
-		for (int i = 0; i < sortedURIs.length; i++) {
-			String uri = sortedURIs[i];
+		// schema URIs and (sorted) localNames
+		String[] uris = getURITableEntries();
+		GrammarURIEntry[] grammarEntries = new GrammarURIEntry[uris.length];
+		for (int i = 0; i < uris.length; i++) {
+			String uri = uris[i];
 
+			// local-names
 			String[] localNamesArray;
 			if (schemaLocalNames.containsKey(uri)) {
 				List<String> localNames = schemaLocalNames.get(uri);
@@ -263,28 +283,44 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				localNamesArray = new String[0];
 			}
 
+			// prefixes
+			String[] prefixes;
+			if (uri.equals(XMLConstants.NULL_NS_URI)) {
+				prefixes = Constants.PREFIXES_EMPTY;
+			} else if (uri.equals(XMLConstants.XML_NS_URI)) {
+				prefixes = Constants.PREFIXES_XML;
+			} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+				prefixes = Constants.PREFIXES_XSI;
+			} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+				prefixes = Constants.PREFIXES_XSD;
+			} else {
+				prefixes = new String[0];
+			}
+
 			// add schema entry
-			additionalSchemaEntries[i] = new GrammarURIEntry(uri,
-					localNamesArray, null);
+			grammarEntries[i] = new GrammarURIEntry(uri, localNamesArray,
+					prefixes);
 		}
 
-		SchemaInformedGrammar sig = new SchemaInformedGrammar(
-				additionalSchemaEntries, fragmentElements, globalElements);
+		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
+				fragmentElements, globalElements);
 
 		/*
 		 * type grammar
 		 */
 		sig.setTypeGrammars(grammarTypes);
-		
+
 		/*
 		 * Simple sub-type hierarchy
 		 */
 		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
 		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
-		while(iterTypes.hasNext()) {
+		while (iterTypes.hasNext()) {
 			QName typeQName = iterTypes.next();
-			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName.getLocalPart(), typeQName.getNamespaceURI());
-			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE && !td.getAnonymous() ) {
+			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName
+					.getLocalPart(), typeQName.getNamespaceURI());
+			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
+					&& !td.getAnonymous()) {
 				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 				XSTypeDefinition baseType = td.getBaseType();
 				if (baseType == null) {
@@ -296,13 +332,14 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 						sub = new ArrayList<QName>();
 						subtypes.put(baseTypeQName, sub);
 					}
-					sub.add(getQNameForType(td));	
-					// System.out.println( td + " instance of "  + baseTypeQName);	
+					sub.add(getQNameForType(td));
+					// System.out.println( td + " instance of " +
+					// baseTypeQName);
 				}
 			}
 		}
 		sig.setSimpleTypeSubtypes(subtypes);
-		
+
 		/*
 		 * global attributes
 		 */
@@ -319,9 +356,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return sig;
 	}
 
-	protected static boolean isNamespacesOfInterest(String namespaceURI) {
+	// NOT EQUAL
+	// "" [empty string],
+	// "http://www.w3.org/XML/1998/namespace",
+	// "http://www.w3.org/2001/XMLSchema-instance",
+	// "http://www.w3.org/2001/XMLSchema"
+	protected static boolean isAdditionalNamespace(String namespaceURI) {
 		assert (namespaceURI != null);
-		if (namespaceURI.equals(XMLConstants.XML_NS_URI)
+		if (namespaceURI.equals(XMLConstants.NULL_NS_URI)
+				|| namespaceURI.equals(XMLConstants.XML_NS_URI)
 				|| namespaceURI
 						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)
 				|| namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
@@ -331,14 +374,14 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected String[] initURITableEntries() {
+	protected String[] getURITableEntries() {
 		StringList namespaces = xsModel.getNamespaces();
 		TreeSet<String> sortedURIs = new TreeSet<String>();
 
 		for (int i = 0; i < namespaces.getLength(); i++) {
 			String uri = namespaces.item(i) == null ? XMLConstants.NULL_NS_URI
 					: namespaces.item(i);
-			if (isNamespacesOfInterest(uri)) {
+			if (isAdditionalNamespace(uri)) {
 				sortedURIs.add(uri);
 			}
 		}
@@ -347,19 +390,22 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (String atWildcardURI : this.atWildcardNamespaces) {
 			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
 					: atWildcardURI;
-			if (isNamespacesOfInterest(atWildcardURI)) {
+			if (isAdditionalNamespace(atWildcardURI)) {
 				sortedURIs.add(atWildcardURI);
 			}
 		}
 
-		// default namespace does not show up all the time ?
-		if (!sortedURIs.contains(XMLConstants.NULL_NS_URI)) {
-			sortedURIs.add(XMLConstants.NULL_NS_URI);
+		// copy to array (in right order)
+		String[] uris = new String[4 + sortedURIs.size()];
+		uris[0] = XMLConstants.NULL_NS_URI;
+		uris[1] = XMLConstants.XML_NS_URI;
+		uris[2] = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
+		uris[3] = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+		int compactID = 4;
+		for (String addUri : sortedURIs) {
+			uris[compactID] = addUri;
+			compactID++;
 		}
-
-		// copy to array
-		String[] uris = new String[sortedURIs.size()];
-		sortedURIs.toArray(uris);
 
 		return uris;
 	}
@@ -374,20 +420,32 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		if (namespaceURI == null) {
 			namespaceURI = XMLConstants.NULL_NS_URI;
 		}
-		if (isNamespacesOfInterest(namespaceURI)) {
-			// fetch localName list
-			List<String> localNameList;
-			if (schemaLocalNames.containsKey(namespaceURI)) {
-				localNameList = schemaLocalNames.get(namespaceURI);
-			} else {
-				localNameList = new ArrayList<String>();
-				schemaLocalNames.put(namespaceURI, localNameList);
-			}
-			// check localName value presence
-			if (!localNameList.contains(localName)) {
-				localNameList.add(localName);
-			}
+		// if (isNamespacesOfInterest(namespaceURI)) {
+		// fetch localName list
+		List<String> localNameList;
+		if (schemaLocalNames.containsKey(namespaceURI)) {
+			localNameList = schemaLocalNames.get(namespaceURI);
+		} else {
+			localNameList = new ArrayList<String>();
+			schemaLocalNames.put(namespaceURI, localNameList);
 		}
+		// check localName value presence
+		if (!localNameList.contains(localName)) {
+			localNameList.add(localName);
+		}
+		// } else {
+		// GrammarURIEntry gue = AbstractGrammar.getURIEntryForXSD();
+		// boolean found = false;
+		// for(String locN : gue.localNames) {
+		// if(localName.equals(locN)) {
+		// found = true;
+		// }
+		// }
+		// if (!found) {
+		// System.out.println("NotOfInterest: " + namespaceURI + " --> " +
+		// localName);
+		// }
+		// }
 	}
 
 	protected List<StartElement> initGrammars() throws EXIException {

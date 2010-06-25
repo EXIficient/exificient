@@ -18,9 +18,6 @@
 
 package com.siemens.ct.exi.grammar;
 
-import javax.xml.XMLConstants;
-
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
@@ -45,57 +42,6 @@ public abstract class AbstractGrammar implements Grammar {
 
 	public AbstractGrammar(boolean isSchemaInformed) {
 		this.isSchemaInformed = isSchemaInformed;
-	}
-	
-	protected static GrammarURIEntry getURIEntryForEmpty() {
-		/*
-		 * "", empty string
-		 */
-		String[] localNamesEmpty = { };
-		String[] prefixesEmpty = { "" };
-		return new GrammarURIEntry(Constants.EMPTY_STRING,
-				localNamesEmpty, prefixesEmpty);
-	}
-	
-	protected static GrammarURIEntry getURIEntryForXML() {
-		/*
-		 * "http://www.w3.org/XML/1998/namespace"
-		 */
-		String[] localNamesXML = { "base", "id", "lang", "space" };
-		String[] prefixesXML = { "xml" };
-		return new GrammarURIEntry(XMLConstants.XML_NS_URI,
-				localNamesXML, prefixesXML);
-	}
-	
-	protected static GrammarURIEntry getURIEntryForXSI() {
-		/*
-		 * "http://www.w3.org/2001/XMLSchema-instance", xsi
-		 */
-		String[] localNamesXSI = { "nil", "type" };
-		String[] prefixesXSI = { "xsi" };
-		return new GrammarURIEntry(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, localNamesXSI, prefixesXSI);
-	}
-	
-	protected static GrammarURIEntry getURIEntryForXSD() {
-		/*
-		 * "http://www.w3.org/2001/XMLSchema", xsd
-		 */
-		String[] localNamesXSD = { "ENTITIES", "ENTITY", "ID", "IDREF",
-				"IDREFS", "NCName", "NMTOKEN", "NMTOKENS", "NOTATION",
-				"Name", "QName", "anySimpleType", "anyType", "anyURI",
-				"base64Binary", "boolean", "byte", "date", "dateTime",
-				"decimal", "double", "duration", "float", "gDay", "gMonth",
-				"gMonthDay", "gYear", "gYearMonth", "hexBinary", "int",
-				"integer", "language", "long", "negativeInteger",
-				"nonNegativeInteger", "nonPositiveInteger",
-				"normalizedString", "positiveInteger", "short", "string",
-				"time", "token", "unsignedByte", "unsignedInt",
-				"unsignedLong", "unsignedShort" };
-		assert (localNamesXSD.length == 46);
-		String[] prefixesXSD = {};
-		return new GrammarURIEntry(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, localNamesXSD, prefixesXSD);
 	}
 
 	public boolean isSchemaInformed() {
