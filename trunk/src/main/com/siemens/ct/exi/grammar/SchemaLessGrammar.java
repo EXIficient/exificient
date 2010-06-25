@@ -20,8 +20,10 @@ package com.siemens.ct.exi.grammar;
 
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -45,17 +47,22 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
 public class SchemaLessGrammar extends AbstractGrammar {
 	public SchemaLessGrammar() {
 		super(false);
-		
+
 		grammarEntries = new GrammarURIEntry[3];
 
 		// "", empty string
-		grammarEntries[0] = getURIEntryForEmpty();
+		grammarEntries[0] = new GrammarURIEntry(Constants.EMPTY_STRING,
+				Constants.LOCAL_NAMES_EMPTY, Constants.PREFIXES_EMPTY);
 
 		// "http://www.w3.org/XML/1998/namespace"
-		grammarEntries[1] = getURIEntryForXML();
+		grammarEntries[1] = new GrammarURIEntry(XMLConstants.XML_NS_URI,
+				Constants.LOCAL_NAMES_XML, Constants.PREFIXES_XML);
 
 		// "http://www.w3.org/2001/XMLSchema-instance", xsi
-		grammarEntries[2] = getURIEntryForXSI();
+		grammarEntries[2] = new GrammarURIEntry(
+				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+				Constants.LOCAL_NAMES_XSI, Constants.PREFIXES_XSI);
+		;
 
 		init();
 	}
@@ -72,8 +79,8 @@ public class SchemaLessGrammar extends AbstractGrammar {
 	}
 
 	/*
-	 * Note: create new instance since fragment content grammar may have
-	 * been changed over time
+	 * Note: create new instance since fragment content grammar may have been
+	 * changed over time
 	 */
 	public Rule getBuiltInFragmentGrammar() {
 		/*
@@ -100,7 +107,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		// no type grammar available
 		return null;
 	}
-	
+
 	public List<QName> getSimpleTypeSubtypes(QName type) {
 		// no type nor sub-types
 		return null;
