@@ -132,8 +132,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				XMLConstants.DEFAULT_NS_PREFIX);
 		// "http://www.w3.org/XML/1998/namespace"
 		uriToPrefix.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
-		// "http://www.w3.org/1999/xhtml"
-		uriToPrefix.put("http://www.w3.org/1999/xhtml", "");
 	}
 
 	public void setInputStream(InputStream is, boolean exiBodyOnly)
@@ -473,7 +471,13 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
 		String pfx = uriToPrefix.get(uri);
 		if (pfx == null) {
-			pfx = "ns" + createdPfxCnt++;
+			// TODO is special html NS handling necessary ?
+			if (uri.equals("http://www.w3.org/1999/xhtml")) {
+				// "http://www.w3.org/1999/xhtml" --> ""
+				pfx = "";
+			} else {
+				pfx = "ns" + createdPfxCnt++;	
+			}
 			uriToPrefix.put(uri, pfx);
 			declarePrefix(pfx, uri);
 		}
