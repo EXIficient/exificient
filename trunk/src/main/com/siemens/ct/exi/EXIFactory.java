@@ -137,7 +137,7 @@ public interface EXIFactory extends Cloneable {
 	 * value "unbounded" is assumed when the "valueMaxLength" element is absent
 	 * in the EXI Options document.
 	 * <p>
-	 * See {@link http://www.w3.org/TR/exi/#key-valueMaxLengthOption}
+	 * See http://www.w3.org/TR/exi/#key-valueMaxLengthOption
 	 * </p>
 	 * 
 	 * @param valueMaxLength
@@ -161,7 +161,7 @@ public interface EXIFactory extends Cloneable {
 	 * absent.
 	 * 
 	 * <p>
-	 * See {@link http://www.w3.org/TR/exi/#key-valuePartitionCapacityOption}
+	 * See http://www.w3.org/TR/exi/#key-valuePartitionCapacityOption
 	 * </p>
 	 * 
 	 * @param valuePartitionCapacity

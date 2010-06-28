@@ -313,7 +313,8 @@ public interface EXIDecoder {
 	 * Returns qualified name for end element name as String (the one previously
 	 * created for SE event)
 	 * 
-	 * @see getStartElementQNameAsString()
+	 * <p>see getStartElementQNameAsString()</p>
+	 * 
 	 * @return <code>String</code> for qname
 	 */
 	public String getEndElementQNameAsString();
