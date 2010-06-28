@@ -1,0 +1,34 @@
+-------------------------------------------------------------------------
+EXIficient - open source implementation of the W3C Efficient XML Interchange (EXI) format specification
+Version 0.5, released June 28, 2010
+http://exificient.sourceforge.net/
+
+The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
+
+Please report bugs via the SourceForge bug tracking system at http://sourceforge.net/tracker/?group_id=236860.
+Thank you.
+
+Copyright (C) 2007, 2010 Siemens AG
+
+This program and its interfaces are free software;
+you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+-------------------------------------------------------------------------
+
+In order to build EXIficient, you must have:
+
+- The EXIficient source code
+- Xerces2 Java Parser, available at http://xerces.apache.org/xerces2-j/
+- JUnit, a framework for writing automated tests available at http://junit.org
+- XMLUnit, JUnit and NUnit testing for XML available at http://xmlunit.sourceforge.net/
