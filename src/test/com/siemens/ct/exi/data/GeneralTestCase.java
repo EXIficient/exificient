@@ -40,7 +40,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypeInteger();
 		// GeneralTestCase.setConfigurationDatatypeFloat();
-		GeneralTestCase.setConfigurationDatatypes();
+		// GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj();
@@ -59,14 +59,14 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType();
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
-		// GeneralTestCase.setConfigurationEntityReference1();
+		GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
 		// GeneralTestCase.setConfigurationStringTable2 ( );
 	}
 
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -124,6 +124,17 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
+//		// #7b (strict & lexical-values)
+//		testCaseOptions.add(new TestCaseOption());
+//		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+//		testCaseOptions.lastElement().setFidelityOptions(
+//				FidelityOptions.createStrict());
+//			testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+//					FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+//		testCaseOptions.lastElement().setFragments(false);
+//		testCaseOptions.lastElement().setXmlEqual(false);
+//		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+
 		// #8
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
@@ -142,7 +153,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 		testCaseOptions.lastElement().setBlockSize(200);
-		
+
 		// #9 BlockSize
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
@@ -152,7 +163,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 		testCaseOptions.lastElement().setBlockSize(200);
-		
+
 		// #10 BlockSize & valueMaxLength & valuePartitionCapacity
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
@@ -163,7 +174,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setBlockSize(200);
 		testCaseOptions.lastElement().setValueMaxLength(8);
 		testCaseOptions.lastElement().setValuePartitionCapacity(16);
-		
+
 		// #11 valuePartitionCapacity
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -172,16 +183,19 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
-		
+
 		// #12 dtr map
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createDefault());
-		QName[] dtrTypes = {new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer")};
-		QName[] dtrRepresentations = {new QName(Constants.W3C_EXI_NS_URI, "string")};
-		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes, dtrRepresentations);
-		
+		QName[] dtrTypes = { new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"integer") };
+		QName[] dtrRepresentations = { new QName(Constants.W3C_EXI_NS_URI,
+				"string") };
+		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes,
+				dtrRepresentations);
+
 	}
 
 	@Test

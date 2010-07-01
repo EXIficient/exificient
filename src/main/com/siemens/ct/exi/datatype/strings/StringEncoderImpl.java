@@ -55,7 +55,8 @@ public class StringEncoderImpl implements StringEncoder {
 			 * string literal is encoded as a String with the length incremented
 			 * by two.
 			 */
-			int L = value.length();
+			// int L = value.length();
+			final int L = value.codePointCount(0, value.length());
 			valueChannel.encodeUnsignedInteger(L + 2);
 			/*
 			 * If length L is greater than zero the string S is added 

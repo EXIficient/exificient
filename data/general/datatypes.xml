@@ -109,6 +109,8 @@
     
     <!-- Built-in Type: String  -->
     <string>ss ss </string>
+    <string>&#x2000B;</string> <!-- high/low surrogate pairs -->
+    <string>foo &#x2000B; blaa</string>
     <string></string>   <!--  *Empty* strings -->
     <string />
     <normalizedString> dasdas     dasdas</normalizedString>
