@@ -50,21 +50,24 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 * that are represented as UTF-16 surrogate pairs in Java.
 	 */
 	public void encodeString(final String s) throws IOException {
-		encodeUnsignedInteger(s.length());
-		this.encodeStringOnly(s);
+		final int lenChars = s.length();
+		final int lenCharacters = s.codePointCount(0, lenChars);
+		encodeUnsignedInteger(lenCharacters);
+		encodeStringOnly(s);
 	}
 
 	/**
 	 * 
 	 */
 	public void encodeStringOnly(final String s) throws IOException {
-		final int len = s.length();
-		for (int i = 0; i<len; i++) {
+		final int lenChars = s.length();
+		for (int i = 0; i<lenChars; i++) {
 			final char ch = s.charAt(i);
 
 			// Is this a UTF-16 surrogate pair?
 			if (Character.isHighSurrogate(ch)) {
-				encodeUnsignedInteger(Character.toCodePoint(ch, s.charAt(++i)));
+				// use code-point and increment loop count (2 char's)
+				encodeUnsignedInteger(s.codePointAt(i++));
 			} else {
 				encodeUnsignedInteger(ch);
 			}

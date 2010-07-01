@@ -39,7 +39,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaGroup1 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup2 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup3 ( );
-		setConfigurationSchemaUnion1();
+		SchemaTestCase.setConfigurationSchemaUnion1();
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1a ( );
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaAttributeGroup1a ( );
@@ -75,7 +75,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaVehicle();
 	}
 
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -132,6 +132,17 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		
+//		// #7b (strict & lexical-values)
+//		testCaseOptions.add(new TestCaseOption());
+//		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+//		testCaseOptions.lastElement().setFidelityOptions(
+//				FidelityOptions.createStrict());
+//			testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+//					FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+//		testCaseOptions.lastElement().setFragments(false);
+//		testCaseOptions.lastElement().setXmlEqual(false);
+//		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());

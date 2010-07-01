@@ -58,7 +58,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	}
 
 	/**
-	 * Decode the characters of a string whose length has already been read.
+	 * Decode the characters of a string whose length (#code-points) has already been read.
 	 * Look for codepoints of more than 16 bits that are represented as UTF-16
 	 * surrogate pairs in Java.
 	 * 
@@ -73,7 +73,16 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			int codePoint = decodeUnsignedInteger();
 
 			if (Character.isSupplementaryCodePoint(codePoint)) {
-				Character.toChars(codePoint, ca, i++);
+				// (first) supplementary code-point
+				// Note: this SHOULD be done differently and is not optimal at all
+				StringBuilder sb = new StringBuilder();
+				sb.append(ca, 0, i); // append chars so far
+				sb.appendCodePoint(codePoint); // append current code-point
+				for(int k=i+1; k<length; k++) {
+					sb.appendCodePoint(decodeUnsignedInteger());
+				}
+				ca = sb.toString().toCharArray(); // reset char array
+				break; // STOP for loop
 			} else {
 				ca[i] = (char) codePoint;
 			}

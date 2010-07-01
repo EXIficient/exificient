@@ -93,6 +93,10 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// string literal is encoded as a String with the length
 			// incremented by two.
 			int numberOfTuples = lastValidValue.length();
+			
+//			if (numberOfTuples != lastValidValue.codePointCount(0, numberOfTuples)) {
+//				System.err.println("dsadas");
+//			}
 
 			valueChannel.encodeUnsignedInteger(numberOfTuples + 2);
 

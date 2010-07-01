@@ -634,8 +634,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				// Note: Do we really want to encode any whitespace characters?
 				String trim = chars.trim();
 				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)
-						|| trim.length() > 0) {
+						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE) || trim.length() > 0 ) {
 					// Undeclared CH can be found on 2nd level
 					int ecCHundeclared = currentRule.get2ndLevelEventCode(
 							EventType.CHARACTERS_GENERIC_UNDECLARED,
@@ -644,6 +643,9 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 					if (ecCHundeclared == Constants.NOT_FOUND) {
 						if (exiFactory.isFragment() && trim.length() == 0) {
 							// skip empty characters in "outer" fragment element throw warning
+							throwWarning("Skip CH: '" + chars + "'");
+						} else if(fidelityOptions.isStrict() && trim.length() == 0 ) {
+							// skip "insignificant" whitespaces
 							throwWarning("Skip CH: '" + chars + "'");
 						} else {
 							assert (fidelityOptions.isStrict());
