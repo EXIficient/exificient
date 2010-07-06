@@ -136,7 +136,7 @@ public class SelfContainedTestCase extends TestCase {
 			{
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
-				decoder.decodeStartFragmentSelfContained();
+				decoder.decodeStartSelfContainedFragment();
 				
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
@@ -155,7 +155,7 @@ public class SelfContainedTestCase extends TestCase {
 			{ 
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
-				decoder.decodeStartFragmentSelfContained();
+				decoder.decodeStartSelfContainedFragment();
 				
 				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);

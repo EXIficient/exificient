@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.core.sax;
+package com.siemens.ct.exi.api.sax;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -289,7 +289,7 @@ public class SAXDecoder implements XMLReader {
 				break;
 			/* SELF_CONTAINED */
 			case SELF_CONTAINED:
-				decoder.decodeStartFragmentSelfContained();
+				decoder.decodeStartSelfContainedFragment();
 				break;
 			/* ELEMENT CONTENT EVENTS */
 			/* START ELEMENT */
