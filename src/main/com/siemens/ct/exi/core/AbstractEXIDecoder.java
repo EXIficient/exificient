@@ -117,7 +117,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		super.initForEachRun();
 
 		ec = 0;
-		
+
 		// namespaces/prefixes
 		initPrefixes();
 
@@ -308,7 +308,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL,
 				channel);
 		if (!preservePrefix) {
-			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);	
+			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 		}
 		boolean xsiNil;
 
@@ -337,14 +337,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		attributeValue = typeDecoder
 				.readValue(qnameDatatype, XSI_TYPE, channel);
 		if (!preservePrefix) {
-			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);	
+			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 		}
 
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
 			String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
-			if (qnv.getPrefix() == null ) {
+			if (qnv.getPrefix() == null) {
 				attributeValue = new QNameValue(qnv.toQName(), pfx);
 			}
 		} else {
@@ -476,7 +476,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				// "http://www.w3.org/1999/xhtml" --> ""
 				pfx = "";
 			} else {
-				pfx = "ns" + createdPfxCnt++;	
+				pfx = "ns" + createdPfxCnt++;
 			}
 			uriToPrefix.put(uri, pfx);
 			declarePrefix(pfx, uri);
@@ -492,17 +492,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			}
 		}
 	}
-	
-	
+
 	/* ================================= */
-	
-	
+
 	public void decodeStartDocument() throws EXIException {
 		// update current rule
 		currentRule = currentRule.lookFor(ec).next;
 	}
-	
-	
+
 	public void decodeStartElement() throws EXIException, IOException {
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
@@ -514,7 +511,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// push element
 		pushElement(se, nextRule);
 	}
-	
+
 	public void decodeStartElementNS() throws EXIException, IOException {
 		assert (nextEventType == EventType.START_ELEMENT_NS);
 		// StartElementNS
@@ -542,12 +539,12 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// learn start-element ?
 		currentRule.learnStartElement(nextSE);
 		// push element
-		pushElement(nextSE, nextRule.getElementContentRule());;
+		pushElement(nextSE, nextRule.getElementContentRule());
+		;
 	}
 
-	
 	public void decodeStartElementGenericUndeclared() throws EXIException,
-	IOException {
+			IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
 		elementQName = qnameDatatype.readQName(channel);
@@ -560,7 +557,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// push element
 		pushElement(nextSE, currentRule.getElementContentRule());
 	}
-	
+
 	public void decodeNamespaceDeclaration() throws EXIException, IOException {
 		// prefix mapping
 		nsURI = qnameDatatype.readUri(channel);
@@ -573,7 +570,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// NS
 		declarePrefix(nsPrefix, nsURI);
 	}
-	
 
 	public void decodeAttributeXsiNil() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
@@ -624,7 +620,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		} else {
 			Attribute globalAT;
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
-			if ( currentRule.isSchemaInformed() && ( globalAT = grammar.getGlobalAttribute(attributeQName) ) != null ) {
+			if (currentRule.isSchemaInformed()
+					&& (globalAT = grammar.getGlobalAttribute(attributeQName)) != null) {
 				dt = globalAT.getDatatype();
 			}
 			readAttributeContent(dt);
@@ -726,7 +723,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		// update current rule
 		currentRule = currentRule.getElementContentRule();
 	}
-	
+
 	/* ================================= */
 
 	public QName getElementQName() {
@@ -791,7 +788,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		return piData;
 	}
 
-	public void decodeStartFragmentSelfContained() throws EXIException,
+	public void decodeStartSelfContainedFragment() throws EXIException,
 			IOException {
 		throw new RuntimeException("[EXI] SelfContained");
 	}

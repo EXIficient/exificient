@@ -125,7 +125,7 @@ public interface EXIDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartFragmentSelfContained() throws EXIException,
+	public void decodeStartSelfContainedFragment() throws EXIException,
 			IOException;
 
 	/**

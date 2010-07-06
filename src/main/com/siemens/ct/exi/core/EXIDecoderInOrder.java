@@ -46,6 +46,10 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		
 		initForEachRun();
 	}
+	
+	public DecoderChannel getChannel() {
+		return this.channel;
+	}
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {

@@ -113,6 +113,24 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			scEncoder.encodeEndDocument();
 		}
 	}
+	
+	protected void encodeEndSC() throws EXIException, IOException {
+		// end SC fragment
+		scEncoder.encodeEndDocument();
+		// Skip to the next byte-aligned boundary in the stream if it is
+		// not already at such a boundary
+		this.channel.align();
+		// indicate that SC portion is over
+		scEncoder = null;
+		super.popElement();
+		
+		// NOTE: NO outer EE
+		// Spec says "Evaluate the sequence of events (SD, SE(qname), content, ED) .."
+		// e.g., "sc" is self-Contained element
+		// Sequence: <sc>foo</sc>
+		// --> SE(sc) --> SC --> SD --> SE(sc) --> CH --> EE --> ED
+		// content == SE(sc) --> CH --> EE
+	}
 
 	@Override
 	public void encodeStartElement(String uri, String localName, String prefix)
@@ -134,7 +152,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 				this.channel.align();
 				
 				// start SC element
-				this.encodeStartElementSC(uri, localName, prefix);
+				this.encodeStartSC(uri, localName, prefix);
 			}
 		} else {
 			scEncoder.encodeStartElement(uri, localName, prefix);
@@ -142,7 +160,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		}
 	}
 	
-	protected void encodeStartElementSC(String uri, String localName, String prefix)
+	protected void encodeStartSC(String uri, String localName, String prefix)
 	throws EXIException, IOException {
 		//	SC Factory & Encoder
 		EXIFactory scEXIFactory = exiFactory.clone();
@@ -176,23 +194,8 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			// EE
 			scEncoder.encodeEndElement();
 			if ( getElementContextQName().equals(qname) ) {
-				// end SC fragment
-				scEncoder.encodeEndDocument();
-				// Skip to the next byte-aligned boundary in the stream if it is
-				// not already at such a boundary
-				this.channel.align();
-				// indicate that SC portion is over
-				scEncoder = null;
-				super.popElement();
+				this.encodeEndSC();
 			}
-			
-			// NOTE: NO outer EE
-			// Spec says "Evaluate the sequence of events (SD, SE(qname), content, ED) .."
-			// e.g., "sc" is self-Contained element
-			// Sequence: <sc>foo</sc>
-			// --> SE(sc) --> SC --> SD --> SE(sc) --> CH --> EE --> ED
-			// content == SE(sc) --> CH --> EE
-			
 		}
 	}
 

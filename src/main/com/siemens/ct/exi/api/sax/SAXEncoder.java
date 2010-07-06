@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.core.sax;
+package com.siemens.ct.exi.api.sax;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -68,11 +68,11 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 
 	@Override
 	public boolean hasNext() throws EXIException, IOException {
-		if ( scDecoder == null ) {
+		if (scDecoder == null) {
 			return super.hasNext();
 		} else {
 			boolean bool = scDecoder.hasNext();
-			if ( this.scDecoder.nextEventType == EventType.END_DOCUMENT ) {		
+			if (this.scDecoder.nextEventType == EventType.END_DOCUMENT) {
 				scDecoder.decodeEndDocument();
 				// Skip to the next byte-aligned boundary in the stream if it is
 				// not already at such a boundary
@@ -147,10 +147,10 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public void decodeStartFragmentSelfContained() throws EXIException,
+	public void decodeStartSelfContainedFragment() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
-			//	SC Factory & Decoder
+			// SC Factory & Decoder
 			EXIFactory scEXIFactory = exiFactory.clone();
 			scEXIFactory.setEXIBodyOnly(true);
 			scEXIFactory.setFragment(true);
@@ -185,12 +185,11 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 				throw new RuntimeException("[EXI] Unsupported EventType " + et
 						+ " in SelfContained Element");
 			}
+			
 		} else {
 			// 
-			scDecoder.decodeStartFragmentSelfContained();
+			scDecoder.decodeStartSelfContainedFragment();
 		}
-		
-
 	}
 
 	@Override
@@ -285,7 +284,6 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		}
 	}
 
-
 	@Override
 	public List<PrefixMapping> getPrefixDeclarations() {
 		if (scDecoder == null) {
@@ -294,7 +292,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 			return scDecoder.getPrefixDeclarations();
 		}
 	}
-	
+
 	@Override
 	public void decodeNamespaceDeclaration() throws EXIException, IOException {
 		if (scDecoder == null) {
@@ -373,17 +371,17 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		return (scDecoder == null ? super.getElementQName() : scDecoder
 				.getElementQName());
 	}
-	
+
 	@Override
 	public String getStartElementQNameAsString() {
-		return (scDecoder == null ? super.getStartElementQNameAsString() : scDecoder
-				.getStartElementQNameAsString());
+		return (scDecoder == null ? super.getStartElementQNameAsString()
+				: scDecoder.getStartElementQNameAsString());
 	}
-	
+
 	@Override
 	public String getEndElementQNameAsString() {
-		return (scDecoder == null ? super.getEndElementQNameAsString() : scDecoder
-				.getEndElementQNameAsString());
+		return (scDecoder == null ? super.getEndElementQNameAsString()
+				: scDecoder.getEndElementQNameAsString());
 	}
 
 	@Override
@@ -391,11 +389,11 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		return (scDecoder == null ? super.getAttributeQName() : scDecoder
 				.getAttributeQName());
 	}
-	
+
 	@Override
 	public String getAttributeQNameAsString() {
-		return (scDecoder == null ? super.getAttributeQNameAsString() : scDecoder
-				.getAttributeQNameAsString());
+		return (scDecoder == null ? super.getAttributeQNameAsString()
+				: scDecoder.getAttributeQNameAsString());
 	}
 
 	@Override
