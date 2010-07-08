@@ -74,10 +74,6 @@ public class BuiltIn {
 
 	public static final int MAX_BOUNDED_NBIT_INTEGER_RANGE = 4096;
 
-	enum IntegerType {
-		INT, LONG, BIG_INTEGER
-	}
-
 	/*
 	 * Binary
 	 */
@@ -186,7 +182,7 @@ public class BuiltIn {
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
 			throws EXIException {
 		Datatype datatype = null;
-		
+
 		// used for dtr map
 		QName schemaType = getSchemaType(std);
 
@@ -211,50 +207,55 @@ public class BuiltIn {
 						// TODO enumeration not type-castable !?
 						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
 								.getBaseType();
-						
+
 						Value[] values = new Value[enumList.getLength()];
-						
+
 						if (stdEnum.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
-							XSObjectList unionMemberTypes = stdEnum.getMemberTypes();
-							
+							XSObjectList unionMemberTypes = stdEnum
+									.getMemberTypes();
+
 							for (int k = 0; k < enumList.getLength(); k++) {
 								String sEnumValue = enumList.item(k);
-								
+
 								Datatype dtEnumValues = null;
 								boolean valid = false;
 								int j = 0;
-								
-								while(!valid && j< unionMemberTypes.getLength())  {
+
+								while (!valid
+										&& j < unionMemberTypes.getLength()) {
 									XSSimpleTypeDefinition stdEnumUnion = (XSSimpleTypeDefinition) unionMemberTypes
-									.item(j);
+											.item(j);
 									dtEnumValues = getDatatype(stdEnumUnion);
 									valid = dtEnumValues.isValid(sEnumValue);
-									
+
 									j++;
 								}
 
 								if (!valid) {
 									throw new RuntimeException(
 											"No valid enumeration value '"
-													+ sEnumValue + "', " + stdEnum);
+													+ sEnumValue + "', "
+													+ stdEnum);
 								}
 								values[k] = dtEnumValues.getValue();
 							}
 						} else {
 							Datatype dtEnumValues = getDatatype(stdEnum);
-							
+
 							for (int k = 0; k < enumList.getLength(); k++) {
 								String sEnumValue = enumList.item(k);
-								boolean valid = dtEnumValues.isValid(sEnumValue);
+								boolean valid = dtEnumValues
+										.isValid(sEnumValue);
 								if (!valid) {
 									throw new RuntimeException(
 											"No valid enumeration value '"
-													+ sEnumValue + "', " + stdEnum);
+													+ sEnumValue + "', "
+													+ stdEnum);
 								}
 								values[k] = dtEnumValues.getValue();
 							}
 						}
-						
+
 						datatype = new EnumerationDatatype(values, schemaType);
 					}
 					// else {
@@ -303,7 +304,7 @@ public class BuiltIn {
 
 		return exiDatatypeID;
 	}
-	
+
 	private static QName getSchemaType(XSSimpleTypeDefinition std) {
 		// used for dtr map
 		// Note: if type is anonymous the "closest" type is used as schema-type
@@ -312,46 +313,71 @@ public class BuiltIn {
 			XSTypeDefinition baseType = std;
 			do {
 				baseType = baseType.getBaseType();
-			}
-			while ( baseType == null || baseType.getAnonymous());
+			} while (baseType == null || baseType.getAnonymous());
 			uri = baseType.getNamespace();
 			name = baseType.getName();
 		} else {
 			uri = std.getNamespace();
 			name = std.getName();
 		}
-		
+
 		return new QName(uri, name);
 	}
 
-	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std, QName schemaType) {
+	private static Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
+			QName schemaType) {
 		/*
 		 * detect base integer type (e.g. int, long, BigInteger)
 		 */
-		IntegerType intType;
-
 		// walk up the hierarchy till we find xsd simple integer types
 		XSTypeDefinition xsdSTD = std;
 		while (!XMLConstants.W3C_XML_SCHEMA_NS_URI
 				.equals(xsdSTD.getNamespace())) {
 			xsdSTD = xsdSTD.getBaseType();
 		}
+
 		// set appropriate integer type
+		BuiltInType intType;
+		// big
 		if (xsdSTD.getName().equals("integer")
 				|| xsdSTD.getName().equals("nonPositiveInteger")
-				|| xsdSTD.getName().equals("negativeInteger")
-				|| xsdSTD.getName().equals("nonNegativeInteger")
+				|| xsdSTD.getName().equals("negativeInteger")) {
+			intType = BuiltInType.INTEGER_BIG;
+		}
+		// unsigned big
+		else if (xsdSTD.getName().equals("nonNegativeInteger")
 				|| xsdSTD.getName().equals("positiveInteger")) {
-			// BigInteger
-			intType = IntegerType.BIG_INTEGER;
-		} else if (xsdSTD.getName().equals("long")
-				|| xsdSTD.getName().equals("unsignedLong")
-				|| xsdSTD.getName().equals("unsignedInt")) {
-			// long
-			intType = IntegerType.LONG;
-		} else {
-			// int
-			intType = IntegerType.INT;
+			intType = BuiltInType.UNSIGNED_INTEGER_BIG;
+		}
+		// int 64
+		else if (xsdSTD.getName().equals("long")) {
+			intType = BuiltInType.INTEGER_64;
+		}
+		// unsigned int 64
+		else if (xsdSTD.getName().equals("unsignedLong")) {
+			intType = BuiltInType.UNSIGNED_INTEGER_64;
+		}
+		// int 32
+		else if (xsdSTD.getName().equals("int")) {
+			intType = BuiltInType.INTEGER_32;
+		}
+		// unsigned int 32
+		else if (xsdSTD.getName().equals("unsignedInt")) {
+			intType = BuiltInType.UNSIGNED_INTEGER_32;
+		}
+		// int 16
+		else if (xsdSTD.getName().equals("short")
+				|| xsdSTD.getName().equals("byte")) {
+			intType = BuiltInType.INTEGER_16;
+		}
+		// unsigned int 16
+		else if (xsdSTD.getName().equals("unsignedShort")
+				|| xsdSTD.getName().equals("unsignedByte")) {
+			intType = BuiltInType.UNSIGNED_INTEGER_16;
+		}
+		// ERROR ??
+		else {
+			throw new RuntimeException("Unexpected Integer Type: " + xsdSTD);
 		}
 
 		/*
@@ -390,21 +416,8 @@ public class BuiltIn {
 		/*
 		 * calculate bounded range;
 		 */
-		BigInteger boundedRange;
-		// max < 0
-		if (max.compareTo(BigInteger.ZERO) == -1) {
-			// max & min negative
-			boundedRange = min.abs().subtract(max.abs()).add(BigInteger.ONE);
-		} else {
-			// max positive
-			if (min.compareTo(BigInteger.ZERO) == -1) {
-				// min negative
-				boundedRange = max.add(min.abs()).add(BigInteger.ONE);
-			} else {
-				// min positive
-				boundedRange = max.abs().subtract(min).add(BigInteger.ONE);
-			}
-		}
+		// max - min + 1 --- e.g., [-1 .. -1] = 3 OR [2 .. 4] = 3 
+		BigInteger boundedRange = max.subtract(min).add(BigInteger.ONE);
 
 		/*
 		 * Set-up appropriate datatype
@@ -419,21 +432,34 @@ public class BuiltIn {
 			 * maxInclusiveXS2 and maxExclusiveXS2 facets, use n-bit Unsigned
 			 * Integer representation.
 			 */
-			if (intType == IntegerType.BIG_INTEGER) {
+			switch (intType) {
+			case UNSIGNED_INTEGER_BIG:
+			case INTEGER_BIG:
+			case UNSIGNED_INTEGER_64:
+				// big
 				assert (max.subtract(min).add(BigInteger.ONE)
 						.equals(boundedRange));
 				datatype = new NBitBigIntegerDatatype(min, max, schemaType);
-			} else if (intType == IntegerType.LONG) {
+				break;
+			case INTEGER_64:
+			case UNSIGNED_INTEGER_32:
+				// long
 				assert ((max.longValue() - min.longValue() + 1) == boundedRange
 						.intValue());
-				datatype = new NBitLongDatatype(min.longValue(),
-						max.longValue(), schemaType);
-			} else {
-				assert ((intType == IntegerType.INT));
+				datatype = new NBitLongDatatype(min.longValue(), max
+						.longValue(), schemaType);
+				break;
+			case INTEGER_32:
+			case UNSIGNED_INTEGER_16:
+			case INTEGER_16:
+				// int
 				assert ((max.intValue() - min.intValue() + 1) == boundedRange
 						.intValue());
-				datatype = new NBitIntegerDatatype(min.intValue(),
-						max.intValue(), schemaType);
+				datatype = new NBitIntegerDatatype(min.intValue(), max
+						.intValue(), schemaType);
+				break;
+			default:
+				throw new RuntimeException("Unexpected n-Bit Integer Type: " + intType);
 			}
 		} else if (min.signum() >= 0) {
 			/*
@@ -445,25 +471,55 @@ public class BuiltIn {
 			 * minExclusiveXS2 facet is specified with a value equal to or
 			 * greater than -1.
 			 */
-			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new UnsignedBigIntegerDatatype(schemaType);
-			} else if (intType == IntegerType.LONG) {
-				datatype = new UnsignedLongDatatype(schemaType);
-			} else {
-				assert ((intType == IntegerType.INT));
-				datatype = new UnsignedIntegerDatatype(schemaType);
+			
+			// update int-type according to facet restrictions that cause val >= 0
+			if (intType == BuiltInType.INTEGER_BIG)  {
+				intType = BuiltInType.UNSIGNED_INTEGER_BIG;
+			} else if (intType == BuiltInType.INTEGER_64) {
+				intType = BuiltInType.UNSIGNED_INTEGER_64;
+			} else if (intType == BuiltInType.INTEGER_32) {
+				intType = BuiltInType.UNSIGNED_INTEGER_32;
+			} else if (intType == BuiltInType.INTEGER_16) {
+				intType = BuiltInType.UNSIGNED_INTEGER_16;
+			}
+			
+			switch (intType) {
+			case UNSIGNED_INTEGER_BIG:
+			case UNSIGNED_INTEGER_64:
+				// big
+				datatype = new UnsignedBigIntegerDatatype(intType, schemaType);
+				break;
+			case UNSIGNED_INTEGER_32:
+				// long
+				datatype = new UnsignedLongDatatype(intType, schemaType);
+				break;
+			case UNSIGNED_INTEGER_16:
+				// int
+				datatype = new UnsignedIntegerDatatype(intType, schemaType);
+				break;
+			default:
+				throw new RuntimeException("Unexpected Unsigned Integer Type: " + intType);
 			}
 		} else {
 			/*
 			 * Otherwise, use Integer representation.
 			 */
-			if (intType == IntegerType.BIG_INTEGER) {
-				datatype = new BigIntegerDatatype(schemaType);
-			} else if (intType == IntegerType.LONG) {
-				datatype = new LongDatatype(schemaType);
-			} else {
-				assert ((intType == IntegerType.INT));
-				datatype = new IntegerDatatype(schemaType);
+			switch (intType) {
+			case INTEGER_BIG:
+				// big
+				datatype = new BigIntegerDatatype(intType, schemaType);
+				break;
+			case INTEGER_64:
+				// long
+				datatype = new LongDatatype(intType, schemaType);
+				break;
+			case INTEGER_32:
+			case INTEGER_16:
+				// int
+				datatype = new IntegerDatatype(intType, schemaType);
+				break;
+			default:
+				throw new RuntimeException("Unexpected Integer Type: " + intType);
 			}
 		}
 
@@ -474,10 +530,10 @@ public class BuiltIn {
 		return new QName(type.getNamespace(), type.getName());
 	}
 
-	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std, QName schemaType)
-			throws EXIException {
+	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std,
+			QName schemaType) throws EXIException {
 		Datatype datatype;
-		
+
 		// 
 		QName schemaDatatype = getXMLSchemaDatatype(std);
 
@@ -495,17 +551,20 @@ public class BuiltIn {
 			QName primitive = BuiltIn.getPrimitive(std);
 
 			if (XSD_DATETIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.dateTime, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.dateTime,
+						schemaType);
 			} else if (XSD_TIME.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.time, schemaType);
 			} else if (XSD_DATE.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.date, schemaType);
 			} else if (XSD_GYEARMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gYearMonth, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.gYearMonth,
+						schemaType);
 			} else if (XSD_GYEAR.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.gYear, schemaType);
 			} else if (XSD_GMONTHDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gMonthDay, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.gMonthDay,
+						schemaType);
 			} else if (XSD_GDAY.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.gDay, schemaType);
 			} else if (XSD_GMONTH.equals(primitive)) {
@@ -543,7 +602,8 @@ public class BuiltIn {
 						// restricted char set
 						RestrictedCharacterSet rcs = new CodePointCharacterSet(
 								re.getCodePoints());
-						datatype = new RestrictedCharacterSetDatatype(rcs, schemaType);
+						datatype = new RestrictedCharacterSetDatatype(rcs,
+								schemaType);
 					}
 				}
 			} else {

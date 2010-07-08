@@ -52,7 +52,7 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 	protected HugeIntegerValue lastValidValue;
 
 	public NBitBigIntegerDatatype(BigInteger lowerBound, BigInteger upperBound, QName schemaType) {
-		super(BuiltInType.NBIT_BIG_INTEGER, schemaType);
+		super(BuiltInType.NBIT_INTEGER_BIG, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
 		// lower bound

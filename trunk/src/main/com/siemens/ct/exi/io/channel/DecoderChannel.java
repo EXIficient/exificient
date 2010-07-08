@@ -53,6 +53,12 @@ public interface DecoderChannel {
 	 */
 	public void align() throws IOException;
 	
+    /**
+     * Skips over and discards <code>n</code> bytes of data from this channel.
+     * @throws IOException
+     */
+    public void skip(int n) throws IOException;
+	
 	/**
 	 * Decodes and returns an n-bit unsigned integer.
 	 */

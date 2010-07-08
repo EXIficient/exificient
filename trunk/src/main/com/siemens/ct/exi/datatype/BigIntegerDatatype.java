@@ -44,8 +44,9 @@ public class BigIntegerDatatype extends AbstractDatatype {
 	
 	protected HugeIntegerValue lastInteger;
 	
-	public BigIntegerDatatype(QName schemaType) {
-		super(BuiltInType.BIG_INTEGER, schemaType);
+	public BigIntegerDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.INTEGER_BIG);
 		rcs = new XSDIntegerCharacterSet();
 	}
 	

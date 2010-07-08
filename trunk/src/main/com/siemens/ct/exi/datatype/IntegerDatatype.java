@@ -44,8 +44,9 @@ public class IntegerDatatype extends AbstractDatatype {
 
 	private IntegerValue lastInteger;
 
-	public IntegerDatatype(QName schemaType) {
-		super(BuiltInType.INTEGER, schemaType);
+	public IntegerDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.INTEGER_32 || builtInType == BuiltInType.INTEGER_16);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 

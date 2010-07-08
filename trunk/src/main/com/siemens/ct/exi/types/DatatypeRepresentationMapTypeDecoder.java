@@ -123,7 +123,7 @@ public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder {
 				} else if ("double".equals(localPart)) {
 					datatype = new FloatDatatype(BuiltInType.DOUBLE, null);
 				} else if ("integer".equals(localPart)) {
-					datatype = new BigIntegerDatatype(null);
+					datatype = new BigIntegerDatatype(BuiltInType.INTEGER_BIG, null);
 				} else if ("string".equals(localPart)) {
 					datatype = new StringDatatype(null);
 				} else {
