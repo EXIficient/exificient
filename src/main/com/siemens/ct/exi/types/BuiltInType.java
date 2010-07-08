@@ -19,7 +19,14 @@
 package com.siemens.ct.exi.types;
 
 /**
- * TODO Description
+ * EXI has a list built-in EXI datatype representations used for representing
+ * content items in EXI stream (see
+ * http://www.w3.org/TR/exi/#encodingDatatypes).
+ * 
+ * <p>
+ * Additionally some built-in types are augmented with information necessary for
+ * machine processing (e.g., number of bits).
+ * <p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -37,11 +44,11 @@ public enum BuiltInType {
 	/* Float */
 	FLOAT, DOUBLE,
 	/* N-Bit Integer */
-	NBIT_INTEGER, NBIT_LONG, NBIT_BIG_INTEGER,
+	NBIT_INTEGER_32, NBIT_INTEGER_64, NBIT_INTEGER_BIG,
 	/* Unsigned Integer */
-	UNSIGNED_INTEGER, UNSIGNED_LONG, UNSIGNED_BIG_INTEGER,
+	UNSIGNED_INTEGER_16, UNSIGNED_INTEGER_32, UNSIGNED_INTEGER_64, UNSIGNED_INTEGER_BIG,
 	/* (Signed) Integer */
-	INTEGER, LONG, BIG_INTEGER,
+	INTEGER_16, INTEGER_32, INTEGER_64, INTEGER_BIG,
 	/* Datetime */
 	DATETIME,
 	/* String */

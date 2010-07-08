@@ -44,8 +44,9 @@ public class LongDatatype extends AbstractDatatype {
 	
 	private LongValue lastLong;
 	
-	public LongDatatype(QName schemaType) {
-		super(BuiltInType.LONG, schemaType);
+	public LongDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.INTEGER_64);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 	

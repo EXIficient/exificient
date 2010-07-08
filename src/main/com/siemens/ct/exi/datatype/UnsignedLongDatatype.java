@@ -44,8 +44,9 @@ public class UnsignedLongDatatype extends AbstractDatatype {
 	
 	private LongValue lastUnsignedLong;
 	
-	public UnsignedLongDatatype(QName schemaType) {
-		super(BuiltInType.UNSIGNED_LONG, schemaType);
+	public UnsignedLongDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_32);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 	

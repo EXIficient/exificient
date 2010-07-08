@@ -49,7 +49,7 @@ public class NBitLongDatatype extends AbstractDatatype {
 	protected LongValue validValue;
 
 	public NBitLongDatatype(long lowerBound, long upperBound, QName schemaType) {
-		super(BuiltInType.NBIT_LONG, schemaType);
+		super(BuiltInType.NBIT_INTEGER_64, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
 		this.lowerBound = lowerBound;

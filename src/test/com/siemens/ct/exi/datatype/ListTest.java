@@ -33,7 +33,7 @@ public class ListTest extends AbstractTestCase {
 
 	public void testListInteger1() throws IOException {
 		String s = "100 34 56 -23 1567";
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(BuiltInType.INTEGER_32, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);

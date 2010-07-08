@@ -88,6 +88,26 @@ final public class BitInputStream {
 			capacity = 0;
 		}
 	}
+	
+	/**
+	 * Skip n bytes
+	 * 
+	 * @param n
+	 * @throws IOException
+	 */
+	public void skip(int n) throws IOException {
+		if (capacity == 0) {
+			//	aligned
+			while(n != 0) {
+				n -= istream.skip(n);
+			}
+		} else {
+			// not aligned, grrr
+			for(int i=0; i<n; n++) {
+				readBits(8);
+			}
+		}
+	}
 
 	/**
 	 * Return next bit from underlying stream.

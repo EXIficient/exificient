@@ -50,7 +50,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	protected final int numberOfBits4Range;
 
 	public NBitIntegerDatatype(int lowerBound, int upperBound, QName schemaType) {
-		super(BuiltInType.NBIT_INTEGER, schemaType);
+		super(BuiltInType.NBIT_INTEGER_32, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
 		this.lowerBound = lowerBound;

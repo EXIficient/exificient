@@ -41,40 +41,40 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class UnsignedBigIntegerDatatype extends AbstractDatatype {
-	
+
 	private HugeIntegerValue lastUnsignedInteger;
-	
-	public UnsignedBigIntegerDatatype(QName schemaType) {
-		super(BuiltInType.UNSIGNED_BIG_INTEGER, schemaType);
+
+	public UnsignedBigIntegerDatatype(BuiltInType builtInType, QName schemaType) {
+		super(builtInType, schemaType);
+		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_BIG || builtInType == BuiltInType.UNSIGNED_INTEGER_64);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		lastUnsignedInteger = HugeIntegerValue.parse(value);
 		return (lastUnsignedInteger != null && lastUnsignedInteger.isPositive());
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof HugeIntegerValue) {
 			lastUnsignedInteger = ((HugeIntegerValue) value);
-			return (lastUnsignedInteger.isPositive());			
+			return (lastUnsignedInteger.isPositive());
 		} else {
 			return false;
 		}
 	}
-	
+
 	public Value getValue() {
 		return lastUnsignedInteger;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeUnsignedHugeInteger(lastUnsignedInteger);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeUnsignedHugeIntegerValue();
 	}
 }

@@ -50,6 +50,12 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public void align() throws IOException {
 	}
 	
+	public void skip(int n) throws IOException {
+		while(n != 0) {
+			n -= is.skip(n);
+		}
+	}
+	
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the byte

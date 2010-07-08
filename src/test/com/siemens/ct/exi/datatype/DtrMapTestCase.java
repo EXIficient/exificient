@@ -47,7 +47,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		QName schemaType = new QName("", "Integer");
 
-		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER_32);
 		assertTrue(dt.getSchemaType().equals(schemaType));
 
 		assertTrue(dt.isValid("+10"));
@@ -82,7 +82,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		QName schemaType = new QName("", "Integer");
 
-		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER_32);
 		assertTrue(dt.getSchemaType().equals(schemaType));
 
 		assertTrue(dt.isValid("+10"));
