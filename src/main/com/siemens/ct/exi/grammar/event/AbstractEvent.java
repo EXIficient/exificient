@@ -18,14 +18,12 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public abstract class AbstractEvent implements Event {

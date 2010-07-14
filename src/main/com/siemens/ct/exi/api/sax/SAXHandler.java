@@ -1,14 +1,19 @@
 /*
- * EXI Testing Task Force Measurement Suite: http://www.w3.org/XML/EXI/
+ * Copyright (C) 2007-2010 Siemens AG
  *
- * Copyright © [2006] World Wide Web Consortium, (Massachusetts Institute of
- * Technology, European Research Consortium for Informatics and Mathematics,
- * Keio University). All Rights Reserved. This work is distributed under the
- * W3C® Software License [1] in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.
+ * This program and its interfaces are free software;
+ * you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation.
  *
- * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package com.siemens.ct.exi.api.sax;

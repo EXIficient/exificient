@@ -21,12 +21,11 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.grammar.event.Event;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081008
+ * @version 0.5
  */
 
 public interface SchemaInformedRule extends Rule {

@@ -70,7 +70,7 @@ import com.siemens.ct.exi.types.TypedTypeEncoder;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090331
+ * @version 0.5
  */
 
 public class DefaultEXIFactory implements EXIFactory {
@@ -83,7 +83,6 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected QName[] dtrMapTypes;
 	protected QName[] dtrMapRepresentations;
-	// protected DatatypeRepresentation[] userDefinedDatatypeRepresentations;
 
 	protected QName[] scElements;
 

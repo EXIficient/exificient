@@ -20,6 +20,14 @@ package com.siemens.ct.exi.values;
 
 import com.siemens.ct.exi.util.MethodsBag;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class LongValue extends AbstractIntegerValue {
 
 	protected final long val;

@@ -26,6 +26,14 @@ import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.DateTimeType;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class DateTimeValue extends AbstractValue {
 
 	public static final int NUMBER_BITS_MONTHDAY = 9;

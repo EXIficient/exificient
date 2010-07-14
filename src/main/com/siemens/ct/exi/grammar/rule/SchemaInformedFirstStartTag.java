@@ -23,12 +23,11 @@ import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.2009101209
+ * @version 0.5
  */
 
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag {

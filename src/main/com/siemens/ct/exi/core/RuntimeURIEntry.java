@@ -25,37 +25,44 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class RuntimeURIEntry {
-	
+
 	public final String namespaceURI;
 	public final int id;
 
 	protected final List<QName> localNames;
 	protected final Map<String, Integer> localNameIDs;
-	
+
 	protected final List<String> prefixes;
 	protected final Map<String, Integer> prefixIDs;
-	
+
 	public RuntimeURIEntry(String namespaceURI, int id) {
 		this.namespaceURI = namespaceURI;
 		this.id = id;
-		
+
 		localNames = new ArrayList<QName>();
 		localNameIDs = new HashMap<String, Integer>();
-		
+
 		prefixes = new ArrayList<String>();
 		prefixIDs = new HashMap<String, Integer>();
 	}
-	
-	
+
 	public Integer getLocalNameID(final String localName) {
 		return localNameIDs.get(localName);
 	}
-	
+
 	public QName getNameContext(final int localNameID) {
 		return localNames.get(localNameID);
 	}
-	
+
 	/*
 	 * LocalNames
 	 */
@@ -65,9 +72,9 @@ public class RuntimeURIEntry {
 		localNames.add(qname);
 		return qname;
 	}
-	
+
 	public QName removeLocalName(final int localNameID) {
-		QName qname =localNames.remove(localNameID);
+		QName qname = localNames.remove(localNameID);
 		localNameIDs.remove(qname.getLocalPart());
 		return qname;
 	}
@@ -75,7 +82,7 @@ public class RuntimeURIEntry {
 	public int getLocalNameSize() {
 		return localNames.size();
 	}
-	
+
 	/*
 	 * Prefixes
 	 */
@@ -85,29 +92,29 @@ public class RuntimeURIEntry {
 		prefixIDs.put(prefix, prefixID);
 		prefixes.add(prefix);
 	}
-	
+
 	public String removePrefix(final int prefixID) {
-		String pfx =prefixes.remove(prefixID);
+		String pfx = prefixes.remove(prefixID);
 		prefixIDs.remove(pfx);
 		return pfx;
 	}
-	
+
 	public List<String> getPrefixes() {
 		return this.prefixes;
 	}
-	
+
 	public Integer getPrefixID(String prefix) {
 		return prefixIDs.get(prefix);
 	}
-	
+
 	public String getPrefix(final int prefixID) {
 		return prefixes.get(prefixID);
 	}
-	
+
 	public int getPrefixSize() {
 		return prefixes.size();
 	}
-	
+
 	@Override
 	public String toString() {
 		return namespaceURI + "(" + id + ")";

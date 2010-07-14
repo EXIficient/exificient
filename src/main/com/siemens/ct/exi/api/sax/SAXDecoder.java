@@ -47,12 +47,12 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
+ * Parses EXI stream to SAX events.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class SAXDecoder implements XMLReader {

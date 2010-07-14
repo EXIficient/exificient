@@ -36,12 +36,11 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090423
+ * @version 0.5
  */
 
 public class SchemaLessGrammar extends AbstractGrammar {

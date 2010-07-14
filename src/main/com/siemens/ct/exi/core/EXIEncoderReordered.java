@@ -20,6 +20,15 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
+/**
+ * EXI encoder for (pre-)compression streams.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class EXIEncoderReordered extends AbstractEXIEncoder {
 
 	protected DeflaterOutputStream deflater;

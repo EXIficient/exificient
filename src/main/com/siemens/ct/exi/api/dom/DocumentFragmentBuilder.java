@@ -30,6 +30,15 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+/**
+ * Builds a <code>DocumentFragment</code> for a given EXI stream.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class DocumentFragmentBuilder {
 
 	protected DocumentBuilder docBuilder;

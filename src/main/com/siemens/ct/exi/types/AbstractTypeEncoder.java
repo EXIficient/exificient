@@ -21,12 +21,11 @@ package com.siemens.ct.exi.types;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements

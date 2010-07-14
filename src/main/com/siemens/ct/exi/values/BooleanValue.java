@@ -20,6 +20,14 @@ package com.siemens.ct.exi.values;
 
 import com.siemens.ct.exi.Constants;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class BooleanValue extends AbstractValue {
 
 	protected final boolean bool;

@@ -29,7 +29,8 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
- * Encoder for SELF_CONTAINED elements
+ * EXI encoder for bit or byte-aligned streams and possible SELF_CONTAINED
+ * elements.
  * 
  * <p>
  * All productions of the form LeftHandSide : SC Fragment are evaluated as
@@ -58,7 +59,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
@@ -113,7 +114,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			scEncoder.encodeEndDocument();
 		}
 	}
-	
+
 	protected void encodeEndSC() throws EXIException, IOException {
 		// end SC fragment
 		scEncoder.encodeEndDocument();
@@ -123,9 +124,10 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		// indicate that SC portion is over
 		scEncoder = null;
 		super.popElement();
-		
+
 		// NOTE: NO outer EE
-		// Spec says "Evaluate the sequence of events (SD, SE(qname), content, ED) .."
+		// Spec says
+		// "Evaluate the sequence of events (SD, SE(qname), content, ED) .."
 		// e.g., "sc" is self-Contained element
 		// Sequence: <sc>foo</sc>
 		// --> SE(sc) --> SC --> SD --> SE(sc) --> CH --> EE --> ED
@@ -136,21 +138,23 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException {
 		QName qname;
-		
+
 		// business as usual
 		if (scEncoder == null) {
 			super.encodeStartElement(uri, localName, prefix);
 			qname = elementContext.qname;
-			
+
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
-				int ec2 = currentRule.get2ndLevelEventCode(EventType.SELF_CONTAINED, fidelityOptions);
+				int ec2 = currentRule.get2ndLevelEventCode(
+						EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
-				
-				// Skip to the next byte-aligned boundary in the stream if it is not
+
+				// Skip to the next byte-aligned boundary in the stream if it is
+				// not
 				// already at such a boundary
 				this.channel.align();
-				
+
 				// start SC element
 				this.encodeStartSC(uri, localName, prefix);
 			}
@@ -159,10 +163,10 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			qname = scEncoder.elementContext.qname;
 		}
 	}
-	
+
 	protected void encodeStartSC(String uri, String localName, String prefix)
-	throws EXIException, IOException {
-		//	SC Factory & Encoder
+			throws EXIException, IOException {
+		// SC Factory & Encoder
 		EXIFactory scEXIFactory = exiFactory.clone();
 		scEXIFactory.setEXIBodyOnly(true);
 		scEXIFactory.setFragment(true);
@@ -178,9 +182,9 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		scEncoder.encodeStartElementNoSC(uri, localName, prefix);
 		// from now on events are forwarded to the scEncoder
 	}
-	
-	protected void encodeStartElementNoSC(String uri, String localName, String prefix)
-	throws EXIException, IOException {
+
+	protected void encodeStartElementNoSC(String uri, String localName,
+			String prefix) throws EXIException, IOException {
 		super.encodeStartElement(uri, localName, prefix);
 	}
 
@@ -189,11 +193,11 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		if (scEncoder == null) {
 			super.encodeEndElement();
 		} else {
-			//	fetch qname before EE
+			// fetch qname before EE
 			QName qname = scEncoder.elementContext.qname;
 			// EE
 			scEncoder.encodeEndElement();
-			if ( getElementContextQName().equals(qname) ) {
+			if (getElementContextQName().equals(qname)) {
 				this.encodeEndSC();
 			}
 		}
@@ -220,7 +224,8 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	}
 
 	@Override
-	public void encodeXsiNil(String value, String pfx) throws EXIException, IOException {
+	public void encodeXsiNil(String value, String pfx) throws EXIException,
+			IOException {
 		if (scEncoder == null) {
 			super.encodeXsiNil(value, pfx);
 		} else {
@@ -229,8 +234,8 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 	}
 
 	@Override
-	public void encodeXsiType(String xsiTypeRaw, String pfx) throws EXIException,
-			IOException {
+	public void encodeXsiType(String xsiTypeRaw, String pfx)
+			throws EXIException, IOException {
 		if (scEncoder == null) {
 			super.encodeXsiType(xsiTypeRaw, pfx);
 		} else {
@@ -276,7 +281,7 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			scEncoder.encodeComment(ch, start, length);
 		}
 	}
-	
+
 	@Override
 	public void encodeProcessingInstruction(String target, String data)
 			throws EXIException, IOException {

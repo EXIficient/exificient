@@ -22,6 +22,14 @@ import java.util.List;
 
 import com.siemens.ct.exi.Constants;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class ListValue extends AbstractValue {
 	
 	protected final List<Value> values;

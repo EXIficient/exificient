@@ -31,12 +31,13 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
+ * EXI decoder for bit or byte-aligned streams and possible self-contained
+ * elements.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
@@ -185,7 +186,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 				throw new RuntimeException("[EXI] Unsupported EventType " + et
 						+ " in SelfContained Element");
 			}
-			
+
 		} else {
 			// 
 			scDecoder.decodeStartSelfContainedFragment();

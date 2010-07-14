@@ -24,12 +24,11 @@ import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081009
+ * @version 0.5
  */
 
 /*
@@ -68,6 +67,10 @@ public class SchemaInformedStartTag extends
 	@Override
 	public void setFirstElementRule() {
 		this.isFirstElementRule = true;
+	}
+	
+	public boolean isFirstElementRule() {
+		return isFirstElementRule;
 	}
 	
 //	public boolean isFirstElementRule() {

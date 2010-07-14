@@ -23,12 +23,11 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081103
+ * @version 0.5
  */
 
 public class StartElement extends AbstractEvent {

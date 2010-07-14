@@ -30,12 +30,12 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
- * TODO Description
+ * Serializes SAX events (also entity references and such) to EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class SAXEncoderExtendedHandler extends SAXEncoder {
@@ -50,7 +50,8 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	protected String docTypeText;
 	protected boolean noEntityReference;
 
-	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os) throws EXIException {
+	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os)
+			throws EXIException {
 		super(factory, os);
 
 		preserveDTD = factory.getFidelityOptions().isFidelityEnabled(
@@ -102,12 +103,14 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void startCDATA() throws SAXException {
 		// <![CDATA[
-		super.characters(Constants.CDATA_START_ARRAY, 0, Constants.CDATA_START_ARRAY.length);
+		super.characters(Constants.CDATA_START_ARRAY, 0,
+				Constants.CDATA_START_ARRAY.length);
 	}
 
 	public void endCDATA() throws SAXException {
 		// ]]>
-		super.characters(Constants.CDATA_END_ARRAY, 0, Constants.CDATA_END_ARRAY.length);
+		super.characters(Constants.CDATA_END_ARRAY, 0,
+				Constants.CDATA_END_ARRAY.length);
 	}
 
 	public void startDTD(String name, String publicId, String systemId)

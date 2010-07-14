@@ -22,12 +22,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081007
+ * @version 0.5
  */
 
 final public class ByteEncoderChannel extends AbstractEncoderChannel implements

@@ -44,12 +44,11 @@ import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081105
+ * @version 0.5
  */
 
 public class DatatypeRepresentationMapTypeDecoder extends AbstractTypeDecoder {

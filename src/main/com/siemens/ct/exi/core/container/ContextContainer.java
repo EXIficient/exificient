@@ -23,6 +23,14 @@ import java.util.List;
 
 import com.siemens.ct.exi.datatype.Datatype;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class ContextContainer {
 	
 	final List<String> values;

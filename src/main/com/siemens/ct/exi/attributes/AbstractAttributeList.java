@@ -35,16 +35,7 @@ import com.siemens.ct.exi.FidelityOptions;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090331
- */
-
-/*
- * Namespace (NS) and attribute (AT) events are encoded in a specific order
- * following the associated start element (SE) event. Namespace (NS) events are
- * encoded first, in document order, followed by the AT(xsi:type) event if
- * present, followed by the rest of the attribute (AT) events. When schemas are
- * used, attribute events occur in lexical order sorted first by qname localName
- * then by qname uri.
+ * @version 0.5
  */
 
 public abstract class AbstractAttributeList implements AttributeList {

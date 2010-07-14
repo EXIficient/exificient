@@ -26,12 +26,12 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
- * TODO Description
+ * EXI decoder for bit or byte-aligned streams.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class EXIDecoderInOrder extends AbstractEXIDecoder {

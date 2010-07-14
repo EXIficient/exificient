@@ -23,12 +23,11 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public abstract class AbstractDatatypeEvent extends AbstractEvent implements

@@ -22,6 +22,14 @@ import java.math.BigInteger;
 
 import com.siemens.ct.exi.util.MethodsBag;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public final class HugeIntegerValue extends AbstractIntegerValue implements
 		Comparable<HugeIntegerValue> {
 

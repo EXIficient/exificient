@@ -40,12 +40,12 @@ import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
- * TODO Description
+ * Serializes an Document/DocumentFragment to an EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class DOMWriter {

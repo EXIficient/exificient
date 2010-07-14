@@ -42,6 +42,15 @@ import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
+
 public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		EXIEncoder {
 

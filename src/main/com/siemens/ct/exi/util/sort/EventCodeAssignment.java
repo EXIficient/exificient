@@ -25,9 +25,15 @@ import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Event;
 
-/*
+/**
  * Helper Class for sorting EXI events 
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
  */
+
 public class EventCodeAssignment implements Comparator<Event>, Serializable {
 
 	private static final long serialVersionUID = 7616132143378329230L;
