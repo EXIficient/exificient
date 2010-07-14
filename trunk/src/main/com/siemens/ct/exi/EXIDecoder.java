@@ -58,7 +58,7 @@ public interface EXIDecoder {
 	 * 
 	 * @return <code>EventType</code> for next EXI event
 	 */
-	public EventType next() throws EXIException;
+	public EventType next() throws EXIException, IOException;
 
 	/**
 	 * Initializes the beginning of a set of XML events
@@ -313,7 +313,9 @@ public interface EXIDecoder {
 	 * Returns qualified name for end element name as String (the one previously
 	 * created for SE event)
 	 * 
-	 * <p>see getStartElementQNameAsString()</p>
+	 * <p>
+	 * see getStartElementQNameAsString()
+	 * </p>
 	 * 
 	 * @return <code>String</code> for qname
 	 */
@@ -395,13 +397,20 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for comment text
 	 */
 	public char[] getComment();
-	
+
 	/**
 	 * Prefix declarations for current context (element)
 	 * 
-	 * @return list or null if no mappings are available 
+	 * @return list or null if no mappings are available
 	 */
 	public List<PrefixMapping> getPrefixDeclarations();
+
+	/**
+	 * Recently undeclared prefix declarations for popped context (element)
+	 * 
+	 * @return list or null if no mappings are available
+	 */
+	public List<PrefixMapping> getUndeclaredPrefixDeclarations();
 
 	/**
 	 * Provides processing instructions target.

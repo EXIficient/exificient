@@ -88,7 +88,7 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public EventType next() throws EXIException {
+	public EventType next() throws EXIException, IOException {
 		return (scDecoder == null ? super.next() : scDecoder.next());
 	}
 

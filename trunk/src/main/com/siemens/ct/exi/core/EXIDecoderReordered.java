@@ -645,7 +645,8 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 			// read next block
 			setupNewBlock();
 		}
-		return (stillNoEndOfDocument || eventTypes.size() > (eventTypeIndex + 1));
+		// return (stillNoEndOfDocument || eventTypes.size() > (eventTypeIndex + 1));
+		return (stillNoEndOfDocument || eventTypes.size() > eventTypeIndex);
 	}
 
 	public EventType next() throws EXIException {

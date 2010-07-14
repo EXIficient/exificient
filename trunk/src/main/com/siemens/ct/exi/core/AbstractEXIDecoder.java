@@ -85,6 +85,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 	// current values
 	protected QName elementQName;
+	protected String elementSQName;
 	protected String elementPrefix;
 	protected QName attributeQName;
 	protected String attributePrefix;
@@ -100,6 +101,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	protected String nsPrefix;
 	protected String piTarget;
 	protected String piData;
+	
+	//
+	List<PrefixMapping> undeclaredPrefixes;
 
 	public AbstractEXIDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
@@ -203,33 +207,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				}
 			}
 		}
-
-		// if (openElement) {
-		// switch (nextEventType) {
-		// /* ELEMENT CONTENT EVENTS */
-		// case START_ELEMENT:
-		// case START_ELEMENT_NS:
-		// case START_ELEMENT_GENERIC:
-		// case START_ELEMENT_GENERIC_UNDECLARED:
-		// case END_ELEMENT:
-		// case END_ELEMENT_UNDECLARED:
-		// case CHARACTERS:
-		// case CHARACTERS_GENERIC:
-		// case CHARACTERS_GENERIC_UNDECLARED:
-		// case DOC_TYPE:
-		// case ENTITY_REFERENCE:
-		// case COMMENT:
-		// case PROCESSING_INSTRUCTION:
-		// // handle pfx mapping for element
-		// checkPrefixMapping(elementPrefix, elementQName.getNamespaceURI());
-		// openElement = false;
-		// }
-		// }
-
-		// if (nextEventType != EventType.NAMESPACE_DECLARATION && nextEventType
-		// != EventType.START_DOCUMENT ) {
-		// finalizeOpenElement();
-		// }
 	}
 
 	public List<PrefixMapping> getPrefixDeclarations() {
@@ -240,19 +217,10 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 
 		return elementContext.prefixDeclarations;
 	}
-
-	// boolean openElement;
-	//	
-	// protected void finalizeOpenElement() {
-	// // qname as string
-	// if (openElement) {
-	// String sqname = getQualifiedName(elementQName,
-	// elementPrefix);
-	// setQNameAsString(sqname);
-	//			
-	// openElement = false;
-	// }
-	// }
+	
+	public List<PrefixMapping> getUndeclaredPrefixDeclarations() {
+		return this.undeclaredPrefixes;
+	}
 
 	protected void updateInvalidValueAttribute() throws EXIException {
 		SchemaInformedRule sir = (SchemaInformedRule) currentRule;
@@ -485,8 +453,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	protected final void undeclarePrefixes() {
-		if (elementContext.prefixDeclarations != null) {
-			for (PrefixMapping pm : elementContext.prefixDeclarations) {
+		undeclaredPrefixes = elementContext.prefixDeclarations;
+		if (undeclaredPrefixes != null) {
+			for (PrefixMapping pm : undeclaredPrefixes) {
 				uriToPrefix.remove(pm.uri);
 			}
 		}
@@ -675,6 +644,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public void decodeEndElement() throws EXIException, IOException {
 		// save ee information before popping context
 		elementQName = elementContext.qname;
+		elementSQName = elementContext.sqname;
 		// NS
 		undeclarePrefixes();
 		// pop element
@@ -684,6 +654,7 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	public void decodeEndElementUndeclared() throws EXIException, IOException {
 		// save ee information before popping context
 		elementQName = elementContext.qname;
+		elementSQName = elementContext.sqname;
 		// NS
 		undeclarePrefixes();
 		// learn end-element event ?
@@ -736,7 +707,8 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	}
 
 	public String getEndElementQNameAsString() {
-		return getQNameAsString();
+		return elementSQName;
+		// return getQNameAsString();
 	}
 
 	public QName getAttributeQName() {
