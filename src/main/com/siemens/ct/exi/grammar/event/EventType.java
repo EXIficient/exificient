@@ -91,7 +91,7 @@ public enum EventType {
 	CHARACTERS_GENERIC, // schema-declared
 	CHARACTERS_GENERIC_UNDECLARED, // schema-undeclared
 	/*
-	 * 	END_DOCUMENT
+	 * END_DOCUMENT
 	 */
 	END_DOCUMENT,
 	/*
@@ -102,5 +102,5 @@ public enum EventType {
 	SELF_CONTAINED, // start of self-contained fragment
 	ENTITY_REFERENCE, // entity reference
 	COMMENT, // 
-	PROCESSING_INSTRUCTION,
+	PROCESSING_INSTRUCTION
 }

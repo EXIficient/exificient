@@ -147,7 +147,8 @@ public class SAXDecoder implements XMLReader {
 		if ("http://xml.org/sax/features/namespaces".equals(name)) {
 			/* EXI needs namespaces to work properly */
 			namespaces = value;
-		} else if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
+		} else if ("http://xml.org/sax/features/namespace-prefixes"
+				.equals(name)) {
 			namespacePrefixes = value;
 		}
 	}
@@ -192,9 +193,9 @@ public class SAXDecoder implements XMLReader {
 			if (contentHandler == null) {
 				throw new SAXException("No content handler set!");
 			}
-			
-//			System.out.println("namespaces:" + namespaces);
-//			System.out.println("namespacePrefixes: " + namespacePrefixes);
+
+			// System.out.println("namespaces:" + namespaces);
+			// System.out.println("namespacePrefixes: " + namespacePrefixes);
 
 			// init
 			initForEachRun();
@@ -210,17 +211,11 @@ public class SAXDecoder implements XMLReader {
 	protected void parseEXIEvents() throws IOException, EXIException,
 			SAXException {
 
-		// Start "Document"
-		boolean hasNext = decoder.hasNext();
-		assert (hasNext);
-		EventType eventType = decoder.next();
-		assert (eventType == EventType.START_DOCUMENT);
-		decoder.decodeStartDocument();
-		contentHandler.startDocument();
-		
+		EventType eventType;
+
 		String eeQNameAsString = Constants.EMPTY_STRING;
 		List<PrefixMapping> eePrefixes = null;
-		
+
 		boolean deferredStartElement = false;
 
 		while (decoder.hasNext()) {
@@ -249,6 +244,15 @@ public class SAXDecoder implements XMLReader {
 			}
 
 			switch (eventType) {
+			/* DOCUMENT */
+			case START_DOCUMENT:
+				decoder.decodeStartDocument();
+				contentHandler.startDocument();
+				break;
+			case END_DOCUMENT:
+				decoder.decodeEndDocument();
+				contentHandler.endDocument();
+				break;
 			/* ATTRIBUTES */
 			case ATTRIBUTE:
 				decoder.decodeAttribute();
@@ -315,21 +319,19 @@ public class SAXDecoder implements XMLReader {
 				break;
 			/* END ELEMENT */
 			case END_ELEMENT:
-				eePrefixes = decoder.getPrefixDeclarations();
-				// Note: get qname before popping EE event
+				decoder.decodeEndElement();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
+					eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
-				decoder.decodeEndElement();
 				handleEndElement(eeQNameAsString, eePrefixes);
 				break;
 			case END_ELEMENT_UNDECLARED:
-				eePrefixes = decoder.getPrefixDeclarations();
-				// Note: get qname before popping EE event
+				decoder.decodeEndElementUndeclared();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
+					eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
-				decoder.decodeEndElementUndeclared();
 				handleEndElement(eeQNameAsString, eePrefixes);
 				break;
 			/* CHARACTERS */
@@ -368,28 +370,25 @@ public class SAXDecoder implements XMLReader {
 						+ "' ");
 			}
 		}
+	}
 
-		// End "Document"
-		decoder.decodeEndDocument();
-		contentHandler.endDocument();
-	}
-	
-	protected final void startPrefixMappings(List<PrefixMapping> prefixes) throws SAXException {
+	protected final void startPrefixMappings(List<PrefixMapping> prefixes)
+			throws SAXException {
 		if (prefixes != null) {
-			for(PrefixMapping pm : prefixes) {
+			for (PrefixMapping pm : prefixes) {
 				contentHandler.startPrefixMapping(pm.pfx, pm.uri);
-			}	
-		}
-	}
-	
-	protected final void endPrefixMappings(List<PrefixMapping> eePrefixes) throws SAXException {
-		if(eePrefixes != null) {
-			for(PrefixMapping pm: eePrefixes) {
-				contentHandler.endPrefixMapping(pm.pfx);		
 			}
 		}
 	}
 
+	protected final void endPrefixMappings(List<PrefixMapping> eePrefixes)
+			throws SAXException {
+		if (eePrefixes != null) {
+			for (PrefixMapping pm : eePrefixes) {
+				contentHandler.endPrefixMapping(pm.pfx);
+			}
+		}
+	}
 
 	/*
 	 * SAX Content Handler
@@ -402,7 +401,7 @@ public class SAXDecoder implements XMLReader {
 		if (namespacePrefixes) {
 			seQNameAsString = decoder.getStartElementQNameAsString();
 		}
-		
+
 		if (namespaces) {
 			startPrefixMappings(decoder.getPrefixDeclarations());
 		}
@@ -422,13 +421,14 @@ public class SAXDecoder implements XMLReader {
 		attributes.clear();
 	}
 
-	protected void handleEndElement(String eeQNameAsString, List<PrefixMapping> eePrefixes) throws SAXException, IOException {
+	protected void handleEndElement(String eeQNameAsString,
+			List<PrefixMapping> eePrefixes) throws SAXException, IOException {
 		QName eeQName = decoder.getElementQName();
 
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(), eeQName
 				.getLocalPart(), eeQNameAsString);
-		
+
 		// endPrefixMapping
 		endPrefixMappings(eePrefixes);
 	}
