@@ -32,12 +32,11 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080919
+ * @version 0.5
  */
 
 public abstract class AbstractSchemaLessRule extends AbstractRule implements

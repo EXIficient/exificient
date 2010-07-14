@@ -20,6 +20,14 @@ package com.siemens.ct.exi.values;
 
 import org.apache.xerces.impl.dv.util.HexBin;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class BinaryHexValue extends AbstractBinaryValue {
 
 	public BinaryHexValue(byte[] bytes) {

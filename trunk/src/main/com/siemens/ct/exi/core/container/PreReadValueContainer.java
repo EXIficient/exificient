@@ -16,10 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 package com.siemens.ct.exi.core.container;
 
 import com.siemens.ct.exi.values.Value;
+
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
 
 public class PreReadValueContainer {
 	

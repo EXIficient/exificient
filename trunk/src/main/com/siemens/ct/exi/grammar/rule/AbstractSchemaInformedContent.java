@@ -27,12 +27,11 @@ import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public abstract class AbstractSchemaInformedContent extends

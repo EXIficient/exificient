@@ -35,7 +35,7 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public class EXIResult extends SAXResult {

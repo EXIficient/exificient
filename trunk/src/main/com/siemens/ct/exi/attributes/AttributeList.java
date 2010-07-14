@@ -22,12 +22,17 @@ import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.Attributes;
 
 /**
- * TODO Description
+ * Namespace (NS) and attribute (AT) events are encoded in a specific order
+ * following the associated start element (SE) event. Namespace (NS) events are
+ * encoded first, in document order, followed by the AT(xsi:type) event if
+ * present, followed by the rest of the attribute (AT) events. When schemas are
+ * used, attribute events occur in lexical order sorted first by qname localName
+ * then by qname uri.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090331
+ * @version 0.5
  */
 
 public interface AttributeList {
@@ -46,7 +51,7 @@ public interface AttributeList {
 	public boolean hasXsiType();
 
 	public String getXsiTypeRaw();
-	
+
 	public String getXsiTypePrefix();
 
 	/*
@@ -55,7 +60,7 @@ public interface AttributeList {
 	public boolean hasXsiNil();
 
 	public String getXsiNil();
-	
+
 	public String getXsiNilPrefix();
 
 	/*

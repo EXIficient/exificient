@@ -21,12 +21,12 @@ package com.siemens.ct.exi.attributes;
 import com.siemens.ct.exi.EXIFactory;
 
 /**
- * TODO Description
+ * Factory for creating attribute lists according to EXI Factory.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090324
+ * @version 0.5
  */
 
 public class AttributeFactory {

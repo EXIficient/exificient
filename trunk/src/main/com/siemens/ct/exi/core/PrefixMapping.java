@@ -18,6 +18,14 @@
 
 package com.siemens.ct.exi.core;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public final class PrefixMapping {
 	
 	public final String pfx;

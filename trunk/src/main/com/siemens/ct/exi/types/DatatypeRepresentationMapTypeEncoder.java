@@ -43,12 +43,11 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.DateTimeType;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public class DatatypeRepresentationMapTypeEncoder extends AbstractTypeEncoder {

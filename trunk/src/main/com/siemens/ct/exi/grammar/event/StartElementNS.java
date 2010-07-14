@@ -21,12 +21,11 @@ package com.siemens.ct.exi.grammar.event;
 import javax.xml.XMLConstants;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090421
+ * @version 0.5
  */
 
 public class StartElementNS extends AbstractEvent {

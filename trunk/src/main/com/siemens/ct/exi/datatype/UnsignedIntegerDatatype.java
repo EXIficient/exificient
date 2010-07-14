@@ -32,24 +32,23 @@ import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public class UnsignedIntegerDatatype extends AbstractDatatype {
-	
+
 	protected IntegerValue lastUnsignedInteger;
-	
+
 	public UnsignedIntegerDatatype(BuiltInType builtInType, QName schemaType) {
 		super(builtInType, schemaType);
 		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_16);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		lastUnsignedInteger = IntegerValue.parse(value);
 		if (lastUnsignedInteger != null) {
@@ -58,28 +57,27 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			lastUnsignedInteger = ((IntegerValue) value);
-			return (lastUnsignedInteger.toInteger() >= 0);			
+			return (lastUnsignedInteger.toInteger() >= 0);
 		} else {
 			return false;
 		}
 	}
-	
+
 	public Value getValue() {
 		return lastUnsignedInteger;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeUnsignedInteger(lastUnsignedInteger.toInteger());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeUnsignedIntegerValue();
 	}
 }

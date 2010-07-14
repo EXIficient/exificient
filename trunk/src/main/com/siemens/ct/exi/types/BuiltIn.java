@@ -62,12 +62,11 @@ import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090421
+ * @version 0.5
  */
 
 public class BuiltIn {
@@ -416,7 +415,7 @@ public class BuiltIn {
 		/*
 		 * calculate bounded range;
 		 */
-		// max - min + 1 --- e.g., [-1 .. -1] = 3 OR [2 .. 4] = 3 
+		// max - min + 1 --- e.g., [-1 .. -1] = 3 OR [2 .. 4] = 3
 		BigInteger boundedRange = max.subtract(min).add(BigInteger.ONE);
 
 		/*
@@ -459,7 +458,8 @@ public class BuiltIn {
 						.intValue(), schemaType);
 				break;
 			default:
-				throw new RuntimeException("Unexpected n-Bit Integer Type: " + intType);
+				throw new RuntimeException("Unexpected n-Bit Integer Type: "
+						+ intType);
 			}
 		} else if (min.signum() >= 0) {
 			/*
@@ -471,9 +471,11 @@ public class BuiltIn {
 			 * minExclusiveXS2 facet is specified with a value equal to or
 			 * greater than -1.
 			 */
-			
-			// update int-type according to facet restrictions that cause val >= 0
-			if (intType == BuiltInType.INTEGER_BIG)  {
+
+			/*
+			 * update int-type according to facet restrictions, val >= 0
+			 */
+			if (intType == BuiltInType.INTEGER_BIG) {
 				intType = BuiltInType.UNSIGNED_INTEGER_BIG;
 			} else if (intType == BuiltInType.INTEGER_64) {
 				intType = BuiltInType.UNSIGNED_INTEGER_64;
@@ -482,7 +484,7 @@ public class BuiltIn {
 			} else if (intType == BuiltInType.INTEGER_16) {
 				intType = BuiltInType.UNSIGNED_INTEGER_16;
 			}
-			
+
 			switch (intType) {
 			case UNSIGNED_INTEGER_BIG:
 			case UNSIGNED_INTEGER_64:
@@ -498,7 +500,8 @@ public class BuiltIn {
 				datatype = new UnsignedIntegerDatatype(intType, schemaType);
 				break;
 			default:
-				throw new RuntimeException("Unexpected Unsigned Integer Type: " + intType);
+				throw new RuntimeException("Unexpected Unsigned Integer Type: "
+						+ intType);
 			}
 		} else {
 			/*
@@ -519,7 +522,8 @@ public class BuiltIn {
 				datatype = new IntegerDatatype(intType, schemaType);
 				break;
 			default:
-				throw new RuntimeException("Unexpected Integer Type: " + intType);
+				throw new RuntimeException("Unexpected Integer Type: "
+						+ intType);
 			}
 		}
 

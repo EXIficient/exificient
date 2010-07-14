@@ -33,6 +33,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Wraps SAX events and build DOM based on it.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 		DTDHandler {
 

@@ -20,6 +20,14 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigDecimal;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class DecimalValue extends AbstractValue {
 
 	public final boolean negative;

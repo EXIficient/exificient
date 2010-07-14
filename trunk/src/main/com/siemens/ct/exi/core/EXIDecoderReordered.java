@@ -45,12 +45,12 @@ import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
+ * EXI decoder for (pre-)compression streams.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class EXIDecoderReordered extends AbstractEXIDecoder {

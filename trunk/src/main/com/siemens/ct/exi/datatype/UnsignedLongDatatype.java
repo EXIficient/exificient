@@ -32,54 +32,52 @@ import com.siemens.ct.exi.values.LongValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public class UnsignedLongDatatype extends AbstractDatatype {
-	
+
 	private LongValue lastUnsignedLong;
-	
+
 	public UnsignedLongDatatype(BuiltInType builtInType, QName schemaType) {
 		super(builtInType, schemaType);
 		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_32);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		lastUnsignedLong = LongValue.parse(value);
-		if (lastUnsignedLong != null ) {
+		if (lastUnsignedLong != null) {
 			return (lastUnsignedLong.toLong() >= 0);
-		} else  {
-			return false;
-		}
-	}
-	
-	public boolean isValid(Value value) {
-		if (value instanceof LongValue) {
-			lastUnsignedLong = ((LongValue) value);
-			return (lastUnsignedLong.toLong() >= 0);			
 		} else {
 			return false;
 		}
 	}
-	
+
+	public boolean isValid(Value value) {
+		if (value instanceof LongValue) {
+			lastUnsignedLong = ((LongValue) value);
+			return (lastUnsignedLong.toLong() >= 0);
+		} else {
+			return false;
+		}
+	}
+
 	public Value getValue() {
 		return lastUnsignedLong;
 	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeUnsignedLong(lastUnsignedLong.toLong());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeUnsignedLongValue();
 	}
 }

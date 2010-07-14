@@ -25,6 +25,14 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public interface StringDecoder extends StringCoder {
 
 	public void addValue(QName context, Value value);

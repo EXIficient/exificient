@@ -27,12 +27,11 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081117
+ * @version 0.5
  */
 
 public interface TypeDecoder extends TypeCoder {

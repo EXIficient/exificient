@@ -31,12 +31,12 @@ import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
- * TODO Description
+ * EXI encoder for bit or byte-aligned streams.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090414
+ * @version 0.5
  */
 
 public class EXIEncoderInOrder extends AbstractEXIEncoder {
@@ -51,21 +51,20 @@ public class EXIEncoderInOrder extends AbstractEXIEncoder {
 		super.setOutput(os, exiBodyOnly);
 
 		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
-			setChannel( new BitEncoderChannel(os));
+			setChannel(new BitEncoderChannel(os));
 		} else {
 			assert (exiFactory.getCodingMode() == CodingMode.BYTE_PACKED);
-			setChannel( new ByteEncoderChannel(os));
+			setChannel(new ByteEncoderChannel(os));
 		}
 	}
-	
+
 	public void setChannel(EncoderChannel encoderChannel) {
 		this.channel = encoderChannel;
 		this.os = encoderChannel.getOutputStream();
 	}
 
 	@Override
-	protected void writeValue(QName valueContext)
-			throws IOException {
+	protected void writeValue(QName valueContext) throws IOException {
 		typeEncoder.writeValue(valueContext, channel);
 	}
 

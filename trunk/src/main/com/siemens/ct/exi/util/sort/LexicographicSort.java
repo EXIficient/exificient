@@ -31,11 +31,17 @@ import org.apache.xerces.xs.XSElementDeclaration;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 
-/*
- * Helper Class for sorting element declarations, context et cetera
+/**
+ * Helper Class for sorting element declarations, context et cetera.
  * 
- * EXI#s lexical order: sorted first by qname's local-name then by qname's URI
+ * EXI's lexical order: sorted first by qname's local-name then by qname's URI.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
  */
+
 public class LexicographicSort implements Comparator<Object>, Serializable {
 
 	private static final long serialVersionUID = 5591893050060075221L;

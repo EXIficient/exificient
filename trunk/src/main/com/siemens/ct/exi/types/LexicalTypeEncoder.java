@@ -28,12 +28,11 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090421
+ * @version 0.5
  */
 
 public class LexicalTypeEncoder extends AbstractTypeEncoder {

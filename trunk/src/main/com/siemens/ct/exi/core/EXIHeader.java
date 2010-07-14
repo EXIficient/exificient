@@ -25,12 +25,12 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 
 /**
- * TODO Description
+ * EXI Header (see http://www.w3.org/TR/exi/#header)
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20080718
+ * @version 0.5
  */
 
 public class EXIHeader {

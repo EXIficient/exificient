@@ -23,6 +23,14 @@ import java.io.ByteArrayInputStream;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class NoEntityResolver implements EntityResolver {
 
 	public InputSource resolveEntity(String publicId, String systemId) {

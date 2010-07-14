@@ -31,12 +31,11 @@ import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081111
+ * @version 0.5
  */
 
 public abstract class AbstractDatatype implements Datatype {

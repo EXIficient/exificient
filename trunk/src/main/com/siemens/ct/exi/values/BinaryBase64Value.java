@@ -20,6 +20,14 @@ package com.siemens.ct.exi.values;
 
 import org.apache.xerces.impl.dv.util.Base64;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class BinaryBase64Value extends AbstractBinaryValue {
 
 	public BinaryBase64Value(byte[] bytes) {

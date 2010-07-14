@@ -18,6 +18,14 @@
 
 package com.siemens.ct.exi.values;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 abstract public class AbstractBinaryValue extends AbstractValue {
 
 	protected final byte[] bytes;

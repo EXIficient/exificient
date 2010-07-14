@@ -37,12 +37,11 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedFragmentContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081016
+ * @version 0.5
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar {

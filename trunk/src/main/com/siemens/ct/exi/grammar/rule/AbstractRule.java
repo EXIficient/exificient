@@ -19,12 +19,11 @@
 package com.siemens.ct.exi.grammar.rule;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081031
+ * @version 0.5
  */
 
 import java.util.List;

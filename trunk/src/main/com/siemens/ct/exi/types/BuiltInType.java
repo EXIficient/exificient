@@ -31,7 +31,7 @@ package com.siemens.ct.exi.types;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090421
+ * @version 0.5
  */
 
 public enum BuiltInType {

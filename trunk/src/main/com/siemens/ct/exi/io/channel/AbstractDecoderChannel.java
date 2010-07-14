@@ -31,12 +31,11 @@ import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.LongValue;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081117
+ * @version 0.5
  */
 
 public abstract class AbstractDecoderChannel implements DecoderChannel {

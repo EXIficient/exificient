@@ -34,12 +34,12 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
- * TODO Description
+ * Builds a <code>Document</code> for a given EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090324
+ * @version 0.5
  */
 
 public class DOMBuilder {

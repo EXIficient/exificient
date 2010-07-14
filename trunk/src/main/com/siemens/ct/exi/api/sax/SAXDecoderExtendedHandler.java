@@ -36,12 +36,13 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
- * TODO Description
+ * Parses EXI stream to SAX events with extended features such as entity
+ * references.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20090407
+ * @version 0.5
  */
 
 public class SAXDecoderExtendedHandler extends SAXDecoder implements
@@ -70,21 +71,22 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 
 	@Override
 	protected void handleDocType() throws SAXException, IOException {
-		if (lexicalHandler != null ) {
+		if (lexicalHandler != null) {
 			String publicID = decoder.getDocTypePublicID().length() == 0 ? null
 					: decoder.getDocTypePublicID();
 			String systemID = decoder.getDocTypeSystemID().length() == 0 ? null
 					: decoder.getDocTypeSystemID();
 
 			// start DTD
-			lexicalHandler.startDTD(decoder.getDocTypeName(), publicID, systemID);
-			
+			lexicalHandler.startDTD(decoder.getDocTypeName(), publicID,
+					systemID);
+
 			// parse DTD context and register declaration-handler
 			// TODO not sure whether there is a better way to do DTD
 			String docTypeText = decoder.getDocTypeText();
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			xmlReader.setProperty(
-					"http://xml.org/sax/properties/declaration-handler", this );
+					"http://xml.org/sax/properties/declaration-handler", this);
 			Reader r = new StringReader("<!DOCTYPE foo [" + docTypeText + " ]>"
 					+ "<foo/>");
 			xmlReader.parse(new InputSource(r));
@@ -106,7 +108,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 				contentHandler.characters(entity, 0, entity.length);
 				contentHandler.processingInstruction(
 						Result.PI_ENABLE_OUTPUT_ESCAPING, "");
-			} else {			
+			} else {
 				// start entity
 				lexicalHandler.startEntity(entityReferenceName);
 
@@ -153,7 +155,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 
 	@Override
 	protected void handleComment() throws SAXException {
-		if (lexicalHandler != null ) {
+		if (lexicalHandler != null) {
 			char[] comment = decoder.getComment();
 			lexicalHandler.comment(comment, 0, comment.length);
 		}
@@ -169,7 +171,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 		if (declarationHandler != null) {
 			checkDummyEntity();
 			declarationHandler.attributeDecl(name, name2, type, mode, value);
-		} else if (contentHandler instanceof DeclHandler ) {
+		} else if (contentHandler instanceof DeclHandler) {
 			checkDummyEntity();
 			DeclHandler dh = (DeclHandler) contentHandler;
 			dh.attributeDecl(name, name2, type, mode, value);
@@ -180,7 +182,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 		if (declarationHandler != null) {
 			checkDummyEntity();
 			declarationHandler.elementDecl(name, model);
-		} else if (contentHandler instanceof DeclHandler ) {
+		} else if (contentHandler instanceof DeclHandler) {
 			checkDummyEntity();
 			DeclHandler dh = (DeclHandler) contentHandler;
 			dh.elementDecl(name, model);
@@ -191,7 +193,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 			throws SAXException {
 		if (declarationHandler != null) {
 			declarationHandler.externalEntityDecl(name, publicId, systemId);
-		} else if (contentHandler instanceof DeclHandler ) {
+		} else if (contentHandler instanceof DeclHandler) {
 			DeclHandler dh = (DeclHandler) contentHandler;
 			dh.externalEntityDecl(name, publicId, systemId);
 		}
@@ -205,7 +207,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 
 		if (declarationHandler != null) {
 			declarationHandler.internalEntityDecl(name, value);
-		} else if (contentHandler instanceof DeclHandler ) {
+		} else if (contentHandler instanceof DeclHandler) {
 			DeclHandler dh = (DeclHandler) contentHandler;
 			dh.internalEntityDecl(name, value);
 		}

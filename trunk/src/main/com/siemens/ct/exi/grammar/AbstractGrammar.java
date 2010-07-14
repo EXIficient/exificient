@@ -21,12 +21,11 @@ package com.siemens.ct.exi.grammar;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081014
+ * @version 0.5
  */
 
 public abstract class AbstractGrammar implements Grammar {

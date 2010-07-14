@@ -23,6 +23,14 @@ import java.io.IOException;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.util.MethodsBag;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.5
+ */
+
 public class FloatValue extends AbstractValue {
 
 	public final long mantissa;

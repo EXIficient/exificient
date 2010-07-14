@@ -33,12 +33,11 @@ import com.siemens.ct.exi.values.LongValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
- * TODO Description
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.4.20081111
+ * @version 0.5
  */
 
 public class NBitLongDatatype extends AbstractDatatype {
