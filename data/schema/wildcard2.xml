@@ -14,7 +14,7 @@
         <!--<el xsi:type="xs:string">312</el>-->
         
         <!-- valid, right namespace -->
-        <foo:elString>llkök</foo:elString>
+        <foo:elString>llkk</foo:elString>
     </foo:wildcardsNS>
     <foo:wildcards >
         <foo:elInt>8</foo:elInt>

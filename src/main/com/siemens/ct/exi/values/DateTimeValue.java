@@ -24,7 +24,6 @@ import java.util.TimeZone;
 
 import com.siemens.ct.exi.exceptions.XMLParsingException;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.values.DateTimeType;
 
 /**
  * 

@@ -56,7 +56,7 @@ public interface DecoderChannel {
      * Skips over and discards <code>n</code> bytes of data from this channel.
      * @throws IOException
      */
-    public void skip(int n) throws IOException;
+    public void skip(long n) throws IOException;
 	
 	/**
 	 * Decodes and returns an n-bit unsigned integer.

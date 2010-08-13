@@ -29,6 +29,7 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;

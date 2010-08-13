@@ -32,7 +32,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.siemens.ct.exi.api.dom.DOMBuilder;
@@ -53,6 +52,8 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		Transformer trans = transfac.newTransformer();
 		// due to fragments
 		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		// remaining keys
+		trans.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // "ASCII" "UTF-8"
 		trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		// // TEST DOCTYPE
@@ -87,7 +88,12 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 
 		// decode to DOM
 		DOMBuilder domBuilder = new DOMBuilder(ef);
-		Document doc = domBuilder.parse(exiDocument);
+		Node doc;
+		if (ef.isFragment()) {
+			doc = domBuilder.parseFragment(exiDocument);
+		} else {
+			doc = domBuilder.parse(exiDocument);
+		}
 
 		// create string from xml tree
 		StringWriter sw = new StringWriter();

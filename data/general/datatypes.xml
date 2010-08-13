@@ -112,7 +112,7 @@
     
     <!-- Built-in Type: String  -->
     <string>ss ss </string>
-    <string>&#x2000B;</string> <!-- high/low surrogate pairs -->
+    <string>&#x1D11E;</string> <!-- high/low surrogate pairs for U+1D11E == 119070 -->
     <string>foo &#x2000B; blaa</string>
     <string></string>   <!--  *Empty* strings -->
     <string />

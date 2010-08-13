@@ -95,7 +95,7 @@ final public class BitInputStream {
 	 * @param n
 	 * @throws IOException
 	 */
-	public void skip(int n) throws IOException {
+	public void skip(long n) throws IOException {
 		if (capacity == 0) {
 			//	aligned
 			while(n != 0) {
