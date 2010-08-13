@@ -301,8 +301,9 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 			IOException {
 		// type qname & prefix
 		QName xsiTypeQName;
-		attributeValue = typeDecoder
-				.readValue(qnameDatatype, XSI_TYPE, channel);
+		// attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE, channel);
+		attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
+		
 		if (!preservePrefix) {
 			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 		}
@@ -310,10 +311,14 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
-			String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
-			if (qnv.getPrefix() == null) {
+			String pfx;
+			if (!preservePrefix) {
+				pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
 				attributeValue = new QNameValue(qnv.toQName(), pfx);
 			}
+//			if (qnv.getPrefix() == null) {
+//				attributeValue = new QNameValue(qnv.toQName(), pfx);
+//			}
 		} else {
 			// parse string value again (lexical value mode)
 			qnameDatatype.isValid(attributeValue.toString());
@@ -438,13 +443,13 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
 		String pfx = uriToPrefix.get(uri);
 		if (pfx == null) {
-			// TODO is special html NS handling necessary ?
-			if (uri.equals("http://www.w3.org/1999/xhtml")) {
-				// "http://www.w3.org/1999/xhtml" --> ""
-				pfx = "";
-			} else {
+//			// TODO is special html NS handling necessary ?
+//			if (uri.equals("http://www.w3.org/1999/xhtml")) {
+//				// "http://www.w3.org/1999/xhtml" --> ""
+//				pfx = "";
+//			} else {
 				pfx = "ns" + createdPfxCnt++;
-			}
+//			}
 			uriToPrefix.put(uri, pfx);
 			declarePrefix(pfx, uri);
 		}
@@ -508,7 +513,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		currentRule.learnStartElement(nextSE);
 		// push element
 		pushElement(nextSE, nextRule.getElementContentRule());
-		;
 	}
 
 	public void decodeStartElementGenericUndeclared() throws EXIException,

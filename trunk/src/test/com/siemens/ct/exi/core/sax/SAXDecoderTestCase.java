@@ -41,8 +41,10 @@ import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class SAXDecoderTestCase extends XMLTestCase {
@@ -50,15 +52,23 @@ public class SAXDecoderTestCase extends XMLTestCase {
 	/* does EXI make sense otherwise ?*/
 	static final boolean namespaces = true;
 	
-	String xml = "<foo:root xmlns:foo='urn:foo' xmlns:fooX='urn:fooX' at1='x'>"
+	String xmlA = "<foo:root xmlns:foo='urn:foo' xmlns:fooX='urn:fooX' at1='x'>"
 			+ "   <bla:el xmlns:bla='urn:bla' buu:at2='y' fooX:at3='z' xmlns:buu='urn:buu'>w</bla:el>"
 			+ "</foo:root>";
 
-	class TestContentHandler extends DefaultHandler {
+	// Bug-ID 3033335
+	String xmlB = "<FpML xmlns='http://www.fpml.org/2005/FpML-4-2' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "
+		+ " xmlns:ibml='http://ibml.jel.com/2005' xsi:type='ibml:ContractAmended' >"
+		+ "</FpML>";
+	
+	String xsdBLocation = "./data/bugs/ID3033335/ibml.xsd";
+	
+	abstract class TestContentHandler extends DefaultHandler {
 		final boolean namespacePrefixes;
 		final boolean preservePrefixes;
 		int openElements = 0;
 		List<String>[] pfxMappings;
+		
 		@SuppressWarnings("unchecked")
 		public TestContentHandler(boolean namespacePrefixes, boolean preservePrefixes) {
 			this.namespacePrefixes = namespacePrefixes;
@@ -67,24 +77,44 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			pfxMappings[0] = new ArrayList<String>();
 			pfxMappings[1] = new ArrayList<String>();
 		}
+		
 		public void startElement(String uri, String localName, String qName,
 				Attributes atts) throws SAXException {
+			openElements++;
+		}
+		
+		public void endElement(String uri, String localName, String qName)
+		throws SAXException {
+			openElements--;
+		}
+	}
+	
+	class TestContentHandlerA extends TestContentHandler {
+		
+		public TestContentHandlerA(boolean namespacePrefixes,
+				boolean preservePrefixes) {
+			super(namespacePrefixes, preservePrefixes);
+		}
+		public void startElement(String uri, String localName, String qName,
+				Attributes atts) throws SAXException {
+			super.startElement(uri, localName, qName, atts);
+
+			
 			if (namespaces) {
-				if (openElements == 0) {
+				if (openElements == 1) {
 					// [xml] & urn:foo (+urn:fooX)
-					assertTrue(pfxMappings[openElements].size() >= 1);
-					assertTrue(pfxMappings[openElements].contains("urn:foo"));
+					assertTrue(pfxMappings[openElements-1].size() >= 1);
+					assertTrue(pfxMappings[openElements-1].contains("urn:foo"));
 					// assertTrue(pfxMappings[openElements].contains("urn:fooX"));
-				} else if (openElements == 1) {
+				} else if (openElements == 2) {
 					// urn:bla & urn:buu (+urn:fooX)
-					assertTrue(pfxMappings[openElements].size() >= 2);
-					assertTrue(pfxMappings[openElements].contains("urn:bla"));
-					assertTrue(pfxMappings[openElements].contains("urn:buu"));
+					assertTrue(pfxMappings[openElements-1].size() >= 2);
+					assertTrue(pfxMappings[openElements-1].contains("urn:bla"));
+					assertTrue(pfxMappings[openElements-1].contains("urn:buu"));
 					// assertTrue(pfxMappings[openElements].contains("urn:fooX"));	
 				}
 			}
 			
-			openElements++;
 			if (openElements == 1)  {
 				// element
 				assertTrue("urn:foo".equals(uri));
@@ -143,6 +173,7 @@ public class SAXDecoderTestCase extends XMLTestCase {
 		}
 		public void endElement(String uri, String localName, String qName)
 				throws SAXException {
+			
 			if (openElements == 1)  {
 				assertTrue("urn:foo".equals(uri));
 				assertTrue("root".equals(localName));
@@ -166,7 +197,8 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					assertTrue(qName.equals(Constants.EMPTY_STRING));
 				}
 			}
-			openElements--;
+			
+			super.endElement(uri, localName, qName);
 		}
 		public void startPrefixMapping(String prefix, String uri)
 				throws SAXException {
@@ -229,65 +261,184 @@ public class SAXDecoderTestCase extends XMLTestCase {
 		}
 	}
 
-	public void testDecoderPrefixesAndPreservePrefixes() throws Exception {
-		boolean namespacePrefixes = true;
-		boolean preservePrefixes = true;
+	class TestContentHandlerB extends TestContentHandler {
 		
-		// bit-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
-		// byte-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
-		// pre-compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
-		// compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
-	}
+		public TestContentHandlerB(boolean namespacePrefixes,
+				boolean preservePrefixes) {
+			super(namespacePrefixes, preservePrefixes);
+		}
+		public void startElement(String uri, String localName, String qName,
+				Attributes atts) throws SAXException {
+			super.startElement(uri, localName, qName, atts);
 	
-	public void testDecoderPrefixes() throws Exception {
-		boolean namespacePrefixes = true;
+			if (namespaces) {
+				if (openElements == 1) {
+					// [xml] & urn:foo (+urn:fooX)
+					assertTrue(pfxMappings[openElements-1].size() >= 2);
+					assertTrue(pfxMappings[openElements-1].contains("http://www.w3.org/2001/XMLSchema-instance"));
+					assertTrue(pfxMappings[openElements-1].contains("http://www.fpml.org/2005/FpML-4-2"));
+					assertTrue(pfxMappings[openElements-1].contains("http://ibml.jel.com/2005"));
+				} 
+			}
+		}
+		public void endElement(String uri, String localName, String qName)
+				throws SAXException {
+			
+			if (openElements == 1)  {
+
+			} 
+			
+			super.endElement(uri, localName, qName);
+		}
+		public void startPrefixMapping(String prefix, String uri)
+				throws SAXException {
+			if (openElements == 0)  {
+				pfxMappings[0].add(uri);
+				// xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+				if (uri.equals("http://www.w3.org/2001/XMLSchema-instance")) {
+					if(preservePrefixes) {
+						assertTrue(prefix.equals("xsi"));
+					} else {
+						assertTrue(prefix.length() > 0);
+					}
+				// xmlns='http://www.fpml.org/2005/FpML-4-2'
+				} else if(uri.equals("http://www.fpml.org/2005/FpML-4-2")) {
+					if(preservePrefixes) {
+						assertTrue(prefix.equals(""));
+					} else {
+						assertTrue(prefix.length() > 0);
+					}
+				// xmlns:ibml='http://ibml.jel.com/2005'
+				} else if(uri.equals("http://ibml.jel.com/2005")) {
+					if(preservePrefixes) {
+						assertTrue(prefix.equals("ibml"));
+					} else {
+						assertTrue(prefix.length() > 0);
+					}
+				} else if (uri.equals("http://www.w3.org/XML/1998/namespace")) {
+					assertTrue(prefix.equals("xml"));
+				} else if (uri.equals(XMLConstants.NULL_NS_URI)) {
+					assertTrue(prefix.equals(XMLConstants.DEFAULT_NS_PREFIX));
+				} else {
+					fail("No exptected URI: " + uri);
+				}
+				// System.out.println("0 " + prefix + " --> " + uri);
+			}
+		}
+		public void endPrefixMapping(String prefix) throws SAXException {
+			if (openElements == 0)  {
+			}
+		}
+	}
+
+	public void testDecoderBNone() throws Exception {
+		boolean namespacePrefixes = false;
 		boolean preservePrefixes = false;
 		
+		TestContentHandler tch = new TestContentHandlerB(namespacePrefixes, preservePrefixes);
+		
 		// bit-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
 		// byte-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
 		// pre-compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
 		// compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+	}
+
+	public void testDecoderBNoneSchema() throws Exception {
+		boolean namespacePrefixes = false;
+		boolean preservePrefixes = false;
+		
+		TestContentHandler tch = new TestContentHandlerB(namespacePrefixes, preservePrefixes);
+		
+		// bit-packed
+		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		// byte-packed
+		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		// pre-compression
+		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		// compression
+		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+	}
+
+	public void testDecoderAPrefixesAndPreservePrefixes() throws Exception {
+		boolean namespacePrefixes = true;
+		boolean preservePrefixes = true;
+
+		TestContentHandler tch = new TestContentHandlerA(namespacePrefixes, preservePrefixes);
+		
+		// bit-packed
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		// byte-packed
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		// pre-compression
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		// compression
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
 	}
 	
-	public void testDecoderPreservePrefixes() throws Exception {
+	public void testDecoderAPrefixes() throws Exception {
+		boolean namespacePrefixes = true;
+		boolean preservePrefixes = false;
+
+		TestContentHandler tch = new TestContentHandlerA(namespacePrefixes, preservePrefixes);
+		
+		// bit-packed
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		// byte-packed
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		// pre-compression
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		// compression
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+	}
+	
+	public void testDecoderAPreservePrefixes() throws Exception {
 		boolean namespacePrefixes = false;
 		boolean preservePrefixes = true;
 		
+		TestContentHandler tch = new TestContentHandlerA(namespacePrefixes, preservePrefixes);
+		
 		// bit-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
 		// byte-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
 		// pre-compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
 		// compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
 	}
 	
-	public void testDecoderNone() throws Exception {
+	public void testDecoderANone() throws Exception {
 		boolean namespacePrefixes = false;
 		boolean preservePrefixes = false;
 		
+		TestContentHandler tch = new TestContentHandlerA(namespacePrefixes, preservePrefixes);
+		
 		// bit-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
 		// byte-packed
-		_test(namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
 		// pre-compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
 		// compression
-		_test(namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+		_test(xmlA, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
 	}
 	
-	protected void _test(boolean namespacePrefixes, boolean preservePrefixes, CodingMode codingMode) throws SAXException, IOException, EXIException {
+	protected void _test(String xml, String xsdLoc, TestContentHandler tch, boolean namespacePrefixes, boolean preservePrefixes, CodingMode codingMode) throws SAXException, IOException, EXIException {
 		try {
 			EXIFactory factory = DefaultEXIFactory.newInstance();
+			
+			// schema?
+			if (xsdLoc != null) {
+				GrammarFactory gf = GrammarFactory.newInstance();
+				Grammar g = gf.createGrammar(xsdLoc);
+				factory.setGrammar(g);
+			}
+			
+			
 			factory.setCodingMode(codingMode);
 			FidelityOptions fo = factory.getFidelityOptions();
 			fo.setFidelity(FidelityOptions.FEATURE_PREFIX, preservePrefixes);
@@ -311,7 +462,7 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			exiReader.setFeature("http://xml.org/sax/features/namespaces", namespaces);
 			exiReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 					namespacePrefixes);
-			exiReader.setContentHandler(new TestContentHandler(namespacePrefixes, preservePrefixes));
+			exiReader.setContentHandler(tch);
 
 			exiReader.parse(new InputSource(is));
 		} catch (Exception e) {

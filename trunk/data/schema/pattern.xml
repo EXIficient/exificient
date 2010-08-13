@@ -28,7 +28,7 @@
     <!-- "([$]?([^\. ']+|'[^']+'))" -->
     <pattern6>A</pattern6>
     <pattern6>cdas</pattern6>
-    <pattern6>ä</pattern6>
+    <pattern6>a</pattern6>
     
     <!-- "([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+" -->
     <pattern7>A.B0</pattern7>

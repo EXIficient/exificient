@@ -322,16 +322,18 @@ public class SAXDecoder implements XMLReader {
 				decoder.decodeEndElement();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
-					eePrefixes = decoder.getUndeclaredPrefixDeclarations();
+					// eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
+				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				handleEndElement(eeQNameAsString, eePrefixes);
 				break;
 			case END_ELEMENT_UNDECLARED:
 				decoder.decodeEndElementUndeclared();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
-					eePrefixes = decoder.getUndeclaredPrefixDeclarations();
+					// eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
+				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				handleEndElement(eeQNameAsString, eePrefixes);
 				break;
 			/* CHARACTERS */
@@ -416,7 +418,7 @@ public class SAXDecoder implements XMLReader {
 		QName seQName = decoder.getElementQName();
 		contentHandler.startElement(seQName.getNamespaceURI(), seQName
 				.getLocalPart(), seQNameAsString, attributes);
-
+		
 		// clear AT information
 		attributes.clear();
 	}

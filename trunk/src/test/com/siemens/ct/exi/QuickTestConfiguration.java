@@ -32,7 +32,7 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -83,18 +83,18 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createAll();
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -116,8 +116,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

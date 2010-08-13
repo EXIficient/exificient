@@ -231,6 +231,13 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				assert (ei.event.isEventType(EventType.START_ELEMENT_GENERIC));
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
+				
+//				// encode entire qualified name
+//				QName qname = qnameDatatype.encodeQName(uri, localName, prefix,
+//						channel);
+//				// next SE ...
+//				nextSE = getGenericStartElement(qname);
+				
 				// next rule at the top
 				nextTopRule = ei.next;
 			} else {
@@ -246,14 +253,25 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 				}
 				// encode [undeclared] event-code
 				encode2ndLevelEventCode(ecSEundeclared);
+				
+//				// encode entire qualified name
+//				QName qname = qnameDatatype.encodeQName(uri, localName, prefix,
+//						channel);
+//				// next SE ...
+//				nextSE = getGenericStartElement(qname);
+//				// next rule at the top
+//				nextTopRule = nextSE.getRule();				
+				
 				// next rule at the top
 				nextTopRule = currentRule.getElementContentRule();
 			}
+			
 			// encode entire qualified name
 			QName qname = qnameDatatype.encodeQName(uri, localName, prefix,
 					channel);
 			// next SE ...
 			nextSE = getGenericStartElement(qname);
+			
 			// learning for built-in grammar,
 			currentRule.learnStartElement(nextSE);
 		}
@@ -332,7 +350,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		/*
 		 * The value of each AT (xsi:type) event is represented as a QName.
 		 */
-		typeEncoder.isValid(qnameDatatype, raw);
+		qnameDatatype.isValid(raw);
+		// typeEncoder.isValid(qnameDatatype, raw);
 		// boolean valid = typeEncoder.isValid(qnameDatatype, raw);
 		// System.out.println("Valid " + raw + ": " + valid);
 		
@@ -378,7 +397,8 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		}
 
 		// xsi:type value "content" as qname
-		typeEncoder.writeValue(XSI_TYPE, channel);
+		// typeEncoder.writeValue(XSI_TYPE, channel);
+		qnameDatatype.writeValue(channel, null, XSI_TYPE);
 		
 		// grammar exists ?
 		if (tg != null) {

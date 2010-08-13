@@ -110,7 +110,7 @@ public class FragmentTestCase extends AbstractTestCase {
 	public void testFragment2() throws Exception {
 		// set up configuration
 		setConfigurationFragment2();
-
+	
 		// execute test
 		_test();
 	}

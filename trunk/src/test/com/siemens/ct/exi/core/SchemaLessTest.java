@@ -684,4 +684,121 @@ public class SchemaLessTest extends TestCase {
 		}
 	}
 
+	/*
+		 * Bug-ID: ID: 3030325
+		 * 
+		 * xsi:type learning in schema-less mode
+		 * 
+		 * <?xml version="1.0" encoding="utf-8"?>
+		 * <a xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+		 * <b xsi:type="c"/>
+		 * <b xsi:type="d"/>
+		 * </a>
+		 */
+		public void testSchemaLess4() throws IOException, SAXException,
+				EXIException {
+			EXIFactory factory = DefaultEXIFactory.newInstance();
+		
+			factory.setFidelityOptions(FidelityOptions.createDefault());
+			factory.setCodingMode(CodingMode.BIT_PACKED);
+			// factory.setGrammar ( GrammarFactory.getSchemaLessGrammar ( ) );
+		
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			QName a = new QName("", "root");
+			QName b = new QName("", "b");
+		
+			QName atXsiType = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
+			
+			// encoder
+			{
+				EXIEncoder encoder = factory.createEXIEncoder();
+				encoder.setOutput(baos, factory.isEXIBodyOnly());
+		
+				String pfx = null; // unset according fidelity-options
+		
+				encoder.encodeStartDocument();
+				encoder.encodeStartElement(a.getNamespaceURI(), a
+						.getLocalPart(), pfx);
+		
+				encoder.encodeStartElement(b.getNamespaceURI(), b
+						.getLocalPart(), pfx);
+				encoder.encodeXsiType("c", "");
+	//			encoder.encodeAttribute(atXsiType.getNamespaceURI(), atXsiType.getLocalPart(),pfx, "c");
+				encoder.encodeEndElement();
+				
+				encoder.encodeStartElement(b.getNamespaceURI(), b
+						.getLocalPart(), pfx);
+				encoder.encodeXsiType("d", "");
+	//			encoder.encodeAttribute(atXsiType.getNamespaceURI(), atXsiType.getLocalPart(),pfx, "d");
+				encoder.encodeEndElement();
+		
+				encoder.encodeEndElement(); // a
+	
+				encoder.encodeEndDocument();
+				encoder.flush();
+			}
+		
+			baos.flush();
+		
+			// decoder
+			{
+				EXIDecoder decoder = factory.createEXIDecoder();
+				decoder.setInputStream(
+						new ByteArrayInputStream(baos.toByteArray()), factory
+								.isEXIBodyOnly());
+		
+				assertTrue(decoder.next() == EventType.START_DOCUMENT);
+				decoder.decodeStartDocument();
+		
+				// decoder.inspectStream();
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				decoder.decodeStartElementGeneric();
+				assertTrue(decoder.getElementQName().equals(a));
+		
+				/*
+				 * first b
+				 */
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				decoder.decodeStartElementGenericUndeclared();
+				assertTrue(decoder.getElementQName().equals(b));
+				
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				decoder.decodeAttributeGenericUndeclared();
+				assertTrue(decoder.getAttributeQName().equals(atXsiType));
+				
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+				decoder.decodeEndElementUndeclared();
+		
+				/*
+				 * second b
+				 */
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				decoder.decodeStartElementGenericUndeclared();
+				assertTrue(decoder.getElementQName().equals(b));
+		
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.ATTRIBUTE);
+				decoder.decodeAttribute();
+				assertTrue(decoder.getAttributeQName().equals(atXsiType));
+				
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+				
+				// end root a
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+		
+				decoder.hasNext();
+				assertTrue(decoder.next() == EventType.END_DOCUMENT);
+				decoder.decodeEndDocument();
+			}
+		}
+
 }

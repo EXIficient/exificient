@@ -56,7 +56,7 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 		istream.align();
 	}
 	
-	public void skip(int n) throws IOException {
+	public void skip(long n) throws IOException {
 		istream.skip(n);
 	}
 
