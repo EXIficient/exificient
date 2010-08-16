@@ -24,7 +24,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.core.PrefixMapping;
+import com.siemens.ct.exi.core.container.DocType;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
+import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
@@ -40,264 +42,88 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public interface EXIDecoder {
+	
 	public void setInputStream(InputStream is, boolean exiBodyOnly)
 			throws EXIException, IOException;
 
 	/**
-	 * Reports whether an additional EXI event is available.
-	 * 
-	 * @return <tt>true</tt> if the stream has more events.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public boolean hasNext() throws EXIException, IOException;
-
-	/**
-	 * Reports the next available EXI event-type
+	 * Reports the next available EXI event-type or <code>null</code> if no more
+	 * EXI event is available.
 	 * 
 	 * @return <code>EventType</code> for next EXI event
 	 */
 	public EventType next() throws EXIException, IOException;
 
 	/**
-	 * Initializes the beginning of a set of XML events
+	 * Indicates the beginning of a set of XML events
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeStartDocument() throws EXIException, IOException;
 
 	/**
-	 * Finalizes the end of a set of XML events
+	 * Indicates the end of a set of XML events
 	 * 
 	 * @throws EXIException
 	 */
 	public void decodeEndDocument() throws EXIException, IOException;
 
 	/**
-	 * Reads EXI start element.
+	 * Reads EXI start element and returns qualified name.
 	 * 
 	 * <p>
 	 * Start element appearing as expected event.
 	 * </p>
 	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartElement() throws EXIException, IOException;
+	public QName decodeStartElement() throws EXIException, IOException;
 
 	/**
-	 * Reads start element where only the URI is known.
+	 * Reads start element where only the URI is known and returns qualified
+	 * name.
 	 * 
 	 * <p>
 	 * Expected start element with given namespaceURI
 	 * </p>
 	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartElementNS() throws EXIException, IOException;
+	public QName decodeStartElementNS() throws EXIException, IOException;
 
 	/**
-	 * Reads generic start element.
+	 * Reads generic start element and returns qualified name.
 	 * 
 	 * <p>
 	 * Expected generic start element
 	 * </p>
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeStartElementGeneric() throws EXIException, IOException;
-
-	/**
-	 * Parses unexpected start element.
+	 * @return <code>QName</code> for qualified name
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void decodeStartElementGenericUndeclared() throws EXIException,
+	public QName decodeStartElementGeneric() throws EXIException, IOException;
+
+	/**
+	 * Parses unexpected start element and returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeStartElementGenericUndeclared() throws EXIException,
 			IOException;
 
 	/**
-	 * Reads EXI a self-contained start element
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeStartSelfContainedFragment() throws EXIException,
-			IOException;
-
-	/**
-	 * Reads EXI end element
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeEndElement() throws EXIException, IOException;
-
-	/**
-	 * Reads unexpected EXI end element.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeEndElementUndeclared() throws EXIException, IOException;
-
-	// /**
-	// * Reads an end element part of self-contained fragments
-	// *
-	// * @throws EXIException
-	// * @throws IOException
-	// */
-	// public void decodeEndFragmentSelfContained() throws EXIException,
-	// IOException;
-
-	/**
-	 * Parses xsi:nil attribute
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeXsiNil() throws EXIException, IOException;
-
-	/**
-	 * Parses xsi:type attribute
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeXsiType() throws EXIException, IOException;
-
-	/**
-	 * Parses attribute
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttribute() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with given namespaceURI
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeNS() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with schema-invalid value (qname given)
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeInvalidValue() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with schema-invalid value (NO qname given)
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeAnyInvalidValue() throws EXIException,
-			IOException;
-
-	/**
-	 * Parses expected generic attribute.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeGeneric() throws EXIException, IOException;
-
-	/**
-	 * Parses unexpected attribute.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeAttributeGenericUndeclared() throws EXIException,
-			IOException;
-
-	/**
-	 * Parses namespace declaration retrieving associated URI and prefix.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeNamespaceDeclaration() throws EXIException, IOException;
-
-	/**
-	 * Decodes characters
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeCharacters() throws EXIException, IOException;
-
-	/**
-	 * Decodes generic characters.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeCharactersGeneric() throws EXIException, IOException;
-
-	/**
-	 * Decodes unexpected (generic) characters.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeCharactersGenericUndeclared() throws EXIException,
-			IOException;
-
-	/**
-	 * Parses DOCTYPE with information items
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeDocType() throws EXIException, IOException;
-
-	/**
-	 * Parses EntityReference
-	 * 
-	 * @throws EXIException
-	 */
-	public void decodeEntityReference() throws EXIException, IOException;
-
-	/**
-	 * Parses comment with associated characters.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeComment() throws EXIException, IOException;
-
-	/**
-	 * Parses processing instruction with associated target and data.
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public void decodeProcessingInstruction() throws EXIException, IOException;
-
-	// ////////////////////////////////////////////////////////////////
-	//
-	// fetching values
-	// 
-	// ////////////////////////////////////////////////////////////////
-
-	/**
-	 * Returns qualified name for (current) element
-	 * 
-	 * @return <code>QName</code> for qname
-	 */
-	public QName getElementQName();
-
-	/**
-	 * Returns qualified name for start element name as String
+	 * Returns qualified name for current start element name as String.
 	 * 
 	 * <p>
 	 * QName ::= PrefixedName | UnprefixedName <br />
@@ -308,6 +134,35 @@ public interface EXIDecoder {
 	 * @return <code>String</code> for qname
 	 */
 	public String getStartElementQNameAsString();
+
+	/**
+	 * Reads EXI a self-contained start element.
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void decodeStartSelfContainedFragment() throws EXIException,
+			IOException;
+
+	/**
+	 * Reads EXI end element and returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeEndElement() throws EXIException, IOException;
+
+	/**
+	 * Reads unexpected EXI end element and returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeEndElementUndeclared() throws EXIException, IOException;
 
 	/**
 	 * Returns qualified name for end element name as String (the one previously
@@ -322,11 +177,87 @@ public interface EXIDecoder {
 	public String getEndElementQNameAsString();
 
 	/**
-	 * Returns qualified name for (last) attribute
+	 * Parses xsi:nil attribute
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeXsiNil() throws EXIException, IOException;
+
+	/**
+	 * Parses xsi:type attribute
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeXsiType() throws EXIException, IOException;
+
+	/**
+	 * Parses attribute and returns qualified name.
 	 * 
 	 * @return <code>QName</code> for qname
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public QName getAttributeQName();
+	public QName decodeAttribute() throws EXIException, IOException;
+
+	/**
+	 * Parses expected attribute with given namespaceURI and returns qualified
+	 * name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeNS() throws EXIException, IOException;
+
+	/**
+	 * Parses expected attribute with schema-invalid value (qname given) and
+	 * returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeInvalidValue() throws EXIException, IOException;
+
+	/**
+	 * Parses expected attribute with schema-invalid value (NO qname given) and
+	 * returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeAnyInvalidValue() throws EXIException,
+			IOException;
+
+	/**
+	 * Parses expected generic attribute and returns qualified name.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeGeneric() throws EXIException, IOException;
+
+	/**
+	 * Parses unexpected attribute.
+	 * 
+	 * @return <code>QName</code> for qualified name
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public QName decodeAttributeGenericUndeclared() throws EXIException,
+			IOException;
 
 	/**
 	 * Returns qualified name for (last) attribute as String
@@ -349,81 +280,99 @@ public interface EXIDecoder {
 	public Value getAttributeValue();
 
 	/**
-	 * Provides characters as well as significant/insignificant whitespace
-	 * characters
+	 * Parses namespace declaration retrieving associated URI and prefix.
 	 * 
-	 * @return <code>Value</code> for XML characters item
-	 */
-	public Value getCharactersValue();
-
-	/**
-	 * Provides DOCTYPE name.
+	 * @return <code>NamespaceDeclaration</code> ns declaration
 	 * 
-	 * @return <code>String</code> for DOCTYPE name
+	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public String getDocTypeName();
-
-	/**
-	 * Provides DOCTYPE public ID.
-	 * 
-	 * @return <code>String</code> for DOCTYPE public ID
-	 */
-	public String getDocTypePublicID();
-
-	/**
-	 * Provides DOCTYPE system ID.
-	 * 
-	 * @return <code>String</code> for DOCTYPE system ID
-	 */
-	public String getDocTypeSystemID();
-
-	/**
-	 * Provides DOCTYPE text.
-	 * 
-	 * @return <code>String</code> for DOCTYPE text
-	 */
-	public String getDocTypeText();
-
-	/**
-	 * Provides ENTITY_REFERENCE name.
-	 * 
-	 * @return <code>String</code> for DOCTYPE name
-	 */
-	public String getEntityReferenceName();
-
-	/**
-	 * Provides comment text.
-	 * 
-	 * @return <code>String</code> for comment text
-	 */
-	public char[] getComment();
+	public NamespaceDeclaration decodeNamespaceDeclaration()
+			throws EXIException, IOException;
 
 	/**
 	 * Prefix declarations for current context (element)
 	 * 
 	 * @return list or null if no mappings are available
 	 */
-	public List<PrefixMapping> getPrefixDeclarations();
+	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations();
 
 	/**
-	 * Recently undeclared prefix declarations for popped context (element)
+	 * Recently undeclared prefix declarations for popped (element) context
 	 * 
 	 * @return list or null if no mappings are available
 	 */
-	public List<PrefixMapping> getUndeclaredPrefixDeclarations();
+	public List<NamespaceDeclaration> getUndeclaredPrefixDeclarations();
 
 	/**
-	 * Provides processing instructions target.
+	 * Decodes characters and reports them.
 	 * 
-	 * @return <code>String</code> for PI target
+	 * @return <code>Value</code> for XML characters item
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public String getPITarget();
+	public Value decodeCharacters() throws EXIException, IOException;
 
 	/**
-	 * Provides processing instructions data.
+	 * Decodes generic characters.
 	 * 
-	 * @return <code>String</code> for PI data
+	 * @return <code>Value</code> for XML characters item
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
 	 */
-	public String getPIData();
+	public Value decodeCharactersGeneric() throws EXIException, IOException;
+
+	/**
+	 * Decodes unexpected (generic) characters and reports them.
+	 * 
+	 * @return <code>Value</code> for XML characters item
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public Value decodeCharactersGenericUndeclared() throws EXIException,
+			IOException;
+
+	/**
+	 * Parses DOCTYPE with information items (name, publicID, systemID, text).
+	 * 
+	 * @return <code>DocType</code> for DOCTYPE information items
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public DocType decodeDocType() throws EXIException, IOException;
+
+	/**
+	 * Parses EntityReference and returns ER name.
+	 * 
+	 * @return <code>String</code> for ER name
+	 * 
+	 * @throws EXIException
+	 */
+	public char[] decodeEntityReference() throws EXIException, IOException;
+
+	/**
+	 * Parses comment with associated characters and provides comment text.
+	 * 
+	 * @return <code>String</code> for comment text
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public char[] decodeComment() throws EXIException, IOException;
+
+	/**
+	 * Parses processing instruction with associated target and data.
+	 * 
+	 * @return <code>String</code> for PI target and data
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public ProcessingInstruction decodeProcessingInstruction()
+			throws EXIException, IOException;
 
 }

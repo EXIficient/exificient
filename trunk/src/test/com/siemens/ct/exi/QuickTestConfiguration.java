@@ -32,7 +32,7 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
 @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -95,11 +95,17 @@ public class QuickTestConfiguration {
 		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		fidelityOptions = FidelityOptions.createAll();
+		try {
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+		} catch (UnsupportedOption e) {
+		}
 	}
 	
 	// ///////////////////////////////////////////////////
 	// OTHER OPTIONS
 	static {
+		selfContainedElements = new QName[1];
+		selfContainedElements[0] = new QName("", "note");
 		// blockSize = 9013;
 		// blockSize = 200;
 		// valueMaxLength = 8;
@@ -116,8 +122,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

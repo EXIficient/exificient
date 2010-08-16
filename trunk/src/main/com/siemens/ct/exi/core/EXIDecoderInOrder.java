@@ -59,20 +59,15 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		nextEventType = EventType.START_DOCUMENT;
 	}
 
-	public boolean hasNext() throws EXIException, IOException {
+	public EventType next() throws EXIException, IOException {
 		if (nextEventType == EventType.END_DOCUMENT) {
 			// last was ED --> no more events
-			return false;
+			return null;
 		} else {
 			// decode event code
 			decodeEventCode();
-			return true;
-			// return (nextEventType != EventType.END_DOCUMENT);	
+			return nextEventType;	
 		}
-	}
-
-	public EventType next() throws EXIException, IOException {
-		return nextEventType;
 	}
 
 }

@@ -14,7 +14,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.core.container.ContextContainer;
+import com.siemens.ct.exi.core.container.Context;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
@@ -40,13 +40,13 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected Datatype lastDatatype;
 
 	protected List<QName> contextOrders;
-	protected Map<QName, ContextContainer> contexts;
+	protected Map<QName, Context> contexts;
 
 	public EXIEncoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		contextOrders = new ArrayList<QName>();
-		contexts = new HashMap<QName, ContextContainer>();
+		contexts = new HashMap<QName, Context>();
 	}
 
 	@Override
@@ -82,9 +82,9 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	@Override
 	protected void writeValue(QName valueContext) throws IOException {
 		
-		ContextContainer cc = contexts.get(valueContext);
+		Context cc = contexts.get(valueContext);
 		if(cc == null) {
-			cc = new ContextContainer();
+			cc = new Context();
 			contexts.put(valueContext, cc);
 			contextOrders.add(valueContext);
 		}
@@ -130,7 +130,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			// 1. structure stream already written
 			// 2. value channels in order
 			for (QName contextOrder : contextOrders) {
-				ContextContainer cc = contexts.get(contextOrder);
+				Context cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
@@ -163,7 +163,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
 			for (QName contextOrder : contextOrders) {
-				ContextContainer cc = contexts.get(contextOrder);
+				Context cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
@@ -180,7 +180,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 
 			// all value channels having more than 100 values
 			for (QName contextOrder : contextOrders) {
-				ContextContainer cc = contexts.get(contextOrder);
+				Context cc = contexts.get(contextOrder);
 				List<String> values = cc.getValues();
 				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();

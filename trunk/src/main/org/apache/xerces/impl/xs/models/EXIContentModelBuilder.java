@@ -114,6 +114,15 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		elementPool.clear();
 		schemaParsingErrors.clear();
 	}
+	
+//	class NoXMLEntityResolver implements XMLEntityResolver {
+//		public XMLInputSource resolveEntity(
+//				org.apache.xerces.xni.XMLResourceIdentifier resourceIdentifier)
+//				throws XNIException, IOException {
+//			// Note: If the entity cannot be resolved, this method should return null
+//			return null;
+//		}
+//	}
 
 	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
 		try {
@@ -122,9 +131,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// load XSD schema & get XSModel
 			XMLSchemaLoader sl = new XMLSchemaLoader();
 			sl.setErrorHandler(this);
-
+//			sl.setEntityResolver(new NoXMLEntityResolver());
+			
 			SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
 
+			
 			// set XSModel
 			xsModel = g.toXSModel();
 

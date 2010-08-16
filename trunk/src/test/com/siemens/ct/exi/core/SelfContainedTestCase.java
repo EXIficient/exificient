@@ -119,59 +119,43 @@ public class SelfContainedTestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementQName().equals(root));
+			assertTrue(decoder.decodeStartElementGeneric().equals(root));
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(decoder.getCharactersValue().toString()));
+			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
 
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			//	<sc> #1
 			decoder.decodeStartElementGenericUndeclared();
 			{
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 				decoder.decodeStartSelfContainedFragment();
 				
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-				decoder.decodeCharactersGenericUndeclared();
-				assertTrue(s.equals(decoder.getCharactersValue().toString()));
+				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
 				
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			//	<sc> #2
 			decoder.decodeStartElement();
 			{ 
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 				decoder.decodeStartSelfContainedFragment();
 				
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-				decoder.decodeCharactersGenericUndeclared();
-				assertTrue(s.equals(decoder.getCharactersValue().toString()));
+				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
 				
-				decoder.hasNext();
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
 						
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -192,20 +176,15 @@ public class SelfContainedTestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(decoder.getCharactersValue().toString()));
+			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();	
 		}
@@ -220,20 +199,15 @@ public class SelfContainedTestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			decoder.decodeStartElementGeneric();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			decoder.decodeCharactersGenericUndeclared();
-			assertTrue(s.equals(decoder.getCharactersValue().toString()));
+			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 			
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();	
 		}
