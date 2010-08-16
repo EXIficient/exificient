@@ -26,6 +26,9 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.core.container.DocType;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
+import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
@@ -66,14 +69,15 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 			System.err.println("TODO setInputStream");
 		}
 	}
-
+	
 	@Override
-	public boolean hasNext() throws EXIException, IOException {
+	public EventType next() throws EXIException, IOException {
+		// return (scDecoder == null ? super.next() : scDecoder.next());
 		if (scDecoder == null) {
-			return super.hasNext();
+			return super.next();
 		} else {
-			boolean bool = scDecoder.hasNext();
-			if (this.scDecoder.nextEventType == EventType.END_DOCUMENT) {
+			EventType et = scDecoder.next();
+			if (et == EventType.END_DOCUMENT) {
 				scDecoder.decodeEndDocument();
 				// Skip to the next byte-aligned boundary in the stream if it is
 				// not already at such a boundary
@@ -81,15 +85,11 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 				// indicate that SC portion is over
 				scDecoder = null;
 				popElement();
-				return super.hasNext();
+				et = super.next();
 			}
-			return bool;
+			// return next();
+			return et;
 		}
-	}
-
-	@Override
-	public EventType next() throws EXIException, IOException {
-		return (scDecoder == null ? super.next() : scDecoder.next());
 	}
 
 	@Override
@@ -111,39 +111,39 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public void decodeStartElement() throws EXIException, IOException {
+	public QName decodeStartElement() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeStartElement();
+			return super.decodeStartElement();
 		} else {
-			scDecoder.decodeStartElement();
+			return scDecoder.decodeStartElement();
 		}
 	}
 
 	@Override
-	public void decodeStartElementNS() throws EXIException, IOException {
+	public QName decodeStartElementNS() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeStartElementNS();
+			return super.decodeStartElementNS();
 		} else {
-			scDecoder.decodeStartElementNS();
+			return scDecoder.decodeStartElementNS();
 		}
 	}
 
 	@Override
-	public void decodeStartElementGeneric() throws EXIException, IOException {
+	public QName decodeStartElementGeneric() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeStartElementGeneric();
+			return super.decodeStartElementGeneric();
 		} else {
-			scDecoder.decodeStartElementGeneric();
+			return scDecoder.decodeStartElementGeneric();
 		}
 	}
 
 	@Override
-	public void decodeStartElementGenericUndeclared() throws EXIException,
+	public QName decodeStartElementGenericUndeclared() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
-			super.decodeStartElementGenericUndeclared();
+			return super.decodeStartElementGenericUndeclared();
 		} else {
-			scDecoder.decodeStartElementGenericUndeclared();
+			return scDecoder.decodeStartElementGenericUndeclared();
 		}
 	}
 
@@ -167,8 +167,8 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 			// Evaluate the sequence of events (SD, SE(qname), content, ED)
 			// according to the Fragment grammar
 			scDecoder.decodeStartDocument();
-			this.hasNext(); // decode next event
-			EventType et = this.next();
+			// this.hasNext(); // decode next event
+			EventType et = next();
 			switch (et) {
 			case START_ELEMENT:
 				scDecoder.decodeStartElement();
@@ -194,183 +194,177 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public void decodeEndElement() throws EXIException, IOException {
+	public QName decodeEndElement() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeEndElement();
+			return super.decodeEndElement();
 		} else {
-			scDecoder.decodeEndElement();
+			return scDecoder.decodeEndElement();
 		}
 	}
 
 	@Override
-	public void decodeEndElementUndeclared() throws EXIException, IOException {
+	public QName decodeEndElementUndeclared() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeEndElementUndeclared();
+			return super.decodeEndElementUndeclared();
 		} else {
-			scDecoder.decodeEndElementUndeclared();
+			return scDecoder.decodeEndElementUndeclared();
 		}
 	}
 
 	@Override
-	public void decodeAttributeXsiNil() throws EXIException, IOException {
+	public QName decodeAttributeXsiNil() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeXsiNil();
+			return super.decodeAttributeXsiNil();
 		} else {
-			scDecoder.decodeAttributeXsiNil();
+			return scDecoder.decodeAttributeXsiNil();
 		}
 	}
 
 	@Override
-	public void decodeAttributeXsiType() throws EXIException, IOException {
+	public QName decodeAttributeXsiType() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeXsiType();
+			return super.decodeAttributeXsiType();
 		} else {
-			scDecoder.decodeAttributeXsiType();
+			return scDecoder.decodeAttributeXsiType();
 		}
 	}
 
 	@Override
-	public void decodeAttribute() throws EXIException, IOException {
+	public QName decodeAttribute() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttribute();
+			return super.decodeAttribute();
 		} else {
-			scDecoder.decodeAttribute();
+			return scDecoder.decodeAttribute();
 		}
 	}
 
 	@Override
-	public void decodeAttributeNS() throws EXIException, IOException {
+	public QName decodeAttributeNS() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeNS();
+			return super.decodeAttributeNS();
 		} else {
-			scDecoder.decodeAttributeNS();
+			return scDecoder.decodeAttributeNS();
 		}
 	}
 
 	@Override
-	public void decodeAttributeInvalidValue() throws EXIException, IOException {
+	public QName decodeAttributeInvalidValue() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeInvalidValue();
+			return super.decodeAttributeInvalidValue();
 		} else {
-			scDecoder.decodeAttributeInvalidValue();
+			return scDecoder.decodeAttributeInvalidValue();
 		}
 	}
 
 	@Override
-	public void decodeAttributeAnyInvalidValue() throws EXIException,
+	public QName decodeAttributeAnyInvalidValue() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeAnyInvalidValue();
+			return super.decodeAttributeAnyInvalidValue();
 		} else {
-			scDecoder.decodeAttributeAnyInvalidValue();
+			return scDecoder.decodeAttributeAnyInvalidValue();
 		}
 	}
 
 	@Override
-	public void decodeAttributeGeneric() throws EXIException, IOException {
+	public QName decodeAttributeGeneric() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeGeneric();
+			return super.decodeAttributeGeneric();
 		} else {
-			scDecoder.decodeAttributeGeneric();
+			return scDecoder.decodeAttributeGeneric();
 		}
 	}
 
 	@Override
-	public void decodeAttributeGenericUndeclared() throws EXIException,
+	public QName decodeAttributeGenericUndeclared() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
-			super.decodeAttributeGenericUndeclared();
+			return super.decodeAttributeGenericUndeclared();
 		} else {
-			scDecoder.decodeAttributeGenericUndeclared();
+			return scDecoder.decodeAttributeGenericUndeclared();
 		}
 	}
 
 	@Override
-	public List<PrefixMapping> getPrefixDeclarations() {
+	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
 		if (scDecoder == null) {
-			return super.getPrefixDeclarations();
+			return super.getDeclaredPrefixDeclarations();
 		} else {
-			return scDecoder.getPrefixDeclarations();
+			return scDecoder.getDeclaredPrefixDeclarations();
 		}
 	}
 
 	@Override
-	public void decodeNamespaceDeclaration() throws EXIException, IOException {
+	public NamespaceDeclaration decodeNamespaceDeclaration() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeNamespaceDeclaration();
+			return super.decodeNamespaceDeclaration();
 		} else {
-			scDecoder.decodeNamespaceDeclaration();
+			return scDecoder.decodeNamespaceDeclaration();
 		}
 	}
 
 	@Override
-	public void decodeCharacters() throws EXIException, IOException {
+	public Value decodeCharacters() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeCharacters();
+			return super.decodeCharacters();
 		} else {
-			scDecoder.decodeCharacters();
+			return scDecoder.decodeCharacters();
 		}
 	}
 
 	@Override
-	public void decodeCharactersGeneric() throws EXIException, IOException {
+	public Value decodeCharactersGeneric() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeCharactersGeneric();
+			return super.decodeCharactersGeneric();
 		} else {
-			scDecoder.decodeCharactersGeneric();
+			return scDecoder.decodeCharactersGeneric();
 		}
 	}
 
 	@Override
-	public void decodeCharactersGenericUndeclared() throws EXIException,
+	public Value decodeCharactersGenericUndeclared() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
-			super.decodeCharactersGenericUndeclared();
+			return super.decodeCharactersGenericUndeclared();
 		} else {
-			scDecoder.decodeCharactersGenericUndeclared();
+			return scDecoder.decodeCharactersGenericUndeclared();
 		}
 	}
 
 	@Override
-	public void decodeDocType() throws EXIException, IOException {
+	public DocType decodeDocType() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeDocType();
+			return super.decodeDocType();
 		} else {
-			scDecoder.decodeDocType();
+			return scDecoder.decodeDocType();
 		}
 	}
 
 	@Override
-	public void decodeEntityReference() throws EXIException, IOException {
+	public char[] decodeEntityReference() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeEntityReference();
+			return super.decodeEntityReference();
 		} else {
-			scDecoder.decodeEntityReference();
+			return scDecoder.decodeEntityReference();
 		}
 	}
 
 	@Override
-	public void decodeComment() throws EXIException, IOException {
+	public char[] decodeComment() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeComment();
+			return super.decodeComment();
 		} else {
-			scDecoder.decodeComment();
+			return scDecoder.decodeComment();
 		}
 	}
 
 	@Override
-	public void decodeProcessingInstruction() throws EXIException, IOException {
+	public ProcessingInstruction decodeProcessingInstruction() throws EXIException, IOException {
 		if (scDecoder == null) {
-			super.decodeProcessingInstruction();
+			return super.decodeProcessingInstruction();
 		} else {
-			scDecoder.decodeProcessingInstruction();
+			return scDecoder.decodeProcessingInstruction();
 		}
-	}
-
-	@Override
-	public QName getElementQName() {
-		return (scDecoder == null ? super.getElementQName() : scDecoder
-				.getElementQName());
 	}
 
 	@Override
@@ -386,12 +380,6 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	}
 
 	@Override
-	public QName getAttributeQName() {
-		return (scDecoder == null ? super.getAttributeQName() : scDecoder
-				.getAttributeQName());
-	}
-
-	@Override
 	public String getAttributeQNameAsString() {
 		return (scDecoder == null ? super.getAttributeQNameAsString()
 				: scDecoder.getAttributeQNameAsString());
@@ -401,57 +389,5 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 	public Value getAttributeValue() {
 		return (scDecoder == null ? super.getAttributeValue() : scDecoder
 				.getAttributeValue());
-	}
-
-	@Override
-	public Value getCharactersValue() {
-		return (scDecoder == null ? super.getCharactersValue() : scDecoder
-				.getCharactersValue());
-	}
-
-	@Override
-	public String getDocTypeName() {
-		return (scDecoder == null ? super.getDocTypeName() : scDecoder
-				.getDocTypeName());
-	}
-
-	@Override
-	public String getDocTypePublicID() {
-		return (scDecoder == null ? super.getDocTypePublicID() : scDecoder
-				.getDocTypePublicID());
-	}
-
-	@Override
-	public String getDocTypeSystemID() {
-		return (scDecoder == null ? super.getDocTypeSystemID() : scDecoder
-				.getDocTypeSystemID());
-	}
-
-	@Override
-	public String getDocTypeText() {
-		return (scDecoder == null ? super.getDocTypeText() : scDecoder
-				.getDocTypeText());
-	}
-
-	@Override
-	public String getEntityReferenceName() {
-		return (scDecoder == null ? super.getEntityReferenceName() : scDecoder
-				.getEntityReferenceName());
-	}
-
-	@Override
-	public char[] getComment() {
-		return (scDecoder == null ? super.getComment() : scDecoder.getComment());
-	}
-
-	@Override
-	public String getPITarget() {
-		return (scDecoder == null ? super.getPITarget() : scDecoder
-				.getPITarget());
-	}
-
-	@Override
-	public String getPIData() {
-		return (scDecoder == null ? super.getPIData() : scDecoder.getPIData());
 	}
 }

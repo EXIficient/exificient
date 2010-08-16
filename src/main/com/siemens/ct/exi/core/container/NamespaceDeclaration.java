@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.core.container;
 
-import com.siemens.ct.exi.values.Value;
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -28,26 +26,12 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public class PreReadValueContainer {
-	
-	protected Value[] contentValues;
-	protected int index;
-	
-	public PreReadValueContainer(Value[] contentValues) {
-		setValues(contentValues);
-	}
-	
-	protected void setValues(Value[] contentValues) {
-		this.contentValues = contentValues;
-		this.index = 0; 
-	}
-	
-	public Value[] getValues() {
-		return contentValues;
-	}
-	
-	
-	public Value getNextContantValue() {
-		return contentValues[index++];
+public class NamespaceDeclaration {
+	public final String namespaceURI;
+	public final String prefix;
+
+	public NamespaceDeclaration(String namespaceURI, String prefix) {
+		this.namespaceURI = namespaceURI;
+		this.prefix = prefix;
 	}
 }

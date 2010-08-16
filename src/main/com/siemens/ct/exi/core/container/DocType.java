@@ -18,11 +18,6 @@
 
 package com.siemens.ct.exi.core.container;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.siemens.ct.exi.datatype.Datatype;
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -31,26 +26,17 @@ import com.siemens.ct.exi.datatype.Datatype;
  * @version 0.5
  */
 
-public class ContextContainer {
-	
-	final List<String> values;
-	final List<Datatype> valueDatatypes;
-	
-	public ContextContainer() {
-		values = new ArrayList<String>();
-		valueDatatypes = new ArrayList<Datatype>();
-	}
-	
-	public void addValue(String value, Datatype datatype) {
-		values.add(value);
-		valueDatatypes.add(datatype);
-	}
-	
-	public List<String> getValues() {
-		return values;
-	}
-	
-	public List<Datatype> getValueDatatypes() {
-		return valueDatatypes;
+public class DocType {
+	public final char[] name;
+	public final char[] publicID;
+	public final char[] systemID;
+	public final char[] text;
+
+	public DocType(char[] name, char[] publicID, char[] systemID,
+			char[] text) {
+		this.name = name;
+		this.publicID = publicID;
+		this.systemID = systemID;
+		this.text = text;
 	}
 }

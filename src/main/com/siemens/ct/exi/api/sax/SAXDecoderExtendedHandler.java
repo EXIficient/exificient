@@ -33,6 +33,7 @@ import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
@@ -70,20 +71,20 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	}
 
 	@Override
-	protected void handleDocType() throws SAXException, IOException {
+	protected void handleDocType(DocType docType) throws SAXException, IOException {
 		if (lexicalHandler != null) {
-			String publicID = decoder.getDocTypePublicID().length() == 0 ? null
-					: decoder.getDocTypePublicID();
-			String systemID = decoder.getDocTypeSystemID().length() == 0 ? null
-					: decoder.getDocTypeSystemID();
+			String publicID = docType.publicID.length == 0 ? null
+					: new String(docType.publicID);
+			String systemID = docType.systemID.length == 0 ? null
+					: new String(docType.systemID);
 
 			// start DTD
-			lexicalHandler.startDTD(decoder.getDocTypeName(), publicID,
+			lexicalHandler.startDTD(new String(docType.name), publicID,
 					systemID);
 
 			// parse DTD context and register declaration-handler
 			// TODO not sure whether there is a better way to do DTD
-			String docTypeText = decoder.getDocTypeText();
+			String docTypeText = new String(docType.text);
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			xmlReader.setProperty(
 					"http://xml.org/sax/properties/declaration-handler", this);
@@ -97,9 +98,9 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	}
 
 	@Override
-	protected void handleEntityReference() throws SAXException {
+	protected void handleEntityReference(char[] erName) throws SAXException {
 		if (lexicalHandler != null) {
-			String entityReferenceName = decoder.getEntityReferenceName();
+			String entityReferenceName = new String(erName);
 
 			if (disable_ouput_escaping) {
 				char[] entity = ("&" + entityReferenceName + ";").toCharArray();
@@ -154,9 +155,9 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 	}
 
 	@Override
-	protected void handleComment() throws SAXException {
+	protected void handleComment(char[] comment) throws SAXException {
 		if (lexicalHandler != null) {
-			char[] comment = decoder.getComment();
+			// char[] comment = decoder.getComment();
 			lexicalHandler.comment(comment, 0, comment.length);
 		}
 	}

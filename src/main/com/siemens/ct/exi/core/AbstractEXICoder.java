@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.datatype.QNameDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -124,10 +125,10 @@ public abstract class AbstractEXICoder {
 	}
 	
 	protected final void declarePrefix(String pfx, String uri) {
-		if (elementContext.prefixDeclarations == null) {
-			elementContext.prefixDeclarations = new ArrayList<PrefixMapping>();
+		if (elementContext.nsDeclarations == null) {
+			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
 		}
-		elementContext.prefixDeclarations.add(new PrefixMapping(pfx, uri));	
+		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));	
 	}
 	
 //	// just works for decoder
@@ -139,10 +140,10 @@ public abstract class AbstractEXICoder {
 		// check all stack items expect last one (in reverse order)
 		for(int i=elementContextStackIndex; i>0; i--) {
 			ElementContext ec = elementContextStack[i];
-			if(ec.prefixDeclarations != null) {
-				for(PrefixMapping pm : ec.prefixDeclarations) {
-					if(pm.pfx.equals(prefix)) {
-						return pm.uri;
+			if(ec.nsDeclarations != null) {
+				for(NamespaceDeclaration ns : ec.nsDeclarations) {
+					if(ns.prefix.equals(prefix)) {
+						return ns.namespaceURI;
 					}
 				}
 			}
@@ -225,8 +226,8 @@ public abstract class AbstractEXICoder {
 		final QName qname;
 		public String sqname;
 		Rule rule;	// may be modified while coding
-		//	TODO prefix declarations
-		List<PrefixMapping> prefixDeclarations; 
+		//	prefix declarations
+		List<NamespaceDeclaration> nsDeclarations; 
 
 		public ElementContext(QName qname, Rule rule) {
 			this.qname = qname;

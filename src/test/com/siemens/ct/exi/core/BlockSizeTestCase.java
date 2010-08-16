@@ -70,57 +70,39 @@ public class BlockSizeTestCase extends XMLTestCase {
 			InputStream is = new ByteArrayInputStream(os.toByteArray());
 			EXIDecoder exiDecoder = factory.createEXIDecoder();
 			exiDecoder.setInputStream(is, factory.isEXIBodyOnly());
-			
-			exiDecoder.hasNext();
+
 			assertTrue(exiDecoder.next() == EventType.START_DOCUMENT);
 			exiDecoder.decodeStartDocument();
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.START_ELEMENT_GENERIC);
-			exiDecoder.decodeStartElementGeneric();
-			assertTrue(exiDecoder.getElementQName().getLocalPart().equals("root"));
+			assertTrue(exiDecoder.decodeStartElementGeneric().getLocalPart().equals("root"));
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			exiDecoder.decodeAttributeGenericUndeclared();
-			assertTrue(exiDecoder.getAttributeQName().getLocalPart().equals("atA"));
+			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atA"));
 			assertTrue(exiDecoder.getAttributeValue().equals("a"));
 
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			exiDecoder.decodeAttributeGenericUndeclared();
-			assertTrue(exiDecoder.getAttributeQName().getLocalPart().equals("atB"));
+			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atB"));
 			assertTrue(exiDecoder.getAttributeValue().equals("b"));
 
-			exiDecoder.hasNext();
-			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			exiDecoder.decodeAttributeGenericUndeclared();
-			assertTrue(exiDecoder.getAttributeQName().getLocalPart().equals("atC"));
+			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atC"));
 			assertTrue(exiDecoder.getAttributeValue().equals("c"));
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			exiDecoder.decodeAttributeGenericUndeclared();
-			assertTrue(exiDecoder.getAttributeQName().getLocalPart().equals("atD"));
+			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atD"));
 			assertTrue(exiDecoder.getAttributeValue().equals("d"));
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			exiDecoder.decodeAttributeGenericUndeclared();
-			assertTrue(exiDecoder.getAttributeQName().getLocalPart().equals("atE"));
+			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atE"));
 			assertTrue(exiDecoder.getAttributeValue().equals("e"));
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);	
-			exiDecoder.decodeCharactersGenericUndeclared();
-			assertTrue(exiDecoder.getCharactersValue().toString().equals("... TEXT ..."));
+			assertTrue(exiDecoder.decodeCharactersGenericUndeclared().toString().equals("... TEXT ..."));
 
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
-			exiDecoder.decodeEndElement();
-			assertTrue(exiDecoder.getElementQName().getLocalPart().equals("root"));
+			assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("root"));
 			
-			exiDecoder.hasNext();
 			assertTrue(exiDecoder.next() == EventType.END_DOCUMENT);
 			exiDecoder.decodeEndDocument();
 			

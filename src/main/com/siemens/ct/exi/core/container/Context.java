@@ -16,7 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.core;
+package com.siemens.ct.exi.core.container;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.siemens.ct.exi.datatype.Datatype;
 
 /**
  * 
@@ -26,13 +31,26 @@ package com.siemens.ct.exi.core;
  * @version 0.5
  */
 
-public final class PrefixMapping {
+public class Context {
 	
-	public final String pfx;
-	public final String uri;
+	final List<String> values;
+	final List<Datatype> valueDatatypes;
 	
-	public PrefixMapping(String pfx, String uri) {
-		this.pfx = pfx;
-		this.uri = uri;
+	public Context() {
+		values = new ArrayList<String>();
+		valueDatatypes = new ArrayList<Datatype>();
+	}
+	
+	public void addValue(String value, Datatype datatype) {
+		values.add(value);
+		valueDatatypes.add(datatype);
+	}
+	
+	public List<String> getValues() {
+		return values;
+	}
+	
+	public List<Datatype> getValueDatatypes() {
+		return valueDatatypes;
 	}
 }

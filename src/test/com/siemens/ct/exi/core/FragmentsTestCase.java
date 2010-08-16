@@ -108,73 +108,42 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			decoder.decodeStartElementGeneric();
-			assertTrue(decoder.getElementQName().equals(s1));
+			assertTrue(decoder.decodeStartElementGeneric().equals(s1));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			decoder.decodeStartElementGenericUndeclared();
-			assertTrue(decoder.getElementQName().equals(s2));
+			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(s2));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeQName().equals(at1));
+			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			decoder.decodeEndElementUndeclared();
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			decoder.decodeStartElement();
-			assertTrue(decoder.getElementQName().equals(s1));
-
-			// decoder.inspectStream();
-			decoder.hasNext();
+			assertTrue(decoder.decodeStartElement().equals(s1));
+			
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			decoder.decodeStartElement();
-			assertTrue(decoder.getElementQName().equals(s2));
+			assertTrue(decoder.decodeStartElement().equals(s2));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
-			decoder.decodeAttribute();
-			assertTrue(decoder.getAttributeQName().equals(at1));
+			assertTrue(decoder.decodeAttribute().equals(at1));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh2));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			decoder.decodeAttributeGenericUndeclared();
-			assertTrue(decoder.getAttributeQName().equals(at2));
+			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at2));
 			assertTrue(decoder.getAttributeValue().toString().equals(atCh3));
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
-			// decoder.inspectStream();
-			decoder.hasNext();
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}

@@ -41,7 +41,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIDecoder;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.core.PrefixMapping;
+import com.siemens.ct.exi.core.container.DocType;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
+import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.values.Value;
@@ -76,7 +78,7 @@ public class SAXDecoder implements XMLReader {
 
 	protected boolean namespaces = true;
 	protected boolean namespacePrefixes = false;
-
+	
 	protected String seQNameAsString = Constants.EMPTY_STRING;
 	protected String atQNameAsString = Constants.EMPTY_STRING;
 
@@ -214,14 +216,15 @@ public class SAXDecoder implements XMLReader {
 		EventType eventType;
 
 		String eeQNameAsString = Constants.EMPTY_STRING;
-		List<PrefixMapping> eePrefixes = null;
+		List<NamespaceDeclaration> eePrefixes = null;
 
-		boolean deferredStartElement = false;
+		QName deferredStartElement = null;
 
-		while (decoder.hasNext()) {
-			eventType = decoder.next();
+		// while (decoder.hasNext()) {
+		while ( ( eventType = decoder.next()) != null ) {
+			// eventType = decoder.next();
 
-			if (deferredStartElement) {
+			if (deferredStartElement != null) {
 				switch (eventType) {
 				/* ELEMENT CONTENT EVENTS */
 				case START_ELEMENT:
@@ -238,8 +241,8 @@ public class SAXDecoder implements XMLReader {
 				case COMMENT:
 				case PROCESSING_INSTRUCTION:
 					// No Attribute or NS event --> start deferred element
-					handleDeferredStartElement();
-					deferredStartElement = false;
+					handleDeferredStartElement(deferredStartElement);
+					deferredStartElement = null;
 				}
 			}
 
@@ -255,36 +258,28 @@ public class SAXDecoder implements XMLReader {
 				break;
 			/* ATTRIBUTES */
 			case ATTRIBUTE:
-				decoder.decodeAttribute();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttribute());
 				break;
 			case ATTRIBUTE_NS:
-				decoder.decodeAttributeNS();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeNS());
 				break;
 			case ATTRIBUTE_XSI_NIL:
-				decoder.decodeAttributeXsiNil();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeXsiNil());
 				break;
 			case ATTRIBUTE_XSI_TYPE:
-				decoder.decodeAttributeXsiType();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeXsiType());
 				break;
 			case ATTRIBUTE_INVALID_VALUE:
-				decoder.decodeAttributeInvalidValue();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeInvalidValue());
 				break;
 			case ATTRIBUTE_ANY_INVALID_VALUE:
-				decoder.decodeAttributeAnyInvalidValue();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeAnyInvalidValue());
 				break;
 			case ATTRIBUTE_GENERIC:
-				decoder.decodeAttributeGeneric();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeGeneric());
 				break;
 			case ATTRIBUTE_GENERIC_UNDECLARED:
-				decoder.decodeAttributeGenericUndeclared();
-				handleAttribute();
+				handleAttribute(decoder.decodeAttributeGenericUndeclared());
 				break;
 			/* NAMESPACE DECLARATION */
 			case NAMESPACE_DECLARATION:
@@ -298,74 +293,61 @@ public class SAXDecoder implements XMLReader {
 			/* ELEMENT CONTENT EVENTS */
 			/* START ELEMENT */
 			case START_ELEMENT:
-				decoder.decodeStartElement();
 				// defer start element and keep on processing
-				deferredStartElement = true;
+				deferredStartElement = decoder.decodeStartElement();
 				break;
 			case START_ELEMENT_NS:
-				decoder.decodeStartElementNS();
 				// defer start element and keep on processing
-				deferredStartElement = true;
+				deferredStartElement = decoder.decodeStartElementNS();
 				break;
 			case START_ELEMENT_GENERIC:
-				decoder.decodeStartElementGeneric();
 				// defer start element and keep on processing
-				deferredStartElement = true;
+				deferredStartElement = decoder.decodeStartElementGeneric();
 				break;
 			case START_ELEMENT_GENERIC_UNDECLARED:
-				decoder.decodeStartElementGenericUndeclared();
 				// defer start element and keep on processing
-				deferredStartElement = true;
+				deferredStartElement = decoder.decodeStartElementGenericUndeclared();
 				break;
 			/* END ELEMENT */
 			case END_ELEMENT:
-				decoder.decodeEndElement();
+				QName eeQName = decoder.decodeEndElement();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
-					// eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
 				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
-				handleEndElement(eeQNameAsString, eePrefixes);
+				handleEndElement(eeQName, eeQNameAsString, eePrefixes);
 				break;
 			case END_ELEMENT_UNDECLARED:
-				decoder.decodeEndElementUndeclared();
+				eeQName = decoder.decodeEndElementUndeclared();
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getEndElementQNameAsString();
-					// eePrefixes = decoder.getUndeclaredPrefixDeclarations();
 				}
 				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
-				handleEndElement(eeQNameAsString, eePrefixes);
+				handleEndElement(eeQName, eeQNameAsString, eePrefixes);
 				break;
 			/* CHARACTERS */
 			case CHARACTERS:
-				decoder.decodeCharacters();
-				handleCharacters();
+				handleCharacters(decoder.decodeCharacters());
 				break;
 			case CHARACTERS_GENERIC:
-				decoder.decodeCharactersGeneric();
-				handleCharacters();
+				handleCharacters(decoder.decodeCharactersGeneric());
 				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				decoder.decodeCharactersGenericUndeclared();
-				handleCharacters();
+				handleCharacters(decoder.decodeCharactersGenericUndeclared());
 				break;
 			/* MISC */
 			case DOC_TYPE:
-				decoder.decodeDocType();
-				handleDocType();
+				handleDocType(decoder.decodeDocType());
 				break;
 			case ENTITY_REFERENCE:
-				decoder.decodeEntityReference();
-				handleEntityReference();
+				handleEntityReference(decoder.decodeEntityReference());
 				break;
 			case COMMENT:
-				decoder.decodeComment();
-				handleComment();
+				handleComment(decoder.decodeComment());
 				break;
 			case PROCESSING_INSTRUCTION:
-				decoder.decodeProcessingInstruction();
-				contentHandler.processingInstruction(decoder.getPITarget(),
-						decoder.getPIData());
+				ProcessingInstruction pi = decoder.decodeProcessingInstruction();
+				contentHandler.processingInstruction(pi.target, pi.data);
 				break;
 			default:
 				throw new RuntimeException("Unexpected EXI Event '" + eventType
@@ -374,20 +356,20 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	protected final void startPrefixMappings(List<PrefixMapping> prefixes)
+	protected final void startPrefixMappings(List<NamespaceDeclaration> prefixes)
 			throws SAXException {
 		if (prefixes != null) {
-			for (PrefixMapping pm : prefixes) {
-				contentHandler.startPrefixMapping(pm.pfx, pm.uri);
+			for (NamespaceDeclaration ns : prefixes) {
+				contentHandler.startPrefixMapping(ns.prefix, ns.namespaceURI);
 			}
 		}
 	}
 
-	protected final void endPrefixMappings(List<PrefixMapping> eePrefixes)
+	protected final void endPrefixMappings(List<NamespaceDeclaration> eePrefixes)
 			throws SAXException {
 		if (eePrefixes != null) {
-			for (PrefixMapping pm : eePrefixes) {
-				contentHandler.endPrefixMapping(pm.pfx);
+			for (NamespaceDeclaration ns : eePrefixes) {
+				contentHandler.endPrefixMapping(ns.prefix);
 			}
 		}
 	}
@@ -395,7 +377,7 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * SAX Content Handler
 	 */
-	protected void handleDeferredStartElement() throws SAXException,
+	protected void handleDeferredStartElement(QName deferredStartElement) throws SAXException,
 			IOException, EXIException {
 
 		// NOTE: getting qname needs to be done before starting prefix
@@ -405,7 +387,7 @@ public class SAXDecoder implements XMLReader {
 		}
 
 		if (namespaces) {
-			startPrefixMappings(decoder.getPrefixDeclarations());
+			startPrefixMappings(decoder.getDeclaredPrefixDeclarations());
 		}
 
 		/*
@@ -415,18 +397,15 @@ public class SAXDecoder implements XMLReader {
 		 */
 
 		// start so far deferred start element
-		QName seQName = decoder.getElementQName();
-		contentHandler.startElement(seQName.getNamespaceURI(), seQName
+		contentHandler.startElement(deferredStartElement.getNamespaceURI(), deferredStartElement
 				.getLocalPart(), seQNameAsString, attributes);
 		
 		// clear AT information
 		attributes.clear();
 	}
 
-	protected void handleEndElement(String eeQNameAsString,
-			List<PrefixMapping> eePrefixes) throws SAXException, IOException {
-		QName eeQName = decoder.getElementQName();
-
+	protected void handleEndElement(QName eeQName, String eeQNameAsString,
+			List<NamespaceDeclaration> eePrefixes) throws SAXException, IOException {
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(), eeQName
 				.getLocalPart(), eeQNameAsString);
@@ -435,7 +414,7 @@ public class SAXDecoder implements XMLReader {
 		endPrefixMappings(eePrefixes);
 	}
 
-	protected void handleAttribute() throws SAXException, IOException,
+	protected void handleAttribute(QName atQName) throws SAXException, IOException,
 			EXIException {
 		Value val = decoder.getAttributeValue();
 
@@ -449,15 +428,13 @@ public class SAXDecoder implements XMLReader {
 		if (namespacePrefixes) {
 			atQNameAsString = decoder.getAttributeQNameAsString();
 		}
-		QName atQName = decoder.getAttributeQName();
+		// QName atQName = decoder.getAttributeQName();
 		String sVal = val.toString(cbuffer, 0);
 		attributes.addAttribute(atQName.getNamespaceURI(), atQName
 				.getLocalPart(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
 	}
 
-	protected void handleCharacters() throws SAXException, IOException {
-		Value val = decoder.getCharactersValue();
-
+	protected void handleCharacters(Value val) throws SAXException, IOException {
 		int slen = val.getCharactersLength();
 		if (slen > cbuffer.length) {
 			// need to create a new (expanded) buffer
@@ -474,12 +451,12 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * Hooks for Decl & Lexical Handler
 	 */
-	protected void handleDocType() throws SAXException, IOException {
+	protected void handleDocType(DocType docType) throws SAXException, IOException {
 	}
 
-	protected void handleEntityReference() throws SAXException {
+	protected void handleEntityReference(char[] erName) throws SAXException {
 	}
 
-	protected void handleComment() throws SAXException {
+	protected void handleComment(char[] comment) throws SAXException {
 	}
 }
