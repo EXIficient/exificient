@@ -106,7 +106,7 @@ public class SAXEncoder extends DefaultHandler2 {
 	protected void startElementPfx(String uri, String local, String prefix,
 			Attributes attributes) throws EXIException, IOException {
 		checkPendingChars();
-
+		
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
 

@@ -190,9 +190,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		} else {
 			throw new EXIException("No EXI Event found for endDocument");
 		}
-
-		// flush chunk(s) to bit/byte output stream
-//		flush();
 	}
 
 	public void encodeStartElement(String uri, String localName, String prefix)
@@ -200,7 +197,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 
 		sePrefix = prefix;
 		EventInformation ei;
-
+		
 		Rule nextTopRule;
 		StartElement nextSE;
 

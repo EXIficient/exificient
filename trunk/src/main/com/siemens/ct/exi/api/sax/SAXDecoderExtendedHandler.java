@@ -77,7 +77,7 @@ public class SAXDecoderExtendedHandler extends SAXDecoder implements
 					: new String(docType.publicID);
 			String systemID = docType.systemID.length == 0 ? null
 					: new String(docType.systemID);
-
+			
 			// start DTD
 			lexicalHandler.startDTD(new String(docType.name), publicID,
 					systemID);
