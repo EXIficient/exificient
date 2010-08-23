@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -43,11 +42,11 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
+public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 
-	protected EXIDecoderInOrderSC scDecoder;
+	protected EXIBodyDecoderInOrderSC scDecoder;
 
-	public EXIDecoderInOrderSC(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyDecoderInOrderSC(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 		assert (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC));
 	}
@@ -60,15 +59,15 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		scDecoder = null;
 	}
 
-	@Override
-	public void setInputStream(InputStream is, boolean exiBodyOnly)
-			throws EXIException, IOException {
-		if (scDecoder == null) {
-			super.setInputStream(is, exiBodyOnly);
-		} else {
-			System.err.println("TODO setInputStream");
-		}
-	}
+//	@Override
+//	public void setInputStream(InputStream is)
+//			throws EXIException, IOException {
+//		if (scDecoder == null) {
+//			super.setInputStream(is, exiBodyOnly);
+//		} else {
+//			System.err.println("TODO setInputStream");
+//		}
+//	}
 	
 	@Override
 	public EventType next() throws EXIException, IOException {
@@ -153,9 +152,9 @@ public class EXIDecoderInOrderSC extends EXIDecoderInOrder {
 		if (scDecoder == null) {
 			// SC Factory & Decoder
 			EXIFactory scEXIFactory = exiFactory.clone();
-			scEXIFactory.setEXIBodyOnly(true);
+			// scEXIFactory.setEXIBodyOnly(true);
 			scEXIFactory.setFragment(true);
-			scDecoder = (EXIDecoderInOrderSC) scEXIFactory.createEXIDecoder();
+			scDecoder = (EXIBodyDecoderInOrderSC) scEXIFactory.createEXIBodyDecoder();
 			scDecoder.channel = this.channel;
 			scDecoder.setErrorHandler(this.errorHandler);
 			scDecoder.initForEachRun();

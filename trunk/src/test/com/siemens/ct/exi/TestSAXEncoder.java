@@ -129,6 +129,15 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		// create test-encoder & encode to EXI
 		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
 		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
+		if (QuickTestConfiguration.INCLUDE_COOKIE) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
+		}
+		if (QuickTestConfiguration.INCLUDE_OPTIONS) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
+		}
+		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
+		}
 		testEncoder.encodeTo(ef, xmlInput);
 
 		encodedOutput.flush();

@@ -29,6 +29,7 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -41,11 +42,12 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public interface EXIDecoder {
+public interface EXIBodyDecoder {
 	
-	public void setInputStream(InputStream is, boolean exiBodyOnly)
-			throws EXIException, IOException;
+	public void setInputStream(InputStream is) throws EXIException, IOException;
 
+	public void setInputChannel(DecoderChannel channel) throws EXIException, IOException;
+	
 	/**
 	 * Reports the next available EXI event-type or <code>null</code> if no more
 	 * EXI event is available.

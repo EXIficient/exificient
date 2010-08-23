@@ -18,11 +18,16 @@
 
 package com.siemens.ct.exi.core;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 
 /**
@@ -34,19 +39,45 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
  * @version 0.5
  */
 
-public class EXIDecoderInOrder extends AbstractEXIDecoder {
+public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 
-	public EXIDecoderInOrder(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyDecoderInOrder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
-	
-	public void setChannel(DecoderChannel decoderChannel) throws EXIException, IOException {
-		this.channel = decoderChannel;
-		// this.is = decoderChannel.geInputStream();
+
+	public void setInputStream(InputStream is)
+			throws EXIException, IOException {
+
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered
+		// already
+		if (!(is instanceof BufferedInputStream)) {
+			is = new BufferedInputStream(is);
+		}
+
+		CodingMode codingMode = exiFactory.getCodingMode();
 		
+		// setup data-stream only
+		if (codingMode == CodingMode.BIT_PACKED) {
+			// create new bit-aligned channel
+			 setInputChannel( new BitDecoderChannel(is));
+		} else {
+			assert (codingMode == CodingMode.BYTE_PACKED);
+			// create new byte-aligned channel
+			 setInputChannel( new ByteDecoderChannel(is));
+		}
+
 		initForEachRun();
 	}
-	
+
+	public void setInputChannel(DecoderChannel decoderChannel) throws EXIException,
+			IOException {
+		this.channel = decoderChannel;
+		// this.is = decoderChannel.geInputStream();
+
+		initForEachRun();
+	}
+
 	public DecoderChannel getChannel() {
 		return this.channel;
 	}
@@ -66,7 +97,7 @@ public class EXIDecoderInOrder extends AbstractEXIDecoder {
 		} else {
 			// decode event code
 			decodeEventCode();
-			return nextEventType;	
+			return nextEventType;
 		}
 	}
 

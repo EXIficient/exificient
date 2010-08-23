@@ -76,6 +76,14 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		builtInDocumentGrammar = new Document(builtInDocContentGrammar,
 				"Document");
 	}
+	
+	public final boolean isBuiltInXMLSchemaTypesOnly() {
+		return false;
+	}
+	
+	public final String getSchemaId() {
+		return null;
+	}
 
 	/*
 	 * Note: create new instance since fragment content grammar may have been

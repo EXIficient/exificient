@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-
 import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
 import org.junit.Test;
 

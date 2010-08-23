@@ -30,8 +30,8 @@ import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.CodingMode;
-import com.siemens.ct.exi.EXIDecoder;
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -75,8 +75,8 @@ public class SelfContainedTestCase extends TestCase {
 		
 		// encoder
 		{
-			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
 			String pfx = null;
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(root.getNamespaceURI(), root.getLocalPart(),
@@ -111,10 +111,9 @@ public class SelfContainedTestCase extends TestCase {
 
 		// decoder ALL
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()), factory
-							.isEXIBodyOnly());
+					new ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -162,16 +161,16 @@ public class SelfContainedTestCase extends TestCase {
 		
 		EXIFactory scEXIFactory = factory.clone();
 		scEXIFactory.setFragment(true);
-		scEXIFactory.setEXIBodyOnly(true);
+		// scEXIFactory.setEXIBodyOnly(true);
 		
 		int MINUS_BYTE_OFFSET = 3;	// TODO why 3
 		
 		// decoder SC #1 
 		{
-			EXIDecoder decoder = scEXIFactory.createEXIDecoder();
+			EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
 			is.skip(offsetSC1-MINUS_BYTE_OFFSET);
-			decoder.setInputStream(is, scEXIFactory.isEXIBodyOnly());
+			decoder.setInputStream(is);
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -191,10 +190,10 @@ public class SelfContainedTestCase extends TestCase {
 		
 		// decoder SC #2
 		{
-			EXIDecoder decoder = scEXIFactory.createEXIDecoder();
+			EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
 			is.skip(offsetSC2-MINUS_BYTE_OFFSET);
-			decoder.setInputStream(is, scEXIFactory.isEXIBodyOnly());
+			decoder.setInputStream(is);
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * Internal EXI Encoder interface to transform XML events to an EXI stream.
@@ -33,11 +34,12 @@ import com.siemens.ct.exi.exceptions.ErrorHandler;
  * @version 0.5
  */
 
-public interface EXIEncoder {
+public interface EXIBodyEncoder {
 	
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException;
+	public void setOutputStream(OutputStream os) throws EXIException, IOException;
 
+	public void setOutputChannel(EncoderChannel channel) throws EXIException, IOException;
+	
 	/**
 	 * Flushes (possibly) remaining bit(s) to output stream
 	 * 

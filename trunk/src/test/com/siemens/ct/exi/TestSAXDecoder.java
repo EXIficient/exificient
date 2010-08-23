@@ -38,7 +38,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
+@SuppressWarnings("all")
 public class TestSAXDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
 
@@ -85,9 +87,16 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 	public static void main(String[] args) throws Exception {
 		// create test-decoder
 		TestSAXDecoder testDecoder = new TestSAXDecoder();
-
+		
 		// get factory
-		EXIFactory ef = testDecoder.getQuickTestEXIactory();
+		EXIFactory ef;
+		if(QuickTestConfiguration.INCLUDE_OPTIONS && QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
+			// decoder should be able to decode file without settings: 
+			// EXI Options document carries necessary information
+			ef = DefaultEXIFactory.newInstance();
+		} else {
+			ef = testDecoder.getQuickTestEXIactory();
+		}
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration

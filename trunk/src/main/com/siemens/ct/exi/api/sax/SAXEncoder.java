@@ -27,8 +27,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -43,7 +44,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  */
 
 public class SAXEncoder extends DefaultHandler2 {
-	protected EXIEncoder encoder;
+	protected EXIBodyEncoder encoder;
 
 	// buffers the characters of the characters() callback
 	protected StringBuilder sbChars;
@@ -55,26 +56,25 @@ public class SAXEncoder extends DefaultHandler2 {
 	protected List<PrefixMapping> prefixMappings;
 
 	public SAXEncoder(EXIFactory factory, OutputStream os) throws EXIException {
-		this.encoder = factory.createEXIEncoder();
+		try {
+			// initialize char buffer
+			sbChars = new StringBuilder();
 
-		// initialize char buffer
-		sbChars = new StringBuilder();
+			// prefix to NS mappings
+			prefixMappings = new ArrayList<PrefixMapping>();
 
-		// prefix to NS mappings
-		prefixMappings = new ArrayList<PrefixMapping>();
+			// attribute list
+			AttributeFactory attFactory = AttributeFactory.newInstance();
+			exiAttributes = attFactory.createAttributeListInstance(factory);
 
-		// attribute list
-		AttributeFactory attFactory = AttributeFactory.newInstance();
-		exiAttributes = attFactory.createAttributeListInstance(factory);
-		
-		// encoder output
-		encoder.setOutput(os, factory.isEXIBodyOnly());
+			// exi stream
+			EXIStreamEncoder exiStream = new EXIStreamEncoder();
+			// write header & get body encoder
+			this.encoder = exiStream.encodeHeader(factory, os);
+		} catch (IOException e) {
+			throw new EXIException(e);
+		}
 	}
-
-//	public void setOutput(OutputStream os, boolean exiBodyOnly)
-//			throws EXIException {
-//		encoder.setOutput(os, exiBodyOnly);
-//	}
 
 	/*
 	 * ======================================================================
@@ -94,7 +94,7 @@ public class SAXEncoder extends DefaultHandler2 {
 	// }
 
 	public void startElement(String uri, String local, String raw,
-			Attributes attributes) throws SAXException  {
+			Attributes attributes) throws SAXException {
 		try {
 			// no prefix
 			this.startElementPfx(uri, local, null, attributes);
@@ -106,7 +106,7 @@ public class SAXEncoder extends DefaultHandler2 {
 	protected void startElementPfx(String uri, String local, String prefix,
 			Attributes attributes) throws EXIException, IOException {
 		checkPendingChars();
-		
+
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
 
@@ -119,9 +119,10 @@ public class SAXEncoder extends DefaultHandler2 {
 		}
 	}
 
-	protected void handleNamespaceDeclarations() throws EXIException, IOException {
+	protected void handleNamespaceDeclarations() throws EXIException,
+			IOException {
 		int size = prefixMappings.size();
-		if ( size > 0) {
+		if (size > 0) {
 			for (int i = 0; i < size; i++) {
 				PrefixMapping pm = prefixMappings.get(i);
 				encoder.encodeNamespaceDeclaration(pm.uri, pm.prefix);
@@ -131,7 +132,8 @@ public class SAXEncoder extends DefaultHandler2 {
 		}
 	}
 
-	protected void handleAttributes(Attributes attributes) throws EXIException, IOException {
+	protected void handleAttributes(Attributes attributes) throws EXIException,
+			IOException {
 		// 1. Namespace declaration(s)
 		// (done via startPrefixMapping et cetera)
 
@@ -141,12 +143,14 @@ public class SAXEncoder extends DefaultHandler2 {
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
 
-			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
+			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes
+					.getXsiTypePrefix());
 		}
 
 		// 3. XSI-Nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
+			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes
+					.getXsiNilPrefix());
 		}
 
 		// 4. Remaining Attributes
@@ -203,20 +207,21 @@ public class SAXEncoder extends DefaultHandler2 {
 		sbChars.append(ch, start, length);
 		// new String(ch, start, length);
 	}
-	
+
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
 			encoder.encodeCharacters(sbChars.toString());
 			sbChars.setLength(0);
 		}
 	}
-	
+
 	static final class PrefixMapping {
 		final String prefix;
 		final String uri;
+
 		public PrefixMapping(String prefix, String uri) {
 			this.prefix = prefix;
-			this.uri= uri; 
+			this.uri = uri;
 		}
 	}
 

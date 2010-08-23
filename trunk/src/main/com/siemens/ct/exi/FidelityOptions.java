@@ -51,7 +51,6 @@ public class FidelityOptions {
 	 * content items
 	 */
 	public static final String FEATURE_LEXICAL_VALUE = "PRESERVE_LEXICAL_VALUES";
-	// public static final String FEATURE_WS = "PRESERVE_WHITESPACES";
 
 	/* Enable the use of self contained elements in the EXI stream */
 	public static final String FEATURE_SC = "SELF_CONTAINED";
@@ -97,10 +96,15 @@ public class FidelityOptions {
 
 	/**
 	 * Creates fidelity options using the maximum XML compatibility mode, e.g.
-	 * preserving unsignificant whitespaces.
+	 * preserving comments, unsignificant whitespaces et cetera.
+	 * 
 	 * <p>
-	 * Note: Per default SelfContained Element support is not set to TRUE. It
+	 * Note A: Per default SelfContained Element support is not set to TRUE. It
 	 * cannot work together with (Pre-)Compression!
+	 * </p>
+	 * 
+	 * <p>
+	 * Note B: Per default preservation of schema-location is not set to TRUE.
 	 * </p>
 	 * 
 	 * @return default fidelity options
@@ -117,7 +121,7 @@ public class FidelityOptions {
 		// fo.options.add(FEATURE_WS);
 		// fo.options.add(FEATURE_SC);
 
-		fo.options.add(FEATURE_XSI_SCHEMALOCATION);
+		// fo.options.add(FEATURE_XSI_SCHEMALOCATION);
 
 		return fo;
 	}
@@ -126,7 +130,7 @@ public class FidelityOptions {
 	 * Enables or disables the specified fidelity feature.
 	 * 
 	 * @param key
-	 *            refering to a specific feature
+	 *            referring to a specific feature
 	 * @param decision
 	 *            enabling or disabling feature
 	 * @throws UnsupportedOption

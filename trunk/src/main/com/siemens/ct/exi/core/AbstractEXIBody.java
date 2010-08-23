@@ -42,7 +42,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 
 /**
- * Shared functionality between EXI Encoder and Decoder.
+ * Shared functionality between EXI Body Encoder and EXI Body Decoder.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -50,7 +50,7 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
  * @version 0.5
  */
 
-public abstract class AbstractEXICoder {
+public abstract class AbstractEXIBody {
 	
 	// xsi:type & nil
 	static final QName XSI_NIL = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
@@ -58,10 +58,10 @@ public abstract class AbstractEXICoder {
 	
 	// factory
 	protected final EXIFactory exiFactory;
-	protected final Grammar grammar;
-	protected final boolean isSchemaInformed;
-	protected final FidelityOptions fidelityOptions;
-	protected final boolean preservePrefix;
+	
+	protected Grammar grammar;
+	protected FidelityOptions fidelityOptions;
+	protected boolean preservePrefix;
 
 	// error handler
 	protected ErrorHandler errorHandler;
@@ -80,15 +80,12 @@ public abstract class AbstractEXICoder {
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
 
-	public AbstractEXICoder(EXIFactory exiFactory) {
+	public AbstractEXIBody(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
-		this.grammar = exiFactory.getGrammar();
-		this.isSchemaInformed = grammar.isSchemaInformed();
-		this.fidelityOptions = exiFactory.getFidelityOptions();
+		// QName datatype (coder)
+		qnameDatatype = new QNameDatatype(this, null);
 		
-		// preserve prefixes
-		preservePrefix = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+		initFactoryInformation();
 		
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
@@ -96,13 +93,22 @@ public abstract class AbstractEXICoder {
 		// init once (runtime lists et cetera)
 		runtimeElements = new HashMap<QName, StartElement>();
 		elementContextStack = new ElementContext[INITIAL_STACK_SIZE];
-	
-		// QName datatype (coder)
-		// qnameDatatype = new QNameDatatype(namespaces, preservePrefix, null);
-		qnameDatatype = new QNameDatatype(this, preservePrefix, null);
-		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
+		
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
+	}
+	
+	protected void initFactoryInformation() throws EXIException {
+		this.grammar = exiFactory.getGrammar();
+		this.fidelityOptions = exiFactory.getFidelityOptions();
+		
+		// preserve prefixes
+		preservePrefix = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+		
+		qnameDatatype.setPreservePrefix(preservePrefix);
+		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
+
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -218,7 +224,7 @@ public abstract class AbstractEXICoder {
 	 */
 	protected void throwWarning(String message) {
 		errorHandler.warning(new EXIException(message + ", options="
-				+ fidelityOptions));
+				+ exiFactory.getFidelityOptions()));
 		// System.err.println(message);
 	}
 	

@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.SchemaLessGrammar;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 
@@ -35,10 +36,11 @@ import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
  */
 
 public class GrammarFactory {
-	private static XSDGrammarBuilder grammarBuilder = XSDGrammarBuilder
-			.newInstance();
+
+	protected XSDGrammarBuilder grammarBuilder;
 
 	protected GrammarFactory() {
+		grammarBuilder = XSDGrammarBuilder.newInstance();
 	}
 
 	public static GrammarFactory newInstance() {
@@ -51,7 +53,9 @@ public class GrammarFactory {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
 			grammarBuilder.loadGrammar(xsdLocation);
-			return grammarBuilder.toGrammar();
+			SchemaInformedGrammar g = grammarBuilder.toGrammar();
+			g.setSchemaId(xsdLocation);
+			return g;
 		}
 	}
 
@@ -60,11 +64,13 @@ public class GrammarFactory {
 		grammarBuilder.loadGrammar(is);
 		return grammarBuilder.toGrammar();
 	}
-	
+
 	/* built-in XSD types only are available */
 	public Grammar createXSDTypesOnlyGrammar() throws EXIException {
 		grammarBuilder.loadXSDTypesOnlyGrammar();
-		return grammarBuilder.toGrammar();
+		SchemaInformedGrammar g = grammarBuilder.toGrammar();
+		g.setBuiltInXMLSchemaTypesOnly(true); // builtInXMLSchemaTypesOnly
+		return g;
 	}
 
 	/* no schema information at all */

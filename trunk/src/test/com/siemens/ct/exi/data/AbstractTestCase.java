@@ -41,6 +41,7 @@ import com.siemens.ct.exi.AbstractTestDecoder;
 import com.siemens.ct.exi.AbstractTestEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 import com.siemens.ct.exi.TestDOMDecoder;
 import com.siemens.ct.exi.TestDOMEncoder;
@@ -84,6 +85,15 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		if (tco.getValuePartitionCapacity() >= 0) {
 			ef.setValuePartitionCapacity(tco.getValuePartitionCapacity());
 		}
+		if (tco.isIncludeCookie()) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
+		}
+		if (tco.isIncludeOptions()) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
+		}
+		if (tco.isIncludeSchemaId()) {
+			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
+		}
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {
@@ -116,6 +126,12 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		InputStream exiDocument = new ByteArrayInputStream(exiEncodedOutput
 				.toByteArray());
 
+		
+		if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
+			// all EXI options and schemaID from the header have to be used
+			ef = DefaultEXIFactory.newInstance();
+		}
+		
 		
 		// <-- decode as SAX
 		try {

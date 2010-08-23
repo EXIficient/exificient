@@ -19,13 +19,12 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
@@ -51,23 +50,29 @@ import com.siemens.ct.exi.util.MethodsBag;
  */
 
 
-public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
-		EXIEncoder {
+public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
+		EXIBodyEncoder {
+	
+	protected final EXIHeaderEncoder exiHeader;
 
 	// prefix of previous start element (relevant for preserving prefixes)
 	protected String sePrefix = null;
 
-	// OutputStream & Channel
+	// Output Channel
 	protected EncoderChannel channel;
-	protected OutputStream os;
 
 	// Type Encoder (including string encoder etc.)
 	protected TypeEncoder typeEncoder;
 
-	public AbstractEXIEncoder(EXIFactory exiFactory) throws EXIException {
+	public AbstractEXIBodyEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
+		this.exiHeader = new EXIHeaderEncoder();
+	}
+	
+	@Override
+	protected void initFactoryInformation() throws EXIException {
+		super.initFactoryInformation();
 		
-		// init once
 		typeEncoder = exiFactory.createTypeEncoder();
 	}
 
@@ -78,26 +83,6 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 		// clear string values etc.
 		typeEncoder.clear();
 	}
-
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException {
-		this.os = os;
-
-		if (!exiBodyOnly) {
-			// EXI header
-			EXIHeader.write(os);
-		}
-	}
-	
-//	@Override
-//	public String getPrefix(String uri) {
-//		return namespaces.getPrefix(uri);
-//	}
-//
-//	@Override
-//	public String getURI(String prefix) {
-//		return namespaces.getURI(prefix);
-//	}
 
 	/*
 	 * Stream
@@ -162,7 +147,7 @@ public abstract class AbstractEXIEncoder extends AbstractEXICoder implements
 	}
 
 	public void encodeStartDocument() throws EXIException, IOException {
-		if (this.os == null) {
+		if (this.channel == null) {
 			throw new EXIException(
 					"No valid EXI OutputStream set for encoding. Please use setOutput( ... )");
 		}

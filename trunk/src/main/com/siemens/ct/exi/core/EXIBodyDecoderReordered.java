@@ -41,7 +41,6 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -57,7 +56,7 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public class EXIDecoderReordered extends AbstractEXIDecoder {
+public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	// store appearing event-types in right order
 	protected List<EventType> eventTypes;
 	protected int eventTypeIndex;
@@ -118,8 +117,10 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	protected Inflater inflater;
 
 	protected boolean firstChannel;
+	
+	protected InputStream is;
 
-	public EXIDecoderReordered(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyDecoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		// events
@@ -213,34 +214,38 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 		xsiPrefixIndex = 0;
 	}
 
-	@Override
-	public void setInputStream(InputStream is, boolean exiBodyOnly)
+	// @Override
+	public void setInputStream(InputStream is)
 			throws EXIException, IOException {
-
+		
 		// buffer stream if not already
 		// TODO is there a *nice* way to detect whether a stream is buffered
 		// already
-		if (!(is instanceof BufferedInputStream)) {
-			this.is = new BufferedInputStream(is);
-		} else {
+//		if (!(is instanceof BufferedInputStream)) {
+//			is = new BufferedInputStream(is);
+//		} else {
 			this.is = is;
-		}
-
-		// header
-		if (!exiBodyOnly) {
-			// parse header (bit-wise)
-			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-			EXIHeader.parse(headerChannel);
-		}
-
-		// body (structure)
+//		}
+		
 		firstChannel = true;
-		channel = getNextChannel();
-
-		initForEachRun();
+		 channel = getNextChannel();
+		// setInputChannel();
+		 
+		 initForEachRun();
+	}
+	
+	public void setInputChannel(DecoderChannel channel)
+	throws EXIException, IOException {
+		throw new RuntimeException("[EXI] Reorderd EXI Body decoder needs to be set via setInputStream(...)");
+//		this.channel = channel;
+//		firstChannel = true;
+//
+//		initForEachRun();
 	}
 
 	public DecoderChannel getNextChannel() throws IOException {
+		// System.out.println("getNextChannel()");
+		
 		if (codingMode == CodingMode.COMPRESSION) {
 			if (firstChannel) {
 				bytesRead = 0;
@@ -607,7 +612,7 @@ public class EXIDecoderReordered extends AbstractEXIDecoder {
 	
 	private final void setupNewBlock() throws IOException, EXIException {
 		// System.out.println("TODO 0, read next block");
-		// System.out.println("Next Value " + blockValues + " \t " + v + " after " + qname);
+		// System.out.println("Next Value " + blockValues);
 		
 		initBlock();
 		

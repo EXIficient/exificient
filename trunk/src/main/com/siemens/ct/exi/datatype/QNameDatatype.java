@@ -26,7 +26,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.core.AbstractEXICoder;
+import com.siemens.ct.exi.core.AbstractEXIBody;
 import com.siemens.ct.exi.core.RuntimeURIEntry;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -54,8 +54,8 @@ public class QNameDatatype extends AbstractDatatype {
 	protected String qnamePrefix;
 	
 //	protected NamespaceSupport namespaces;
-	protected AbstractEXICoder namespaces;
-	protected final boolean preservePrefix;
+	protected AbstractEXIBody namespaces;
+	protected boolean preservePrefix;
 
 	// Grammar entries
 	protected GrammarURIEntry[] grammarURIEntries;
@@ -65,18 +65,22 @@ public class QNameDatatype extends AbstractDatatype {
 	protected List<RuntimeURIEntry> runtimeURIEntries;
 
 	// public QNameDatatype(NamespaceSupport namespaces, boolean preservePrefix, QName schemaType) {
-	public QNameDatatype(AbstractEXICoder namespaces, boolean preservePrefix, QName schemaType) {
+	public QNameDatatype(AbstractEXIBody namespaces, QName schemaType) {
 		super(BuiltInType.QNAME, schemaType);
 		this.rcs = new XSDStringCharacterSet();
 		//
 		this.namespaces = namespaces;
-		this.preservePrefix = preservePrefix;
 		// 
 		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
 	}
 	
+	public void setPreservePrefix(boolean preservePrefix) {
+		this.preservePrefix = preservePrefix;
+	}
+	
 	public void setGrammarURIEnties(GrammarURIEntry[] grammarURIEntries) {	
 		this.grammarURIEntries = grammarURIEntries;
+		runtimeURIEntries.clear();
 		for (GrammarURIEntry grammarEntry : grammarURIEntries) {
 			addURI(grammarEntry.uri);
 			// prefixes
