@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
@@ -47,7 +48,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 * @param fidelityOptions
 	 *            new fidelity options
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * @see FidelityOptions
 	 */
 	public void setFidelityOptions(FidelityOptions fidelityOptions);
@@ -60,6 +61,25 @@ public interface EXIFactory extends Cloneable {
 	 * @see FidelityOptions
 	 */
 	public FidelityOptions getFidelityOptions();
+
+	/**
+	 * Sets the header options used by the EXI Encoder(e.g., include EXI Cookie,
+	 * EXI Options document).
+	 * 
+	 * @param headerOptions
+	 *            header options
+	 * @throws EXIException
+	 * @see HeaderOptions
+	 */
+	public void setHeaderOptions(HeaderOptions headerOptions);
+
+	/**
+	 * Returns the header options used by the EXI encoder.
+	 * 
+	 * @return header options currently used by the factory
+	 * @see HeaderOptions
+	 */
+	public HeaderOptions getHeaderOptions();
 
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
@@ -102,17 +122,17 @@ public interface EXIFactory extends Cloneable {
 	 */
 	public CodingMode getCodingMode();
 
-	/**
-	 * Sets whether an EXI Body is preceded by an EXI Header. By default any EXI
-	 * stream consists of an EXI header followed by an EXI Body. e.g.
-	 * SelfContained Fragments are treated differently and no additional header
-	 * is added.
-	 * 
-	 * @param exiBodyOnly
-	 */
-	public void setEXIBodyOnly(boolean exiBodyOnly);
-
-	public boolean isEXIBodyOnly();
+//	/**
+//	 * Sets whether an EXI Body is preceded by an EXI Header. By default any EXI
+//	 * stream consists of an EXI header followed by an EXI Body. e.g.
+//	 * SelfContained Fragments are treated differently and no additional header
+//	 * is added.
+//	 * 
+//	 * @param exiBodyOnly
+//	 */
+//	public void setEXIBodyOnly(boolean exiBodyOnly);
+//
+//	public boolean isEXIBodyOnly();
 
 	/**
 	 * The default blockSize is intentionally large (1,000,000) but can be
@@ -187,7 +207,26 @@ public interface EXIFactory extends Cloneable {
 	 */
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations);
+	
+	
+	/**
+	 * EXI processors MAY provide the capability to specify different built-in EXI datatype
+	 * representations or user-defined datatype representations for representing
+	 * specific schema datatypes.
+	 * 
+	 * @return qualified name array for dtr types OR <code>null</code>
+	 */
+	public QName[] getDatatypeRepresentationMapTypes();
 
+	/**
+	 * EXI processors MAY provide the capability to specify different built-in EXI datatype
+	 * representations or user-defined datatype representations for representing
+	 * specific schema datatypes.
+	 * 
+	 * @return qualified name array for dtr representations OR <code>null</code>
+	 */
+	public QName[] getDatatypeRepresentationMapRepresentations();
+	
 	/**
 	 * Self-contained elements may be read independently from the rest of the
 	 * EXI body, allowing them to be indexed for random access. The
@@ -208,37 +247,38 @@ public interface EXIFactory extends Cloneable {
 	public boolean isSelfContainedElement(QName element);
 
 	/**
-	 * Returns an <code>EXIEncoder</code>
+	 * Returns an <code>EXIBodyEncoder</code>
 	 * 
 	 * @return encoder using the previously set coding options.
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * 
 	 */
-	public EXIEncoder createEXIEncoder() throws EXIException;
+	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException;
 
 	/**
 	 * Returns an <code>DefaultHandler2</code>
 	 * 
 	 * @return writer using the previously set coding options.
-	 * @throws EXIException 
+	 * @throws EXIException
+	 * @throws IOException
 	 * 
 	 */
 	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException;
-
+	
 	/**
-	 * Returns an <code>EXIDecoder</code>
+	 * Returns an <code>EXIBodyDecoder</code>
 	 * 
 	 * @return decoder using the previously set coding options.
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * 
 	 */
-	public EXIDecoder createEXIDecoder() throws EXIException;
+	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException;
 
 	/**
 	 * Returns an <code>EXIReader</code>
 	 * 
 	 * @return reader using the previously set coding options.
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * 
 	 */
 	public XMLReader createEXIReader() throws EXIException;
@@ -249,7 +289,7 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type encoder according given EXI options
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * @see TypeEncoder
 	 */
 	public TypeEncoder createTypeEncoder() throws EXIException;
@@ -260,7 +300,7 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type decoder according given EXI options
-	 * @throws EXIException 
+	 * @throws EXIException
 	 * @see TypeDecoder
 	 */
 	public TypeDecoder createTypeDecoder() throws EXIException;

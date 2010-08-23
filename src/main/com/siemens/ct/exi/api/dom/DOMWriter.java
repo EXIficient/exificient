@@ -32,8 +32,9 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
@@ -50,7 +51,8 @@ import com.siemens.ct.exi.exceptions.EXIException;
 
 public class DOMWriter {
 	protected EXIFactory factory;
-	protected EXIEncoder encoder;
+	protected EXIStreamEncoder exiStream;
+	protected EXIBodyEncoder exiBody;
 
 	// attributes
 	private AttributeList exiAttributes;
@@ -64,7 +66,8 @@ public class DOMWriter {
 
 	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
-		this.encoder = factory.createEXIEncoder();
+		
+		this.exiStream = new EXIStreamEncoder();
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -74,35 +77,33 @@ public class DOMWriter {
 		sbChars = new StringBuilder();
 
 		// preserve options
-//		preserveWhitespaces = factory.getFidelityOptions().isFidelityEnabled(
-//				FidelityOptions.FEATURE_WS);
 		preserveComments = factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_COMMENT);
 		preservePIs = factory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PI);
 	}
 
-	public void setOutput(OutputStream os) throws EXIException {
-		encoder.setOutput(os, factory.isEXIBodyOnly());
+	public void setOutput(OutputStream os) throws EXIException, IOException {
+		exiBody = exiStream.encodeHeader(this.factory, os);
 	}
 
 	public void encode(Document doc) throws EXIException, IOException {
-		encoder.encodeStartDocument();
+		exiBody.encodeStartDocument();
 
 		// encode all child-nodes to retain root external
 		// nodes such as as comments and insignificant whitespaces
 		encodeChildNodes(doc.getChildNodes());
 
-		encoder.encodeEndDocument();
-		encoder.flush();
+		exiBody.encodeEndDocument();
+		exiBody.flush();
 	}
 
 	public void encodeFragment(DocumentFragment docFragment)
 			throws EXIException, IOException {
-		encoder.encodeStartDocument();
+		exiBody.encodeStartDocument();
 		encodeChildNodes(docFragment.getChildNodes());
-		encoder.encodeEndDocument();
-		encoder.flush();
+		exiBody.encodeEndDocument();
+		exiBody.flush();
 	}
 
 	public void encode(Node n) throws EXIException, IOException {
@@ -111,10 +112,10 @@ public class DOMWriter {
 		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE) {
 			encodeFragment((DocumentFragment) n);
 		} else {
-			encoder.encodeStartDocument();
+			exiBody.encodeStartDocument();
 			encodeNode(n);
-			encoder.encodeEndDocument();
-			encoder.flush();
+			exiBody.encodeEndDocument();
+			exiBody.flush();
 		}
 	}
 
@@ -130,7 +131,7 @@ public class DOMWriter {
 			throw new EXIException("EXI requires namespace-aware DOM (nodes) " + root.getNodeName());
 		}
 
-		encoder.encodeStartElement(namespaceURI, localName, root.getPrefix());
+		exiBody.encodeStartElement(namespaceURI, localName, root.getPrefix());
 
 		// attributes
 		NamedNodeMap attributes = root.getAttributes();
@@ -146,23 +147,23 @@ public class DOMWriter {
 				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
 						: at.getLocalName();
 
-				encoder.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
+				exiBody.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
 			}
 		}
 
 		// xsi:type
 		if (exiAttributes.hasXsiType()) {
-			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
+			exiBody.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
 		}
 
 		// xsi:nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
+			exiBody.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
 		}
 
 		// AT
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
-			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
+			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
 							.getAttributePrefix(i), exiAttributes
 							.getAttributeValue(i));
@@ -173,7 +174,7 @@ public class DOMWriter {
 		encodeChildNodes(children);
 
 		// end element
-		encoder.encodeEndElement();
+		exiBody.encodeEndElement();
 	}
 
 	protected void encodeChildNodes(NodeList children) throws EXIException, IOException {
@@ -193,7 +194,7 @@ public class DOMWriter {
 				if (preserveComments) {
 					checkPendingChars();
 					String c = n.getNodeValue();
-					encoder.encodeComment(c.toCharArray(), 0, c.length());
+					exiBody.encodeComment(c.toCharArray(), 0, c.length());
 				}
 				break;
 			case Node.DOCUMENT_TYPE_NODE:
@@ -205,7 +206,7 @@ public class DOMWriter {
 						.getSystemId();
 				String text = dt.getInternalSubset() == null ? "" : dt
 						.getInternalSubset();
-				encoder.encodeDocType(dt.getName(), publicID, systemID, text);
+				exiBody.encodeDocType(dt.getName(), publicID, systemID, text);
 				break;
 			case Node.ENTITY_REFERENCE_NODE:
 				// checkPendingChars();
@@ -214,13 +215,13 @@ public class DOMWriter {
 			case Node.CDATA_SECTION_NODE:
 				checkPendingChars();
 				String cdata = n.getNodeValue();
-				encoder.encodeCharacters(Constants.CDATA_START + cdata + Constants.CDATA_END);
+				exiBody.encodeCharacters(Constants.CDATA_START + cdata + Constants.CDATA_END);
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {
 					checkPendingChars();
 					ProcessingInstruction pi = (ProcessingInstruction) n;
-					encoder.encodeProcessingInstruction(pi.getTarget(), pi
+					exiBody.encodeProcessingInstruction(pi.getTarget(), pi
 							.getData());
 				}
 				break;
@@ -236,7 +237,7 @@ public class DOMWriter {
 	
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
-			encoder.encodeCharacters(sbChars.toString());
+			exiBody.encodeCharacters(sbChars.toString());
 			sbChars.setLength(0);
 		}
 	}

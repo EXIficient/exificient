@@ -37,6 +37,9 @@ public class TestCaseOption {
 	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
+	private boolean includeCookie;
+	private boolean includeOptions;
+	private boolean includeSchemaId;
 	
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -132,6 +135,29 @@ public class TestCaseOption {
 		return valuePartitionCapacity;
 	}
 	
+	public void setIncludeCookie(boolean includeCookie) {
+		this.includeCookie = includeCookie;
+	}
+	
+	public boolean isIncludeCookie() {
+		return includeCookie;
+	}
+	
+	public void setIncludeOptions(boolean includeOptions) {
+		this.includeOptions = includeOptions;
+	}
+	
+	public boolean isIncludeOptions() {
+		return includeOptions;
+	}
+	
+	public void setIncludeSchemaId(boolean includeSchemaId) {
+		this.includeSchemaId = includeSchemaId;
+	}
+	
+	public boolean isIncludeSchemaId() {
+		return includeSchemaId;
+	}
 
 	@Override
 	public String toString() {

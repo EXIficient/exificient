@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.CodingMode;
-import com.siemens.ct.exi.EXIDecoder;
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -56,8 +56,8 @@ public class SchemaLessTest extends TestCase {
 
 		// encoder
 		{
-			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
 			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
@@ -69,10 +69,9 @@ public class SchemaLessTest extends TestCase {
 
 		// decoder
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()), factory
-							.isEXIBodyOnly());
+					new ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -107,8 +106,8 @@ public class SchemaLessTest extends TestCase {
 
 		// encoder
 		{
-			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
 
 			String pfx = null; // unset according fidelity-options
 
@@ -145,10 +144,9 @@ public class SchemaLessTest extends TestCase {
 
 		// decoder
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()), factory
-							.isEXIBodyOnly());
+					new ByteArrayInputStream(baos.toByteArray()));
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
@@ -218,8 +216,8 @@ public class SchemaLessTest extends TestCase {
 
 		// encoder
 		{
-			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
 
 			String pfx = null; // unset according fidelity-options
 
@@ -250,10 +248,9 @@ public class SchemaLessTest extends TestCase {
 
 		// decoder
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()), factory
-							.isEXIBodyOnly());
+					new ByteArrayInputStream(baos.toByteArray()));
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
@@ -321,8 +318,8 @@ public class SchemaLessTest extends TestCase {
 
 		// encoder
 		{
-			EXIEncoder encoder = factory.createEXIEncoder();
-			encoder.setOutput(baos, factory.isEXIBodyOnly());
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
 
 			String pfx = null; // unset according fidelity-options
 
@@ -393,10 +390,9 @@ public class SchemaLessTest extends TestCase {
 
 		// decoder
 		{
-			EXIDecoder decoder = factory.createEXIDecoder();
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()), factory
-							.isEXIBodyOnly());
+					new ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -551,8 +547,8 @@ public class SchemaLessTest extends TestCase {
 			
 			// encoder
 			{
-				EXIEncoder encoder = factory.createEXIEncoder();
-				encoder.setOutput(baos, factory.isEXIBodyOnly());
+				EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+				encoder.setOutputStream(baos);
 		
 				String pfx = null; // unset according fidelity-options
 		
@@ -582,10 +578,9 @@ public class SchemaLessTest extends TestCase {
 		
 			// decoder
 			{
-				EXIDecoder decoder = factory.createEXIDecoder();
+				EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 				decoder.setInputStream(
-						new ByteArrayInputStream(baos.toByteArray()), factory
-								.isEXIBodyOnly());
+						new ByteArrayInputStream(baos.toByteArray()));
 		
 				assertTrue(decoder.next() == EventType.START_DOCUMENT);
 				decoder.decodeStartDocument();

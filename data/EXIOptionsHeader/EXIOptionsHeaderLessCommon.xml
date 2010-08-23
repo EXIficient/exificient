@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<header xmlns="http://www.w3.org/2007/exi/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.w3.org/2007/exi/ ./EXIOptionsHeader.xsd">
-          <lesscommon>
-              <preserve>
-                  <schemaLocations/>
-                  <dtd/>
-                  <prefixes/>
-                  <lexicalValues/>
-                  <whitespace/>
-                  <comments/>
-                  <pi/>
-              </preserve>
-              
-          </lesscommon>
+<header xmlns="http://www.w3.org/2009/exi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2009/exi ./EXIOptionsHeader.xsd">
+    <lesscommon>
+        <preserve>
+            <dtd/>
+            <prefixes/>
+            <lexicalValues/>
+            <comments/>
+            <pis/>
+        </preserve>
+    </lesscommon>
 </header>

@@ -88,6 +88,16 @@ final public class BitInputStream {
 			capacity = 0;
 		}
 	}
+
+	/**
+	 * Returns current byte buffer without actually reading data
+	 * 
+	 * @throws IOException
+	 */
+	public int lookAhead() throws IOException {
+		readBuffer();
+		return buffer;
+	}
 	
 	/**
 	 * Skip n bytes

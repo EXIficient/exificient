@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.helpers;
 
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
@@ -27,21 +28,22 @@ import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIDecoder;
-import com.siemens.ct.exi.EXIEncoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
+import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
 import com.siemens.ct.exi.api.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.api.sax.SAXEncoderExtendedHandler;
-import com.siemens.ct.exi.core.EXIDecoderInOrder;
-import com.siemens.ct.exi.core.EXIDecoderInOrderSC;
-import com.siemens.ct.exi.core.EXIDecoderReordered;
-import com.siemens.ct.exi.core.EXIEncoderInOrder;
-import com.siemens.ct.exi.core.EXIEncoderInOrderSC;
-import com.siemens.ct.exi.core.EXIEncoderReordered;
+import com.siemens.ct.exi.core.EXIBodyDecoderInOrder;
+import com.siemens.ct.exi.core.EXIBodyDecoderInOrderSC;
+import com.siemens.ct.exi.core.EXIBodyDecoderReordered;
+import com.siemens.ct.exi.core.EXIBodyEncoderInOrder;
+import com.siemens.ct.exi.core.EXIBodyEncoderInOrderSC;
+import com.siemens.ct.exi.core.EXIBodyEncoderReordered;
 import com.siemens.ct.exi.datatype.strings.BoundedStringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.BoundedStringEncoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -80,14 +82,15 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected CodingMode codingMode;
 
 	protected FidelityOptions fidelityOptions;
+	protected HeaderOptions headerOptions;
 
 	protected QName[] dtrMapTypes;
 	protected QName[] dtrMapRepresentations;
 
 	protected QName[] scElements;
 
-	/* default: false */
-	protected boolean exiBodyOnly = false;
+//	/* default: false */
+//	protected boolean exiBodyOnly = false;
 
 	/* default: 1,000,000 */
 	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE;
@@ -103,6 +106,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected static void setDefaultValues(EXIFactory factory) {
 		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.setHeaderOptions(HeaderOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setFragment(false);
 		factory.setGrammar(GrammarFactory.newInstance()
@@ -125,6 +129,14 @@ public class DefaultEXIFactory implements EXIFactory {
 	public FidelityOptions getFidelityOptions() {
 		return fidelityOptions;
 	}
+	
+	public void setHeaderOptions(HeaderOptions headerOptions) {
+		this.headerOptions = headerOptions;
+	}
+
+	public HeaderOptions getHeaderOptions() {
+		return headerOptions;
+	}
 
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations) {
@@ -139,6 +151,15 @@ public class DefaultEXIFactory implements EXIFactory {
 			this.dtrMapRepresentations = dtrMapRepresentations;
 		}
 	}
+	
+	public QName[] getDatatypeRepresentationMapTypes() {
+		return dtrMapTypes;
+	}
+
+	public QName[] getDatatypeRepresentationMapRepresentations() {
+		return dtrMapRepresentations;
+	}
+	
 
 	public void setSelfContainedElements(QName[] scElements) {
 		this.scElements = scElements;
@@ -185,13 +206,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		return this.codingMode;
 	}
 
-	public void setEXIBodyOnly(boolean exiBodyOnly) {
-		this.exiBodyOnly = exiBodyOnly;
-	}
-
-	public boolean isEXIBodyOnly() {
-		return exiBodyOnly;
-	}
+//	public void setEXIBodyOnly(boolean exiBodyOnly) {
+//		this.exiBodyOnly = exiBodyOnly;
+//	}
+//
+//	public boolean isEXIBodyOnly() {
+//		return exiBodyOnly;
+//	}
 
 	public void setBlockSize(int blockSize) {
 		if (blockSize < 0) {
@@ -228,17 +249,17 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 		// blockSize in NON compression mode? Just ignore it!
 	}
-
-	public EXIEncoder createEXIEncoder() throws EXIException {
+	
+	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException {
 		doSanityCheck();
 		
 		if (codingMode.usesRechanneling()) {
-			return new EXIEncoderReordered(this);
+			return new EXIBodyEncoderReordered(this);
 		} else {
 			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-				return new EXIEncoderInOrderSC(this);
+				return new EXIBodyEncoderInOrderSC(this);
 			} else {
-				return new EXIEncoderInOrder(this);
+				return new EXIBodyEncoderInOrder(this);
 			}
 		}
 	}
@@ -255,16 +276,16 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public EXIDecoder createEXIDecoder() throws EXIException {
+	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException {
 		doSanityCheck();
 		
 		if (codingMode.usesRechanneling()) {
-			return new EXIDecoderReordered(this);
+			return new EXIBodyDecoderReordered(this);
 		} else {
 			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-				return new EXIDecoderInOrderSC(this);
+				return new EXIBodyDecoderInOrderSC(this);
 			} else {
-				return new EXIDecoderInOrder(this);
+				return new EXIBodyDecoderInOrder(this);
 			}
 		}
 	}
@@ -361,13 +382,57 @@ public class DefaultEXIFactory implements EXIFactory {
 		// shallow copy
 		copy.setCodingMode(codingMode);
 		copy.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		copy.setEXIBodyOnly(exiBodyOnly);
+		// copy.setEXIBodyOnly(exiBodyOnly);
 		copy.setFidelityOptions(fidelityOptions);
 		copy.setFragment(isFragment);
 		copy.setGrammar(grammar);
 		copy.setSelfContainedElements(scElements);
 		// return...
 		return copy;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof EXIFactory) {
+			EXIFactory other = (EXIFactory) o;
+			// fidelity options
+			if(!fidelityOptions.equals(other.getFidelityOptions())) {
+				return false;
+			}
+//			// header options
+//			if(!headerOptions.equals(other.getHeaderOptions())) {
+//				return false;
+//			}
+			// fragment
+			if(isFragment!= other.isFragment()) {
+				return false;
+			}
+			// datatype representation map
+			if(!(Arrays.equals(this.dtrMapTypes, other.getDatatypeRepresentationMapTypes()) &&
+					Arrays.equals(this.dtrMapRepresentations, other.getDatatypeRepresentationMapRepresentations()))	) {
+				return false;
+			}
+			// coding mode
+			if(getCodingMode()!=other.getCodingMode()) {
+				return false;
+			}
+			// block size
+			if (getBlockSize()!= other.getBlockSize()) {
+				return false;
+			}
+			// value max length
+			if (getValueMaxLength()!= other.getValueMaxLength()) {
+				return false;
+			}
+			// value partition capacity
+			if (getValuePartitionCapacity()!= other.getValuePartitionCapacity()) {
+				return false;
+			}
+			
+			// everything fine so far
+			return true;
+		}
+		return false;
 	}
 
 }

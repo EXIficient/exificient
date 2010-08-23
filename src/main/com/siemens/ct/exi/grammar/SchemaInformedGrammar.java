@@ -59,6 +59,10 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 	protected Map<QName, List<QName>> subtypes;
 
 	protected SchemaInformedRule builtInFragmentGrammar;
+	
+	protected boolean builtInXMLSchemaTypesOnly = false;
+	
+	protected String schemaId;
 
 	protected SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
 			List<StartElement> fragmentElements, List<StartElement> sortedGlobalElements) {
@@ -108,6 +112,25 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 		for (StartElement globalElement : sortedGlobalElements) {
 			globalElements.put(globalElement.getQName(), globalElement);
 		}
+	}
+	
+	
+	public void setBuiltInXMLSchemaTypesOnly(boolean builtInXMLSchemaTypesOnly) {
+		this.builtInXMLSchemaTypesOnly = builtInXMLSchemaTypesOnly;
+		this.schemaId = Constants.EMPTY_STRING;
+	}
+	
+	public final String getSchemaId() {
+		return schemaId;
+	}
+	
+	public void setSchemaId(String schemaId) {
+		this.schemaId = schemaId;
+	}
+	
+	
+	public boolean isBuiltInXMLSchemaTypesOnly() {
+		return builtInXMLSchemaTypesOnly;
 	}
 	
 	protected static boolean containsEmptyURI(GrammarURIEntry[] entries) {

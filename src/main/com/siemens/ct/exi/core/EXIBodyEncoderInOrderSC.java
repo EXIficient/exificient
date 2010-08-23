@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
@@ -62,11 +61,11 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.5
  */
 
-public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
+public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 
-	protected EXIEncoderInOrderSC scEncoder;
+	protected EXIBodyEncoderInOrderSC scEncoder;
 
-	public EXIEncoderInOrderSC(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyEncoderInOrderSC(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
 
@@ -78,15 +77,15 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 		scEncoder = null;
 	}
 
-	@Override
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException {
-		if (scEncoder == null) {
-			super.setOutput(os, exiBodyOnly);
-		} else {
-			scEncoder.setOutput(os, exiBodyOnly);
-		}
-	}
+//	@Override
+//	public void setOutput(OutputStream os, boolean exiBodyOnly)
+//			throws EXIException, IOException {
+//		if (scEncoder == null) {
+//			super.setOutput(os, exiBodyOnly);
+//		} else {
+//			scEncoder.setOutput(os, exiBodyOnly);
+//		}
+//	}
 
 	@Override
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -168,10 +167,10 @@ public class EXIEncoderInOrderSC extends EXIEncoderInOrder {
 			throws EXIException, IOException {
 		// SC Factory & Encoder
 		EXIFactory scEXIFactory = exiFactory.clone();
-		scEXIFactory.setEXIBodyOnly(true);
+		// scEXIFactory.setEXIBodyOnly(true);
 		scEXIFactory.setFragment(true);
-		scEncoder = (EXIEncoderInOrderSC) scEXIFactory.createEXIEncoder();
-		scEncoder.os = this.os; // needs to be unequal null
+		scEncoder = (EXIBodyEncoderInOrderSC) scEXIFactory.createEXIBodyEncoder();
+		// scEncoder.os = this.os; // needs to be unequal null
 		scEncoder.channel = this.channel;
 		scEncoder.setErrorHandler(this.errorHandler);
 

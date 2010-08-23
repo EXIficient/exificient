@@ -18,22 +18,21 @@
 
 package com.siemens.ct.exi;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.BuiltInXSDTestCase;
-import com.siemens.ct.exi.data.DeviationsTestCase;
-import com.siemens.ct.exi.data.FragmentTestCase;
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.data.SchemaTestCase;
-import com.siemens.ct.exi.data.W3CTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
-@SuppressWarnings("unused")
+// @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;
+	
+	// include Cookie, EXI Options, SchemaId
+	public static final boolean INCLUDE_COOKIE = true;
+	public static final boolean INCLUDE_OPTIONS = true;
+	public static final boolean INCLUDE_SCHEMA_ID = true;
 
+	
 	// fragments
 	public static boolean FRAGMENTS = false;
 
@@ -83,29 +82,29 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
-		try {
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-		} catch (UnsupportedOption e) {
-		}
+		// fidelityOptions = FidelityOptions.createAll();
+//		try {
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////
 	// OTHER OPTIONS
 	static {
-		selfContainedElements = new QName[1];
-		selfContainedElements[0] = new QName("", "note");
+//		selfContainedElements = new QName[1];
+//		selfContainedElements[0] = new QName("", "note");
 		// blockSize = 9013;
 		// blockSize = 200;
 		// valueMaxLength = 8;
@@ -122,8 +121,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

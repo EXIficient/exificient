@@ -31,7 +31,7 @@ import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
- * EXI encoder for bit or byte-aligned streams.
+ * EXI Body encoder for bit or byte-aligned streams.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -39,28 +39,30 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.5
  */
 
-public class EXIEncoderInOrder extends AbstractEXIEncoder {
+public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 
-	public EXIEncoderInOrder(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyEncoderInOrder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 	}
 
-	@Override
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException {
-		super.setOutput(os, exiBodyOnly);
+	public void setOutputStream(OutputStream os)
+			throws EXIException, IOException {
+		
+		CodingMode codingMode = exiFactory.getCodingMode();
 
-		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
-			setChannel(new BitEncoderChannel(os));
+		// setup data-stream only
+		if (codingMode == CodingMode.BIT_PACKED) {
+			// create new bit-aligned channel
+			setOutputChannel(new BitEncoderChannel(os));
 		} else {
-			assert (exiFactory.getCodingMode() == CodingMode.BYTE_PACKED);
-			setChannel(new ByteEncoderChannel(os));
+			assert (codingMode == CodingMode.BYTE_PACKED);
+			// create new byte-aligned channel
+			setOutputChannel(new ByteEncoderChannel(os));
 		}
 	}
 
-	public void setChannel(EncoderChannel encoderChannel) {
+	public void setOutputChannel(EncoderChannel encoderChannel) {
 		this.channel = encoderChannel;
-		this.os = encoderChannel.getOutputStream();
 	}
 
 	@Override

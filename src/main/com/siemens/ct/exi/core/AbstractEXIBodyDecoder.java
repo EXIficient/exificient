@@ -18,9 +18,7 @@
 
 package com.siemens.ct.exi.core;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +26,8 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIDecoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.container.DocType;
@@ -48,8 +45,6 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
-import com.siemens.ct.exi.io.channel.BitDecoderChannel;
-import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
@@ -66,16 +61,17 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
-		EXIDecoder {
+public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
+		EXIBodyDecoder {
 
+	protected final EXIHeaderDecoder exiHeader;
+	
 	// next event
 	protected Event nextEvent;
 	protected Rule nextRule;
 	protected EventType nextEventType;
 
 	// decoder stream
-	protected InputStream is;
 	protected DecoderChannel channel;
 
 	// namespaces/prefixes
@@ -96,21 +92,25 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 	//
 	List<NamespaceDeclaration> undeclaredPrefixes;
 
-	public AbstractEXIDecoder(EXIFactory exiFactory) throws EXIException {
+	public AbstractEXIBodyDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
+		exiHeader = new EXIHeaderDecoder();
+		
 		// namespaces/prefixes
 		uriToPrefix = new HashMap<String, String>();
-
-		// init once
+	}
+	
+	@Override
+	protected void initFactoryInformation() throws EXIException {
+		super.initFactoryInformation();
+		
 		typeDecoder = exiFactory.createTypeDecoder();
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
-
-		// ec = 0;
 
 		// namespaces/prefixes
 		initPrefixes();
@@ -128,33 +128,6 @@ public abstract class AbstractEXIDecoder extends AbstractEXICoder implements
 		uriToPrefix.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
 	}
 
-	public void setInputStream(InputStream is, boolean exiBodyOnly)
-			throws EXIException, IOException {
-
-		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered
-		// already
-		if (!(is instanceof BufferedInputStream)) {
-			this.is = is = new BufferedInputStream(is);
-		}
-
-		// header
-		if (!exiBodyOnly) {
-			// parse header (bit-wise)
-			BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-			EXIHeader.parse(headerChannel);
-		}
-
-		// body
-		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
-			channel = new BitDecoderChannel(is);
-		} else {
-			assert (exiFactory.getCodingMode() == CodingMode.BYTE_PACKED);
-			channel = new ByteDecoderChannel(is);
-		}
-
-		initForEachRun();
-	}
 
 	protected final void decodeEventCode() throws EXIException, IOException {
 		// 1st level

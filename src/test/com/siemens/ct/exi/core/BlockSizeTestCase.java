@@ -33,7 +33,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.CodingMode;
-import com.siemens.ct.exi.EXIDecoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -67,9 +67,10 @@ public class BlockSizeTestCase extends XMLTestCase {
 
 			// read EXI stream
 			os.flush();
-			InputStream is = new ByteArrayInputStream(os.toByteArray());
-			EXIDecoder exiDecoder = factory.createEXIDecoder();
-			exiDecoder.setInputStream(is, factory.isEXIBodyOnly());
+			byte[] bytes = os.toByteArray();
+			InputStream is = new ByteArrayInputStream(bytes, 1, bytes.length-1); // header
+			EXIBodyDecoder exiDecoder = factory.createEXIBodyDecoder();
+			exiDecoder.setInputStream(is);
 
 			assertTrue(exiDecoder.next() == EventType.START_DOCUMENT);
 			exiDecoder.decodeStartDocument();

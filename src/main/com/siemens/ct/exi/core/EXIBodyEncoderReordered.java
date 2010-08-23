@@ -29,8 +29,9 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  * @version 0.5
  */
 
-public class EXIEncoderReordered extends AbstractEXIEncoder {
+public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
+	protected OutputStream os;
 	protected DeflaterOutputStream deflater;
 	protected CodingMode codingMode;
 
@@ -42,8 +43,10 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	protected List<QName> contextOrders;
 	protected Map<QName, Context> contexts;
 
-	public EXIEncoderReordered(EXIFactory exiFactory) throws EXIException {
+	public EXIBodyEncoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
+
+		this.codingMode = exiFactory.getCodingMode();
 
 		contextOrders = new ArrayList<QName>();
 		contexts = new HashMap<QName, Context>();
@@ -55,21 +58,27 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 
 		initBlock();
 	}
-	
+
 	protected void initBlock() {
 		blockValues = 0;
 		contextOrders.clear();
 		contexts.clear();
 	}
 
-	@Override
-	public void setOutput(OutputStream os, boolean exiBodyOnly)
-			throws EXIException {
-		super.setOutput(os, exiBodyOnly);
-		this.codingMode = exiFactory.getCodingMode();
+	public void setOutputStream(OutputStream os)
+			throws EXIException, IOException {
+		this.os = os;
 
+		// setup new data-stream
 		channel = new ByteEncoderChannel(getStream());
+
 	}
+	
+	public void setOutputChannel(EncoderChannel encoderChannel) {
+		this.channel = encoderChannel;
+		this.os = channel.getOutputStream();
+	}
+	
 
 	@Override
 	protected boolean isTypeValid(Datatype datatype, String value) {
@@ -78,46 +87,44 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 		return super.isTypeValid(datatype, value);
 	}
 
-
 	@Override
 	protected void writeValue(QName valueContext) throws IOException {
-		
+
 		Context cc = contexts.get(valueContext);
-		if(cc == null) {
+		if (cc == null) {
 			cc = new Context();
 			contexts.put(valueContext, cc);
 			contextOrders.add(valueContext);
 		}
-		
+
 		cc.addValue(lastValue, lastDatatype);
 		// blockValues++;
-		
 
-		// new block goes directly after value 
-		if (++blockValues == exiFactory.getBlockSize() ) {
+		// new block goes directly after value
+		if (++blockValues == exiFactory.getBlockSize()) {
 			// blockValues larger than set blockSize
-			// System.out.println("new block " + blockValues + " after " + valueContext + " = '" + lastValue + "'");
-			
+			// System.out.println("new block " + blockValues + " after " +
+			// valueContext + " = '" + lastValue + "'");
+
 			// close this block and setup new one
 			closeBlock();
 			initBlock();
 			channel = new ByteEncoderChannel(getStream());
 		}
-		
-		
+
 	}
 
 	protected OutputStream getStream() {
 		if (codingMode == CodingMode.COMPRESSION) {
-			deflater = new DeflaterOutputStream(os, new Deflater(
-					codingMode.getDeflateLevel(), true));
+			deflater = new DeflaterOutputStream(os, new Deflater(codingMode
+					.getDeflateLevel(), true));
 			return deflater;
 		} else {
-			assert(codingMode == CodingMode.PRE_COMPRESSION);
+			assert (codingMode == CodingMode.PRE_COMPRESSION);
 			return os;
 		}
 	}
-	
+
 	protected void closeBlock() throws IOException {
 		/*
 		 * If the block contains at most 100 values, the block will contain only
@@ -168,7 +175,8 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+						typeEncoder.isValid(valueDatatypes.get(i), values
+								.get(i));
 						typeEncoder.writeValue(contextOrder, leq100);
 					}
 					wasThereLeq100 = true;
@@ -184,13 +192,14 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 				List<String> values = cc.getValues();
 				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
-					//	create stream
+					// create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+						typeEncoder.isValid(valueDatatypes.get(i), values
+								.get(i));
 						typeEncoder.writeValue(contextOrder, gre100);
 					}
-					//	finish stream
+					// finish stream
 					finalizeStream();
 				}
 			}
@@ -208,7 +217,7 @@ public class EXIEncoderReordered extends AbstractEXIEncoder {
 	public void flush() throws IOException {
 		// close remaining block
 		closeBlock();
-		
+
 		// finalize document
 		os.flush();
 	}

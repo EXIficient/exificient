@@ -36,21 +36,54 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  */
 
 public interface Grammar {
-	
+
+	/**
+	 * Schema information is used to create grammar.
+	 * 
+	 * @return
+	 */
 	public boolean isSchemaInformed();
+
+	/**
+	 * The schemaID option may be used to identify the schema information used
+	 * for processing the EXI body. When the "schemaID" is null no schema
+	 * information is used for processing the EXI body. When the value of the
+	 * "schemaID" is an empty string, no user defined schema information is used
+	 * for processing the EXI body; however, the built-in XML schema types are
+	 * available for use in the EXI body.
+	 * 
+	 * <p>
+	 * An example schemaID scheme is the use of URI that is apt for globally
+	 * identifying schema resources on the Web.
+	 * </p>
+	 * 
+	 * @return schema identifier
+	 */
+	public String getSchemaId();
+
+	/**
+	 * The built-in XML schema types are available.
+	 * 
+	 * <p>
+	 * Note: the grammar is schema-informed also (see isSchemaInformed())
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public boolean isBuiltInXMLSchemaTypesOnly();
 
 	public Rule getBuiltInDocumentGrammar();
 
 	public Rule getBuiltInFragmentGrammar();
 
 	public GrammarURIEntry[] getGrammarEntries();
-	
+
 	public StartElement getGlobalElement(QName qname);
-	
+
 	public Attribute getGlobalAttribute(QName qname);
-	
+
 	public SchemaInformedRule getTypeGrammar(QName qname);
-	
+
 	/**
 	 * Returns (direct) simple types in type hierarchy
 	 * 

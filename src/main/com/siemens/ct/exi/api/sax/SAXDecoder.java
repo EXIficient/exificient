@@ -39,8 +39,9 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EXIDecoder;
+import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -59,9 +60,10 @@ import com.siemens.ct.exi.values.Value;
 
 public class SAXDecoder implements XMLReader {
 
-	protected EXIFactory exiFactory;
+	protected EXIFactory noOptionsFactory;
+	protected EXIStreamDecoder exiStream;
 
-	protected EXIDecoder decoder;
+	protected EXIBodyDecoder decoder;
 
 	protected ContentHandler contentHandler;
 	protected DTDHandler dtdHandler;
@@ -82,9 +84,9 @@ public class SAXDecoder implements XMLReader {
 	protected String seQNameAsString = Constants.EMPTY_STRING;
 	protected String atQNameAsString = Constants.EMPTY_STRING;
 
-	public SAXDecoder(EXIFactory exiFactory) throws EXIException {
-		this.exiFactory = exiFactory;
-		this.decoder = exiFactory.createEXIDecoder();
+	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
+		this.noOptionsFactory = noOptionsFactory;
+		this.exiStream = new EXIStreamDecoder();
 		attributes = new AttributesImpl();
 	}
 
@@ -185,19 +187,18 @@ public class SAXDecoder implements XMLReader {
 
 	public void parse(InputSource inputSource) throws IOException, SAXException {
 		assert (inputSource != null);
-		assert (decoder != null);
+		assert (exiStream != null);
 
+		if (contentHandler == null) {
+			throw new SAXException("No content handler set!");
+		}
+		
 		try {
 			// setup (bit) input stream
-			InputStream inputStream = inputSource.getByteStream();
-			decoder.setInputStream(inputStream, exiFactory.isEXIBodyOnly());
-
-			if (contentHandler == null) {
-				throw new SAXException("No content handler set!");
-			}
-
-			// System.out.println("namespaces:" + namespaces);
-			// System.out.println("namespacePrefixes: " + namespacePrefixes);
+			InputStream is = inputSource.getByteStream();
+			
+			// header
+			decoder = exiStream.decodeHeader(noOptionsFactory, is);
 
 			// init
 			initForEachRun();
@@ -220,9 +221,7 @@ public class SAXDecoder implements XMLReader {
 
 		QName deferredStartElement = null;
 
-		// while (decoder.hasNext()) {
 		while ( ( eventType = decoder.next()) != null ) {
-			// eventType = decoder.next();
 
 			if (deferredStartElement != null) {
 				switch (eventType) {

@@ -59,11 +59,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType();
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
-		GeneralTestCase.setConfigurationEntityReference1();
+		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
-		// GeneralTestCase.setConfigurationStringTable2 ( );
+		GeneralTestCase.setConfigurationStringTable2 ( );
 	}
 
 	protected void setUp() throws Exception {
@@ -104,6 +104,8 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
+		testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
@@ -112,6 +114,8 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
+		testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
@@ -124,16 +128,16 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
-//		// #7b (strict & lexical-values)
-//		testCaseOptions.add(new TestCaseOption());
-//		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-//		testCaseOptions.lastElement().setFidelityOptions(
-//				FidelityOptions.createStrict());
-//			testCaseOptions.lastElement().getFidelityOptions().setFidelity(
-//					FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-//		testCaseOptions.lastElement().setFragments(false);
-//		testCaseOptions.lastElement().setXmlEqual(false);
-//		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		// // #7b (strict & lexical-values)
+		// testCaseOptions.add(new TestCaseOption());
+		// testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		// testCaseOptions.lastElement().setFidelityOptions(
+		// FidelityOptions.createStrict());
+		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+		// FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		// testCaseOptions.lastElement().setFragments(false);
+		// testCaseOptions.lastElement().setXmlEqual(false);
+		// testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());
@@ -183,6 +187,18 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
+
+		// #11a valuePartitionCapacity + Header Cookie & Options & SchemaId
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setValuePartitionCapacity(5);
+		testCaseOptions.lastElement().setIncludeCookie(true);
+		testCaseOptions.lastElement().setIncludeOptions(true);
+		testCaseOptions.lastElement().setIncludeSchemaId(true);
 
 		// #12 dtr map
 		testCaseOptions.add(new TestCaseOption());
@@ -300,7 +316,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	public void testDatatypes() throws Exception {
 		// set up configuration
 		setConfigurationDatatypes();
-	
+
 		// execute test
 		_test();
 	}
@@ -595,7 +611,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	public void testEntityReference1() throws Exception {
 		// set up configuration
 		setConfigurationEntityReference1();
-	
+
 		// execute test
 		_test();
 	}
