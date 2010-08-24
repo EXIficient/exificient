@@ -58,8 +58,9 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 		}
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		transformer.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // ASCII
-
+		
 		this.decodeTo(ef, exiDocument, xmlOutput, transformer);
 	}
 	

@@ -50,6 +50,8 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		// set up a transformer
 		TransformerFactory transfac = TransformerFactory.newInstance();
 		Transformer trans = transfac.newTransformer();
+		// output options
+		trans.setOutputProperty(OutputKeys.METHOD, "xml");
 		// due to fragments
 		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		// remaining keys
@@ -79,12 +81,14 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 
 	public void decodeTo(EXIFactory ef, InputStream exiDocument,
 			OutputStream xmlOutput) throws Exception {
-		Transformer transformer = tf.newTransformer();
-
-		if (ef.isFragment()) {
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-					"yes");
-		}
+//		Transformer transformer = tf.newTransformer();
+//
+//		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//		
+//		if (ef.isFragment()) {
+//			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+//					"yes");
+//		}
 
 		// decode to DOM
 		DOMBuilder domBuilder = new DOMBuilder(ef);

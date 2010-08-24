@@ -51,6 +51,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	protected String docTypeSystemID;
 	protected String docTypeText;
 	protected boolean noEntityReference;
+	protected boolean noDTD;
 
 	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os)
 			throws EXIException {
@@ -66,6 +67,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	public void startDocument() throws SAXException {
 		// init
 		noEntityReference = true;
+		noDTD = true;
 		// normal stuff
 		super.startDocument();
 	}
@@ -90,6 +92,9 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			throws SAXException {
 		if (noEntityReference) {
 			super.characters(ch, start, length);
+		} else {
+			// System.out.println("dasdsa");
+			super.characters(ch, start, length);
 		}
 		// new String(ch, start, length);
 	}
@@ -100,13 +105,38 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 * ======================================================================
 	 */
 	public void comment(char[] ch, int start, int length) throws SAXException {
-		if (preserveComment) {
-			try {
-				checkPendingChars();
-				encoder.encodeComment(ch, start, length);
-			} catch (Exception e) {
-				throw new SAXException("comment", e);
+		if (noDTD) {
+			if (preserveComment) {
+				try {
+					checkPendingChars();
+					encoder.encodeComment(ch, start, length);
+				} catch (Exception e) {
+					throw new SAXException("comment", e);
+				}
 			}
+		} else {
+			// DTD section
+			if (preserveDTD) {
+				this.docTypeText += "<!--" + new String(ch, start, length)
+						+ "-->";
+			}
+		}
+	}
+
+	public void processingInstruction(String target, String data)
+			throws SAXException {
+		try {
+			if (noDTD) {
+				checkPendingChars();
+				encoder.encodeProcessingInstruction(target, data);
+			} else {
+				// DTD section
+				if (preserveDTD) {
+					this.docTypeText += "<?" + target + " " + data + "?>";
+				}
+			}
+		} catch (Exception e) {
+			throw new SAXException("processingInstruction", e);
 		}
 	}
 
@@ -124,6 +154,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void startDTD(String name, String publicId, String systemId)
 			throws SAXException {
+		noDTD = false;
 		if (preserveDTD) {
 			try {
 				checkPendingChars();
@@ -138,6 +169,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	}
 
 	public void endDTD() throws SAXException {
+		noDTD = true;
 		if (preserveDTD) {
 			try {
 				encoder.encodeDocType(docTypeName, docTypePublicID,
@@ -148,40 +180,40 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		}
 	}
 
-	public void startEntity(String name) throws SAXException {
-		if (preserveDTD) {
-			try {
-				// &amp; --> name="amp"
-				checkPendingChars();
-				noEntityReference = false;
-			} catch (Exception e) {
-				throw new SAXException("startEntity", e);
-			}
-		}
-	}
+//	public void startEntity(String name) throws SAXException {
+//		if (preserveDTD) {
+//			try {
+//				// &amp; --> name="amp"
+//				checkPendingChars();
+//				noEntityReference = false;
+//			} catch (Exception e) {
+//				throw new SAXException("startEntity", e);
+//			}
+//		}
+//	}
 
-	public void endEntity(String name) throws SAXException {
-		if (preserveDTD) {
-			try {
-				if (noEntityReference == false) {
-					/*
-					 * General entities are reported with their regular names,
-					 * parameter entities have '%' prepended to their names, and
-					 * the external DTD subset has the pseudo-entity name
-					 * "[dtd]".
-					 */
-					if (name.startsWith("%") || name.equals("[dtd]")) {
-						// do nothing
-					} else {
-						encoder.encodeEntityReference(name);
-					}
-					noEntityReference = true;
-				}
-			} catch (Exception e) {
-				throw new SAXException("endEntity " + name, e);
-			}
-		}
-	}
+//	public void endEntity(String name) throws SAXException {
+//		if (preserveDTD) {
+//			try {
+//				if (noEntityReference == false) {
+//					/*
+//					 * General entities are reported with their regular names,
+//					 * parameter entities have '%' prepended to their names, and
+//					 * the external DTD subset has the pseudo-entity name
+//					 * "[dtd]".
+//					 */
+//					if (name.startsWith("%") || name.equals("[dtd]")) {
+//						// do nothing
+//					} else {
+//						encoder.encodeEntityReference(name);
+//					}
+//					noEntityReference = true;
+//				}
+//			} catch (Exception e) {
+//				throw new SAXException("endEntity " + name, e);
+//			}
+//		}
+//	}
 
 	/*
 	 * ======================================================================

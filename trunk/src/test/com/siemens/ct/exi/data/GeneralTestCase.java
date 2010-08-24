@@ -57,13 +57,15 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
 		// GeneralTestCase.setConfigurationDocType();
+		GeneralTestCase.setConfigurationDocType0 ( );
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
+		// GeneralTestCase.setConfigurationDocType3 ( );
 		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
-		GeneralTestCase.setConfigurationStringTable2 ( );
+		// GeneralTestCase.setConfigurationStringTable2 ( );
 	}
 
 	protected void setUp() throws Exception {
@@ -578,6 +580,21 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	@Test
+	public void testDocType0() throws Exception {
+		// set up configuration
+		setConfigurationDocType0();
+	
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationDocType0() {
+		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/general/docType0.xml");
+		QuickTestConfiguration.setExiLocation("./out/general/docType0.xml.exi");
+	}
+	
+	@Test
 	public void testDocType1() throws Exception {
 		// set up configuration
 		setConfigurationDocType1();
@@ -605,6 +622,21 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/general/docType2.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType2.xml.exi");
+	}
+	
+	@Test
+	public void testDocType3() throws Exception {
+		// set up configuration
+		setConfigurationDocType3();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationDocType3() {
+		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/general/docType3.xml");
+		QuickTestConfiguration.setExiLocation("./out/general/docType3.xml.exi");
 	}
 
 	@Test
