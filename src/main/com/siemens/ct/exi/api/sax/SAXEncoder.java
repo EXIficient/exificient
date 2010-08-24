@@ -180,16 +180,6 @@ public class SAXEncoder extends DefaultHandler2 {
 		}
 	}
 
-	public void processingInstruction(String target, String data)
-			throws SAXException {
-		try {
-			checkPendingChars();
-			encoder.encodeProcessingInstruction(target, data);
-		} catch (Exception e) {
-			throw new SAXException("processingInstruction", e);
-		}
-	}
-
 	public void endElement(String uri, String local, String raw)
 			throws SAXException {
 		try {

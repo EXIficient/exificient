@@ -89,8 +89,8 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected QName[] scElements;
 
-//	/* default: false */
-//	protected boolean exiBodyOnly = false;
+	// /* default: false */
+	// protected boolean exiBodyOnly = false;
 
 	/* default: 1,000,000 */
 	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE;
@@ -122,14 +122,14 @@ public class DefaultEXIFactory implements EXIFactory {
 		return factory;
 	}
 
-	public void setFidelityOptions(FidelityOptions fidelityOptions)  {
+	public void setFidelityOptions(FidelityOptions fidelityOptions) {
 		this.fidelityOptions = fidelityOptions;
 	}
 
 	public FidelityOptions getFidelityOptions() {
 		return fidelityOptions;
 	}
-	
+
 	public void setHeaderOptions(HeaderOptions headerOptions) {
 		this.headerOptions = headerOptions;
 	}
@@ -151,7 +151,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			this.dtrMapRepresentations = dtrMapRepresentations;
 		}
 	}
-	
+
 	public QName[] getDatatypeRepresentationMapTypes() {
 		return dtrMapTypes;
 	}
@@ -159,7 +159,6 @@ public class DefaultEXIFactory implements EXIFactory {
 	public QName[] getDatatypeRepresentationMapRepresentations() {
 		return dtrMapRepresentations;
 	}
-	
 
 	public void setSelfContainedElements(QName[] scElements) {
 		this.scElements = scElements;
@@ -206,13 +205,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		return this.codingMode;
 	}
 
-//	public void setEXIBodyOnly(boolean exiBodyOnly) {
-//		this.exiBodyOnly = exiBodyOnly;
-//	}
-//
-//	public boolean isEXIBodyOnly() {
-//		return exiBodyOnly;
-//	}
+	// public void setEXIBodyOnly(boolean exiBodyOnly) {
+	// this.exiBodyOnly = exiBodyOnly;
+	// }
+	//
+	// public boolean isEXIBodyOnly() {
+	// return exiBodyOnly;
+	// }
 
 	public void setBlockSize(int blockSize) {
 		if (blockSize < 0) {
@@ -241,18 +240,20 @@ public class DefaultEXIFactory implements EXIFactory {
 	public int getValuePartitionCapacity() {
 		return valuePartitionCapacity;
 	}
-	
+
 	protected void doSanityCheck() throws EXIException {
 		// some consistency checks
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) && codingMode.usesRechanneling()) {
-			throw new EXIException("(Pre-)Compression and selfContained elements cannot work together");
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)
+				&& codingMode.usesRechanneling()) {
+			throw new EXIException(
+					"(Pre-)Compression and selfContained elements cannot work together");
 		}
 		// blockSize in NON compression mode? Just ignore it!
 	}
-	
+
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException {
 		doSanityCheck();
-		
+
 		if (codingMode.usesRechanneling()) {
 			return new EXIBodyEncoderReordered(this);
 		} else {
@@ -269,6 +270,8 @@ public class DefaultEXIFactory implements EXIFactory {
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
 				|| fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_PI)
+				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			return new SAXEncoderExtendedHandler(this, os);
 		} else {
@@ -278,7 +281,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException {
 		doSanityCheck();
-		
+
 		if (codingMode.usesRechanneling()) {
 			return new EXIBodyDecoderReordered(this);
 		} else {
@@ -323,9 +326,10 @@ public class DefaultEXIFactory implements EXIFactory {
 				typeEncoder = new LexicalTypeEncoder(stringEncoder);
 			} else {
 				if (dtrMapTypes != null) {
-					assert(dtrMapTypes.length == dtrMapRepresentations.length);
+					assert (dtrMapTypes.length == dtrMapRepresentations.length);
 					typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-							stringEncoder, dtrMapTypes, dtrMapRepresentations, grammar);
+							stringEncoder, dtrMapTypes, dtrMapRepresentations,
+							grammar);
 				} else {
 					// use default type encoders
 					typeEncoder = new TypedTypeEncoder(stringEncoder);
@@ -359,9 +363,10 @@ public class DefaultEXIFactory implements EXIFactory {
 				typeDecoder = new LexicalTypeDecoder(stringDecoder);
 			} else {
 				if (dtrMapTypes != null) {
-					assert(dtrMapTypes.length == dtrMapRepresentations.length);
+					assert (dtrMapTypes.length == dtrMapRepresentations.length);
 					typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-							stringDecoder, dtrMapTypes, dtrMapRepresentations, grammar);
+							stringDecoder, dtrMapTypes, dtrMapRepresentations,
+							grammar);
 				} else {
 					// use default type decoders
 					typeDecoder = new TypedTypeDecoder(stringDecoder);
@@ -390,45 +395,48 @@ public class DefaultEXIFactory implements EXIFactory {
 		// return...
 		return copy;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof EXIFactory) {
 			EXIFactory other = (EXIFactory) o;
 			// fidelity options
-			if(!fidelityOptions.equals(other.getFidelityOptions())) {
+			if (!fidelityOptions.equals(other.getFidelityOptions())) {
 				return false;
 			}
-//			// header options
-//			if(!headerOptions.equals(other.getHeaderOptions())) {
-//				return false;
-//			}
+			// // header options
+			// if(!headerOptions.equals(other.getHeaderOptions())) {
+			// return false;
+			// }
 			// fragment
-			if(isFragment!= other.isFragment()) {
+			if (isFragment != other.isFragment()) {
 				return false;
 			}
 			// datatype representation map
-			if(!(Arrays.equals(this.dtrMapTypes, other.getDatatypeRepresentationMapTypes()) &&
-					Arrays.equals(this.dtrMapRepresentations, other.getDatatypeRepresentationMapRepresentations()))	) {
+			if (!(Arrays.equals(this.dtrMapTypes, other
+					.getDatatypeRepresentationMapTypes()) && Arrays.equals(
+					this.dtrMapRepresentations, other
+							.getDatatypeRepresentationMapRepresentations()))) {
 				return false;
 			}
 			// coding mode
-			if(getCodingMode()!=other.getCodingMode()) {
+			if (getCodingMode() != other.getCodingMode()) {
 				return false;
 			}
 			// block size
-			if (getBlockSize()!= other.getBlockSize()) {
+			if (getBlockSize() != other.getBlockSize()) {
 				return false;
 			}
 			// value max length
-			if (getValueMaxLength()!= other.getValueMaxLength()) {
+			if (getValueMaxLength() != other.getValueMaxLength()) {
 				return false;
 			}
 			// value partition capacity
-			if (getValuePartitionCapacity()!= other.getValuePartitionCapacity()) {
+			if (getValuePartitionCapacity() != other
+					.getValuePartitionCapacity()) {
 				return false;
 			}
-			
+
 			// everything fine so far
 			return true;
 		}

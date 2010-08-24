@@ -150,10 +150,12 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 	}
 
 	public void characters(char[] ch, int start, int length) {
-		// add new text node
-		String ss = new String(ch, start, length);
-		Text text = checkDocument().createTextNode(ss);
-		currentNode.appendChild(text);
+		if (length > 0) {
+			// add new text node
+			String ss = new String(ch, start, length);
+			Text text = checkDocument().createTextNode(ss);
+			currentNode.appendChild(text);	
+		}
 	}
 
 	public void processingInstruction(String target, String data) {

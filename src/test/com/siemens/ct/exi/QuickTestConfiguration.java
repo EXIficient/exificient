@@ -28,9 +28,9 @@ public class QuickTestConfiguration {
 	public static final boolean USE_SCHEMA = true;
 	
 	// include Cookie, EXI Options, SchemaId
-	public static final boolean INCLUDE_COOKIE = true;
-	public static final boolean INCLUDE_OPTIONS = true;
-	public static final boolean INCLUDE_SCHEMA_ID = true;
+	public static final boolean INCLUDE_COOKIE = false;
+	public static final boolean INCLUDE_OPTIONS = false;
+	public static final boolean INCLUDE_SCHEMA_ID = false;
 
 	
 	// fragments
@@ -82,18 +82,18 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createAll();
 //		try {
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 //		} catch (UnsupportedOption e) {

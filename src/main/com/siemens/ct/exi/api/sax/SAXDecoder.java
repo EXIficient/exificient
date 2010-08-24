@@ -68,7 +68,7 @@ public class SAXDecoder implements XMLReader {
 	protected ContentHandler contentHandler;
 	protected DTDHandler dtdHandler;
 	protected LexicalHandler lexicalHandler;
-	protected DeclHandler declarationHandler;
+	protected DeclHandler declHandler;
 	protected ErrorHandler errorHandler;
 
 	protected static final String ATTRIBUTE_TYPE = "CDATA";
@@ -163,7 +163,7 @@ public class SAXDecoder implements XMLReader {
 			this.lexicalHandler = (LexicalHandler) value;
 		} else if ("http://xml.org/sax/properties/declaration-handler"
 				.equals(name)) {
-			this.declarationHandler = (DeclHandler) value;
+			this.declHandler = (DeclHandler) value;
 		}
 	}
 
@@ -173,7 +173,7 @@ public class SAXDecoder implements XMLReader {
 			return this.lexicalHandler;
 		} else if ("http://xml.org/sax/properties/declaration-handler"
 				.equals(name)) {
-			return this.declarationHandler;
+			return this.declHandler;
 		} else {
 			return null;
 		}
