@@ -41,6 +41,12 @@ public interface Constants {
 	 */
 	public static final String W3C_EXI_NS_URI = "http://www.w3.org/2009/exi";
 	
+	
+	/**
+	 * XML Reader feature
+	 */
+	public static final String W3C_EXI_FEATURE_BODY_ONLY =  "http://www.w3.org/exi/features/exi-body-only";
+	
 	/**
 	 * Initial Entries in String Table Partitions
 	 */

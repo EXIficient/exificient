@@ -30,6 +30,7 @@ import org.w3c.dom.DocumentFragment;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 
@@ -81,15 +82,19 @@ public class DOMBuilder {
 	}
 
 	public Document parse(InputStream is) throws EXIException {
+		return parse(is, false);
+	}
+	
+	public Document parse(InputStream is, boolean exiBodyOnly) throws EXIException {
 		try {
-//			// create empty document
-//			Document document = domImplementation.createDocument(null, null,
-//					null);
-
 			// create SAX to DOM Handlers
 			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation, false);
 
 			XMLReader reader = factory.createEXIReader();
+			// EXI Features
+			reader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY,
+					exiBodyOnly);
+			// SAX Features
 			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 					true);
 			reader.setProperty("http://xml.org/sax/properties/lexical-handler", s2dHandler);

@@ -81,15 +81,7 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 
 	public void decodeTo(EXIFactory ef, InputStream exiDocument,
 			OutputStream xmlOutput) throws Exception {
-//		Transformer transformer = tf.newTransformer();
-//
-//		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//		
-//		if (ef.isFragment()) {
-//			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-//					"yes");
-//		}
-
+		
 		// decode to DOM
 		DOMBuilder domBuilder = new DOMBuilder(ef);
 		Node doc;

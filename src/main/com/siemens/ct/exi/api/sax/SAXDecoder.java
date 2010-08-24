@@ -80,6 +80,7 @@ public class SAXDecoder implements XMLReader {
 
 	protected boolean namespaces = true;
 	protected boolean namespacePrefixes = false;
+	protected boolean exiBodyOnly = false;
 	
 	protected String seQNameAsString = Constants.EMPTY_STRING;
 	protected String atQNameAsString = Constants.EMPTY_STRING;
@@ -154,6 +155,10 @@ public class SAXDecoder implements XMLReader {
 		} else if ("http://xml.org/sax/features/namespace-prefixes"
 				.equals(name)) {
 			namespacePrefixes = value;
+		} else if (Constants.W3C_EXI_FEATURE_BODY_ONLY.equals(name)) {
+			exiBodyOnly = value;
+		} else {
+			throw new SAXNotRecognizedException(name);
 		}
 	}
 
@@ -164,6 +169,8 @@ public class SAXDecoder implements XMLReader {
 		} else if ("http://xml.org/sax/properties/declaration-handler"
 				.equals(name)) {
 			this.declHandler = (DeclHandler) value;
+		} else {
+			throw new SAXNotRecognizedException(name);
 		}
 	}
 
@@ -197,8 +204,14 @@ public class SAXDecoder implements XMLReader {
 			// setup (bit) input stream
 			InputStream is = inputSource.getByteStream();
 			
-			// header
-			decoder = exiStream.decodeHeader(noOptionsFactory, is);
+			if (exiBodyOnly) {
+				// no EXI header
+				decoder = noOptionsFactory.createEXIBodyDecoder();
+				decoder.setInputStream(is);
+			} else {
+				// read header (default)
+				decoder = exiStream.decodeHeader(noOptionsFactory, is);	
+			}
 
 			// init
 			initForEachRun();
