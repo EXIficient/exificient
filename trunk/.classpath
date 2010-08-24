@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="src" path="src/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar" sourcepath="lib/Xerces-J-src.2.9.1.zip"/>
 	<classpathentry kind="lib" path="lib/test/junit-4.5.jar"/>
