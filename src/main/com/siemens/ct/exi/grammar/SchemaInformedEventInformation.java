@@ -31,6 +31,8 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 
 public class SchemaInformedEventInformation extends EventInformation {
 
+	private static final long serialVersionUID = -7301991368895524208L;
+
 	public SchemaInformedEventInformation(Rule next, Event event, int eventCode) {
 		super(next, event, eventCode);
 	}

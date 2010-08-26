@@ -41,6 +41,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class DecimalDatatype extends AbstractDatatype {
 
+	private static final long serialVersionUID = -1045398309238670727L;
+
 	protected DecimalValue lastValidDecimal;
 
 	public DecimalDatatype(QName schemaType) {

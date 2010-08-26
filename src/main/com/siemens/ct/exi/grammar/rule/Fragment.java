@@ -34,7 +34,14 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * Fragment : SD FragmentContent 0
  */
 public class Fragment extends AbstractSchemaInformedRule {
+	
+	private static final long serialVersionUID = 4883701889805280947L;
+	
 	Rule fragmentContent;
+	
+//	// Serializable
+//	protected Fragment() {
+//	}
 
 	public Fragment(Rule fragmentContent, String label) {
 		super(label);

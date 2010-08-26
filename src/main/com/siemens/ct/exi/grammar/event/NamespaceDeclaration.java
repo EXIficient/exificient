@@ -28,6 +28,8 @@ package com.siemens.ct.exi.grammar.event;
 
 public class NamespaceDeclaration extends AbstractEvent {
 
+	private static final long serialVersionUID = 1861646097016756412L;
+
 	public NamespaceDeclaration() {
 		super(EventType.NAMESPACE_DECLARATION);
 	}

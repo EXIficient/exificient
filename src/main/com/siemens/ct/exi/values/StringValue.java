@@ -28,6 +28,8 @@ package com.siemens.ct.exi.values;
 
 public class StringValue extends AbstractValue {
 	
+	private static final long serialVersionUID = -2583604220181066337L;
+	
 	protected char[] characters;
 	protected String sValue;
 	

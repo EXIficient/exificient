@@ -38,6 +38,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
+	
+	private static final long serialVersionUID = -2644676723844219418L;
+	
 	protected Rule docEnd;
 
 	public SchemaInformedDocContent(Rule docEnd) {

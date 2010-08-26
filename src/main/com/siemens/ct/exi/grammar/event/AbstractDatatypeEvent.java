@@ -33,6 +33,8 @@ import com.siemens.ct.exi.datatype.Datatype;
 public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 		DatatypeEvent {
 
+	private static final long serialVersionUID = -975693882715012642L;
+
 	private final QName valueType;
 
 	private final Datatype datatype;

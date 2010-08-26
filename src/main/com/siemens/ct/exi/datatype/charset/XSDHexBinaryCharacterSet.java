@@ -32,6 +32,8 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class XSDHexBinaryCharacterSet extends AbstractRestrictedCharacterSet {
 
+	private static final long serialVersionUID = 7180439670571114904L;
+
 	/*
 	 * xsd:hexBinary { #x9, #xA, #xD, #x20, [0-9], [A-F], [a-f] }
 	 */

@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
@@ -38,7 +39,8 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.5
  */
 
-public interface Datatype {
+public interface Datatype extends Serializable {
+	
 	// if no codec map is used
 	public BuiltInType getBuiltInType();
 

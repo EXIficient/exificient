@@ -28,6 +28,8 @@ package com.siemens.ct.exi.values;
 
 public abstract class AbstractValue implements Value {
 	
+	private static final long serialVersionUID = 7617762856524097078L;
+	
 	protected int slen = -1;
 	
 	@Override

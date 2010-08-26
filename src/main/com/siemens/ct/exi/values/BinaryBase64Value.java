@@ -30,6 +30,8 @@ import org.apache.xerces.impl.dv.util.Base64;
 
 public class BinaryBase64Value extends AbstractBinaryValue {
 
+	private static final long serialVersionUID = -2690177084175673837L;
+
 	public BinaryBase64Value(byte[] bytes) {
 		super(bytes);
 	}

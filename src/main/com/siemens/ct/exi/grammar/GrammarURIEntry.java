@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -26,7 +28,9 @@ package com.siemens.ct.exi.grammar;
  * @version 0.5
  */
 
-public class GrammarURIEntry {
+public class GrammarURIEntry implements Serializable {
+	
+	private static final long serialVersionUID = 352521635962295594L;
 	
 	public final String uri;
 	public final String[] localNames;

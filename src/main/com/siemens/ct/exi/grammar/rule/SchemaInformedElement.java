@@ -45,6 +45,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public class SchemaInformedElement extends
 		AbstractSchemaInformedContent {
 
+	private static final long serialVersionUID = 7009002330388834813L;
+
 	@Override
 	protected void buildEvents2(FidelityOptions fidelityOptions) {
 		if (fidelityOptions.isStrict()) {

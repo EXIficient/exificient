@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar.event;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -26,8 +28,10 @@ package com.siemens.ct.exi.grammar.event;
  * @version 0.5
  */
 
-public interface Event {
+public interface Event extends Serializable {
+	
 	public EventType getEventType();
 
 	public boolean isEventType(EventType eventType);
+	
 }

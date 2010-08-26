@@ -41,6 +41,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class UnsignedLongDatatype extends AbstractDatatype {
 
+	private static final long serialVersionUID = -1301092165221268158L;
+	
 	private LongValue lastUnsignedLong;
 
 	public UnsignedLongDatatype(BuiltInType builtInType, QName schemaType) {

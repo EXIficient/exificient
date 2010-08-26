@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.values;
 
+import java.io.Serializable;
+
 /**
  * Value is a container concept encapsulating value items, e.g. String Values
  * but also Integers, Floats etc.
@@ -28,7 +30,7 @@ package com.siemens.ct.exi.values;
  * @version 0.5
  */
 
-public interface Value {
+public interface Value extends Serializable {
 
 	/**
 	 * Returns character array containing the vales represented as String

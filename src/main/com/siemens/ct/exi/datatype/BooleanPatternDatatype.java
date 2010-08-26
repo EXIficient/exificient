@@ -42,6 +42,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class BooleanPatternDatatype extends AbstractDatatype {
 	
+	private static final long serialVersionUID = 3601744720431415L;
+	
 	private int lastValidBooleanID;
 	private boolean lastValidBoolean;
 	

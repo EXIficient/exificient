@@ -30,6 +30,8 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class IntegerValue extends AbstractIntegerValue {
 
+	private static final long serialVersionUID = -7715640034582532707L;
+	
 	protected final int val;
 
 	public IntegerValue(int val) {

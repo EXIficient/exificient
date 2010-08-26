@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
+import java.io.Serializable;
+
 /**
  * If a string value is associated with a schema datatype and one or more of the
  * datatypes in its datatype hierarchy has one or more pattern facets, there may
@@ -30,7 +32,7 @@ package com.siemens.ct.exi.datatype.charset;
  * @version 0.5
  */
 
-public interface RestrictedCharacterSet {
+public interface RestrictedCharacterSet extends Serializable {
 	/**
 	 * Retrieves the code-point for given code.
 	 * 

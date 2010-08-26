@@ -32,6 +32,8 @@ import com.siemens.ct.exi.Constants;
 
 public class ListValue extends AbstractValue {
 	
+	private static final long serialVersionUID = -8991265913614252729L;
+	
 	protected final List<Value> values;
 	
 	public ListValue(List<Value> values) {

@@ -42,6 +42,8 @@ import com.siemens.ct.exi.util.MethodsBag;
 public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		SchemaLessRule {
 	
+	private static final long serialVersionUID = -4412097592336436189L;
+	
 	protected List<EventInformation> containers;
 	protected int eventCount;
 

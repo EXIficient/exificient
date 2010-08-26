@@ -40,6 +40,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class EnumerationDatatype extends AbstractDatatype {
 	
+	private static final long serialVersionUID = -5065239322174326749L;
+	
 	protected int codingLength;
 	protected Value[] enumValues;
 	protected int lastValidIndex;

@@ -30,6 +30,8 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public class CharactersGeneric extends AbstractDatatypeEvent {
 	
+	private static final long serialVersionUID = -3511879681514922795L;
+
 	public CharactersGeneric() {
 		super(EventType.CHARACTERS_GENERIC, null, BuiltIn.DEFAULT_DATATYPE);
 	}

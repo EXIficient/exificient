@@ -49,7 +49,9 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class QNameDatatype extends AbstractDatatype {
-
+	
+	private static final long serialVersionUID = -5388595112370214500L;
+	
 	protected QName qname;
 	protected String qnamePrefix;
 	

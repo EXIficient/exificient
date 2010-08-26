@@ -44,6 +44,8 @@ import com.siemens.ct.exi.types.BuiltIn;
  */
 public class SchemaLessElement extends SchemaLessContent {
 
+	private static final long serialVersionUID = -787607643786879290L;
+
 	protected SchemaLessElement() {
 		super();
 

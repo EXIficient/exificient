@@ -44,6 +44,9 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
  */
 
 public class SchemaLessGrammar extends AbstractGrammar {
+	
+	private static final long serialVersionUID = -6969262948282161888L;
+
 	public SchemaLessGrammar() {
 		super(false);
 

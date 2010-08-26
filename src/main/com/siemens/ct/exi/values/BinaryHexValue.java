@@ -30,6 +30,8 @@ import org.apache.xerces.impl.dv.util.HexBin;
 
 public class BinaryHexValue extends AbstractBinaryValue {
 
+	private static final long serialVersionUID = 4914135099644891193L;
+
 	public BinaryHexValue(byte[] bytes) {
 		super(bytes);
 	}

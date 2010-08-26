@@ -40,6 +40,9 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  */
 
 public class SchemaLessFragmentContent extends AbstractSchemaLessRule {
+	
+	private static final long serialVersionUID = 5335067628889400319L;
+
 	public SchemaLessFragmentContent() {
 		super();
 		//	SE(*) --> FragmentContent

@@ -30,6 +30,8 @@ import java.math.BigDecimal;
 
 public class DecimalValue extends AbstractValue {
 
+	private static final long serialVersionUID = 5268045994978250547L;
+	
 	public final boolean negative;
 	public final HugeIntegerValue integral;
 	public final HugeIntegerValue revFractional;

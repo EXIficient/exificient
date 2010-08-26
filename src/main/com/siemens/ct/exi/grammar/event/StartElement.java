@@ -31,6 +31,9 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public class StartElement extends AbstractEvent {
+	
+	private static final long serialVersionUID = -874684674312937990L;
+
 	protected final QName qname;
 	
 	private Rule rule;

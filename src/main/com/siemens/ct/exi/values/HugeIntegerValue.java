@@ -33,6 +33,8 @@ import com.siemens.ct.exi.util.MethodsBag;
 public final class HugeIntegerValue extends AbstractIntegerValue implements
 		Comparable<HugeIntegerValue> {
 
+	private static final long serialVersionUID = 4938301238683583609L;
+
 	public static final HugeIntegerValue ZERO = new HugeIntegerValue(0l);
 
 	public final boolean isLongValue;
