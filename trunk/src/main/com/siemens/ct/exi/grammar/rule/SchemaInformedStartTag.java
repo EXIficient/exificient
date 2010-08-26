@@ -55,6 +55,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public class SchemaInformedStartTag extends
 		AbstractSchemaInformedContent {
 	
+	private static final long serialVersionUID = -674782327638586700L;
+
 	protected SchemaInformedRule elementContent2;
 
 	protected boolean isFirstElementRule = false;

@@ -30,6 +30,8 @@ import javax.xml.XMLConstants;
 
 public class StartElementNS extends AbstractEvent {
 
+	private static final long serialVersionUID = -4465373887587175179L;
+	
 	private String namespaceURI;
 
 	public StartElementNS(String uri) {

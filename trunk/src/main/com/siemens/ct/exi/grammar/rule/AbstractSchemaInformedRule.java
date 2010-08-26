@@ -46,6 +46,8 @@ import com.siemens.ct.exi.util.sort.EventCodeAssignment;
 public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		SchemaInformedRule {
 
+	private static final long serialVersionUID = -5145919918050815021L;
+
 	// contains all necessary event information including event-codes
 	EventInformation[] containers = new EventInformation[0];
 

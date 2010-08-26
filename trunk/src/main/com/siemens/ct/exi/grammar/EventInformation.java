@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.io.Serializable;
+
 import com.siemens.ct.exi.grammar.event.Event;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
@@ -29,7 +31,9 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  * @version 0.5
  */
 
-public abstract class EventInformation {
+public abstract class EventInformation implements Serializable {
+	
+	private static final long serialVersionUID = -6237642832111152869L;
 	
 	public final Rule next;
 	final int eventCode;

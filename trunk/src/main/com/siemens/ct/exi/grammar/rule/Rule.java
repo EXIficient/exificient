@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
+import java.io.Serializable;
+
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.event.Attribute;
@@ -33,7 +35,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * @version 0.5
  */
 
-public interface Rule {
+public interface Rule extends Serializable {
 
 	/*
 	 * rule created according to schema information

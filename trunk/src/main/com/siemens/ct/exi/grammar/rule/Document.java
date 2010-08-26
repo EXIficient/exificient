@@ -34,6 +34,9 @@ import com.siemens.ct.exi.grammar.event.StartDocument;
  * Document : SD DocContent 0
  */
 public class Document extends AbstractSchemaInformedRule {
+	
+	private static final long serialVersionUID = 2859986001661016733L;
+	
 	Rule docContent;
 
 	public Document(Rule docContent) {

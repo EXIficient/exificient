@@ -32,6 +32,8 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class XSDBooleanCharacterSet extends AbstractRestrictedCharacterSet {
 
+	private static final long serialVersionUID = -2931452374414551649L;
+
 	/*
 	 * xsd:boolean { #x9, #xA, #xD, #x20, 0, 1, a, e, f, l, r, s, t, u }
 	 */

@@ -37,6 +37,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public abstract class AbstractSchemaInformedContent extends
 		AbstractSchemaInformedRule {
 
+	private static final long serialVersionUID = -5955467095950097406L;
+	
 	// second level events according to fidelity options
 	// NOTE: events on second level are produced once. Setting new fidelity
 	// option does not make any difference! A new fidelityOptions object is needed.

@@ -42,6 +42,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
 public class SchemaInformedFragmentContent extends
 		AbstractSchemaInformedRule {
 
+	private static final long serialVersionUID = 2041418874823084368L;
+
+
 	public SchemaInformedFragmentContent(String label) {
 		super(label);
 		//		SE(*) --> FragmentContent

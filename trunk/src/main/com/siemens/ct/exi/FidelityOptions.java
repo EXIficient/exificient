@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +37,10 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
  * @version 0.5
  */
 
-public class FidelityOptions {
+public class FidelityOptions implements Serializable {
+	
+	private static final long serialVersionUID = 2403291078846997571L;
+	
 	/* Comments, ProcessingInstructions, DTDs and Prefixes are preserved */
 	public static final String FEATURE_COMMENT = "PRESERVE_COMMENTS";
 	public static final String FEATURE_PI = "PRESERVE_PIS";

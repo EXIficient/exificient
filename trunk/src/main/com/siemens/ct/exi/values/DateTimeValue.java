@@ -35,6 +35,8 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class DateTimeValue extends AbstractValue {
 
+	private static final long serialVersionUID = 298943383646546462L;
+	
 	public static final int NUMBER_BITS_MONTHDAY = 9;
 	public static final int NUMBER_BITS_TIME = 17;
 	public static final int NUMBER_BITS_TIMEZONE = 11;

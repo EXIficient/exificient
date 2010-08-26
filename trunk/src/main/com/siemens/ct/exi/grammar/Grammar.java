@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -35,7 +36,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.5
  */
 
-public interface Grammar {
+public interface Grammar extends Serializable {
 
 	/**
 	 * Schema information is used to create grammar.

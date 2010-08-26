@@ -41,6 +41,9 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class NBitLongDatatype extends AbstractDatatype {
+	
+	private static final long serialVersionUID = -7495146909694866276L;
+	
 	protected final long lowerBound;
 	protected final long upperBound;
 	protected final int numberOfBits4Range;

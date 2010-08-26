@@ -42,6 +42,8 @@ import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 public abstract class AbstractRule implements Rule {
 	
+	private static final long serialVersionUID = -1626120406315756322L;
+	
 	protected static final SchemaInformedRule END_RULE = new SchemaInformedElement();
 	static {
 		END_RULE.setLabel("<END>");

@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.io.Serializable;
+
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -28,7 +30,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @version 0.5
  */
 
-public class EventTypeInformation {
+public class EventTypeInformation implements Serializable {
+	
+	private static final long serialVersionUID = -7078689920509278518L;
 	
 	//	second level event code
 	public final int eventCode2;

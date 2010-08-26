@@ -40,6 +40,8 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 	// #xD, CR (carriage-return)
 	// #x20, SP (space)
 
+	private static final long serialVersionUID = 1487974340218946481L;
+	
 	protected Map<Integer, Integer> codeSet; // codePoint --> internal code
 	protected List<Integer> codePointList;	// internal code --> codePoint
 

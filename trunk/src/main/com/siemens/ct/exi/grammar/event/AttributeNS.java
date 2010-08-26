@@ -30,6 +30,8 @@ import javax.xml.XMLConstants;
 
 public class AttributeNS extends AbstractEvent {
 
+	private static final long serialVersionUID = 6004967457126269590L;
+
 	private String namespaceURI;
 
 	public AttributeNS(String uri) {

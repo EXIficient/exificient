@@ -41,6 +41,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class FloatDatatype extends AbstractDatatype {
 
+	private static final long serialVersionUID = 1286030422795118970L;
+	
 	protected FloatValue lastValidFloat;
 
 	public FloatDatatype(BuiltInType builtInType, QName schemaType) {

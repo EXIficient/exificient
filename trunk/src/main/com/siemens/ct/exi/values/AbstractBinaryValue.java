@@ -28,6 +28,8 @@ package com.siemens.ct.exi.values;
 
 abstract public class AbstractBinaryValue extends AbstractValue {
 
+	private static final long serialVersionUID = -7022141926130631608L;
+	
 	protected final byte[] bytes;
 	protected String sValue;
 

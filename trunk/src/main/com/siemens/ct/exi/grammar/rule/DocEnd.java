@@ -36,6 +36,8 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 public class DocEnd extends AbstractSchemaInformedRule {
 
+	private static final long serialVersionUID = -3648891485531691554L;
+
 	public DocEnd() {
 		super();
 		//	add EE rule

@@ -27,6 +27,9 @@ package com.siemens.ct.exi.grammar.event;
  */
 
 public class EndDocument extends AbstractEvent {
+	
+	private static final long serialVersionUID = 1557843214060714272L;
+
 	public EndDocument() {
 		super(EventType.END_DOCUMENT);
 	}

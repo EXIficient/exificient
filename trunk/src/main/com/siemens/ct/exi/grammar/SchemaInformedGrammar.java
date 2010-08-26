@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.grammar;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,12 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @version 0.5
  */
 
-public class SchemaInformedGrammar extends AbstractGrammar {
+public class SchemaInformedGrammar extends AbstractGrammar implements Serializable {
+
+	/**
+	 * TODO serialVersionUID
+	 */
+	private static final long serialVersionUID = 7647530843802602241L;
 
 	protected List<StartElement> sortedGlobalElements; // subset of entire set of
 													// element
@@ -64,6 +70,10 @@ public class SchemaInformedGrammar extends AbstractGrammar {
 	
 	protected String schemaId;
 
+	public SchemaInformedGrammar() {
+		super(true);
+	}
+	
 	protected SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
 			List<StartElement> fragmentElements, List<StartElement> sortedGlobalElements) {
 		super(true);

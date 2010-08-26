@@ -41,6 +41,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class BigIntegerDatatype extends AbstractDatatype {
 	
+	private static final long serialVersionUID = 9143219910713203932L;
+	
 	protected HugeIntegerValue lastInteger;
 	
 	public BigIntegerDatatype(BuiltInType builtInType, QName schemaType) {

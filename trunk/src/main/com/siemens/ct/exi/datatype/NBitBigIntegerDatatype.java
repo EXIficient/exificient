@@ -43,6 +43,8 @@ import com.siemens.ct.exi.values.Value;
 
 public class NBitBigIntegerDatatype extends AbstractDatatype {
 
+	private static final long serialVersionUID = -2502808105531063938L;
+	
 	protected final HugeIntegerValue hiLowerBound;
 	protected final HugeIntegerValue hiUpperBound;
 

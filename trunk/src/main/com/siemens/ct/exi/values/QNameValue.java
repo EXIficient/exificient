@@ -30,6 +30,8 @@ import javax.xml.namespace.QName;
 
 public class QNameValue extends AbstractValue {
 
+	private static final long serialVersionUID = -6092774558055449492L;
+	
 	protected final QName qname;
 	protected final String prefix;
 

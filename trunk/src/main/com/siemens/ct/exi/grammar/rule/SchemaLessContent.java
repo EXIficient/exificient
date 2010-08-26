@@ -35,6 +35,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public abstract class SchemaLessContent extends AbstractSchemaLessRule {
+	
+	private static final long serialVersionUID = -354500199734740496L;
+	
 	protected static final Map<FidelityOptions, List<EventType>> optionsStartTag;
 	protected static final Map<FidelityOptions, List<EventType>> optionsChildContent;
 

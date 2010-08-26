@@ -30,6 +30,8 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 
 public abstract class AbstractGrammar implements Grammar {
 
+	private static final long serialVersionUID = 1328500655881102889L;
+
 	protected GrammarURIEntry[] grammarEntries;
 
 	/*
