@@ -21,6 +21,7 @@ package com.siemens.ct.exi.data;
 import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 
@@ -30,7 +31,7 @@ public class SchemaTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		SchemaTestCase.setConfigurationSchemaChoice1 ( );
+		// SchemaTestCase.setConfigurationSchemaChoice1 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice2 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice3 ( );
 		// SchemaTestCase.setConfigurationSchemaChoiceN1 ( );
@@ -53,7 +54,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
-		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
+		SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
@@ -162,9 +163,15 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
-		testCaseOptions.lastElement().setIncludeCookie(true);
-		testCaseOptions.lastElement().setIncludeOptions(true);
-		testCaseOptions.lastElement().setIncludeSchemaId(true);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_COOKIE);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_OPTIONS);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_SCHEMA_ID);
+//		testCaseOptions.lastElement().setIncludeCookie(true);
+//		testCaseOptions.lastElement().setIncludeOptions(true);
+//		testCaseOptions.lastElement().setIncludeSchemaId(true);
 	}
 
 	@Test

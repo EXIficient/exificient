@@ -11,9 +11,9 @@ import junit.framework.TestCase;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -69,7 +69,7 @@ public class EXIHeaderTestCase extends TestCase {
 		
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setCodingMode(CodingMode.BYTE_PACKED);
-		ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
+		ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
@@ -121,7 +121,7 @@ public class EXIHeaderTestCase extends TestCase {
 		DecoderChannel decoderChannel = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
 		
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
-		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel);
+		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, DefaultEXIFactory.newInstance());
 		
 		assertTrue(test.equals(decodedTest));
 	}
@@ -179,8 +179,8 @@ public class EXIHeaderTestCase extends TestCase {
 	
 	public void testEXIOptions6() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		HeaderOptions ho = ef.getHeaderOptions();
-		ho.setOption(HeaderOptions.INCLUDE_SCHEMA_ID); // schema-less
+		EncodingOptions ho = ef.getEncodingOptions();
+		ho.setOption(EncodingOptions.INCLUDE_SCHEMA_ID); // schema-less
 
 		_testOptions(ef);
 	}
@@ -189,8 +189,8 @@ public class EXIHeaderTestCase extends TestCase {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		Grammar g = GrammarFactory.newInstance().createXSDTypesOnlyGrammar();
 		ef.setGrammar(g);
-		HeaderOptions ho = ef.getHeaderOptions();
-		ho.setOption(HeaderOptions.INCLUDE_SCHEMA_ID); // built-in
+		EncodingOptions ho = ef.getEncodingOptions();
+		ho.setOption(EncodingOptions.INCLUDE_SCHEMA_ID); // built-in
 
 		_testOptions(ef);
 	}
@@ -200,8 +200,8 @@ public class EXIHeaderTestCase extends TestCase {
 		String xsdLocation = "data/EXIOptionsHeader/EXIOptionsHeader.xsd";
 		Grammar g = GrammarFactory.newInstance().createGrammar(xsdLocation);
 		ef.setGrammar(g);
-		HeaderOptions ho = ef.getHeaderOptions();
-		ho.setOption(HeaderOptions.INCLUDE_SCHEMA_ID); // schema-informed
+		EncodingOptions ho = ef.getEncodingOptions();
+		ho.setOption(EncodingOptions.INCLUDE_SCHEMA_ID); // schema-informed
 
 		_testOptions(ef);
 	}

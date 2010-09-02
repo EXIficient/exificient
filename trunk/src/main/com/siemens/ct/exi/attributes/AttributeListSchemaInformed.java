@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.attributes;
 
-import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.EXIFactory;
 
 /**
  * Schema-informed attribute list.
@@ -31,8 +31,8 @@ import com.siemens.ct.exi.FidelityOptions;
 
 public class AttributeListSchemaInformed extends AbstractAttributeList {
 
-	public AttributeListSchemaInformed(FidelityOptions fidelityOptions) {
-		super(fidelityOptions);
+	public AttributeListSchemaInformed(EXIFactory exiFactory) {
+		super(exiFactory);
 	}
 
 	/*

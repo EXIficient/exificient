@@ -32,7 +32,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
@@ -123,7 +122,8 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			// [EXI Options] ?
 			EXIFactory exiFactory;
 			if (presenceOptions) {
-				exiFactory = readEXIOptions(headerChannel);
+				// use default options clone and re-set if needed
+				exiFactory = readEXIOptions(headerChannel, noOptionsFactory);
 			} else {
 				exiFactory = noOptionsFactory;
 			}
@@ -143,13 +143,15 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	}
 
 
-	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel)
+	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel, EXIFactory noOptionsFactory)
 			throws EXIException, IOException {
 		EXIBodyDecoderInOrder decoder = (EXIBodyDecoderInOrder) getHeaderFactory()
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
-		EXIFactory exiOptionsFactory = DefaultEXIFactory.newInstance();
-	
+		
+		// EXIFactory exiOptionsFactory = DefaultEXIFactory.newInstance();
+		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
+		
 		clear();
 	
 		EventType eventType;

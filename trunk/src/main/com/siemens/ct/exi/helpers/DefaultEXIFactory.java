@@ -31,9 +31,9 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
 import com.siemens.ct.exi.api.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
@@ -82,7 +82,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected CodingMode codingMode;
 
 	protected FidelityOptions fidelityOptions;
-	protected HeaderOptions headerOptions;
+	protected EncodingOptions encodingOptions;
 
 	protected QName[] dtrMapTypes;
 	protected QName[] dtrMapRepresentations;
@@ -106,7 +106,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected static void setDefaultValues(EXIFactory factory) {
 		factory.setFidelityOptions(FidelityOptions.createDefault());
-		factory.setHeaderOptions(HeaderOptions.createDefault());
+		factory.setEncodingOptions(EncodingOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setFragment(false);
 		factory.setGrammar(GrammarFactory.newInstance()
@@ -130,12 +130,12 @@ public class DefaultEXIFactory implements EXIFactory {
 		return fidelityOptions;
 	}
 
-	public void setHeaderOptions(HeaderOptions headerOptions) {
-		this.headerOptions = headerOptions;
+	public void setEncodingOptions(EncodingOptions encodingOptions) {
+		this.encodingOptions = encodingOptions;
 	}
 
-	public HeaderOptions getHeaderOptions() {
-		return headerOptions;
+	public EncodingOptions getEncodingOptions() {
+		return encodingOptions;
 	}
 
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,

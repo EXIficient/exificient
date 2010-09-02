@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
@@ -50,8 +51,14 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	protected String docTypePublicID;
 	protected String docTypeSystemID;
 	protected String docTypeText;
-	protected boolean noEntityReference;
-	protected boolean noDTD;
+	protected boolean entityReferenceRange;
+	protected boolean dtdRange;
+
+	/*
+	 *  retain entity reference handling
+	 *  (TRUE -> does not resolve entity references)
+	 */
+	protected boolean retainEntityReference;
 
 	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os)
 			throws EXIException {
@@ -61,13 +68,15 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		preserveDTD = fo.isFidelityEnabled(FidelityOptions.FEATURE_DTD);
 		preserveComment = fo.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT);
 		preservePrefix = fo.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+		
+		retainEntityReference = factory.getEncodingOptions().isOptionEnabled(EncodingOptions.RETAIN_ENTITY_REFERENCE);
 	}
 
 	@Override
 	public void startDocument() throws SAXException {
 		// init
-		noEntityReference = true;
-		noDTD = true;
+		entityReferenceRange = false;
+		dtdRange = false;
 		// normal stuff
 		super.startDocument();
 	}
@@ -90,10 +99,14 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		if (noEntityReference) {
-			super.characters(ch, start, length);
+		if (preserveDTD && entityReferenceRange) {
+			if (retainEntityReference) {
+				// do nothing, ER has its own EXI event
+			} else {
+				// encode entity reference as characters
+				super.characters(ch, start, length);
+			}
 		} else {
-			// System.out.println("dasdsa");
 			super.characters(ch, start, length);
 		}
 		// new String(ch, start, length);
@@ -105,7 +118,13 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 * ======================================================================
 	 */
 	public void comment(char[] ch, int start, int length) throws SAXException {
-		if (noDTD) {
+		if (dtdRange) {
+			// DTD section
+			if (preserveDTD) {
+				this.docTypeText += "<!--" + new String(ch, start, length)
+						+ "-->";
+			}
+		} else {
 			if (preserveComment) {
 				try {
 					checkPendingChars();
@@ -114,26 +133,20 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 					throw new SAXException("comment", e);
 				}
 			}
-		} else {
-			// DTD section
-			if (preserveDTD) {
-				this.docTypeText += "<!--" + new String(ch, start, length)
-						+ "-->";
-			}
 		}
 	}
 
 	public void processingInstruction(String target, String data)
 			throws SAXException {
 		try {
-			if (noDTD) {
-				checkPendingChars();
-				encoder.encodeProcessingInstruction(target, data);
-			} else {
+			if (dtdRange) {
 				// DTD section
 				if (preserveDTD) {
 					this.docTypeText += "<?" + target + " " + data + "?>";
 				}
+			} else {
+				checkPendingChars();
+				encoder.encodeProcessingInstruction(target, data);
 			}
 		} catch (Exception e) {
 			throw new SAXException("processingInstruction", e);
@@ -154,67 +167,83 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void startDTD(String name, String publicId, String systemId)
 			throws SAXException {
-		noDTD = false;
-		if (preserveDTD) {
-			try {
+		try {
+			if (preserveDTD) {
+
 				checkPendingChars();
 				docTypeName = name;
 				docTypePublicID = publicId == null ? "" : publicId;
 				docTypeSystemID = systemId == null ? "" : systemId;
 				docTypeText = "";
-			} catch (Exception e) {
-				throw new SAXException("startDTD", e);
 			}
+			dtdRange = true;
+
+		} catch (Exception e) {
+			throw new SAXException("startDTD", e);
 		}
 	}
 
 	public void endDTD() throws SAXException {
-		noDTD = true;
-		if (preserveDTD) {
-			try {
+		try {
+			if (preserveDTD) {
 				encoder.encodeDocType(docTypeName, docTypePublicID,
 						docTypeSystemID, docTypeText);
-			} catch (Exception e) {
-				throw new SAXException("endDTD", e);
+				// System.out.println("DAPE encode DTD text = " + docTypeText);
 			}
+			dtdRange = false;
+		} catch (Exception e) {
+			throw new SAXException("endDTD", e);
 		}
 	}
 
-//	public void startEntity(String name) throws SAXException {
-//		if (preserveDTD) {
-//			try {
-//				// &amp; --> name="amp"
-//				checkPendingChars();
-//				noEntityReference = false;
-//			} catch (Exception e) {
-//				throw new SAXException("startEntity", e);
-//			}
-//		}
-//	}
+	public void startEntity(String name) throws SAXException {
+		if (preserveDTD) {
+			if (retainEntityReference) {
+				try {
+					// &amp; --> name="amp"
+					checkPendingChars();
+				} catch (Exception e) {
+					throw new SAXException("startEntity", e);
+				}
+			}
+		}
+		entityReferenceRange = true;
+	}
+	
+	public void endEntity(String name) throws SAXException {
+		try {
+			if (preserveDTD && entityReferenceRange) {
+				if (retainEntityReference) {
+					/*
+					 * General entities are reported with their regular names,
+					 * parameter entities have '%' prepended to their names, and
+					 * the external DTD subset has the pseudo-entity name
+					 * "[dtd]".
+					 */
+					if (name.startsWith("%") || name.equals("[dtd]")) {
+						// do nothing
+					} else {
+						encoder.encodeEntityReference(name);
+					}
+				}
+			}
+			entityReferenceRange = false;
 
-//	public void endEntity(String name) throws SAXException {
-//		if (preserveDTD) {
-//			try {
-//				if (noEntityReference == false) {
-//					/*
-//					 * General entities are reported with their regular names,
-//					 * parameter entities have '%' prepended to their names, and
-//					 * the external DTD subset has the pseudo-entity name
-//					 * "[dtd]".
-//					 */
-//					if (name.startsWith("%") || name.equals("[dtd]")) {
-//						// do nothing
-//					} else {
-//						encoder.encodeEntityReference(name);
-//					}
-//					noEntityReference = true;
-//				}
-//			} catch (Exception e) {
-//				throw new SAXException("endEntity " + name, e);
-//			}
-//		}
-//	}
+		} catch (Exception e) {
+			throw new SAXException("endEntity " + name, e);
+		}
+	}
 
+	public void skippedEntity(String name) throws SAXException {
+		try {
+			if (preserveDTD) {
+				encoder.encodeEntityReference(name);
+			}
+		} catch (Exception e) {
+			throw new SAXException("skippedEntity " + name, e);
+		}
+	}
+	
 	/*
 	 * ======================================================================
 	 * Interface DTDHandler
@@ -222,10 +251,12 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 */
 	public void notationDecl(String name, String publicId, String systemId)
 			throws SAXException {
+		// System.out.println("DAPE Encode notationDecl = " + name);
 	}
 
 	public void unparsedEntityDecl(String name, String publicId,
 			String systemId, String notationName) throws SAXException {
+		// System.out.println("DAPE Encode unparsedEntityDecl = " + name);
 	}
 
 	/*
@@ -260,6 +291,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void externalEntityDecl(String name, String publicId, String systemId)
 			throws SAXException {
+		// System.out.println("DAPE Encode externalEntityDecl = " + name);
 	}
 
 }

@@ -34,7 +34,7 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
  * @version 0.5
  */
 
-public class HeaderOptions {
+public class EncodingOptions {
 
 	/* EXI Cookie */
 	public static final String INCLUDE_COOKIE = "INCLUDE_COOKIE";
@@ -42,22 +42,28 @@ public class HeaderOptions {
 	public static final String INCLUDE_OPTIONS = "INCLUDE_OPTIONS";
 	/* schemaID as part of EXI Options */
 	public static final String INCLUDE_SCHEMA_ID = "INCLUDE_SCHEMA_ID";
+	
+	/* encode entity references as ER event instead of trying to resolve them */
+	public static final String RETAIN_ENTITY_REFERENCE = "KEEP_ENTITY_REFERENCES_UNRESOLVED";
+	
+	/* attribute "schemaLocation" and "noNamespaceSchemaLocation" */
+	public static final String INCLUDE_XSI_SCHEMALOCATION = "INCLUDE_XSI_SCHEMALOCATION";
 
 	/* contains options and according values */
 	protected Set<String> options;
 
-	protected HeaderOptions() {
+	protected EncodingOptions() {
 		options = new HashSet<String>();
 	}
 
 	/**
-	 * Creates header options using default options (NO Cookie, option or
+	 * Creates encoding options using default options (NO Cookie, option or
 	 * schemaID).
 	 * 
-	 * @return default header options
+	 * @return default encoding options
 	 */
-	public static HeaderOptions createDefault() {
-		HeaderOptions ho = new HeaderOptions();
+	public static EncodingOptions createDefault() {
+		EncodingOptions ho = new EncodingOptions();
 		return ho;
 	}
 
@@ -76,8 +82,12 @@ public class HeaderOptions {
 			options.add(key);
 		} else if (key.equals(INCLUDE_SCHEMA_ID)) {
 			options.add(key);
+		} else if (key.equals(RETAIN_ENTITY_REFERENCE)) {
+			options.add(key);
+		} else if (key.equals(INCLUDE_XSI_SCHEMALOCATION)) {
+			options.add(key);
 		} else {
-			throw new UnsupportedOption("HeaderOption '" + key
+			throw new UnsupportedOption("EncodingOption '" + key
 					+ "' is unknown!");
 		}
 	}
@@ -116,8 +126,8 @@ public class HeaderOptions {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof HeaderOptions) {
-			HeaderOptions other = (HeaderOptions) o;
+		if (o instanceof EncodingOptions) {
+			EncodingOptions other = (EncodingOptions) o;
 			return options.equals(other.options);
 		}
 

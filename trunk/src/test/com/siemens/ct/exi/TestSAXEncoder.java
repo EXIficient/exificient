@@ -65,7 +65,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 				false);
 		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver(new NoEntityResolver());
-
+		
 		return xmlReader;
 	}
 
@@ -130,13 +130,13 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
 		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
 		if (QuickTestConfiguration.INCLUDE_COOKIE) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
 		}
 		if (QuickTestConfiguration.INCLUDE_OPTIONS) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 		}
 		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
 		}
 		testEncoder.encodeTo(ef, xmlInput);
 

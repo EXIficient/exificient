@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 
@@ -57,11 +58,13 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
 		// GeneralTestCase.setConfigurationDocType();
-		GeneralTestCase.setConfigurationDocType0 ( );
+		// GeneralTestCase.setConfigurationDocType0 ( );
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
 		// GeneralTestCase.setConfigurationDocType3 ( );
-		// GeneralTestCase.setConfigurationEntityReference1();
+		GeneralTestCase.setConfigurationEntityReference1();
+		// GeneralTestCase.setConfigurationEntityReference2();
+		// GeneralTestCase.setConfigurationEntityReferenceUnresolved1();
 		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
@@ -106,8 +109,10 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().getFidelityOptions().setFidelity(
-				FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+		// FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
@@ -116,8 +121,10 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().getFidelityOptions().setFidelity(
-				FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+		// FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 
@@ -198,9 +205,15 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
-		testCaseOptions.lastElement().setIncludeCookie(true);
-		testCaseOptions.lastElement().setIncludeOptions(true);
-		testCaseOptions.lastElement().setIncludeSchemaId(true);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_COOKIE);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_OPTIONS);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_SCHEMA_ID);
+		// testCaseOptions.lastElement().setIncludeCookie(true);
+		// testCaseOptions.lastElement().setIncludeOptions(true);
+		// testCaseOptions.lastElement().setIncludeSchemaId(true);
 
 		// #12 dtr map
 		testCaseOptions.add(new TestCaseOption());
@@ -583,7 +596,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	public void testDocType0() throws Exception {
 		// set up configuration
 		setConfigurationDocType0();
-	
+
 		// execute test
 		_test();
 	}
@@ -593,7 +606,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/docType0.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType0.xml.exi");
 	}
-	
+
 	@Test
 	public void testDocType1() throws Exception {
 		// set up configuration
@@ -623,7 +636,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXmlLocation("./data/general/docType2.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType2.xml.exi");
 	}
-	
+
 	@Test
 	public void testDocType3() throws Exception {
 		// set up configuration
@@ -655,6 +668,40 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/general/entityReference1.xml.exi");
 	}
+
+	@Test
+	public void testEntityReference2() throws Exception {
+		// set up configuration
+		setConfigurationEntityReference2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationEntityReference2() {
+		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/entityReference2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/entityReference2.xml.exi");
+	}
+
+//	@Test
+//	public void testEntityReferenceUnresolved1() throws Exception {
+//		// set up configuration
+//		setConfigurationEntityReferenceUnresolved1();
+//
+//		// execute test
+//		_test();
+//	}
+//
+//	public static void setConfigurationEntityReferenceUnresolved1() {
+//		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+//		QuickTestConfiguration
+//				.setXmlLocation("./data/general/entityReferenceUnresolved1.xml");
+//		QuickTestConfiguration
+//				.setExiLocation("./out/general/entityReferenceUnresolved1.xml.exi");
+//	}
 
 	@Test
 	public void XtestCData1() throws Exception {

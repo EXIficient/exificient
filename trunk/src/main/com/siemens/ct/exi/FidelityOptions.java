@@ -46,10 +46,7 @@ public class FidelityOptions implements Serializable {
 	public static final String FEATURE_PI = "PRESERVE_PIS";
 	public static final String FEATURE_DTD = "PRESERVE_DTDS";
 	public static final String FEATURE_PREFIX = "PRESERVE_PREFIXES";
-
-	/* attribute schemaLocation (also noNamespaceSchemaLocation) is preserved */
-	public static final String FEATURE_XSI_SCHEMALOCATION = "PRESERVE_XSI_SCHEMALOCATION";
-
+	
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
@@ -170,8 +167,7 @@ public class FidelityOptions implements Serializable {
 			}
 		} else if (key.equals(FEATURE_COMMENT) || key.equals(FEATURE_PI)
 				|| key.equals(FEATURE_DTD) || key.equals(FEATURE_PREFIX)
-				|| key.equals(FEATURE_SC)
-				|| key.equals(FEATURE_XSI_SCHEMALOCATION)) {
+				|| key.equals(FEATURE_SC)) {
 			if (decision) {
 				//	
 				if (isStrict()) {

@@ -69,17 +69,17 @@ public interface EXIFactory extends Cloneable {
 	 * @param headerOptions
 	 *            header options
 	 * @throws EXIException
-	 * @see HeaderOptions
+	 * @see EncodingOptions
 	 */
-	public void setHeaderOptions(HeaderOptions headerOptions);
+	public void setEncodingOptions(EncodingOptions headerOptions);
 
 	/**
 	 * Returns the header options used by the EXI encoder.
 	 * 
 	 * @return header options currently used by the factory
-	 * @see HeaderOptions
+	 * @see EncodingOptions
 	 */
-	public HeaderOptions getHeaderOptions();
+	public EncodingOptions getEncodingOptions();
 
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
