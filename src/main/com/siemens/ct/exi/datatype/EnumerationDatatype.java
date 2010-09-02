@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -50,7 +51,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;
-		this.rcs = null;
+		this.rcs = new XSDStringCharacterSet(); // String ?
 
 		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
 	}

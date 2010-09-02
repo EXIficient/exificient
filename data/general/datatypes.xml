@@ -109,6 +109,7 @@
     <listBytes>+1 0 127 -127</listBytes>
     <listBytes></listBytes>
     <listFloats>1e4 -10000 5.234e-2</listFloats>
+    <listOfEnums>--12-25 --08-15 --01-01 --07-14</listOfEnums><!--   - -12-25  - -08-15  - -01-01  - -07-14       -->
     
     <!-- Built-in Type: String  -->
     <string>ss ss </string>

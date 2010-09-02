@@ -134,7 +134,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 		int codeLength = currentRule
 				.get1stLevelEventCodeLength(fidelityOptions);
 		int ec = codeLength > 0 ? channel.decodeNBitUnsignedInteger(codeLength) : 0;
-
+		
 		assert (ec >= 0);
 
 		if (ec < currentRule.getNumberOfEvents()) {

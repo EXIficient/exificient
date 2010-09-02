@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 
 public class TestCaseOption {
@@ -37,9 +38,14 @@ public class TestCaseOption {
 	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
-	private boolean includeCookie;
-	private boolean includeOptions;
-	private boolean includeSchemaId;
+	private EncodingOptions encodingOptions;
+//	private boolean includeCookie;
+//	private boolean includeOptions;
+//	private boolean includeSchemaId;
+	
+	public TestCaseOption() {
+		encodingOptions = EncodingOptions.createDefault();
+	}
 	
 	public CodingMode getCodingMode() {
 		return codingMode;
@@ -134,30 +140,38 @@ public class TestCaseOption {
 	public int getValuePartitionCapacity() {
 		return valuePartitionCapacity;
 	}
-	
-	public void setIncludeCookie(boolean includeCookie) {
-		this.includeCookie = includeCookie;
+
+	public void setEncodingOptions(EncodingOptions encodingOptions) {
+		this.encodingOptions = encodingOptions;
 	}
 	
-	public boolean isIncludeCookie() {
-		return includeCookie;
+	public EncodingOptions getEncodingOptions() {
+		return encodingOptions;
 	}
 	
-	public void setIncludeOptions(boolean includeOptions) {
-		this.includeOptions = includeOptions;
-	}
-	
-	public boolean isIncludeOptions() {
-		return includeOptions;
-	}
-	
-	public void setIncludeSchemaId(boolean includeSchemaId) {
-		this.includeSchemaId = includeSchemaId;
-	}
-	
-	public boolean isIncludeSchemaId() {
-		return includeSchemaId;
-	}
+//	public void setIncludeCookie(boolean includeCookie) {
+//		this.includeCookie = includeCookie;
+//	}
+//	
+//	public boolean isIncludeCookie() {
+//		return includeCookie;
+//	}
+//	
+//	public void setIncludeOptions(boolean includeOptions) {
+//		this.includeOptions = includeOptions;
+//	}
+//	
+//	public boolean isIncludeOptions() {
+//		return includeOptions;
+//	}
+//	
+//	public void setIncludeSchemaId(boolean includeSchemaId) {
+//		this.includeSchemaId = includeSchemaId;
+//	}
+//	
+//	public boolean isIncludeSchemaId() {
+//		return includeSchemaId;
+//	}
 
 	@Override
 	public String toString() {

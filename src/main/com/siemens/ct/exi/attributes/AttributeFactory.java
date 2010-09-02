@@ -39,10 +39,9 @@ public class AttributeFactory {
 
 	public AttributeList createAttributeListInstance(EXIFactory exiFactory) {
 		if (exiFactory.getGrammar().isSchemaInformed()) {
-			return new AttributeListSchemaInformed(exiFactory
-					.getFidelityOptions());
+			return new AttributeListSchemaInformed(exiFactory);
 		} else {
-			return new AttributeListSchemaLess(exiFactory.getFidelityOptions());
+			return new AttributeListSchemaLess(exiFactory);
 		}
 	}
 }

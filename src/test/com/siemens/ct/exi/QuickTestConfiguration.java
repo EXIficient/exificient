@@ -21,6 +21,7 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -91,13 +92,14 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
-//		try {
+		// fidelityOptions = FidelityOptions.createAll();
+		try {
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-//		} catch (UnsupportedOption e) {
-//		}
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+		} catch (UnsupportedOption e) {
+		}
 	}
 	
 	// ///////////////////////////////////////////////////

@@ -25,8 +25,8 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -59,11 +59,11 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	public void write(BitEncoderChannel headerChannel, EXIFactory f)
 			throws EXIException {
 		try {
-			HeaderOptions headerOptions = f.getHeaderOptions();
+			EncodingOptions headerOptions = f.getEncodingOptions();
 			CodingMode codingMode = f.getCodingMode();
 
 			// EXI Cookie
-			if (headerOptions.isOptionEnabled(HeaderOptions.INCLUDE_COOKIE)) {
+			if (headerOptions.isOptionEnabled(EncodingOptions.INCLUDE_COOKIE)) {
 				// four byte field consists of four characters " $ " , " E ",
 				// " X " and " I " in that order
 				headerChannel.encode('$');
@@ -77,7 +77,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 
 			// Presence Bit for EXI Options 0
 			boolean includeOptions = headerOptions
-					.isOptionEnabled(HeaderOptions.INCLUDE_OPTIONS);
+					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS);
 			headerChannel.encodeBoolean(includeOptions);
 
 			// EXI Format Preview Version 1-0000
@@ -447,8 +447,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	}
 
 	protected boolean isSchemaId(EXIFactory f) {
-		HeaderOptions ho = f.getHeaderOptions();
-		return ho.isOptionEnabled(HeaderOptions.INCLUDE_SCHEMA_ID);
+		EncodingOptions ho = f.getEncodingOptions();
+		return ho.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID);
 	}
 
 	protected boolean isStrict(EXIFactory f) {

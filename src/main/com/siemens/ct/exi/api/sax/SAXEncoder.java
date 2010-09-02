@@ -109,7 +109,7 @@ public class SAXEncoder extends DefaultHandler2 {
 
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
-
+		
 		// handle NS declarations
 		handleNamespaceDeclarations();
 

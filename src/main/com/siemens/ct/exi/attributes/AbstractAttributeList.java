@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 
 /**
@@ -42,8 +44,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public static final int XMLNS_PFX_START = XMLConstants.XMLNS_ATTRIBUTE
 			.length() + 1;
 
-	// EXI FidelityOptions
-	protected FidelityOptions fidelityOptions;
+	// options
 	protected boolean preserveSchemaLocation;
 	protected boolean preservePrefixes;
 
@@ -63,13 +64,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 	protected List<String> attributeValue;
 	protected List<String> attributePrefix;
 
-	public AbstractAttributeList(FidelityOptions fidelityOptions) {
-		// fidelityOptions
-		this.fidelityOptions = fidelityOptions;
-		preserveSchemaLocation = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_XSI_SCHEMALOCATION);
-		preservePrefixes = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+	public AbstractAttributeList(EXIFactory exiFactory) {
+		// options
+		preserveSchemaLocation = exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
 
 		// attributes
 		attributeURI = new ArrayList<String>();

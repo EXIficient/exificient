@@ -713,10 +713,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		urType0.setFirstElementRule();
 
 		// empty ur-Type
-		SchemaInformedRule emptyUrType0 = new SchemaInformedElement();
+		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
+		urType1.addTerminalRule(END_ELEMENT);
+		SchemaInformedRule emptyUrType0 = new SchemaInformedStartTag(emptyUrType1);
 		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
 		emptyUrType0.addTerminalRule(END_ELEMENT);
-		// emptyUrType0.setFirstElementRule();
+		emptyUrType0.setFirstElementRule();
 
 		// nillable ?
 		urType0.setTypeEmpty(emptyUrType0);
@@ -794,6 +796,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		type_i.setFirstElementRule();
+		typeEmpty_i.setFirstElementRule();
 		type_i.setTypeEmpty(typeEmpty_i);
 
 		return type_i;

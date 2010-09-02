@@ -40,8 +40,8 @@ import org.xml.sax.SAXException;
 import com.siemens.ct.exi.AbstractTestDecoder;
 import com.siemens.ct.exi.AbstractTestEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.HeaderOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
 import com.siemens.ct.exi.TestDOMDecoder;
 import com.siemens.ct.exi.TestDOMEncoder;
@@ -85,15 +85,17 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		if (tco.getValuePartitionCapacity() >= 0) {
 			ef.setValuePartitionCapacity(tco.getValuePartitionCapacity());
 		}
-		if (tco.isIncludeCookie()) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
-		}
-		if (tco.isIncludeOptions()) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
-		}
-		if (tco.isIncludeSchemaId()) {
-			ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
-		}
+		ef.setEncodingOptions(tco.getEncodingOptions());
+
+		// if (tco.getEncodingOptions() .isIncludeCookie()) {
+		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
+		// }
+		// if (tco.isIncludeOptions()) {
+		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
+		// }
+		// if (tco.isIncludeSchemaId()) {
+		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
+		// }
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {
@@ -126,13 +128,15 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		InputStream exiDocument = new ByteArrayInputStream(exiEncodedOutput
 				.toByteArray());
 
-		
-		if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
+		EncodingOptions encodingOptions = tco.getEncodingOptions();
+		// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
+		if (encodingOptions.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
+				&& encodingOptions
+						.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
 			// all EXI options and schemaID from the header have to be used
 			ef = DefaultEXIFactory.newInstance();
 		}
-		
-		
+
 		// <-- decode as SAX
 		try {
 			decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
@@ -151,7 +155,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 					+ " [" + tco.toString() + "]", e);
 		}
 	}
-	
+
 	protected void decode(EXIFactory ef, InputStream exiDocument, API api,
 			boolean checkXMLEqual) throws Exception {
 		// decoded XML
@@ -169,24 +173,22 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		List<String> domDiffIssues = new ArrayList<String>();
 		// entity references
-		domDiffIssues.add("./data/general/entityReference1.xml");	
+		domDiffIssues.add("./data/general/entityReference1.xml");
 		// fragments
 		domDiffIssues.add("./data/fragment/fragment3a.xml.frag");
 		domDiffIssues.add("./data/fragment/fragment3b.xml.frag");
 		// ???
 		domDiffIssues.add("./data/W3C/xhtml/www.w3.org.htm");
 		domDiffIssues.add("./data/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm");
-		
-		
+
 		String xmlLocation = QuickTestConfiguration.getXmlLocation();
-		
-		
-		if (api == API.DOM && domDiffIssues.contains(xmlLocation) ) {
-			// TODO find a solution for known DOM diff tool issues 
+
+		if (api == API.DOM && domDiffIssues.contains(xmlLocation)) {
+			// TODO find a solution for known DOM diff tool issues
 			// System.out.println("No DOM diff for: " + xmlLocation);
 		} else if (checkXMLEqual) {
 			InputStream control = new FileInputStream(xmlLocation);
-			checkXMLEquality(ef, control, testDecXML);	
+			checkXMLEquality(ef, control, testDecXML);
 		} else {
 			checkXMLValidity(ef, testDecXML);
 		}
