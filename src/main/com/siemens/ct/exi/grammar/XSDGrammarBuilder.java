@@ -55,8 +55,11 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTag;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTagRule;
 import com.siemens.ct.exi.types.BuiltIn;
 
 /**
@@ -69,7 +72,7 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
-	protected Map<QName, SchemaInformedRule> grammarTypes;
+	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
 
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
@@ -99,7 +102,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initOnce();
 
 		handledElements = new HashSet<XSElementDeclaration>();
-		grammarTypes = new HashMap<QName, SchemaInformedRule>();
+		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagRule>();
 		schemaLocalNames = new HashMap<String, List<String>>();
 		atWildcardNamespaces = new ArrayList<String>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
@@ -211,7 +214,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		/*
 		 * ElementFragmentStartTag
 		 */
-		SchemaInformedRule startTag = new SchemaInformedStartTag(content);
+		SchemaInformedFirstStartTagRule startTag = new SchemaInformedFirstStartTag(content);
 		startTag.addRule(ATTRIBUTE_GENERIC, startTag);// AT (*)
 		startTag.addRule(START_ELEMENT_GENERIC, content); // SE (*)
 		startTag.addTerminalRule(END_ELEMENT); // EE
@@ -219,7 +222,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		/*
 		 * ElementFragmentTypeEmpty
 		 */
-		SchemaInformedRule typeEmpty = startTag; // not correct
+		SchemaInformedFirstStartTagRule typeEmpty = startTag; // not correct
 
 		/*
 		 * As with all schema informed element grammars, the schema-informed
@@ -233,7 +236,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * declaration that has named sub-types, and ElementFragmentTypeEmpty is
 		 * used to serve as the TypeEmpty of the type in the process.
 		 */
-		startTag.setFirstElementRule();
+		// startTag.setFirstElementRule();
 		startTag.setNillable(true);
 		startTag.setTypeEmpty(typeEmpty);
 		startTag.setTypeCastable(true);
@@ -457,7 +460,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
 
 			QName name = new QName(td.getNamespace(), td.getName());
-			SchemaInformedRule sir = translateTypeDefinitionToFSA(td);
+			SchemaInformedFirstStartTagRule sir = translateTypeDefinitionToFSA(td);
 
 			grammarTypes.put(name, sir);
 		}
@@ -496,7 +499,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			StartElement se = elementPool.get(elementDecl);
 
 			// element-rule
-			SchemaInformedRule elementRule;
+			SchemaInformedFirstStartTagRule elementRule;
 
 			XSTypeDefinition td = elementDecl.getTypeDefinition();
 			if (td.getAnonymous()) {
@@ -510,7 +513,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				// *duplicate* first productions to allow different behavior
 				// (e.g. property nillable is element dependent)
 				if (elementDecl.getNillable()) {
-					elementRule = elementRule.duplicate();
+					elementRule = (SchemaInformedFirstStartTagRule) elementRule.duplicate();
 					elementRule.setNillable(true);
 				} else {
 					elementRule.setNillable(false);
@@ -560,7 +563,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return qNameType;
 	}
 
-	protected SchemaInformedRule handleAttributes(
+	protected SchemaInformedStartTagRule handleAttributes(
 			SchemaInformedRule ruleContent, SchemaInformedRule ruleContent2,
 			XSObjectList attributes, XSWildcard attributeWC)
 			throws EXIException {
@@ -568,7 +571,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// Attribute Uses
 		// http://www.w3.org/TR/exi/#attributeUses
 
-		SchemaInformedRule ruleStart = new SchemaInformedStartTag(ruleContent2);
+		SchemaInformedStartTagRule ruleStart = new SchemaInformedStartTag(ruleContent2);
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
 			EventInformation ei = ruleContent.lookFor(i);
@@ -600,7 +603,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 				Attribute at = getAttribute(attrUse.getAttrDeclaration());
 
-				SchemaInformedRule newCurrent = new SchemaInformedStartTag(
+				SchemaInformedStartTagRule newCurrent = new SchemaInformedStartTag(
 						ruleContent2);
 				newCurrent.addRule(at, ruleStart);
 
@@ -667,7 +670,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected SchemaInformedRule getTypeGrammar(String namespaceURI, String name) {
+	protected SchemaInformedFirstStartTagRule getTypeGrammar(String namespaceURI, String name) {
 		QName en = new QName(namespaceURI, name);
 		return grammarTypes.get(en);
 	}
@@ -696,30 +699,30 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	public static SchemaInformedRule getUrTypeRule() {
+	public static SchemaInformedFirstStartTagRule getUrTypeRule() {
+		
+		// empty ur-Type
+		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
+		emptyUrType1.addTerminalRule(END_ELEMENT);
+		SchemaInformedFirstStartTagRule emptyUrType0 = new SchemaInformedFirstStartTag(emptyUrType1);
+		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
+		emptyUrType0.addTerminalRule(END_ELEMENT);
+		// emptyUrType0.setFirstElementRule();
+		
 		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
 		urType1.setLabel("any");
 		urType1.addRule(START_ELEMENT_GENERIC, urType1);
 		urType1.addTerminalRule(END_ELEMENT);
 		urType1.addRule(new CharactersGeneric(), urType1);
-
-		SchemaInformedRule urType0 = new SchemaInformedStartTag(urType1);
+		
+		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(urType1);
 		urType0.addRule(ATTRIBUTE_GENERIC, urType0);
 		urType0.addRule(START_ELEMENT_GENERIC, urType1);
 		urType0.addTerminalRule(END_ELEMENT);
 		urType0.addRule(new CharactersGeneric(), urType1);
 		urType0.setTypeCastable(true);
-		urType0.setFirstElementRule();
-
-		// empty ur-Type
-		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
-		urType1.addTerminalRule(END_ELEMENT);
-		SchemaInformedRule emptyUrType0 = new SchemaInformedStartTag(emptyUrType1);
-		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
-		emptyUrType0.addTerminalRule(END_ELEMENT);
-		emptyUrType0.setFirstElementRule();
-
+		// urType0.setFirstElementRule();
 		// nillable ?
 		urType0.setTypeEmpty(emptyUrType0);
 		urType0.setNillable(false);
@@ -738,10 +741,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * @return
 	 * @throws EXIException
 	 */
-	protected SchemaInformedRule translateTypeDefinitionToFSA(
+	protected SchemaInformedFirstStartTagRule translateTypeDefinitionToFSA(
 			XSTypeDefinition td) throws EXIException {
-		SchemaInformedRule type_i = null;
-		SchemaInformedRule typeEmpty_i = null;
+		SchemaInformedFirstStartTagRule type_i = null;
+		SchemaInformedFirstStartTagRule typeEmpty_i = null;
 
 		// simple vs. complex type handling
 		if (td.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE) {
@@ -749,7 +752,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
 							.getNamespace())) {
 				// ur-type
-				SchemaInformedRule urType = getUrTypeRule();
+				SchemaInformedFirstStartTagRule urType = getUrTypeRule();
 				type_i = urType;
 				typeEmpty_i = urType.getTypeEmpty();
 			} else {
@@ -767,27 +770,28 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				XSWildcard attributeWC = ctd.getAttributeWildcard();
 
 				// type_i (start tag)
-				type_i = handleAttributes(ruleContent, ruleContent2,
+				SchemaInformedStartTagRule sistr = handleAttributes(ruleContent, ruleContent2,
 						attributes, attributeWC);
+				type_i = new SchemaInformedFirstStartTag( sistr);
 				type_i.setTypeCastable(isTypeCastable(ctd));
 
 				// typeEmpty_i
 				SchemaInformedRule ruleEnd = new SchemaInformedElement();
 				ruleEnd.addTerminalRule(END_ELEMENT);
-				typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, attributes,
-						attributeWC);
+				typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(ruleEnd, ruleEnd, attributes,
+						attributeWC));
 			}
 		} else {
 			assert (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
 			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 			SchemaInformedElement simpleContent = translateSimpleTypeDefinitionToFSA(std);
-			type_i = handleAttributes(simpleContent, simpleContent, null, null);
+			type_i = new SchemaInformedFirstStartTag(handleAttributes(simpleContent, simpleContent, null, null));
 			type_i.setTypeCastable(isTypeCastable(std));
 			// TypeEmpty i
 			SchemaInformedRule ruleEnd = new SchemaInformedElement();
 			ruleEnd.addTerminalRule(END_ELEMENT);
-			typeEmpty_i = handleAttributes(ruleEnd, ruleEnd, null, null);
+			typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(ruleEnd, ruleEnd, null, null));
 		}
 
 		if (!td.getAnonymous()) {
@@ -795,8 +799,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			addLocalNameStringEntry(td.getNamespace(), td.getName());
 		}
 
-		type_i.setFirstElementRule();
-		typeEmpty_i.setFirstElementRule();
+		
+		// type_i.setFirstElementRule();
+		// typeEmpty_i.setFirstElementRule();
 		type_i.setTypeEmpty(typeEmpty_i);
 
 		return type_i;

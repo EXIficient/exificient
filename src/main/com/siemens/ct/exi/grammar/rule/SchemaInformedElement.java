@@ -70,7 +70,7 @@ public class SchemaInformedElement extends
 	}
 
 	@Override
-	public SchemaInformedElement duplicate() {
+	public SchemaInformedElement clone() {
 		SchemaInformedElement clone = new SchemaInformedElement();
 
 		//	duplicate top level only
@@ -91,5 +91,19 @@ public class SchemaInformedElement extends
 	public boolean equals(Object obj) {
 		return (obj instanceof SchemaInformedElement && super.equals(obj));
 	}
+//
+//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
+//		// TODO Auto-generated method stub
+//	}
+
+//	public StartSchemaInformedRule getTypeEmpty() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 }

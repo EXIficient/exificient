@@ -20,8 +20,7 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.data.DeviationsTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -95,11 +94,11 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-		} catch (UnsupportedOption e) {
-		}
+//		try {
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -123,10 +122,10 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
-		// DeviationsTestCase.setupQuickTest();
+		DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
 	}
 

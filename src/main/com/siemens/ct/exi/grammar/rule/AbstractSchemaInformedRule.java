@@ -55,13 +55,13 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	protected int codeLengthA; // 1st level only
 	protected int codeLengthB; // 2nd OR 3rd level
 
-	// subtype (xsi:type) OR nillable (xsi:nill) ?
-	protected boolean isTypeCastable = false;
-	protected boolean isNillable = false;
+//	// subtype (xsi:type) OR nillable (xsi:nill) ?
+//	protected boolean isTypeCastable = false;
+//	protected boolean isNillable = false;
 	// EE present
 	protected boolean hasEndElement = false;
 
-	protected SchemaInformedRule typeEmpty;
+//	protected SchemaInformedRule typeEmpty;
 
 	/*
 	 * schema-deviated attributes
@@ -100,22 +100,19 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 				: codeLengthA);
 	}
 
-	public void setTypeCastable(boolean isTypeCastable) {
-		this.isTypeCastable = isTypeCastable;
-	}
-
-	public void setNillable(boolean nil) {
-		this.isNillable = nil;
-		// setTypeEmpty(typeEmpty);
-	}
-	
-	public void setTypeEmpty(SchemaInformedRule typeEmpty) {
-		this.typeEmpty = typeEmpty;
-	}
-
-	public SchemaInformedRule getTypeEmpty() {
-		return this.typeEmpty;
-	}
+//	public void setTypeCastable(boolean isTypeCastable) {
+//		this.isTypeCastable = isTypeCastable;
+//	}
+//
+//	public void setNillable(boolean nil) {
+//		this.isNillable = nil;
+//		// setTypeEmpty(typeEmpty);
+//	}
+//	
+//	public void setFirstElementRule() {
+//		throw new RuntimeException(
+//				"Not allowed to set first element, only in StartTag");
+//	}
 
 	public int getNumberOfDeclaredAttributes() {
 		return numberOfDeclaredAttributes;
@@ -255,10 +252,20 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return sb.toString();
 	}
 
-	public SchemaInformedRule duplicate() {
+//	public SchemaInformedRule duplicate() {
+//		return this;
+//	}
+	
+	@Override
+	public SchemaInformedRule clone() {
 		return this;
 	}
-
+	
+	public SchemaInformedRule duplicate() {
+		return clone();
+	}
+	
+	
 	// // for encoder
 	// public EventInformation lookFor(EventType eventType, String... args) {
 	// for (EventInformation ei : containers) {
@@ -360,10 +367,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return containers[eventCode];
 	}
 
-	public void setFirstElementRule() {
-		throw new RuntimeException(
-				"Not allowed to set first element, only in StartTag");
-	}
 	
 //	public boolean isFirstElementRule() {
 //		return false;

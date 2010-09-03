@@ -35,6 +35,7 @@ import com.siemens.ct.exi.grammar.event.DatatypeEvent;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -412,7 +413,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 					
 					if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 						// update current rule
-						currentRule = siCurrentRule.getTypeEmpty();
+						currentRule = ((SchemaInformedFirstStartTagRule)siCurrentRule).getTypeEmpty();
 					}
 				} else {
 					EventInformation ei = currentRule
@@ -430,7 +431,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 						
 						if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 							// update current rule
-							currentRule = siCurrentRule.getTypeEmpty();
+							currentRule = ((SchemaInformedFirstStartTagRule)siCurrentRule).getTypeEmpty();
 						}
 					} else {
 						throw new EXIException("Attribute xsi=nil='"
@@ -501,7 +502,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				|| (ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC)) != null) {
 			// declared AT(uri:*) OR declared AT(*)
 			atContext = new QName(uri, localName);
-			next = ei.next;
+			// next = ei.next;
+			next = currentRule;
 			/*
 			 * If a global attribute definition exists for qname, let
 			 * global-type be the datatype of the global attribute.

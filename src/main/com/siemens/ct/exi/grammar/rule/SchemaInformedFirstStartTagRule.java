@@ -29,7 +29,7 @@ package com.siemens.ct.exi.grammar.rule;
 /*
  * first rule is different (namespace declaration, xsi:type and xsi:nil)
  */
-public interface StartSchemaInformedRule extends SchemaInformedRule {
+public interface SchemaInformedFirstStartTagRule extends SchemaInformedStartTagRule {
 
 	/*
 	 * sets whether type is castable
@@ -39,6 +39,11 @@ public interface StartSchemaInformedRule extends SchemaInformedRule {
 	/*
 	 * sets whether element is nillable
 	 */
-	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
+	public void setNillable(boolean nillable);	
+	
+	
+	public void setTypeEmpty(SchemaInformedFirstStartTagRule typeEmpty);
 
+	public SchemaInformedFirstStartTagRule getTypeEmpty();
+	
 }
