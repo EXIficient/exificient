@@ -44,6 +44,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
@@ -254,7 +255,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 
 		if (xsiNil && currentRule.isSchemaInformed()) {
 			// jump to typeEmpty
-			currentRule = ((SchemaInformedRule) currentRule).getTypeEmpty();
+			currentRule = ((SchemaInformedFirstStartTagRule) currentRule).getTypeEmpty();
 		}
 	}
 

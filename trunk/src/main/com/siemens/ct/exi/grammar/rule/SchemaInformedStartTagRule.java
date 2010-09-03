@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
-import com.siemens.ct.exi.grammar.event.Event;
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -28,26 +26,11 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @version 0.5
  */
 
-public interface SchemaInformedRule extends Rule {
-	
-//	/*
-//	 * 
-//	 */
-//	public void addRule(Event event, Rule rule);
-//
-//	public void addTerminalRule(Event event);
-	
+/*
+ * first rule is different (namespace declaration, xsi:type and xsi:nil)
+ */
+public interface SchemaInformedStartTagRule extends SchemaInformedRule {
 
-	public void addTerminalRule(Event event);
-	
-	
-//	/*
-//	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
-//	 */
-//	public void setFirstElementRule();
-//	
-////	public boolean isFirstElementRule();
-//
 //	/*
 //	 * sets whether type is castable
 //	 */
@@ -56,29 +39,30 @@ public interface SchemaInformedRule extends Rule {
 //	/*
 //	 * sets whether element is nillable
 //	 */
-//	public void setNillable(boolean nillable);
+//	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
+
+	
+	
+//	/*
+//	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
+//	 */
+//	public void setFirstElementRule();
+	
+	
+//	public boolean isFirstElementRule();
+
+//	/*
+//	 * sets whether type is castable
+//	 */
+//	public void setTypeCastable(boolean hasNamedSubtypes);
 //
 //	/*
-//	 * set typeEmpty
+//	 * sets whether element is nillable
 //	 */
-//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty);
+//	public void setNillable(boolean nillable);	
 //	
-//	/*
-//	 * get empty type
-//	 */
-//	public StartSchemaInformedRule getTypeEmpty();
-	
-	
-	/*
-	 * Label
-	 */
-	public void setLabel(String label);
-
-	public String getLabel();
-
-	/*
-	 * clones schema-informed rule
-	 */
-	public SchemaInformedRule duplicate();
-
+//	
+//	public void setTypeEmpty(SchemaInformedStartTagRule typeEmpty);
+//
+//	public SchemaInformedStartTagRule getTypeEmpty();
 }
