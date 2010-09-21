@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
@@ -201,6 +202,134 @@ public class EventCodeTest extends TestCase {
 		// ### Term_product0_0 ###
 
 		// ### Term_product1_0 ###
+	}
+
+	public void testAttributeWildcard() throws Exception {
+		
+		/*
+		 * AT/SE sequence having required items AT(a), AT(b), SE(X) PLUS
+		 * an attribute wildcard.
+		 * 
+		 * 
+		 * 
+		 * G_00:                        G_01:
+		 *       AT(a) G_01                   EE
+		 *       AT(*) G_00
+		 *       
+		 * G_10:                        G_11:
+		 *       AT(b) G_11                   EE
+		 *       AT(*) G_10
+		 *       
+		 * G_20:
+		 * 	    AT(*) G_20
+		 *      EE
+		 *      
+		 * G_30:                        G_31:
+		 *      SE(X) G_31                   EE
+		 *      
+		 *      
+		 * Then, when we compute G_0 + G_1 + G_2 + G_3, the concatenation operator
+		 * replaces all the EE non-terminals of productions in the first 3 grammars
+		 * with references to the "next" grammar as follows:
+		 * 
+		 * G_00:                        G_01:
+		 *       AT(a) G_01                   G_10
+		 *       AT(*) G_00
+		 *       
+		 *  G_10:                        G_11:
+		 *        AT(b) G_11                   G_20
+		 *        AT(*) G_10
+		 *        
+		 * G_20:
+		 *        AT(*) G_20
+		 *        G_30
+		 *        
+		 * G_30:                        G_31
+		 *        SE(X) G_31                   EE
+		 *  
+		 *  
+		 *  Normalization replaces all the productions that do not have a terminal
+		 *  symbol, yielding this:
+		 *  
+		 *  G_00:                        
+		 *        AT(a) G_10                   
+		 *        AT(*) G_00
+		 *        
+		 * G_10:                       
+		 *       AT(b) G_20               
+		 *       AT(*) G_10
+		 * 
+		 * G_20:
+		 *       AT(*) G_20
+		 *       SE(X) G_31
+		 * 
+		 * G_30:                        
+		 *      SE(X) G_31 
+		 * 
+		 * G_31:
+		 *      EE
+		 */
+	
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='root'>"
+				+ "  <xs:complexType>"
+				+ "   <xs:sequence >"
+				+ "    <xs:element name='X' type='xs:string'  /> "
+				+ "   </xs:sequence>"
+				+ "   <xs:attribute name='b' type='xs:string' use='required' />   "
+				+ "   <xs:attribute name='a' type='xs:string' use='required' />   "
+				+ "   <xs:anyAttribute processContents='lax' namespace='##any'/>"
+				+ "  </xs:complexType>" + " </xs:element>" + ""
+				+ "</xs:schema>";
+	
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		Rule G_00 = g.getGlobalElement(new QName("", "root")).getRule();
+		
+		/*
+		 *  G_00:                        
+		 *        AT(a) G_10                   
+		 *        AT(*) G_00
+		 */
+		assertTrue(G_00.getNumberOfEvents() == 2);
+		assertTrue(G_00.lookFor(0).event.isEventType(EventType.ATTRIBUTE));
+		Attribute atA = (Attribute) G_00.lookFor(0).event;
+		assertTrue(atA.getQName().getLocalPart().equals("a"));
+		assertTrue(G_00.lookFor(1).event.isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_00.lookFor(1).next == G_00);
+		Rule G_10 = G_00.lookFor(0).next;
+		
+		/*
+		 * 	G_10:                       
+		 *       AT(b) G_20               
+		 *       AT(*) G_10
+		 */
+		assertTrue(G_10.getNumberOfEvents() == 2);
+		assertTrue(G_10.lookFor(0).event.isEventType(EventType.ATTRIBUTE));
+		Attribute atB = (Attribute) G_10.lookFor(0).event;
+		assertTrue(atB.getQName().getLocalPart().equals("b"));
+		assertTrue(G_10.lookFor(1).event.isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_10.lookFor(1).next == G_10);
+		Rule G_20 = G_10.lookFor(0).next;
+		
+		/*
+		 * G_20:
+		 *       AT(*) G_20
+		 *       SE(X) G_31
+		 */
+		assertTrue(G_20.getNumberOfEvents() == 2);
+		assertTrue(G_20.lookFor(0).event.isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_20.lookFor(0).next == G_20);
+		assertTrue(G_20.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		StartElement seX = (StartElement) G_20.lookFor(1).event;
+		assertTrue(seX.getQName().getLocalPart().equals("X"));
+		Rule G_31 = G_20.lookFor(1).next;
+		
+		/*
+		 * G_31:
+		 *      EE
+		 */
+		assertTrue(G_31.getNumberOfEvents() == 1);
+		assertTrue(G_31.lookFor(0).event.isEventType(EventType.END_ELEMENT));
 	}
 
 }
