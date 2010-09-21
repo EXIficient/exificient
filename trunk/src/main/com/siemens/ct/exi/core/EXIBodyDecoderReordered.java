@@ -307,19 +307,23 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		}
 	}
 
+	protected void updateAttributeToXsiType() throws EXIException, IOException {
+		eventTypes.set(eventTypes.size() - 1, EventType.ATTRIBUTE_XSI_TYPE);
+		// value content
+		decodeAttributeXsiTypeStructure();			
+		xsiValues.add(attributeValue);
+		assert (attributeValue instanceof QNameValue);
+//		attributePrefix = qnameDatatype.decodeQNamePrefix(XSI_TYPE, channel);
+		// TODO prefix
+		xsiPrefixes.add(attributePrefix);
+//		xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+	}
+	
 	protected void handleSpecialAttributeCases() throws EXIException,
 			IOException {
 		if (XSI_TYPE.equals(attributeQName)) {
 			// xsi:type
-			eventTypes.set(eventTypes.size() - 1, EventType.ATTRIBUTE_XSI_TYPE);
-			// value content
-			decodeAttributeXsiTypeStructure();			
-			xsiValues.add(attributeValue);
-			assert (attributeValue instanceof QNameValue);
-//			attributePrefix = qnameDatatype.decodeQNamePrefix(XSI_TYPE, channel);
-			// TODO prefix
-			xsiPrefixes.add(attributePrefix);
-//			xsiPrefixes.add(namespaces.getPrefix(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+			updateAttributeToXsiType();
 		} else if (XSI_NIL.equals(attributeQName)
 				&& currentRule.isSchemaInformed()) {
 			// xsi:nil
@@ -431,9 +435,13 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				break;
 			case ATTRIBUTE:
 				Datatype dtAT = decodeAttributeStructure();
-				qnameEntries
-						.add(new QNameEntry(attributeQName, attributePrefix));
-				incrementValues(attributeQName, dtAT);
+				if (attributeQName.equals(XSI_TYPE)) {
+					updateAttributeToXsiType();
+				} else {
+					qnameEntries
+					.add(new QNameEntry(attributeQName, attributePrefix));
+			incrementValues(attributeQName, dtAT);	
+				}
 				break;
 			case ATTRIBUTE_INVALID_VALUE:
 				decodeAttributeStructure();

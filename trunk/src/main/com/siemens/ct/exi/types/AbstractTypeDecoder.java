@@ -37,6 +37,10 @@ public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		this.stringDecoder = stringDecoder;
 	}
 	
+	public StringDecoder getStringDecoder() {
+		return stringDecoder;
+	}
+	
 	public void clear() {
 		stringDecoder.clear();
 	}
