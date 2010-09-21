@@ -351,7 +351,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
 		// update grammar
-		currentRule.learnAttribute(new Attribute(attributeQName));
+		if (attributeQName.equals(XSI_TYPE)) {
+			currentRule.learnAttribute(new Attribute(XSI_TYPE, null,
+			qnameDatatype) );
+		} else {
+			currentRule.learnAttribute(new Attribute(attributeQName));	
+		}
 	}
 
 	private void decodeAttributeGenericStructureOnly() throws EXIException,
@@ -535,7 +540,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 
 	public QName decodeAttribute() throws EXIException, IOException {
 		// structure & content
-		readAttributeContent(decodeAttributeStructure());
+		Datatype dt = decodeAttributeStructure();
+		if (attributeQName.equals(XSI_TYPE)) {
+			decodeAttributeXsiTypeStructure();
+		} else {
+			readAttributeContent(dt);
+		}
 		return attributeQName;
 	}
 

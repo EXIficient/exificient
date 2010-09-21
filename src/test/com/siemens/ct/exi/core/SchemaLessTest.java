@@ -607,7 +607,8 @@ public class SchemaLessTest extends TestCase {
 				assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
 		
 				assertTrue(decoder.next() == EventType.ATTRIBUTE);
-				assertTrue(decoder.decodeAttribute().equals(atXsiType));
+				QName at = decoder.decodeAttribute();
+				assertTrue(at.equals(atXsiType));
 				
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
