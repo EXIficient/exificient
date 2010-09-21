@@ -34,4 +34,13 @@ public class NamespaceDeclaration {
 		this.namespaceURI = namespaceURI;
 		this.prefix = prefix;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof NamespaceDeclaration) {
+			NamespaceDeclaration other = (NamespaceDeclaration) o;
+			return (namespaceURI.equals(other.namespaceURI) && prefix.equals(other.prefix));
+		}
+		return false;
+	}
 }

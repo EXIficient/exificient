@@ -51,22 +51,24 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
  */
 
 public abstract class AbstractEXIBody {
-	
+
 	// xsi:type & nil
-	static final QName XSI_NIL = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
-	static final QName XSI_TYPE = new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
-	
+	static final QName XSI_NIL = new QName(
+			XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
+	static final QName XSI_TYPE = new QName(
+			XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
+
 	// factory
 	protected final EXIFactory exiFactory;
-	
+
 	protected Grammar grammar;
 	protected FidelityOptions fidelityOptions;
 	protected boolean preservePrefix;
 
 	// error handler
 	protected ErrorHandler errorHandler;
-	
-	//	QName and Boolean datatype (coder)
+
+	// QName and Boolean datatype (coder)
 	protected QNameDatatype qnameDatatype;
 	protected BooleanDatatype booleanDatatype;
 
@@ -76,7 +78,7 @@ public abstract class AbstractEXIBody {
 	protected ElementContext[] elementContextStack;
 	protected int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
-	
+
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
 
@@ -84,28 +86,28 @@ public abstract class AbstractEXIBody {
 		this.exiFactory = exiFactory;
 		// QName datatype (coder)
 		qnameDatatype = new QNameDatatype(this, null);
-		
+
 		initFactoryInformation();
-		
+
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
 
 		// init once (runtime lists et cetera)
 		runtimeElements = new HashMap<QName, StartElement>();
 		elementContextStack = new ElementContext[INITIAL_STACK_SIZE];
-		
+
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
 	}
-	
+
 	protected void initFactoryInformation() throws EXIException {
 		this.grammar = exiFactory.getGrammar();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
-		
+
 		// preserve prefixes
 		preservePrefix = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-		
+
 		qnameDatatype.setPreservePrefix(preservePrefix);
 		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
 
@@ -114,41 +116,46 @@ public abstract class AbstractEXIBody {
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
-	
+
 	// re-init (rule stack etc)
-	protected void initForEachRun() throws EXIException, IOException {		
+	protected void initForEachRun() throws EXIException, IOException {
 		// clear runtime rules
 		runtimeElements.clear();
-		
+
 		// possible document/fragment grammar
-		currentRule = exiFactory.isFragment() ? grammar.getBuiltInFragmentGrammar() : grammar.getBuiltInDocumentGrammar();
-		
+		currentRule = exiFactory.isFragment() ? grammar
+				.getBuiltInFragmentGrammar() : grammar
+				.getBuiltInDocumentGrammar();
+
 		// (core) context
 		elementContextStackIndex = 0;
-		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(null, currentRule);
-		
+		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(
+				null, currentRule);
+
 		qnameDatatype.initForEachRun();
 	}
-	
+
 	protected final void declarePrefix(String pfx, String uri) {
 		if (elementContext.nsDeclarations == null) {
 			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
 		}
-		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));	
+		assert (elementContext.nsDeclarations
+				.contains(new NamespaceDeclaration(uri, pfx)) == false);
+		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));
 	}
-	
-//	// just works for decoder
-//	public final String getPrefix(String uri) {
-//		return uriToPrefix.get(uri);
-//	}
+
+	// // just works for decoder
+	// public final String getPrefix(String uri) {
+	// return uriToPrefix.get(uri);
+	// }
 
 	public final String getURI(String prefix) {
 		// check all stack items expect last one (in reverse order)
-		for(int i=elementContextStackIndex; i>0; i--) {
+		for (int i = elementContextStackIndex; i > 0; i--) {
 			ElementContext ec = elementContextStack[i];
-			if(ec.nsDeclarations != null) {
-				for(NamespaceDeclaration ns : ec.nsDeclarations) {
-					if(ns.prefix.equals(prefix)) {
+			if (ec.nsDeclarations != null) {
+				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+					if (ns.prefix.equals(prefix)) {
 						return ns.namespaceURI;
 					}
 				}
@@ -158,22 +165,23 @@ public abstract class AbstractEXIBody {
 	}
 
 	protected final void pushElement(StartElement se, Rule contextRule) {
-		// update "rule" item of current peak (for popElement() later on) 
+		// update "rule" item of current peak (for popElement() later on)
 		// elementContext.rule = currentRule;
 		elementContext.rule = contextRule;
-		//	set "new" current-rule
+		// set "new" current-rule
 		currentRule = se.getRule();
-		//	create new stack item & push it
+		// create new stack item & push it
 		pushElementContext(new ElementContext(se.getQName(), currentRule));
 	}
-	
+
 	protected final void pushElementContext(ElementContext elementContext) {
 		this.elementContext = elementContext;
 		++elementContextStackIndex;
 		// array needs to be extended?
 		if (elementContextStack.length == elementContextStackIndex) {
 			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
-			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0, elementContextStack.length);
+			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0,
+					elementContextStack.length);
 			elementContextStack = elementContextStackNew;
 		}
 		elementContextStack[elementContextStackIndex] = elementContext;
@@ -181,14 +189,14 @@ public abstract class AbstractEXIBody {
 
 	protected final void popElement() {
 		assert (this.elementContextStackIndex > 0);
-		//	pop element from stack
-		elementContextStack[elementContextStackIndex--] = null;	// let gc do the rest
+		// pop element from stack
+		elementContextStack[elementContextStackIndex--] = null; // let gc do the
+																// rest
 		elementContext = elementContextStack[elementContextStackIndex];
 		// update current rule to new (old) element stack
 		currentRule = elementContext.rule;
 	}
 
-	
 	protected StartElement getGenericStartElement(QName qname) {
 		// is there a global element that should be used
 		StartElement nextSE = grammar.getGlobalElement(qname);
@@ -206,15 +214,15 @@ public abstract class AbstractEXIBody {
 
 		return nextSE;
 	}
-	
+
 	protected QName getElementContextQName() {
 		return elementContextStack[elementContextStackIndex].qname;
 	}
-	
+
 	protected void setQNameAsString(String sqname) {
-		elementContextStack[elementContextStackIndex].sqname = sqname; 
+		elementContextStack[elementContextStackIndex].sqname = sqname;
 	}
-	
+
 	protected String getQNameAsString() {
 		return elementContextStack[elementContextStackIndex].sqname;
 	}
@@ -227,13 +235,13 @@ public abstract class AbstractEXIBody {
 				+ exiFactory.getFidelityOptions()));
 		// System.err.println(message);
 	}
-	
+
 	static final class ElementContext {
 		final QName qname;
 		public String sqname;
-		Rule rule;	// may be modified while coding
-		//	prefix declarations
-		List<NamespaceDeclaration> nsDeclarations; 
+		Rule rule; // may be modified while coding
+		// prefix declarations
+		List<NamespaceDeclaration> nsDeclarations;
 
 		public ElementContext(QName qname, Rule rule) {
 			this.qname = qname;

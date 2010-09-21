@@ -765,7 +765,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	public NamespaceDeclaration decodeNamespaceDeclaration() throws EXIException {
 		NamespaceDeclaration ns = nsEntries.get(nsEntryIndex++);
 		// NS
-		this.declarePrefix(ns.prefix, ns.namespaceURI);
+		// declarePrefix(ns.prefix, ns.namespaceURI);
 		return ns;
 	}
 

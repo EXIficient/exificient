@@ -85,7 +85,11 @@ public abstract class AbstractTestCoder {
 	}
 	
 	public static Grammar getGrammar(String xsdLocation) throws EXIException {
-		return grammarFactory.createGrammar(xsdLocation);
+		if (xsdLocation == null) {
+			return grammarFactory.createSchemaLessGrammar();
+		} else {
+			return grammarFactory.createGrammar(xsdLocation);	
+		}
 	}
 
 	protected static OutputStream getOutputStream(String exiLocation)

@@ -8,4 +8,6 @@
    <el_c xsi:type="foo:subInt">333</el_c>
    <!-- unknown type -->
    <el_d xsi:type="ns:subIntFoo">444</el_d>
+    <!-- unknown -->
+    <el_e xsi:type="bla">XyZ</el_e>
 </ns:root>

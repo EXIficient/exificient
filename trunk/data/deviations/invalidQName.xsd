@@ -7,6 +7,7 @@
                 <xs:element name="el_b"/>
                 <xs:element name="el_c"/>
                 <xs:element name="el_d"/>
+                <xs:element name="el_e"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
