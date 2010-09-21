@@ -373,6 +373,7 @@ public class SAXDecoder implements XMLReader {
 		if (prefixes != null) {
 			for (NamespaceDeclaration ns : prefixes) {
 				contentHandler.startPrefixMapping(ns.prefix, ns.namespaceURI);
+				// System.out.println("EXIficient PM: " + ns.prefix + " --> " + ns.namespaceURI);
 			}
 		}
 	}
@@ -397,7 +398,7 @@ public class SAXDecoder implements XMLReader {
 		if (namespacePrefixes) {
 			seQNameAsString = decoder.getStartElementQNameAsString();
 		}
-
+		
 		if (namespaces) {
 			startPrefixMappings(decoder.getDeclaredPrefixDeclarations());
 		}

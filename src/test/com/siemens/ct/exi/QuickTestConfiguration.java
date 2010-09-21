@@ -20,12 +20,13 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.SchemaTestCase;
+import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -82,10 +83,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
@@ -94,11 +95,12 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-//		try {
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+		try {
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//		} catch (UnsupportedOption e) {
-//		}
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		} catch (UnsupportedOption e) {
+		}
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -120,9 +122,9 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest ( );
+		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
