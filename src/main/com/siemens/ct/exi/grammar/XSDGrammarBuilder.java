@@ -578,12 +578,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			ruleStart.addRule(ei.event, ei.next);
 		}
 
+		
 		// If an {attribute wildcard} is specified, increment n and generate an
 		// additional attribute use grammar G n-1 as follows:
 		// G n-1, 0 :
 		// EE
 		if (attributeWC != null) {
-			ruleStart.addTerminalRule(END_ELEMENT);
+			// ruleStart.addTerminalRule(END_ELEMENT);
 			handleAttributeWildCard(attributeWC, ruleStart);
 		}
 
