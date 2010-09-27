@@ -90,7 +90,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		// set EXI as content & lexical handler
 		SAXResult saxResult = new EXIResult(exiOutput, ef);
 		xmlReader.setContentHandler(saxResult.getHandler());
-
+		
 		// set LexicalHandler
 		xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler",
 				saxResult.getLexicalHandler());

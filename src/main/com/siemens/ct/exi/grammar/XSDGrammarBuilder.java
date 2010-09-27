@@ -87,6 +87,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
+	//  schema information is available to describe the contents of an EXI stream and more than one element is declared with the same qname
+	protected SchemaInformedFirstStartTagRule elementFragment0;
+	
 	protected XSDGrammarBuilder() {
 		super();
 
@@ -116,6 +119,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		grammarTypes.clear();
 		atWildcardNamespaces.clear();
 		attributePool.clear();
+		
+		elementFragment0 = null;
 
 		schemaLocalNames.clear();
 		// "", empty string
@@ -138,16 +143,43 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected boolean isSameGrammar(List<XSElementDeclaration> elements) {
+	protected boolean isSameElementGrammar(List<XSElementDeclaration> elements) {
 		assert (elements.size() > 1);
+		/*
+		 * If all such elements have the same type name and {nillable} property
+		 * value, their content is evaluated according to specific grammar for
+		 * that element declaration
+		 */
 		for (int i = 1; i < elements.size(); i++) {
-			// If all such elements have the same type name and {nillable}
-			// property value, their content is evaluated according to
-			// specific grammar for that element declaration
 			XSElementDeclaration e0 = elements.get(0);
-			XSElementDeclaration ei = elements.get(i);
-			if (e0.getTypeDefinition() != ei.getTypeDefinition()
-					|| e0.getNillable() != ei.getNillable()) {
+			XSTypeDefinition t0 = e0.getTypeDefinition();
+			XSElementDeclaration e1 = elements.get(i);
+			XSTypeDefinition t1 = e1.getTypeDefinition();
+			if (t0.getAnonymous() || t1.getAnonymous()) {
+				// cannot have same type name
+				return false;
+			} 
+			if (t0.getName() != t1.getName() || t0.getNamespace() != t1.getNamespace()
+					|| e0.getNillable() != e1.getNillable()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	protected boolean isSameAttributeGrammar(
+			List<XSAttributeDeclaration> attributes) {
+		assert (attributes.size() > 1);
+		/*
+		 * If all such elements have the same type name and {nillable} property
+		 * value, their content is evaluated according to specific grammar for
+		 * that element declaration.
+		 */
+		for (int i = 1; i < attributes.size(); i++) {
+			XSAttributeDeclaration e0 = attributes.get(0);
+			XSAttributeDeclaration ei = attributes.get(i);
+			if (e0.getTypeDefinition() != ei.getTypeDefinition()) {
 				return false;
 			}
 		}
@@ -159,19 +191,19 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		List<StartElement> fragmentElements = new ArrayList<StartElement>();
 
 		// create unique qname map
-		Map<QName, List<XSElementDeclaration>> namedElements = new HashMap<QName, List<XSElementDeclaration>>();
+		Map<QName, List<XSElementDeclaration>> uniqueNamedElements = new HashMap<QName, List<XSElementDeclaration>>();
 		for (XSElementDeclaration elDecl : handledElements) {
 			QName en = new QName(elDecl.getNamespace(), elDecl.getName());
-			if (namedElements.containsKey(en)) {
-				namedElements.get(en).add(elDecl);
+			if (uniqueNamedElements.containsKey(en)) {
+				uniqueNamedElements.get(en).add(elDecl);
 			} else {
 				List<XSElementDeclaration> list = new ArrayList<XSElementDeclaration>();
 				list.add(elDecl);
-				namedElements.put(en, list);
+				uniqueNamedElements.put(en, list);
 			}
 		}
 
-		Iterator<Entry<QName, List<XSElementDeclaration>>> iter = namedElements
+		Iterator<Entry<QName, List<XSElementDeclaration>>> iter = uniqueNamedElements
 				.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<QName, List<XSElementDeclaration>> e = iter.next();
@@ -185,44 +217,197 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				fragmentElements.add(getStartElement(elements.get(0)));
 			} else {
 				// multiple elements
-				if (isSameGrammar(elements)) {
+				if (isSameElementGrammar(elements)) {
 					fragmentElements.add(getStartElement(elements.get(0)));
 				} else {
 					StartElement se = new StartElement(qname);
-					se
-							.setRule(getSchemaInformedElementFragmentGrammar(elements));
+					Rule elementFragmentGrammar = getSchemaInformedElementFragmentGrammar(uniqueNamedElements);
+					se.setRule(elementFragmentGrammar);
 					fragmentElements.add(se);
-					// System.err.println("ambiguous elements " + elements);
+					// System.out.println("ambiguous elements " + elements + ", " + qname);
 				}
 			}
 		}
 
 		return fragmentElements;
 	}
+	
 
 	// http://www.w3.org/TR/exi/#informedElementFragGrammar
 	protected Rule getSchemaInformedElementFragmentGrammar(
-			List<XSElementDeclaration> elements) {
-		// TODO 8.5.3 Schema-informed Element Fragment Grammar
+			Map<QName, List<XSElementDeclaration>> uniqueNamedElements) {
+		
+		if (elementFragment0 != null) {
+			return elementFragment0;
+		}
+			
+		
+		// 8.5.3 Schema-informed Element Fragment Grammar
+		SchemaInformedRule elementFragment1 = new SchemaInformedElement();
+		elementFragment0 = new SchemaInformedFirstStartTag(
+				elementFragment1);
+
+		// 
+		// ElementFragment 1 :
+		// SE ( F0 ) ElementFragment 1 0
+		// SE ( F1 ) ElementFragment 1 1
+		// ...
+		// SE ( Fm-1 ) ElementFragment 1 m-1
+		// SE ( * ) ElementFragment 1 m
+		// EE m+1
+		// CH [untyped value] ElementFragment 1 m+2
+
 		/*
-		 * ElementFragmentContent
+		 * The variable m in the grammar above represents the number of unique
+		 * element qnames declared in the schema. The variables F0 , F1 , ...
+		 * Fm-1 represent these qnames sorted lexicographically, first by
+		 * local-name, then by uri. If there is more than one element declared
+		 * with the same qname, the qname is included only once. If all such
+		 * elements have the same type name and {nillable} property value, their
+		 * content is evaluated according to specific grammar for that element
+		 * declaration. Otherwise, their content is evaluated according to the
+		 * relaxed Element Fragment grammar described above.
 		 */
-		SchemaInformedRule content = new SchemaInformedElement();
-		content.addRule(START_ELEMENT_GENERIC, content); // SE (*)
-		content.addTerminalRule(END_ELEMENT); // EE
-		content.addRule(CHARACTERS_GENERIC, content); // CH [untyped value]
+		List<QName> uniqueNamedElementsList = new ArrayList<QName>();
+		Iterator<QName> iter = uniqueNamedElements.keySet().iterator();
+		while (iter.hasNext()) {
+			uniqueNamedElementsList.add(iter.next());
+		}
+		Collections.sort(uniqueNamedElementsList, lexSort);
+
+		for (QName fm : uniqueNamedElementsList) {
+			StartElement se;
+			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
+			if (elements.size() == 1 || isSameElementGrammar(elements)) {
+				se = getStartElement(elements.get(0));
+			} else {
+				// content is evaluated according to the relaxed Element
+				// Fragment grammar
+				se = new StartElement(fm);
+				se.setRule(elementFragment0);
+			}
+			elementFragment1.addRule(se, elementFragment1);
+		}
+
+		// SE ( * ) ElementFragment 1 m
+		elementFragment1.addRule(START_ELEMENT_GENERIC, elementFragment1);
+		// EE m+1
+		elementFragment1.addTerminalRule(END_ELEMENT);
+		// CH [untyped value] ElementFragment 1 m+2
+		elementFragment1.addRule(CHARACTERS_GENERIC, elementFragment1);
+
+		// ElementFragment 0 :
+		// AT ( A 0 ) [schema-typed value] ElementFragment 0 0
+		// AT ( A 1 ) [schema-typed value] ElementFragment 0 1
+		// ...
+		// AT (A n-1) [schema-typed value] ElementFragment 0 n-1
+		// AT ( * ) ElementFragment 0 n
+		// SE ( F0 ) ElementFragment 1 n+1
+		// SE ( F1 ) ElementFragment 1 n+2
+		// ...
+		// SE ( Fm-1 ) ElementFragment 1 n+m
+		// SE ( * ) ElementFragment 1 n+m+1
+		// EE n+m+2
+		// CH [untyped value] ElementFragment 1 n+m+3
+
 		/*
-		 * ElementFragmentStartTag
+		 * The variable n in the grammar above represents the number of unique
+		 * qnames given to explicitly declared attributes in the schema. The
+		 * variables A 0 , A 1 , ... A n-1 represent these qnames sorted
+		 * lexicographically, first by local-name, then by uri. If there is more
+		 * than one attribute declared with the same qname, the qname is
+		 * included only once. If all such attributes have the same schema type
+		 * name, their value is represented using that type. Otherwise, their
+		 * value is represented as a String.
 		 */
-		SchemaInformedFirstStartTagRule startTag = new SchemaInformedFirstStartTag(content);
-		startTag.addRule(ATTRIBUTE_GENERIC, startTag);// AT (*)
-		startTag.addRule(START_ELEMENT_GENERIC, content); // SE (*)
-		startTag.addTerminalRule(END_ELEMENT); // EE
-		startTag.addRule(CHARACTERS_GENERIC, content);// CH [untyped value]
-		/*
-		 * ElementFragmentTypeEmpty
-		 */
-		SchemaInformedFirstStartTagRule typeEmpty = startTag; // not correct
+
+		List<QName> uniqueNamedAttributeList = new ArrayList<QName>();
+
+		// create unique qname map
+		Map<QName, List<XSAttributeDeclaration>> uniqueNamedAttributes = new HashMap<QName, List<XSAttributeDeclaration>>();
+		Iterator<XSAttributeDeclaration> atts = attributePool.keySet()
+				.iterator();
+		while (atts.hasNext()) {
+			XSAttributeDeclaration atDecl = atts.next();
+			QName atQname = new QName(atDecl.getNamespace(), atDecl.getName());
+			if (uniqueNamedAttributes.containsKey(atQname)) {
+				uniqueNamedAttributes.get(atQname).add(atDecl);
+			} else {
+				List<XSAttributeDeclaration> list = new ArrayList<XSAttributeDeclaration>();
+				list.add(atDecl);
+				uniqueNamedAttributes.put(atQname, list);
+				uniqueNamedAttributeList.add(atQname);
+			}
+		}
+		Collections.sort(uniqueNamedAttributeList, lexSort);
+
+		for (QName an : uniqueNamedAttributeList) {
+			Attribute at;
+			List<XSAttributeDeclaration> attributes = uniqueNamedAttributes
+					.get(an);
+			if (attributes.size() == 1 || isSameAttributeGrammar(attributes)) {
+				at = getAttribute(attributes.get(0));
+			} else {
+				// represented as a String
+				at = new Attribute(an);
+			}
+			elementFragment0.addRule(at, elementFragment0);
+		}
+		// AT ( * ) ElementFragment 0 n
+		elementFragment0.addRule(ATTRIBUTE_GENERIC, elementFragment0);
+
+		// SE ( F0 ) ElementFragment 1 n+1
+		// ..
+		for (QName fm : uniqueNamedElementsList) {
+			StartElement se;
+			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
+			if (elements.size() == 1 || isSameElementGrammar(elements)) {
+				se = getStartElement(elements.get(0));
+			} else {
+				// content is evaluated according to the relaxed Element
+				// Fragment grammar
+				se = new StartElement(fm);
+				se.setRule(elementFragment0);
+			}
+			elementFragment0.addRule(se, elementFragment1);
+		}
+
+		// SE ( * ) ElementFragment 1 n+m+1
+		elementFragment0.addRule(START_ELEMENT_GENERIC, elementFragment1);
+		// EE n+m+2
+		elementFragment0.addTerminalRule(END_ELEMENT);
+		// CH [untyped value] ElementFragment 1 n+m+3
+		elementFragment0.addRule(CHARACTERS_GENERIC, elementFragment1);
+
+		SchemaInformedRule elementFragmentEmpty1 = new SchemaInformedElement();
+		SchemaInformedFirstStartTagRule elementFragmentEmpty0 = new SchemaInformedFirstStartTag(
+				elementFragmentEmpty1);
+
+		// ElementFragmentTypeEmpty 0 :
+		// AT ( A 0 ) [schema-typed value] ElementFragmentTypeEmpty 0 0
+		// AT ( A 1 ) [schema-typed value] ElementFragmentTypeEmpty 0 1
+		// ...
+		// AT ( A n-1 ) [schema-typed value] ElementFragmentTypeEmpty 0 n-1
+		// AT ( * ) ElementFragmentTypeEmpty 0 n
+		// EE n+1
+		for (QName an : uniqueNamedAttributeList) {
+			Attribute at;
+			List<XSAttributeDeclaration> attributes = uniqueNamedAttributes
+					.get(an);
+			if (attributes.size() == 1 || isSameAttributeGrammar(attributes)) {
+				at = getAttribute(attributes.get(0));
+			} else {
+				// represented as a String
+				at = new Attribute(an);
+			}
+			elementFragmentEmpty0.addRule(at, elementFragmentEmpty0);
+		}
+		elementFragmentEmpty0.addRule(ATTRIBUTE_GENERIC, elementFragmentEmpty0);
+		elementFragmentEmpty0.addTerminalRule(END_ELEMENT);
+		
+		// ElementFragmentTypeEmpty 1 :
+		// EE 0
+		elementFragmentEmpty1.addTerminalRule(END_ELEMENT);
 
 		/*
 		 * As with all schema informed element grammars, the schema-informed
@@ -236,12 +421,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * declaration that has named sub-types, and ElementFragmentTypeEmpty is
 		 * used to serve as the TypeEmpty of the type in the process.
 		 */
-		// startTag.setFirstElementRule();
-		startTag.setNillable(true);
-		startTag.setTypeEmpty(typeEmpty);
-		startTag.setTypeCastable(true);
+		elementFragment0.setNillable(true);
+		elementFragment0.setTypeEmpty(elementFragmentEmpty0);
+		elementFragment0.setTypeCastable(true);
 
-		return startTag;
+		return elementFragment0;
 	}
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
@@ -513,7 +697,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				// *duplicate* first productions to allow different behavior
 				// (e.g. property nillable is element dependent)
 				if (elementDecl.getNillable()) {
-					elementRule = (SchemaInformedFirstStartTagRule) elementRule.duplicate();
+					elementRule = (SchemaInformedFirstStartTagRule) elementRule
+							.duplicate();
 					elementRule.setNillable(true);
 				} else {
 					elementRule.setNillable(false);
@@ -526,8 +711,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return globalElements;
 	}
 
-	protected Attribute getAttribute(XSAttributeDeclaration attrDecl)
-			throws EXIException {
+	protected Attribute getAttribute(XSAttributeDeclaration attrDecl) {
 		// local name for string table pre-population
 		addLocalNameStringEntry(attrDecl.getNamespace(), attrDecl.getName());
 
@@ -571,14 +755,14 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// Attribute Uses
 		// http://www.w3.org/TR/exi/#attributeUses
 
-		SchemaInformedStartTagRule ruleStart = new SchemaInformedStartTag(ruleContent2);
+		SchemaInformedStartTagRule ruleStart = new SchemaInformedStartTag(
+				ruleContent2);
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
 			EventInformation ei = ruleContent.lookFor(i);
 			ruleStart.addRule(ei.event, ei.next);
 		}
 
-		
 		// If an {attribute wildcard} is specified, increment n and generate an
 		// additional attribute use grammar G n-1 as follows:
 		// G n-1, 0 :
@@ -671,7 +855,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected SchemaInformedFirstStartTagRule getTypeGrammar(String namespaceURI, String name) {
+	protected SchemaInformedFirstStartTagRule getTypeGrammar(
+			String namespaceURI, String name) {
 		QName en = new QName(namespaceURI, name);
 		return grammarTypes.get(en);
 	}
@@ -701,23 +886,25 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	}
 
 	public static SchemaInformedFirstStartTagRule getUrTypeRule() {
-		
+
 		// empty ur-Type
 		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
 		emptyUrType1.addTerminalRule(END_ELEMENT);
-		SchemaInformedFirstStartTagRule emptyUrType0 = new SchemaInformedFirstStartTag(emptyUrType1);
+		SchemaInformedFirstStartTagRule emptyUrType0 = new SchemaInformedFirstStartTag(
+				emptyUrType1);
 		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
 		emptyUrType0.addTerminalRule(END_ELEMENT);
 		// emptyUrType0.setFirstElementRule();
-		
+
 		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
 		urType1.setLabel("any");
 		urType1.addRule(START_ELEMENT_GENERIC, urType1);
 		urType1.addTerminalRule(END_ELEMENT);
 		urType1.addRule(new CharactersGeneric(), urType1);
-		
-		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(urType1);
+
+		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(
+				urType1);
 		urType0.addRule(ATTRIBUTE_GENERIC, urType0);
 		urType0.addRule(START_ELEMENT_GENERIC, urType1);
 		urType0.addTerminalRule(END_ELEMENT);
@@ -771,28 +958,30 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				XSWildcard attributeWC = ctd.getAttributeWildcard();
 
 				// type_i (start tag)
-				SchemaInformedStartTagRule sistr = handleAttributes(ruleContent, ruleContent2,
-						attributes, attributeWC);
-				type_i = new SchemaInformedFirstStartTag( sistr);
+				SchemaInformedStartTagRule sistr = handleAttributes(
+						ruleContent, ruleContent2, attributes, attributeWC);
+				type_i = new SchemaInformedFirstStartTag(sistr);
 				type_i.setTypeCastable(isTypeCastable(ctd));
 
 				// typeEmpty_i
 				SchemaInformedRule ruleEnd = new SchemaInformedElement();
 				ruleEnd.addTerminalRule(END_ELEMENT);
-				typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(ruleEnd, ruleEnd, attributes,
-						attributeWC));
+				typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(
+						ruleEnd, ruleEnd, attributes, attributeWC));
 			}
 		} else {
 			assert (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
 			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 			SchemaInformedElement simpleContent = translateSimpleTypeDefinitionToFSA(std);
-			type_i = new SchemaInformedFirstStartTag(handleAttributes(simpleContent, simpleContent, null, null));
+			type_i = new SchemaInformedFirstStartTag(handleAttributes(
+					simpleContent, simpleContent, null, null));
 			type_i.setTypeCastable(isTypeCastable(std));
 			// TypeEmpty i
 			SchemaInformedRule ruleEnd = new SchemaInformedElement();
 			ruleEnd.addTerminalRule(END_ELEMENT);
-			typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(ruleEnd, ruleEnd, null, null));
+			typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(
+					ruleEnd, ruleEnd, null, null));
 		}
 
 		if (!td.getAnonymous()) {
@@ -800,7 +989,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			addLocalNameStringEntry(td.getNamespace(), td.getName());
 		}
 
-		
 		// type_i.setFirstElementRule();
 		// typeEmpty_i.setFirstElementRule();
 		type_i.setTypeEmpty(typeEmpty_i);

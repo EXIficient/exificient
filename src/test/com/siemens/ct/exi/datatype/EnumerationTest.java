@@ -47,15 +47,38 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+		// Note: Enumeration schema types derived from others by union, QName or Notation are processed by their respective built-in EXI datatype representations
+		assertTrue(dt.getBuiltInType() == BuiltInType.STRING);
+		
+//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+//		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+//
+//		assertTrue(dt.isValid("+10"));
+//		assertTrue(dt.isValid("12:32:00"));
+//		assertTrue(dt.isValid("+588"));
+//
+//		assertFalse(dt.isValid("00"));
+//		assertFalse(dt.isValid("12:32:12"));
+	}
 
-		assertTrue(dt.isValid("+10"));
-		assertTrue(dt.isValid("12:32:00"));
-		assertTrue(dt.isValid("+588"));
+	public void testEnumerationQName1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:bla='urn:bla'>"
+				+ "  <xs:simpleType name='Enumeration'>"
+				+ "    <xs:restriction base='xs:QName'>"
+				+ "      <xs:enumeration value='Ho'/>"
+				+ "      <xs:enumeration value='bla:Uuu'/>"
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+	
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"Enumeration", "");
+	
+		// Note: Enumeration schema types derived from others by union, QName or Notation are processed by their respective built-in EXI datatype representations
+		assertTrue(dt.getBuiltInType() == BuiltInType.STRING);
 
-		assertFalse(dt.isValid("00"));
-		assertFalse(dt.isValid("12:32:12"));
+		
+		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 	}
 
 	public void testEnumerationInteger1() throws IOException, EXIException {
