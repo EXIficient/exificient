@@ -443,6 +443,7 @@ public class SAXDecoder implements XMLReader {
 		}
 		// QName atQName = decoder.getAttributeQName();
 		String sVal = val.toString(cbuffer, 0);
+		// System.out.println("[EXIficient AT] " + atQName + ", " + atQNameAsString + " = " + sVal);
 		attributes.addAttribute(atQName.getNamespaceURI(), atQName
 				.getLocalPart(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
 	}

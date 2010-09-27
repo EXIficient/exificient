@@ -20,6 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.Value;
@@ -42,11 +43,11 @@ public class BooleanTest extends AbstractTestCase {
 		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
 		Value val1 = bool.readValue(getBitDecoder(), null, null);
-		assertTrue(s.equals(val1.toString()));
+		assertTrue(Constants.DECODED_BOOLEAN_FALSE.equals(val1.toString()));
 		// Byte
 		bool.writeValue(getByteEncoder(), null, null);
 		Value val2 = bool.readValue(getBitDecoder(), null, null);
-		assertTrue(s.equals(val2.toString()));
+		assertTrue(Constants.DECODED_BOOLEAN_FALSE.equals(val2.toString()));
 	}
 	
 	public void testBoolean1() throws IOException {
@@ -61,11 +62,11 @@ public class BooleanTest extends AbstractTestCase {
 		bool.writeValue(bitEC, null, null);
 		bitEC.flush();
 		Value val1 = bool.readValue(getBitDecoder(), null, null);
-		assertTrue(s.equals(val1.toString()));
+		assertTrue(Constants.DECODED_BOOLEAN_TRUE.equals(val1.toString()));
 		// Byte
 		bool.writeValue(getByteEncoder(), null, null);
 		Value val2 = bool.readValue(getBitDecoder(), null, null);
-		assertTrue(s.equals(val2.toString()));
+		assertTrue(Constants.DECODED_BOOLEAN_TRUE.equals(val2.toString()));
 	}
 	
 	public void testBooleanFalse() throws IOException {

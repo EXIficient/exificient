@@ -40,19 +40,18 @@ public interface Constants {
 	 * Defined to be "<code>http://www.w3.org/2009/exi</code>".
 	 */
 	public static final String W3C_EXI_NS_URI = "http://www.w3.org/2009/exi";
-	
-	
+
 	/**
 	 * XML Reader feature
 	 */
-	public static final String W3C_EXI_FEATURE_BODY_ONLY =  "http://www.w3.org/exi/features/exi-body-only";
-	
+	public static final String W3C_EXI_FEATURE_BODY_ONLY = "http://www.w3.org/exi/features/exi-body-only";
+
 	/**
 	 * Initial Entries in String Table Partitions
 	 */
 	/* "", empty string */
 	public static final String[] PREFIXES_EMPTY = { "" };
-	public static final String[] LOCAL_NAMES_EMPTY = { };
+	public static final String[] LOCAL_NAMES_EMPTY = {};
 	/* "http://www.w3.org/XML/1998/namespace" */
 	public static String[] PREFIXES_XML = { "xml" };
 	public static String[] LOCAL_NAMES_XML = { "base", "id", "lang", "space" };
@@ -61,18 +60,17 @@ public interface Constants {
 	public static String[] LOCAL_NAMES_XSI = { "nil", "type" };
 	/* "http://www.w3.org/2001/XMLSchema", xsd */
 	public static String[] PREFIXES_XSD = {};
-	public static String[] LOCAL_NAMES_XSD = { "ENTITIES", "ENTITY", "ID", "IDREF",
-			"IDREFS", "NCName", "NMTOKEN", "NMTOKENS", "NOTATION",
+	public static String[] LOCAL_NAMES_XSD = { "ENTITIES", "ENTITY", "ID",
+			"IDREF", "IDREFS", "NCName", "NMTOKEN", "NMTOKENS", "NOTATION",
 			"Name", "QName", "anySimpleType", "anyType", "anyURI",
-			"base64Binary", "boolean", "byte", "date", "dateTime",
-			"decimal", "double", "duration", "float", "gDay", "gMonth",
-			"gMonthDay", "gYear", "gYearMonth", "hexBinary", "int",
-			"integer", "language", "long", "negativeInteger",
-			"nonNegativeInteger", "nonPositiveInteger",
-			"normalizedString", "positiveInteger", "short", "string",
-			"time", "token", "unsignedByte", "unsignedInt",
+			"base64Binary", "boolean", "byte", "date", "dateTime", "decimal",
+			"double", "duration", "float", "gDay", "gMonth", "gMonthDay",
+			"gYear", "gYearMonth", "hexBinary", "int", "integer", "language",
+			"long", "negativeInteger", "nonNegativeInteger",
+			"nonPositiveInteger", "normalizedString", "positiveInteger",
+			"short", "string", "time", "token", "unsignedByte", "unsignedInt",
 			"unsignedLong", "unsignedShort" };
-	
+
 	/**
 	 * 
 	 */
@@ -112,8 +110,12 @@ public interface Constants {
 	public static final char[] XSD_BOOLEAN_0_ARRAY = XSD_BOOLEAN_0
 			.toCharArray();
 
-	public static final char[] DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_TRUE_ARRAY;
-	public static final char[] DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_FALSE_ARRAY;
+	public static final String DECODED_BOOLEAN_TRUE = XSD_BOOLEAN_TRUE;
+	public static final String DECODED_BOOLEAN_FALSE = XSD_BOOLEAN_FALSE;
+	public static final char[] DECODED_BOOLEAN_TRUE_ARRAY = DECODED_BOOLEAN_TRUE
+			.toCharArray();
+	public static final char[] DECODED_BOOLEAN_FALSE_ARRAY = DECODED_BOOLEAN_FALSE
+			.toCharArray();
 
 	public static final int NOT_FOUND = -1;
 
@@ -151,7 +153,7 @@ public interface Constants {
 	public static final long FLOAT_EXPONENT_MIN_RANGE = -16383; // - (2^14-1)
 	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383; // 2^14-1
 	public static final long FLOAT_MANTISSA_MIN_RANGE = -9223372036854775808L; // -
-																				// (2^63)
+	// (2^63)
 	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L; // 2^63-1
 
 }

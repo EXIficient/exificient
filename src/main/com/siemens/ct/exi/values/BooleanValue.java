@@ -40,11 +40,11 @@ public class BooleanValue extends AbstractValue {
 	public BooleanValue(boolean bool) {
 		this.bool = bool;
 		if (bool) {
-			characters = Constants.XSD_BOOLEAN_1_ARRAY;
-			sValue = Constants.XSD_BOOLEAN_1;
+			characters = Constants.DECODED_BOOLEAN_TRUE_ARRAY;
+			sValue = Constants.DECODED_BOOLEAN_TRUE;
 		} else {
-			characters = Constants.XSD_BOOLEAN_0_ARRAY;
-			sValue = Constants.XSD_BOOLEAN_0;
+			characters = Constants.DECODED_BOOLEAN_FALSE_ARRAY;
+			sValue = Constants.DECODED_BOOLEAN_FALSE;
 		}
 	}
 
