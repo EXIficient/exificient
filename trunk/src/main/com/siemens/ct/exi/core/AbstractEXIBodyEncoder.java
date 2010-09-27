@@ -289,7 +289,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 	public void encodeEndElement() throws EXIException, IOException {
 		// int ec = currentRule.get1stLevelEventCode(eventEE);
 		EventInformation ei = currentRule.lookForEvent(EventType.END_ELEMENT);
-
+		
 		if (ei != null) {
 			// encode EventCode (common case)
 			encode1stLevelEventCode(ei.getEventCode());

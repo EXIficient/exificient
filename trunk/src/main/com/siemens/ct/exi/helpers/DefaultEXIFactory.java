@@ -52,6 +52,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
 import com.siemens.ct.exi.types.LexicalTypeDecoder;
@@ -441,6 +442,58 @@ public class DefaultEXIFactory implements EXIFactory {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		// grammar
+		if (grammar.isSchemaInformed()) {
+			SchemaInformedGrammar sig = (SchemaInformedGrammar) grammar;
+			sb.append("[Schema-Informed=" + sig.getSchemaId() + "]");
+		} else {
+			sb.append("[Schema-Less]");
+		}
+		// coding-mode
+		sb.append("[" + codingMode + "]");
+		// fidelity options
+		sb.append(fidelityOptions.toString());
+		// fragment
+		if (isFragment()) {
+			sb.append("[Fragment]");
+		}
+		// dtr
+		if (this.dtrMapTypes != null && this.dtrMapTypes.length > 0) {
+			sb.append("[DTR Types=");
+			for(QName dtrMapType : dtrMapTypes) {
+				sb.append(dtrMapType + " ");
+			}
+			sb.append(", Representation=");
+			for(QName dtrMapRepresentation : dtrMapRepresentations) {
+				sb.append(dtrMapRepresentation + " ");
+			}
+			sb.append("]");
+		}
+		// sc elements
+		if (this.scElements != null && this.scElements.length > 0) {
+			sb.append("[SCElements=" +  "]");
+			for(QName scElement : scElements) {
+				sb.append(scElement + " ");
+			}
+			sb.append("]");
+		}
+		// blockSize, valueMaxLength, valuePartitionCapacity
+		if (this.blockSize!= Constants.DEFAULT_BLOCK_SIZE) {
+			sb.append("[blockSize=" + blockSize + "]");
+		}
+		if (this.valueMaxLength!= Constants.DEFAULT_VALUE_MAX_LENGTH) {
+			sb.append("[valueMaxLength=" + valueMaxLength + "]");
+		}
+		if (this.valuePartitionCapacity!= Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+			sb.append("[valuePartitionCapacity=" + valuePartitionCapacity + "]");
+		}
+
+		return sb.toString();
 	}
 
 }

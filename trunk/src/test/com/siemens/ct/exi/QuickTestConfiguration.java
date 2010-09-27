@@ -21,12 +21,11 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -35,7 +34,7 @@ public class QuickTestConfiguration {
 
 	
 	// fragments
-	public static boolean FRAGMENTS = false;
+	public static boolean FRAGMENTS = true;
 
 	// coding mode
 	public static CodingMode CODING_MODE;
@@ -83,24 +82,24 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
-		// fidelityOptions = FidelityOptions.createStrict();
+		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+//		try {
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////

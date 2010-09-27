@@ -57,7 +57,6 @@ import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.Value;
 
@@ -134,6 +133,14 @@ public class BuiltIn {
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
 
 	/*
+	 * Misc
+	 */
+	protected static final QName XSD_QNAME = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "QName");
+	protected static final QName XSD_NOTATION = new QName(
+			XMLConstants.W3C_XML_SCHEMA_NS_URI, "Notation");
+	
+	/*
 	 * default QName / BuiltInType / Datatype
 	 */
 	public static final QName DEFAULT_VALUE_NAME = XSD_STRING;
@@ -179,7 +186,7 @@ public class BuiltIn {
 	}
 
 	public static Datatype getDatatype(XSSimpleTypeDefinition std)
-			throws EXIException {
+ {
 		Datatype datatype = null;
 
 		// used for dtr map
@@ -207,39 +214,54 @@ public class BuiltIn {
 						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
 								.getBaseType();
 
-						Value[] values = new Value[enumList.getLength()];
+						// Value[] values = new Value[enumList.getLength()];
+
+						/*
+						 * Exceptions are for schema types derived from others
+						 * by union and their subtypes, QName or Notation and
+						 * types derived therefrom by restriction. The values of
+						 * such types are processed by their respective built-in
+						 * EXI datatype representations instead of being
+						 * represented as enumerations.
+						 */
 
 						if (stdEnum.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
-							XSObjectList unionMemberTypes = stdEnum
-									.getMemberTypes();
-
-							for (int k = 0; k < enumList.getLength(); k++) {
-								String sEnumValue = enumList.item(k);
-
-								Datatype dtEnumValues = null;
-								boolean valid = false;
-								int j = 0;
-
-								while (!valid
-										&& j < unionMemberTypes.getLength()) {
-									XSSimpleTypeDefinition stdEnumUnion = (XSSimpleTypeDefinition) unionMemberTypes
-											.item(j);
-									dtEnumValues = getDatatype(stdEnumUnion);
-									valid = dtEnumValues.isValid(sEnumValue);
-
-									j++;
-								}
-
-								if (!valid) {
-									throw new RuntimeException(
-											"No valid enumeration value '"
-													+ sEnumValue + "', "
-													+ stdEnum);
-								}
-								values[k] = dtEnumValues.getValue();
-							}
+							datatype = new StringDatatype(schemaType);
+							// XSObjectList unionMemberTypes = stdEnum
+							// .getMemberTypes();
+							//
+							// for (int k = 0; k < enumList.getLength(); k++) {
+							// String sEnumValue = enumList.item(k);
+							//
+							// Datatype dtEnumValues = null;
+							// boolean valid = false;
+							// int j = 0;
+							//
+							// while (!valid
+							// && j < unionMemberTypes.getLength()) {
+							// XSSimpleTypeDefinition stdEnumUnion =
+							// (XSSimpleTypeDefinition) unionMemberTypes
+							// .item(j);
+							// dtEnumValues = getDatatype(stdEnumUnion);
+							// valid = dtEnumValues.isValid(sEnumValue);
+							//
+							// j++;
+							// }
+							//
+							// if (!valid) {
+							// throw new RuntimeException(
+							// "No valid enumeration value '"
+							// + sEnumValue + "', "
+							// + stdEnum);
+							// }
+							// values[k] = dtEnumValues.getValue();
+							// }
+						} else if ( XSD_QNAME.equals(getSchemaType(stdEnum)) || XSD_NOTATION.equals(getSchemaType(stdEnum)) ) {
+							datatype = new StringDatatype(schemaType);
 						} else {
+
 							Datatype dtEnumValues = getDatatype(stdEnum);
+							Value[] values = new Value[enumList.getLength()];
 
 							for (int k = 0; k < enumList.getLength(); k++) {
 								String sEnumValue = enumList.item(k);
@@ -253,9 +275,10 @@ public class BuiltIn {
 								}
 								values[k] = dtEnumValues.getValue();
 							}
-						}
 
-						datatype = new EnumerationDatatype(values, schemaType);
+							datatype = new EnumerationDatatype(values,
+									schemaType);
+						}
 					}
 					// else {
 					// System.err.println("XSMultiValueFacet " +
@@ -535,7 +558,7 @@ public class BuiltIn {
 	}
 
 	private static Datatype getDatatypeOfType(XSSimpleTypeDefinition std,
-			QName schemaType) throws EXIException {
+			QName schemaType) {
 		Datatype datatype;
 
 		// 
