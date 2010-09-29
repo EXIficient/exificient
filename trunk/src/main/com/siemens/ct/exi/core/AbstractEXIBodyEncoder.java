@@ -214,13 +214,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
 
-				// // encode entire qualified name
-				// QName qname = qnameDatatype.encodeQName(uri, localName,
-				// prefix,
-				// channel);
-				// // next SE ...
-				// nextSE = getGenericStartElement(qname);
-
 				// next rule at the top
 				nextTopRule = ei.next;
 			} else {
@@ -236,15 +229,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				}
 				// encode [undeclared] event-code
 				encode2ndLevelEventCode(ecSEundeclared);
-
-				// // encode entire qualified name
-				// QName qname = qnameDatatype.encodeQName(uri, localName,
-				// prefix,
-				// channel);
-				// // next SE ...
-				// nextSE = getGenericStartElement(qname);
-				// // next rule at the top
-				// nextTopRule = nextSE.getRule();
 
 				// next rule at the top
 				nextTopRule = currentRule.getElementContentRule();
