@@ -93,10 +93,11 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * If there are some unwritten bits, pad them if necessary and write them
-	 * out. Note that this method does not flush the underlying stream.
+	 * out. Note that this method does flush the underlying stream.
 	 */
 	public void flush() throws IOException {
 		align();
+		ostream.flush();
 	}
 
 	/**

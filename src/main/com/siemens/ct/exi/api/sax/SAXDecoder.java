@@ -42,6 +42,7 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -89,6 +90,10 @@ public class SAXDecoder implements XMLReader {
 		this.noOptionsFactory = noOptionsFactory;
 		this.exiStream = new EXIStreamDecoder();
 		attributes = new AttributesImpl();
+		// switch namespace prefixes to TRUE if the stream preserves prefixes
+		if (noOptionsFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+			namespacePrefixes = true;
+		}
 	}
 
 	protected void initForEachRun() {
