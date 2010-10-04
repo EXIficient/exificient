@@ -36,10 +36,15 @@ public interface SchemaInformedFirstStartTagRule extends SchemaInformedStartTagR
 	 */
 	public void setTypeCastable(boolean hasNamedSubtypes);
 
+	public boolean isTypeCastable();
+	
 	/*
 	 * sets whether element is nillable
 	 */
-	public void setNillable(boolean nillable);	
+	public void setNillable(boolean nillable);
+	
+	public boolean isNillable();
+	
 	
 	
 	public void setTypeEmpty(SchemaInformedFirstStartTagRule typeEmpty);

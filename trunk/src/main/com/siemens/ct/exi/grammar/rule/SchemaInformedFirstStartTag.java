@@ -64,8 +64,16 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		this.isTypeCastable = isTypeCastable;
 	}
 
+	public boolean isTypeCastable() {
+		return isTypeCastable;
+	}
+
 	public void setNillable(boolean isNillable) {
 		this.isNillable = isNillable;
+	}
+
+	public boolean isNillable() {
+		return isNillable;
 	}
 
 	public void setTypeEmpty(SchemaInformedFirstStartTagRule typeEmpty) {
