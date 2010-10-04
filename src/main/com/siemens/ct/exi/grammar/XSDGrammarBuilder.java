@@ -50,7 +50,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
-import com.siemens.ct.exi.grammar.event.CharactersGeneric;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
@@ -87,9 +86,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
-	//  schema information is available to describe the contents of an EXI stream and more than one element is declared with the same qname
+	// schema information is available to describe the contents of an EXI stream
+	// and more than one element is declared with the same qname
 	protected SchemaInformedFirstStartTagRule elementFragment0;
-	
+
 	protected XSDGrammarBuilder() {
 		super();
 
@@ -119,7 +119,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		grammarTypes.clear();
 		atWildcardNamespaces.clear();
 		attributePool.clear();
-		
+
 		elementFragment0 = null;
 
 		schemaLocalNames.clear();
@@ -158,8 +158,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			if (t0.getAnonymous() || t1.getAnonymous()) {
 				// cannot have same type name
 				return false;
-			} 
-			if (t0.getName() != t1.getName() || t0.getNamespace() != t1.getNamespace()
+			}
+			if (t0.getName() != t1.getName()
+					|| t0.getNamespace() != t1.getNamespace()
 					|| e0.getNillable() != e1.getNillable()) {
 				return false;
 			}
@@ -224,28 +225,26 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					Rule elementFragmentGrammar = getSchemaInformedElementFragmentGrammar(uniqueNamedElements);
 					se.setRule(elementFragmentGrammar);
 					fragmentElements.add(se);
-					// System.out.println("ambiguous elements " + elements + ", " + qname);
+					// System.out.println("ambiguous elements " + elements +
+					// ", " + qname);
 				}
 			}
 		}
 
 		return fragmentElements;
 	}
-	
 
 	// http://www.w3.org/TR/exi/#informedElementFragGrammar
 	protected Rule getSchemaInformedElementFragmentGrammar(
 			Map<QName, List<XSElementDeclaration>> uniqueNamedElements) {
-		
+
 		if (elementFragment0 != null) {
 			return elementFragment0;
 		}
-			
-		
+
 		// 8.5.3 Schema-informed Element Fragment Grammar
 		SchemaInformedRule elementFragment1 = new SchemaInformedElement();
-		elementFragment0 = new SchemaInformedFirstStartTag(
-				elementFragment1);
+		elementFragment0 = new SchemaInformedFirstStartTag(elementFragment1);
 
 		// 
 		// ElementFragment 1 :
@@ -404,7 +403,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 		elementFragmentEmpty0.addRule(ATTRIBUTE_GENERIC, elementFragmentEmpty0);
 		elementFragmentEmpty0.addTerminalRule(END_ELEMENT);
-		
+
 		// ElementFragmentTypeEmpty 1 :
 		// EE 0
 		elementFragmentEmpty1.addTerminalRule(END_ELEMENT);
@@ -645,6 +644,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			QName name = new QName(td.getNamespace(), td.getName());
 			SchemaInformedFirstStartTagRule sir = translateTypeDefinitionToFSA(td);
+			// types cannot be nillable (only elements!)
+			assert (!sir.isNillable());
 
 			grammarTypes.put(name, sir);
 		}
@@ -885,35 +886,52 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
+	// http://www.w3.org/TR/exi/#anyTypeGrammar
 	public static SchemaInformedFirstStartTagRule getUrTypeRule() {
 
-		// empty ur-Type
-		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
-		emptyUrType1.addTerminalRule(END_ELEMENT);
-		SchemaInformedFirstStartTagRule emptyUrType0 = new SchemaInformedFirstStartTag(
-				emptyUrType1);
-		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
-		emptyUrType0.addTerminalRule(END_ELEMENT);
-		// emptyUrType0.setFirstElementRule();
-
-		// ur-Type
 		SchemaInformedRule urType1 = new SchemaInformedElement();
-		urType1.setLabel("any");
-		urType1.addRule(START_ELEMENT_GENERIC, urType1);
-		urType1.addTerminalRule(END_ELEMENT);
-		urType1.addRule(new CharactersGeneric(), urType1);
-
 		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(
 				urType1);
+		urType0.setLabel("ur-type");
+
+		// Type ur-type, 0 :
+		// AT (*) Type ur-type, 0
+		// SE(*) Type ur-type, 1
+		// EE
+		// CH Type ur-type, 1
 		urType0.addRule(ATTRIBUTE_GENERIC, urType0);
 		urType0.addRule(START_ELEMENT_GENERIC, urType1);
 		urType0.addTerminalRule(END_ELEMENT);
-		urType0.addRule(new CharactersGeneric(), urType1);
+		urType0.addRule(CHARACTERS_GENERIC, urType1);
+		// anyType is castable
 		urType0.setTypeCastable(true);
-		// urType0.setFirstElementRule();
-		// nillable ?
-		urType0.setTypeEmpty(emptyUrType0);
+		// types are NOT nillable
 		urType0.setNillable(false);
+
+		// Type ur-type, 1 :
+		// SE(*) Type ur-type, 1
+		// EE
+		// CH Type ur-type, 1
+		urType1.addRule(START_ELEMENT_GENERIC, urType1);
+		urType1.addTerminalRule(END_ELEMENT);
+		urType1.addRule(CHARACTERS_GENERIC, urType1);
+
+		// empty types
+		SchemaInformedRule emptyUrType1 = new SchemaInformedElement();
+		SchemaInformedFirstStartTagRule emptyUrType0 = new SchemaInformedFirstStartTag(
+				emptyUrType1);
+		// set type empty
+		urType0.setTypeEmpty(emptyUrType0);
+		
+		// TypeEmpty ur-type, 0 :
+		// AT (*) TypeEmpty ur-type, 0
+		// EE
+		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
+		emptyUrType0.addTerminalRule(END_ELEMENT);
+		
+		// TypeEmpty ur-type, 1 :
+		// EE
+		emptyUrType1.addTerminalRule(END_ELEMENT);
 
 		return urType0;
 	}
