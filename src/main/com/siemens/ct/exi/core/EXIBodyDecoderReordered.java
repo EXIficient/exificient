@@ -195,7 +195,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	protected void initBlock() {
 		// count value items
 		blockValues = 0;
-
+		
 		// events
 		eventTypes.clear();
 		eventTypeIndex = 0;

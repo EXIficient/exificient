@@ -40,6 +40,14 @@ public interface EncoderChannel {
 	public void flush() throws IOException;
 
 	/**
+	 * Returns the number of bytes written.
+	 * 
+	 * This feature is optional and channels that no not support this
+	 * feature are required to report -1.
+	 * */
+	public int getLength();
+
+	/**
 	 * Align to next byte-aligned boundary in the stream if it is not already at
 	 * such a boundary
 	 * 
@@ -104,7 +112,7 @@ public interface EncoderChannel {
 	public void encodeLong(long l) throws IOException;
 
 	public void encodeBigInteger(BigInteger bi) throws IOException;
-	
+
 	public void encodeHugeInteger(HugeIntegerValue hi) throws IOException;
 
 	/**
