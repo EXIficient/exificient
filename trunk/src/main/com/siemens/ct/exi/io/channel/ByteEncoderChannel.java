@@ -32,6 +32,7 @@ import java.io.OutputStream;
 final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 		EncoderChannel {
 	private final OutputStream os;
+	protected int len = 0;
 
 	/**
 	 * Construct a byte aligned encoder from output stream.
@@ -42,6 +43,10 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 
 	public OutputStream getOutputStream() {
 		return os;
+	}
+	
+	public int getLength() {
+		return len;
 	}
 
 	public void flush() throws IOException {
@@ -54,10 +59,12 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 
 	public void encode(int b) throws IOException {
 		os.write(b);
+		len++;
 	}
 
 	public void encode(byte b[], int off, int len) throws IOException {
 		os.write(b, off, len);
+		this.len += len;
 	}
 
 	/**

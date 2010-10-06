@@ -65,20 +65,19 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		contexts.clear();
 	}
 
-	public void setOutputStream(OutputStream os)
-			throws EXIException, IOException {
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException {
 		this.os = os;
 
 		// setup new data-stream
 		channel = new ByteEncoderChannel(getStream());
 
 	}
-	
+
 	public void setOutputChannel(EncoderChannel encoderChannel) {
 		this.channel = encoderChannel;
 		this.os = channel.getOutputStream();
 	}
-	
 
 	@Override
 	protected boolean isTypeValid(Datatype datatype, String value) {
@@ -127,13 +126,23 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected void closeBlock() throws IOException {
 		/*
+		 * Some EXI events have zero-byte representations and are not explicitly
+		 * represented in the EXI stream. If a sequence of these events occurs
+		 * following the final block, implementations must take care to avoid
+		 * allocating an extra, empty block for the implicit events at the end
+		 * of the stream.
+		 */
+		if (blockValues == 0 && channel.getLength() == 0) {
+			// empty block
+		}
+		/*
 		 * If the block contains at most 100 values, the block will contain only
 		 * 1 compressed stream containing the structure channel followed by all
 		 * of the value channels. The order of the value channels within the
 		 * compressed stream is defined by the order in which the first value in
 		 * each channel occurs in the EXI event sequence.
 		 */
-		if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
+		else if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 			// 1. structure stream already written
 			// 2. value channels in order
 			for (QName contextOrder : contextOrders) {
@@ -141,7 +150,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 				List<String> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
-					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
+					typeEncoder.isValid(valueDatatypes.get(i), values
+							.get(i));
 					typeEncoder.writeValue(contextOrder, channel);
 				}
 			}

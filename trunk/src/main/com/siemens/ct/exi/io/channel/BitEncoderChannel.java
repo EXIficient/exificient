@@ -48,6 +48,10 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 	public OutputStream getOutputStream() {
 		return ostream;
 	}
+	
+	public int getLength() {
+		return -1;
+	}
 
 	/**
 	 * Flush underlying bit output stream.
