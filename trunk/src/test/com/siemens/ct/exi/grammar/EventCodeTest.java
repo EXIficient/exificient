@@ -331,5 +331,176 @@ public class EventCodeTest extends TestCase {
 		assertTrue(G_31.getNumberOfEvents() == 1);
 		assertTrue(G_31.lookFor(0).event.isEventType(EventType.END_ELEMENT));
 	}
+	
+	
+	public void testBuiltInDocumentGrammar() {
+		Grammar g = GrammarFactory.newInstance().createSchemaLessGrammar();
+		
+		Rule document = g.getBuiltInDocumentGrammar();
+		/*
+		 * Document :
+		 * SD DocContent	0
+		 */
+		assertTrue(document.getNumberOfEvents() == 1);
+		EventInformation eiSD =  document.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule docContent = eiSD.next;
+		/*
+		 * DocContent :
+		 * SE (*) DocEnd	0
+		 * DT DocContent	1.0
+		 * CM DocContent	1.1.0
+		 * PI DocContent	1.1.1
+		 */
+		assertTrue(docContent.getNumberOfEvents() == 1);
+		EventInformation eiSE =  docContent.lookFor(0);
+		assertTrue(eiSE.event.isEventType(EventType.START_ELEMENT_GENERIC));
+
+		Rule docEnd = eiSE.next;
+		/*
+		 * DocEnd :
+		 * ED	0
+		 * CM DocEnd	1.0
+		 * PI DocEnd	1.1
+		 */
+		assertTrue(docEnd.getNumberOfEvents() == 1);
+		EventInformation ei =  docEnd.lookFor(0);
+		assertTrue(ei.event.isEventType(EventType.END_DOCUMENT));
+	}
+
+	public void testBuiltInFragmentGrammar() {
+		Grammar g = GrammarFactory.newInstance().createSchemaLessGrammar();
+		
+		Rule fragment = g.getBuiltInFragmentGrammar();
+		/*
+		 * Fragment :
+		 * SD FragmentContent	0
+		 */
+		assertTrue(fragment.getNumberOfEvents() == 1);
+		EventInformation eiSD =  fragment.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule fragmentContent = eiSD.next;
+		/*
+		 * FragmentContent :
+		 * SE (*) FragmentContent	0
+		 * ED	1
+		 * CM FragmentContent	2.0
+		 * PI FragmentContent	2.1
+		 */
+		assertTrue(fragmentContent.getNumberOfEvents() == 2);
+		EventInformation eiSE =  fragmentContent.lookFor(0);
+		assertTrue(eiSE.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE.next == fragmentContent);
+		EventInformation eiED =  fragmentContent.lookFor(1);
+		assertTrue(eiED.event.isEventType(EventType.END_DOCUMENT));
+	}
+
+	public void testSchemaInformedDocumentGrammar() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='optional' minOccurs='0' maxOccurs='unbounded'/> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+
+		Grammar g = getGrammarFromSchemaAsString(schema);
+	
+		Rule document = g.getBuiltInDocumentGrammar();
+		/*
+		 * Document :
+		 * SD DocContent	0
+		 */
+		assertTrue(document.getNumberOfEvents() == 1);
+		EventInformation eiSD =  document.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule docContent = eiSD.next;
+		/*
+		 * DocContent :
+		 * SE (G 0) DocEnd	0
+		 * SE (G 1) DocEnd	1
+		 * . . .
+		 * SE (G n-1) DocEnd	n-1
+		 * SE (*) DocEnd	n
+		 * DT DocContent	 (n+1).0
+		 * CM DocContent	 (n+1).1.0
+		 * PI DocContent	 (n+1).1.1
+		 */
+		assertTrue(docContent.getNumberOfEvents() == 2);
+		EventInformation eiSE_root =  docContent.lookFor(0);
+		assertTrue(eiSE_root.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement)eiSE_root.event).getQName().getLocalPart().equals("root"));
+		EventInformation eiSEG =  docContent.lookFor(1);
+		assertTrue(eiSEG.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE_root.next == eiSEG.next);
+		
+		Rule docEnd = eiSEG.next;
+		/*
+		 * DocEnd :
+		 * ED	0
+		 * CM DocEnd	1.0
+		 * PI DocEnd	1.1
+		 */
+		assertTrue(docEnd.getNumberOfEvents() == 1);
+		EventInformation ei =  docEnd.lookFor(0);
+		assertTrue(ei.event.isEventType(EventType.END_DOCUMENT));
+	}
+
+	public void testSchemaInformedFragmentGrammar() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='optional' minOccurs='0' maxOccurs='unbounded'/> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		
+		Rule fragment = g.getBuiltInFragmentGrammar();
+		/*
+		 * Fragment :
+		 * SD FragmentContent	0
+		 */
+		assertTrue(fragment.getNumberOfEvents() == 1);
+		EventInformation eiSD =  fragment.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule fragmentContent = eiSD.next;
+		/*
+		 * FragmentContent :
+		 * SE (F 0) FragmentContent	0
+		 * SE (F 1) FragmentContent	1
+		 * . . . 
+		 * SE (F n-1) FragmentContent	n-1
+		 * SE (*) FragmentContent	n
+		 * ED	n+1
+		 * CM FragmentContent	(n+2).0
+		 * PI FragmentContent	(n+2).1
+		 */
+		assertTrue(fragmentContent.getNumberOfEvents() == 4);
+		
+		EventInformation eiSE_optional =  fragmentContent.lookFor(0);
+		assertTrue(eiSE_optional.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(eiSE_optional.next == fragmentContent);
+		assertTrue(((StartElement)eiSE_optional.event).getQName().getLocalPart().equals("optional"));
+		
+		EventInformation eiSE_root =  fragmentContent.lookFor(1);
+		assertTrue(eiSE_root.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(eiSE_root.next == fragmentContent);
+		assertTrue(((StartElement)eiSE_root.event).getQName().getLocalPart().equals("root"));
+		
+		EventInformation eiSE =  fragmentContent.lookFor(2);
+		assertTrue(eiSE.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE.next == fragmentContent);
+		
+		EventInformation eiED =  fragmentContent.lookFor(3);
+		assertTrue(eiED.event.isEventType(EventType.END_DOCUMENT));
+	}
 
 }
