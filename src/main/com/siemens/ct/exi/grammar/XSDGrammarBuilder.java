@@ -537,8 +537,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			Attribute at = getAttribute(atDecl);
 			globalAttributes.put(at.getQName(), at);
 		}
-		sig.setGlobalAttributes(globalAttributes);
-
+		sig.setGlobalAttributes(globalAttributes);		
+		
 		return sig;
 	}
 
@@ -603,10 +603,20 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	 * lexicographically.
 	 */
 	protected void addLocalNameStringEntry(String namespaceURI, String localName) {
+		// fetch localName list
+		List<String> localNameList = addNamespaceStringEntry(namespaceURI);
+		
+		// check localName value presence
+		if (!localNameList.contains(localName)) {
+			localNameList.add(localName);
+			// System.out.println("LocalName=" + localName + " \t " + namespaceURI);
+		}
+	}
+	
+	protected List<String> addNamespaceStringEntry(String namespaceURI) {
 		if (namespaceURI == null) {
 			namespaceURI = XMLConstants.NULL_NS_URI;
 		}
-		// if (isNamespacesOfInterest(namespaceURI)) {
 		// fetch localName list
 		List<String> localNameList;
 		if (schemaLocalNames.containsKey(namespaceURI)) {
@@ -615,24 +625,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			localNameList = new ArrayList<String>();
 			schemaLocalNames.put(namespaceURI, localNameList);
 		}
-		// check localName value presence
-		if (!localNameList.contains(localName)) {
-			localNameList.add(localName);
-		}
-		// } else {
-		// GrammarURIEntry gue = AbstractGrammar.getURIEntryForXSD();
-		// boolean found = false;
-		// for(String locN : gue.localNames) {
-		// if(localName.equals(locN)) {
-		// found = true;
-		// }
-		// }
-		// if (!found) {
-		// System.out.println("NotOfInterest: " + namespaceURI + " --> " +
-		// localName);
-		// }
-		// }
+		
+		return localNameList;
 	}
+	
 
 	protected List<StartElement> initGrammars() throws EXIException {
 		List<StartElement> globalElements = new ArrayList<StartElement>();
@@ -851,6 +847,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				// add attribute wildcard URI
 				if (!atWildcardNamespaces.contains(namespace)) {
 					atWildcardNamespaces.add(namespace);
+					addNamespaceStringEntry(namespace);
 				}
 			}
 		}
@@ -871,11 +868,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			return;
 		}
 		this.handledElements.add(xsElementDeclaration);
-
+		
 		// add local name entry for string table pre-population
 		addLocalNameStringEntry(xsElementDeclaration.getNamespace(),
 				xsElementDeclaration.getName());
-
+		
 		// type definition
 		XSTypeDefinition td = xsElementDeclaration.getTypeDefinition();
 

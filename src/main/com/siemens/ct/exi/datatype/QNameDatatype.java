@@ -81,6 +81,7 @@ public class QNameDatatype extends AbstractDatatype {
 	}
 	
 	public void setGrammarURIEnties(GrammarURIEntry[] grammarURIEntries) {	
+//		long start = System.currentTimeMillis();
 		this.grammarURIEntries = grammarURIEntries;
 		runtimeURIEntries.clear();
 		for (GrammarURIEntry grammarEntry : grammarURIEntries) {
@@ -94,6 +95,8 @@ public class QNameDatatype extends AbstractDatatype {
 				uriContext.addLocalName(localName);
 			}
 		}
+//		long end = System.currentTimeMillis();
+//		System.out.println("Init StringTable " + (end-start));
 	}
 	
 	public void initForEachRun()  {
