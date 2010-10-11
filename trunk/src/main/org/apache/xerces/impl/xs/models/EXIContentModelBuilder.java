@@ -281,9 +281,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		if (elementPool.containsKey(elementDecl)) {
 			se = elementPool.get(elementDecl);
 		} else {
+			String namespaceURI = elementDecl.getNamespace();
+			String localName = elementDecl.getName();
 			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(
-					elementDecl.getNamespace(), elementDecl.getName());
+					namespaceURI, localName);
 			se = new StartElement(qname);
+			addLocalNameStringEntry(namespaceURI, localName);
 			elementPool.put(elementDecl, se);
 		}
 
@@ -404,7 +407,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					printTransition(startState, xs, nextState);
 
 					for (int i = 0; i < sl.getLength(); i++) {
-						Event xsEvent = new StartElementNS(sl.item(i));
+						String namespaceURI = sl.item(i);
+						addNamespaceStringEntry(namespaceURI);
+						Event xsEvent = new StartElementNS(namespaceURI);
 						boolean isNewState = handleStateEntry(startState,
 								knownStates, xsEvent, nextState, isMixedContent);
 						if (isNewState) {
@@ -417,6 +422,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			}
 		}
 	}
+	
+	abstract protected void addLocalNameStringEntry(String namespaceURI, String localName);
+	
+	abstract protected List<String> addNamespaceStringEntry(String namespaceURI);
 
 	/**
 	 * 
