@@ -132,8 +132,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		 * allocating an extra, empty block for the implicit events at the end
 		 * of the stream.
 		 */
-		if (blockValues == 0 && channel.getLength() == 0) {
-			// empty block
+		if (channel.getLength() == 0) {
+			// empty block -> no deflate stream so..
 		}
 		/*
 		 * If the block contains at most 100 values, the block will contain only
