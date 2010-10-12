@@ -77,8 +77,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
 
-	// attribute wildcard namespaces
-	protected List<String> atWildcardNamespaces;
+//	// attribute wildcard namespaces
+//	protected List<String> atWildcardNamespaces;
 
 	// avoids recursive element handling
 	protected Set<XSElementDeclaration> handledElements;
@@ -107,7 +107,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		handledElements = new HashSet<XSElementDeclaration>();
 		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagRule>();
 		schemaLocalNames = new HashMap<String, List<String>>();
-		atWildcardNamespaces = new ArrayList<String>();
+		// atWildcardNamespaces = new ArrayList<String>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 	}
 
@@ -117,7 +117,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		handledElements.clear();
 		grammarTypes.clear();
-		atWildcardNamespaces.clear();
+		// atWildcardNamespaces.clear();
 		attributePool.clear();
 
 		elementFragment0 = null;
@@ -438,10 +438,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			throw new EXIException(sb.toString());
 		}
+		
 
 		// initialize grammars --> global element)
 		List<StartElement> globalElements = initGrammars();
-
+		
 		// schema declared elements --> fragment grammars
 		List<StartElement> fragmentElements = getFragmentGrammars();
 
@@ -449,6 +450,45 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		Collections.sort(globalElements, lexSort);
 		Collections.sort(fragmentElements, lexSort);
 
+		/*
+		 * Simple sub-type hierarchy
+		 */
+		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
+		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
+		while (iterTypes.hasNext()) {
+			QName typeQName = iterTypes.next();
+			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName
+					.getLocalPart(), typeQName.getNamespaceURI());
+			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
+					&& !td.getAnonymous()) {
+				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
+				XSTypeDefinition baseType = td.getBaseType();
+				if (baseType == null) {
+					// http://www.w3.org/2001/XMLSchema,anySimpleType
+				} else {
+					QName baseTypeQName = getQNameForType(baseType);
+					List<QName> sub = subtypes.get(baseTypeQName);
+					if (sub == null) {
+						sub = new ArrayList<QName>();
+						subtypes.put(baseTypeQName, sub);
+					}
+					sub.add(getQNameForType(td));
+				}
+			}
+		}
+
+		/*
+		 * global attributes
+		 */
+		XSNamedMap nm = xsModel
+				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
+		Map<QName, Attribute> globalAttributes = new HashMap<QName, Attribute>();
+		for (int i = 0; i < nm.getLength(); i++) {
+			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
+			Attribute at = getAttribute(atDecl);
+			globalAttributes.put(at.getQName(), at);
+		}
+		
 		// schema URIs and (sorted) localNames
 		String[] uris = getURITableEntries();
 		GrammarURIEntry[] grammarEntries = new GrammarURIEntry[uris.length];
@@ -487,57 +527,17 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			grammarEntries[i] = new GrammarURIEntry(uri, localNamesArray,
 					prefixes);
 		}
-
+		
+		/*
+		 * create schema informed grammar
+		 * (+set grammarTypes, simpleSubTypes and global attributes)
+		 */
 		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
 				fragmentElements, globalElements);
-
-		/*
-		 * type grammar
-		 */
+		
 		sig.setTypeGrammars(grammarTypes);
-
-		/*
-		 * Simple sub-type hierarchy
-		 */
-		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
-		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
-		while (iterTypes.hasNext()) {
-			QName typeQName = iterTypes.next();
-			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName
-					.getLocalPart(), typeQName.getNamespaceURI());
-			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
-					&& !td.getAnonymous()) {
-				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-				XSTypeDefinition baseType = td.getBaseType();
-				if (baseType == null) {
-					// http://www.w3.org/2001/XMLSchema,anySimpleType
-				} else {
-					QName baseTypeQName = getQNameForType(baseType);
-					List<QName> sub = subtypes.get(baseTypeQName);
-					if (sub == null) {
-						sub = new ArrayList<QName>();
-						subtypes.put(baseTypeQName, sub);
-					}
-					sub.add(getQNameForType(td));
-					// System.out.println( td + " instance of " +
-					// baseTypeQName);
-				}
-			}
-		}
 		sig.setSimpleTypeSubtypes(subtypes);
-
-		/*
-		 * global attributes
-		 */
-		XSNamedMap nm = xsModel
-				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
-		Map<QName, Attribute> globalAttributes = new HashMap<QName, Attribute>();
-		for (int i = 0; i < nm.getLength(); i++) {
-			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
-			Attribute at = getAttribute(atDecl);
-			globalAttributes.put(at.getQName(), at);
-		}
-		sig.setGlobalAttributes(globalAttributes);		
+		sig.setGlobalAttributes(globalAttributes);
 		
 		return sig;
 	}
@@ -571,15 +571,25 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
-
-		// any attribute namespaces
-		for (String atWildcardURI : this.atWildcardNamespaces) {
-			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
-					: atWildcardURI;
-			if (isAdditionalNamespace(atWildcardURI)) {
-				sortedURIs.add(atWildcardURI);
+		
+		// is this necessary? (but doesn't hurt either)
+		Iterator<String> iterUris = schemaLocalNames.keySet().iterator();
+		while (iterUris.hasNext()) {
+			String uri = iterUris.next();
+			if (isAdditionalNamespace(uri)) {
+				sortedURIs.add(uri);
 			}
 		}
+		
+
+//		// any attribute namespaces
+//		for (String atWildcardURI : this.atWildcardNamespaces) {
+//			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
+//					: atWildcardURI;
+//			if (isAdditionalNamespace(atWildcardURI)) {
+//				sortedURIs.add(atWildcardURI);
+//			}
+//		}
 
 		// copy to array (in right order)
 		String[] uris = new String[4 + sortedURIs.size()];
@@ -845,10 +855,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				String namespace = sl.item(k);
 				rule.addRule(new AttributeNS(namespace), rule);
 				// add attribute wildcard URI
-				if (!atWildcardNamespaces.contains(namespace)) {
-					atWildcardNamespaces.add(namespace);
-					addNamespaceStringEntry(namespace);
-				}
+				addNamespaceStringEntry(namespace);
+//				if (!atWildcardNamespaces.contains(namespace)) {
+//					atWildcardNamespaces.add(namespace);
+//				}
 			}
 		}
 	}

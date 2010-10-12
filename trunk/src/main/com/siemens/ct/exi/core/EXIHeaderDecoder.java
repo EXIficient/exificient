@@ -149,8 +149,13 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
 		
-		// EXIFactory exiOptionsFactory = DefaultEXIFactory.newInstance();
+		// clone factory
 		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
+		
+		// STRICT is special, there is no NON STRICT flag --> per default set to non strict
+		if (exiOptionsFactory.getFidelityOptions().isStrict()) {
+			exiOptionsFactory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_STRICT, false);
+		}
 		
 		clear();
 	
