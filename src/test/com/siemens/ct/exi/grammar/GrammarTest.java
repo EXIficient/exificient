@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 public class GrammarTest extends TestCase {
 	String schema;
 
-	private Grammar getGrammarFromSchemaAsString(String schemaAsString)
+	public static Grammar getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());

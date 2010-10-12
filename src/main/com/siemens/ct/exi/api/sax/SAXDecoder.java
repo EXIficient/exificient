@@ -223,7 +223,7 @@ public class SAXDecoder implements XMLReader {
 
 			// process EXI events
 			parseEXIEvents();
-
+			
 		} catch (EXIException e) {
 			throw new SAXException("EXI", e);
 		}

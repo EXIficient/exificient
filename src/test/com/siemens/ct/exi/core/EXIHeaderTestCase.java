@@ -110,6 +110,10 @@ public class EXIHeaderTestCase extends TestCase {
 	}
 	
 	protected void _testOptions(EXIFactory test) throws EXIException, IOException {
+		_testOptions(test, null);
+	}
+
+	protected void _testOptions(EXIFactory test, EXIFactory noOptionsFactory) throws EXIException, IOException {
 		EXIHeaderEncoder headerEncoder = new EXIHeaderEncoder();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -121,7 +125,11 @@ public class EXIHeaderTestCase extends TestCase {
 		DecoderChannel decoderChannel = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
 		
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
-		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, DefaultEXIFactory.newInstance());
+		if (noOptionsFactory == null) {
+			noOptionsFactory = DefaultEXIFactory.newInstance();
+		}
+		
+		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, noOptionsFactory);
 		
 		assertTrue(test.equals(decodedTest));
 	}
@@ -205,5 +213,16 @@ public class EXIHeaderTestCase extends TestCase {
 
 		_testOptions(ef);
 	}
+	
+	public void testEXIOptions9() throws EXIException, IOException {		
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		
+		// STRICT as noOptionsFactory
+		EXIFactory efStrict = DefaultEXIFactory.newInstance();
+		efStrict.setFidelityOptions(FidelityOptions.createStrict());
+
+		_testOptions(ef, efStrict);
+	}
+	
 	
 }

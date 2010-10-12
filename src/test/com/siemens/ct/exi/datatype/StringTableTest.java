@@ -33,13 +33,16 @@ import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
+import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammar.GrammarTest;
+import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.StringTypeDecoder;
 import com.siemens.ct.exi.types.StringTypeEncoder;
 
-public class StringTableValueTest extends AbstractTestCase {
+public class StringTableTest extends AbstractTestCase {
 
 	@Test
 	public void testStringTableValue0() throws IOException {
@@ -365,6 +368,83 @@ public class StringTableValueTest extends AbstractTestCase {
 		assertTrue(ddl.readValue(dt, qc, bdc).toString().equals(s4)); /* replaces values */
 		assertTrue(ddl.readValue(dt, qa, bdc).toString().equals(s1)); /* no local hit*/
 		assertTrue(ddl.readValue(dt, qc, bdc).toString().equals(s2)); /* no local hit*/
+	}
+
+	@Test
+	public void testStringTableGlobalAttribute() throws Exception {
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence >"
+			+ "    <xs:element name='a' type='xs:string' /> "
+			+ "    <xs:element name='b' type='xs:string' /> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ " <xs:attribute name='globalAT' type='xs:integer' />"
+			+ "</xs:schema>";
+		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		GrammarURIEntry[] gue = g.getGrammarEntries();
+		
+		// a, b, globalAT, root
+		String[] localNames0 = gue[0].localNames;
+		assertTrue(localNames0.length == 4);
+		assertTrue("a".equals(localNames0[0]));
+		assertTrue("b".equals(localNames0[1]));
+		assertTrue("globalAT".equals(localNames0[2]));
+		assertTrue("root".equals(localNames0[3]));
+	}
+
+	@Test
+	public void testStringTableAnyAttributeElement() throws Exception {
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence >"
+			+ "    <xs:any namespace='urn:bla' />"
+			+ "   </xs:sequence>"
+			+ "   <xs:anyAttribute namespace='urn:foo'/>"
+			+ "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		GrammarURIEntry[] gue = g.getGrammarEntries();
+		
+		// root
+		String[] localNames0 = gue[0].localNames;
+		assertTrue(localNames0.length == 1);
+		assertTrue("root".equals(localNames0[0]));
+		
+		// urn:bla
+		assertTrue("urn:bla".equals(gue[4].uri));
+		String[] localNames4 = gue[4].localNames;
+		assertTrue(localNames4.length == 0);
+		
+		// urn:foo
+		assertTrue("urn:foo".equals(gue[5].uri));
+		String[] localNames5 = gue[5].localNames;
+		assertTrue(localNames5.length == 0);
+	}
+	
+	@Test
+	public void testStringTableAnyOther() throws Exception {
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence >"
+			+ "    <xs:any namespace='##other' />"
+			+ "   </xs:sequence>"
+			+ "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		GrammarURIEntry[] gue = g.getGrammarEntries();
+		
+		// root
+		String[] localNames0 = gue[0].localNames;
+		assertTrue(localNames0.length == 1);
+		assertTrue("root".equals(localNames0[0]));
+		
+		assertTrue(gue.length == 4);
 	}
 
 }
