@@ -20,6 +20,12 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -49,6 +55,32 @@ public class ListTest extends AbstractTestCase {
 		EncoderChannel byteEC = getByteEncoder();
 		ldtInteger.writeValue(byteEC, null, null);
 		Value v2 = ldtInteger.readValue(getByteDecoder(), null, null);
+		assertTrue(s.equals(v2.toString()));
+	}
+	
+	public void testListIntegerLexical1() throws IOException {
+		String s = "100 34 56 -23 1567";
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(BuiltInType.INTEGER_32, null), null);
+
+		boolean valid = ldtInteger.isValidRCS(s);
+		assertTrue(valid);
+
+		StringEncoder stringEncoder = new StringEncoderImpl();
+		StringDecoder stringDecoder = new StringDecoderImpl();
+		QName context = new QName("", "intList"); 
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		ldtInteger.writeValueRCS(rcsDatatype, bitEC, stringEncoder, context);
+		bitEC.flush();
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, getBitDecoder(), stringDecoder, context);
+		assertTrue(s.equals(v1.toString()));
+
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		ldtInteger.writeValueRCS(rcsDatatype, byteEC, stringEncoder, context);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, getByteDecoder(), stringDecoder, context);
 		assertTrue(s.equals(v2.toString()));
 	}
 

@@ -242,7 +242,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.INTEGER_64 == dt.getBuiltInType());
 	}
-
+	
 	public void testUnsignedInteger1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='UnsignedInteger'>"
@@ -302,6 +302,21 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				.getBuiltInType());
 	}
 
+	public void testUnsignedInteger5() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='UnsignedInteger'>"
+				+ "    <xs:restriction base='xs:positiveInteger'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"UnsignedInteger", "");
+
+		assertTrue(BuiltInType.UNSIGNED_INTEGER_BIG == dt
+				.getBuiltInType());
+	}
+	
 	public void testUnsignedIntegerFacet1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='UnsignedInteger'>"
