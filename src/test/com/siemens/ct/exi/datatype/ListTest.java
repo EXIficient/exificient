@@ -83,6 +83,35 @@ public class ListTest extends AbstractTestCase {
 		Value v2 = ldtInteger.readValueRCS(rcsDatatype, getByteDecoder(), stringDecoder, context);
 		assertTrue(s.equals(v2.toString()));
 	}
+	
+	// encodes special chars as well
+	public void testListIntegerLexical2() throws IOException {
+		char special = '\u03D7';
+		String s = "100" + special;
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(BuiltInType.INTEGER_32, null), null);
+
+		boolean valid = ldtInteger.isValidRCS(s);
+		assertTrue(valid);
+
+		StringEncoder stringEncoder = new StringEncoderImpl();
+		StringDecoder stringDecoder = new StringDecoderImpl();
+		QName context = new QName("", "intList"); 
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		ldtInteger.writeValueRCS(rcsDatatype, bitEC, stringEncoder, context);
+		bitEC.flush();
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, getBitDecoder(), stringDecoder, context);
+		assertTrue(s.equals(v1.toString()));
+
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		ldtInteger.writeValueRCS(rcsDatatype, byteEC, stringEncoder, context);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, getByteDecoder(), stringDecoder, context);
+		assertTrue(s.equals(v2.toString()));
+	}
+	
 
 	public void testListNBit1() throws IOException {
 		String s = "+1 0 127 -127";
