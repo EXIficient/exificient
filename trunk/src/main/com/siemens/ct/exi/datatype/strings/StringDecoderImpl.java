@@ -52,6 +52,8 @@ public class StringDecoderImpl implements StringDecoder {
 		localValues = new HashMap<QName, List<Value>>();
 	}
 
+	private static final Value EMPTY_STRING_VALUE = new StringValue("");
+	
 	public Value readValue(QName context, DecoderChannel valueChannel)
 			throws IOException {
 		Value value;
@@ -72,15 +74,17 @@ public class StringDecoderImpl implements StringDecoder {
 			// ==> string literal is encoded as a String with the length
 			// incremented by two.
 			int L = i - 2;
-			value = new StringValue(valueChannel.decodeStringOnly(L));
 			/*
 			 * If length L is greater than zero the string S is added 
 			 */
 			if (L > 0) {
+				value = new StringValue(valueChannel.decodeStringOnly(L));
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the global
 				// value string table partition.
 				addValue(context, value);	
+			} else {
+				value = EMPTY_STRING_VALUE;
 			}
 			break;
 		}

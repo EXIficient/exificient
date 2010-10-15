@@ -99,10 +99,10 @@ public class ListDatatype extends AbstractDatatype {
 		return new ListValue(values);
 	}
 
-	@Override
-	public boolean isValidRCS(String value) {
-		return super.isValidRCS(value);
-	}
+//	@Override
+//	public boolean isValidRCS(String value) {
+//		return super.isValidRCS(value);
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
@@ -120,28 +120,33 @@ public class ListDatatype extends AbstractDatatype {
 		}
 	}
 
-	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			EncoderChannel valueChannel, StringEncoder stringEncoder,
-			QName context) throws IOException {
-		
-		StringTokenizer st = new StringTokenizer(this.lastRCSValue,
-				Constants.XSD_LIST_DELIM);
-		
-		// length prefixed sequence of values
-		valueChannel.encodeUnsignedInteger(st.countTokens());
-
-		// iterate over all tokens
-		rcsEncoder.setRestrictedCharacterSet(rcs);
-
-		while (st.hasMoreTokens()) {
-			rcsEncoder.isValid(st.nextToken());
-			rcsEncoder.writeValue(valueChannel, stringEncoder, context);
-		}
-	}
+//	@Override
+//	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+//			EncoderChannel valueChannel, StringEncoder stringEncoder,
+//			QName context) throws IOException {
+//		
+////		StringTokenizer st = new StringTokenizer(this.lastRCSValue,
+////				Constants.XSD_LIST_DELIM);
+////		
+////		// length prefixed sequence of values
+////		valueChannel.encodeUnsignedInteger(st.countTokens());
+////
+////		// iterate over all tokens
+//		
+//		rcsEncoder.setRestrictedCharacterSet(rcs);
+//		rcsEncoder.isValid(lastRCSValue);
+//		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
+//		
+////		while (st.hasMoreTokens()) {
+////			rcsEncoder.isValid(st.nextToken());
+////			rcsEncoder.writeValue(valueChannel, stringEncoder, context);
+////		}
+//	}
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
+		
+		
 		int len = valueChannel.decodeUnsignedInteger();
 		List<Value> values = new ArrayList<Value>(len);
 
@@ -153,20 +158,23 @@ public class ListDatatype extends AbstractDatatype {
 		return new ListValue(values);
 	}
 
-	@Override
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			QName context) throws IOException {
-		int len = valueChannel.decodeUnsignedInteger();
-		List<Value> values = new ArrayList<Value>(len);
-
-		rcsDecoder.setRestrictedCharacterSet(rcs);
-
-		for (int i = 0; i < len; i++) {
-			values.add(rcsDecoder.readValue(valueChannel, stringDecoder,
-					context));
-		}
-
-		return new ListValue(values);
-	}
+//	@Override
+//	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+//			DecoderChannel valueChannel, StringDecoder stringDecoder,
+//			QName context) throws IOException {
+//		return super.readValueRCS(rcsDecoder, valueChannel, stringDecoder, context);
+//		
+//		
+////		int len = valueChannel.decodeUnsignedInteger();
+////		List<Value> values = new ArrayList<Value>(len);
+////
+////		rcsDecoder.setRestrictedCharacterSet(rcs);
+////
+////		for (int i = 0; i < len; i++) {
+////			values.add(rcsDecoder.readValue(valueChannel, stringDecoder,
+////					context));
+////		}
+////
+////		return new ListValue(values);
+//	}
 }

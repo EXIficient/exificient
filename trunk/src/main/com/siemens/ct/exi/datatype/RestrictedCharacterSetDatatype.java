@@ -44,6 +44,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -6098764255799006920L;
 	
+	private static final Value EMPTY_STRING_VALUE = new StringValue("");
+	
 	protected String lastValidValue;
 
 	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs, QName schemaType) {
@@ -93,35 +95,37 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// string-table miss ==> restricted character
 			// string literal is encoded as a String with the length
 			// incremented by two.
-			int numberOfTuples = lastValidValue.length();
-			
-//			if (numberOfTuples != lastValidValue.codePointCount(0, numberOfTuples)) {
-//				System.err.println("dsadas");
-//			}
+			// int L = lastValidValue.length();
+			final int L = lastValidValue.codePointCount(0, lastValidValue.length());
 
-			valueChannel.encodeUnsignedInteger(numberOfTuples + 2);
+			valueChannel.encodeUnsignedInteger(L + 2);
 
-			// number of bits
-			int numberOfBits = rcs.getCodingLength();
+			/*
+			 * If length L is greater than zero the string S is added 
+			 */
+			if (L > 0) {
+				// number of bits
+				int numberOfBits = rcs.getCodingLength();
 
-			for (int i = 0; i < numberOfTuples; i++) {
-				int codePoint = lastValidValue.codePointAt(i);
-				int code = rcs.getCode(codePoint);
-				if (code == Constants.NOT_FOUND) {
-					// indicate deviation
-					valueChannel.encodeNBitUnsignedInteger(rcs.size(),
-							numberOfBits);
+				for (int i = 0; i < L; i++) {
+					int codePoint = lastValidValue.codePointAt(i);
+					int code = rcs.getCode(codePoint);
+					if (code == Constants.NOT_FOUND) {
+						// indicate deviation
+						valueChannel.encodeNBitUnsignedInteger(rcs.size(),
+								numberOfBits);
 
-					valueChannel.encodeUnsignedInteger(codePoint);
-				} else {
-					valueChannel.encodeNBitUnsignedInteger(code, numberOfBits);
+						valueChannel.encodeUnsignedInteger(codePoint);
+					} else {
+						valueChannel.encodeNBitUnsignedInteger(code, numberOfBits);
+					}
 				}
-			}
 
-			// After encoding the string value, it is added to both the
-			// associated "local" value string table partition and the
-			// global value string table partition.
-			stringEncoder.addValue(context, lastValidValue);
+				// After encoding the string value, it is added to both the
+				// associated "local" value string table partition and the
+				// global value string table partition.
+				stringEncoder.addValue(context, lastValidValue);	
+			}
 		}
 	}
 
@@ -141,32 +145,39 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// not found in global value (and local value) partition
 			// ==> restricted character string literal is encoded as a String
 			// with the length incremented by two.
-			int slen = i - 2;
+			int L = i - 2;
+			
+			/*
+			 * If length L is greater than zero the string S is added 
+			 */
+			if (L > 0) {
+				// number of bits
+				int numberOfBits = rcs.getCodingLength();
+				int size = rcs.size();
 
-			// number of bits
-			int numberOfBits = rcs.getCodingLength();
-			int size = rcs.size();
+				char[] cValue = new char[L];
+				value = new StringValue(cValue);
 
-			char[] cValue = new char[slen];
-			value = new StringValue(cValue);
+				for (int k = 0; k < L; k++) {
+					int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);
+					int codePoint;
+					if (code == size) {
+						// deviation
+						codePoint = valueChannel.decodeUnsignedInteger();
+					} else {
+						codePoint = rcs.getCodePoint(code);
+					}
 
-			for (int k = 0; k < slen; k++) {
-				int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);
-				int codePoint;
-				if (code == size) {
-					// deviation
-					codePoint = valueChannel.decodeUnsignedInteger();
-				} else {
-					codePoint = rcs.getCodePoint(code);
+					Character.toChars(codePoint, cValue, k);
 				}
 
-				Character.toChars(codePoint, cValue, k);
+				// After encoding the string value, it is added to both the
+				// associated "local" value string table partition and the global
+				// value string table partition.
+				stringDecoder.addValue(context, value);	
+			} else {
+				value = EMPTY_STRING_VALUE;
 			}
-
-			// After encoding the string value, it is added to both the
-			// associated "local" value string table partition and the global
-			// value string table partition.
-			stringDecoder.addValue(context, value);
 		}
 
 		return value;

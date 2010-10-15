@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -53,9 +54,12 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	 */
 	private static final long serialVersionUID = 7647530843802602241L;
 
-	protected List<StartElement> sortedGlobalElements; // subset of entire set of
-													// element
-
+	 // subset of entire set of (named) element
+	protected List<StartElement> sortedGlobalElements;
+	
+	// named elements
+	protected List<StartElement> namedElements;
+	
 	protected Map<QName, StartElement> globalElements;
 
 	protected Map<QName, Attribute> globalAttributes;
@@ -84,6 +88,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		
 		//	elements
 		this.sortedGlobalElements = sortedGlobalElements;
+		this.namedElements = fragmentElements;
 		
 		// init document & fragment grammar
 		initDocumentGrammar();
@@ -124,6 +129,10 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return false;
 	}
 	
+	public List<StartElement> getNamedElements() {
+		return this.namedElements;
+	}
+	
 	public StartElement getGlobalElement(QName qname) {
 		//	TODO build hash-map
 		for (StartElement globalElement : sortedGlobalElements) {
@@ -152,7 +161,10 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	public SchemaInformedRule getTypeGrammar(QName qname) {
 		return grammarTypes.get(qname);
 	}
-	
+
+	public Set<QName> getTypeGrammars() {
+		return grammarTypes.keySet();
+	}
 	
 	protected void setSimpleTypeSubtypes(Map<QName, List<QName>> subtypes) {
 		this.subtypes = subtypes;
