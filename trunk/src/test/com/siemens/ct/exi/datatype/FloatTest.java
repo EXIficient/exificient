@@ -21,6 +21,7 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.FloatValue;
 
@@ -49,7 +50,7 @@ public class FloatTest extends AbstractTestCase {
 		float f = 12.25f;
 		FloatValue fv = FloatValue.parse(f);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -64,7 +65,7 @@ public class FloatTest extends AbstractTestCase {
 		float f = 12.75f;
 		FloatValue fv = FloatValue.parse(f);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -79,7 +80,7 @@ public class FloatTest extends AbstractTestCase {
 		float f = 1567.0f;
 		FloatValue fv = FloatValue.parse(f);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -109,7 +110,7 @@ public class FloatTest extends AbstractTestCase {
 		float f = 0f;
 		FloatValue fv = FloatValue.parse(f);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -124,7 +125,7 @@ public class FloatTest extends AbstractTestCase {
 		float f = 1f / 3f;
 		FloatValue fv = FloatValue.parse(f);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -134,7 +135,7 @@ public class FloatTest extends AbstractTestCase {
 		float diff = Math.abs(f - df);
 		assertTrue(diff < 0.000001);
 	}
-	
+
 	public void testFloatType1_123456789() throws IOException {
 		double d = 1.123456789d;
 		FloatValue fv = FloatValue.parse(d);
@@ -154,7 +155,7 @@ public class FloatTest extends AbstractTestCase {
 		double d = 56783.132154d;
 		FloatValue fv = FloatValue.parse(d);
 		assertTrue(fv != null);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeFloat(fv.mantissa, fv.exponent);
@@ -179,8 +180,6 @@ public class FloatTest extends AbstractTestCase {
 		double diff = Math.abs(d - dd);
 		assertTrue(diff < 0.00000000001);
 	}
-
-
 
 	public void testFloatNaN() throws IOException {
 		String s = "NaN";
@@ -419,6 +418,118 @@ public class FloatTest extends AbstractTestCase {
 				d2)) == 0);
 	}
 
+	// the range of the mantissa is -(2^63) to 2^63-1 
+	// the range of the exponent is -(2^14-1) to 2^14-1
+	public void testFloatBoundary1() throws IOException {
+		// mantissa MINIMUM
+		long m = Constants.FLOAT_MANTISSA_MIN_RANGE;
+		long e = 123;
+		FloatValue fv = new FloatValue(m, e);
+		
+		String s = fv.toString();
+		assert("-9223372036854775808E123".equals(s));
+		
+		FloatValue f = FloatValue.parse(s);
+		assertTrue(f != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f.mantissa, f.exponent);
+		bitEC.flush();
+		String d1 = getBitDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d1, new BigDecimal(s).compareTo(new BigDecimal(
+				d1)) == 0);
+		// Byte
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		String d2 = getByteDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d2, new BigDecimal(s).compareTo(new BigDecimal(
+				d2)) == 0);
+	}
+	
+	// the range of the mantissa is -(2^63) to 2^63-1 
+	// the range of the exponent is -(2^14-1) to 2^14-1
+	public void testFloatBoundary2() throws IOException {
+		// mantissa MAXIMUM
+		long m = Constants.FLOAT_MANTISSA_MAX_RANGE;
+		long e = 123;
+		FloatValue fv = new FloatValue(m, e);
+		
+		String s = fv.toString();
+		assert("9223372036854775807E123".equals(s));
+		
+		FloatValue f = FloatValue.parse(s);
+		assertTrue(f != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f.mantissa, f.exponent);
+		bitEC.flush();
+		String d1 = getBitDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d1, new BigDecimal(s).compareTo(new BigDecimal(
+				d1)) == 0);
+		// Byte
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		String d2 = getByteDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d2, new BigDecimal(s).compareTo(new BigDecimal(
+				d2)) == 0);
+	}
+
+	// the range of the mantissa is -(2^63) to 2^63-1 
+	// the range of the exponent is -(2^14-1) to 2^14-1
+	public void testFloatBoundary3() throws IOException {
+		// exponent MINIMUM
+		long m = 456;
+		long e = Constants.FLOAT_EXPONENT_MIN_RANGE;
+		FloatValue fv = new FloatValue(m, e);
+		
+		String s = fv.toString();
+		assert("456E-16383".equals(s));
+		
+		FloatValue f = FloatValue.parse(s);
+		assertTrue(f != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f.mantissa, f.exponent);
+		bitEC.flush();
+		String d1 = getBitDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d1, new BigDecimal(s).compareTo(new BigDecimal(
+				d1)) == 0);
+		// Byte
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		String d2 = getByteDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d2, new BigDecimal(s).compareTo(new BigDecimal(
+				d2)) == 0);
+	}
+	
+	// the range of the mantissa is -(2^63) to 2^63-1 
+	// the range of the exponent is -(2^14-1) to 2^14-1
+	public void testFloatBoundary4() throws IOException {
+		// exponent MAXIMUM
+		long m = 456;
+		long e = Constants.FLOAT_EXPONENT_MAX_RANGE;
+		FloatValue fv = new FloatValue(m, e);
+		
+		String s = fv.toString();
+		assert("456E16383".equals(s));
+		
+		FloatValue f = FloatValue.parse(s);
+		assertTrue(f != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeFloat(f.mantissa, f.exponent);
+		bitEC.flush();
+		String d1 = getBitDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d1, new BigDecimal(s).compareTo(new BigDecimal(
+				d1)) == 0);
+		// Byte
+		getByteEncoder().encodeFloat(f.mantissa, f.exponent);
+		String d2 = getByteDecoder().decodeFloatValue().toString();
+		assertTrue(s + " != " + d2, new BigDecimal(s).compareTo(new BigDecimal(
+				d2)) == 0);
+	}
+	
 	public void testFloatInvalid0() {
 		String s = "x11.1";
 
@@ -442,7 +553,7 @@ public class FloatTest extends AbstractTestCase {
 		assertFalse("Invalid float value '" + s + "' parsed successfully",
 				f != null);
 	}
-	
+
 	public void testFloatInvalid3() {
 		String s = "E";
 
@@ -450,42 +561,63 @@ public class FloatTest extends AbstractTestCase {
 		assertFalse("Invalid float value '" + s + "' parsed successfully",
 				f != null);
 	}
-	
+
 	public void testFloatInvalid4() throws IOException {
-		//	too large mantissa
+		// too large mantissa
 		// The range of the mantissa is - (2^63) to 2^63-1
 		// and the range of the exponent is - (2^14-1) to 2^14-1
+		// 9223372036854775807L would be OK!
 		String s = "9223372036854775808E3";
 		FloatValue f = FloatValue.parse(s);
 		assertFalse("Float Mantissa " + s + " too large", f != null);
 	}
 	
+	public void testFloatInvalid4b() throws IOException {
+		// too large mantissa
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		// 9223372036854775807L would be OK!
+		String s = "9223372036854775809E3";
+		FloatValue f = FloatValue.parse(s);
+		assertFalse("Float Mantissa " + s + " too large", f != null);
+	}
+
 	public void testFloatInvalid5() throws IOException {
-		//	too large exponent
+		// too large exponent
 		// The range of the mantissa is - (2^63) to 2^63-1
 		// and the range of the exponent is - (2^14-1) to 2^14-1
 		String s = "123E16384";
 		FloatValue f = FloatValue.parse(s);
 		assertFalse("Float exponent" + s + " too large", f != null);
 	}
-	
+
 	public void testFloatInvalid6() throws IOException {
-		//	too large mantissa
+		// too large mantissa
 		// The range of the mantissa is - (2^63) to 2^63-1
 		// and the range of the exponent is - (2^14-1) to 2^14-1
+		/* -(2^63) == -9223372036854775808L */
 		String s = "-9223372036854775809E3";
 		FloatValue f = FloatValue.parse(s);
 		assertFalse("Double Mantissa " + s + " too large", f != null);
 	}
 	
+	public void testFloatInvalid6b() throws IOException {
+		// too large mantissa
+		// The range of the mantissa is - (2^63) to 2^63-1
+		// and the range of the exponent is - (2^14-1) to 2^14-1
+		/* -(2^63) == -9223372036854775808L */
+		String s = "-9223372036854775810E3";
+		FloatValue f = FloatValue.parse(s);
+		assertFalse("Double Mantissa " + s + " too large", f != null);
+	}
+
 	public void testFloatInvalid7() throws IOException {
-		//	too large exponent
+		// too large exponent
 		// The range of the mantissa is - (2^63) to 2^63-1
 		// and the range of the exponent is - (2^14-1) to 2^14-1
 		String s = "123E-16384";
 		FloatValue f = FloatValue.parse(s);
 		assertFalse("Double exponent" + s + " too large", f != null);
 	}
-	
 
 }

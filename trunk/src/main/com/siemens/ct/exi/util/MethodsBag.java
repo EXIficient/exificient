@@ -193,7 +193,12 @@ public class MethodsBag {
     }
     
     public static final int getStringSize(long l) {
-    	return (l < 0) ? stringSize(-l) + 1 : stringSize(l);
+    	if (l == Long.MIN_VALUE) {
+    		// -9223372036854775808
+    		return 20;
+    	} else {
+    		return (l < 0) ? stringSize(-l) + 1 : stringSize(l);	
+    	}
     }
 
 	
@@ -282,9 +287,32 @@ public class MethodsBag {
      * digit at the specified index (exclusive), and working
      * backwards from there.
      *
-     * Will fail if i == Long.MIN_VALUE
      */
     public final static void itos(long i, int index, char[] buf) {
+    	if (i == Long.MIN_VALUE) {
+    		// -9223372036854775808
+    		buf[--index] = '8';
+    		buf[--index] = '0';
+    		buf[--index] = '8';
+    		buf[--index] = '5';
+    		buf[--index] = '7';
+    		buf[--index] = '7';
+    		buf[--index] = '4';
+    		buf[--index] = '5';
+    		buf[--index] = '8';
+    		buf[--index] = '6';
+    		buf[--index] = '3';
+    		buf[--index] = '0';
+    		buf[--index] = '2';
+    		buf[--index] = '7';
+    		buf[--index] = '3';
+    		buf[--index] = '3';
+    		buf[--index] = '2';
+    		buf[--index] = '2';
+    		buf[--index] = '9';
+    		buf[--index] = '-';
+    		return;
+    	}
     	assert(!(i == Long.MIN_VALUE));
     	
         long q;
