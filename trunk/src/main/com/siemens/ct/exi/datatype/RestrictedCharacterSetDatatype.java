@@ -95,8 +95,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// string-table miss ==> restricted character
 			// string literal is encoded as a String with the length
 			// incremented by two.
-			// int L = lastValidValue.length();
-			final int L = lastValidValue.codePointCount(0, lastValidValue.length());
+			final int L = lastValidValue.length();
+			// final int L = lastValidValue.codePointCount(0, lastValidValue.length());
 
 			valueChannel.encodeUnsignedInteger(L + 2);
 
