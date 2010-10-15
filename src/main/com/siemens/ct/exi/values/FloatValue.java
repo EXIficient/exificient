@@ -109,6 +109,18 @@ public class FloatValue extends AbstractValue {
 					}
 				}
 
+				// mantissa overflow ?
+				if (sMantissa < 0) {
+					if (negative) {
+						if (sMantissa != Long.MIN_VALUE) {
+							return null;
+						}
+					} else {
+						return null;
+					}
+				}
+				
+				
 				// status: parsing exponent after e or E
 				if (c == 'e' || c == 'E') {
 					// status: checking sign of exponent
@@ -143,20 +155,15 @@ public class FloatValue extends AbstractValue {
 				// adjust exponent and mantissa
 				sExponent -= decimalDigits;
 
-				// overflow
-				if (sMantissa < 0) {
-					return null;
-				}
-
 				if (negative) {
 					sMantissa = -sMantissa;
 				}
 
 				// too large ranges
-				if (sMantissa <= Constants.FLOAT_MANTISSA_MIN_RANGE
-						|| sMantissa >= Constants.FLOAT_MANTISSA_MAX_RANGE
-						|| sExponent <= Constants.FLOAT_EXPONENT_MIN_RANGE
-						|| sExponent >= Constants.FLOAT_EXPONENT_MAX_RANGE) {
+				if (sMantissa < Constants.FLOAT_MANTISSA_MIN_RANGE
+						|| sMantissa > Constants.FLOAT_MANTISSA_MAX_RANGE
+						|| sExponent < Constants.FLOAT_EXPONENT_MIN_RANGE
+						|| sExponent > Constants.FLOAT_EXPONENT_MAX_RANGE) {
 					return null;
 				}
 
