@@ -20,6 +20,8 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.ByteArrayInputStream;
 
+import javax.xml.namespace.QName;
+
 import org.apache.xerces.xs.XSModel;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
@@ -27,6 +29,8 @@ import org.apache.xerces.xs.XSTypeDefinition;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
+import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.DateTimeType;
@@ -36,20 +40,31 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		super(testName);
 	}
 
-	protected static Grammar getGrammarFor(String schemaAsString) throws EXIException {
+	protected static Grammar getGrammarFor(String schemaAsString)
+			throws EXIException {
 		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
 		return xsdGB.toGrammar();
 	}
-	
+
+	protected static Grammar getGrammar(String schemaAsString)
+			throws EXIException {
+		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
+				.getBytes());
+		xsdGB.loadGrammar(bais);
+		return xsdGB.toGrammar();
+	}
+
 	protected static Datatype getSimpleDatatypeFor(String schemaAsString,
 			String typeName, String typeURI) throws EXIException {
 		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
+
 		XSModel xsModel = xsdGB.getXSModel();
 
 		XSTypeDefinition td = xsModel.getTypeDefinition(typeName, typeURI);
@@ -242,7 +257,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.INTEGER_64 == dt.getBuiltInType());
 	}
-	
+
 	public void testUnsignedInteger1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='UnsignedInteger'>"
@@ -254,8 +269,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"UnsignedInteger", "");
 
-		assertTrue(BuiltInType.UNSIGNED_INTEGER_BIG == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.UNSIGNED_INTEGER_BIG == dt.getBuiltInType());
 	}
 
 	public void testUnsignedInteger2() throws Exception {
@@ -313,10 +327,9 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"UnsignedInteger", "");
 
-		assertTrue(BuiltInType.UNSIGNED_INTEGER_BIG == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.UNSIGNED_INTEGER_BIG == dt.getBuiltInType());
 	}
-	
+
 	public void testUnsignedIntegerFacet1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='UnsignedInteger'>"
@@ -426,7 +439,6 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.NBIT_INTEGER_32 == dt.getBuiltInType());
 	}
-	
 
 	public void testNBitIntegerFacet4() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
@@ -440,7 +452,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"NBit", "");
-		
+
 		assertTrue(BuiltInType.NBIT_INTEGER_64 == dt.getBuiltInType());
 	}
 
@@ -458,7 +470,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.ENUMERATION == dt.getBuiltInType());
 	}
-	
+
 	public void testEnumeration2() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='Enumeration'>"
@@ -472,7 +484,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
-		
+
 		assertTrue(BuiltInType.ENUMERATION == dt.getBuiltInType());
 		assertTrue(dt.isValid("+0"));
 
@@ -508,12 +520,11 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Letter", "");
 
-		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt.getBuiltInType());
 	}
-	
+
 	public void testRestrictedCharSet2() throws Exception {
-		//	uses xs:language but defines *own* pattern facet
+		// uses xs:language but defines *own* pattern facet
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='myLanguage'>"
 				+ "      <xs:restriction base='xs:language'>"
@@ -525,12 +536,11 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"myLanguage", "");
 
-		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt.getBuiltInType());
 	}
-	
+
 	public void testRestrictedCharSet3() throws Exception {
-		//	uses xs:language but defines *own* BUT same pattern facet
+		// uses xs:language but defines *own* BUT same pattern facet
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='myLanguage'>"
 				+ "      <xs:restriction base='xs:language'>"
@@ -542,12 +552,11 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"myLanguage", "");
 
-		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt.getBuiltInType());
 	}
-	
+
 	public void testRestrictedCharSet4() throws Exception {
-		//	uses indirectly xs:language but defines *own* BUT same pattern facet
+		// uses indirectly xs:language but defines *own* BUT same pattern facet
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='myLanguageParent'>"
 				+ "      <xs:restriction base='xs:language'>"
@@ -556,14 +565,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				+ "    </xs:simpleType>"
 				+ "    <xs:simpleType name='myLanguage'>"
 				+ "      <xs:restriction base='myLanguageParent' />"
-				+ "    </xs:simpleType>"
-				+ "</xs:schema>";
+				+ "    </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"myLanguage", "");
 
-		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt
-				.getBuiltInType());
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt.getBuiltInType());
 	}
 
 	public void testNoRestrictedCharSet1() throws Exception {
@@ -584,19 +591,75 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		/*
 		 * NOTE: If the target datatype definition is a definition for a
 		 * built-in datatypeXS2, there is no restricted character set for the
-		 * string value. 
-		 * http://www.w3.org/TR/exi/#restrictedCharSet
+		 * string value. http://www.w3.org/TR/exi/#restrictedCharSet
 		 */
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:simpleType name='myLanguage'>"
 				+ "      <xs:restriction base='xs:language' />"
-				+ "    </xs:simpleType>"
-				+ "</xs:schema>";
+				+ "    </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"myLanguage", "");
 
-		assertTrue("" + dt.getBuiltInType(), BuiltInType.STRING == dt.getBuiltInType());
+		assertTrue("" + dt.getBuiltInType(), BuiltInType.STRING == dt
+				.getBuiltInType());
+	}
+
+	public void testPositiveInteger1() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myPositiveInteger'>"
+				+ "      <xs:restriction base='xs:positiveInteger' />"
+				+ "    </xs:simpleType>" + "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myPositiveInteger", "");
+
+		assertTrue("" + dt.getBuiltInType(),
+				BuiltInType.UNSIGNED_INTEGER_BIG == dt.getBuiltInType());
+
+		Grammar grammar = getGrammar(schemaAsString);
+		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
+				.getTypeGrammar(new QName("", "myPositiveInteger"));
+		assertTrue(!r.isTypeCastable());
+		assertTrue(!r.isNillable());
+	}
+
+	public void testNonPositiveInteger1() throws Exception {
+		/*
+		 * Known Xerces Bug !? xs:nonPositiveInteger not type-castable
+		 */
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:element name='myNonPositiveInteger' type='xs:nonPositiveInteger' />"
+				+ "</xs:schema>";
+
+		Grammar grammar = getGrammar(schemaAsString);
+
+		StartElement se = grammar.getGlobalElement(new QName("",
+				"myNonPositiveInteger"));
+
+		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) se
+				.getRule();
+		assertTrue(r.isTypeCastable());
+		assertTrue(!r.isNillable());
+	}
+
+	public void testNonPositiveInteger2() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myNonPositiveInteger'>"
+				+ "      <xs:restriction base='xs:nonPositiveInteger' />"
+				+ "    </xs:simpleType>" + "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myNonPositiveInteger", "");
+
+		assertTrue("" + dt.getBuiltInType(), BuiltInType.INTEGER_BIG == dt
+				.getBuiltInType());
+
+		Grammar grammar = getGrammar(schemaAsString);
+		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
+				.getTypeGrammar(new QName("", "myNonPositiveInteger"));
+		assertTrue(!r.isTypeCastable());
+		assertTrue(!r.isNillable());
 	}
 
 }
