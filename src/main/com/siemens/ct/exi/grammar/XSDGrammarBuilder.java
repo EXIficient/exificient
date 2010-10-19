@@ -77,8 +77,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
 
-//	// attribute wildcard namespaces
-//	protected List<String> atWildcardNamespaces;
+	// // attribute wildcard namespaces
+	// protected List<String> atWildcardNamespaces;
 
 	// avoids recursive element handling
 	protected Set<XSElementDeclaration> handledElements;
@@ -438,11 +438,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			throw new EXIException(sb.toString());
 		}
-		
 
 		// initialize grammars --> global element)
 		List<StartElement> globalElements = initGrammars();
-		
+
 		// schema declared elements --> fragment grammars
 		List<StartElement> fragmentElements = getFragmentGrammars();
 
@@ -459,20 +458,38 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			QName typeQName = iterTypes.next();
 			XSTypeDefinition td = xsModel.getTypeDefinition(typeQName
 					.getLocalPart(), typeQName.getNamespaceURI());
+
 			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
 					&& !td.getAnonymous()) {
 				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-				XSTypeDefinition baseType = td.getBaseType();
+				// XSTypeDefinition baseType = td.getBaseType();
+				XSTypeDefinition baseType = getBaseType(td);
+				
 				if (baseType == null) {
 					// http://www.w3.org/2001/XMLSchema,anySimpleType
 				} else {
 					QName baseTypeQName = getQNameForType(baseType);
+
+//					// known Xerces Bug!
+//					// reports integer as baseType of negativeInteger. SHOULD be
+//					// nonPositiveInteger
+//					if ("negativeInteger".equals(td.getName())
+//							&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
+//									.getNamespace())) {
+//						System.err.println("XXX");
+//						// baseTypeQName = new
+//						// QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+//						// "nonPositiveInteger");
+//						baseTypeQName = new QName("", "nonPositiveInteger");
+//					}
+
 					List<QName> sub = subtypes.get(baseTypeQName);
 					if (sub == null) {
 						sub = new ArrayList<QName>();
 						subtypes.put(baseTypeQName, sub);
 					}
 					sub.add(getQNameForType(td));
+
 				}
 			}
 		}
@@ -488,7 +505,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			Attribute at = getAttribute(atDecl);
 			globalAttributes.put(at.getQName(), at);
 		}
-		
+
 		// schema URIs and (sorted) localNames
 		String[] uris = getURITableEntries();
 		GrammarURIEntry[] grammarEntries = new GrammarURIEntry[uris.length];
@@ -527,18 +544,18 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			grammarEntries[i] = new GrammarURIEntry(uri, localNamesArray,
 					prefixes);
 		}
-		
+
 		/*
-		 * create schema informed grammar
-		 * (+set grammarTypes, simpleSubTypes and global attributes)
+		 * create schema informed grammar (+set grammarTypes, simpleSubTypes and
+		 * global attributes)
 		 */
 		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
 				fragmentElements, globalElements);
-		
+
 		sig.setTypeGrammars(grammarTypes);
 		sig.setSimpleTypeSubtypes(subtypes);
 		sig.setGlobalAttributes(globalAttributes);
-		
+
 		return sig;
 	}
 
@@ -571,7 +588,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
-		
+
 		// is this necessary? (but doesn't hurt either)
 		Iterator<String> iterUris = schemaLocalNames.keySet().iterator();
 		while (iterUris.hasNext()) {
@@ -580,16 +597,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
-		
 
-//		// any attribute namespaces
-//		for (String atWildcardURI : this.atWildcardNamespaces) {
-//			atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
-//					: atWildcardURI;
-//			if (isAdditionalNamespace(atWildcardURI)) {
-//				sortedURIs.add(atWildcardURI);
-//			}
-//		}
+		// // any attribute namespaces
+		// for (String atWildcardURI : this.atWildcardNamespaces) {
+		// atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
+		// : atWildcardURI;
+		// if (isAdditionalNamespace(atWildcardURI)) {
+		// sortedURIs.add(atWildcardURI);
+		// }
+		// }
 
 		// copy to array (in right order)
 		String[] uris = new String[4 + sortedURIs.size()];
@@ -615,14 +631,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected void addLocalNameStringEntry(String namespaceURI, String localName) {
 		// fetch localName list
 		List<String> localNameList = addNamespaceStringEntry(namespaceURI);
-		
+
 		// check localName value presence
 		if (!localNameList.contains(localName)) {
 			localNameList.add(localName);
-			// System.out.println("LocalName=" + localName + " \t " + namespaceURI);
+			// System.out.println("LocalName=" + localName + " \t " +
+			// namespaceURI);
 		}
 	}
-	
+
 	protected List<String> addNamespaceStringEntry(String namespaceURI) {
 		if (namespaceURI == null) {
 			namespaceURI = XMLConstants.NULL_NS_URI;
@@ -635,10 +652,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			localNameList = new ArrayList<String>();
 			schemaLocalNames.put(namespaceURI, localNameList);
 		}
-		
+
 		return localNameList;
 	}
-	
 
 	protected List<StartElement> initGrammars() throws EXIException {
 		List<StartElement> globalElements = new ArrayList<StartElement>();
@@ -738,10 +754,28 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return at;
 	}
 
+	protected XSTypeDefinition getBaseType(XSTypeDefinition td) {
+		// avoid Xerces bug
+		// Xerces reports integer as base-type for negativeInteger instead of nonPositiveInteger 
+		if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+			if ("negativeInteger".equals(td.getName())
+					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
+							.getNamespace())) {
+				XSTypeDefinition td2 = xsModel.getTypeDefinition("nonPositiveInteger", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				return td2;
+			} else {
+				return td.getBaseType();
+			}
+		} else {
+			return td.getBaseType();
+		}
+	}
+
 	protected QName getQNameForType(XSTypeDefinition typeDefinition) {
 		QName qNameType;
 		if (typeDefinition.getAnonymous()) {
-			XSTypeDefinition tdBase = typeDefinition.getBaseType();
+			// XSTypeDefinition tdBase = typeDefinition.getBaseType();
+			XSTypeDefinition tdBase = getBaseType(typeDefinition);
 			if (tdBase.getName() == null) {
 				qNameType = BuiltIn.DEFAULT_VALUE_NAME;
 			} else {
@@ -856,9 +890,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				rule.addRule(new AttributeNS(namespace), rule);
 				// add attribute wildcard URI
 				addNamespaceStringEntry(namespace);
-//				if (!atWildcardNamespaces.contains(namespace)) {
-//					atWildcardNamespaces.add(namespace);
-//				}
+				// if (!atWildcardNamespaces.contains(namespace)) {
+				// atWildcardNamespaces.add(namespace);
+				// }
 			}
 		}
 	}
@@ -878,11 +912,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			return;
 		}
 		this.handledElements.add(xsElementDeclaration);
-		
+
 		// add local name entry for string table pre-population
 		addLocalNameStringEntry(xsElementDeclaration.getNamespace(),
 				xsElementDeclaration.getName());
-		
+
 		// type definition
 		XSTypeDefinition td = xsElementDeclaration.getTypeDefinition();
 
@@ -929,13 +963,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				emptyUrType1);
 		// set type empty
 		urType0.setTypeEmpty(emptyUrType0);
-		
+
 		// TypeEmpty ur-type, 0 :
 		// AT (*) TypeEmpty ur-type, 0
 		// EE
 		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
 		emptyUrType0.addTerminalRule(END_ELEMENT);
-		
+
 		// TypeEmpty ur-type, 1 :
 		// EE
 		emptyUrType1.addTerminalRule(END_ELEMENT);
@@ -1032,7 +1066,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (int i = 0; i < types.getLength(); i++) {
 			XSTypeDefinition td2 = (XSTypeDefinition) types.item(i);
 
-			if (td.equals(td2.getBaseType())) {
+			// if (td.equals(td2.getBaseType())) {
+			if ( td.equals(  getBaseType(td2) ) ) {
 				isTypeCastable = true;
 			}
 		}
