@@ -56,7 +56,13 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// <!-- 3.1.0 46 Chars -->
 		//  <!-- 3.2.0 48 Chars -->
         // <!-- 6.0.0d2 202 Chars -->
-		assertTrue(codePoints.size() == 46);
+		assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 46);
+	}
+
+	public void testNonUnicode3_1_0() throws Exception {
+		EXIRegularExpression re = new EXIRegularExpression("\uFFFF");
+		
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 	
 	
