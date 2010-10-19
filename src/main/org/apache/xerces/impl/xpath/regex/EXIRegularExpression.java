@@ -44,7 +44,7 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 // Useful XML Schema RegExpr Links
 // http://www.xmlschemareference.com/regularExpression.html
 // http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#regexs
-
+// http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.txt
 public class EXIRegularExpression extends RegularExpression {
 
 	/*
@@ -67,12 +67,22 @@ public class EXIRegularExpression extends RegularExpression {
 		isRestrictedSet = true;
 		// analyze set
 		handleToken(this.tokentree);
+		// detect whether we deal with BMP characters
+		// and whether the characters are part of Unicode 3.1.0
+		Set<Integer> toRemove = new HashSet<Integer>();
+		for(Integer cp : set) {
+			if ( ! Unicode_3_1_0_BMP.isRelevantCodepoint(cp)) {
+				toRemove.add(cp);
+//				isRestrictedSet = false;
+//				return;
+			}
+		}
+		for(Integer toRem : toRemove) {
+			set.remove(toRem);
+		}
 	}
 
 	protected void addChar(int cp) {
-		// TODO detect whether we deal with a BMP character only and it is part
-		// of
-		// Unicode 3.1.0
 		set.add(cp);
 	}
 
@@ -109,7 +119,23 @@ public class EXIRegularExpression extends RegularExpression {
 		case Token.STRING:
 			StringToken st = (StringToken) t;
 			String str = st.getString();
-			for (int i = 0; i < str.length(); i++) {
+			
+			
+//			final int lenChars = str.length();
+//			for (int i = 0; i<lenChars; i++) {
+//				final char ch = str.charAt(i);
+//				// Is this a UTF-16 surrogate pair?
+//				if (Character.isHighSurrogate(ch)) {
+//					// use code-point and increment loop count (2 char's)
+//					addChar(str.codePointAt(i++));
+//				} else {
+//					addChar(ch);
+//				}
+//			}
+			
+			final int L = str.codePointCount(0, str.length());
+			// for (int i = 0; i < str.length(); i++) {
+			for (int i = 0; i < L; i++) {
 				addChar(str.codePointAt(i));
 			}
 			break;
