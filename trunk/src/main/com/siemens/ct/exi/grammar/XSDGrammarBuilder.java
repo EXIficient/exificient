@@ -1141,12 +1141,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		Characters chSchemaValid = new Characters(nameValueType, BuiltIn
 				.getDatatype(std));
 
-		SchemaInformedElement type_i_1 = new SchemaInformedElement();
-
+//		SchemaInformedElement type_i_1 = new SchemaInformedElement();
+//		type_i_1.addTerminalRule(END_ELEMENT);
+		SchemaInformedRule type_i_1 = SIMPLE_END_ELEMENT_RULE;
+		
 		SchemaInformedElement type_i_0 = new SchemaInformedElement();
 		type_i_0.addRule(chSchemaValid, type_i_1);
-
-		type_i_1.addTerminalRule(END_ELEMENT);
 
 		// TODO TypeEmpty
 

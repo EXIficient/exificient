@@ -29,8 +29,8 @@ public class QuickTestConfiguration {
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
-	public static final boolean INCLUDE_OPTIONS = false;
-	public static final boolean INCLUDE_SCHEMA_ID = false;
+	public static final boolean INCLUDE_OPTIONS = true;
+	public static final boolean INCLUDE_SCHEMA_ID = true;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -91,8 +91,8 @@ public class QuickTestConfiguration {
 	// FIDELITY OPTIONS
 	static {
 		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		// fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createAll();
 //		try {
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
@@ -109,7 +109,7 @@ public class QuickTestConfiguration {
 		// blockSize = 9013;
 		// blockSize = 200;
 		// valueMaxLength = 8;
-		// valuePartitionCapacity = 16;
+		valuePartitionCapacity = 5;
 //		dtrMapTypes = new QName[1];
 //		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 //		dtrMapRepresentations = new QName[1];

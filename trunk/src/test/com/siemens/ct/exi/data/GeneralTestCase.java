@@ -72,6 +72,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	protected void setUp() throws Exception {
+		
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -188,6 +189,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setValueMaxLength(8);
 		testCaseOptions.lastElement().setValuePartitionCapacity(16);
 
+		
 		// #11 valuePartitionCapacity
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -197,6 +199,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
 
+		
 		// #11a valuePartitionCapacity + Header Cookie & Options & SchemaId
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -204,16 +207,14 @@ public class GeneralTestCase extends AbstractTestCase {
 				FidelityOptions.createAll());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
-		testCaseOptions.lastElement().setValuePartitionCapacity(5);
+		testCaseOptions.lastElement().setValuePartitionCapacity(4);
 		testCaseOptions.lastElement().getEncodingOptions().setOption(
 				EncodingOptions.INCLUDE_COOKIE);
 		testCaseOptions.lastElement().getEncodingOptions().setOption(
 				EncodingOptions.INCLUDE_OPTIONS);
 		testCaseOptions.lastElement().getEncodingOptions().setOption(
 				EncodingOptions.INCLUDE_SCHEMA_ID);
-		// testCaseOptions.lastElement().setIncludeCookie(true);
-		// testCaseOptions.lastElement().setIncludeOptions(true);
-		// testCaseOptions.lastElement().setIncludeSchemaId(true);
+		
 
 		// #12 dtr map
 		testCaseOptions.add(new TestCaseOption());
