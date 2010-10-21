@@ -50,21 +50,24 @@ public abstract class AbstractSchemaInformedContent extends
 		events2 = new ArrayList<EventTypeInformation>();
 	}
 
+	
+	private final void checkEvents2(FidelityOptions fidelityOptions) {
+		if(fidelityOptions != fidelityOptions2 && !fidelityOptions.equals(fidelityOptions2)) {
+			events2.clear();
+			buildEvents2(fidelityOptions);
+		}
+	}
+	
 	abstract protected void buildEvents2(FidelityOptions fidelityOptions);
 	
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		if(fidelityOptions != fidelityOptions2) {
-			buildEvents2(fidelityOptions);
-		}
-		
+		checkEvents2(fidelityOptions);
 		return (get3rdLevelCharacteristics(fidelityOptions) > 0 ? events2.size() + 1 : events2.size());
 	}
 	
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
-		if(fidelityOptions != fidelityOptions2) {
-			buildEvents2(fidelityOptions);
-		}
+		checkEvents2(fidelityOptions);
 		
 		for(EventTypeInformation eti : events2) {
 			if (eti.eventType == eventType) {
@@ -77,10 +80,7 @@ public abstract class AbstractSchemaInformedContent extends
 	
 	public EventType get2ndLevelEvent(int eventCode2,
 			FidelityOptions fidelityOptions) {
-		if(fidelityOptions != fidelityOptions2) {
-			buildEvents2(fidelityOptions);
-		}
-		
+		checkEvents2(fidelityOptions);
 		assert (eventCode2 >= 0 && eventCode2 < events2.size());
 		return events2.get(eventCode2).eventType;
 	}

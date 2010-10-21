@@ -82,6 +82,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	protected static final Event ATTRIBUTE_GENERIC = new AttributeGeneric();
 	protected static final Event CHARACTERS_GENERIC = new CharactersGeneric();
 
+	protected static final SchemaInformedRule SIMPLE_END_ELEMENT_RULE = new SchemaInformedElement();
+	static {
+		SIMPLE_END_ELEMENT_RULE.addTerminalRule(END_ELEMENT);
+	}
+	
 	protected static final boolean forUPA = false;
 
 	protected static final LexicographicSort lexSort = new LexicographicSort();
