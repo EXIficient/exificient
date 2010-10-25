@@ -476,7 +476,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 		// sc elements
 		if (this.scElements != null && this.scElements.length > 0) {
-			sb.append("[SCElements=" +  "]");
+			sb.append("[SCElements=");
 			for(QName scElement : scElements) {
 				sb.append(scElement + " ");
 			}
