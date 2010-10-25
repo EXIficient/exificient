@@ -22,6 +22,13 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -47,13 +54,66 @@ public class EnumerationDatatype extends AbstractDatatype {
 	protected Value[] enumValues;
 	protected int lastValidIndex;
 
-	public EnumerationDatatype(Value[] enumValues, QName schemaType) {
+	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues, QName schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;
-		this.rcs = new XSDStringCharacterSet(); // String ?
-
 		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
+		
+		// restricted character set
+		switch(bitEnumValues) {
+		/* Binary */
+		case BINARY_BASE64:
+			this.rcs = new XSDBase64CharacterSet();
+			break;
+		case BINARY_HEX:
+			this.rcs = new XSDHexBinaryCharacterSet();
+			break;
+		/* Boolean */
+		case BOOLEAN:
+		case BOOLEAN_PATTERN:
+			this.rcs = new XSDBooleanCharacterSet();
+			break;
+		/* Decimal */
+		case DECIMAL:
+			this.rcs = new XSDDecimalCharacterSet();
+			break;
+		/* Float */
+		case FLOAT:
+		case DOUBLE:
+			this.rcs = new XSDDoubleCharacterSet();
+		/* N-Bit Integer */ /* Unsigned Integer */ /* (Signed) Integer */
+		case NBIT_INTEGER_32:
+		case NBIT_INTEGER_64:
+		case NBIT_INTEGER_BIG:
+		case UNSIGNED_INTEGER_16:
+		case UNSIGNED_INTEGER_32:
+		case UNSIGNED_INTEGER_64:
+		case UNSIGNED_INTEGER_BIG:
+		case INTEGER_16:
+		case INTEGER_32:
+		case INTEGER_64:
+		case INTEGER_BIG:
+			this.rcs = new XSDIntegerCharacterSet();
+			break;
+		/* Datetime */
+		case DATETIME:
+			this.rcs = new XSDDateTimeCharacterSet();
+			break;
+		/* String */
+		// STRING,
+		/* Enumeration */
+		// ENUMERATION,
+		/* List */
+		// LIST,
+		/* Restricted Character Set */
+		// RESTRICTED_CHARACTER_SET,
+		/* QName */
+		// QNAME;
+		default:
+			this.rcs = new XSDStringCharacterSet(); // String
+		}
+		
 	}
 
 	public int getEnumerationSize() {

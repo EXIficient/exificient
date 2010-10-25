@@ -88,5 +88,21 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 		size = codeSet.size();
 		codingLength = MethodsBag.getCodingLength(size + 1);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof AbstractRestrictedCharacterSet) {
+			AbstractRestrictedCharacterSet other = (AbstractRestrictedCharacterSet) o;
+			if (this.size() == other.size()) {
+				for (int code = 0; code<this.size(); code++) {
+					if (this.getCodePoint(code) != other.getCodePoint(code)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

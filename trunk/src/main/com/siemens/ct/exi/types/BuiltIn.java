@@ -276,7 +276,7 @@ public class BuiltIn {
 								values[k] = dtEnumValues.getValue();
 							}
 
-							datatype = new EnumerationDatatype(values,
+							datatype = new EnumerationDatatype(values, dtEnumValues.getBuiltInType(),
 									schemaType);
 						}
 					}
