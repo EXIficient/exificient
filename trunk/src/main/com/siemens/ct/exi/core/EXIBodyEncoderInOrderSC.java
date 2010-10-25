@@ -148,7 +148,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 				int ec2 = currentRule.get2ndLevelEventCode(
 						EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
-
+				
 				// Skip to the next byte-aligned boundary in the stream if it is
 				// not
 				// already at such a boundary
@@ -196,7 +196,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			QName qname = scEncoder.elementContext.qname;
 			// EE
 			scEncoder.encodeEndElement();
-			if (getElementContextQName().equals(qname)) {
+			if (getElementContextQName().equals(qname) && scEncoder.currentRule.lookForEvent(EventType.END_DOCUMENT) != null ) {
 				this.encodeEndSC();
 			}
 		}

@@ -21,11 +21,12 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -90,26 +91,26 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
-//		try {
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+		// fidelityOptions = FidelityOptions.createAll();
+		try {
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-//		} catch (UnsupportedOption e) {
-//		}
+		} catch (UnsupportedOption e) {
+		}
 	}
 	
 	// ///////////////////////////////////////////////////
 	// OTHER OPTIONS
 	static {
-//		selfContainedElements = new QName[1];
-//		selfContainedElements[0] = new QName("", "note");
+		selfContainedElements = new QName[1];
+		selfContainedElements[0] = new QName("urn:foo", "ANY");
 		// blockSize = 9013;
 		// blockSize = 200;
 		// valueMaxLength = 8;
-		valuePartitionCapacity = 5;
+//		valuePartitionCapacity = 5;
 //		dtrMapTypes = new QName[1];
 //		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 //		dtrMapRepresentations = new QName[1];

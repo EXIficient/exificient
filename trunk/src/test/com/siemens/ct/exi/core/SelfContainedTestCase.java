@@ -54,14 +54,14 @@ public class SelfContainedTestCase extends TestCase {
 	public void testSelfContained0() throws IOException, SAXException,
 			EXIException {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-
+	
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		FidelityOptions fo = factory.getFidelityOptions();
 		fo.setFidelity(FidelityOptions.FEATURE_SC, true);
 		
 		
-
+	
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName root = new QName("", "root");
 		QName sc = new QName("", "sc");
@@ -108,22 +108,22 @@ public class SelfContainedTestCase extends TestCase {
 		}
 		
 		
-
+	
 		// decoder ALL
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(
 					new ByteArrayInputStream(baos.toByteArray()));
-
+	
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-
+	
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElementGeneric().equals(root));
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
-
+	
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			//	<sc> #1
 			decoder.decodeStartElementGenericUndeclared();
@@ -154,7 +154,7 @@ public class SelfContainedTestCase extends TestCase {
 						
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-
+	
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -212,5 +212,168 @@ public class SelfContainedTestCase extends TestCase {
 		}
 		
 	}
+
+		/*
+		 * <foo>
+		 *   <foo>text</foo>
+		 * </foo>
+		 */
+		public void testSelfContained1() throws IOException, SAXException,
+		EXIException {
+	//		String xmlAsString = "<foo><foo>text</foo></foo>";
+	//		XMLReader  xmlReader = XMLReaderFactory.createXMLReader();
+			
+			EXIFactory factory = DefaultEXIFactory.newInstance();
+	
+			factory.setFidelityOptions(FidelityOptions.createDefault());
+			factory.setCodingMode(CodingMode.BIT_PACKED);
+			FidelityOptions fo = factory.getFidelityOptions();
+			fo.setFidelity(FidelityOptions.FEATURE_SC, true);
+			
+			
+	
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			QName foo = new QName("", "foo");
+			// QName foo2 = new QName("", "foo2");
+			String s = "text";
+			
+			QName[] scElements = new QName[1];
+			scElements[0] = foo;
+			factory.setSelfContainedElements(scElements);
+			
+			int offsetSC1, offsetSC2;
+			
+			// encoder
+			{
+				EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+				encoder.setOutputStream(baos);
+				String pfx = null;
+				encoder.encodeStartDocument();
+				encoder.encodeStartElement(foo.getNamespaceURI(), foo.getLocalPart(),
+						pfx);
+				offsetSC1 = baos.toByteArray().length;
+				{
+					encoder.encodeStartElement(foo.getNamespaceURI(), foo.getLocalPart(),
+							pfx);
+					
+					offsetSC2 = baos.toByteArray().length;
+					// System.out.println("SC_1: " + offsetSC1);
+					
+					encoder.encodeCharacters(s);
+					encoder.encodeEndElement();
+				}
+				encoder.encodeEndElement();	//	foo
+				encoder.encodeEndDocument();
+				encoder.flush();
+			}
+			
+//			System.out.println("offsetSC1 = " + offsetSC1);
+//			System.out.println("offsetSC2 = " + offsetSC2);
+			
+	
+			// decoder ALL
+			{
+				EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+				decoder.setInputStream(
+						new ByteArrayInputStream(baos.toByteArray()));
+		
+				assertTrue(decoder.next() == EventType.START_DOCUMENT);
+				decoder.decodeStartDocument();
+		
+				// <sc> #1
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				assertTrue(decoder.decodeStartElementGeneric().equals(foo));
+
+				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
+				decoder.decodeStartSelfContainedFragment();
+				
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				//	<sc> #2
+				decoder.decodeStartElementGenericUndeclared();
+				{
+					assertTrue(decoder.next() == EventType.SELF_CONTAINED);
+					decoder.decodeStartSelfContainedFragment();
+					
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					
+					assertTrue(decoder.next() == EventType.END_ELEMENT);
+					decoder.decodeEndElement();
+				}
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+				
+				assertTrue(decoder.next() == EventType.END_DOCUMENT);
+				decoder.decodeEndDocument();
+			}
+			
+			
+			EXIFactory scEXIFactory = factory.clone();
+			scEXIFactory.setFragment(true);
+			// scEXIFactory.setEXIBodyOnly(true);
+			
+			int MINUS_BYTE_OFFSET = 4;	// TODO why 4
+			
+			// decoder SC #1 
+			{
+				EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
+				InputStream is = new ByteArrayInputStream(baos.toByteArray());
+				is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+				decoder.setInputStream(is);
+				
+				assertTrue(decoder.next() == EventType.START_DOCUMENT);
+				decoder.decodeStartDocument();
+				
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				decoder.decodeStartElementGeneric();
+				
+				{
+					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+					decoder.decodeStartElementGenericUndeclared();
+					
+					assertTrue(decoder.next() == EventType.SELF_CONTAINED);
+					decoder.decodeStartSelfContainedFragment();
+					
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					
+					assertTrue(decoder.next() == EventType.END_ELEMENT);
+					decoder.decodeEndElement();					
+				}
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+				
+				assertTrue(decoder.next() == EventType.END_DOCUMENT);
+				decoder.decodeEndDocument();	
+			}
+			
+			// decoder SC #2
+			{
+				EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
+				InputStream is = new ByteArrayInputStream(baos.toByteArray());
+				is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+				decoder.setInputStream(is);
+				
+				assertTrue(decoder.next() == EventType.START_DOCUMENT);
+				decoder.decodeStartDocument();
+				
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				decoder.decodeStartElementGeneric();
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+				
+				assertTrue(decoder.next() == EventType.END_DOCUMENT);
+				decoder.decodeEndDocument();	
+			}
+			
+			
+			
+		}
 
 }
