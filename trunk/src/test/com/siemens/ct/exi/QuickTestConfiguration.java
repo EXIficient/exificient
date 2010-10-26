@@ -21,20 +21,19 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
-	public static final boolean INCLUDE_OPTIONS = true;
-	public static final boolean INCLUDE_SCHEMA_ID = true;
+	public static final boolean INCLUDE_OPTIONS = false;
+	public static final boolean INCLUDE_SCHEMA_ID = false;
 
 	// fragments
-	public static boolean FRAGMENTS = false;
+	public static boolean FRAGMENTS = true;
 
 	// coding mode
 	public static CodingMode CODING_MODE;
@@ -94,19 +93,19 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+//		try {
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////
 	// OTHER OPTIONS
 	static {
-		selfContainedElements = new QName[1];
-		selfContainedElements[0] = new QName("urn:foo", "ANY");
+//		selfContainedElements = new QName[1];
+//		selfContainedElements[0] = new QName("urn:foo", "ANY");
 		// blockSize = 9013;
 		// blockSize = 200;
 		// valueMaxLength = 8;

@@ -680,6 +680,28 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		CodePointCharacterSet rcs = new CodePointCharacterSet(codePoints);
 		assertTrue(dt.getRestrictedCharacterSet().equals(rcs));
 	}
+	
+	public void testRestrictedCharSet5() throws Exception {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='myString'>"
+				+ "      <xs:restriction base='xs:string'>"
+				+ "      <xs:pattern value='[ABC&#x10FFF;]{1}'/>"
+				+ "      </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"myString", "");
+
+		assertTrue(BuiltInType.RESTRICTED_CHARACTER_SET == dt.getBuiltInType());
+		
+		Set<Integer> codePoints = new HashSet<Integer>();
+		codePoints.add((int)'A');
+		codePoints.add((int)'B');
+		codePoints.add((int)'C');
+		CodePointCharacterSet rcs = new CodePointCharacterSet(codePoints);
+		assertTrue(dt.getRestrictedCharacterSet().equals(rcs));
+	}
 
 	public void testNoRestrictedCharSet1() throws Exception {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"

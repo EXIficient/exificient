@@ -338,6 +338,21 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				uniqueNamedAttributeList.add(atQname);
 			}
 		}
+		// add global attributes
+		XSNamedMap nm = xsModel.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
+		for (int i = 0; i < nm.getLength(); i++) {
+			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
+			QName atQname = new QName(atDecl.getNamespace(), atDecl.getName());
+			if (uniqueNamedAttributes.containsKey(atQname)) {
+				uniqueNamedAttributes.get(atQname).add(atDecl);
+			} else {
+				List<XSAttributeDeclaration> list = new ArrayList<XSAttributeDeclaration>();
+				list.add(atDecl);
+				uniqueNamedAttributes.put(atQname, list);
+				uniqueNamedAttributeList.add(atQname);
+			}
+		}
+		
 		Collections.sort(uniqueNamedAttributeList, lexSort);
 
 		for (QName an : uniqueNamedAttributeList) {
