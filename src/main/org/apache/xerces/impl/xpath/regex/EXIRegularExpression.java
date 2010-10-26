@@ -87,7 +87,7 @@ public class EXIRegularExpression extends RegularExpression {
 	}
 
 	public boolean isEntireSetOfXMLCharacters() {
-		return !(isRestrictedSet && set.size() <= MAX_NUMBER_OF_CHARACTERS);
+		return set.isEmpty() ||  !(isRestrictedSet && set.size() <= MAX_NUMBER_OF_CHARACTERS);
 	}
 
 	public Set<Integer> getCodePoints() {

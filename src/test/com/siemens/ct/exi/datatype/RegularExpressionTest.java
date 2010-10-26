@@ -439,6 +439,27 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertTrue(s.equals(v2.toString()));
 	}
 
+	public void testPattern25() throws EXIException {
+		// unicode databae 3.2 ONLY!
+		EXIRegularExpression re = new EXIRegularExpression("\u303B");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+	
+	public void testPattern26() throws EXIException {
+		// "&#x10FFF;" NON BMP
+		EXIRegularExpression re = new EXIRegularExpression("[ABC&#x10FFF;]{1}");
+		assertTrue(!re.isEntireSetOfXMLCharacters());
+		// A, B, and C ?
+		assertTrue(re.getCodePoints().size() == 3);
+	}
+	
+	public void testPattern26_() throws EXIException {
+		EXIRegularExpression re = new EXIRegularExpression("[ABC]{1}");
+		assertTrue(!re.isEntireSetOfXMLCharacters());
+		// A, B, and C
+		assertTrue(re.getCodePoints().size() == 3);
+	}
+	
 
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");
