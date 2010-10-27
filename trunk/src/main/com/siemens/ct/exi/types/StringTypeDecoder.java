@@ -43,7 +43,7 @@ public class StringTypeDecoder extends AbstractTypeDecoder {
 
 	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException {
-		return datatype.readValue(valueChannel, stringDecoder, context);
-		// return stringDecoder.readValue(context, valueChannel);
+		// return datatype.readValue(valueChannel, stringDecoder, context);
+		return stringDecoder.readValue(context, valueChannel);
 	}
 }

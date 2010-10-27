@@ -20,12 +20,12 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.data.BuiltInXSDTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 	
 	// include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -33,7 +33,7 @@ public class QuickTestConfiguration {
 	public static final boolean INCLUDE_SCHEMA_ID = false;
 
 	// fragments
-	public static boolean FRAGMENTS = true;
+	public static boolean FRAGMENTS = false;
 
 	// coding mode
 	public static CodingMode CODING_MODE;
@@ -94,7 +94,8 @@ public class QuickTestConfiguration {
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 //		try {
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
 //		} catch (UnsupportedOption e) {
@@ -121,8 +122,8 @@ public class QuickTestConfiguration {
 	// TEST CASE (GROUP)
 	static {
 		// SchemaTestCase.setupQuickTest ( );
-		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
+		BuiltInXSDTestCase.setupQuickTest ( );
+		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

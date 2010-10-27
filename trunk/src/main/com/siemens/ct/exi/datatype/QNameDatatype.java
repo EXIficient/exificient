@@ -159,6 +159,8 @@ public class QNameDatatype extends AbstractDatatype {
 	///////////////////////////////////////////////////
 
 	public boolean isValid(String value) {		
+		super.isValidRCS(value);
+		
 		// extract prefix
 		qnamePrefix = QNameUtilities.getPrefixPart(value);
 		// retrieve uri
@@ -196,12 +198,12 @@ public class QNameDatatype extends AbstractDatatype {
 		return new QNameValue(qname, qnamePrefix);
 	}
 	
-	@Override
-	public boolean isValidRCS(String value) {
-		// Note: boolean really needs to do a check since it can be used for xsi:nil
-		super.isValidRCS(value);
-		return isValid(value);
-	}
+//	@Override
+//	public boolean isValidRCS(String value) {
+//		// Note: boolean really needs to do a check since it can be used for xsi:nil
+//		super.isValidRCS(value);
+//		return isValid(value);
+//	}
 	
 	public QName getQName() {
 		return qname;
