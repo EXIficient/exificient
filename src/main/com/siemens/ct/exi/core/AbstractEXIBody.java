@@ -64,6 +64,7 @@ public abstract class AbstractEXIBody {
 	protected Grammar grammar;
 	protected FidelityOptions fidelityOptions;
 	protected boolean preservePrefix;
+	protected boolean preserveLexicalValues;
 
 	// error handler
 	protected ErrorHandler errorHandler;
@@ -107,7 +108,11 @@ public abstract class AbstractEXIBody {
 		// preserve prefixes
 		preservePrefix = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-
+		
+		// preserve lecicalValues
+		preserveLexicalValues = fidelityOptions
+		.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
+		
 		qnameDatatype.setPreservePrefix(preservePrefix);
 		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
 

@@ -318,7 +318,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		/*
 		 * The value of each AT (xsi:type) event is represented as a QName.
 		 */
-		qnameDatatype.isValid(raw);
+		if (!qnameDatatype.isValid(raw)) {
+			throw new EXIException("[EXI] xsi:type='" + raw + "' not encodable");
+		}
 		// typeEncoder.isValid(qnameDatatype, raw);
 		// boolean valid = typeEncoder.isValid(qnameDatatype, raw);
 		// System.out.println("Valid " + raw + ": " + valid);
@@ -376,8 +378,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		}
 
 		// xsi:type value "content" as qname
-		// typeEncoder.writeValue(XSI_TYPE, channel);
-		qnameDatatype.writeValue(channel, null, XSI_TYPE);
+		if (this.preserveLexicalValues) {
+			// as string
+			typeEncoder.isValid(qnameDatatype, raw);
+			typeEncoder.writeValue(XSI_TYPE, channel);	
+		} else {
+			// typed
+			qnameDatatype.writeValue(channel, null, XSI_TYPE);	
+		}
 
 		// grammar exists ?
 		if (tg != null) {

@@ -267,7 +267,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 		// type qname & prefix
 		QName xsiTypeQName;
 		// attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE, channel);
-		attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
+		if (this.preserveLexicalValues) {
+			attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE, channel);
+		} else {
+			// typed
+			attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
+		}
+		// attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
+		// attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE, channel);	
 		
 		if (!preservePrefix) {
 			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
@@ -276,9 +283,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
-			String pfx;
 			if (!preservePrefix) {
-				pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
+				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
 				attributeValue = new QNameValue(qnv.toQName(), pfx);
 			}
 //			if (qnv.getPrefix() == null) {
@@ -286,8 +292,20 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 //			}
 		} else {
 			// parse string value again (lexical value mode)
-			qnameDatatype.isValid(attributeValue.toString());
-			xsiTypeQName = qnameDatatype.getQName();
+			if ( qnameDatatype.isValid(attributeValue.toString()) ) {
+				// System.out.println("EXIIII parse xsi:type lexically again!! " + attributeValue );
+				xsiTypeQName = qnameDatatype.getQName();
+				if (!preservePrefix) {
+					String pfx = qnameDatatype.getPrefix();
+					// System.out.println("No prefix preservation -> " + pfx );
+
+					declarePrefix(pfx, xsiTypeQName.getNamespaceURI());
+					attributeValue = new QNameValue(xsiTypeQName, pfx);
+				}
+			} else {
+				throw new EXIException("[EXI] no valid xsi:type='" + attributeValue + "'" );
+			}
+			
 		}
 
 		// update grammar according to given xsi:type
@@ -427,6 +445,11 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 		return pfx;
 	}
 
+//	protected final void declarePrefix(String uri, String pfx) {
+//		uriToPrefix.put(uri, pfx);
+//		declarePrefix(pfx, uri);
+//	}
+	
 	protected final void undeclarePrefixes() {
 		undeclaredPrefixes = elementContext.nsDeclarations;
 		if (undeclaredPrefixes != null) {

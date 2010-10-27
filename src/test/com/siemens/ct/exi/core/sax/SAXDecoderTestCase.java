@@ -277,7 +277,7 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					assertTrue(pfxMappings[openElements-1].size() >= 2);
 					assertTrue(pfxMappings[openElements-1].contains("http://www.w3.org/2001/XMLSchema-instance"));
 					assertTrue(pfxMappings[openElements-1].contains("http://www.fpml.org/2005/FpML-4-2"));
-					assertTrue(pfxMappings[openElements-1].contains("http://ibml.jel.com/2005"));
+					assertTrue(pfxMappings[openElements-1].contains("http://ibml.jel.com/2005"));	
 				} 
 			}
 		}
