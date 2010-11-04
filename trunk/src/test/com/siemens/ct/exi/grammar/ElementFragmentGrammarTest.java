@@ -60,7 +60,7 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule r = g.getBuiltInFragmentGrammar();
+		Rule r = g.getFragmentGrammar();
 
 		EventInformation ei = r.lookForEvent(EventType.START_DOCUMENT);
 		EventInformation ei2 =  ei.next.lookForStartElement("", "root");
@@ -98,7 +98,7 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule r = g.getBuiltInFragmentGrammar();
+		Rule r = g.getFragmentGrammar();
 
 		EventInformation ei = r.lookForEvent(EventType.START_DOCUMENT);
 		EventInformation ei2 =  ei.next.lookForStartElement("", "root");

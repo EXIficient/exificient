@@ -35,9 +35,10 @@ public abstract class AbstractGrammar implements Grammar {
 	protected GrammarURIEntry[] grammarEntries;
 
 	/*
-	 * Built-in Grammars
+	 * Document and Fragment Grammars
 	 */
-	protected Rule builtInDocumentGrammar;
+	protected Rule documentGrammar;
+	protected Rule fragmentGrammar;
 
 	private final boolean isSchemaInformed;
 
@@ -49,8 +50,8 @@ public abstract class AbstractGrammar implements Grammar {
 		return isSchemaInformed;
 	}
 
-	public Rule getBuiltInDocumentGrammar() {
-		return builtInDocumentGrammar;
+	public Rule getDocumentGrammar() {
+		return documentGrammar;
 	}
 
 	public GrammarURIEntry[] getGrammarEntries() {

@@ -51,11 +51,17 @@ import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.rule.DocEnd;
+import com.siemens.ct.exi.grammar.rule.Document;
+import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFragmentContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTagRule;
@@ -71,14 +77,17 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
+	protected final SchemaInformedRule SIMPLE_END_ELEMENT_RULE;
+
+	protected final SchemaInformedFirstStartTagRule SIMPLE_END_ELEMENT_EMPTY_RULE;
+
+	protected final SchemaInformedFirstStartTagRule SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE;
+
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
 
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
-
-	// // attribute wildcard namespaces
-	// protected List<String> atWildcardNamespaces;
 
 	// avoids recursive element handling
 	protected Set<XSElementDeclaration> handledElements;
@@ -86,13 +95,23 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
-	// schema information is available to describe the contents of an EXI stream
+	// when schema information is available to describe the contents of an EXI stream
 	// and more than one element is declared with the same qname
 	protected SchemaInformedFirstStartTagRule elementFragment0;
 
 	protected XSDGrammarBuilder() {
 		super();
 
+		SIMPLE_END_ELEMENT_RULE = new SchemaInformedElement();
+		SIMPLE_END_ELEMENT_RULE.addTerminalRule(END_ELEMENT);
+		// 
+		SIMPLE_END_ELEMENT_EMPTY_RULE = new SchemaInformedFirstStartTag(SIMPLE_END_ELEMENT_RULE);
+		SIMPLE_END_ELEMENT_EMPTY_RULE.addTerminalRule(END_ELEMENT);
+		SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE = new SchemaInformedFirstStartTag(SIMPLE_END_ELEMENT_RULE);
+		// 
+		SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE.addTerminalRule(END_ELEMENT);
+		SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE.setTypeCastable(true);
+		
 		initOnce();
 	}
 
@@ -188,7 +207,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return true;
 	}
 
-	protected List<StartElement> getFragmentGrammars() {
+	protected List<StartElement> getFragmentElements() {
 		List<StartElement> fragmentElements = new ArrayList<StartElement>();
 
 		// create unique qname map
@@ -339,7 +358,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 		}
 		// add global attributes
-		XSNamedMap nm = xsModel.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
+		XSNamedMap nm = xsModel
+				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
 		for (int i = 0; i < nm.getLength(); i++) {
 			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
 			QName atQname = new QName(atDecl.getNamespace(), atDecl.getName());
@@ -352,7 +372,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				uniqueNamedAttributeList.add(atQname);
 			}
 		}
-		
+
 		Collections.sort(uniqueNamedAttributeList, lexSort);
 
 		for (QName an : uniqueNamedAttributeList) {
@@ -458,11 +478,17 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		List<StartElement> globalElements = initGrammars();
 
 		// schema declared elements --> fragment grammars
-		List<StartElement> fragmentElements = getFragmentGrammars();
+		List<StartElement> fragmentElements = getFragmentElements();
 
 		// sort both lists (declared & global elements)
 		Collections.sort(globalElements, lexSort);
 		Collections.sort(fragmentElements, lexSort);
+
+		// global element
+		Map<QName, StartElement> mapGlobalElements = new HashMap<QName, StartElement>();
+		for (StartElement globalElement : globalElements) {
+			mapGlobalElements.put(globalElement.getQName(), globalElement);
+		}
 
 		/*
 		 * Simple sub-type hierarchy
@@ -479,31 +505,18 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
 				// XSTypeDefinition baseType = td.getBaseType();
 				XSTypeDefinition baseType = getBaseType(td);
-				
+
 				if (baseType == null) {
 					// http://www.w3.org/2001/XMLSchema,anySimpleType
 				} else {
-					QName baseTypeQName = getQNameForType(baseType);
-
-//					// known Xerces Bug!
-//					// reports integer as baseType of negativeInteger. SHOULD be
-//					// nonPositiveInteger
-//					if ("negativeInteger".equals(td.getName())
-//							&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
-//									.getNamespace())) {
-//						System.err.println("XXX");
-//						// baseTypeQName = new
-//						// QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-//						// "nonPositiveInteger");
-//						baseTypeQName = new QName("", "nonPositiveInteger");
-//					}
+					QName baseTypeQName = getValueType(baseType);
 
 					List<QName> sub = subtypes.get(baseTypeQName);
 					if (sub == null) {
 						sub = new ArrayList<QName>();
 						subtypes.put(baseTypeQName, sub);
 					}
-					sub.add(getQNameForType(td));
+					sub.add(getValueType(td));
 
 				}
 			}
@@ -514,11 +527,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 */
 		XSNamedMap nm = xsModel
 				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
-		Map<QName, Attribute> globalAttributes = new HashMap<QName, Attribute>();
+		Map<QName, Attribute> mapGlobalAttributes = new HashMap<QName, Attribute>();
 		for (int i = 0; i < nm.getLength(); i++) {
 			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
 			Attribute at = getAttribute(atDecl);
-			globalAttributes.put(at.getQName(), at);
+			mapGlobalAttributes.put(at.getQName(), at);
 		}
 
 		// schema URIs and (sorted) localNames
@@ -561,15 +574,59 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		/*
+		 * Global elements declared in the schema. G 0, G 1, ... G n-1 represent
+		 * all the qnames of global elements sorted lexicographically, first by
+		 * localName, then by uri. http://www.w3.org/TR/exi/#informedDocGrammars
+		 */
+		// DocEnd rule
+		Rule builtInDocEndGrammar = new DocEnd("DocEnd");
+		// DocContent rule
+		SchemaInformedRule builtInDocContentGrammar = new SchemaInformedDocContent(
+				builtInDocEndGrammar, "DocContent");
+		// DocContent rule & add global elements (sorted)
+		for (StartElement globalElement : globalElements) {
+			builtInDocContentGrammar.addRule(globalElement,
+					builtInDocEndGrammar);
+		}
+		// Document rule
+		Document documentGrammar = new Document(builtInDocContentGrammar,
+				"Document");
+
+		/*
+		 * FragmentContent grammar represents the number of unique element
+		 * qnames declared in the schema sorted lexicographically, first by
+		 * localName, then by uri.
+		 * http://www.w3.org/TR/exi/#informedElementFragGrammar
+		 */
+		/*
+		 * Fragment Content
+		 */
+		SchemaInformedRule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
+				"FragmentContent");
+		for (StartElement fragmentElement : fragmentElements) {
+			builtInFragmentContentGrammar.addRule(fragmentElement,
+					builtInFragmentContentGrammar);
+		}
+
+		/*
+		 * Fragment
+		 */
+		Fragment fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
+				"Fragment");
+		fragmentGrammar.addRule(new StartDocument(),
+				builtInFragmentContentGrammar);
+
+		/*
 		 * create schema informed grammar (+set grammarTypes, simpleSubTypes and
 		 * global attributes)
 		 */
 		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
-				fragmentElements, globalElements);
+				documentGrammar, fragmentGrammar, elementPool.values());
 
 		sig.setTypeGrammars(grammarTypes);
 		sig.setSimpleTypeSubtypes(subtypes);
-		sig.setGlobalAttributes(globalAttributes);
+		sig.setGlobalElements(mapGlobalElements);
+		sig.setGlobalAttributes(mapGlobalAttributes);
 
 		return sig;
 	}
@@ -612,15 +669,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				sortedURIs.add(uri);
 			}
 		}
-
-		// // any attribute namespaces
-		// for (String atWildcardURI : this.atWildcardNamespaces) {
-		// atWildcardURI = atWildcardURI == null ? XMLConstants.NULL_NS_URI
-		// : atWildcardURI;
-		// if (isAdditionalNamespace(atWildcardURI)) {
-		// sortedURIs.add(atWildcardURI);
-		// }
-		// }
 
 		// copy to array (in right order)
 		String[] uris = new String[4 + sortedURIs.size()];
@@ -758,11 +806,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			at = attributePool.get(attrDecl);
 		} else {
 			// AT datatype
-			XSSimpleTypeDefinition td = attrDecl.getTypeDefinition();
-			QName qNameType = getQNameForType(td);
+			XSSimpleTypeDefinition std = attrDecl.getTypeDefinition();
+			QName valueType = getValueType(std);
 			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
-			at = new Attribute(qname, qNameType, BuiltIn.getDatatype(td));
+			at = new Attribute(qname, valueType, BuiltIn.getDatatype(std));
 			attributePool.put(attrDecl, at);
 		}
 
@@ -771,12 +819,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	protected XSTypeDefinition getBaseType(XSTypeDefinition td) {
 		// avoid Xerces bug
-		// Xerces reports integer as base-type for negativeInteger instead of nonPositiveInteger 
+		// Xerces reports integer as base-type for negativeInteger instead of
+		// nonPositiveInteger
 		if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
 			if ("negativeInteger".equals(td.getName())
 					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
 							.getNamespace())) {
-				XSTypeDefinition td2 = xsModel.getTypeDefinition("nonPositiveInteger", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				XSTypeDefinition td2 = xsModel.getTypeDefinition(
+						"nonPositiveInteger",
+						XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				return td2;
 			} else {
 				return td.getBaseType();
@@ -786,21 +837,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected QName getQNameForType(XSTypeDefinition typeDefinition) {
-		QName qNameType;
-		if (typeDefinition.getAnonymous()) {
-			// XSTypeDefinition tdBase = typeDefinition.getBaseType();
-			XSTypeDefinition tdBase = getBaseType(typeDefinition);
-			if (tdBase.getName() == null) {
-				qNameType = BuiltIn.DEFAULT_VALUE_NAME;
-			} else {
-				qNameType = new QName(tdBase.getNamespace(), tdBase.getName());
-			}
-		} else {
-			qNameType = new QName(typeDefinition.getNamespace(), typeDefinition
-					.getName());
+	protected QName getValueType(XSTypeDefinition typeDefinition) {
+
+		while (typeDefinition.getAnonymous()) {
+			typeDefinition = getBaseType(typeDefinition);
 		}
-		return qNameType;
+
+		QName valueType = new QName(typeDefinition.getNamespace(),
+				typeDefinition.getName());
+		return valueType;
 	}
 
 	protected SchemaInformedStartTagRule handleAttributes(
@@ -984,12 +1029,40 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// EE
 		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
 		emptyUrType0.addTerminalRule(END_ELEMENT);
+		// anyType is castable
+		emptyUrType0.setTypeCastable(true);
 
 		// TypeEmpty ur-type, 1 :
 		// EE
 		emptyUrType1.addTerminalRule(END_ELEMENT);
 
 		return urType0;
+	}
+
+	protected boolean isTypeCastable(XSTypeDefinition td) {
+
+		boolean isTypeCastable = false;
+
+		// has named sub-types
+		XSNamedMap types = this.xsModel
+				.getComponents(XSConstants.TYPE_DEFINITION);
+		for (int i = 0; i < types.getLength(); i++) {
+			XSTypeDefinition td2 = (XSTypeDefinition) types.item(i);
+
+			// if (td.equals(td2.getBaseType())) {
+			if (td.equals(getBaseType(td2))) {
+				isTypeCastable = true;
+			}
+		}
+
+		// is a simple type definition of which {variety} is union
+		if (!isTypeCastable
+				&& td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
+			isTypeCastable = (std.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION);
+		}
+
+		return isTypeCastable;
 	}
 
 	/**
@@ -1006,56 +1079,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected SchemaInformedFirstStartTagRule translateTypeDefinitionToFSA(
 			XSTypeDefinition td) throws EXIException {
 		SchemaInformedFirstStartTagRule type_i = null;
-		SchemaInformedFirstStartTagRule typeEmpty_i = null;
 
 		// simple vs. complex type handling
 		if (td.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE) {
-			if (Constants.XSD_ANY_TYPE.equals(td.getName())
-					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
-							.getNamespace())) {
-				// ur-type
-				SchemaInformedFirstStartTagRule urType = getUrTypeRule();
-				type_i = urType;
-				typeEmpty_i = urType.getTypeEmpty();
-			} else {
-				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
-
-				SchemaInformedRule ruleContent = translateComplexTypeDefinitionToFSA(ctd);
-
-				// create copy of Element_i_content --> Element_i_content_2
-				// (used for content schema-deviations in start-tags, direct
-				// jumps)
-				SchemaInformedRule ruleContent2 = ruleContent.duplicate();
-
-				// attributes
-				XSObjectList attributes = ctd.getAttributeUses();
-				XSWildcard attributeWC = ctd.getAttributeWildcard();
-
-				// type_i (start tag)
-				SchemaInformedStartTagRule sistr = handleAttributes(
-						ruleContent, ruleContent2, attributes, attributeWC);
-				type_i = new SchemaInformedFirstStartTag(sistr);
-				type_i.setTypeCastable(isTypeCastable(ctd));
-
-				// typeEmpty_i
-				SchemaInformedRule ruleEnd = new SchemaInformedElement();
-				ruleEnd.addTerminalRule(END_ELEMENT);
-				typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(
-						ruleEnd, ruleEnd, attributes, attributeWC));
-			}
+			XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) td;
+			type_i = translateComplexTypeDefinitionToFSA(ctd);
 		} else {
 			assert (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
-			// Type i
 			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-			SchemaInformedElement simpleContent = translateSimpleTypeDefinitionToFSA(std);
-			type_i = new SchemaInformedFirstStartTag(handleAttributes(
-					simpleContent, simpleContent, null, null));
-			type_i.setTypeCastable(isTypeCastable(std));
-			// TypeEmpty i
-			SchemaInformedRule ruleEnd = new SchemaInformedElement();
-			ruleEnd.addTerminalRule(END_ELEMENT);
-			typeEmpty_i = new SchemaInformedFirstStartTag(handleAttributes(
-					ruleEnd, ruleEnd, null, null));
+			type_i = translateSimpleTypeDefinitionToFSA(std);
 		}
 
 		if (!td.getAnonymous()) {
@@ -1063,42 +1095,37 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			addLocalNameStringEntry(td.getNamespace(), td.getName());
 		}
 
-		// type_i.setFirstElementRule();
-		// typeEmpty_i.setFirstElementRule();
-		type_i.setTypeEmpty(typeEmpty_i);
-
 		return type_i;
-		// return new TypeGrammar(type_i, typeEmpty_i);
 	}
 
-	protected boolean isTypeCastable(XSTypeDefinition td) {
-
-		boolean isTypeCastable = false;
-
-		// has named sub-types
-		XSNamedMap types = this.xsModel
-				.getComponents(XSConstants.TYPE_DEFINITION);
-		for (int i = 0; i < types.getLength(); i++) {
-			XSTypeDefinition td2 = (XSTypeDefinition) types.item(i);
-
-			// if (td.equals(td2.getBaseType())) {
-			if ( td.equals(  getBaseType(td2) ) ) {
-				isTypeCastable = true;
-			}
-		}
-
-		// is a simple type definition of which {variety} is union
-		if (!isTypeCastable
-				&& td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
-			XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-			isTypeCastable = (std.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION);
-		}
-
-		return isTypeCastable;
-	}
-
-	protected SchemaInformedRule translateComplexTypeDefinitionToFSA(
+	/**
+	 * Given an XML Schema type definition T i , two type grammars are created,
+	 * which are denoted by Type i and TypeEmpty i . Type i is a grammar that
+	 * fully reflects the type definition of T i , whereas TypeEmpty i is a
+	 * grammar that accepts only the attribute uses and attribute wildcards of T
+	 * i , if any.
+	 * 
+	 * @param ctd
+	 * @return
+	 * @throws EXIException
+	 */
+	protected SchemaInformedFirstStartTagRule translateComplexTypeDefinitionToFSA(
 			XSComplexTypeDefinition ctd) throws EXIException {
+
+		/*
+		 * anyType is special
+		 */
+		if (Constants.XSD_ANY_TYPE.equals(ctd.getName())
+				&& XMLConstants.W3C_XML_SCHEMA_NS_URI
+						.equals(ctd.getNamespace())) {
+			// ur-type
+			SchemaInformedFirstStartTagRule urType = getUrTypeRule();
+			return urType;
+		}
+
+		/*
+		 * Rule Content
+		 */
 		SchemaInformedRule ruleContent = null;
 
 		switch (ctd.getContentType()) {
@@ -1139,33 +1166,91 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			break;
 		}
 
-		return ruleContent;
+		// create copy of Element_i_content --> Element_i_content_2
+		// (used for content schema-deviations in start-tags, direct
+		// jumps)
+		SchemaInformedRule ruleContent2 = ruleContent.duplicate();
 
+		// attributes
+		XSObjectList attributes = ctd.getAttributeUses();
+		XSWildcard attributeWC = ctd.getAttributeWildcard();
+
+		boolean isTypeCastable = isTypeCastable(ctd);
+
+		// type_i (start tag)
+		SchemaInformedStartTagRule sistr = handleAttributes(ruleContent,
+				ruleContent2, attributes, attributeWC);
+		SchemaInformedFirstStartTagRule type_i = new SchemaInformedFirstStartTag(
+				sistr);
+		type_i.setTypeCastable(isTypeCastable);
+
+		// typeEmpty_i
+		SchemaInformedRule ruleEnd = new SchemaInformedElement();
+		ruleEnd.addTerminalRule(END_ELEMENT);
+		SchemaInformedFirstStartTagRule typeEmpty_i = new SchemaInformedFirstStartTag(
+				handleAttributes(ruleEnd, ruleEnd, attributes, attributeWC));
+		typeEmpty_i.setTypeCastable(isTypeCastable);
+		type_i.setTypeEmpty(typeEmpty_i);
+
+		return type_i;
+		// return ruleContent;
 	}
 
-	protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
+	/**
+	 * Given an XML Schema type definition T i , two type grammars are created,
+	 * which are denoted by Type i and TypeEmpty i . Type i is a grammar that
+	 * fully reflects the type definition of T i , whereas TypeEmpty i is a
+	 * grammar that accepts only the attribute uses and attribute wildcards of T
+	 * i , if any.
+	 * 
+	 * @param std
+	 * @return
+	 * @throws EXIException
+	 */
+	// protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
+	protected SchemaInformedFirstStartTagRule translateSimpleTypeDefinitionToFSA(
 			XSSimpleTypeDefinition std) throws EXIException {
 
-		QName nameValueType;
-		if (std.getAnonymous()) {
-			nameValueType = new QName(null, "Anonymous");
-		} else {
-			nameValueType = new QName(std.getNamespace(), std.getName());
-		}
-
-		Characters chSchemaValid = new Characters(nameValueType, BuiltIn
+		/*
+		 * Simple content
+		 */
+		QName valueType = this.getValueType(std);
+		Characters chSchemaValid = new Characters(valueType, BuiltIn
 				.getDatatype(std));
 
-//		SchemaInformedElement type_i_1 = new SchemaInformedElement();
-//		type_i_1.addTerminalRule(END_ELEMENT);
-		SchemaInformedRule type_i_1 = SIMPLE_END_ELEMENT_RULE;
-		
-		SchemaInformedElement type_i_0 = new SchemaInformedElement();
-		type_i_0.addRule(chSchemaValid, type_i_1);
+		SchemaInformedRule simpleContentEnd = SIMPLE_END_ELEMENT_RULE;
 
-		// TODO TypeEmpty
+		SchemaInformedElement simpleContent = new SchemaInformedElement();
+		simpleContent.addRule(chSchemaValid, simpleContentEnd);
 
-		return type_i_0;
+		/*
+		 * 
+		 */
+		boolean isTypeCastable = isTypeCastable(std);
+
+		// Type i
+		SchemaInformedFirstStartTagRule type_i = new SchemaInformedFirstStartTag(
+				handleAttributes(simpleContent, simpleContent, null, null));
+		type_i.setTypeCastable(isTypeCastable);
+
+		SchemaInformedFirstStartTagRule typeEmpty_i;
+		if (isTypeCastable) {
+			typeEmpty_i = SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE;
+		} else {
+			typeEmpty_i = SIMPLE_END_ELEMENT_EMPTY_RULE;
+		}
+
+		// // TypeEmpty i
+		// SchemaInformedRule ruleEnd = new SchemaInformedElement();
+		// ruleEnd.addTerminalRule(END_ELEMENT);
+		// typeEmpty_i = new
+		// SchemaInformedFirstStartTag(handleAttributes(ruleEnd,
+		// ruleEnd, null, null));
+		// typeEmpty_i.setTypeCastable(isTypeCastable);
+
+		type_i.setTypeEmpty(typeEmpty_i);
+
+		return type_i;
 	}
 
 }

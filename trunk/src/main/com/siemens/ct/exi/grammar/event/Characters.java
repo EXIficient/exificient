@@ -37,4 +37,15 @@ public class Characters extends AbstractDatatypeEvent {
 	public Characters(QName valueType, Datatype datatype) {
 		super(EventType.CHARACTERS, valueType, datatype);
 	}
+
+	public boolean equals(Object o) {
+		if (super.equals(o)) {
+			// event-type is ok already
+			Characters ch = (Characters) o;
+			return (this.valueType.equals(ch.valueType) && this.datatype
+					.getBuiltInType().equals(ch.getDatatype().getBuiltInType()));
+		} else {
+			return false;
+		}
+	}
 }

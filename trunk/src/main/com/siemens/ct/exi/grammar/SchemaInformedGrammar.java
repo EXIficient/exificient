@@ -19,7 +19,7 @@
 package com.siemens.ct.exi.grammar;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,15 +28,11 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedFragmentContent;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
@@ -50,15 +46,9 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 public class SchemaInformedGrammar extends AbstractGrammar implements Serializable {
 
 	/**
-	 * TODO serialVersionUID
+	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 7647530843802602241L;
-
-	 // subset of entire set of (named) element
-	protected List<StartElement> sortedGlobalElements;
-	
-	// named elements
-	protected List<StartElement> namedElements;
 	
 	protected Map<QName, StartElement> globalElements;
 
@@ -66,39 +56,27 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
 	
+	protected Collection<StartElement> elements;
+	
 	/* (direct) simple sub-types for given qname */
 	protected Map<QName, List<QName>> subtypes;
-
-	protected SchemaInformedRule builtInFragmentGrammar;
 	
 	protected boolean builtInXMLSchemaTypesOnly = false;
 	
 	protected String schemaId;
 
-	public SchemaInformedGrammar() {
-		super(true);
-	}
 	
-	protected SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
-			List<StartElement> fragmentElements, List<StartElement> sortedGlobalElements) {
+	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
 		super(true);
 		
 		// uri & local-name & prefix entries
 		this.grammarEntries = grammarEntries;
 		
-		//	elements
-		this.sortedGlobalElements = sortedGlobalElements;
-		this.namedElements = fragmentElements;
-		
-		// init document & fragment grammar
-		initDocumentGrammar();
-		initFragmentGrammar(fragmentElements);
+		// set document & fragment grammar
+		documentGrammar = document;
+		fragmentGrammar= fragment;
 
-		// initialize map of global element
-		this.globalElements = new HashMap<QName, StartElement>();
-		for (StartElement globalElement : sortedGlobalElements) {
-			globalElements.put(globalElement.getQName(), globalElement);
-		}
+		this.elements = elements;
 	}
 	
 	
@@ -114,34 +92,22 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	public void setSchemaId(String schemaId) {
 		this.schemaId = schemaId;
 	}
-	
-	
+		
 	public boolean isBuiltInXMLSchemaTypesOnly() {
 		return builtInXMLSchemaTypesOnly;
 	}
-	
-	protected static boolean containsEmptyURI(GrammarURIEntry[] entries) {
-		for(int i=0;i<entries.length; i++) {
-			if(entries[i].uri.equals(Constants.EMPTY_STRING)) {
-				return true;
-			}
-		}
-		return false;
+
+	public Collection<StartElement> getElements() {
+		return this.elements;
 	}
 	
-	public List<StartElement> getNamedElements() {
-		return this.namedElements;
+	protected void setGlobalElements(Map<QName, StartElement> globalElements) {
+		assert (globalElements != null);
+		this.globalElements = globalElements;
 	}
 	
 	public StartElement getGlobalElement(QName qname) {
-		//	TODO build hash-map
-		for (StartElement globalElement : sortedGlobalElements) {
-			if(globalElement.getQName().equals(qname)) {
-				return globalElement;
-			}
-		}
-
-		return null;
+		return globalElements.get(qname);
 	}
 	
 	protected void setGlobalAttributes(Map<QName, Attribute> globalAttributes) {
@@ -174,58 +140,8 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return subtypes.get(type);
 	}
 
-	protected void initDocumentGrammar() {
-		// Note: Schema-informed document grammar does NOT change over time!
-		/*
-		 * Global elements declared in the schema. G 0, G 1, ... G n-1 represent
-		 * all the qnames of global elements sorted lexicographically, first by
-		 * localName, then by uri.
-		 * http://www.w3.org/TR/exi/#informedDocGrammars
-		 */
-		// DocEnd rule
-		Rule builtInDocEndGrammar = new DocEnd("DocEnd");
-		// DocContent rule
-		SchemaInformedRule builtInDocContentGrammar = new SchemaInformedDocContent(
-				builtInDocEndGrammar, "DocContent");
-		// DocContent rule & add global elements (sorted)
-		for (StartElement globalElement : sortedGlobalElements) {
-			builtInDocContentGrammar.addRule(globalElement,
-					builtInDocEndGrammar);
-		}
-		// Document rule
-		builtInDocumentGrammar = new Document(builtInDocContentGrammar,
-				"Document");
-	}
-
-	protected void initFragmentGrammar(List<StartElement> namedElements) {
-		// Note: Schema-informed fragment grammar does NOT change over time!
-		/*
-		 * FragmentContent grammar represents the number of unique element
-		 * qnames declared in the schema sorted lexicographically, first by
-		 * localName, then by uri.
-		 * http://www.w3.org/TR/exi/#informedElementFragGrammar
-		 */
-		/*
-		 * Fragment Content
-		 */
-		SchemaInformedRule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
-				"FragmentContent");
-		for (StartElement namedElement : namedElements) {
-			builtInFragmentContentGrammar.addRule(namedElement,
-					builtInFragmentContentGrammar);
-		}
-
-		/*
-		 * Fragment
-		 */
-		builtInFragmentGrammar = new Fragment(builtInFragmentContentGrammar,
-				"Fragment");
-		builtInFragmentGrammar.addRule(new StartDocument(),
-				builtInFragmentContentGrammar);
-	}
-
-	public Rule getBuiltInFragmentGrammar() {
-		return builtInFragmentGrammar;
+	public Rule getFragmentGrammar() {
+		return fragmentGrammar;
 	}
 
 }

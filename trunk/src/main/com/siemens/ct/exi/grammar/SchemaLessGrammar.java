@@ -76,7 +76,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		Rule builtInDocContentGrammar = new SchemaLessDocContent(
 				builtInDocEndGrammar, "DocContent");
 		// Document rule
-		builtInDocumentGrammar = new Document(builtInDocContentGrammar,
+		documentGrammar = new Document(builtInDocContentGrammar,
 				"Document");
 	}
 	
@@ -92,7 +92,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 	 * Note: create new instance since fragment content grammar may have been
 	 * changed over time
 	 */
-	public Rule getBuiltInFragmentGrammar() {
+	public Rule getFragmentGrammar() {
 		/*
 		 * Fragment Content
 		 */
@@ -101,12 +101,12 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		/*
 		 * Fragment
 		 */
-		Rule builtInFragmentGrammar = new Fragment(
+		fragmentGrammar = new Fragment(
 				builtInFragmentContentGrammar, "Fragment");
-		builtInFragmentGrammar.addRule(new StartDocument(),
+		fragmentGrammar.addRule(new StartDocument(),
 				builtInFragmentContentGrammar);
 
-		return builtInFragmentGrammar;
+		return fragmentGrammar;
 	}
 
 	public Attribute getGlobalAttribute(QName qname) {
