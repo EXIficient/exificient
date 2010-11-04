@@ -47,6 +47,9 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 // http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.txt
 public class EXIRegularExpression extends RegularExpression {
 
+	// Java 1.5 supports Unicode 4.0
+	public static final boolean USE_UNICODE_4_0 = true;
+	
 	/*
 	 * If the resulting set of characters contains less than 256 characters and
 	 * contains only BMP characters, the string value has a restricted character
@@ -65,21 +68,42 @@ public class EXIRegularExpression extends RegularExpression {
 		// init set
 		set = new HashSet<Integer>();
 		isRestrictedSet = true;
+		
+		// To remove all non-BMP characters, the following should work:
+		// String sanitizedString = regex.replaceAll("[^\u0000-\uFFFF]", "");
+		
+		// non-BMP characters ?
+		final int lenChars = regex.length();
+		for (int i = 0; i<lenChars; i++) {
+			final char ch = regex.charAt(i);
+
+			// Is this a UTF-16 surrogate pair?
+			if (Character.isHighSurrogate(ch)) {
+				isRestrictedSet = false;
+				return;
+			} 
+		}
+		
 		// analyze set
 		handleToken(this.tokentree);
-		// detect whether we deal with BMP characters
-		// and whether the characters are part of Unicode 3.1.0
-		Set<Integer> toRemove = new HashSet<Integer>();
-		for(Integer cp : set) {
-			if ( ! Unicode_3_1_0_BMP.isRelevantCodepoint(cp)) {
-				toRemove.add(cp);
-//				isRestrictedSet = false;
-//				return;
+		
+		
+		if (! USE_UNICODE_4_0) {
+			// detect whether we deal with BMP characters
+			// and whether the characters are part of Unicode 3.1.0
+			Set<Integer> toRemove = new HashSet<Integer>();
+			for(Integer cp : set) {
+				if ( ! Unicode_3_1_0_BMP.isRelevantCodepoint(cp)) {
+					toRemove.add(cp);
+//					isRestrictedSet = false;
+//					return;
+				}
 			}
+			for(Integer toRem : toRemove) {
+				set.remove(toRem);
+			}			
 		}
-		for(Integer toRem : toRemove) {
-			set.remove(toRem);
-		}
+
 	}
 
 	protected void addChar(int cp) {

@@ -228,4 +228,22 @@ public class StringTest extends AbstractTestCase {
 	}
 	
 	
+	public void testNonBMP1() throws IOException {
+		// "&#x10FFF;" NON BMP ( == 69631 )
+		// X &#x10FFF; Y
+		String s = new StringBuilder().append("X ").appendCodePoint(0x10FFF).append(" Y").toString();
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeString(s);
+		bitEC.flush();
+		char[] sd1 = getBitDecoder().decodeString();
+		assertTrue(s.equals(new String(sd1)));
+		
+		// Byte
+		getByteEncoder().encodeString(s);
+		char[] sd2 = getByteDecoder().decodeString();
+		assertTrue(s.equals(new String(sd2)));
+	}
+	
 }
