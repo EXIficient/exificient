@@ -35,9 +35,9 @@ public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 
 	private static final long serialVersionUID = -975693882715012642L;
 
-	private final QName valueType;
+	protected final QName valueType;
 
-	private final Datatype datatype;
+	protected final Datatype datatype;
 
 	public AbstractDatatypeEvent(EventType eventType, QName valueType,
 			Datatype datatype) {

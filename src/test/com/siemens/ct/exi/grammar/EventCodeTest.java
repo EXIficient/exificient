@@ -336,7 +336,7 @@ public class EventCodeTest extends TestCase {
 	public void testBuiltInDocumentGrammar() {
 		Grammar g = GrammarFactory.newInstance().createSchemaLessGrammar();
 		
-		Rule document = g.getBuiltInDocumentGrammar();
+		Rule document = g.getDocumentGrammar();
 		/*
 		 * Document :
 		 * SD DocContent	0
@@ -372,7 +372,7 @@ public class EventCodeTest extends TestCase {
 	public void testBuiltInFragmentGrammar() {
 		Grammar g = GrammarFactory.newInstance().createSchemaLessGrammar();
 		
-		Rule fragment = g.getBuiltInFragmentGrammar();
+		Rule fragment = g.getFragmentGrammar();
 		/*
 		 * Fragment :
 		 * SD FragmentContent	0
@@ -409,7 +409,7 @@ public class EventCodeTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 	
-		Rule document = g.getBuiltInDocumentGrammar();
+		Rule document = g.getDocumentGrammar();
 		/*
 		 * Document :
 		 * SD DocContent	0
@@ -462,7 +462,7 @@ public class EventCodeTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 		
-		Rule fragment = g.getBuiltInFragmentGrammar();
+		Rule fragment = g.getFragmentGrammar();
 		/*
 		 * Fragment :
 		 * SD FragmentContent	0

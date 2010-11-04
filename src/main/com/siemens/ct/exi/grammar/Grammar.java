@@ -73,9 +73,9 @@ public interface Grammar extends Serializable {
 	 */
 	public boolean isBuiltInXMLSchemaTypesOnly();
 
-	public Rule getBuiltInDocumentGrammar();
+	public Rule getDocumentGrammar();
 
-	public Rule getBuiltInFragmentGrammar();
+	public Rule getFragmentGrammar();
 
 	public GrammarURIEntry[] getGrammarEntries();
 

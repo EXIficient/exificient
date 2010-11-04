@@ -129,8 +129,8 @@ public abstract class AbstractEXIBody {
 
 		// possible document/fragment grammar
 		currentRule = exiFactory.isFragment() ? grammar
-				.getBuiltInFragmentGrammar() : grammar
-				.getBuiltInDocumentGrammar();
+				.getFragmentGrammar() : grammar
+				.getDocumentGrammar();
 
 		// (core) context
 		elementContextStackIndex = 0;
