@@ -54,23 +54,37 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		Set<Integer> codePoints = re.getCodePoints();
 		// <!-- 3.1.0 46 Chars -->
-		//  <!-- 3.2.0 48 Chars -->
+		// <!-- 3.2.0 48 Chars -->
+		// <!-- 4.0 114 Chars -->
         // <!-- 6.0.0d2 202 Chars -->
-		assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 46);
+		if (EXIRegularExpression.USE_UNICODE_4_0) {
+			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 114);	
+		} else {
+			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 46);
+		}
+		
 	}
 
 	public void testNonUnicode3_1_0() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("\uFFFF");
 		
-		assertTrue(re.isEntireSetOfXMLCharacters());
+		if (EXIRegularExpression.USE_UNICODE_4_0) {
+			
+		} else {
+			assertTrue(re.isEntireSetOfXMLCharacters());	
+		}
 	}
 	
 	
 	public void testNonBMP() throws Exception {
 		// char c = 0xDC00; // \uDC00
-		Character.isLetter(0x2F81A);
+		// Character.isLetter(0x2F81A);
+		String test = new StringBuilder().appendCodePoint(0x10FFF).toString();
+		
+		EXIRegularExpression re = new EXIRegularExpression(test);
 		// EXIRegularExpression re = new EXIRegularExpression("&#x10FFF");
-		EXIRegularExpression re = new EXIRegularExpression("\u10FFF");
+		// EXIRegularExpression re = new EXIRegularExpression("\u10FFF");
+		// EXIRegularExpression re = new EXIRegularExpression("[\u10FFF-\u10FFF]");
 		
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
@@ -81,7 +95,11 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// UnicodeData-3.2.0: 03D7 .. 03DA (4 chars, 03D8 & 03D9)
 		EXIRegularExpression re = new EXIRegularExpression("[\u03D7-\u03DA]");
 		assertFalse(re.isEntireSetOfXMLCharacters());
-		assertTrue(re.getCodePoints().size() == 2);
+		if (EXIRegularExpression.USE_UNICODE_4_0) {
+			assertTrue(re.getCodePoints().size() == 4);	
+		} else {
+			assertTrue(re.getCodePoints().size() == 2);
+		}
 	}
 
 	@Test
@@ -440,17 +458,24 @@ public class RegularExpressionTest extends AbstractTestCase {
 	}
 
 	public void testPattern25() throws EXIException {
-		// unicode databae 3.2 ONLY!
+		// unicode database 3.2 ONLY!
 		EXIRegularExpression re = new EXIRegularExpression("\u303B");
-		assertTrue(re.isEntireSetOfXMLCharacters());
+		if (EXIRegularExpression.USE_UNICODE_4_0) {
+			assertTrue(!re.isEntireSetOfXMLCharacters());
+			assertTrue(re.getCodePoints().size() == 1);
+		} else {
+			assertTrue(re.isEntireSetOfXMLCharacters());	
+		}
 	}
 	
 	public void testPattern26() throws EXIException {
 		// "&#x10FFF;" NON BMP
-		EXIRegularExpression re = new EXIRegularExpression("[ABC&#x10FFF;]{1}");
-		assertTrue(!re.isEntireSetOfXMLCharacters());
-		// A, B, and C ?
-		assertTrue(re.getCodePoints().size() == 3);
+		String test = new StringBuilder().append("[ABC").appendCodePoint(0x10FFF).append("]{1}").toString();
+		// EXIRegularExpression re = new EXIRegularExpression("[ABC&#x10FFF;]{1}");
+		EXIRegularExpression re = new EXIRegularExpression(test);
+		assertTrue(re.isEntireSetOfXMLCharacters());
+//		// A, B, and C ?
+//		assertTrue(re.getCodePoints().size() == 3);
 	}
 	
 	public void testPattern26_() throws EXIException {
