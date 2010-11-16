@@ -44,12 +44,15 @@ public class SchemaInformedFragmentContent extends
 
 	private static final long serialVersionUID = 2041418874823084368L;
 
-
-	public SchemaInformedFragmentContent(String label) {
-		super(label);
+	public SchemaInformedFragmentContent() {
 		//		SE(*) --> FragmentContent
 		this.addRule(START_ELEMENT_GENERIC, this);
 		addTerminalRule(new EndDocument());
+	}
+
+	public SchemaInformedFragmentContent(String label) {
+		this();
+		setLabel(label);
 	}
 
 	public String toString() {

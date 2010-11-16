@@ -189,7 +189,7 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	}
 
 	public String toString() {
-		String s = "FirstStartTag";
+		String s = "First";
 
 		if (this.isTypeCastable) {
 			s += "(xsi:type)";

@@ -51,7 +51,6 @@ import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
@@ -479,6 +478,30 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		// schema declared elements --> fragment grammars
 		List<StartElement> fragmentElements = getFragmentElements();
+		
+//		// (all) elements
+//		Collection<StartElement> elements = new HashSet<StartElement>();
+//		{
+////			// element pool
+////			Collection<StartElement> elementsX = elementPool.values();
+////			for(StartElement se : elementsX) {
+////				// System.out.println(se + "\t" + se.getRule());
+////				elements.add(se);
+////			}
+//			// global elements
+//			for(StartElement ge : globalElements) {
+//				if (!elements.contains(ge)) {
+//					elements.add(ge);	
+//				}
+//			}
+//			// fragment elements
+//			for(StartElement fe : fragmentElements) {
+//				if (!elements.contains(fe)) {
+//					elements.add(fe);	
+//				}
+//			}
+//		}
+		
 
 		// sort both lists (declared & global elements)
 		Collections.sort(globalElements, lexSort);
@@ -613,15 +636,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 */
 		Fragment fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
 				"Fragment");
-		fragmentGrammar.addRule(new StartDocument(),
-				builtInFragmentContentGrammar);
-
+//		fragmentGrammar.addRule(new StartDocument(),
+//				builtInFragmentContentGrammar);
+		
 		/*
 		 * create schema informed grammar (+set grammarTypes, simpleSubTypes and
 		 * global attributes)
 		 */
 		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
-				documentGrammar, fragmentGrammar, elementPool.values());
+				documentGrammar, fragmentGrammar); // , elements);
 
 		sig.setTypeGrammars(grammarTypes);
 		sig.setSimpleTypeSubtypes(subtypes);

@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
@@ -103,8 +102,8 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		 */
 		fragmentGrammar = new Fragment(
 				builtInFragmentContentGrammar, "Fragment");
-		fragmentGrammar.addRule(new StartDocument(),
-				builtInFragmentContentGrammar);
+//		fragmentGrammar.addRule(new StartDocument(),
+//				builtInFragmentContentGrammar);
 
 		return fragmentGrammar;
 	}

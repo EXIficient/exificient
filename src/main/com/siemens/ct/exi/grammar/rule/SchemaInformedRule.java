@@ -30,44 +30,7 @@ import com.siemens.ct.exi.grammar.event.Event;
 
 public interface SchemaInformedRule extends Rule {
 	
-//	/*
-//	 * 
-//	 */
-//	public void addRule(Event event, Rule rule);
-//
-//	public void addTerminalRule(Event event);
-	
-
 	public void addTerminalRule(Event event);
-	
-	
-//	/*
-//	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
-//	 */
-//	public void setFirstElementRule();
-//	
-////	public boolean isFirstElementRule();
-//
-//	/*
-//	 * sets whether type is castable
-//	 */
-//	public void setTypeCastable(boolean hasNamedSubtypes);
-//
-//	/*
-//	 * sets whether element is nillable
-//	 */
-//	public void setNillable(boolean nillable);
-//
-//	/*
-//	 * set typeEmpty
-//	 */
-//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty);
-//	
-//	/*
-//	 * get empty type
-//	 */
-//	public StartSchemaInformedRule getTypeEmpty();
-	
 	
 	/*
 	 * Label

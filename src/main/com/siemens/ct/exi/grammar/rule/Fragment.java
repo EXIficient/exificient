@@ -21,6 +21,7 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartDocument;
 
 /**
  * 
@@ -39,13 +40,14 @@ public class Fragment extends AbstractSchemaInformedRule {
 	
 	Rule fragmentContent;
 	
-//	// Serializable
-//	protected Fragment() {
-//	}
-
-	public Fragment(Rule fragmentContent, String label) {
-		super(label);
+	public Fragment(Rule fragmentContent) {
 		this.fragmentContent = fragmentContent;
+		addRule(new StartDocument(), fragmentContent);
+	}
+	
+	public Fragment(Rule fragmentContent, String label) {
+		this(fragmentContent);
+		this.setLabel(label);
 	}
 
 	public String toString() {
