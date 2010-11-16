@@ -71,7 +71,11 @@ public class StartElement extends AbstractEvent {
 			return true;
 		} else if (obj instanceof StartElement) {
 			StartElement otherSE = (StartElement) obj;
-			return (qname.equals(otherSE.qname));
+			if (qname.equals(otherSE.qname)) {
+				return rule.equals(otherSE.rule);
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

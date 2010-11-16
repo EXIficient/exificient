@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.grammar;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
 	
-	protected Collection<StartElement> elements;
+	// protected Collection<StartElement> elements;
 	
 	/* (direct) simple sub-types for given qname */
 	protected Map<QName, List<QName>> subtypes;
@@ -66,7 +65,8 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	protected String schemaId;
 
 	
-	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
+	// public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
+	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment) {
 		super(true);
 		
 		// uri & local-name & prefix entries
@@ -76,7 +76,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		documentGrammar = document;
 		fragmentGrammar= fragment;
 
-		this.elements = elements;
+		// this.elements = elements;
 	}
 	
 	
@@ -97,11 +97,11 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return builtInXMLSchemaTypesOnly;
 	}
 
-	public Collection<StartElement> getElements() {
-		return this.elements;
-	}
+//	public Collection<StartElement> getElements() {
+//		return this.elements;
+//	}
 	
-	protected void setGlobalElements(Map<QName, StartElement> globalElements) {
+	public void setGlobalElements(Map<QName, StartElement> globalElements) {
 		assert (globalElements != null);
 		this.globalElements = globalElements;
 	}
@@ -110,7 +110,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return globalElements.get(qname);
 	}
 	
-	protected void setGlobalAttributes(Map<QName, Attribute> globalAttributes) {
+	public void setGlobalAttributes(Map<QName, Attribute> globalAttributes) {
 		assert (globalAttributes != null);
 		this.globalAttributes = globalAttributes;
 	}
@@ -119,7 +119,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return globalAttributes.get(qname);
 	}
 	
-	protected void setTypeGrammars(Map<QName, SchemaInformedFirstStartTagRule> grammarTypes) {
+	public void setTypeGrammars(Map<QName, SchemaInformedFirstStartTagRule> grammarTypes) {
 		assert (grammarTypes != null);
 		this.grammarTypes = grammarTypes;
 	}
@@ -132,7 +132,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		return grammarTypes.keySet();
 	}
 	
-	protected void setSimpleTypeSubtypes(Map<QName, List<QName>> subtypes) {
+	public void setSimpleTypeSubtypes(Map<QName, List<QName>> subtypes) {
 		this.subtypes = subtypes;
 	}
 	
