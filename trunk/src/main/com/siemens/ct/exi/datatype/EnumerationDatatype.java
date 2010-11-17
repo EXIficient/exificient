@@ -161,20 +161,22 @@ public class EnumerationDatatype extends AbstractDatatype {
 		return enumValues[i];
 	}
 	
-	@Override
-	// When the preserve.lexicalValues option is true, enumerated values are
-	// encoded as String
-	public boolean isValidRCS(String value) {
-		this.lastRCSValue = value;
-		return true;
-	}
-
-	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			EncoderChannel valueChannel, StringEncoder stringEncoder,
-			QName context) throws IOException {
-		stringEncoder.writeValue(context, valueChannel, lastRCSValue);
-	}
+//	@Override
+//	// When the preserve.lexicalValues option is true, enumerated values are
+//	// encoded as String
+//	public boolean isValidRCS(String value) {
+//		// super.isValidRCS(value);
+//		this.lastRCSValue = value;
+//		return true;
+//	}
+//
+//	@Override
+//	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+//			EncoderChannel valueChannel, StringEncoder stringEncoder,
+//			QName context) throws IOException {
+//		// super.writeValueRCS(rcsEncoder, valueChannel, stringEncoder, context)
+//		stringEncoder.writeValue(context, valueChannel, lastRCSValue);
+//	}
 	
 	
 	public void writeValue(EncoderChannel valueChannel,
@@ -191,11 +193,11 @@ public class EnumerationDatatype extends AbstractDatatype {
 	}
 
 
-	@Override
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			QName context) throws IOException {
-		return stringDecoder.readValue(context, valueChannel);
-	}
+//	@Override
+//	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+//			DecoderChannel valueChannel, StringDecoder stringDecoder,
+//			QName context) throws IOException {
+//		return stringDecoder.readValue(context, valueChannel);
+//	}
 
 }
