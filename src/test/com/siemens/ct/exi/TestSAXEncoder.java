@@ -32,6 +32,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.util.FragmentUtilities;
 import com.siemens.ct.exi.util.NoEntityResolver;
 import com.siemens.ct.exi.util.SkipRootElementXMLReader;
@@ -44,6 +45,22 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 		super();
 		this.exiOutput = exiOutput;
 	}
+	
+	protected static void setupEncodingOptions(EXIFactory ef) throws UnsupportedOption {
+		if (QuickTestConfiguration.INCLUDE_COOKIE) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
+		}
+		if (QuickTestConfiguration.INCLUDE_OPTIONS) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		}
+		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
+		}
+		if (QuickTestConfiguration.RETAIN_ENTITY_REFERENCE) {
+			ef.getEncodingOptions().setOption(EncodingOptions.RETAIN_ENTITY_REFERENCE);
+		}
+	}
+	
 
 	protected XMLReader getXMLReader() throws Exception {
 		// create xml reader
@@ -128,16 +145,10 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		// create test-encoder & encode to EXI
 		TestSAXEncoder testEncoder = new TestSAXEncoder(encodedOutput);
-		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
-		if (QuickTestConfiguration.INCLUDE_COOKIE) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
-		}
-		if (QuickTestConfiguration.INCLUDE_OPTIONS) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
-		}
-		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
-		}
+		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory		
+		// setup encoding options
+		setupEncodingOptions(ef);
+
 		testEncoder.encodeTo(ef, xmlInput);
 
 		encodedOutput.flush();

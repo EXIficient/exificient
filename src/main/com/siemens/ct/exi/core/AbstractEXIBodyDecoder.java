@@ -701,7 +701,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 
 	public char[] decodeEntityReference() throws EXIException, IOException {
 		// decode name AS string
-		return channel.decodeString();
+		char[] er = channel.decodeString();
+		// update current rule
+		currentRule = currentRule.getElementContentRule();
+		return er;
 	}
 
 	public char[] decodeComment() throws EXIException, IOException {
