@@ -716,6 +716,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 
 			// name AS string
 			writeString(name);
+			
+			// update current rule
+			currentRule = currentRule.getElementContentRule();
 		}
 	}
 
