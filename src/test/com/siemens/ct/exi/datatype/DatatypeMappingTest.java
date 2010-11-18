@@ -770,12 +770,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "    <xs:element name='myNonPositiveInteger' type='xs:nonPositiveInteger' />"
 				+ "</xs:schema>";
-
+	
 		Grammar grammar = getGrammar(schemaAsString);
-
+	
 		StartElement se = grammar.getGlobalElement(new QName("",
 				"myNonPositiveInteger"));
-
+	
 		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) se
 				.getRule();
 		assertTrue(r.isTypeCastable());

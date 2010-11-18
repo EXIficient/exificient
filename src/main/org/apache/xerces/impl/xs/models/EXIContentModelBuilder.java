@@ -94,9 +94,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	// errors while schema parsing
 	protected List<String> schemaParsingErrors;
 
-	// elements that appear while processing
-	protected List<XSElementDeclaration> remainingElements;
-
 	// pool for element-declaration of StartElement events
 	protected Map<XSElementDeclaration, StartElement> elementPool;
 
@@ -105,13 +102,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 
 	protected void initOnce() {
-		remainingElements = new ArrayList<XSElementDeclaration>();
 		elementPool = new HashMap<XSElementDeclaration, StartElement>();
 		schemaParsingErrors = new ArrayList<String>();
 	}
 
 	protected void initEachRun() {
-		remainingElements.clear();
 		elementPool.clear();
 		schemaParsingErrors.clear();
 	}
@@ -245,7 +240,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 				// Note: xsd:all is allowed to contain elements only
 				if (XSConstants.ELEMENT_DECLARATION == tt.getType()) {
 					XSElementDeclaration el = (XSElementDeclaration) tt;
-					StartElement se = getStartElement(el);
+					// StartElement se = getStartElement(el);
+					StartElement se = translatElementDeclarationToFSA(el);
 					allRule.addRule(se, allRule);
 				} else {
 					throw new RuntimeException(
@@ -277,23 +273,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 	}
 
-	protected StartElement getStartElement(XSElementDeclaration elementDecl) {
-		StartElement se;
-		if (elementPool.containsKey(elementDecl)) {
-			se = elementPool.get(elementDecl);
-		} else {
-			String namespaceURI = elementDecl.getNamespace();
-			String localName = elementDecl.getName();
-			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(
-					namespaceURI, localName);
-			se = new StartElement(qname);
-			addLocalNameStringEntry(namespaceURI, localName);
-			elementPool.put(elementDecl, se);
-		}
-
-		return se;
-	}
-
+	abstract protected StartElement translatElementDeclarationToFSA(
+			XSElementDeclaration xsElementDeclaration) throws EXIException;
+	
 	private void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
 			Map<CMState, SchemaInformedRule> knownStates, boolean isMixedContent)
@@ -325,12 +307,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				printTransition(startState, xs, nextState);
 
-				// add to list of "remaining" elements
-				if (!remainingElements.contains(nextEl)) {
-					remainingElements.add(nextEl);
-
-				}
-
 				// retrieve list of possible elements (e.g. substitution group
 				// elements)
 				List<XSElementDeclaration> elements = getPossibleElementDeclarations(nextEl);
@@ -339,7 +315,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				for (int i = 0; i < elements.size(); i++) {
 					XSElementDeclaration nextEN = elements.get(i);
-					Event xsEvent = getStartElement(nextEN);
+					// Event xsEvent = getStartElement(nextEN);
+					Event xsEvent = translatElementDeclarationToFSA(nextEN);
 					if (i == 0) {
 						// first element tells the right way to proceed
 						isNewState = handleStateEntry(startState, knownStates,
