@@ -21,11 +21,9 @@ package com.siemens.ct.exi.grammar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
@@ -88,9 +86,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
 
-	// avoids recursive element handling
-	protected Set<XSElementDeclaration> handledElements;
-
 	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
@@ -121,11 +116,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	@Override
 	protected void initOnce() {
 		super.initOnce();
-
-		handledElements = new HashSet<XSElementDeclaration>();
+		
 		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagRule>();
 		schemaLocalNames = new HashMap<String, List<String>>();
-		// atWildcardNamespaces = new ArrayList<String>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 	}
 
@@ -133,9 +126,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected void initEachRun() {
 		super.initEachRun();
 
-		handledElements.clear();
 		grammarTypes.clear();
-		// atWildcardNamespaces.clear();
 		attributePool.clear();
 
 		elementFragment0 = null;
@@ -206,12 +197,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return true;
 	}
 
-	protected List<StartElement> getFragmentElements() {
+	protected List<StartElement> getFragmentElements() throws EXIException {
 		List<StartElement> fragmentElements = new ArrayList<StartElement>();
 
 		// create unique qname map
 		Map<QName, List<XSElementDeclaration>> uniqueNamedElements = new HashMap<QName, List<XSElementDeclaration>>();
-		for (XSElementDeclaration elDecl : handledElements) {
+		// for (XSElementDeclaration elDecl : handledElements) {
+		for (XSElementDeclaration elDecl : elementPool.keySet()) {
 			QName en = new QName(elDecl.getNamespace(), elDecl.getName());
 			if (uniqueNamedElements.containsKey(en)) {
 				uniqueNamedElements.get(en).add(elDecl);
@@ -233,11 +225,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			assert (elements.size() >= 1);
 			if (elements.size() == 1) {
 				// just one element for this qualified name --> simple task
-				fragmentElements.add(getStartElement(elements.get(0)));
+				// fragmentElements.add(getStartElement(elements.get(0)));
+				StartElement se = translatElementDeclarationToFSA(elements.get(0));
+				fragmentElements.add(se);
 			} else {
 				// multiple elements
 				if (isSameElementGrammar(elements)) {
-					fragmentElements.add(getStartElement(elements.get(0)));
+					// fragmentElements.add(getStartElement(elements.get(0)));
+					StartElement se = translatElementDeclarationToFSA(elements.get(0));
+					fragmentElements.add(se);
 				} else {
 					StartElement se = new StartElement(qname);
 					Rule elementFragmentGrammar = getSchemaInformedElementFragmentGrammar(uniqueNamedElements);
@@ -254,7 +250,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	// http://www.w3.org/TR/exi/#informedElementFragGrammar
 	protected Rule getSchemaInformedElementFragmentGrammar(
-			Map<QName, List<XSElementDeclaration>> uniqueNamedElements) {
+			Map<QName, List<XSElementDeclaration>> uniqueNamedElements) throws EXIException {
 
 		if (elementFragment0 != null) {
 			return elementFragment0;
@@ -296,7 +292,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			StartElement se;
 			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
 			if (elements.size() == 1 || isSameElementGrammar(elements)) {
-				se = getStartElement(elements.get(0));
+				// se = getStartElement(elements.get(0));
+				se = translatElementDeclarationToFSA(elements.get(0));
 			} else {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
@@ -395,7 +392,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			StartElement se;
 			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
 			if (elements.size() == 1 || isSameElementGrammar(elements)) {
-				se = getStartElement(elements.get(0));
+				// se = getStartElement(elements.get(0));
+				se = translatElementDeclarationToFSA(elements.get(0));
 			} else {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
@@ -478,30 +476,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		// schema declared elements --> fragment grammars
 		List<StartElement> fragmentElements = getFragmentElements();
-		
-//		// (all) elements
-//		Collection<StartElement> elements = new HashSet<StartElement>();
-//		{
-////			// element pool
-////			Collection<StartElement> elementsX = elementPool.values();
-////			for(StartElement se : elementsX) {
-////				// System.out.println(se + "\t" + se.getRule());
-////				elements.add(se);
-////			}
-//			// global elements
-//			for(StartElement ge : globalElements) {
-//				if (!elements.contains(ge)) {
-//					elements.add(ge);	
-//				}
-//			}
-//			// fragment elements
-//			for(StartElement fe : fragmentElements) {
-//				if (!elements.contains(fe)) {
-//					elements.add(fe);	
-//				}
-//			}
-//		}
-		
 
 		// sort both lists (declared & global elements)
 		Collections.sort(globalElements, lexSort);
@@ -525,8 +499,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
 					&& !td.getAnonymous()) {
-				// XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) td;
-				// XSTypeDefinition baseType = td.getBaseType();
 				XSTypeDefinition baseType = getBaseType(td);
 
 				if (baseType == null) {
@@ -540,7 +512,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 						subtypes.put(baseTypeQName, sub);
 					}
 					sub.add(getValueType(td));
-
 				}
 			}
 		}
@@ -621,23 +592,16 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * localName, then by uri.
 		 * http://www.w3.org/TR/exi/#informedElementFragGrammar
 		 */
-		/*
-		 * Fragment Content
-		 */
+		//Fragment Content
 		SchemaInformedRule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
 				"FragmentContent");
 		for (StartElement fragmentElement : fragmentElements) {
 			builtInFragmentContentGrammar.addRule(fragmentElement,
 					builtInFragmentContentGrammar);
 		}
-
-		/*
-		 * Fragment
-		 */
+		//Fragment
 		Fragment fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
 				"Fragment");
-//		fragmentGrammar.addRule(new StartDocument(),
-//				builtInFragmentContentGrammar);
 		
 		/*
 		 * create schema informed grammar (+set grammarTypes, simpleSubTypes and
@@ -721,8 +685,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// check localName value presence
 		if (!localNameList.contains(localName)) {
 			localNameList.add(localName);
-			// System.out.println("LocalName=" + localName + " \t " +
-			// namespaceURI);
 		}
 	}
 
@@ -750,12 +712,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (int i = 0; i < types.getLength(); i++) {
 			XSTypeDefinition td = (XSTypeDefinition) types.item(i);
 
-			QName name = new QName(td.getNamespace(), td.getName());
+			// QName name = new QName(td.getNamespace(), td.getName());
 			SchemaInformedFirstStartTagRule sir = translateTypeDefinitionToFSA(td);
-			// types cannot be nillable (only elements!)
+			// types cannot be nillable nor typable (only elements!)
 			assert (!sir.isNillable());
-
-			grammarTypes.put(name, sir);
+			assert (!sir.isTypeCastable());
 		}
 
 		// global elements
@@ -764,57 +725,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		for (int i = 0; i < xsGlobalElements.getLength(); i++) {
 			XSElementDeclaration globalElementDecl = (XSElementDeclaration) xsGlobalElements
 					.item(i);
-
+			// create rule for global element (do not have scope)
+			StartElement seGlobalElement = translatElementDeclarationToFSA(globalElementDecl);
+			
 			// collect global elements (for DocContent)
-			StartElement seGlobalElement = getStartElement(globalElementDecl);
 			globalElements.add(seGlobalElement);
-			// globalElements.add(new ExpandedName(globalElement.getNamespace(),
-			// globalElement.getName()));
-
-			// create rules for global elements (do not have scope)
-			translatElementDeclarationToFSA(globalElementDecl);
-		}
-
-		// any remaining elements ? (not global elements)
-		for (int i = 0; i < remainingElements.size(); i++) {
-			XSElementDeclaration remElement = remainingElements.get(i);
-			translatElementDeclarationToFSA(remElement);
-		}
-
-		// check entire SE pool
-		// Note: copy due to ConcurrentModificationException !?
-		// Iterator<XSElementDeclaration> iterSE =
-		// elementPool.keySet().iterator();
-		Iterator<XSElementDeclaration> iterSE = (new HashMap<XSElementDeclaration, StartElement>(
-				elementPool)).keySet().iterator();
-		while (iterSE.hasNext()) {
-			XSElementDeclaration elementDecl = iterSE.next();
-			StartElement se = elementPool.get(elementDecl);
-
-			// element-rule
-			SchemaInformedFirstStartTagRule elementRule;
-
-			XSTypeDefinition td = elementDecl.getTypeDefinition();
-			if (td.getAnonymous()) {
-				// create new type grammar for an anonymous type
-				elementRule = translateTypeDefinitionToFSA(td);
-				elementRule.setNillable(elementDecl.getNillable());
-			} else {
-				// fetch existing grammar from pre-processed type
-				elementRule = getTypeGrammar(td.getNamespace(), td.getName());
-
-				// *duplicate* first productions to allow different behavior
-				// (e.g. property nillable is element dependent)
-				if (elementDecl.getNillable()) {
-					elementRule = (SchemaInformedFirstStartTagRule) elementRule
-							.duplicate();
-					elementRule.setNillable(true);
-				} else {
-					elementRule.setNillable(false);
-				}
-			}
-
-			se.setRule(elementRule);
 		}
 
 		return globalElements;
@@ -986,28 +901,57 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return grammarTypes.get(en);
 	}
 
-	protected void translatElementDeclarationToFSA(
+	protected StartElement translatElementDeclarationToFSA(
 			XSElementDeclaration xsElementDeclaration) throws EXIException {
-
+		
+		StartElement se = null;
+		
 		// handle element recursion
-		if (this.handledElements.contains(xsElementDeclaration)) {
-			// element already handled
-			return;
+		if (elementPool.containsKey(xsElementDeclaration)) {
+			return elementPool.get(xsElementDeclaration);
+		} else {
+			String namespaceURI = xsElementDeclaration.getNamespace();
+			String localName = xsElementDeclaration.getName();
+			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(
+					namespaceURI, localName);
+			se = new StartElement(qname);
+			addLocalNameStringEntry(namespaceURI, localName);
+			elementPool.put(xsElementDeclaration, se);
 		}
-		this.handledElements.add(xsElementDeclaration);
 
 		// add local name entry for string table pre-population
 		addLocalNameStringEntry(xsElementDeclaration.getNamespace(),
 				xsElementDeclaration.getName());
 
-		// type definition
+		// type definition --> type grammar
 		XSTypeDefinition td = xsElementDeclaration.getTypeDefinition();
-
-		// type grammar
-		if (td.getAnonymous()) {
-			// create type grammar for anonymous type
-			translateTypeDefinitionToFSA(td);
+		SchemaInformedFirstStartTagRule type = translateTypeDefinitionToFSA(td);
+		
+		if (type.isNillable() || type.isTypeCastable()) {
+			throw new RuntimeException("Type grammar is nillable or typable, " + type + "\t" + td);
 		}
+		
+		// create element grammar
+		if (td.getAnonymous()) {
+			// can use anonymous grammar so set nillable and typable
+			type.setNillable(xsElementDeclaration.getNillable());
+			type.setTypeCastable(isTypeCastable(td));
+			se.setRule(type);
+		} else {
+			// ONLY if element is neither nillable nor typable existing grammar can be used
+			if (xsElementDeclaration.getNillable() || isTypeCastable(td)) {
+				// new top grammar
+				SchemaInformedFirstStartTagRule element = (SchemaInformedFirstStartTagRule) type.duplicate();
+				element.setNillable(xsElementDeclaration.getNillable());
+				element.setTypeCastable(isTypeCastable(td));
+				se.setRule(element);
+			} else {
+				// same grammar
+				se.setRule(type);
+			}
+		}
+		
+		return se;
 	}
 
 	// http://www.w3.org/TR/exi/#anyTypeGrammar
@@ -1027,10 +971,10 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		urType0.addRule(START_ELEMENT_GENERIC, urType1);
 		urType0.addTerminalRule(END_ELEMENT);
 		urType0.addRule(CHARACTERS_GENERIC, urType1);
-		// anyType is castable
-		urType0.setTypeCastable(true);
-		// types are NOT nillable
-		urType0.setNillable(false);
+//		// anyType is castable
+//		urType0.setTypeCastable(true);
+//		// types are NOT nillable
+//		urType0.setNillable(false);
 
 		// Type ur-type, 1 :
 		// SE(*) Type ur-type, 1
@@ -1052,8 +996,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// EE
 		emptyUrType0.addRule(ATTRIBUTE_GENERIC, emptyUrType0);
 		emptyUrType0.addTerminalRule(END_ELEMENT);
-		// anyType is castable
-		emptyUrType0.setTypeCastable(true);
+		
+//		// anyType is castable
+//		emptyUrType0.setTypeCastable(true);
 
 		// TypeEmpty ur-type, 1 :
 		// EE
@@ -1102,6 +1047,15 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected SchemaInformedFirstStartTagRule translateTypeDefinitionToFSA(
 			XSTypeDefinition td) throws EXIException {
 		SchemaInformedFirstStartTagRule type_i = null;
+		QName typeName = null;
+		
+		// type rule already created?
+		if (!td.getAnonymous()) {
+			typeName = new QName(td.getNamespace(), td.getName());
+			if ((type_i = grammarTypes.get(typeName)) != null) {
+				return type_i;
+			}
+		}
 
 		// simple vs. complex type handling
 		if (td.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE) {
@@ -1116,6 +1070,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		if (!td.getAnonymous()) {
 			// add to localName table for string table pre-population
 			addLocalNameStringEntry(td.getNamespace(), td.getName());
+			grammarTypes.put(typeName, type_i);
 		}
 
 		return type_i;
@@ -1198,21 +1153,21 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		XSObjectList attributes = ctd.getAttributeUses();
 		XSWildcard attributeWC = ctd.getAttributeWildcard();
 
-		boolean isTypeCastable = isTypeCastable(ctd);
+//		boolean isTypeCastable = isTypeCastable(ctd);
 
 		// type_i (start tag)
 		SchemaInformedStartTagRule sistr = handleAttributes(ruleContent,
 				ruleContent2, attributes, attributeWC);
 		SchemaInformedFirstStartTagRule type_i = new SchemaInformedFirstStartTag(
 				sistr);
-		type_i.setTypeCastable(isTypeCastable);
+//		type_i.setTypeCastable(isTypeCastable);
 
 		// typeEmpty_i
 		SchemaInformedRule ruleEnd = new SchemaInformedElement();
 		ruleEnd.addTerminalRule(END_ELEMENT);
 		SchemaInformedFirstStartTagRule typeEmpty_i = new SchemaInformedFirstStartTag(
 				handleAttributes(ruleEnd, ruleEnd, attributes, attributeWC));
-		typeEmpty_i.setTypeCastable(isTypeCastable);
+//		typeEmpty_i.setTypeCastable(isTypeCastable);
 		type_i.setTypeEmpty(typeEmpty_i);
 
 		return type_i;
@@ -1246,33 +1201,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		SchemaInformedElement simpleContent = new SchemaInformedElement();
 		simpleContent.addRule(chSchemaValid, simpleContentEnd);
 
-		/*
-		 * 
-		 */
-		boolean isTypeCastable = isTypeCastable(std);
-
 		// Type i
 		SchemaInformedFirstStartTagRule type_i = new SchemaInformedFirstStartTag(
 				handleAttributes(simpleContent, simpleContent, null, null));
-		type_i.setTypeCastable(isTypeCastable);
 
-		SchemaInformedFirstStartTagRule typeEmpty_i;
-		if (isTypeCastable) {
-			typeEmpty_i = SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE;
-		} else {
-			typeEmpty_i = SIMPLE_END_ELEMENT_EMPTY_RULE;
-		}
-
-		// // TypeEmpty i
-		// SchemaInformedRule ruleEnd = new SchemaInformedElement();
-		// ruleEnd.addTerminalRule(END_ELEMENT);
-		// typeEmpty_i = new
-		// SchemaInformedFirstStartTag(handleAttributes(ruleEnd,
-		// ruleEnd, null, null));
-		// typeEmpty_i.setTypeCastable(isTypeCastable);
-
-		type_i.setTypeEmpty(typeEmpty_i);
-
+		type_i.setTypeEmpty(SIMPLE_END_ELEMENT_EMPTY_RULE);
+		
 		return type_i;
 	}
 
