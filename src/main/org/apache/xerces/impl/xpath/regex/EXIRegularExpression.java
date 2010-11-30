@@ -181,7 +181,7 @@ public class EXIRegularExpression extends RegularExpression {
 		case Token.CONCAT: // XY
 			if (t instanceof UnionToken) {
 				UnionToken ut = (UnionToken) t;
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings({ "rawtypes" })
 				Vector children = ut.children;
 				for (int i = 0; i < children.size(); i++) {
 					Token subToken = (Token) children.get(i);

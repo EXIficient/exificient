@@ -503,4 +503,315 @@ public class EventCodeTest extends TestCase {
 		assertTrue(eiED.event.isEventType(EventType.END_DOCUMENT));
 	}
 
+	/*
+	 * <xsd:complexType name="B">
+	 * <xsd:sequence>
+	 * <xsd:element name="AB"/>
+	 * <xsd:element name="AC" minOccurs="0" maxOccurs="2"/>
+	 * <xsd:element name="AD" minOccurs="0"/>
+	 * </xsd:sequence>
+	 * </xsd:complexType>
+	 */
+	public void testSchemaInformedGrammarSequence1() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='AB'/> "
+			+ "    <xs:element name='AC' minOccurs='0' maxOccurs='2'/> "
+			+ "    <xs:element name='AD' minOccurs='0'/> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+	
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		Rule document = g.getDocumentGrammar();
+		/*
+		 * Document :
+		 * SD DocContent	0
+		 */
+		assertTrue(document.getNumberOfEvents() == 1);
+		EventInformation eiSD =  document.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule docContent = eiSD.next;
+		/*
+		 * DocContent :
+		 * SE (G 0) DocEnd	0
+		 * SE (G 1) DocEnd	1
+		 * . . .
+		 * SE (G n-1) DocEnd	n-1
+		 * SE (*) DocEnd	n
+		 * DT DocContent	 (n+1).0
+		 * CM DocContent	 (n+1).1.0
+		 * PI DocContent	 (n+1).1.1
+		 */
+		assertTrue(docContent.getNumberOfEvents() == 2);
+		EventInformation eiSE_root =  docContent.lookFor(0);
+		assertTrue(eiSE_root.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement)eiSE_root.event).getQName().getLocalPart().equals("root"));
+		EventInformation eiSEG =  docContent.lookFor(1);
+		assertTrue(eiSEG.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE_root.next == eiSEG.next);
+		
+		Rule docEnd = eiSEG.next;
+		/*
+		 * DocEnd :
+		 * ED	0
+		 * CM DocEnd	1.0
+		 * PI DocEnd	1.1
+		 */
+		assertTrue(docEnd.getNumberOfEvents() == 1);
+		EventInformation ei =  docEnd.lookFor(0);
+		assertTrue(ei.event.isEventType(EventType.END_DOCUMENT));
+		
+		/*
+		 * 1. SE(AB) 
+		 */
+		Rule root1 = ((StartElement)eiSE_root.event).getRule();
+		assertTrue(root1.getNumberOfEvents() == 1);
+		assertTrue(root1.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		// System.out.println(root1.getNumberOfEvents());
+		
+		/*
+		 * 2. SE(AC), SE(AD), EE
+		 */
+		Rule root2 = root1.lookFor(0).next;
+		assertTrue(root2.getNumberOfEvents() == 3);
+		assertTrue(root2.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+		// after SE(AD) is end
+		assertTrue(root2.lookFor(1).next.getNumberOfEvents() == 1);
+		assertTrue(root2.lookFor(1).next.lookFor(0).event.isEventType(EventType.END_ELEMENT));
+		
+		/*
+		 * following 1st time SE(AC)
+		 * SE(AC), SE(AD), EE
+		 */
+		Rule root3 = root2.lookFor(0).next;
+		assertTrue(root3.getNumberOfEvents() == 3);
+		assertTrue(root3.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+		
+		/*
+		 * following 2nd time SE(AC)
+		 * SE(AD), EE
+		 */
+		Rule root4 = root3.lookFor(0).next;
+		assertTrue(root4.getNumberOfEvents() == 2);
+		
+	}
+
+	/*
+	 * <xsd:complexType name="B">
+	 * <xsd:sequence>
+	 * <xsd:element name="AB"/>
+	 * <xsd:element name="AC" minOccurs="2" maxOccurs="unbounded"/>
+	 * <xsd:element name="AD" minOccurs="0"/>
+	 * </xsd:sequence>
+	 * </xsd:complexType>
+	 */
+	public void testSchemaInformedGrammarSequence2() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='AB'/> "
+			+ "    <xs:element name='AC' minOccurs='2' maxOccurs='unbounded'/> "
+			+ "    <xs:element name='AD' minOccurs='0'/> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+	
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		Rule document = g.getDocumentGrammar();
+		/*
+		 * Document :
+		 * SD DocContent	0
+		 */
+		assertTrue(document.getNumberOfEvents() == 1);
+		EventInformation eiSD =  document.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule docContent = eiSD.next;
+		/*
+		 * DocContent :
+		 * SE (G 0) DocEnd	0
+		 * SE (G 1) DocEnd	1
+		 * . . .
+		 * SE (G n-1) DocEnd	n-1
+		 * SE (*) DocEnd	n
+		 * DT DocContent	 (n+1).0
+		 * CM DocContent	 (n+1).1.0
+		 * PI DocContent	 (n+1).1.1
+		 */
+		assertTrue(docContent.getNumberOfEvents() == 2);
+		EventInformation eiSE_root =  docContent.lookFor(0);
+		assertTrue(eiSE_root.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement)eiSE_root.event).getQName().getLocalPart().equals("root"));
+		EventInformation eiSEG =  docContent.lookFor(1);
+		assertTrue(eiSEG.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE_root.next == eiSEG.next);
+		
+		Rule docEnd = eiSEG.next;
+		/*
+		 * DocEnd :
+		 * ED	0
+		 * CM DocEnd	1.0
+		 * PI DocEnd	1.1
+		 */
+		assertTrue(docEnd.getNumberOfEvents() == 1);
+		EventInformation ei =  docEnd.lookFor(0);
+		assertTrue(ei.event.isEventType(EventType.END_DOCUMENT));
+		
+		/*
+		 * 1. SE(AB) 
+		 */
+		Rule root1 = ((StartElement)eiSE_root.event).getRule();
+		assertTrue(root1.getNumberOfEvents() == 1);
+		assertTrue(root1.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		// System.out.println(root1.getNumberOfEvents());
+		
+		/*
+		 * 2. SE(AC)
+		 */
+		Rule root2 = root1.lookFor(0).next;
+		assertTrue(root2.getNumberOfEvents() == 1);
+		assertTrue(root2.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		
+		/*
+		 * 2. SE(AC)
+		 */
+		Rule root3 = root2.lookFor(0).next;
+		assertTrue(root3.getNumberOfEvents() == 1);
+		assertTrue(root3.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+
+		/*
+		 * 3. SE(AC), SE(AD), EE
+		 */
+		Rule root4 = root3.lookFor(0).next;
+		assertTrue(root4.getNumberOfEvents() == 3);
+		assertTrue(root4.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+		
+		// SE(AC) should point to same node
+		assertTrue(root4.lookFor(0).next == root4);
+		
+		// after SE(AD) is end
+		assertTrue(root4.lookFor(1).next.getNumberOfEvents() == 1);
+		assertTrue(root4.lookFor(1).next.lookFor(0).event.isEventType(EventType.END_ELEMENT));
+		
+	}
+	
+	
+
+	/*
+	 * <xsd:complexType name="B">
+	 * <xsd:sequence>
+	 * <xsd:element name="AB" minOccurs='0' />
+	 * <xsd:element name="AC" minOccurs="1" maxOccurs="3"/>
+	 * <xsd:element name="AD" minOccurs="0"/>
+	 * </xsd:sequence>
+	 * </xsd:complexType>
+	 */
+	public void testSchemaInformedGrammarSequence3() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='AB' minOccurs='0' /> "
+			+ "    <xs:element name='AC' minOccurs='1' maxOccurs='3'/> "
+			+ "    <xs:element name='AD' minOccurs='0'/> "
+			+ "   </xs:sequence>" + "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+	
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		Rule document = g.getDocumentGrammar();
+		/*
+		 * Document :
+		 * SD DocContent	0
+		 */
+		assertTrue(document.getNumberOfEvents() == 1);
+		EventInformation eiSD =  document.lookFor(0);
+		assertTrue(eiSD.event.isEventType(EventType.START_DOCUMENT));
+		
+		Rule docContent = eiSD.next;
+		/*
+		 * DocContent :
+		 * SE (G 0) DocEnd	0
+		 * SE (G 1) DocEnd	1
+		 * . . .
+		 * SE (G n-1) DocEnd	n-1
+		 * SE (*) DocEnd	n
+		 * DT DocContent	 (n+1).0
+		 * CM DocContent	 (n+1).1.0
+		 * PI DocContent	 (n+1).1.1
+		 */
+		assertTrue(docContent.getNumberOfEvents() == 2);
+		EventInformation eiSE_root =  docContent.lookFor(0);
+		assertTrue(eiSE_root.event.isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement)eiSE_root.event).getQName().getLocalPart().equals("root"));
+		EventInformation eiSEG =  docContent.lookFor(1);
+		assertTrue(eiSEG.event.isEventType(EventType.START_ELEMENT_GENERIC));
+		assertTrue(eiSE_root.next == eiSEG.next);
+		
+		Rule docEnd = eiSEG.next;
+		/*
+		 * DocEnd :
+		 * ED	0
+		 * CM DocEnd	1.0
+		 * PI DocEnd	1.1
+		 */
+		assertTrue(docEnd.getNumberOfEvents() == 1);
+		EventInformation ei =  docEnd.lookFor(0);
+		assertTrue(ei.event.isEventType(EventType.END_DOCUMENT));
+		
+		/*
+		 * 1. SE(AB), SE(AC)
+		 */
+		Rule root1 = ((StartElement)eiSE_root.event).getRule();
+		assertTrue(root1.getNumberOfEvents() == 2);
+		assertTrue(root1.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		
+		/*
+		 * 2. SE(AC)
+		 */
+		Rule root2 = root1.lookFor(0).next;
+		assertTrue(root2.getNumberOfEvents() == 1);
+		assertTrue(root2.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		
+		/*
+		 * 3. SE(AC), SE(AD), EE
+		 */
+		Rule root3 = root2.lookFor(0).next;
+		assertTrue(root3.getNumberOfEvents() == 3);
+		assertTrue(root3.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+	
+		/*
+		 * 4. SE(AC), SE(AD), EE
+		 */
+		Rule root4 = root3.lookFor(0).next;
+		assertTrue(root4.getNumberOfEvents() == 3);
+		assertTrue(root4.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+		
+		/*
+		 * 5. SE(AD), EE
+		 */
+		Rule root5 = root4.lookFor(0).next;
+		assertTrue(root5.getNumberOfEvents() == 2);
+		assertTrue(root5.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root5.lookFor(1).event.isEventType(EventType.END_ELEMENT));
+		
+	}
+
+
 }
