@@ -215,11 +215,34 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 		return val;
 	}
+	
+	
+	private void getMaxOccursUnboundedElements(List<XSElementDeclaration> elementsMaxOccursUnbounded, XSParticle xsParticle) {
+		XSTerm xsTerm = xsParticle.getTerm();
+		
+		if (xsTerm instanceof XSElementDeclaration) {
+			XSElementDeclaration xse = (XSElementDeclaration) xsTerm;
+			if (xsParticle.getMaxOccursUnbounded() && !elementsMaxOccursUnbounded.contains(xse)) {
+				elementsMaxOccursUnbounded.add(xse);
+			}
+		} else if (xsTerm instanceof XSModelGroup ) {
+			XSModelGroup smg = (XSModelGroup) xsTerm;
+			XSObjectList particles = smg.getParticles();
+			for(int i=0; i<particles.getLength(); i++) {
+				XSParticle xsp = (XSParticle) particles.item(i);
+				getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsp);
+			}
+		} else {
+			// XSWildcard
+		}
+	}
 
+	
 	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd,
 			boolean isMixedContent) throws EXIException {
 
-		XSTerm xsTerm = ctd.getParticle().getTerm();
+		XSParticle xsParticle = ctd.getParticle();
+		XSTerm xsTerm = xsParticle.getTerm();
 		XSModelGroup mg;
 		// special behaviour for xsd:all
 		if (xsTerm instanceof XSModelGroup
@@ -253,13 +276,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		} else {
 			// complex types other than xsd:all model groups
 			XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd, forUPA);
-
+			
 			int[] state = xscmVal.startContentModel();
 			@SuppressWarnings("unchecked")
 			Vector<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
+			
+			// elements that have a given maxOccurs unbounded
+			List<XSElementDeclaration> elementsMaxOccursUnbounded = new ArrayList<XSElementDeclaration>();
+			getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsParticle);
+			
 			boolean isEnd = xscmVal.endContentModel(state);
-
-			CMState startState = new CMState(possibleElements, isEnd, state);
+			
+			CMState startState = new CMState(possibleElements, isEnd, state, elementsMaxOccursUnbounded);
 			if (DEBUG) {
 				System.out.println("Start = " + startState);
 			}
@@ -267,7 +295,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			Map<CMState, SchemaInformedRule> knownStates = new HashMap<CMState, SchemaInformedRule>();
 			addNewState(knownStates, startState, isMixedContent);
 			handleStateEntries(possibleElements, xscmVal, state, startState,
-					knownStates, isMixedContent);
+					knownStates, isMixedContent, elementsMaxOccursUnbounded);
 
 			return knownStates.get(startState);
 		}
@@ -278,7 +306,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	
 	private void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
-			Map<CMState, SchemaInformedRule> knownStates, boolean isMixedContent)
+			Map<CMState, SchemaInformedRule> knownStates, boolean isMixedContent, List<XSElementDeclaration> elementsMaxOccursUnbounded)
 			throws EXIException {
 		assert (knownStates.containsKey(startState));
 
@@ -296,14 +324,14 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 						subGroupHandler);
 				// check whether right transition was taken
 				assert (xs == nextRet);
-
+				
 				// next possible state
 				@SuppressWarnings("unchecked")
 				Vector<XSObject> nextPossibleElements = xscmVal
 						.whatCanGoHere(cstate);
 				boolean isEnd = xscmVal.endContentModel(cstate);
 				CMState nextState = new CMState(nextPossibleElements, isEnd,
-						cstate);
+						cstate, elementsMaxOccursUnbounded);
 
 				printTransition(startState, xs, nextState);
 
@@ -329,7 +357,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				if (isNewState) {
 					handleStateEntries(nextPossibleElements, xscmVal, cstate,
-							nextState, knownStates, isMixedContent);
+							nextState, knownStates, isMixedContent, elementsMaxOccursUnbounded);
 				}
 
 			} else {
@@ -351,7 +379,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
 					CMState nextState = new CMState(nextPossibleElements,
-							isEnd, cstate);
+							isEnd, cstate, elementsMaxOccursUnbounded);
 
 					printTransition(startState, xs, nextState);
 
@@ -361,7 +389,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							knownStates, xsEvent, nextState, isMixedContent);
 					if (isNewState) {
 						handleStateEntries(nextPossibleElements, xscmVal,
-								cstate, nextState, knownStates, isMixedContent);
+								cstate, nextState, knownStates, isMixedContent, elementsMaxOccursUnbounded);
 					}
 
 				} else {
@@ -380,7 +408,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
 					CMState nextState = new CMState(nextPossibleElements,
-							isEnd, cstate);
+							isEnd, cstate, elementsMaxOccursUnbounded);
 
 					printTransition(startState, xs, nextState);
 
@@ -393,7 +421,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 						if (isNewState) {
 							handleStateEntries(nextPossibleElements, xscmVal,
 									cstate, nextState, knownStates,
-									isMixedContent);
+									isMixedContent, elementsMaxOccursUnbounded);
 						}
 					}
 				}
@@ -502,10 +530,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		protected final Vector<XSObject> states;
 		protected final boolean end;
 		protected int[] state;
+		protected List<XSElementDeclaration> elementsMaxOccursUnbounded;
 
-		public CMState(Vector<XSObject> states, boolean end, int[] state) {
+		public CMState(Vector<XSObject> states, boolean end, int[] state, List<XSElementDeclaration> elementsMaxOccursUnbounded) {
 			this.states = states;
 			this.end = end;
+			this.elementsMaxOccursUnbounded = elementsMaxOccursUnbounded;
 			// copy, may get modified
 			this.state = new int[state.length];
 			System.arraycopy(state, 0, this.state, 0, state.length);
@@ -520,7 +550,19 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					// NOTE: 3rd item is counter only!
 					if (state[0] == other.state[0]
 							&& state[1] == other.state[1]) {
-						return true;
+						if (states.size() == 0 && other.states.size() == 0 ) {
+							return true;
+						} else if (state[2] != other.state[2]) {
+							// any element maxOccurs unbounded
+							for(XSObject s : states) {
+								if (elementsMaxOccursUnbounded.contains(s)) {
+									return true;
+								}
+							}
+							return false;
+						} else {
+							return true;	
+						}
 					}
 				}
 			}

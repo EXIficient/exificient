@@ -139,7 +139,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 			} else {
 				// try to load datatype
 				String className = QNameUtilities.getClassName(representation);
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings("rawtypes")
 				Class c = Class.forName(className);
 				Object o = c.newInstance();
 				if (o instanceof Datatype) {

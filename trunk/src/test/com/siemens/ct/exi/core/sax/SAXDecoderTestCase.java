@@ -331,22 +331,6 @@ public class SAXDecoderTestCase extends XMLTestCase {
 		}
 	}
 
-	public void testDecoderBNone() throws Exception {
-		boolean namespacePrefixes = false;
-		boolean preservePrefixes = false;
-		
-		TestContentHandler tch = new TestContentHandlerB(namespacePrefixes, preservePrefixes);
-		
-		// bit-packed
-		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
-		// byte-packed
-		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
-		// pre-compression
-		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
-		// compression
-		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
-	}
-
 	public void testDecoderBNoneSchema() throws Exception {
 		boolean namespacePrefixes = false;
 		boolean preservePrefixes = false;
@@ -361,6 +345,22 @@ public class SAXDecoderTestCase extends XMLTestCase {
 		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
 		// compression
 		_test(xmlB, xsdBLocation, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
+	}
+
+	public void testDecoderBNone() throws Exception {
+		boolean namespacePrefixes = false;
+		boolean preservePrefixes = false;
+		
+		TestContentHandler tch = new TestContentHandlerB(namespacePrefixes, preservePrefixes);
+		
+		// bit-packed
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BIT_PACKED);
+		// byte-packed
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.BYTE_PACKED);
+		// pre-compression
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.PRE_COMPRESSION);
+		// compression
+		_test(xmlB, null, tch, namespacePrefixes, preservePrefixes, CodingMode.COMPRESSION);
 	}
 
 	public void testDecoderAPrefixesAndPreservePrefixes() throws Exception {
