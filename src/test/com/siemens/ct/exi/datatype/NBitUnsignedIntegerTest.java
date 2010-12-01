@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.types.DatatypeMappingTest;
 
 public class NBitUnsignedIntegerTest extends AbstractTestCase {
 

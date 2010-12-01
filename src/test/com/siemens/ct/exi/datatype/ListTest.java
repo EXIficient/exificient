@@ -29,6 +29,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.DatatypeMappingTest;
 import com.siemens.ct.exi.values.Value;
 
 public class ListTest extends AbstractTestCase {
