@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype;
+package com.siemens.ct.exi.types;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
@@ -28,6 +28,10 @@ import org.apache.xerces.xs.XSModel;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
+import com.siemens.ct.exi.datatype.AbstractTestCase;
+import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.DatetimeDatatype;
+import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
@@ -68,7 +72,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		return xsdGB.toGrammar();
 	}
 
-	protected static Datatype getSimpleDatatypeFor(String schemaAsString,
+	public static Datatype getSimpleDatatypeFor(String schemaAsString,
 			String typeName, String typeURI) throws EXIException {
 		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString

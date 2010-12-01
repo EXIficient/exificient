@@ -75,9 +75,9 @@ public class BuiltIn {
 	/*
 	 * Binary
 	 */
-	protected static final QName XSD_BASE64BINARY = new QName(
+	public static final QName XSD_BASE64BINARY = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "base64Binary");
-	protected static final QName XSD_HEXBINARY = new QName(
+	public static final QName XSD_HEXBINARY = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "hexBinary");
 	/*
 	 * Boolean
@@ -87,49 +87,49 @@ public class BuiltIn {
 	/*
 	 * Date-Time
 	 */
-	protected static final QName XSD_DATETIME = new QName(
+	public static final QName XSD_DATETIME = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "dateTime");
-	protected static final QName XSD_TIME = new QName(
+	public static final QName XSD_TIME = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "time");
-	protected static final QName XSD_DATE = new QName(
+	public static final QName XSD_DATE = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "date");
-	protected static final QName XSD_GYEARMONTH = new QName(
+	public static final QName XSD_GYEARMONTH = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYearMonth");
-	protected static final QName XSD_GYEAR = new QName(
+	public static final QName XSD_GYEAR = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gYear");
-	protected static final QName XSD_GMONTHDAY = new QName(
+	public static final QName XSD_GMONTHDAY = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonthDay");
-	protected static final QName XSD_GDAY = new QName(
+	public static final QName XSD_GDAY = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gDay");
-	protected static final QName XSD_GMONTH = new QName(
+	public static final QName XSD_GMONTH = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "gMonth");
 
 	/*
 	 * Decimal
 	 */
-	protected static final QName XSD_DECIMAL = new QName(
+	public static final QName XSD_DECIMAL = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 	/*
 	 * Float
 	 */
-	protected static final QName XSD_FLOAT = new QName(
+	public static final QName XSD_FLOAT = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "float");
-	protected static final QName XSD_DOUBLE = new QName(
+	public static final QName XSD_DOUBLE = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "double");
 	/*
 	 * Integer
 	 */
-	protected static final QName XSD_INTEGER = new QName(
+	public static final QName XSD_INTEGER = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
 	protected static final QName XSD_NON_NEGATIVE_INTEGER = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "nonNegativeInteger");
 	/*
 	 * String
 	 */
-	protected static final QName XSD_STRING = new QName(
+	public static final QName XSD_STRING = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
 	//	
-	protected static final QName XSD_ANY_SIMPLE_TYPE = new QName(
+	public static final QName XSD_ANY_SIMPLE_TYPE = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
 
 	/*

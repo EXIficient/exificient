@@ -20,8 +20,10 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.DatatypeMappingTest;
 
 public class EnumerationTest extends AbstractTestCase {
 
