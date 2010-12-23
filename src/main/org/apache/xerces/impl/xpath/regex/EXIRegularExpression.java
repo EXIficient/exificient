@@ -96,7 +96,8 @@ public class EXIRegularExpression extends RegularExpression {
 			+ Numbers + ")|(" + Punctuation + ")|(" + Separators + ")|("
 			+ Symbols + ")|(" + Others + ")";
 	// [36] IsBlock ::= 'Is' [a-zA-Z0-9#x2D]+
-	static String IsBlock = "Is" + "[a-zA-Z0-9#x2D]+";
+	// #x2D == '-'
+	static String IsBlock = "Is" + "[a-zA-Z0-9-]+";
 	// [27] charProp ::= IsCategory | IsBlock
 	static String charProp = "(" + IsCategory + ")|(" + IsBlock + ")";
 	// [25] catEsc ::= '\p{' charProp '}'

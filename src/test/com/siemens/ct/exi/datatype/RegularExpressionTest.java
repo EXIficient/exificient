@@ -624,7 +624,25 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		assertTrue(re.getCodePoints().size() == 1);
 	}
-	
+
+	public void testPattern33() throws EXIException {
+		// <xs:pattern value="T529H72b7opQKe3MedjI8"/>
+		EXIRegularExpression re = new EXIRegularExpression("T529H72b7opQKe3MedjI8");
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 18);
+	}
+
+	public void testPattern34() throws EXIException {
+		// <xs:pattern value="\p{IsLatin-1Supplement}"/>
+		EXIRegularExpression re = new EXIRegularExpression("\\p{IsLatin-1Supplement}");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+
+	public void testPattern35() throws EXIException {
+		// <xs:pattern value="\p{IsLatinExtended-A}"/>
+		EXIRegularExpression re = new EXIRegularExpression("\\p{IsLatinExtended-A}");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
 	
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");
