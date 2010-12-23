@@ -20,13 +20,12 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.BuiltInXSDTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.data.W3CTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 	
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -95,14 +94,14 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//		try {
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -112,7 +111,7 @@ public class QuickTestConfiguration {
 //		selfContainedElements[0] = new QName("urn:foo", "ANY");
 		// blockSize = 9013;
 		// blockSize = 200;
-		// valueMaxLength = 8;
+//		valueMaxLength = 0;
 //		valuePartitionCapacity = 5;
 //		dtrMapTypes = new QName[1];
 //		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
@@ -125,9 +124,9 @@ public class QuickTestConfiguration {
 	// TEST CASE (GROUP)
 	static {
 		// SchemaTestCase.setupQuickTest ( );
-		BuiltInXSDTestCase.setupQuickTest ( );
+		// BuiltInXSDTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

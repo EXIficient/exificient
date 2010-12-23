@@ -35,7 +35,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		GeneralTestCase.setConfigurationPerson ( );
+		// GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
@@ -54,7 +54,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationTest5 ( );
 		// GeneralTestCase.setConfigurationComplexStructure ( );
 		// GeneralTestCase.setConfigurationSimpleContent ( );
-		// GeneralTestCase.setConfigurationEmptyContent ( );
+		GeneralTestCase.setConfigurationEmptyContent ( );
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
 		// GeneralTestCase.setConfigurationDocType();

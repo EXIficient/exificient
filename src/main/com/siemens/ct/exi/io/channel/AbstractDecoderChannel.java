@@ -66,6 +66,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * @return The character sequence as a string.
 	 */
 	public char[] decodeStringOnly(int length) throws IOException {
+		
 		char[] ca = new char[length];
 		
 		for (int i = 0; i < length; i++) {
