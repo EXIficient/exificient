@@ -43,52 +43,135 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assert (!Character.isHighSurrogate(c));
 		return (int) c;
 	}
-	
+
+	public void testCategoryEscape1() throws EXIException {
+		String regex = "\\p{Lm}";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
+	public void testCategoryEscape2() throws EXIException {
+		String regex = "\\p{M}";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
+	public void testCategoryEscape3() throws EXIException {
+		String regex = "\\p{IsBasicLatin}";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
+	public void testComplEscape1() throws EXIException {
+		String regex = "\\P{M}";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
+	public void testComplEscape2() throws EXIException {
+		String regex = "\\P{Zs}";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
+	public void testMultiCharEsc1() throws EXIException {
+		String regex = "\\s";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertFalse(re.isEntireSetOfXMLCharacters());
+			Set<Integer> codePoints = re.getCodePoints();
+			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 4);
+		}
+	}
+
+	public void testMultiCharEsc2() throws EXIException {
+		String regex = "\\S";
+
+		EXIRegularExpression re = new EXIRegularExpression(regex);
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		}
+	}
+
 	public void testPattern23() throws EXIException {
 		// ([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+
 		String regex = "\\p{Lm}";
-		
-//		Character.isLetter(codePoint)
-		
+
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-		assertFalse(re.isEntireSetOfXMLCharacters());
-		Set<Integer> codePoints = re.getCodePoints();
-		// <!-- 3.1.0 46 Chars -->
-		// <!-- 3.2.0 48 Chars -->
-		// <!-- 4.0 114 Chars -->
-        // <!-- 6.0.0d2 202 Chars -->
-		if (EXIRegularExpression.USE_UNICODE_4_0) {
-			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 114);	
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
 		} else {
-			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 46);
+			assertFalse(re.isEntireSetOfXMLCharacters());
+			Set<Integer> codePoints = re.getCodePoints();
+			// <!-- 3.1.0 46 Chars -->
+			// <!-- 3.2.0 48 Chars -->
+			// <!-- 4.0 114 Chars -->
+			// <!-- 6.0.0d2 202 Chars -->
+			if (EXIRegularExpression.USE_UNICODE_4_0) {
+				assertTrue("CP Size=" + codePoints.size(),
+						codePoints.size() == 114);
+			} else {
+				assertTrue("CP Size=" + codePoints.size(),
+						codePoints.size() == 46);
+			}
 		}
-		
+
 	}
 
 	public void testNonUnicode3_1_0() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("\uFFFF");
-		
-		if (EXIRegularExpression.USE_UNICODE_4_0) {
-			
+
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertFalse(re.isEntireSetOfXMLCharacters());
+			Set<Integer> codePoints = re.getCodePoints();
+			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 1);
+		} else if (EXIRegularExpression.USE_UNICODE_4_0) {
+			assertFalse(re.isEntireSetOfXMLCharacters());
+			Set<Integer> codePoints = re.getCodePoints();
+			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 1);
 		} else {
-			assertTrue(re.isEntireSetOfXMLCharacters());	
+			assertTrue(re.isEntireSetOfXMLCharacters());
 		}
 	}
-	
-	
+
 	public void testNonBMP() throws Exception {
 		// char c = 0xDC00; // \uDC00
 		// Character.isLetter(0x2F81A);
 		String test = new StringBuilder().appendCodePoint(0x10FFF).toString();
-		
+
 		EXIRegularExpression re = new EXIRegularExpression(test);
 		// EXIRegularExpression re = new EXIRegularExpression("&#x10FFF");
 		// EXIRegularExpression re = new EXIRegularExpression("\u10FFF");
-		// EXIRegularExpression re = new EXIRegularExpression("[\u10FFF-\u10FFF]");
-		
+		// EXIRegularExpression re = new
+		// EXIRegularExpression("[\u10FFF-\u10FFF]");
+
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
-	
+
 	@Test
 	public void testRangeSpecialChars() throws Exception {
 		// UnicodeData-3.1.0: 03D7 .. 03DA (2 chars)
@@ -96,7 +179,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression("[\u03D7-\u03DA]");
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		if (EXIRegularExpression.USE_UNICODE_4_0) {
-			assertTrue(re.getCodePoints().size() == 4);	
+			assertTrue(re.getCodePoints().size() == 4);
 		} else {
 			assertTrue(re.getCodePoints().size() == 2);
 		}
@@ -112,8 +195,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression("[A-Z][B-Z][C-Z]");
 		assertTrue(re.getCodePoints().size() == 26);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('A') == 0);
 		assertTrue(rcs.getCode('L') == 11);
 		assertTrue(rcs.getCode('Z') == 25);
@@ -125,8 +208,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 		assertTrue(re.getCodePoints().size() == 26);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('A') == 0);
 		assertTrue(rcs.getCode('L') == 11);
 		assertTrue(rcs.getCode('Z') == 25);
@@ -139,8 +222,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 		assertTrue(re.getCodePoints().size() == 10);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('0') == 0);
 		assertTrue(rcs.getCode('5') == 5);
 		assertTrue(rcs.getCode('9') == 9);
@@ -152,8 +235,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[a-zA-Z][a-zA-Z][a-zA-Z]"; // e.g. "aXy"
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 
 		assertTrue(rcs.getCode('0') == Constants.NOT_FOUND);
 		assertTrue(rcs.getCode('A') == 0);
@@ -166,8 +249,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[\\-a-zA-Z]"; // e.g. "-" "B"
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('0') == Constants.NOT_FOUND);
 		assertTrue(rcs.getCode('-') == 0);
 		assertTrue(rcs.getCode('A') == 1);
@@ -181,8 +264,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[xyz]"; // e.g. "x" "y" "z"
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == 'x');
 		assertTrue(rcs.getCodePoint(1) == 'y');
 		assertTrue(rcs.getCodePoint(2) == 'z');
@@ -194,8 +277,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "([a-z])*";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == 'a');
 		assertTrue(rcs.getCode('c') == 2);
 		assertTrue(rcs.getCodePoint(25) == 'z');
@@ -208,8 +291,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "([a-z][A-Z])+";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == 'A');
 		assertTrue(rcs.getCodePoint(25) == 'Z');
 		assertTrue(rcs.getCode('c') == 28);
@@ -224,8 +307,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertFalse(codePoints.contains(codePoint('a')));
 		assertTrue(codePoints.contains(codePoint('b')));
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('b') == 0);
 		assertTrue(rcs.getCodePoint(2) == 'd');
 		assertTrue(rcs.getCodingLength() == 5);
@@ -246,8 +329,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		assertFalse(codePoints.contains(codePoint('h')));
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('0') == 0);
 		assertTrue(rcs.getCodePoint(3) == '3');
 		assertTrue(rcs.getCodePoint(13) == 'z');
@@ -261,8 +344,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[a-zA-Z0-9]{8}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == '0');
 		assertTrue(rcs.getCodePoint(25) == 'P');
 		assertTrue(rcs.getCode('c') == 38);
@@ -274,8 +357,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[2-4]{8}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == '2');
 		assertTrue(rcs.getCode('4') == 2);
 		assertTrue(rcs.getCodingLength() == 2);
@@ -286,8 +369,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[3-9]{111}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(1) == '4');
 		assertTrue(rcs.getCode('4') == 1);
 		assertTrue(rcs.getCodingLength() == 3);
@@ -298,8 +381,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "z*";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == 'z');
 		assertTrue(rcs.getCode('z') == 0);
 		assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
@@ -307,12 +390,12 @@ public class RegularExpressionTest extends AbstractTestCase {
 	}
 
 	public void testPattern13() throws EXIException {
-		//	
+		//
 		String regex = "\\s";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == '\t');
 		assertTrue(rcs.getCode(' ') == 3);
 		assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
@@ -324,12 +407,16 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "\\d";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
-		assertTrue(rcs.getCodePoint(0) == '0');
-		assertTrue(rcs.getCode('3') == 3);
-		assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
-		assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
+			assertTrue(rcs.getCodePoint(0) == '0');
+			assertTrue(rcs.getCode('3') == 3);
+			assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
+			assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
+		}
 	}
 
 	public void testPattern15() throws EXIException {
@@ -337,16 +424,20 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "\\p{Nd}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
-		assertTrue(rcs.getCodePoint(1) == '1');
-		assertTrue(rcs.getCode('6') == 6);
-		assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
-		assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
+			assertTrue(rcs.getCodePoint(1) == '1');
+			assertTrue(rcs.getCode('6') == 6);
+			assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
+			assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
+		}
 	}
 
 	public void testPattern16() throws EXIException {
-		//	
+		//
 		String regex = "\\i\\c*";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
@@ -366,8 +457,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "([a-zA-Z]{1,8})(-[a-zA-Z0-9]{1,8})*";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == '-');
 		assertTrue(rcs.getCodePoint(1) == '0');
 		assertTrue(rcs.getCode('8') == 9);
@@ -381,8 +472,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[0-9]{3}-[0-9]{2}-[0-9]{4}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == '-');
 		assertTrue(rcs.getCodePoint(1) == '0');
 		assertTrue(rcs.getCode('8') == 9);
@@ -396,8 +487,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[0-9]{3}(-| )?[0-9]{2}(-| )?[0-9]{4}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == ' ');
 		assertTrue(rcs.getCodePoint(1) == '-');
 		assertTrue(rcs.getCodePoint(2) == '0');
@@ -423,38 +514,48 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
-	
-	
+
 	public void testPattern24() throws EXIException, IOException {
 		// --0\d --0\d --0\d --0\d --\d1 --0\d --0\d
 		String regex = "--0\\d --0\\d --0\\d --0\\d --\\d1 --0\\d --0\\d";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-		assertFalse(re.isEntireSetOfXMLCharacters());
-		
-		String s = "--00 --00 --00 --00 --01 --00 --00";
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re.getCodePoints());
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(rcs, null);
-		
-		boolean valid = rcsDatatype.isValid(s);
-		assertTrue(valid);
-		
-		StringEncoder stringEncoder = new StringEncoderImpl();
-		StringDecoder stringDecoder = new StringDecoderImpl();
-		QName context = new QName("bla");
-		
-		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		rcsDatatype.writeValue(bitEC, stringEncoder, context);
-		bitEC.flush();
-		Value v1 = rcsDatatype.readValue(getBitDecoder(), stringDecoder, context);
-		assertTrue(s.equals(v1.toString()));
-		
-		// Byte
-		EncoderChannel byteEC = getByteEncoder();
-		rcsDatatype.writeValue(byteEC, stringEncoder, context);
-		Value v2 = rcsDatatype.readValue(getByteDecoder(), stringDecoder, context);
-		assertTrue(s.equals(v2.toString()));
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			// multi characters ...
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+
+			assertFalse(re.isEntireSetOfXMLCharacters());
+
+			String s = "--00 --00 --00 --00 --01 --00 --00";
+
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
+			RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
+					rcs, null);
+
+			boolean valid = rcsDatatype.isValid(s);
+			assertTrue(valid);
+
+			StringEncoder stringEncoder = new StringEncoderImpl();
+			StringDecoder stringDecoder = new StringDecoderImpl();
+			QName context = new QName("bla");
+
+			// Bit
+			EncoderChannel bitEC = getBitEncoder();
+			rcsDatatype.writeValue(bitEC, stringEncoder, context);
+			bitEC.flush();
+			Value v1 = rcsDatatype.readValue(getBitDecoder(), stringDecoder,
+					context);
+			assertTrue(s.equals(v1.toString()));
+
+			// Byte
+			EncoderChannel byteEC = getByteEncoder();
+			rcsDatatype.writeValue(byteEC, stringEncoder, context);
+			Value v2 = rcsDatatype.readValue(getByteDecoder(), stringDecoder,
+					context);
+			assertTrue(s.equals(v2.toString()));
+		}
 	}
 
 	public void testPattern25() throws EXIException {
@@ -464,35 +565,74 @@ public class RegularExpressionTest extends AbstractTestCase {
 			assertTrue(!re.isEntireSetOfXMLCharacters());
 			assertTrue(re.getCodePoints().size() == 1);
 		} else {
-			assertTrue(re.isEntireSetOfXMLCharacters());	
+			assertTrue(re.isEntireSetOfXMLCharacters());
 		}
 	}
-	
+
 	public void testPattern26() throws EXIException {
 		// "&#x10FFF;" NON BMP
-		String test = new StringBuilder().append("[ABC").appendCodePoint(0x10FFF).append("]{1}").toString();
-		// EXIRegularExpression re = new EXIRegularExpression("[ABC&#x10FFF;]{1}");
+		String test = new StringBuilder().append("[ABC")
+				.appendCodePoint(0x10FFF).append("]{1}").toString();
+		// EXIRegularExpression re = new
+		// EXIRegularExpression("[ABC&#x10FFF;]{1}");
 		EXIRegularExpression re = new EXIRegularExpression(test);
 		assertTrue(re.isEntireSetOfXMLCharacters());
-//		// A, B, and C ?
-//		assertTrue(re.getCodePoints().size() == 3);
+		// // A, B, and C ?
+		// assertTrue(re.getCodePoints().size() == 3);
 	}
-	
+
 	public void testPattern26_() throws EXIException {
 		EXIRegularExpression re = new EXIRegularExpression("[ABC]{1}");
 		assertTrue(!re.isEntireSetOfXMLCharacters());
 		// A, B, and C
 		assertTrue(re.getCodePoints().size() == 3);
 	}
-	
 
+	public void testPattern27() throws EXIException {
+		EXIRegularExpression re = new EXIRegularExpression("\\d{3}-[A-Z]{2}");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+
+	public void testPattern28() throws EXIException {
+		EXIRegularExpression re = new EXIRegularExpression("\\p{IsCJKRadicalsSupplement}*");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+	
+	public void testPattern29() throws EXIException {
+		// "\d{3}-[A-Z]{2}"
+		EXIRegularExpression re = new EXIRegularExpression("\\d{3}-[A-Z]{2}");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+	
+	public void testPattern30() throws EXIException {
+		// <xs:pattern value="\\c"/> --> means '\' followed by 'c'
+		// Note: Nothing to do with Multiple Character Escape Sequences \c
+		EXIRegularExpression re = new EXIRegularExpression("\\\\c");
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 2);
+	}
+	
+	public void testPattern31() throws EXIException {
+		// <xs:pattern value="\\c\c"/> --> means '\' followed by 'c' and Multiple Character Escape Sequences \c
+		EXIRegularExpression re = new EXIRegularExpression("\\\\c\\c");
+		assertTrue(re.isEntireSetOfXMLCharacters());
+	}
+
+	public void testPattern32() throws EXIException {
+		// <xs:pattern value="\?"/> --> means '?' only
+		EXIRegularExpression re = new EXIRegularExpression("\\?");
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 1);
+	}
+	
+	
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");
 		// aeflm
 		assertTrue(re.getCodePoints().size() == 5);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('a') == 0);
 		assertTrue(rcs.getCodePoint(3) == 'l');
 		assertTrue(rcs.getCodingLength() == 3);
@@ -502,8 +642,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression("A|B|C|-");
 		assertTrue(re.getCodePoints().size() == 4);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('C') == 3);
 		assertTrue(rcs.getCodePoint(0) == '-');
 		assertTrue(rcs.getCodingLength() == 3);
@@ -514,8 +654,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 				"[0-9]{3}-[0-9]{2}-[0-9]{4}");
 		assertTrue(re.getCodePoints().size() == 11);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('5') == 6);
 		assertTrue(rcs.getCodePoint(3) == '2');
 		assertTrue(rcs.getCodingLength() == 4);
@@ -525,41 +665,53 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// \d{3}-[A-Z]{2}|\d{7}
 		EXIRegularExpression re = new EXIRegularExpression(
 				"\\d{3}-[A-Z]{2}|\\d{7}");
-		Set<Integer> codePoints = re.getCodePoints();
 
-		// Note: \d stands for any decimal digit BUT contains more than just
-		// digits
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			// multi characters ...
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+			Set<Integer> codePoints = re.getCodePoints();
 
-		assertTrue(codePoints.contains(codePoint('0')));
-		assertTrue(codePoints.contains(codePoint('3')));
-		assertTrue(codePoints.contains(codePoint('9')));
-		assertTrue(codePoints.contains(codePoint('-')));
-		assertTrue(codePoints.contains(codePoint('X')));
-		assertFalse(codePoints.contains(codePoint('a')));
+			// Note: \d stands for any decimal digit BUT contains more than just
+			// digits
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
-		assertTrue(rcs.getCode('1') == 2);
-		assertTrue(rcs.getCodePoint(12) == 'B');
-		assertTrue(rcs.getCodingLength() == 8);
+			assertTrue(codePoints.contains(codePoint('0')));
+			assertTrue(codePoints.contains(codePoint('3')));
+			assertTrue(codePoints.contains(codePoint('9')));
+			assertTrue(codePoints.contains(codePoint('-')));
+			assertTrue(codePoints.contains(codePoint('X')));
+			assertFalse(codePoints.contains(codePoint('a')));
+
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
+			assertTrue(rcs.getCode('1') == 2);
+			assertTrue(rcs.getCodePoint(12) == 'B');
+			assertTrue(rcs.getCodingLength() == 8);
+		}
 	}
 
 	public void testBasicLatin() throws Exception {
 		// \p{IsBasicLatin}
 		EXIRegularExpression re = new EXIRegularExpression("\\p{IsBasicLatin}");
-		Set<Integer> codePoints = re.getCodePoints();
-		// System.out.println("IsBasicLatin Size = " + charSet.size());
-		assertTrue(codePoints.size() < 256);
-		assertTrue(codePoints.contains(codePoint('a')));
-		assertTrue(codePoints.contains(codePoint('n')));
-		assertTrue(codePoints.contains(codePoint('Z')));
-		assertFalse(codePoints.contains(codePoint('â')));
-		assertFalse(codePoints.contains(codePoint('ß')));
+		
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			// block ...
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+			Set<Integer> codePoints = re.getCodePoints();
+			// System.out.println("IsBasicLatin Size = " + charSet.size());
+			assertTrue(codePoints.size() < 256);
+			assertTrue(codePoints.contains(codePoint('a')));
+			assertTrue(codePoints.contains(codePoint('n')));
+			assertTrue(codePoints.contains(codePoint('Z')));
+			assertFalse(codePoints.contains(codePoint('â')));
+			assertFalse(codePoints.contains(codePoint('ß')));
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
-		assertTrue(rcs.getCode('C') == 67);
-		assertTrue(rcs.getCodingLength() == 8);
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
+			assertTrue(rcs.getCode('C') == 67);
+			assertTrue(rcs.getCodingLength() == 8);	
+		}
 	}
 
 	public void testNonBasicLatin() throws Exception {
@@ -575,7 +727,6 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// assertTrue(codePoints.contains(codePoint('â')));
 		// assertTrue(codePoints.contains(codePoint('ß')));
 	}
-
 
 	public void testUnrestricted1() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression(".*");
@@ -601,7 +752,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		//
 		// assertFalse(codePoints.contains(codePoint('B')));
 		// assertFalse(codePoints.contains(codePoint('X')));
-		//		
+		//
 		// assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
@@ -617,8 +768,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertFalse(codePoints.contains(codePoint('e')));
 		assertFalse(codePoints.contains(codePoint('u')));
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('d') == 2);
 		assertTrue(rcs.getCodePoint(6) == 'j');
 		assertTrue(rcs.getCodingLength() == 5);
@@ -630,8 +781,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		Set<Integer> codePoints = re.getCodePoints();
 		assertTrue(codePoints.size() == 7);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('7') == 4);
 		assertTrue(rcs.getCodePoint(5) == '8');
 		assertTrue(rcs.getCodingLength() == 3);
@@ -642,9 +793,15 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// Unicode letters, except any ASCII letters
 		EXIRegularExpression re = new EXIRegularExpression(
 				"[\\p{Ll}\\p{Lu}-[\\p{IsBasicLatin}]]");
-		Set<Integer> codePoints = re.getCodePoints();
-		// System.out.println("Size = " + charSet.size());
-		assertTrue(codePoints.size() > 256);
+		
+		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
+			// catEsc, block & ...
+			assertTrue(re.isEntireSetOfXMLCharacters());
+		} else {
+			Set<Integer> codePoints = re.getCodePoints();
+			// System.out.println("Size = " + charSet.size());
+			assertTrue(codePoints.size() > 256);	
+		}
 	}
 
 	public void testSubtraction4() throws EXIException {
@@ -663,8 +820,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertTrue(codePoints.contains(codePoint('Y')));
 		assertTrue(codePoints.contains(codePoint('Z')));
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCode('M') == 2);
 		assertTrue(rcs.getCodePoint(5) == 'Z');
 		assertTrue(rcs.getCodingLength() == 3);
@@ -676,8 +833,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "[A-Z-[C-X]]";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-				.getCodePoints());
+		RestrictedCharacterSet rcs = new CodePointCharacterSet(
+				re.getCodePoints());
 		assertTrue(rcs.getCodePoint(0) == 'A');
 		assertTrue(rcs.getCodePoint(1) == 'B');
 		assertTrue(rcs.size() == 4);
@@ -693,8 +850,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 			String regex = "[bla{4}";
 			EXIRegularExpression re = new EXIRegularExpression(regex);
 			@SuppressWarnings("unused")
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(re
-					.getCodePoints());
+			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+					re.getCodePoints());
 			fail();
 		} catch (RuntimeException e) {
 			// an exception for invalid regex is expected

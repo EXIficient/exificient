@@ -357,8 +357,8 @@ public class QNameDatatype extends AbstractDatatype {
 /////////////////////////////////////////////////////////
 	
 	public String readUri(DecoderChannel channel) throws IOException {
-		int nUri = MethodsBag.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
-		int uriID = channel.decodeNBitUnsignedInteger(nUri);
+		int numberBitsUri = MethodsBag.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
+		int uriID = channel.decodeNBitUnsignedInteger(numberBitsUri);
 
 		String uri;
 
