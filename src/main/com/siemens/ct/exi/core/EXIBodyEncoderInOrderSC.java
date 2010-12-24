@@ -58,7 +58,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {

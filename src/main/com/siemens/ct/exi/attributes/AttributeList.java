@@ -32,7 +32,7 @@ import org.xml.sax.Attributes;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public interface AttributeList {

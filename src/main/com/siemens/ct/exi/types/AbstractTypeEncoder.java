@@ -25,7 +25,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements

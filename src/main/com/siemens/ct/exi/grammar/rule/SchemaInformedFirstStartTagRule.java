@@ -23,7 +23,7 @@ package com.siemens.ct.exi.grammar.rule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 /*

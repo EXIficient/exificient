@@ -643,6 +643,13 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression("\\p{IsLatinExtended-A}");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
+
+	public void testPattern36() throws EXIException {
+		//  <xs:pattern value="[0-9]{3}-[0-9]{2}-[0-9]{4}"/>
+		EXIRegularExpression re = new EXIRegularExpression("[0-9]{3}-[0-9]{2}-[0-9]{4}");
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 11);
+	}
 	
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");

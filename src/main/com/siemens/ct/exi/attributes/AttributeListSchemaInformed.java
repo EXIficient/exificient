@@ -26,7 +26,7 @@ import com.siemens.ct.exi.EXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class AttributeListSchemaInformed extends AbstractAttributeList {

@@ -26,7 +26,7 @@ package org.apache.xerces.impl.xpath.regex;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class Unicode_3_1_0_BMP {
