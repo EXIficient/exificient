@@ -36,7 +36,7 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class SAXEncoderExtendedHandler extends SAXEncoder {

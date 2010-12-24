@@ -39,7 +39,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar implements Serializable {
@@ -65,7 +65,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	protected String schemaId;
 
 	
-	// public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
+	// public @version 0.6(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
 	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment) {
 		super(true);
 		

@@ -37,7 +37,7 @@ import com.siemens.ct.exi.FidelityOptions;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public abstract class AbstractAttributeList implements AttributeList {

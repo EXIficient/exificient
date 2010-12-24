@@ -28,7 +28,7 @@ import com.siemens.ct.exi.io.BitOutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public class BitEncoderChannel extends AbstractEncoderChannel implements

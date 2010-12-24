@@ -26,7 +26,7 @@ import java.io.OutputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 final public class ByteEncoderChannel extends AbstractEncoderChannel implements

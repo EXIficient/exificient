@@ -33,7 +33,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.5
+ * @version 0.6
  */
 
 public interface Grammar extends Serializable {
