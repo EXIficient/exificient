@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.pok.xyz.com" xmlns:nsp="http://www.pok.xyz.com" xmlns:ns1="http://www.dft2.xyz.com" xmlns:ns2="http://www.abc.xyz.com" xmlns:ns3="http://www.dft1.xyz.com" xmlns:nss="http://www.svl.xyz.com">
+  <xs:import schemaLocation="XMLSample.xsd"/>
+  <xs:import namespace="http://www.abc.xyz.com" schemaLocation="ns2.xsd"/>
+  <xs:import namespace="http://www.dft1.xyz.com" schemaLocation="ns3.xsd"/>
+  <xs:import namespace="http://www.dft2.xyz.com" schemaLocation="ns1.xsd"/>
+  <xs:import namespace="http://www.svl.xyz.com" schemaLocation="nss.xsd"/>
+  <xs:element name="personnel">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="person"/>
+        <xs:element ref="ns3:person"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="family" type="xs:NCName"/>
+  <xs:element name="link">
+    <xs:complexType>
+      <xs:attribute name="subordinates" use="required" form="qualified" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

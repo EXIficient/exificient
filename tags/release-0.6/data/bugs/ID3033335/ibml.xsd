@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://ibml.jel.com/2005" xmlns:ibml="http://ibml.jel.com/2005" xmlns:FpML="http://www.fpml.org/2005/FpML-4-2" xmlns:xsd="http://www.w3.org/2001/XMLSchema"  targetNamespace="http://ibml.jel.com/2005" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:import namespace="http://www.fpml.org/2005/FpML-4-2" schemaLocation="./fpml.xsd" /><!-- http://www.fpml.org/2005/FpML-4-2  -->
+  <xsd:complexType name="ContractAmended">
+    <xsd:complexContent>
+      <xsd:extension base="FpML:NotificationMessage">
+        <xsd:sequence>
+          <xsd:element name="amendment" type="AmendContract"/>
+          <xsd:element name="party" type="FpML:Party" minOccurs="2" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContractHeader">
+    <xsd:complexContent>
+      <xsd:extension base="FpML:ContractHeader">
+        <xsd:sequence>
+          <xsd:element name="xyz" type="xsd:integer" minOccurs="0" />
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Party">
+    <xsd:complexContent>
+      <xsd:extension base="FpML:Party">
+        <xsd:sequence>
+          <xsd:element name="residenceCountry" type="FpML:Country" minOccurs="0">
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+	<xsd:element name="contractAmended" type="ibml:ContractAmended">
+	</xsd:element>
+	<xsd:complexType name="AmendContract">
+		<xsd:complexContent>
+			<xsd:extension base="FpML:ChangeContract">
+				<xsd:sequence>
+					<xsd:element name="revisedTradeReference" type="FpML:PartyTradeIdentifiers" minOccurs="0">
+					</xsd:element>
+					<xsd:element name="revisedContract" type="FpML:Contract">
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+</xsd:schema>
