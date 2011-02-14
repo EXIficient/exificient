@@ -274,10 +274,13 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
+//	FloatValue fv = new FloatValue(0, 0);
 	public FloatValue decodeFloatValue() throws IOException {
 		long mantissa = decodeLong();
 		long exponent = decodeLong();
-		return new FloatValue(mantissa, exponent);
+		 return new FloatValue(mantissa, exponent);
+//		fv.setValues(mantissa, exponent);
+//		return fv;
 	}
 
 	/**

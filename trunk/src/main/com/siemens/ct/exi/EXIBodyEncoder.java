@@ -95,16 +95,7 @@ public interface EXIBodyEncoder {
 	 * @throws IOException
 	 */
 	public void encodeEndElement() throws EXIException, IOException;
-
-//	/**
-//	 * Supplies the end tag of an SC fragment.
-//	 * 
-//	 * @throws EXIException
-//	 * @throws IOException
-//	 */
-//	public void encodeEndFragmentSelfContained() throws EXIException,
-//			IOException;
-
+	
 	/**
 	 * Supplies an attribute.
 	 * 

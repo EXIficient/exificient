@@ -35,14 +35,22 @@ public class FloatValue extends AbstractValue {
 
 	private static final long serialVersionUID = 5799093635881195073L;
 	
-	public final long mantissa;
-	public final long exponent;
-
+//	public final long mantissa;
+//	public final long exponent;
+	public long mantissa;
+	public long exponent;
+	
 	protected int slenMantissa = -1;
 
 	protected Double f;
 
 	public FloatValue(long mantissa, long exponent) {
+		setValues(mantissa, exponent);
+//		this.mantissa = mantissa;
+//		this.exponent = exponent;
+	}
+	
+	public void setValues(long mantissa, long exponent) {
 		this.mantissa = mantissa;
 		this.exponent = exponent;
 	}
