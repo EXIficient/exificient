@@ -52,12 +52,14 @@ public class EnumerationDatatype extends AbstractDatatype {
 	
 	protected int codingLength;
 	protected Value[] enumValues;
+	protected BuiltInType bitEnumValues;
 	protected int lastValidIndex;
 
 	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues, QName schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;
+		this.bitEnumValues = bitEnumValues;
 		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
 		
 		// restricted character set
@@ -159,6 +161,10 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public Value getEnumValue(int i) {
 		assert(i>=0 && i< enumValues.length);
 		return enumValues[i];
+	}
+
+	public BuiltInType getEnumValueBuiltInType() {
+		return bitEnumValues;
 	}
 	
 //	@Override

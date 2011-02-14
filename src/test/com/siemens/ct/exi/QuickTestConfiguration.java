@@ -25,7 +25,7 @@ import com.siemens.ct.exi.data.W3CTestCase;
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 	
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;

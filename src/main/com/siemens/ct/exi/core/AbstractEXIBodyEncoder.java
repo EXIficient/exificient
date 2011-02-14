@@ -273,7 +273,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 	public void encodeEndElement() throws EXIException, IOException {
 		// int ec = currentRule.get1stLevelEventCode(eventEE);
 		EventInformation ei = currentRule.lookForEvent(EventType.END_ELEMENT);
-		
+
 		if (ei != null) {
 			// encode EventCode (common case)
 			encode1stLevelEventCode(ei.getEventCode());
@@ -283,7 +283,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			// --> if EE is not found check whether an empty CH event *helps*
 			if (currentRule.lookForEvent(EventType.CHARACTERS) != null) {
 				// encode empty characters first
-				this.encodeCharacters(Constants.EMPTY_STRING);
+				this.encodeCharactersForce(Constants.EMPTY_STRING);
 				// try the EE event once again
 				ei = currentRule.lookForEvent(EventType.END_ELEMENT);
 			}
@@ -332,7 +332,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
 
 		if (ec2 != Constants.NOT_FOUND) {
-			
+
 			assert (currentRule.get2ndLevelEvent(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
 
 			// encode event-code, AT(xsi:type)
@@ -343,25 +343,24 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		} else {
 			// Note: cannot be encoded as any other attribute due to the
 			// different channels in compression mode
-			
+
 			// try first (learned) xsi:type attribute
 			EventInformation ei = currentRule.lookForAttribute(
 					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 					Constants.XSI_TYPE);
-			
+
 			if (ei != null) {
 				encode1stLevelEventCode(ei.getEventCode());
 			} else {
 				// try generic attribute
-				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);	
-				
+				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+
 				if (ei != null) {
 					encode1stLevelEventCode(ei.getEventCode());
 				} else {
-					ec2 = currentRule
-							.get2ndLevelEventCode(
-									EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-									fidelityOptions);
+					ec2 = currentRule.get2ndLevelEventCode(
+							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
+							fidelityOptions);
 					if (ec2 != Constants.NOT_FOUND) {
 						encode2ndLevelEventCode(ec2);
 						currentRule.learnAttribute(new Attribute(XSI_TYPE));
@@ -381,10 +380,10 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		if (this.preserveLexicalValues) {
 			// as string
 			typeEncoder.isValid(qnameDatatype, raw);
-			typeEncoder.writeValue(XSI_TYPE, channel);	
+			typeEncoder.writeValue(XSI_TYPE, channel);
 		} else {
 			// typed
-			qnameDatatype.writeValue(channel, null, XSI_TYPE);	
+			qnameDatatype.writeValue(channel, null, XSI_TYPE);
 		}
 
 		// grammar exists ?
@@ -622,6 +621,22 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 	}
 
 	public void encodeCharacters(String chars) throws EXIException, IOException {
+		// Don't we want to prune insignificant whitespace characters
+		if (!fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+			chars = chars.trim();
+			if (chars.length() == 0) {
+				return;
+			}
+		}
+
+		encodeCharactersForce(chars);
+	}
+
+	// use this method if you want the characters to be encoded in any case
+	// (e.g., also whitespace chars)
+	protected final void encodeCharactersForce(String chars)
+			throws EXIException, IOException {
 
 		EventInformation ei = currentRule.lookForEvent(EventType.CHARACTERS);
 
@@ -645,46 +660,33 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				// encode schema-invalid content as string
 				isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
 				writeValue(elementContext.qname);
-				// writeValueAsString(elementContext.qname, chars);
 				// update current rule
 				currentRule = ei.next;
 			} else {
-				// Note: Do we really want to encode any whitespace characters?
-				String trim = chars.trim();
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)
-						|| trim.length() > 0) {
-					// Undeclared CH can be found on 2nd level
-					int ecCHundeclared = currentRule.get2ndLevelEventCode(
-							EventType.CHARACTERS_GENERIC_UNDECLARED,
-							fidelityOptions);
+				// Undeclared CH can be found on 2nd level
+				int ecCHundeclared = currentRule.get2ndLevelEventCode(
+						EventType.CHARACTERS_GENERIC_UNDECLARED,
+						fidelityOptions);
 
-					if (ecCHundeclared == Constants.NOT_FOUND) {
-						if (exiFactory.isFragment() && trim.length() == 0) {
-							// skip empty characters in "outer" fragment element
-							// throw warning
-							throwWarning("Skip CH: '" + chars + "'");
-						} else if (fidelityOptions.isStrict()
-								&& trim.length() == 0) {
-							// skip "insignificant" whitespaces
-							throwWarning("Skip CH: '" + chars + "'");
-						} else {
-							assert (fidelityOptions.isStrict());
-							throw new EXIException("Characters '" + chars
-									+ "' cannot be encoded!");
-						}
+				if (ecCHundeclared == Constants.NOT_FOUND) {
+					if (exiFactory.isFragment()) {
+						// characters in "outer" fragment element
+						throwWarning("Skip CH: '" + chars + "'");
 					} else {
-						// encode [undeclared] event-code
-						encode2ndLevelEventCode(ecCHundeclared);
-						// learn characters event ?
-						currentRule.learnCharacters();
-						// content as string
-						// writeValueAsString(elementContext.qname, chars);
-						isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
-						writeValue(elementContext.qname);
-						// update current rule
-						currentRule = currentRule.getElementContentRule();
+						assert (fidelityOptions.isStrict());
+						throw new EXIException("Characters '" + chars
+								+ "' cannot be encoded!");
 					}
+				} else {
+					// encode [undeclared] event-code
+					encode2ndLevelEventCode(ecCHundeclared);
+					// learn characters event ?
+					currentRule.learnCharacters();
+					// content as string
+					isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
+					writeValue(elementContext.qname);
+					// update current rule
+					currentRule = currentRule.getElementContentRule();
 				}
 			}
 		}
@@ -716,7 +718,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 
 			// name AS string
 			writeString(name);
-			
+
 			// update current rule
 			currentRule = currentRule.getElementContentRule();
 		}
