@@ -48,7 +48,13 @@ public class EncodingOptions {
 	
 	/* attribute "schemaLocation" and "noNamespaceSchemaLocation" */
 	public static final String INCLUDE_XSI_SCHEMALOCATION = "INCLUDE_XSI_SCHEMALOCATION";
+	
+	/* Insignificant xsi:nil values e.g., xsi:nil="false" */
+	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
 
+	/* Insignificant xsi:type values e.g., xsi:type="xs:string" where type is already string */
+	public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE = "INCLUDE_INSIGNIFICANT_XSI_TYPE";
+	
 	/* contains options and according values */
 	protected Set<String> options;
 
@@ -85,6 +91,10 @@ public class EncodingOptions {
 		} else if (key.equals(RETAIN_ENTITY_REFERENCE)) {
 			options.add(key);
 		} else if (key.equals(INCLUDE_XSI_SCHEMALOCATION)) {
+			options.add(key);
+		} else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_NIL)) {
+			options.add(key);
+		} else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
 			options.add(key);
 		} else {
 			throw new UnsupportedOption("EncodingOption '" + key

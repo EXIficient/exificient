@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -64,6 +65,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 	// Type Encoder (including string encoder etc.)
 	protected TypeEncoder typeEncoder;
 
+	// Encoding options
+	protected EncodingOptions encodingOptions;
+
 	public AbstractEXIBodyEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 		this.exiHeader = new EXIHeaderEncoder();
@@ -74,6 +78,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		super.initFactoryInformation();
 
 		typeEncoder = exiFactory.createTypeEncoder();
+		encodingOptions = exiFactory.getEncodingOptions();
 	}
 
 	@Override
@@ -326,7 +331,19 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		// System.out.println("Valid " + raw + ": " + valid);
 
 		QName xsiQName = qnameDatatype.getQName();
-		SchemaInformedRule tg = grammar.getTypeGrammar(xsiQName);
+		SchemaInformedFirstStartTagRule tg = grammar.getTypeGrammar(xsiQName);
+
+		// Note: in some cases we can simply skip the xsi:type event
+		assert (currentRule instanceof SchemaInformedFirstStartTagRule);
+		if (!preserveLexicalValues && tg != null && currentRule.isSchemaInformed()
+				&& tg.getTypeName() != null
+				&& tg.getTypeName().equals(
+						((SchemaInformedFirstStartTagRule) currentRule)
+								.getTypeName())
+				&& !this.encodingOptions
+						.isOptionEnabled(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
+			return;
+		}
 
 		int ec2 = currentRule.get2ndLevelEventCode(
 				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
@@ -399,6 +416,15 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 
 			if (typeEncoder.isValid(booleanDatatype, value)) {
+
+				// Note: in some cases we can simply skip the xsi:nil event
+				if (!preserveLexicalValues
+						&& !booleanDatatype.getBoolean()
+						&& !this.encodingOptions
+								.isOptionEnabled(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL)) {
+					return;
+				}
+
 				// schema-valid boolean
 				int ec2 = siCurrentRule.get2ndLevelEventCode(
 						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);

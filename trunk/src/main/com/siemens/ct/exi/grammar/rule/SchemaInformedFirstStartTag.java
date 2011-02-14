@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.EventTypeInformation;
@@ -40,6 +42,8 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	protected boolean isTypeCastable = false;
 	protected boolean isNillable = false;
 	protected SchemaInformedFirstStartTagRule typeEmpty;
+	
+	protected QName typeName = null;
 
 	public SchemaInformedFirstStartTag(SchemaInformedRule elementContent2) {
 		super(elementContent2);
@@ -58,6 +62,14 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 			}
 			this.addRule(ei.event, next);
 		}
+	}
+	
+	public QName getTypeName() {
+		return this.typeName;
+	}
+	
+	public void setTypeName(QName typeName) {
+		this.typeName = typeName;
 	}
 
 	public void setTypeCastable(boolean isTypeCastable) {
@@ -184,6 +196,7 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		clone.setTypeCastable(this.isTypeCastable);
 		clone.setTypeEmpty(this.typeEmpty);
 		clone.setNillable(this.isNillable);
+		clone.setTypeName(this.typeName);
 
 		return clone;
 	}

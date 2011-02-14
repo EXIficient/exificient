@@ -30,7 +30,7 @@ import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessDocContent;
 import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
 
@@ -112,7 +112,7 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		return null;
 	}
 
-	public SchemaInformedRule getTypeGrammar(QName qname) {
+	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname) {
 		// no type grammar available
 		return null;
 	}

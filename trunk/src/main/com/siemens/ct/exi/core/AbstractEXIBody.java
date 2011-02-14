@@ -104,7 +104,7 @@ public abstract class AbstractEXIBody {
 	protected void initFactoryInformation() throws EXIException {
 		this.grammar = exiFactory.getGrammar();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
-
+		
 		// preserve prefixes
 		preservePrefix = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
