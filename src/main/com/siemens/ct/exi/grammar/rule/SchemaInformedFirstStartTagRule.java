@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
+import javax.xml.namespace.QName;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -31,6 +33,13 @@ package com.siemens.ct.exi.grammar.rule;
  */
 public interface SchemaInformedFirstStartTagRule extends SchemaInformedStartTagRule {
 
+	/*
+	 * returns type-name or null if anonymous type or element
+	 */
+	public QName getTypeName();
+	
+	public void setTypeName(QName typeName);
+	
 	/*
 	 * sets whether type is castable
 	 */

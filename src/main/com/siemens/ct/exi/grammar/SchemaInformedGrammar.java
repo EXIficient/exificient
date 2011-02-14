@@ -32,7 +32,6 @@ import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 
 /**
  * 
@@ -124,7 +123,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 		this.grammarTypes = grammarTypes;
 	}
 
-	public SchemaInformedRule getTypeGrammar(QName qname) {
+	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname) {
 		return grammarTypes.get(qname);
 	}
 

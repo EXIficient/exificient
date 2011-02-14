@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 
 /**
  * 
@@ -83,7 +83,7 @@ public interface Grammar extends Serializable {
 
 	public Attribute getGlobalAttribute(QName qname);
 
-	public SchemaInformedRule getTypeGrammar(QName qname);
+	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname);
 
 	/**
 	 * Returns (direct) simple types in type hierarchy
