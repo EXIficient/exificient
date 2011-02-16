@@ -63,6 +63,56 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public boolean decodeBoolean() throws IOException {
 		return (is.read() == 0 ? false : true);
 	}
+	
+	/**
+	 * Decode an arbitrary precision non negative integer using a sequence of
+	 * octets. The most significant bit of the last octet is set to zero to
+	 * indicate sequence termination. Only seven bits per octet are used to
+	 * store the integer's value.
+	 */
+	public int decodeUnsignedInteger() throws IOException {
+		int result = 0;
+
+		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
+		// int multiplier = 1;
+		int mShift = 0;
+		int b;
+		
+		do {
+			// 1. Read the next octet
+			b = decode();
+			// 2. Multiply the value of the unsigned number represented by
+			// the 7
+			// least significant
+			// bits of the octet by the current multiplier and add the
+			// result to
+			// the current value.
+			// result += (b & 127) * multiplier;
+			result += (b & 127) << mShift;
+			// 3. Multiply the multiplier by 128
+			// multiplier = multiplier << 7;
+			mShift += 7;
+			// 4. If the most significant bit of the octet was 1, go back to
+			// step 1
+		} while ((b >>> 7) == 1);
+
+		return result;
+	}
+	
+	protected long decodeUnsignedLong() throws IOException {
+		long lResult = 0L;
+		int mShift = 0;
+		int b;
+
+		do {
+			b = decode();
+			lResult += ((long) (b & 127)) << mShift;
+			mShift += 7;
+		} while ((b >>> 7) == 1);
+
+		return lResult;
+	}
+	
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.

@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class TestSAXEncoderN extends TestSAXEncoder {
-	public static final int N_RUNS = 1000;
+	public static final int N_RUNS = 100;
 
 	public TestSAXEncoderN(OutputStream exiOuput) {
 		super(exiOuput);

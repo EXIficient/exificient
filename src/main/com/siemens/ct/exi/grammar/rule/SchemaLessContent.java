@@ -50,7 +50,7 @@ public abstract class SchemaLessContent extends AbstractSchemaLessRule {
 			FidelityOptions fidelityOptions) {
 		if (!optionsStartTag.containsKey(fidelityOptions)) {
 			List<EventType> events = new ArrayList<EventType>();
-
+			
 //			if (!fidelityOptions.isStrict()) {
 				// extensibility: EE, AT(*)
 				events.add(EventType.END_ELEMENT_UNDECLARED);
