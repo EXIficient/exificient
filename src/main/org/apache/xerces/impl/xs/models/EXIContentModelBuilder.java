@@ -33,7 +33,6 @@ import org.apache.xerces.impl.xs.SchemaGrammar;
 import org.apache.xerces.impl.xs.SubstitutionGroupHandler;
 import org.apache.xerces.impl.xs.XMLSchemaLoader;
 import org.apache.xerces.impl.xs.XSComplexTypeDecl;
-import org.apache.xerces.impl.xs.XSGrammarBucket;
 import org.apache.xerces.impl.xs.XSParticleDecl;
 import org.apache.xerces.xni.QName;
 import org.apache.xerces.xni.XNIException;
@@ -138,10 +137,13 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// create substitution group-handler
 			// NOTE: it is needed but not really used later on
 			// (substitution groups are handled separately)
-			XSGrammarBucket grammarBucket = new XSGrammarBucket();
-			grammarBucket.putGrammar(g, true);
-			subGroupHandler = new SubstitutionGroupHandler(grammarBucket);
-
+			// Xerces Version 2.9.1
+			//XSGrammarBucket grammarBucket = new XSGrammarBucket();
+			// grammarBucket.putGrammar(g, true);
+			// subGroupHandler = new SubstitutionGroupHandler(grammarBucket);
+			// Xerces Version 2.11.0
+			subGroupHandler = new SubstitutionGroupHandler(sl);
+			
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}
