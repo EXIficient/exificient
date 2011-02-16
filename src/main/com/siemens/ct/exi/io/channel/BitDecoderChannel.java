@@ -140,6 +140,7 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 //		
 //		return null;
 //	}
+	
 
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
