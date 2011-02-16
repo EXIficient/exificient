@@ -431,16 +431,29 @@ public class SAXDecoder implements XMLReader {
 		// endPrefixMapping
 		endPrefixMappings(eePrefixes);
 	}
+	
+	protected final void ensureBufferCapacity(int reqSize) {
+		if (reqSize > cbuffer.length) {
+			int newSize;
+			
+			do {
+				newSize = cbuffer.length << 2;
+			} while(newSize < reqSize);
+			
+			// newSize = reqSize;
+			
+			// need to create a new (expanded) buffer
+			// System.out.println("Expand buffer size: " + cbuffer.length + " --> " + newSize);
+			cbuffer = new char[newSize];
+		}	
+	}
 
 	protected void handleAttribute(QName atQName) throws SAXException, IOException,
 			EXIException {
 		Value val = decoder.getAttributeValue();
 
 		int slen = val.getCharactersLength();
-		if (slen > cbuffer.length) {
-			// need to create a new (expanded) buffer
-			cbuffer = new char[slen];
-		}
+		ensureBufferCapacity(slen);
 
 		// empty string if no qualified name is necessary
 		if (namespacePrefixes) {
@@ -455,10 +468,7 @@ public class SAXDecoder implements XMLReader {
 
 	protected void handleCharacters(Value val) throws SAXException, IOException {
 		int slen = val.getCharactersLength();
-		if (slen > cbuffer.length) {
-			// need to create a new (expanded) buffer
-			cbuffer = new char[slen];
-		}
+		ensureBufferCapacity(slen);
 
 		// returns char array that contains value
 		// Note: can be a different array than the one passed
