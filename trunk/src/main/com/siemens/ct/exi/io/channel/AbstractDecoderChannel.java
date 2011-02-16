@@ -44,7 +44,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	}
 
 	public BooleanValue decodeBooleanValue() throws IOException {
-		return new BooleanValue(decodeBoolean() );
+		return new BooleanValue(decodeBoolean());
 	}
 
 	/**
@@ -57,28 +57,29 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	}
 
 	/**
-	 * Decode the characters of a string whose length (#code-points) has already been read.
-	 * Look for codepoints of more than 16 bits that are represented as UTF-16
-	 * surrogate pairs in Java.
+	 * Decode the characters of a string whose length (#code-points) has already
+	 * been read. Look for codepoints of more than 16 bits that are represented
+	 * as UTF-16 surrogate pairs in Java.
 	 * 
 	 * @param length
 	 *            Length of the character sequence to read.
 	 * @return The character sequence as a string.
 	 */
 	public char[] decodeStringOnly(int length) throws IOException {
-		
+
 		char[] ca = new char[length];
-		
+
 		for (int i = 0; i < length; i++) {
 			int codePoint = decodeUnsignedInteger();
 
 			if (Character.isSupplementaryCodePoint(codePoint)) {
 				// (first) supplementary code-point
-				// Note: this SHOULD be done differently and is not optimal at all
+				// Note: this SHOULD be done differently and is not optimal at
+				// all
 				StringBuilder sb = new StringBuilder();
 				sb.append(ca, 0, i); // append chars so far
 				sb.appendCodePoint(codePoint); // append current code-point
-				for(int k=i+1; k<length; k++) {
+				for (int k = i + 1; k < length; k++) {
 					sb.appendCodePoint(decodeUnsignedInteger());
 				}
 				ca = sb.toString().toCharArray(); // reset char array
@@ -87,7 +88,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 				ca[i] = (char) codePoint;
 			}
 		}
-		
+
 		return ca;
 	}
 
@@ -107,7 +108,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			return decodeUnsignedInteger();
 		}
 	}
-	
+
 	public IntegerValue decodeIntegerValue() throws IOException {
 		return new IntegerValue(decodeInteger());
 	}
@@ -122,34 +123,16 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			return decodeUnsignedLong();
 		}
 	}
-	
-	public LongValue decodeLongValue() throws IOException {
-		return new LongValue (decodeLong());
-	}
-	
 
+	public LongValue decodeLongValue() throws IOException {
+		return new LongValue(decodeLong());
+	}
 
 	public HugeIntegerValue decodeHugeIntegerValue() throws IOException {
-		HugeIntegerValue bi;
-		if (decodeBoolean()) {
-			// For negative values, the Unsigned Integer holds the
-			// magnitude of the value minus 1
-			bi = decodeUnsignedHugeIntegerValue();
-			if (bi.isLongValue) {
-				bi = new HugeIntegerValue(-(bi.longValue + 1L));
-			} else {
-				// TODO look for a more memory sensitive way !?
-				bi = new HugeIntegerValue( bi.bigIntegerValue.add(BigInteger.ONE).negate());
-			}
-		} else {
-			// positive
-			bi = decodeUnsignedHugeIntegerValue();
-		}
-		
-		return bi;
+		return decodeUnsignedHugeIntegerValue(decodeBoolean());
 	}
-
-	public HugeIntegerValue decodeUnsignedHugeIntegerValue() throws IOException {
+	
+	protected HugeIntegerValue decodeUnsignedHugeIntegerValue(boolean negative) throws IOException {
 		long lResult = 0L;
 		int mShift = 0;
 		int b;
@@ -171,7 +154,13 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		} while ((b >>> 7) == 1);
 
 		if (isLongValue) {
-			return new HugeIntegerValue(lResult);
+			// For negative values, the Unsigned Integer holds the
+			// magnitude of the value minus 1
+			if (negative) {
+				return new HugeIntegerValue(-(lResult + 1L));
+			} else {
+				return new HugeIntegerValue(lResult);
+			}
 		} else {
 			// keep on decoding
 			BigInteger bResult = BigInteger.valueOf(lResult);
@@ -185,61 +174,28 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 				multiplier = multiplier.shiftLeft(7);
 			} while ((b >>> 7) == 1);
 
-			return new HugeIntegerValue(bResult);
+			// For negative values, the Unsigned Integer holds the
+			// magnitude of the value minus 1
+			if (negative) {
+				return new HugeIntegerValue(bResult.add(BigInteger.ONE).negate());
+			} else {
+				return new HugeIntegerValue(bResult);
+			}
 		}
 	}
 
-	/**
-	 * Decode an arbitrary precision non negative integer using a sequence of
-	 * octets. The most significant bit of the last octet is set to zero to
-	 * indicate sequence termination. Only seven bits per octet are used to
-	 * store the integer's value.
-	 */
-	public int decodeUnsignedInteger() throws IOException {
-		int result = 0;
-
-		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		// int multiplier = 1;
-		int mShift = 0;
-		int b;
-
-		do {
-			// 1. Read the next octet
-			b = decode();
-			// 2. Multiply the value of the unsigned number represented by the 7
-			// least significant
-			// bits of the octet by the current multiplier and add the result to
-			// the current value.
-			// result += (b & 127) * multiplier;
-			result += (b & 127) << mShift;
-			// 3. Multiply the multiplier by 128
-			// multiplier = multiplier << 7;
-			mShift += 7;
-			// 4. If the most significant bit of the octet was 1, go back to
-			// step 1
-		} while ((b >>> 7) == 1);
-
-		return result;
+	public HugeIntegerValue decodeUnsignedHugeIntegerValue() throws IOException {
+		return(decodeUnsignedHugeIntegerValue(false));
 	}
 	
 	public IntegerValue decodeUnsignedIntegerValue() throws IOException {
 		return new IntegerValue(decodeUnsignedInteger());
 	}
 
-	protected long decodeUnsignedLong() throws IOException {
-		long lResult = 0L;
-		int mShift = 0;
-		int b;
-
-		do {
-			b = decode();
-			lResult += ((long) (b & 127)) << mShift;
-			mShift += 7;
-		} while ((b >>> 7) == 1);
-
-		return lResult;
-	}
 	
+	abstract protected long decodeUnsignedLong() throws IOException;
+
+
 	public LongValue decodeUnsignedLongValue() throws IOException {
 		return new LongValue(decodeUnsignedLong());
 	}
@@ -263,8 +219,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	public DecimalValue decodeDecimalValue() throws IOException {
 		boolean negative = decodeBoolean();
 
-		HugeIntegerValue integral = decodeUnsignedHugeIntegerValue();
-		HugeIntegerValue revFractional = decodeUnsignedHugeIntegerValue();
+		HugeIntegerValue integral = decodeUnsignedHugeIntegerValue(false);
+		HugeIntegerValue revFractional = decodeUnsignedHugeIntegerValue(false);
 
 		return new DecimalValue(negative, integral, revFractional);
 	}
@@ -274,20 +230,21 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-//	FloatValue fv = new FloatValue(0, 0);
+	// FloatValue fv = new FloatValue(0, 0);
 	public FloatValue decodeFloatValue() throws IOException {
 		long mantissa = decodeLong();
 		long exponent = decodeLong();
-		 return new FloatValue(mantissa, exponent);
-//		fv.setValues(mantissa, exponent);
-//		return fv;
+		return new FloatValue(mantissa, exponent);
+		// fv.setValues(mantissa, exponent);
+		// return fv;
 	}
 
 	/**
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public DateTimeValue decodeDateTimeValue(DateTimeType type) throws IOException {
+	public DateTimeValue decodeDateTimeValue(DateTimeType type)
+			throws IOException {
 		int year = 0, monthDay = 0, time = 0, fractionalSecs = 0;
 		boolean presenceFractionalSecs = false;
 
@@ -311,8 +268,9 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		case time: // Time, [FractionalSecs], [TimeZone]
 			// e.g. "12:34:56.135"
 			time = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_TIME);
-			presenceFractionalSecs = decodeBoolean(); 
-			fractionalSecs = presenceFractionalSecs ? decodeUnsignedInteger() : 0;
+			presenceFractionalSecs = decodeBoolean();
+			fractionalSecs = presenceFractionalSecs ? decodeUnsignedInteger()
+					: 0;
 			break;
 		case gMonth: // MonthDay, [TimeZone]
 			// e.g. "--12"
@@ -331,12 +289,13 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		}
 
 		boolean presenceTimezone = decodeBoolean();
-		int timeZone =  presenceTimezone ? decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_TIMEZONE)
+		int timeZone = presenceTimezone ? decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_TIMEZONE)
 				- DateTimeValue.TIMEZONE_OFFSET_IN_MINUTES
 				: 0;
-		
-		return new DateTimeValue(type, year, monthDay, time, presenceFractionalSecs, fractionalSecs,
-				presenceTimezone, timeZone);
+
+		return new DateTimeValue(type, year, monthDay, time,
+				presenceFractionalSecs, fractionalSecs, presenceTimezone,
+				timeZone);
 	}
 
 }

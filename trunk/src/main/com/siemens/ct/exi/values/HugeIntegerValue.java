@@ -35,7 +35,7 @@ public final class HugeIntegerValue extends AbstractIntegerValue implements
 
 	private static final long serialVersionUID = 4938301238683583609L;
 
-	public static final HugeIntegerValue ZERO = new HugeIntegerValue(0l);
+	public static final HugeIntegerValue ZERO = new HugeIntegerValue(0L);
 
 	public final boolean isLongValue;
 	public final long longValue;

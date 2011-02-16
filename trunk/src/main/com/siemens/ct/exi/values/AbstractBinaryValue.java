@@ -41,18 +41,18 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		return bytes;
 	}
 	
-	abstract protected void initString();
+//	abstract protected void initString();
+//	
+//	public int getCharactersLength() {
+//		if (slen == -1) {
+//			initString();
+//		}
+//		return slen;
+//	}
 	
-	public int getCharactersLength() {
-		if (slen == -1) {
-			initString();
-		}
-		return slen;
-	}
-	
-	public char[] toCharacters(char[] cbuffer, int offset) {
-		return sValue.toCharArray();
-	}
+//	public char[] toCharacters(char[] cbuffer, int offset) {
+//		return sValue.toCharArray();
+//	}
 	
 	protected final boolean _equals(byte[] oBytes) {
 		if (bytes.length == oBytes.length) {
@@ -66,12 +66,12 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		return false;
 	}
 	
-	@Override
-	public String toString() {
-		if (slen == -1) {
-			initString();
-		}
-		return sValue;
-	}
+//	@Override
+//	public String toString() {
+//		if (slen == -1) {
+//			initString();
+//		}
+//		return sValue;
+//	}
 
 }

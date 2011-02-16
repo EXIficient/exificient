@@ -28,9 +28,24 @@ import org.apache.xerces.impl.dv.util.HexBin;
  * @version 0.6
  */
 
+// re-uses code from org.apache.xerces.impl.dv.util.HexBin;
 public class BinaryHexValue extends AbstractBinaryValue {
 
 	private static final long serialVersionUID = 4914135099644891193L;
+
+	static private final int LOOKUPLENGTH = 16;
+	static final private char[] lookUpHexAlphabet = new char[LOOKUPLENGTH];
+
+	private int lengthData;
+
+	static {
+		for (int i = 0; i < 10; i++) {
+			lookUpHexAlphabet[i] = (char) ('0' + i);
+		}
+		for (int i = 10; i <= 15; i++) {
+			lookUpHexAlphabet[i] = (char) ('A' + i - 10);
+		}
+	}
 
 	public BinaryHexValue(byte[] bytes) {
 		super(bytes);
@@ -40,9 +55,27 @@ public class BinaryHexValue extends AbstractBinaryValue {
 		return HexBin.decode(val);
 	}
 
-	protected void initString() {
-		sValue = HexBin.encode(bytes);
-		slen = sValue.length();
+	public int getCharactersLength() {
+		if (slen == -1) {
+			lengthData = bytes.length;
+			slen = lengthData * 2;
+		}
+		return slen;
+	}
+	
+	public char[] toCharacters(char[] cbuffer, int offset) {
+		getCharactersLength();
+		
+		int temp;
+		for (int i = 0; i < lengthData; i++) {
+			temp = bytes[i];
+			if (temp < 0)
+				temp += 256;
+			cbuffer[offset + i * 2] = lookUpHexAlphabet[temp >> 4];
+			cbuffer[offset + i * 2 + 1] = lookUpHexAlphabet[temp & 0xf];
+		}
+
+		return cbuffer;
 	}
 
 	@Override
