@@ -60,14 +60,16 @@ public class UnsignedBigIntegerDatatype extends AbstractDatatype {
 		if (value instanceof HugeIntegerValue) {
 			lastUnsignedInteger = ((HugeIntegerValue) value);
 			return (lastUnsignedInteger.isPositive());
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		return lastUnsignedInteger;
-	}
+//	public Value getValue() {
+//		return lastUnsignedInteger;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

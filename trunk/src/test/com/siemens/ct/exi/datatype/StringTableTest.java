@@ -41,6 +41,7 @@ import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.StringTypeDecoder;
 import com.siemens.ct.exi.types.StringTypeEncoder;
+import com.siemens.ct.exi.values.StringValue;
 
 public class StringTableTest extends AbstractTestCase {
 
@@ -59,17 +60,17 @@ public class StringTableTest extends AbstractTestCase {
 		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
 		tes.writeValue(context, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val2));
 		tes.writeValue(context, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
 		tes.writeValue(context, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(context, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(context, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(context, bec);
 
 		bec.flush();
@@ -113,17 +114,17 @@ public class StringTableTest extends AbstractTestCase {
 		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
 		tes.writeValue(c1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val2));
 		tes.writeValue(c3, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
 		tes.writeValue(c2, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(c3, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(c1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, val3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
 		tes.writeValue(c3, bec);
 
 		bec.flush();
@@ -175,25 +176,25 @@ public class StringTableTest extends AbstractTestCase {
 		StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, atCh1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(atCh1));
 		tes.writeValue(ca1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch1));
 		tes.writeValue(cexx1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
 		tes.writeValue(cexx2, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
 		tes.writeValue(cex2, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch3));
 		tes.writeValue(cex3, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, atCh2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(atCh2));
 		tes.writeValue(ca1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch1);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch1));
 		tes.writeValue(cexx1, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
 		tes.writeValue(cexx2, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch2);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
 		tes.writeValue(cex2, bec);
-		tes.isValid(BuiltIn.DEFAULT_DATATYPE, ch3);
+		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch3));
 		tes.writeValue(cex2, bec);
 
 		bec.flush();
@@ -256,21 +257,21 @@ public class StringTableTest extends AbstractTestCase {
 
 
 		// a: 123
-		tes.isValid(dt, s3);
+		tes.isValid(dt, new StringValue(s3));
 		tes.writeValue(qa, bec);
 		// b: 1234
-		tes.isValid(dt, s4);
+		tes.isValid(dt, new StringValue(s4));
 		tes.writeValue(qb, bec);
 		// a: 12345
-		tes.isValid(dt, s5);
+		tes.isValid(dt, new StringValue(s5));
 		tes.writeValue(qa, bec);
 		// b: 123456 /* to large */
 		assertFalse(se.isStringHit(qb, s6));
-		tes.isValid(dt, s6);
+		tes.isValid(dt, new StringValue(s6));
 		tes.writeValue(qb, bec);
 		// a: 1234567 /* to large */
 		assertFalse(se.isStringHit(qa, s7));
-		tes.isValid(dt, s7);
+		tes.isValid(dt, new StringValue(s7));
 		tes.writeValue(qa, bec);
 
 		bec.flush();
@@ -320,30 +321,30 @@ public class StringTableTest extends AbstractTestCase {
 
 
 		// a: 1
-		tes.isValid(dt, s1);
+		tes.isValid(dt, new StringValue(s1));
 		tes.writeValue(qa, bec); // ["1"{a}]
 		// b: 12
-		tes.isValid(dt, s2);
+		tes.isValid(dt, new StringValue(s2));
 		tes.writeValue(qb, bec);  // ["1"{a},"12"{b}]
 		// a: 123
-		tes.isValid(dt, s3);
+		tes.isValid(dt, new StringValue(s3));
 		tes.writeValue(qa, bec); // ["1"{a},"12"{b},"123"{a}]
 		// c: 123 /* global hit */
-		tes.isValid(dt, s3);
+		tes.isValid(dt, new StringValue(s3));
 		tes.writeValue(qc, bec); // ["1","12","123"]
 		// c: 1234
-		tes.isValid(dt, s4);
+		tes.isValid(dt, new StringValue(s4));
 		tes.writeValue(qc, bec); // ["1234","12","123"]
 		// a: 1 /* no local hit due to valuePartitionCapacity*/
 		assertFalse(se.isStringHit(qa, s1));
-		tes.isValid(dt, s1);
+		tes.isValid(dt, new StringValue(s1));
 		tes.writeValue(qa, bec);	 // ["1234","1","123"]
 		// c: 1 /* no local hit due to valuePartitionCapacity*/
 		assertTrue(se.isStringHit(qc, s4));
 		assertTrue(se.isStringHit(qa, s1));
 		assertTrue(se.isStringHit(qc, s3));
 		assertFalse(se.isStringHit(qc, s2));
-		tes.isValid(dt, s2);
+		tes.isValid(dt, new StringValue(s2));
 		tes.writeValue(qc, bec); 	 // ["1234","1","12"]
 		assertTrue(se.isStringHit(qc, s4));
 		assertTrue(se.isStringHit(qa, s1));

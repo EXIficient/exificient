@@ -188,15 +188,17 @@ public class QNameDatatype extends AbstractDatatype {
 			QNameValue qv = ((QNameValue) value);
 			qname = qv.toQName();
 			qnamePrefix = qv.getPrefix();
-			return true;		
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return new QNameValue(qname, qnamePrefix);
-	}
+//	public Value getValue() {
+//		return new QNameValue(qname, qnamePrefix);
+//	}
 	
 //	@Override
 //	public boolean isValidRCS(String value) {

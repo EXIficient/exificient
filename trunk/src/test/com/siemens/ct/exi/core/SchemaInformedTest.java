@@ -38,6 +38,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.QNameValue;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 public class SchemaInformedTest extends TestCase {
@@ -72,7 +73,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
 					pfx);
-			encoder.encodeXsiNil("false", pfx);
+			encoder.encodeAttributeXsiNil(new StringValue("false"), pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
@@ -129,7 +130,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
 					pfx);
-			encoder.encodeXsiNil("false", pfx);
+			encoder.encodeAttributeXsiNil(new BooleanValue(false), pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
@@ -193,7 +194,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
 					pfx);
 			encoder.encodeNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
-			encoder.encodeXsiType("xs:string", pfx);
+			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 			
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
@@ -252,7 +253,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
 					pfx);
 			encoder.encodeNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
-			encoder.encodeXsiType("xs:string", pfx);
+			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 			
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();

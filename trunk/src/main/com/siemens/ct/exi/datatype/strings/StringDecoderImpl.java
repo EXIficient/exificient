@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.StringValue;
-import com.siemens.ct.exi.values.Value;
 
 /**
  * 
@@ -42,21 +41,21 @@ import com.siemens.ct.exi.values.Value;
 public class StringDecoderImpl implements StringDecoder {
 
 	// global values (all)
-	protected List<Value> globalValues;
+	protected List<StringValue> globalValues;
 
 	// local values (per context)
-	protected Map<QName, List<Value>> localValues;
+	protected Map<QName, List<StringValue>> localValues;
 	
 	public StringDecoderImpl() {
-		globalValues = new ArrayList<Value>();
-		localValues = new HashMap<QName, List<Value>>();
+		globalValues = new ArrayList<StringValue>();
+		localValues = new HashMap<QName, List<StringValue>>();
 	}
 
-	private static final Value EMPTY_STRING_VALUE = new StringValue("");
+//	private static final StringValue EMPTY_STRING_VALUE = new StringValue("");
 	
-	public Value readValue(QName context, DecoderChannel valueChannel)
+	public StringValue readValue(QName context, DecoderChannel valueChannel)
 			throws IOException {
-		Value value;
+		StringValue value;
 		
 		int i = valueChannel.decodeUnsignedInteger();
 		
@@ -84,7 +83,8 @@ public class StringDecoderImpl implements StringDecoder {
 				// value string table partition.
 				addValue(context, value);	
 			} else {
-				value = EMPTY_STRING_VALUE;
+				// value = EMPTY_STRING_VALUE;
+				value = StringCoder.EMPTY_STRING_VALUE;
 			}
 			break;
 		}
@@ -95,30 +95,30 @@ public class StringDecoderImpl implements StringDecoder {
 		return value;
 	}
 
-	public Value readValueLocalHit(QName context,
+	public StringValue readValueLocalHit(QName context,
 			DecoderChannel valueChannel) throws IOException {
-		List<Value> localChars = localValues.get(context);
+		List<StringValue> localChars = localValues.get(context);
 		int n = MethodsBag.getCodingLength(localChars.size());
 		int localID = valueChannel.decodeNBitUnsignedInteger(n);
 		return localChars.get(localID);
 	}
 	
-	public Value readValueGlobalHit(QName context,
+	public StringValue readValueGlobalHit(QName context,
 			DecoderChannel valueChannel) throws IOException {
 		int n = MethodsBag.getCodingLength(globalValues.size());
 		int globalID = valueChannel.decodeNBitUnsignedInteger(n);
 		return globalValues.get(globalID);
 	}
 
-	public void addValue(QName context, Value value) {
+	public void addValue(QName context, StringValue value) {
 		// global
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
 		// local
 		// updateLocalValues(context, value);
-		List<Value> lvs = localValues.get(context);
+		List<StringValue> lvs = localValues.get(context);
 		if (lvs == null) {
-			lvs = new ArrayList<Value>();
+			lvs = new ArrayList<StringValue>();
 			localValues.put(context, lvs);
 		}
 		assert (!lvs.contains(value));

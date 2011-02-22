@@ -237,17 +237,17 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeDateTime(DateTimeValue datetime) throws IOException {
 		switch (datetime.type) {
 		case gYear: // Year, [Time-Zone]
-			encodeInteger(datetime.year);
+			encodeInteger(datetime.year - DateTimeValue.YEAR_OFFSET);
 			break;
 		case gYearMonth: // Year, MonthDay, [TimeZone]
 		case date: // Year, MonthDay, [TimeZone]
-			encodeInteger(datetime.year);
+			encodeInteger(datetime.year - DateTimeValue.YEAR_OFFSET);
 			encodeNBitUnsignedInteger(datetime.monthDay,
 					DateTimeValue.NUMBER_BITS_MONTHDAY);
 			break;
 		case dateTime: // Year, MonthDay, Time, [FractionalSecs],
 			// [TimeZone]
-			encodeInteger(datetime.year);
+			encodeInteger(datetime.year - DateTimeValue.YEAR_OFFSET);
 			encodeNBitUnsignedInteger(datetime.monthDay,
 					DateTimeValue.NUMBER_BITS_MONTHDAY);
 			// Note: *no* break;

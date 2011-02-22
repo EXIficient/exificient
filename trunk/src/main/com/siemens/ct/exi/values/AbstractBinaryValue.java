@@ -33,7 +33,8 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 	protected final byte[] bytes;
 	protected String sValue;
 
-	public AbstractBinaryValue(byte[] bytes) {
+	public AbstractBinaryValue(ValueType valueType, byte[] bytes) {
+		super(valueType);
 		this.bytes = bytes;
 	}
 	

@@ -45,8 +45,6 @@ import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
-import com.siemens.ct.exi.types.BuiltIn;
-import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.DateTimeType;
 
 public class DatatypeMappingTest extends AbstractTestCase {

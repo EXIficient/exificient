@@ -57,7 +57,17 @@ import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.values.BinaryBase64Value;
+import com.siemens.ct.exi.values.BinaryHexValue;
+import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.DecimalValue;
+import com.siemens.ct.exi.values.FloatValue;
+import com.siemens.ct.exi.values.HugeIntegerValue;
+import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.LongValue;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -262,9 +272,69 @@ public class BuiltIn {
 
 							Datatype dtEnumValues = getDatatype(stdEnum);
 							Value[] values = new Value[enumList.getLength()];
+							
+							BuiltInType enumBIT = dtEnumValues.getBuiltInType();
 
 							for (int k = 0; k < enumList.getLength(); k++) {
-								String sEnumValue = enumList.item(k);
+								
+								String tok = enumList.item(k);
+								// String sEnumValue = enumList.item(k);
+								Value sEnumValue; 
+								
+								switch(enumBIT) {
+								/* Binary */
+								case BINARY_BASE64:
+									sEnumValue = BinaryBase64Value.parse(tok);
+									break;
+								case BINARY_HEX:
+									sEnumValue = BinaryHexValue.parse(tok);
+									break;
+								/* Boolean */
+								case BOOLEAN:
+								case BOOLEAN_PATTERN:
+									sEnumValue = BooleanValue.parse(tok);
+									break;
+								/* Decimal */
+								case DECIMAL:
+									sEnumValue = DecimalValue.parse(tok);
+									break;
+								/* Float */
+								case FLOAT:
+								case DOUBLE:
+									sEnumValue = FloatValue.parse(tok);
+									break;
+								/* int */
+								case NBIT_INTEGER_32:
+								case UNSIGNED_INTEGER_16:
+								case INTEGER_16:
+								case INTEGER_32:
+									sEnumValue = IntegerValue.parse(tok);
+									break;
+								/* long */
+								case NBIT_INTEGER_64:
+								case UNSIGNED_INTEGER_32:
+								case INTEGER_64:
+									sEnumValue = LongValue.parse(tok);
+									break;
+								/* big */
+								case NBIT_INTEGER_BIG:
+								case UNSIGNED_INTEGER_64:
+								case UNSIGNED_INTEGER_BIG:
+								case INTEGER_BIG:
+									sEnumValue = HugeIntegerValue.parse(tok);
+									break;
+								/* Datetime */
+								case DATETIME:
+									DatetimeDatatype datetimeDT = (DatetimeDatatype) dtEnumValues;
+									sEnumValue = DateTimeValue.parse(tok, datetimeDT.getDatetimeType());
+									break;
+								default:
+									sEnumValue = new StringValue(tok); // String
+								}
+								
+								
+								
+								
 								boolean valid = dtEnumValues
 										.isValid(sEnumValue);
 								if (!valid) {
@@ -273,7 +343,13 @@ public class BuiltIn {
 													+ sEnumValue + "', "
 													+ stdEnum);
 								}
-								values[k] = dtEnumValues.getValue();
+								// values[k] = dtEnumValues.getValue();
+								values[k] = sEnumValue;
+//								if (dtEnumValues.getBuiltInType() != BuiltInType.STRING) {
+//									System.err.println("XXXXXXXXX()");
+//								}
+//								values[k] = null;
+//								System.err.println("dtEnumValues.getValue()");
 							}
 
 							datatype = new EnumerationDatatype(values, dtEnumValues.getBuiltInType(),

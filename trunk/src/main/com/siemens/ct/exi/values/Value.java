@@ -33,7 +33,18 @@ import java.io.Serializable;
 public interface Value extends Serializable {
 
 	/**
-	 * Returns character array containing the vales represented as String
+	 * Returns type of the boxed value e.g., int or boolean.
+	 * <p>
+	 * Note: can be a string-type even if integer-type is expected (e.g., if
+	 * Preserve.LexicalValues is set to TRUE).
+	 * </p>
+	 * 
+	 * @return associated value type
+	 */
+	public ValueType getValueType();
+
+	/**
+	 * Returns character array containing the values represented as String
 	 * representation for XML
 	 * <p>
 	 * Note: can be a different array than the one passed (e.g., String values).

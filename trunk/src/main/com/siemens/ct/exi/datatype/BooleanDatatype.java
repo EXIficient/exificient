@@ -43,7 +43,7 @@ public class BooleanDatatype extends AbstractDatatype {
 	
 	private static final long serialVersionUID = -6150310956233103627L;
 	
-	protected Boolean bool;
+	protected BooleanValue bool;
 	
 	public BooleanDatatype(QName schemaType) {
 		super(BuiltInType.BOOLEAN, schemaType);
@@ -57,16 +57,18 @@ public class BooleanDatatype extends AbstractDatatype {
 	
 	public boolean isValid(Value value) {
 		if (value instanceof BooleanValue) {
-			bool = ((BooleanValue) value).toBoolean();
-			return true;			
+			bool = (BooleanValue) value;
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return new BooleanValue(bool);
-	}
+//	public Value getValue() {
+//		return new BooleanValue(bool);
+//	}
 	
 	@Override
 	public boolean isValidRCS(String value) {
@@ -76,12 +78,12 @@ public class BooleanDatatype extends AbstractDatatype {
 	}
 
 	public boolean getBoolean() {
-		return bool;
+		return bool.toBoolean();
 	}
 	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {
-		valueChannel.encodeBoolean(bool);
+		valueChannel.encodeBoolean(bool.toBoolean());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

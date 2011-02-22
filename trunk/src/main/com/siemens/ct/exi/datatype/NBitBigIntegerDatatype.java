@@ -102,14 +102,16 @@ public class NBitBigIntegerDatatype extends AbstractDatatype {
 		if (value instanceof HugeIntegerValue) {
 			lastValidValue = ((HugeIntegerValue) value);
 			return checkBounds();
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		return lastValidValue;
-	}
+//	public Value getValue() {
+//		return lastValidValue;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

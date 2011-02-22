@@ -99,14 +99,16 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		if (value instanceof IntegerValue) {
 			validValue = ((IntegerValue) value);
 			return checkBounds();
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		return validValue;
-	}
+//	public Value getValue() {
+//		return validValue;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

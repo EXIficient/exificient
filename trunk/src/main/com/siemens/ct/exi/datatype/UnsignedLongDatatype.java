@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.LongValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -43,7 +44,7 @@ public class UnsignedLongDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -1301092165221268158L;
 	
-	private LongValue lastUnsignedLong;
+	private long lastUnsignedLong;
 
 	public UnsignedLongDatatype(BuiltInType builtInType, QName schemaType) {
 		super(builtInType, schemaType);
@@ -52,30 +53,51 @@ public class UnsignedLongDatatype extends AbstractDatatype {
 	}
 
 	public boolean isValid(String value) {
-		lastUnsignedLong = LongValue.parse(value);
-		if (lastUnsignedLong != null) {
-			return (lastUnsignedLong.toLong() >= 0);
+		LongValue longValue = LongValue.parse(value);
+		if (longValue != null) {
+			lastUnsignedLong = longValue.toLong();
+			return (lastUnsignedLong >= 0);
 		} else {
 			return false;
 		}
 	}
 
 	public boolean isValid(Value value) {
-		if (value instanceof LongValue) {
-			lastUnsignedLong = ((LongValue) value);
-			return (lastUnsignedLong.toLong() >= 0);
-		} else {
+		switch (value.getValueType()) {
+		case INT_INTEGER:
+			IntegerValue iv = (IntegerValue) value;
+			lastUnsignedLong = iv.toInteger();
+			return (lastUnsignedLong >= 0);
+		case LONG_INTEGER:
+			LongValue lv = (LongValue) value;
+			lastUnsignedLong = lv.toLong();
+			return (lastUnsignedLong >= 0);
+			// break;
+		default:
+			if (isValid(value.toString())) {
+				return true;
+			}
 			return false;
 		}
+		
+		
+		
+//		if (value instanceof LongValue) {
+//			lastUnsignedLong = ((LongValue) value);
+//			return (lastUnsignedLong.toLong() >= 0);
+//		} else {
+//			return false;
+//		}
 	}
 
-	public Value getValue() {
-		return lastUnsignedLong;
-	}
+//	public Value getValue() {
+//		return lastUnsignedLong;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		valueChannel.encodeUnsignedLong(lastUnsignedLong.toLong());
+		// valueChannel.encodeUnsignedLong(lastUnsignedLong.toLong());
+		valueChannel.encodeUnsignedLong(lastUnsignedLong);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

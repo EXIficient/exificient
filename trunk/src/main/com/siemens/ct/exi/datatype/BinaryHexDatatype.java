@@ -48,14 +48,19 @@ public class BinaryHexDatatype extends AbstractBinaryDatatype {
 
 	public boolean isValid(String value) {
 		value = value.trim();
-		bytes = BinaryHexValue.parse(value);
-		return (bytes != null);
+		BinaryHexValue bv = BinaryHexValue.parse(value);
+		if (bv == null) {
+			return false;
+		} else {
+			bytes = bv.toBytes();
+			return true;
+		}
 	}
 
 	
-	public Value getValue() {
-		return new BinaryHexValue(bytes);
-	}
+//	public Value getValue() {
+//		return new BinaryHexValue(bytes);
+//	}
 	
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)

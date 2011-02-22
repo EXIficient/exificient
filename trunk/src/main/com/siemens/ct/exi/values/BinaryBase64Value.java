@@ -58,11 +58,16 @@ public class BinaryBase64Value extends AbstractBinaryValue {
 	}
 
 	public BinaryBase64Value(byte[] bytes) {
-		super(bytes);
+		super(ValueType.BINARY_BASE64, bytes);
 	}
 
-	public static byte[] parse(String val) {
-		return Base64.decode(val);
+	public static BinaryBase64Value parse(String val) {
+		byte[] bytes = Base64.decode(val);
+		if (bytes == null) {
+			return null;
+		} else {
+			return new BinaryBase64Value(bytes);
+		}
 	}
 
 	public int getCharactersLength() {
@@ -150,12 +155,12 @@ public class BinaryBase64Value extends AbstractBinaryValue {
 	public boolean equals(Object o) {
 		if (o instanceof BinaryBase64Value) {
 			return _equals(((BinaryBase64Value) o).bytes);
-		} else if (o instanceof String) {
-			byte[] b = BinaryBase64Value.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			BinaryBase64Value b = BinaryBase64Value.parse(o.toString());
 			if (b == null) {
 				return false;
 			} else {
-				return _equals(b);
+				return _equals(b.toBytes());
 			}
 		} else {
 			return false;

@@ -64,9 +64,9 @@ public class StringDatatype extends AbstractDatatype {
 		}
 	}
 	
-	public Value getValue() {
-		return new StringValue(lastValue);
-	}
+//	public Value getValue() {
+//		return new StringValue(lastValue);
+//	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {

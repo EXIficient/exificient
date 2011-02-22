@@ -37,6 +37,7 @@ public class ListValue extends AbstractValue {
 	protected final List<Value> values;
 	
 	public ListValue(List<Value> values) {
+		super(ValueType.LIST);
 		this.values = values;
 	}
 	
@@ -108,7 +109,7 @@ public class ListValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof ListValue) {
 			return _equals((ListValue)o);
-		} else if (o instanceof String ) {
+		} else if (o instanceof String || o instanceof StringValue) {
 			// TODO list datatype
 			return false;
 		} else {

@@ -59,15 +59,17 @@ public class IntegerDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			lastInteger = ((IntegerValue) value);
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		return lastInteger;
-	}
+//	public Value getValue() {
+//		return lastInteger;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

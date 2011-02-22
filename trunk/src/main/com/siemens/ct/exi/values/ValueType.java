@@ -16,12 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.datatype.strings;
-
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.values.StringValue;
+package com.siemens.ct.exi.values;
 
 /**
+ * Value types: e.g., String Values, Integers, Floats etc.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -29,9 +27,27 @@ import com.siemens.ct.exi.values.StringValue;
  * @version 0.6
  */
 
-public interface StringCoder {
-	
-	public static final StringValue EMPTY_STRING_VALUE = new StringValue(Constants.EMPTY_STRING);
-	
-	public void clear();
+public enum ValueType {
+	/* Binary */
+	BINARY_BASE64, BINARY_HEX,
+	/* Boolean */
+	BOOLEAN,
+	/* Decimal */
+	DECIMAL,
+	/* Float */
+	FLOAT,
+	/* int Integer */
+	INT_INTEGER,
+	/* long Integer */
+	LONG_INTEGER,
+	/* huge Integer */
+	HUGE_INTEGER,
+	/* Datetime */
+	DATETIME,
+	/* String */
+	STRING,
+	/* List */
+	LIST,
+	/* QName */
+	QNAME;
 }

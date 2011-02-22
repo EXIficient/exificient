@@ -59,15 +59,17 @@ public class LongDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof LongValue) {
 			lastLong = ((LongValue) value);
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return lastLong;
-	}
+//	public Value getValue() {
+//		return lastLong;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {

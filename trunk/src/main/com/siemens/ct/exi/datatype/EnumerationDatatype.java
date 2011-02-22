@@ -154,9 +154,9 @@ public class EnumerationDatatype extends AbstractDatatype {
 	}
 	
 	
-	public Value getValue() {
-		return enumValues[lastValidIndex];
-	}
+//	public Value getValue() {
+//		return enumValues[lastValidIndex];
+//	}
 
 	public Value getEnumValue(int i) {
 		assert(i>=0 && i< enumValues.length);

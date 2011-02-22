@@ -33,6 +33,7 @@ import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.values.StringValue;
 
 /**
  * Serializes SAX events to EXI stream.
@@ -143,22 +144,26 @@ public class SAXEncoder extends DefaultHandler2 {
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
 
-			encoder.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes
+			encoder.encodeAttributeXsiType(new StringValue(exiAttributes.getXsiTypeRaw()), exiAttributes
 					.getXsiTypePrefix());
 		}
 
 		// 3. XSI-Nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes
+			encoder.encodeAttributeXsiNil(new StringValue(exiAttributes.getXsiNil()), exiAttributes
 					.getXsiNilPrefix());
 		}
 
 		// 4. Remaining Attributes
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
+//			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
+//					exiAttributes.getAttributeLocalName(i), exiAttributes
+//							.getAttributePrefix(i), exiAttributes
+//							.getAttributeValue(i));
 			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), exiAttributes
-							.getAttributeValue(i));
+							.getAttributePrefix(i), new StringValue( exiAttributes
+							.getAttributeValue(i)));
 		}
 	}
 
@@ -186,7 +191,6 @@ public class SAXEncoder extends DefaultHandler2 {
 			checkPendingChars();
 			encoder.encodeEndElement();
 		} catch (Exception e) {
-
 			throw new SAXException("endElement=" + raw, e);
 		}
 	}
@@ -200,7 +204,8 @@ public class SAXEncoder extends DefaultHandler2 {
 
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
-			encoder.encodeCharacters(sbChars.toString());
+			// encoder.encodeCharacters(sbChars.toString());
+			encoder.encodeCharacters(new StringValue(sbChars.toString()));
 			sbChars.setLength(0);
 		}
 	}

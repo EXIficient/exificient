@@ -39,6 +39,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.values.StringValue;
 
 /**
  * Serializes an Document/DocumentFragment to an EXI stream.
@@ -153,20 +154,24 @@ public class DOMWriter {
 
 		// xsi:type
 		if (exiAttributes.hasXsiType()) {
-			exiBody.encodeXsiType(exiAttributes.getXsiTypeRaw(), exiAttributes.getXsiTypePrefix());
+			exiBody.encodeAttributeXsiType(new StringValue(exiAttributes.getXsiTypeRaw()), exiAttributes.getXsiTypePrefix());
 		}
 
 		// xsi:nil
 		if (exiAttributes.hasXsiNil()) {
-			exiBody.encodeXsiNil(exiAttributes.getXsiNil(), exiAttributes.getXsiNilPrefix());
+			exiBody.encodeAttributeXsiNil(new StringValue(exiAttributes.getXsiNil()), exiAttributes.getXsiNilPrefix());
 		}
 
 		// AT
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
+//			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
+//					exiAttributes.getAttributeLocalName(i), exiAttributes
+//							.getAttributePrefix(i), exiAttributes
+//							.getAttributeValue(i));
 			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), exiAttributes
-							.getAttributeValue(i));
+							.getAttributePrefix(i), new StringValue(exiAttributes
+							.getAttributeValue(i)));
 		}
 
 		// children
@@ -215,7 +220,7 @@ public class DOMWriter {
 			case Node.CDATA_SECTION_NODE:
 				checkPendingChars();
 				String cdata = n.getNodeValue();
-				exiBody.encodeCharacters(Constants.CDATA_START + cdata + Constants.CDATA_END);
+				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START + cdata + Constants.CDATA_END));
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {
@@ -237,7 +242,8 @@ public class DOMWriter {
 	
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
-			exiBody.encodeCharacters(sbChars.toString());
+			// exiBody.encodeCharacters(sbChars.toString());
+			exiBody.encodeCharacters(new StringValue(sbChars.toString()));
 			sbChars.setLength(0);
 		}
 	}

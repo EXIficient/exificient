@@ -54,8 +54,8 @@ public interface Datatype extends Serializable {
 	public boolean isValid(Value value);
 	
 	
-	// if value is valid
-	public Value getValue();
+//	// if value is valid
+//	public Value getValue();
 	
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 

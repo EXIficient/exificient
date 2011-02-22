@@ -19,6 +19,7 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * EXI encoder for (pre-)compression streams.
@@ -37,7 +38,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected int blockValues;
 
-	protected String lastValue;
+	protected Value lastValue;
 	protected Datatype lastDatatype;
 
 	protected List<QName> contextOrders;
@@ -80,7 +81,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 	}
 
 	@Override
-	protected boolean isTypeValid(Datatype datatype, String value) {
+	protected boolean isTypeValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
 		lastValue = value;
 		return super.isTypeValid(datatype, value);
@@ -147,7 +148,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			// 2. value channels in order
 			for (QName contextOrder : contextOrders) {
 				Context cc = contexts.get(contextOrder);
-				List<String> values = cc.getValues();
+				List<Value> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
 					typeEncoder.isValid(valueDatatypes.get(i), values
@@ -181,7 +182,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			boolean wasThereLeq100 = false;
 			for (QName contextOrder : contextOrders) {
 				Context cc = contexts.get(contextOrder);
-				List<String> values = cc.getValues();
+				List<Value> values = cc.getValues();
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					for (int i = 0; i < values.size(); i++) {
@@ -199,7 +200,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			// all value channels having more than 100 values
 			for (QName contextOrder : contextOrders) {
 				Context cc = contexts.get(contextOrder);
-				List<String> values = cc.getValues();
+				List<Value> values = cc.getValues();
 				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					// create stream

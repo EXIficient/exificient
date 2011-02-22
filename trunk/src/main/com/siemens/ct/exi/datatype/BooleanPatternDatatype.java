@@ -80,16 +80,18 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 			lastValidBoolean = ((BooleanValue) value).toBoolean();
 			// TODO not fully correct
 			lastValidBooleanID = lastValidBoolean ? 2 : 0;
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
 	
-	public Value getValue() {
-		return new BooleanValue(lastValidBoolean);
-	}
+//	public Value getValue() {
+//		return new BooleanValue(lastValidBoolean);
+//	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {

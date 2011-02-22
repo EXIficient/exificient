@@ -47,13 +47,18 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 	}
 
 	public boolean isValid(String value) {
-		bytes = BinaryBase64Value.parse(value);
-		return (bytes != null);
+		BinaryBase64Value bv = BinaryBase64Value.parse(value);
+		if (bv == null) {
+			return false;
+		} else {
+			bytes = bv.toBytes();
+			return true;
+		}
 	}
 	
-	public Value getValue() {
-		return new BinaryBase64Value(bytes);
-	}
+//	public Value getValue() {
+//		return new BinaryBase64Value(bytes);
+//	}
 	
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context)

@@ -355,6 +355,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBody implements
 	protected void decodeAttributeAnyInvalidValueStructure()
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
+		
 	}
 
 	protected void decodeAttributeGenericStructure() throws EXIException,
