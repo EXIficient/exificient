@@ -27,6 +27,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * 
@@ -58,7 +59,17 @@ public class DatatypeRepresentationMapTypeEncoder extends AbstractRepresentation
 		stringEncoder.clear();
 	}
 
-	public boolean isValid(Datatype datatype, String value) {
+//	public boolean isValid(Datatype datatype, String value) {
+//		QName schemaType = datatype.getSchemaType();
+//		recentDtrDataype = dtrMap.get(schemaType);
+//		if (recentDtrDataype == null) {
+//			return defaultEncoder.isValid(datatype, value);
+//		} else {
+//			return recentDtrDataype.isValid(value);
+//		}
+//	}
+	
+	public boolean isValid(Datatype datatype, Value value) {
 		QName schemaType = datatype.getSchemaType();
 		recentDtrDataype = dtrMap.get(schemaType);
 		if (recentDtrDataype == null) {
@@ -76,5 +87,6 @@ public class DatatypeRepresentationMapTypeEncoder extends AbstractRepresentation
 			recentDtrDataype.writeValue(valueChannel, stringEncoder, context);
 		}
 	}
+
 
 }

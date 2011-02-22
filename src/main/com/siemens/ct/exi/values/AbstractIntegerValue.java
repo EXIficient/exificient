@@ -30,6 +30,10 @@ abstract public class AbstractIntegerValue extends AbstractValue {
 	
 	private static final long serialVersionUID = -4439557202079488179L;
 
+	public AbstractIntegerValue(ValueType valueType) {
+		super(valueType);
+	}
+	
 	protected static String getAdjustedValue(String value) {
 		// trim leading and trailing whitespaces
 		value = value.trim();

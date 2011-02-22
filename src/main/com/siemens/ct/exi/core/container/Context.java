@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * 
@@ -33,20 +34,20 @@ import com.siemens.ct.exi.datatype.Datatype;
 
 public class Context {
 	
-	final List<String> values;
+	final List<Value> values;
 	final List<Datatype> valueDatatypes;
 	
 	public Context() {
-		values = new ArrayList<String>();
+		values = new ArrayList<Value>();
 		valueDatatypes = new ArrayList<Datatype>();
 	}
 	
-	public void addValue(String value, Datatype datatype) {
+	public void addValue(Value value, Datatype datatype) {
 		values.add(value);
 		valueDatatypes.add(datatype);
 	}
 	
-	public List<String> getValues() {
+	public List<Value> getValues() {
 		return values;
 	}
 	

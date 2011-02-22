@@ -32,6 +32,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.ListValue;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -75,8 +76,10 @@ public class ListDatatype extends AbstractDatatype {
 		values.clear();
 
 		while (st.hasMoreTokens()) {
-			if (listDatatype.isValid(st.nextToken())) {
-				values.add(listDatatype.getValue());
+			Value nextToken = new StringValue(st.nextToken());
+			if (listDatatype.isValid(nextToken)) {
+				// values.add(listDatatype.getValue());
+				values.add(nextToken);
 			} else {
 				// invalid --> abort process
 				return false;
@@ -88,16 +91,18 @@ public class ListDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof ListValue) {
 			values = ((ListValue) value).toValues();
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
 
-	public Value getValue() {
-		return new ListValue(values);
-	}
+//	public Value getValue() {
+//		return new ListValue(values);
+//	}
 
 //	@Override
 //	public boolean isValidRCS(String value) {

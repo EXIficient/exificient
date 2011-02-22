@@ -37,6 +37,8 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 public class SelfContainedTestCase extends TestCase {
 
@@ -65,7 +67,7 @@ public class SelfContainedTestCase extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName root = new QName("", "root");
 		QName sc = new QName("", "sc");
-		String s = "text";
+		Value s = new StringValue("text");
 		
 		QName[] scElements = new QName[1];
 		scElements[0] = sc;
@@ -235,7 +237,7 @@ public class SelfContainedTestCase extends TestCase {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			QName foo = new QName("", "foo");
 			// QName foo2 = new QName("", "foo2");
-			String s = "text";
+			Value s = new StringValue("text");
 			
 			QName[] scElements = new QName[1];
 			scElements[0] = foo;

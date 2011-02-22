@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * 
@@ -42,7 +43,12 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 		super(stringEncoder);
 	}
 
-	public boolean isValid(Datatype datatype, String value) {
+//	public boolean isValid(Datatype datatype, String value) {
+//		lastDatatype = datatype;
+//		return datatype.isValid(value);
+//	}
+	
+	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
 		return datatype.isValid(value);
 	}

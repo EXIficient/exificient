@@ -50,7 +50,9 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof AbstractBinaryValue) {
 			bytes = ((AbstractBinaryValue) value).toBytes();
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}

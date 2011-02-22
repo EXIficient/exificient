@@ -40,6 +40,7 @@ public class DecimalValue extends AbstractValue {
 
 	public DecimalValue(boolean negative, HugeIntegerValue integral,
 			HugeIntegerValue revFractional) {
+		super(ValueType.DECIMAL);
 		this.negative = negative;
 		this.integral = integral;
 		this.revFractional = revFractional;
@@ -137,8 +138,8 @@ public class DecimalValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof DecimalValue) {
 			return _equals((DecimalValue) o);
-		} else if (o instanceof String) {
-			DecimalValue d = DecimalValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			DecimalValue d = DecimalValue.parse(o.toString());
 			if (d == null) {
 				return false;
 			} else {

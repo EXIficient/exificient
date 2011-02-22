@@ -75,6 +75,7 @@ public interface Constants {
 	 * 
 	 */
 	public static final String EMPTY_STRING = "";
+	// public static final StringValue EMPTY_STRING_VALUE = new StringValue(Constants.EMPTY_STRING);
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
 	public static final String XSI_NONAMESPACE_SCHEMA_LOCATION = "noNamespaceSchemaLocation";

@@ -42,12 +42,14 @@ public final class HugeIntegerValue extends AbstractIntegerValue implements
 	public final BigInteger bigIntegerValue;
 
 	public HugeIntegerValue(long l) {
+		super(ValueType.HUGE_INTEGER);
 		this.longValue = l;
 		this.bigIntegerValue = null;
 		this.isLongValue = true;
 	}
 
 	public HugeIntegerValue(BigInteger bi) {
+		super(ValueType.HUGE_INTEGER);
 		this.bigIntegerValue = bi;
 		this.longValue = -1;
 		this.isLongValue = false;
@@ -206,8 +208,8 @@ public final class HugeIntegerValue extends AbstractIntegerValue implements
 	public boolean equals(Object o) {
 		if (o instanceof HugeIntegerValue) {
 			return _equals((HugeIntegerValue)o);
-		} else if (o instanceof String ) {
-			HugeIntegerValue hi = HugeIntegerValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			HugeIntegerValue hi = HugeIntegerValue.parse(o.toString());
 			if (hi == null) {
 				return false;
 			} else {

@@ -60,15 +60,17 @@ public class FloatDatatype extends AbstractDatatype {
 		if (value instanceof FloatValue) {
 			lastValidFloat = ((FloatValue) value);
 			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		// return new DoubleValue(mantissa, exponent);
-		return lastValidFloat;
-	}
+//	public Value getValue() {
+//		// return new DoubleValue(mantissa, exponent);
+//		return lastValidFloat;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

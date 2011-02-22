@@ -39,6 +39,7 @@ public class QNameValue extends AbstractValue {
 	protected String sValue;
 	
 	public QNameValue(QName qname, String prefix) {
+		super(ValueType.QNAME);
 		this.qname = qname;
 		this.prefix = prefix;
 		

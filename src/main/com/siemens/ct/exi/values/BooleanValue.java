@@ -31,6 +31,9 @@ import com.siemens.ct.exi.Constants;
 public class BooleanValue extends AbstractValue {
 
 	private static final long serialVersionUID = -5198071608091328620L;
+	
+	private static final BooleanValue BOOLEAN_VALUE_FALSE = new BooleanValue(false);
+	private static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(true);
 
 	protected final boolean bool;
 
@@ -38,6 +41,7 @@ public class BooleanValue extends AbstractValue {
 	protected String sValue;
 
 	public BooleanValue(boolean bool) {
+		super(ValueType.BOOLEAN);
 		this.bool = bool;
 		if (bool) {
 			characters = Constants.DECODED_BOOLEAN_TRUE_ARRAY;
@@ -49,6 +53,7 @@ public class BooleanValue extends AbstractValue {
 	}
 
 	public BooleanValue(int boolID) {
+		super(ValueType.BOOLEAN);
 		switch (boolID) {
 		case 0:
 			characters = Constants.XSD_BOOLEAN_FALSE_ARRAY;
@@ -76,14 +81,14 @@ public class BooleanValue extends AbstractValue {
 		}
 	}
 
-	public static Boolean parse(String value) {
+	public static BooleanValue parse(String value) {
 		value = value.trim();
 		if (value.equals(Constants.XSD_BOOLEAN_0)
 				|| value.equals(Constants.XSD_BOOLEAN_FALSE)) {
-			return Boolean.FALSE;
+			return BOOLEAN_VALUE_FALSE;
 		} else if (value.equals(Constants.XSD_BOOLEAN_1)
 				|| value.equals(Constants.XSD_BOOLEAN_TRUE)) {
-			return Boolean.TRUE;
+			return BOOLEAN_VALUE_TRUE;
 		} else {
 			return null;
 		}
@@ -116,12 +121,12 @@ public class BooleanValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof BooleanValue) {
 			return (bool == ((BooleanValue) o).bool);
-		} else if (o instanceof String) {
-			Boolean b = BooleanValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			BooleanValue b = BooleanValue.parse(o.toString());
 			if (b == null) {
 				return false;
 			} else {
-				return (bool == b);
+				return (bool == b.bool);
 			}
 		} else {
 			return false;

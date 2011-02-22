@@ -35,6 +35,7 @@ public class IntegerValue extends AbstractIntegerValue {
 	protected final int val;
 
 	public IntegerValue(int val) {
+		super(ValueType.INT_INTEGER);
 		this.val = val;
 	}
 	
@@ -76,8 +77,8 @@ public class IntegerValue extends AbstractIntegerValue {
 	public boolean equals(Object o) {
 		if (o instanceof IntegerValue) {
 			return (val == ((IntegerValue)o).val);
-		} else if (o instanceof String ) {
-			IntegerValue i = IntegerValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			IntegerValue i = IntegerValue.parse(o.toString());
 			if (i== null) {
 				return false;
 			} else {

@@ -26,6 +26,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * EXI encoder for bit or byte-aligned streams and possible SELF_CONTAINED
@@ -204,11 +205,21 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 
 	@Override
 	public void encodeAttribute(String uri, String localName, String prefix,
-			String value) throws EXIException, IOException {
+			Value value) throws EXIException, IOException {
 		if (scEncoder == null) {
 			super.encodeAttribute(uri, localName, prefix, value);
 		} else {
 			scEncoder.encodeAttribute(uri, localName, prefix, value);
+		}
+	}
+	
+	@Override
+	public void encodeAttribute(QName at,
+			Value value) throws EXIException, IOException {
+		if (scEncoder == null) {
+			super.encodeAttribute(at, value);
+		} else {
+			scEncoder.encodeAttribute(at, value);
 		}
 	}
 
@@ -223,27 +234,27 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 	}
 
 	@Override
-	public void encodeXsiNil(String value, String pfx) throws EXIException,
+	public void encodeAttributeXsiNil(Value nil, String pfx) throws EXIException,
 			IOException {
 		if (scEncoder == null) {
-			super.encodeXsiNil(value, pfx);
+			super.encodeAttributeXsiNil(nil, pfx);
 		} else {
-			scEncoder.encodeXsiNil(value, pfx);
+			scEncoder.encodeAttributeXsiNil(nil, pfx);
 		}
 	}
 
 	@Override
-	public void encodeXsiType(String xsiTypeRaw, String pfx)
+	public void encodeAttributeXsiType(Value type, String pfx)
 			throws EXIException, IOException {
 		if (scEncoder == null) {
-			super.encodeXsiType(xsiTypeRaw, pfx);
+			super.encodeAttributeXsiType(type, pfx);
 		} else {
-			scEncoder.encodeXsiType(xsiTypeRaw, pfx);
+			scEncoder.encodeAttributeXsiType(type, pfx);
 		}
 	}
 
 	@Override
-	public void encodeCharacters(String chars) throws EXIException, IOException {
+	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		if (scEncoder == null) {
 			super.encodeCharacters(chars);
 		} else {

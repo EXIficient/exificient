@@ -45,6 +45,7 @@ public class FloatValue extends AbstractValue {
 	protected Double f;
 
 	public FloatValue(long mantissa, long exponent) {
+		super(ValueType.FLOAT);
 		setValues(mantissa, exponent);
 //		this.mantissa = mantissa;
 //		this.exponent = exponent;
@@ -374,8 +375,8 @@ public class FloatValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof FloatValue) {
 			return _equals((FloatValue) o);
-		} else if (o instanceof String) {
-			FloatValue f = FloatValue.parse((String) o);
+		} else if (o instanceof String|| o instanceof StringValue) {
+			FloatValue f = FloatValue.parse(o.toString());
 			if (f == null) {
 				return false;
 			} else {

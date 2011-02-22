@@ -32,6 +32,16 @@ public abstract class AbstractValue implements Value {
 	
 	protected int slen = -1;
 	
+	protected final ValueType valueType;
+	
+	public AbstractValue(ValueType valueType) {
+		this.valueType = valueType;
+	}
+	
+	public final ValueType getValueType() {
+		return valueType;
+	}
+	
 	@Override
 	public String toString() {
 		char[] cbuffer = new char[getCharactersLength()];

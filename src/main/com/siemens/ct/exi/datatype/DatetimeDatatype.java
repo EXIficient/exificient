@@ -66,15 +66,17 @@ public class DatetimeDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof DateTimeValue) {
 			lastValidDatetime = ((DateTimeValue) value);
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return lastValidDatetime;
-	}
+//	public Value getValue() {
+//		return lastValidDatetime;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {

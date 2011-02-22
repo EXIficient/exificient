@@ -59,15 +59,17 @@ public class BigIntegerDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof HugeIntegerValue) {
 			lastInteger = (HugeIntegerValue) value;
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return lastInteger;
-	}
+//	public Value getValue() {
+//		return lastInteger;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
 			throws IOException {

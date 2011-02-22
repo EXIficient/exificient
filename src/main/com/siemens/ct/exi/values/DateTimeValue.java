@@ -64,6 +64,7 @@ public class DateTimeValue extends AbstractValue {
 	public DateTimeValue(DateTimeType type, int year, int monthDay, int time,
 			boolean presenceFractionalSecs, int fractionalSecs,
 			boolean presenceTimezone, int timezone) {
+		super(ValueType.DATETIME);
 		this.type = type;
 		this.year = year;
 		this.monthDay = monthDay;
@@ -91,21 +92,21 @@ public class DateTimeValue extends AbstractValue {
 		try {
 			switch (type) {
 			case gYear: // gYear Year, [Time-Zone]
-				sYear = parseYear(sbCal) - YEAR_OFFSET;
+				sYear = parseYear(sbCal);
 				break;
 			case gYearMonth: // gYearMonth Year, MonthDay, [TimeZone]
-				sYear = parseYear(sbCal) - YEAR_OFFSET;
+				sYear = parseYear(sbCal);
 				checkCharacter(sbCal, '-'); // hyphen
 				sMonthDay = parseMonth(sbCal) * MONTH_MULTIPLICATOR;
 				break;
 			case date: // date Year, MonthDay, [TimeZone]
-				sYear = parseYear(sbCal) - YEAR_OFFSET; // year
+				sYear = parseYear(sbCal); // year
 				checkCharacter(sbCal, '-'); // hyphen
 				sMonthDay = parseMonthDay(sbCal);
 				break;
 			case dateTime: // dateTime Year, MonthDay, Time, [FractionalSecs],
 				// [TimeZone]
-				sYear = parseYear(sbCal) - YEAR_OFFSET;
+				sYear = parseYear(sbCal);
 				checkCharacter(sbCal, '-'); // hyphen
 				sMonthDay = parseMonthDay(sbCal);
 				checkCharacter(sbCal, 'T'); // Time
@@ -737,9 +738,9 @@ public class DateTimeValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof DateTimeValue) {
 			return _equals((DateTimeValue) o);
-		} else if (o instanceof String) {
+		} else if (o instanceof String || o instanceof StringValue) {
 			// TODO right type assumption 
-			DateTimeValue d = DateTimeValue.parse((String)o, type);
+			DateTimeValue d = DateTimeValue.parse(o.toString(), type);
 			if (d == null) {
 				return false;
 			} else {

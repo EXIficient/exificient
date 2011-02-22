@@ -27,10 +27,14 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.StringValue;
 
 /**
  * EXI Header (see http://www.w3.org/TR/exi/#header)
@@ -45,6 +49,8 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public class EXIHeaderEncoder extends AbstractEXIHeader {
 
+	protected static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(true);
+	
 	public EXIHeaderEncoder() throws EXIException {
 	}
 	
@@ -172,7 +178,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				if (isValueMaxLength(f)) {
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							VALUE_MAX_LENGTH, null);
-					encoder.encodeCharacters(f.getValueMaxLength() + "");
+					// encoder.encodeCharacters(f.getValueMaxLength() + "");
+					encoder.encodeCharacters(new IntegerValue(f.getValueMaxLength()));
 					encoder.encodeEndElement();
 				}
 	
@@ -182,9 +189,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				if (isValuePartitionCapacity(f)) {
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							VALUE_PARTITION_CAPACITY, null);
-					encoder
-							.encodeCharacters(f.getValuePartitionCapacity()
-									+ "");
+					// encoder.encodeCharacters(f.getValuePartitionCapacity()+ "");
+					encoder.encodeCharacters(new IntegerValue(f.getValuePartitionCapacity()));
 					encoder.encodeEndElement();
 				}
 	
@@ -284,7 +290,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 						BLOCK_SIZE, null);
 				// TODO typed fashion
-				encoder.encodeCharacters(f.getBlockSize() + "");
+				// encoder.encodeCharacters(f.getBlockSize() + "");
+				encoder.encodeCharacters(new IntegerValue(f.getBlockSize()));
 				encoder.encodeEndElement();
 			}
 	
@@ -327,7 +334,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				// for use in the EXI body.
 				if (g.isBuiltInXMLSchemaTypesOnly()) {
 					assert (Constants.EMPTY_STRING.equals(g.getSchemaId()));
-					encoder.encodeCharacters(Constants.EMPTY_STRING);
+					// encoder.encodeCharacters(Constants.EMPTY_STRING);
+					encoder.encodeCharacters(StringCoder.EMPTY_STRING_VALUE);
 				} else {
 					if (g.isSchemaInformed()) {
 						// schema-informed
@@ -340,7 +348,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// ho.getOptionValue(HeaderOptions.INCLUDE_SCHEMA_ID);
 						String schemaId = g.getSchemaId();
 						assert (schemaId != null && schemaId.length() > 0);
-						encoder.encodeCharacters(schemaId.toString());
+						// encoder.encodeCharacters(schemaId.toString());
+						encoder.encodeCharacters(new StringValue(schemaId));
 					} else {
 						// schema-less
 						// When the "schemaID" element in the EXI options
@@ -350,7 +359,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// schema information is used for processing the EXI
 						// body.
 						// TODO typed fashion
-						encoder.encodeXsiNil(Constants.XSD_BOOLEAN_TRUE, null);
+						encoder.encodeAttributeXsiNil(BOOLEAN_VALUE_TRUE, null);
 					}
 				}
 	

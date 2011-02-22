@@ -21,9 +21,12 @@ package com.siemens.ct.exi;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.Value;
 
 /**
  * Internal EXI Encoder interface to transform XML events to an EXI stream.
@@ -35,18 +38,20 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
  */
 
 public interface EXIBodyEncoder {
-	
-	public void setOutputStream(OutputStream os) throws EXIException, IOException;
 
-	public void setOutputChannel(EncoderChannel channel) throws EXIException, IOException;
-	
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException;
+
+	public void setOutputChannel(EncoderChannel channel) throws EXIException,
+			IOException;
+
 	/**
 	 * Flushes (possibly) remaining bit(s) to output stream
 	 * 
 	 * @throws IOException
 	 */
 	public void flush() throws IOException;
-	
+
 	/**
 	 * 
 	 * @param errorHandler
@@ -76,7 +81,7 @@ public interface EXIBodyEncoder {
 	 * Provides access to the namespace URI, local name , and prefix
 	 * representation of the start tag.
 	 * </p>
-	 *  
+	 * 
 	 * @param uri
 	 * @param localName
 	 * @param prefix
@@ -89,13 +94,29 @@ public interface EXIBodyEncoder {
 			throws EXIException, IOException;
 
 	/**
+	 * Supplies the start of an element.
+	 * 
+	 * <p>
+	 * Provides access to the namespace URI, local name , and prefix
+	 * representation of the start tag.
+	 * </p>
+	 * 
+	 * @param se
+	 *            start element's qname
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void encodeStartElement(QName se) throws EXIException, IOException;
+
+	/**
 	 * Supplies the end tag of an element.
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
 	public void encodeEndElement() throws EXIException, IOException;
-	
+
 	/**
 	 * Supplies an attribute.
 	 * 
@@ -113,7 +134,25 @@ public interface EXIBodyEncoder {
 	 * @throws IOException
 	 */
 	public void encodeAttribute(String uri, String localName, String prefix,
-			String value) throws EXIException, IOException;
+			Value value) throws EXIException, IOException;
+
+	/**
+	 * Supplies an attribute with the according value.
+	 * 
+	 * <p>
+	 * Provides access to the namespace URI, local name, prefix, and value of
+	 * the attribute.
+	 * </p>
+	 * 
+	 * @param at
+	 *            attribute's qname
+	 * @param value
+	 * 
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void encodeAttribute(QName at, Value value) throws EXIException,
+			IOException;
 
 	/**
 	 * Namespaces are reported as a discrete Namespace event.
@@ -134,32 +173,29 @@ public interface EXIBodyEncoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeXsiNil(String val, String pfx) throws EXIException, IOException;
+	public void encodeAttributeXsiNil(Value nil, String pfx) throws EXIException,
+			IOException;
 
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param xsiTypeRaw  xsi:type value
+	 * @param xsiTypeRaw
+	 *            xsi:type value
 	 * @param pfx
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeXsiType(String xsiTypeRaw, String pfx) throws EXIException,
-			IOException;
-
+	public void encodeAttributeXsiType(Value type, String pfx)
+			throws EXIException, IOException;
+	
 	/**
-	 * Supplies a comment as corresponding characters.
+	 * Supplies characters value.
 	 * 
-	 * <p>
-	 * Note that ignorable whitespace and significant whitespace are also
-	 * reported as Character events.
-	 * </p>
-	 * 
-	 * @param chars
+	 * @param value
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeCharacters(String chars) throws EXIException, IOException;
+	public void encodeCharacters(Value chars) throws EXIException, IOException;
 
 	/**
 	 * Supplies content items to represent a DOCTYPE definition

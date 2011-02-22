@@ -38,6 +38,8 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 public class FragmentsTestCase extends TestCase {
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();
@@ -62,9 +64,9 @@ public class FragmentsTestCase extends TestCase {
 		QName at1 = new QName("", "at1");
 		QName at2 = new QName("", "at2");
 
-		String atCh1 = "dasdas";
-		String atCh2 = "312312";
-		String atCh3 = "002k";
+		Value atCh1 = new StringValue("dasdas");
+		Value atCh2 = new StringValue("312312");
+		Value atCh3 = new StringValue("002k");
 
 		// encoder
 		{
@@ -115,7 +117,7 @@ public class FragmentsTestCase extends TestCase {
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
-			assertTrue(decoder.getAttributeValue().toString().equals(atCh1));
+			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			decoder.decodeEndElementUndeclared();
@@ -131,11 +133,11 @@ public class FragmentsTestCase extends TestCase {
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
 			assertTrue(decoder.decodeAttribute().equals(at1));
-			assertTrue(decoder.getAttributeValue().toString().equals(atCh2));
+			assertTrue(decoder.getAttributeValue().equals(atCh2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at2));
-			assertTrue(decoder.getAttributeValue().toString().equals(atCh3));
+			assertTrue(decoder.getAttributeValue().equals(atCh3));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();

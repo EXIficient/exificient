@@ -35,6 +35,7 @@ public class LongValue extends AbstractIntegerValue {
 	protected final long val;
 
 	public LongValue(long val) {
+		super(ValueType.LONG_INTEGER);
 		this.val = val;
 	}
 	
@@ -76,8 +77,8 @@ public class LongValue extends AbstractIntegerValue {
 	public boolean equals(Object o) {
 		if (o instanceof LongValue) {
 			return (val == ((LongValue)o).val);
-		} else if (o instanceof String ) {
-			LongValue l = LongValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue ) {
+			LongValue l = LongValue.parse(o.toString());
 			if (l== null) {
 				return false;
 			} else {

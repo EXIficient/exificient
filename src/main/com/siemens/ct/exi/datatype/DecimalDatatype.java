@@ -58,15 +58,17 @@ public class DecimalDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof DecimalValue) {
 			lastValidDecimal = ((DecimalValue) value);
-			return true;			
+			return true;
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public Value getValue() {
-		return lastValidDecimal;
-	}
+//	public Value getValue() {
+//		return lastValidDecimal;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

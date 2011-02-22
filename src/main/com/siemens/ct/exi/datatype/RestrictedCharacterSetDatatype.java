@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -44,7 +45,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -6098764255799006920L;
 	
-	private static final Value EMPTY_STRING_VALUE = new StringValue("");
+//	private static final Value EMPTY_STRING_VALUE = new StringValue("");
 	
 	protected String lastValidValue;
 
@@ -81,9 +82,9 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		}
 	}
 
-	public Value getValue() {
-		return new StringValue(lastValidValue);
-	}
+//	public Value getValue() {
+//		return new StringValue(lastValidValue);
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
@@ -131,7 +132,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
-		Value value;
+		StringValue value;
 
 		int i = valueChannel.decodeUnsignedInteger();
 
@@ -176,7 +177,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				// value string table partition.
 				stringDecoder.addValue(context, value);	
 			} else {
-				value = EMPTY_STRING_VALUE;
+				// value = EMPTY_STRING_VALUE;
+				value = StringCoder.EMPTY_STRING_VALUE;
 			}
 		}
 

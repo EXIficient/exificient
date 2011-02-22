@@ -48,11 +48,16 @@ public class BinaryHexValue extends AbstractBinaryValue {
 	}
 
 	public BinaryHexValue(byte[] bytes) {
-		super(bytes);
+		super(ValueType.BINARY_HEX, bytes);
 	}
 
-	public static byte[] parse(String val) {
-		return HexBin.decode(val);
+	public static BinaryHexValue parse(String val) {
+		byte[] bytes = HexBin.decode(val);
+		if (bytes == null) {
+			return null;
+		} else {
+			return new BinaryHexValue(bytes);
+		}
 	}
 
 	public int getCharactersLength() {
@@ -82,12 +87,12 @@ public class BinaryHexValue extends AbstractBinaryValue {
 	public boolean equals(Object o) {
 		if (o instanceof BinaryHexValue) {
 			return _equals(((BinaryHexValue) o).bytes);
-		} else if (o instanceof String) {
-			byte[] b = BinaryHexValue.parse((String) o);
+		} else if (o instanceof String || o instanceof StringValue) {
+			BinaryHexValue b = BinaryHexValue.parse(o.toString());
 			if (b == null) {
 				return false;
 			} else {
-				return _equals(b);
+				return _equals(b.toBytes());
 			}
 		} else {
 			return false;

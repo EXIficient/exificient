@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -50,9 +51,9 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 	class LocalIDMap {
 		final int localID;
 		final QName context; /* debug info*/
-		final List<Value> values;
+		final List<StringValue> values;
 		
-		public LocalIDMap(int localID, QName context, List<Value> values) {
+		public LocalIDMap(int localID, QName context, List<StringValue> values) {
 			this.localID = localID;
 			this.context = context;
 			this.values = values;
@@ -72,7 +73,7 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 	}
 
 	@Override
-	public void addValue(QName context, Value value) {
+	public void addValue(QName context, StringValue value) {
 		// first: check "valueMaxLength"
 		if (valueMaxLength < 0 || value.getCharactersLength() <= valueMaxLength) {
 			// next: check "valuePartitionCapacity"
@@ -96,9 +97,9 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 				
 				// updateLocalValues(context, value);
 				// TODO BLAAAAAAAAAAAAAAAAAAA
-				List<Value> lvs = localValues.get(context);
+				List<StringValue> lvs = localValues.get(context);
 				if (lvs == null) {
-					lvs = new ArrayList<Value>();
+					lvs = new ArrayList<StringValue>();
 					localValues.put(context, lvs);
 				}
 				assert (!lvs.contains(value));

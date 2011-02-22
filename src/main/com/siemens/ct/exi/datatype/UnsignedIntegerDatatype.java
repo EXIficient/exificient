@@ -64,14 +64,16 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 		if (value instanceof IntegerValue) {
 			lastUnsignedInteger = ((IntegerValue) value);
 			return (lastUnsignedInteger.toInteger() >= 0);
+		} else if (isValid(value.toString())) {
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	public Value getValue() {
-		return lastUnsignedInteger;
-	}
+//	public Value getValue() {
+//		return lastUnsignedInteger;
+//	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

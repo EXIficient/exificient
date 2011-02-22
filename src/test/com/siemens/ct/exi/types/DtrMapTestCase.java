@@ -32,8 +32,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
-import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 public class DtrMapTestCase extends AbstractTestCase {
@@ -67,10 +66,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
 				null, dtrMapTypes, dtrMapRepresentations, g);
 
-		assertTrue(dtrTe.isValid(dt, "+10"));
+		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
-		assertTrue(dtrTe.isValid(dt, "12:32:00"));
-		assertTrue(dtrTe.isValid(dt, "Blaa bla"));
+		assertTrue(dtrTe.isValid(dt, new StringValue("12:32:00")));
+		assertTrue(dtrTe.isValid(dt, new StringValue("Blaa bla")));
 		
 		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
@@ -104,10 +103,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
 				null, dtrMapTypes, dtrMapRepresentations, g);
 
-		assertTrue(dtrTe.isValid(dt, "+10"));
+		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
-		assertTrue(dtrTe.isValid(dt, "12:32:00"));
-		assertTrue(dtrTe.isValid(dt, "Blaa bla"));
+		assertTrue(dtrTe.isValid(dt, new StringValue("12:32:00")));
+		assertTrue(dtrTe.isValid(dt, new StringValue("Blaa bla")));
 		
 		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
@@ -234,7 +233,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				null, dtrMapTypes, dtrMapRepresentations, g);
 		Datatype dtShort = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"short", XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		dtrTe.isValid(dtShort, "XXX 12 XX");
+		dtrTe.isValid(dtShort, new StringValue("XXX 12 XX"));
 		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
 		
 	
@@ -387,11 +386,11 @@ public class DtrMapTestCase extends AbstractTestCase {
 				null, dtrMapTypes, dtrMapRepresentations, g);
 	
 		// decimals
-		assertTrue(dtrTe.isValid(dtDecimal, "+10"));
+		assertTrue(dtrTe.isValid(dtDecimal, new StringValue("+10")));
 		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
 		
 		// integers
-		assertTrue(dtrTe.isValid(dtInteger, "+10"));
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// null indicates that no dtr map is in use
 		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
 	}
@@ -421,7 +420,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				null, dtrMapTypes, dtrMapRepresentations, g);
 		
 		// integers
-		assertTrue(dtrTe.isValid(dtInteger, "+10"));
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// null indicates that no dtr map is in use
 		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
 	}
@@ -451,7 +450,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				null, dtrMapTypes, dtrMapRepresentations, g);
 		
 		// integers
-		assertTrue(dtrTe.isValid(dtInteger, "+10"));
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// null indicates that no dtr map is in use
 		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
 	}
