@@ -18,6 +18,7 @@ import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
+import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
@@ -195,9 +196,9 @@ public class RoundtripTestCase extends TestCase {
 		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
 		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
 		
-		EXIBodyEncoder enc2 = factory.createEXIBodyEncoder();
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-		enc2.setOutputStream(os2);
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
 		
 		EventType event;
 		while( (event = dec.next()) != null) {
@@ -235,47 +236,7 @@ public class RoundtripTestCase extends TestCase {
 		/*
 		 * Check equality of streams
 		 */
-//		EXIBodyDecoder dec2= factory.createEXIBodyDecoder();
-//		dec2.setInputStream(new ByteArrayInputStream(os2.toByteArray()));
-//		while( (event = dec2.next()) != null) {
-//			switch(event) {
-//			case START_DOCUMENT:
-//				dec2.decodeStartDocument();
-//				System.out.println("SD");
-//				break;
-//			case START_ELEMENT:
-//				QName se = dec2.decodeStartElement();
-//				System.out.println("SE " + se);
-//				break;
-//			case ATTRIBUTE:
-//				QName at = dec2.decodeAttribute();
-//				Value atv = dec2.getAttributeValue();
-//				System.out.println("AT " + at + " --> " + atv);
-//				break;
-//			case CHARACTERS:
-//				Value chv = dec2.decodeCharacters();
-//				System.out.println("CH " + chv);
-//				break;
-//			case END_ELEMENT:
-//				QName ee = dec2.decodeEndElement();
-//				System.out.println("EE " + ee);
-//				break;
-//			case END_DOCUMENT:
-//				dec2.decodeEndDocument();
-//				System.out.println("ED");
-//				break;
-//			default:
-//				throw new RuntimeException("Unexpected event: " + event);
-//			}
-//		}
-		
-		// without 1 byte header
-		assertTrue(os1.size() == ( os2.size() + 1 ) );
-		byte[] b1 = os1.toByteArray();
-		byte[] b2 = os2.toByteArray();
-		// assertTrue(Arrays.equals(os1.toByteArray(),os2.toByteArray()));
-		for(int i=0; i<os2.size(); i++) {
-			assertTrue( b1[i+1] == b2[i] );
-		}
+		assertTrue(os1.size() == os2.size());
+		assertTrue(Arrays.equals(os1.toByteArray(),os2.toByteArray()));
 	}
 }
