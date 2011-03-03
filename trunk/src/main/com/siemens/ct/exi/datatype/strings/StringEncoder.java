@@ -33,12 +33,11 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public interface StringEncoder extends StringCoder {
-	
-	public void addValue(QName context, String value);
-	
-	public void writeValue(QName context, EncoderChannel channel,
-			String value) throws IOException;
 
-	public boolean isStringHit(QName context, String value)
+	public void addValue(QName context, String value);
+
+	public void writeValue(QName context, EncoderChannel channel, String value)
 			throws IOException;
+
+	public boolean isStringHit(QName context, String value) throws IOException;
 }

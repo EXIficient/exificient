@@ -110,7 +110,7 @@ public class SAXEncoder extends DefaultHandler2 {
 
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
-		
+
 		// handle NS declarations
 		handleNamespaceDeclarations();
 
@@ -144,26 +144,28 @@ public class SAXEncoder extends DefaultHandler2 {
 		// 2. XSI-Type
 		if (exiAttributes.hasXsiType()) {
 
-			encoder.encodeAttributeXsiType(new StringValue(exiAttributes.getXsiTypeRaw()), exiAttributes
-					.getXsiTypePrefix());
+			encoder.encodeAttributeXsiType(
+					new StringValue(exiAttributes.getXsiTypeRaw()),
+					exiAttributes.getXsiTypePrefix());
 		}
 
 		// 3. XSI-Nil
 		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeAttributeXsiNil(new StringValue(exiAttributes.getXsiNil()), exiAttributes
-					.getXsiNilPrefix());
+			encoder.encodeAttributeXsiNil(
+					new StringValue(exiAttributes.getXsiNil()),
+					exiAttributes.getXsiNilPrefix());
 		}
 
 		// 4. Remaining Attributes
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
-//			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
-//					exiAttributes.getAttributeLocalName(i), exiAttributes
-//							.getAttributePrefix(i), exiAttributes
-//							.getAttributeValue(i));
+			// encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
+			// exiAttributes.getAttributeLocalName(i), exiAttributes
+			// .getAttributePrefix(i), exiAttributes
+			// .getAttributeValue(i));
 			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), new StringValue( exiAttributes
-							.getAttributeValue(i)));
+							.getAttributePrefix(i), new StringValue(
+							exiAttributes.getAttributeValue(i)));
 		}
 	}
 

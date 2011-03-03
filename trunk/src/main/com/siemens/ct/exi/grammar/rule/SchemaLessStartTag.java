@@ -48,9 +48,9 @@ import com.siemens.ct.exi.types.BuiltIn;
  */
 
 public class SchemaLessStartTag extends SchemaLessContent {
-	
+
 	private static final long serialVersionUID = -4877451908590620943L;
-	
+
 	protected SchemaLessElement elementContent;
 
 	public SchemaLessStartTag() {
@@ -136,9 +136,8 @@ public class SchemaLessStartTag extends SchemaLessContent {
 		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
 				BuiltIn.DEFAULT_DATATYPE), getElementContentRule());
 	}
-	
 
-//	public boolean isFirstElementRule() {
-//		return true;
-//	}
+	// public boolean isFirstElementRule() {
+	// return true;
+	// }
 }

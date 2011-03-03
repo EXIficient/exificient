@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.types;
 
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com

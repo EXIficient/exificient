@@ -55,8 +55,8 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	protected boolean dtdRange;
 
 	/*
-	 *  retain entity reference handling
-	 *  (TRUE -> does not resolve entity references)
+	 * retain entity reference handling (TRUE -> does not resolve entity
+	 * references)
 	 */
 	protected boolean retainEntityReference;
 
@@ -68,8 +68,9 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		preserveDTD = fo.isFidelityEnabled(FidelityOptions.FEATURE_DTD);
 		preserveComment = fo.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT);
 		preservePrefix = fo.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-		
-		retainEntityReference = factory.getEncodingOptions().isOptionEnabled(EncodingOptions.RETAIN_ENTITY_REFERENCE);
+
+		retainEntityReference = factory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.RETAIN_ENTITY_REFERENCE);
 	}
 
 	@Override
@@ -209,7 +210,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		}
 		entityReferenceRange = true;
 	}
-	
+
 	public void endEntity(String name) throws SAXException {
 		try {
 			if (preserveDTD && entityReferenceRange) {
@@ -243,7 +244,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			throw new SAXException("skippedEntity " + name, e);
 		}
 	}
-	
+
 	/*
 	 * ======================================================================
 	 * Interface DTDHandler

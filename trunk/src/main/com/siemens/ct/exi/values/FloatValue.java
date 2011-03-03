@@ -34,12 +34,12 @@ import com.siemens.ct.exi.util.MethodsBag;
 public class FloatValue extends AbstractValue {
 
 	private static final long serialVersionUID = 5799093635881195073L;
-	
-//	public final long mantissa;
-//	public final long exponent;
+
+	// public final long mantissa;
+	// public final long exponent;
 	public long mantissa;
 	public long exponent;
-	
+
 	protected int slenMantissa = -1;
 
 	protected Double f;
@@ -47,10 +47,10 @@ public class FloatValue extends AbstractValue {
 	public FloatValue(long mantissa, long exponent) {
 		super(ValueType.FLOAT);
 		setValues(mantissa, exponent);
-//		this.mantissa = mantissa;
-//		this.exponent = exponent;
+		// this.mantissa = mantissa;
+		// this.exponent = exponent;
 	}
-	
+
 	public void setValues(long mantissa, long exponent) {
 		this.mantissa = mantissa;
 		this.exponent = exponent;
@@ -128,8 +128,7 @@ public class FloatValue extends AbstractValue {
 						return null;
 					}
 				}
-				
-				
+
 				// status: parsing exponent after e or E
 				if (c == 'e' || c == 'E') {
 					// status: checking sign of exponent
@@ -350,23 +349,23 @@ public class FloatValue extends AbstractValue {
 		if (mantissa == o.mantissa && exponent == o.exponent) {
 			return true;
 		} else {
-			
+
 			if (exponent > o.exponent) {
 				// e.g. 234E2 vs. 2340E1
 				long diff = exponent - o.exponent;
 				long eMantissa = mantissa;
-				for(int i=0; i<diff; i++) {
+				for (int i = 0; i < diff; i++) {
 					eMantissa *= 10;
 				}
-				return (eMantissa == o.mantissa );
+				return (eMantissa == o.mantissa);
 			} else {
 				// e.g. 30E0 vs. 3E1
 				long diff = o.exponent - exponent;
 				long eMantissa = o.mantissa;
-				for(int i=0; i<diff; i++) {
+				for (int i = 0; i < diff; i++) {
 					eMantissa *= 10;
 				}
-				return (mantissa == eMantissa );
+				return (mantissa == eMantissa);
 			}
 		}
 	}
@@ -375,12 +374,12 @@ public class FloatValue extends AbstractValue {
 	public boolean equals(Object o) {
 		if (o instanceof FloatValue) {
 			return _equals((FloatValue) o);
-		} else if (o instanceof String|| o instanceof StringValue) {
+		} else if (o instanceof String || o instanceof StringValue) {
 			FloatValue f = FloatValue.parse(o.toString());
 			if (f == null) {
 				return false;
 			} else {
-				return _equals(f);	
+				return _equals(f);
 			}
 		} else {
 			return false;

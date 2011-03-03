@@ -39,15 +39,15 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public abstract class AbstractDatatype implements Datatype {
-	
+
 	private static final long serialVersionUID = 682257950812949619L;
 
 	// default built-in datatype (no dtr map used)
 	protected final BuiltInType builtInType;
-	
+
 	// for codec map
 	protected final QName schemaType;
-	
+
 	// restricted char set
 	protected RestrictedCharacterSet rcs;
 	protected String lastRCSValue;
@@ -55,14 +55,14 @@ public abstract class AbstractDatatype implements Datatype {
 	public AbstractDatatype() {
 		this(null, null);
 	}
-	
+
 	public AbstractDatatype(BuiltInType builtInType, QName schemaType) {
 		this.builtInType = builtInType;
 		this.schemaType = schemaType;
 	}
-	
-//	public void finish() throws IOException {
-//	}
+
+	// public void finish() throws IOException {
+	// }
 
 	public BuiltInType getBuiltInType() {
 		return builtInType;
@@ -71,36 +71,39 @@ public abstract class AbstractDatatype implements Datatype {
 	public QName getSchemaType() {
 		return schemaType;
 	}
-	
+
 	public RestrictedCharacterSet getRestrictedCharacterSet() {
 		return rcs;
 	}
 
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
-			return (builtInType == ((Datatype) o)
-					.getBuiltInType());
+			return (builtInType == ((Datatype) o).getBuiltInType());
 		} else {
 			return false;
 		}
 	}
-	
+
 	public int hashCode() {
 		return builtInType.ordinal();
 	}
-	
+
 	public boolean isValidRCS(String value) {
 		lastRCSValue = value;
 		return true;
 	}
-	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException {
+
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+			EncoderChannel valueChannel, StringEncoder stringEncoder,
+			QName context) throws IOException {
 		rcsEncoder.setRestrictedCharacterSet(rcs);
 		rcsEncoder.isValid(lastRCSValue);
 		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
 	}
-	
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException {
+
+	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+			DecoderChannel valueChannel, StringDecoder stringDecoder,
+			QName context) throws IOException {
 		rcsDecoder.setRestrictedCharacterSet(rcs);
 		return rcsDecoder.readValue(valueChannel, stringDecoder, context);
 	}

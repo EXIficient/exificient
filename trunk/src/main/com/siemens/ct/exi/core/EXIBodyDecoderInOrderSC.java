@@ -59,16 +59,16 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		scDecoder = null;
 	}
 
-//	@Override
-//	public void setInputStream(InputStream is)
-//			throws EXIException, IOException {
-//		if (scDecoder == null) {
-//			super.setInputStream(is, exiBodyOnly);
-//		} else {
-//			System.err.println("TODO setInputStream");
-//		}
-//	}
-	
+	// @Override
+	// public void setInputStream(InputStream is)
+	// throws EXIException, IOException {
+	// if (scDecoder == null) {
+	// super.setInputStream(is, exiBodyOnly);
+	// } else {
+	// System.err.println("TODO setInputStream");
+	// }
+	// }
+
 	@Override
 	public EventType next() throws EXIException, IOException {
 		// return (scDecoder == null ? super.next() : scDecoder.next());
@@ -154,7 +154,8 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			EXIFactory scEXIFactory = exiFactory.clone();
 			// scEXIFactory.setEXIBodyOnly(true);
 			scEXIFactory.setFragment(true);
-			scDecoder = (EXIBodyDecoderInOrderSC) scEXIFactory.createEXIBodyDecoder();
+			scDecoder = (EXIBodyDecoderInOrderSC) scEXIFactory
+					.createEXIBodyDecoder();
 			scDecoder.channel = this.channel;
 			scDecoder.setErrorHandler(this.errorHandler);
 			scDecoder.initForEachRun();
@@ -187,7 +188,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			}
 
 		} else {
-			// 
+			//
 			scDecoder.decodeStartSelfContainedFragment();
 		}
 	}
@@ -294,7 +295,8 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public NamespaceDeclaration decodeNamespaceDeclaration() throws EXIException, IOException {
+	public NamespaceDeclaration decodeNamespaceDeclaration()
+			throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeNamespaceDeclaration();
 		} else {
@@ -358,7 +360,8 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public ProcessingInstruction decodeProcessingInstruction() throws EXIException, IOException {
+	public ProcessingInstruction decodeProcessingInstruction()
+			throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeProcessingInstruction();
 		} else {

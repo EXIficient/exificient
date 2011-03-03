@@ -57,14 +57,12 @@ public class BinaryHexDatatype extends AbstractBinaryDatatype {
 		}
 	}
 
-	
-//	public Value getValue() {
-//		return new BinaryHexValue(bytes);
-//	}
-	
+	// public Value getValue() {
+	// return new BinaryHexValue(bytes);
+	// }
+
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return new BinaryHexValue(valueChannel.decodeBinary());
 	}
 

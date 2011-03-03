@@ -27,7 +27,7 @@ import org.apache.xerces.impl.dv.util.Base64;
  * 
  * @version 0.6
  */
-//re-uses code from org.apache.xerces.impl.dv.util.Base64Bin;
+// re-uses code from org.apache.xerces.impl.dv.util.Base64Bin;
 public class BinaryBase64Value extends AbstractBinaryValue {
 
 	private static final long serialVersionUID = -2690177084175673837L;

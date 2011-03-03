@@ -116,8 +116,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected OutputStream getStream() {
 		if (codingMode == CodingMode.COMPRESSION) {
-			deflater = new DeflaterOutputStream(os, new Deflater(codingMode
-					.getDeflateLevel(), true));
+			deflater = new DeflaterOutputStream(os, new Deflater(
+					codingMode.getDeflateLevel(), true));
 			return deflater;
 		} else {
 			assert (codingMode == CodingMode.PRE_COMPRESSION);
@@ -151,8 +151,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 				List<Value> values = cc.getValues();
 				List<Datatype> valueDatatypes = cc.getValueDatatypes();
 				for (int i = 0; i < values.size(); i++) {
-					typeEncoder.isValid(valueDatatypes.get(i), values
-							.get(i));
+					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
 					typeEncoder.writeValue(contextOrder, channel);
 				}
 			}
@@ -186,8 +185,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					List<Datatype> valueDatatypes = cc.getValueDatatypes();
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i), values
-								.get(i));
+						typeEncoder.isValid(valueDatatypes.get(i),
+								values.get(i));
 						typeEncoder.writeValue(contextOrder, leq100);
 					}
 					wasThereLeq100 = true;
@@ -206,8 +205,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 					// create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
 					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i), values
-								.get(i));
+						typeEncoder.isValid(valueDatatypes.get(i),
+								values.get(i));
 						typeEncoder.writeValue(contextOrder, gre100);
 					}
 					// finish stream

@@ -61,11 +61,11 @@ public class LexicographicSort implements Comparator<Object>, Serializable {
 		} else if (o1 instanceof QName && o2 instanceof QName) {
 			return compare((QName) o1, (QName) o2);
 		} else if (o1 instanceof StartElement && o2 instanceof StartElement) {
-			return compare(((StartElement) o1).getQName(), ((StartElement) o2)
-					.getQName());
+			return compare(((StartElement) o1).getQName(),
+					((StartElement) o2).getQName());
 		} else if (o1 instanceof Attribute && o2 instanceof Attribute) {
-			return compare(((Attribute) o1).getQName(), ((Attribute) o2)
-					.getQName());
+			return compare(((Attribute) o1).getQName(),
+					((Attribute) o2).getQName());
 		} else {
 			throw new RuntimeException(
 					"[EXI] Unsupported types of classes for sorting.");
@@ -73,18 +73,19 @@ public class LexicographicSort implements Comparator<Object>, Serializable {
 	}
 
 	public static int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
-		return compare(e1.getNamespace(), e1.getName(), e2.getNamespace(), e2
-				.getName());
+		return compare(e1.getNamespace(), e1.getName(), e2.getNamespace(),
+				e2.getName());
 	}
 
-	public static int compare(XSAttributeDeclaration a1, XSAttributeDeclaration a2) {
-		return compare(a1.getNamespace(), a1.getName(), a2.getNamespace(), a2
-				.getName());
+	public static int compare(XSAttributeDeclaration a1,
+			XSAttributeDeclaration a2) {
+		return compare(a1.getNamespace(), a1.getName(), a2.getNamespace(),
+				a2.getName());
 	}
 
 	public static int compare(QName q1, QName q2) {
-		return compare(q1.getNamespaceURI(), q1.getLocalPart(), q2
-				.getNamespaceURI(), q2.getLocalPart());
+		return compare(q1.getNamespaceURI(), q1.getLocalPart(),
+				q2.getNamespaceURI(), q2.getLocalPart());
 	}
 
 	// sorted lexicographically by qname local-name, then by qname uri

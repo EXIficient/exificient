@@ -34,19 +34,19 @@ import java.util.Set;
  */
 
 public class CodePointCharacterSet extends AbstractRestrictedCharacterSet {
-	
+
 	private static final long serialVersionUID = -1326543125848570370L;
 
 	public CodePointCharacterSet(Set<Integer> codePoints) {
 		super();
-		//	sort code-points by UCS
+		// sort code-points by UCS
 		List<Integer> sortedCodePoints = new ArrayList<Integer>();
 		sortedCodePoints.addAll(codePoints);
 		Collections.sort(sortedCodePoints);
-		
+
 		// iterate over characters
 		Iterator<Integer> iter = sortedCodePoints.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			addValue(iter.next());
 		}
 	}

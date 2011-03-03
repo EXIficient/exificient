@@ -85,14 +85,14 @@ public class StringEncoderImpl implements StringEncoder {
 			final int L = value.codePointCount(0, value.length());
 			valueChannel.encodeUnsignedInteger(L + 2);
 			/*
-			 * If length L is greater than zero the string S is added 
+			 * If length L is greater than zero the string S is added
 			 */
 			if (L > 0) {
 				valueChannel.encodeStringOnly(value);
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the
 				// global value string table partition.
-				addValue(context, value);	
+				addValue(context, value);
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public class StringEncoderImpl implements StringEncoder {
 		ValueContainer vc = new ValueContainer(context, localValCnt, globalID);
 		stringValues.put(value, vc);
 	}
-	
+
 	/**
 	 * Returns next localValueID
 	 * 
@@ -126,7 +126,7 @@ public class StringEncoderImpl implements StringEncoder {
 			cnt = 0;
 		}
 		localValueSize.put(context, cnt + 1);
-		
+
 		return cnt;
 	}
 
@@ -134,9 +134,9 @@ public class StringEncoderImpl implements StringEncoder {
 		stringValues.clear();
 		localValueSize.clear();
 	}
-	
+
 	class ValueContainer {
-		
+
 		public final QName context;
 		public final int localValueID;
 		public final int globalValueID;
@@ -146,10 +146,11 @@ public class StringEncoderImpl implements StringEncoder {
 			this.localValueID = localValueID;
 			this.globalValueID = globalValueID;
 		}
-		
+
 		@Override
 		public String toString() {
-			return "[" + context +"," + localValueID+ "," + globalValueID + "]";
+			return "[" + context + "," + localValueID + "," + globalValueID
+					+ "]";
 		}
 	}
 

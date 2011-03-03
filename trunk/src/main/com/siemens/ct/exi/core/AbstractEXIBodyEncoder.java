@@ -53,8 +53,8 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.6
  */
 
-public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
-		EXIBodyEncoder {
+public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
+		implements EXIBodyEncoder {
 
 	protected final EXIHeaderEncoder exiHeader;
 
@@ -206,7 +206,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 			// qname implicit by SE(qname) event, prefix only missing
-			qnameDatatype.encodeQNamePrefix(uri, prefix, channel);
+			qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 			// next rule at the top
 			nextTopRule = ei.next;
 			// next SE ...
@@ -215,8 +215,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			assert (ei.event.isEventType(EventType.START_ELEMENT_NS));
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
-			// encode local-name only
-			QName qname = qnameDatatype.writeLocalName(localName, uri, prefix,
+			// encode local-name (and prefix)
+			QName qname = qnameDatatype.encodeLocalName(localName, uri, prefix,
 					channel);
 			// next rule at the top
 			nextTopRule = ei.next;
@@ -277,8 +277,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			encode2ndLevelEventCode(ec2);
 
 			// prefix mapping
-			qnameDatatype.writeUri(uri, channel);
-			qnameDatatype.writePrefix(prefix, uri, channel);
+			int uriID = qnameDatatype.encodeUri(uri, channel);
+			qnameDatatype.encodeNamespacePrefix(prefix, uriID, channel);
 
 			// local-element-ns
 			channel.encodeBoolean(prefix.equals(sePrefix));
@@ -328,13 +328,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		popElement();
 	}
 
-	public void encodeAttributeXsiType(Value type, String pfx) throws EXIException,
-			IOException {
+	public void encodeAttributeXsiType(Value type, String pfx)
+			throws EXIException, IOException {
 		/*
 		 * The value of each AT (xsi:type) event is represented as a QName.
 		 */
 		if (!qnameDatatype.isValid(type)) {
-			throw new EXIException("[EXI] xsi:type='" + type + "' not encodable");
+			throw new EXIException("[EXI] xsi:type='" + type
+					+ "' not encodable");
 		}
 		// typeEncoder.isValid(qnameDatatype, raw);
 		// boolean valid = typeEncoder.isValid(qnameDatatype, raw);
@@ -367,8 +368,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			// encode event-code, AT(xsi:type)
 			encode2ndLevelEventCode(ec2);
 			// prefix
-			qnameDatatype.encodeQNamePrefix(
-					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx, channel);
+			qnameDatatype.encodeQNamePrefix(pfx,
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
 		} else {
 			// Note: cannot be encoded as any other attribute due to the
 			// different channels in compression mode
@@ -422,8 +423,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 		}
 	}
 
-	public void encodeAttributeXsiNil(Value nil, String pfx) throws EXIException,
-			IOException {
+	public void encodeAttributeXsiNil(Value nil, String pfx)
+			throws EXIException, IOException {
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 
@@ -445,8 +446,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 					// encode event-code only
 					encode2ndLevelEventCode(ec2);
 					// prefix
-					qnameDatatype.encodeQNamePrefix(
-							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, pfx,
+					qnameDatatype.encodeQNamePrefix(pfx,
+							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 							channel);
 
 					// encode nil value as Boolean
@@ -537,13 +538,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 			next = ei.next;
 			if (isTypeValid(datatype, value)) {
 				encode1stLevelEventCode(ei.getEventCode());
-				qnameDatatype.encodeQNamePrefix(uri, prefix, channel);
+				qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 			} else {
 				// AT specialty: calculate 3rd level attribute event-code
 				int eventCode3 = ei.getEventCode()
 						- currentRule.getLeastAttributeEventCode();
 				encodeSchemaInvalidAttributeEventCode(eventCode3);
-				qnameDatatype.encodeQNamePrefix(uri, prefix, channel);
+				qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 				datatype = BuiltIn.DEFAULT_DATATYPE;
 				isTypeValid(datatype, value);
 			}
@@ -595,7 +596,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 				qnameDatatype.encodeQName(uri, localName, prefix, channel);
 			} else {
 				assert (ei.event.isEventType(EventType.ATTRIBUTE_NS));
-				qnameDatatype.writeLocalName(localName, uri, prefix, channel);
+				qnameDatatype.encodeLocalName(localName, uri, prefix, channel);
 			}
 
 		} else {
@@ -667,8 +668,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBody implements
 
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		// Don't we want to prune insignificant whitespace characters
-		if (fidelityOptions.isStrict() || !fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
+		if (fidelityOptions.isStrict()
+				|| !fidelityOptions
+						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 			String schars = chars.toString().trim();
 			if (schars.length() == 0) {
 				return;

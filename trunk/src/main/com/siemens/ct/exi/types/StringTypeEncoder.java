@@ -42,19 +42,20 @@ public class StringTypeEncoder extends AbstractTypeEncoder {
 	public StringTypeEncoder(StringEncoder stringEncoder) {
 		super(stringEncoder);
 	}
-	
-//	public boolean isValid(Datatype datatype, String value) {
-//		lastValidValue = value;
-//		return true;
-//	}
-	
+
+	// public boolean isValid(Datatype datatype, String value) {
+	// lastValidValue = value;
+	// return true;
+	// }
+
 	public boolean isValid(Datatype datatype, Value value) {
 		lastValidValue = value.toString();
 		return true;
-//		return this.isValid(datatype, value.toString());
+		// return this.isValid(datatype, value.toString());
 	}
-	
-	public void writeValue(QName context, EncoderChannel valueChannel) throws IOException {
+
+	public void writeValue(QName context, EncoderChannel valueChannel)
+			throws IOException {
 		stringEncoder.writeValue(context, valueChannel, lastValidValue);
 	}
 

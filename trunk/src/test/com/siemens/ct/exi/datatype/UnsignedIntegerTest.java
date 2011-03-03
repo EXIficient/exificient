@@ -188,11 +188,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(s.equals(getBitDecoder().decodeUnsignedLongValue()
+		assertTrue(s.equals(getBitDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 		// Byte
 		getByteEncoder().encodeUnsignedLong(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeUnsignedLongValue()
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
 
@@ -203,11 +203,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
 
@@ -222,11 +222,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
 
@@ -237,11 +237,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
 
@@ -253,11 +253,11 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// Bit
 		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
-		String s1 = getBitDecoder().decodeUnsignedHugeIntegerValue().toString();
+		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s2 + "!=" + s1, s2.equals(s1));
 		// Byte
 		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
-		assertTrue(s2.equals(getByteDecoder().decodeUnsignedHugeIntegerValue()
+		assertTrue(s2.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
 

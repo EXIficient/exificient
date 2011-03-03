@@ -41,74 +41,75 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
  * @version 0.6
  */
 
-public class SchemaInformedGrammar extends AbstractGrammar implements Serializable {
+public class SchemaInformedGrammar extends AbstractGrammar implements
+		Serializable {
 
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 7647530843802602241L;
-	
+
 	protected Map<QName, StartElement> globalElements;
 
 	protected Map<QName, Attribute> globalAttributes;
-	
+
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
-	
+
 	// protected Collection<StartElement> elements;
-	
+
 	/* (direct) simple sub-types for given qname */
 	protected Map<QName, List<QName>> subtypes;
-	
+
 	protected boolean builtInXMLSchemaTypesOnly = false;
-	
+
 	protected String schemaId;
 
-	
-	// public @version 0.6(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment, Collection<StartElement> elements) {
-	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries, Document document, Fragment fragment) {
+	// public @version 0.6(GrammarURIEntry[] grammarEntries, Document document,
+	// Fragment fragment, Collection<StartElement> elements) {
+	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
+			Document document, Fragment fragment) {
 		super(true);
-		
+
 		// uri & local-name & prefix entries
 		this.grammarEntries = grammarEntries;
-		
+
 		// set document & fragment grammar
 		documentGrammar = document;
-		fragmentGrammar= fragment;
+		fragmentGrammar = fragment;
 
 		// this.elements = elements;
 	}
-	
-	
+
 	public void setBuiltInXMLSchemaTypesOnly(boolean builtInXMLSchemaTypesOnly) {
 		this.builtInXMLSchemaTypesOnly = builtInXMLSchemaTypesOnly;
 		this.schemaId = Constants.EMPTY_STRING;
 	}
-	
+
 	public final String getSchemaId() {
 		return schemaId;
 	}
-	
+
 	public void setSchemaId(String schemaId) {
 		this.schemaId = schemaId;
 	}
-		
+
 	public boolean isBuiltInXMLSchemaTypesOnly() {
 		return builtInXMLSchemaTypesOnly;
 	}
 
-//	public Collection<StartElement> getElements() {
-//		return this.elements;
-//	}
-	
+	// public Collection<StartElement> getElements() {
+	// return this.elements;
+	// }
+
 	public void setGlobalElements(Map<QName, StartElement> globalElements) {
 		assert (globalElements != null);
 		this.globalElements = globalElements;
 	}
-	
+
 	public StartElement getGlobalElement(QName qname) {
 		return globalElements.get(qname);
 	}
-	
+
 	public void setGlobalAttributes(Map<QName, Attribute> globalAttributes) {
 		assert (globalAttributes != null);
 		this.globalAttributes = globalAttributes;
@@ -117,8 +118,9 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	public Attribute getGlobalAttribute(QName qname) {
 		return globalAttributes.get(qname);
 	}
-	
-	public void setTypeGrammars(Map<QName, SchemaInformedFirstStartTagRule> grammarTypes) {
+
+	public void setTypeGrammars(
+			Map<QName, SchemaInformedFirstStartTagRule> grammarTypes) {
 		assert (grammarTypes != null);
 		this.grammarTypes = grammarTypes;
 	}
@@ -130,11 +132,11 @@ public class SchemaInformedGrammar extends AbstractGrammar implements Serializab
 	public Set<QName> getTypeGrammars() {
 		return grammarTypes.keySet();
 	}
-	
+
 	public void setSimpleTypeSubtypes(Map<QName, List<QName>> subtypes) {
 		this.subtypes = subtypes;
 	}
-	
+
 	public List<QName> getSimpleTypeSubtypes(QName type) {
 		return subtypes.get(type);
 	}

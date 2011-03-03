@@ -29,9 +29,9 @@ import java.io.Serializable;
  */
 
 public interface Event extends Serializable {
-	
+
 	public EventType getEventType();
 
 	public boolean isEventType(EventType eventType);
-	
+
 }

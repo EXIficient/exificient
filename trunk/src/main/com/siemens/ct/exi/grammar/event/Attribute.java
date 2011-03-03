@@ -32,22 +32,20 @@ import com.siemens.ct.exi.types.BuiltIn;
  */
 
 public class Attribute extends AbstractDatatypeEvent {
-	
+
 	private static final long serialVersionUID = -8354368786561188680L;
-	
+
 	protected QName qname;
 
-	public Attribute(QName qname, QName valueType,
-			Datatype datatype) {
+	public Attribute(QName qname, QName valueType, Datatype datatype) {
 		super(EventType.ATTRIBUTE, valueType, datatype);
 		this.qname = qname;
 	}
 
 	public Attribute(QName qname) {
-		this(qname, BuiltIn.DEFAULT_VALUE_NAME,
-				BuiltIn.DEFAULT_DATATYPE);
+		this(qname, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
 	}
-	
+
 	public QName getQName() {
 		return this.qname;
 	}

@@ -78,15 +78,15 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		scEncoder = null;
 	}
 
-//	@Override
-//	public void setOutput(OutputStream os, boolean exiBodyOnly)
-//			throws EXIException, IOException {
-//		if (scEncoder == null) {
-//			super.setOutput(os, exiBodyOnly);
-//		} else {
-//			scEncoder.setOutput(os, exiBodyOnly);
-//		}
-//	}
+	// @Override
+	// public void setOutput(OutputStream os, boolean exiBodyOnly)
+	// throws EXIException, IOException {
+	// if (scEncoder == null) {
+	// super.setOutput(os, exiBodyOnly);
+	// } else {
+	// scEncoder.setOutput(os, exiBodyOnly);
+	// }
+	// }
 
 	@Override
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -149,7 +149,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 				int ec2 = currentRule.get2ndLevelEventCode(
 						EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
-				
+
 				// Skip to the next byte-aligned boundary in the stream if it is
 				// not
 				// already at such a boundary
@@ -170,7 +170,8 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		EXIFactory scEXIFactory = exiFactory.clone();
 		// scEXIFactory.setEXIBodyOnly(true);
 		scEXIFactory.setFragment(true);
-		scEncoder = (EXIBodyEncoderInOrderSC) scEXIFactory.createEXIBodyEncoder();
+		scEncoder = (EXIBodyEncoderInOrderSC) scEXIFactory
+				.createEXIBodyEncoder();
 		// scEncoder.os = this.os; // needs to be unequal null
 		scEncoder.channel = this.channel;
 		scEncoder.setErrorHandler(this.errorHandler);
@@ -197,7 +198,9 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			QName qname = scEncoder.elementContext.qname;
 			// EE
 			scEncoder.encodeEndElement();
-			if (getElementContextQName().equals(qname) && scEncoder.currentRule.lookForEvent(EventType.END_DOCUMENT) != null ) {
+			if (getElementContextQName().equals(qname)
+					&& scEncoder.currentRule
+							.lookForEvent(EventType.END_DOCUMENT) != null) {
 				this.encodeEndSC();
 			}
 		}
@@ -212,10 +215,10 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			scEncoder.encodeAttribute(uri, localName, prefix, value);
 		}
 	}
-	
+
 	@Override
-	public void encodeAttribute(QName at,
-			Value value) throws EXIException, IOException {
+	public void encodeAttribute(QName at, Value value) throws EXIException,
+			IOException {
 		if (scEncoder == null) {
 			super.encodeAttribute(at, value);
 		} else {
@@ -234,8 +237,8 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 	}
 
 	@Override
-	public void encodeAttributeXsiNil(Value nil, String pfx) throws EXIException,
-			IOException {
+	public void encodeAttributeXsiNil(Value nil, String pfx)
+			throws EXIException, IOException {
 		if (scEncoder == null) {
 			super.encodeAttributeXsiNil(nil, pfx);
 		} else {

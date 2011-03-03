@@ -54,7 +54,7 @@ public class DecimalDatatype extends AbstractDatatype {
 		lastValidDecimal = DecimalValue.parse(value);
 		return (lastValidDecimal != null);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof DecimalValue) {
 			lastValidDecimal = ((DecimalValue) value);
@@ -65,10 +65,10 @@ public class DecimalDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
-//	public Value getValue() {
-//		return lastValidDecimal;
-//	}
+
+	// public Value getValue() {
+	// return lastValidDecimal;
+	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

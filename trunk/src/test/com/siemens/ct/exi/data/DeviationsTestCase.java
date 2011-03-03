@@ -33,13 +33,13 @@ public class DeviationsTestCase extends AbstractTestCase {
 	public static void setupQuickTest() {
 		// DeviationsTestCase.setConfigurationDeviationAt1 ( );
 		// DeviationsTestCase.setConfigurationDeviationEl1 ( );
-		// DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
+		DeviationsTestCase.setConfigurationDeviationDatatype1 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype2 ( );
 		// DeviationsTestCase.setConfigurationDeviationDatatype3();
 		// DeviationsTestCase.setConfigurationDeviationXsiType( );
 		// DeviationsTestCase.setConfigurationDeviationXsiNil();
 		// DeviationsTestCase.setConfigurationDeviationGlobalAttribute1();
-		DeviationsTestCase.setConfigurationDeviationInvalidQName();
+		// DeviationsTestCase.setConfigurationDeviationInvalidQName();
 	}
 
 	protected void setUp() {

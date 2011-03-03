@@ -27,40 +27,40 @@ package com.siemens.ct.exi.values;
  */
 
 public class StringValue extends AbstractValue {
-	
+
 	private static final long serialVersionUID = -2583604220181066337L;
-	
+
 	protected char[] characters;
 	protected String sValue;
-	
+
 	public StringValue(char[] ca) {
 		super(ValueType.STRING);
 		this.characters = ca;
 	}
-	
+
 	public StringValue(String s) {
 		super(ValueType.STRING);
 		// this(s.toCharArray());
 		sValue = s;
 	}
-	
+
 	private void checkCharacters() {
 		if (characters == null) {
 			characters = sValue.toCharArray();
 		}
 	}
-	
+
 	public int getCharactersLength() {
 		checkCharacters();
 		return characters.length;
 	}
-	
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
-		 checkCharacters();
+		checkCharacters();
 		// return internal char buffer to indicate that this should be used
 		return this.characters;
 	}
-	
+
 	@Override
 	public String toString() {
 		if (sValue == null) {
@@ -68,16 +68,15 @@ public class StringValue extends AbstractValue {
 		}
 		return sValue;
 	}
-	
+
 	@Override
 	public String toString(char[] cbuffer, int offset) {
 		return toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		return toString().equals(o.toString());
 	}
-	
-	
+
 }

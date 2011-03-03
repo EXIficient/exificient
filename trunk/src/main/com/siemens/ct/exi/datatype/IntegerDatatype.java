@@ -42,12 +42,14 @@ import com.siemens.ct.exi.values.Value;
 public class IntegerDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -7131847569262739592L;
-	
+
 	private IntegerValue lastInteger;
 
 	public IntegerDatatype(BuiltInType builtInType, QName schemaType) {
 		super(builtInType, schemaType);
-		assert (builtInType == BuiltInType.INTEGER_32 || builtInType == BuiltInType.INTEGER_16);
+		assert (builtInType == BuiltInType.INTEGER_BIG
+				|| builtInType == BuiltInType.INTEGER_64
+				|| builtInType == BuiltInType.INTEGER_32 || builtInType == BuiltInType.INTEGER_16);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 
@@ -55,7 +57,7 @@ public class IntegerDatatype extends AbstractDatatype {
 		lastInteger = IntegerValue.parse(value);
 		return (lastInteger != null);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			lastInteger = ((IntegerValue) value);
@@ -66,14 +68,10 @@ public class IntegerDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-
-//	public Value getValue() {
-//		return lastInteger;
-//	}
-
+	
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		valueChannel.encodeInteger(lastInteger.toInteger());
+		valueChannel.encodeIntegerValue(lastInteger);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

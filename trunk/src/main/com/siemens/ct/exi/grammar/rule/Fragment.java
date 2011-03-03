@@ -35,16 +35,16 @@ import com.siemens.ct.exi.grammar.event.StartDocument;
  * Fragment : SD FragmentContent 0
  */
 public class Fragment extends AbstractSchemaInformedRule {
-	
+
 	private static final long serialVersionUID = 4883701889805280947L;
-	
+
 	Rule fragmentContent;
-	
+
 	public Fragment(Rule fragmentContent) {
 		this.fragmentContent = fragmentContent;
 		addRule(new StartDocument(), fragmentContent);
 	}
-	
+
 	public Fragment(Rule fragmentContent, String label) {
 		this(fragmentContent);
 		this.setLabel(label);
@@ -53,7 +53,7 @@ public class Fragment extends AbstractSchemaInformedRule {
 	public String toString() {
 		return "Fragment" + super.toString();
 	}
-	
+
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
 		return Constants.NOT_FOUND;

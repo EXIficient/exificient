@@ -40,50 +40,51 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class StringDatatype extends AbstractDatatype {
-	
+
 	private static final long serialVersionUID = 4636133910606239257L;
-	
+
 	protected String lastValue;
-	
+
 	public StringDatatype(QName schemaType) {
 		super(BuiltInType.STRING, schemaType);
 		this.rcs = new XSDStringCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		lastValue = value;
 		return true;
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof StringValue) {
 			lastValue = ((StringValue) value).toString();
-			return true;			
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
-//	public Value getValue() {
-//		return new StringValue(lastValue);
-//	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	// public Value getValue() {
+	// return new StringValue(lastValue);
+	// }
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		stringEncoder.writeValue(context, valueChannel, lastValue);
 	}
-	
+
 	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+			EncoderChannel valueChannel, StringEncoder stringEncoder,
+			QName context) throws IOException {
 		stringEncoder.writeValue(context, valueChannel, this.lastRCSValue);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return stringDecoder.readValue(context, valueChannel);
 	}
-	
+
 	@Override
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
 			DecoderChannel valueChannel, StringDecoder stringDecoder,

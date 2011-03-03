@@ -38,10 +38,11 @@ public abstract class AbstractSchemaInformedContent extends
 		AbstractSchemaInformedRule {
 
 	private static final long serialVersionUID = -5955467095950097406L;
-	
+
 	// second level events according to fidelity options
 	// NOTE: events on second level are produced once. Setting new fidelity
-	// option does not make any difference! A new fidelityOptions object is needed.
+	// option does not make any difference! A new fidelityOptions object is
+	// needed.
 	protected List<EventTypeInformation> events2;
 	protected FidelityOptions fidelityOptions2;
 
@@ -50,34 +51,35 @@ public abstract class AbstractSchemaInformedContent extends
 		events2 = new ArrayList<EventTypeInformation>();
 	}
 
-	
 	private final void checkEvents2(FidelityOptions fidelityOptions) {
-		if(fidelityOptions != fidelityOptions2 && !fidelityOptions.equals(fidelityOptions2)) {
+		if (fidelityOptions != fidelityOptions2
+				&& !fidelityOptions.equals(fidelityOptions2)) {
 			events2.clear();
 			buildEvents2(fidelityOptions);
 		}
 	}
-	
+
 	abstract protected void buildEvents2(FidelityOptions fidelityOptions);
-	
+
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
 		checkEvents2(fidelityOptions);
-		return (get3rdLevelCharacteristics(fidelityOptions) > 0 ? events2.size() + 1 : events2.size());
+		return (get3rdLevelCharacteristics(fidelityOptions) > 0 ? events2
+				.size() + 1 : events2.size());
 	}
-	
+
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
 		checkEvents2(fidelityOptions);
-		
-		for(EventTypeInformation eti : events2) {
+
+		for (EventTypeInformation eti : events2) {
 			if (eti.eventType == eventType) {
 				return eti.eventCode2;
 			}
 		}
-		
+
 		return Constants.NOT_FOUND;
 	}
-	
+
 	public EventType get2ndLevelEvent(int eventCode2,
 			FidelityOptions fidelityOptions) {
 		checkEvents2(fidelityOptions);

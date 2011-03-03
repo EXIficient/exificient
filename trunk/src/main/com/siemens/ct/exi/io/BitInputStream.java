@@ -44,9 +44,9 @@ final public class BitInputStream {
 	 * used. An int is used instead of a byte int-to-byte conversions in the VM.
 	 */
 	private int buffer = 0;
-	
+
 	/**
-	 *  ???
+	 * ???
 	 */
 	private int mask = 0xFF;
 
@@ -104,7 +104,7 @@ final public class BitInputStream {
 		readBuffer();
 		return buffer;
 	}
-	
+
 	/**
 	 * Skip n bytes
 	 * 
@@ -113,13 +113,13 @@ final public class BitInputStream {
 	 */
 	public void skip(long n) throws IOException {
 		if (capacity == 0) {
-			//	aligned
-			while(n != 0) {
+			// aligned
+			while (n != 0) {
 				n -= istream.skip(n);
 			}
 		} else {
 			// not aligned, grrr
-			for(int i=0; i<n; n++) {
+			for (int i = 0; i < n; n++) {
 				readBits(8);
 			}
 		}
@@ -146,18 +146,18 @@ final public class BitInputStream {
 
 		readBuffer();
 		int result;
-		
-		if (n <= capacity) {		
+
+		if (n <= capacity) {
 			// buffer already holds all necessary bits
 			capacity -= n;
-			result = ((buffer & mask ) >> capacity);
+			result = ((buffer & mask) >> capacity);
 			mask = mask >>> n;
 		} else {
 			// get as many bits from buffer as possible
 			n -= capacity;
 			capacity = 0;
 			result = (buffer & mask);
-			
+
 			// possibly read whole bytes
 			while (n >= 8) {
 				n -= BUFFER_CAPACITY;
@@ -168,44 +168,45 @@ final public class BitInputStream {
 			if (n > 0) {
 				readBuffer();
 				capacity -= n;
-				result = (result << n) | ((buffer & mask ) >> capacity);
+				result = (result << n) | ((buffer & mask) >> capacity);
 				mask = mask >>> n;
 			}
 		}
 		return result;
 	}
+
 	public void read(byte b[], int off, int len) throws IOException {
-		if ( len == 0) {
-			
-		} else if ( capacity == 0 ) {
+		if (len == 0) {
+
+		} else if (capacity == 0) {
 			// byte-aligned --> read all bytes at byte-border (at once?)
 			int readBytes = 0;
 			do {
-				readBytes += istream.read(b, readBytes, len-readBytes);
-			} while(readBytes < len);
+				readBytes += istream.read(b, readBytes, len - readBytes);
+			} while (readBytes < len);
 		} else {
 			// get as many bits from buffer as possible
 			int remBits = 8 - capacity;
 			int b1 = (buffer & mask);
-			
+
 			// read whole bytes
-			for(int i=0; i<(len-1); i++) {
+			for (int i = 0; i < (len - 1); i++) {
 				int b2 = readDirectByte();
-				b[off+i] =(byte) ( (b1 << remBits) | ( b2 >>> capacity) );
+				b[off + i] = (byte) ((b1 << remBits) | (b2 >>> capacity));
 				b1 = b2;
 			}
-			
+
 			capacity = 0;
 
 			// read remaining bits
 			readBuffer();
 			capacity -= remBits;
-			b[off+len-1] = (byte)( (b1 << remBits) | ((buffer & mask ) >> capacity));
+			b[off + len - 1] = (byte) ((b1 << remBits) | ((buffer & mask) >> capacity));
 			mask = mask >>> remBits;
-			
-//			for(int i=0; i<len; i++) {
-//				b[off+i] = (byte) readBits(8);
-//			}
+
+			// for(int i=0; i<len; i++) {
+			// b[off+i] = (byte) readBits(8);
+			// }
 		}
 	}
 

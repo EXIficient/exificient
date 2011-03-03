@@ -20,6 +20,8 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigDecimal;
 
+import com.siemens.ct.exi.util.MethodsBag;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -31,15 +33,15 @@ import java.math.BigDecimal;
 public class DecimalValue extends AbstractValue {
 
 	private static final long serialVersionUID = 5268045994978250547L;
-	
+
 	public final boolean negative;
-	public final HugeIntegerValue integral;
-	public final HugeIntegerValue revFractional;
+	public final IntegerValue integral;
+	public final IntegerValue revFractional;
 
 	protected BigDecimal bd;
 
-	public DecimalValue(boolean negative, HugeIntegerValue integral,
-			HugeIntegerValue revFractional) {
+	public DecimalValue(boolean negative, IntegerValue integral,
+			IntegerValue revFractional) {
 		super(ValueType.DECIMAL);
 		this.negative = negative;
 		this.integral = integral;
@@ -49,7 +51,7 @@ public class DecimalValue extends AbstractValue {
 	public static DecimalValue parse(String decimal) {
 		try {
 			boolean sNegative;
-			HugeIntegerValue sIntegral, sRevFractional;
+			IntegerValue sIntegral, sRevFractional;
 			decimal = decimal.trim();
 			// --- handle sign
 			sNegative = false; // default
@@ -67,20 +69,20 @@ public class DecimalValue extends AbstractValue {
 
 			if (decPoint == -1) {
 				// no decimal point at all
-				sIntegral = HugeIntegerValue.parse(decimal);
+				sIntegral = IntegerValue.parse(decimal);
 				// integral.parse(decimal);
-				sRevFractional = HugeIntegerValue.ZERO;
+				sRevFractional = IntegerValue.ZERO;
 				// revFractional.setValue(0);
 			} else if (decPoint == 0) {
 				// e.g. ".234"
-				sIntegral = HugeIntegerValue.ZERO;
-				sRevFractional = HugeIntegerValue.parse(new StringBuilder(
+				sIntegral = IntegerValue.ZERO;
+				sRevFractional = IntegerValue.parse(new StringBuilder(
 						decimal.substring(decPoint + 1, decimal.length()))
 						.reverse().toString());
 			} else {
-				sIntegral = HugeIntegerValue.parse(decimal.substring(0,
+				sIntegral = IntegerValue.parse(decimal.substring(0,
 						decPoint));
-				sRevFractional = HugeIntegerValue.parse(new StringBuilder(
+				sRevFractional = IntegerValue.parse(new StringBuilder(
 						decimal.substring(decPoint + 1, decimal.length()))
 						.reverse().toString());
 			}
@@ -124,14 +126,31 @@ public class DecimalValue extends AbstractValue {
 		// dot
 		cbuffer[offset++] = '.';
 		// fractional
-		revFractional.toCharactersReverse(cbuffer, offset);
+		switch(revFractional.valueType) {
+		case INT_INTEGER:
+			MethodsBag.itosReverse(revFractional.ival, offset, cbuffer);
+			break;
+		case LONG_INTEGER:
+			MethodsBag.itosReverse(revFractional.lval, offset, cbuffer);
+			break;
+		case BIG_INTEGER:
+			// TODO look for a more suitable way, big integer
+			StringBuilder sb = new StringBuilder(revFractional.bval.toString());
+			char[] bi = sb.reverse().toString().toCharArray();
+			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+			break;
+		default:
+			/* ERROR */
+			throw new RuntimeException("Unknown Int Type: " + revFractional.valueType);
+		}
+		// revFractional.toCharactersReverse(cbuffer, offset);
 
 		return cbuffer;
 	}
 
-	protected final boolean _equals(DecimalValue o) {
-		return (negative == o.negative && integral._equals(o.integral) && revFractional
-				._equals(o.revFractional));
+	private final boolean _equals(DecimalValue o) {
+		return (negative == o.negative && integral.equals(o.integral) && revFractional
+				.equals(o.revFractional));
 	}
 
 	@Override
@@ -143,7 +162,7 @@ public class DecimalValue extends AbstractValue {
 			if (d == null) {
 				return false;
 			} else {
-				return _equals(d);	
+				return _equals(d);
 			}
 		} else {
 			return false;

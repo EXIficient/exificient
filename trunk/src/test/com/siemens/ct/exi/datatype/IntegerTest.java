@@ -23,6 +23,8 @@ import java.math.BigInteger;
 
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.ValueType;
 
 public class IntegerTest extends AbstractTestCase {
 
@@ -35,10 +37,14 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(0);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == 0);
+		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
+		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.intValue() == 0);
 		// Byte
 		getByteEncoder().encodeInteger(0);
-		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == 0);
+		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
+		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.intValue() == 0);
 	}
 
 	public void testInteger1() throws IOException {
@@ -46,10 +52,14 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(1);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == 1);
+		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
+		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.intValue() == 1);
 		// Byte
 		getByteEncoder().encodeInteger(1);
-		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == 1);
+		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
+		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.intValue() == 1);
 	}
 
 	public void testIntegerMaxNegativeInteger() throws IOException {
@@ -57,10 +67,14 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeInteger(Integer.MIN_VALUE);
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeIntegerValue().toInteger() == Integer.MIN_VALUE);
+		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
+		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.intValue() == Integer.MIN_VALUE);
 		// Byte
 		getByteEncoder().encodeInteger(Integer.MIN_VALUE);
-		assertTrue(getByteDecoder().decodeIntegerValue().toInteger() == Integer.MIN_VALUE);
+		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
+		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.intValue() == Integer.MIN_VALUE);
 	}
 
 	public void testInteger0S() throws IOException {
@@ -135,10 +149,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeLong(xmlInteger);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeLongValue().toString()));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeLong(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeLongValue().toString()));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 
@@ -151,10 +165,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 	
 	public void testIntegerBig1() throws IOException {
@@ -166,10 +180,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 
@@ -182,10 +196,10 @@ public class IntegerTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeBigInteger(xmlInteger);
 		bitEC.flush();
-		assertTrue(s.equals(getBitDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getBitDecoder().decodeIntegerValue().toString()));
 		// Byte
 		getByteEncoder().encodeBigInteger(xmlInteger);
-		assertTrue(s.equals(getByteDecoder().decodeHugeIntegerValue().toString()));
+		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
 	public void testIntegerSequence() throws IOException {
@@ -200,8 +214,12 @@ public class IntegerTest extends AbstractTestCase {
 		DecoderChannel dcBit = getBitDecoder();
 		DecoderChannel dcByte = getByteDecoder();
 		for (int i = 0; i < 100000; i++) {
-			assertEquals(dcBit.decodeIntegerValue().toInteger(), i);
-			assertEquals(dcByte.decodeIntegerValue().toInteger(), i);
+			IntegerValue dec1 = dcBit.decodeIntegerValue();
+			assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+			assertEquals(dec1.intValue(), i);
+			IntegerValue dec2 = dcByte.decodeIntegerValue();
+			assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+			assertEquals(dec2.intValue(), i);
 		}
 	}
 

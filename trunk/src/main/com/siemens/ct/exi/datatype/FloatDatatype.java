@@ -42,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
 public class FloatDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 1286030422795118970L;
-	
+
 	protected FloatValue lastValidFloat;
 
 	public FloatDatatype(BuiltInType builtInType, QName schemaType) {
@@ -67,10 +67,10 @@ public class FloatDatatype extends AbstractDatatype {
 		}
 	}
 
-//	public Value getValue() {
-//		// return new DoubleValue(mantissa, exponent);
-//		return lastValidFloat;
-//	}
+	// public Value getValue() {
+	// // return new DoubleValue(mantissa, exponent);
+	// return lastValidFloat;
+	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

@@ -52,9 +52,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * n.(m+1) ER Element i, content2 n.(m+2) CM Element i, content2 n.(m+3).0 PI
  * Element i, content2 n.(m+3).1
  */
-public class SchemaInformedStartTag extends
-		AbstractSchemaInformedContent implements SchemaInformedStartTagRule {
-	
+public class SchemaInformedStartTag extends AbstractSchemaInformedContent
+		implements SchemaInformedStartTagRule {
+
 	private static final long serialVersionUID = -674782327638586700L;
 
 	protected SchemaInformedRule elementContent2;
@@ -63,49 +63,53 @@ public class SchemaInformedStartTag extends
 		super();
 		this.elementContent2 = elementContent2;
 	}
-	
+
 	@Override
 	protected void buildEvents2(FidelityOptions fidelityOptions) {
 		if (!fidelityOptions.isStrict()) {
 			int eventCode2 = 0;
-			
+
 			// EE on second level necessary ?
 			if (!hasEndElement) {
-				events2.add(new EventTypeInformation(EventType.END_ELEMENT_UNDECLARED, eventCode2++));	
+				events2.add(new EventTypeInformation(
+						EventType.END_ELEMENT_UNDECLARED, eventCode2++));
 			}
 			// AT(*) & AT[schema-invalid]
-			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_INVALID_VALUE, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.ATTRIBUTE_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.ATTRIBUTE_INVALID_VALUE, eventCode2++));
 			// extensibility: SE(*), CH(*)
-			events2.add(new EventTypeInformation(EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
 			// ER
 			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-				events2.add(new EventTypeInformation(EventType.ENTITY_REFERENCE, eventCode2++));
+				events2.add(new EventTypeInformation(
+						EventType.ENTITY_REFERENCE, eventCode2++));
 			}
 		}
-		
+
 		fidelityOptions2 = fidelityOptions;
 	}
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return ( !fidelityOptions.isStrict() );
+		return (!fidelityOptions.isStrict());
 	}
-
 
 	@Override
 	public Rule getElementContentRule() {
 		return elementContent2;
 	}
 
-
 	@Override
 	public SchemaInformedStartTag clone() {
 		SchemaInformedStartTag clone = new SchemaInformedStartTag(
 				elementContent2);
-		
-		//	duplicate top level
+
+		// duplicate top level
 		for (int i = 0; i < getNumberOfEvents(); i++) {
 			EventInformation ei = lookFor(i);
 			// remove self-reference
@@ -118,7 +122,7 @@ public class SchemaInformedStartTag extends
 
 		return clone;
 	}
-	
+
 	public String toString() {
 		String s = "StartTag";
 		return s + super.toString();

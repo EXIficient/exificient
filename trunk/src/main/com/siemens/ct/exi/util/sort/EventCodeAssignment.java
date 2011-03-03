@@ -26,7 +26,7 @@ import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Event;
 
 /**
- * Helper Class for sorting EXI events 
+ * Helper Class for sorting EXI events
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -37,7 +37,7 @@ import com.siemens.ct.exi.grammar.event.Event;
 public class EventCodeAssignment implements Comparator<Event>, Serializable {
 
 	private static final long serialVersionUID = 7616132143378329230L;
-	
+
 	protected static final LexicographicSort lexSort = new LexicographicSort();
 
 	// see http://www.w3.org/TR/exi/#eventCodeAssignment

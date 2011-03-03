@@ -60,13 +60,14 @@ public class DOMBuilder {
 
 	public DocumentFragment parseFragment(InputStream is) throws EXIException {
 		try {
-//			// create empty document fragment
-//			Document document = domImplementation.createDocument(null, null,
-//					null);
-//			DocumentFragment docFragment = document.createDocumentFragment();
+			// // create empty document fragment
+			// Document document = domImplementation.createDocument(null, null,
+			// null);
+			// DocumentFragment docFragment = document.createDocumentFragment();
 
 			// create SAX to DOM Handlers
-			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation, true);
+			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation,
+					true);
 
 			XMLReader reader = factory.createEXIReader();
 			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
@@ -74,7 +75,7 @@ public class DOMBuilder {
 			reader.setContentHandler(s2dHandler);
 
 			reader.parse(new InputSource(is));
-			//return docFragment;
+			// return docFragment;
 			return s2dHandler.getDocumentFragment();
 		} catch (Exception e) {
 			throw new EXIException(e);
@@ -84,26 +85,30 @@ public class DOMBuilder {
 	public Document parse(InputStream is) throws EXIException {
 		return parse(is, false);
 	}
-	
-	public Document parse(InputStream is, boolean exiBodyOnly) throws EXIException {
+
+	public Document parse(InputStream is, boolean exiBodyOnly)
+			throws EXIException {
 		try {
 			// create SAX to DOM Handlers
-			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation, false);
+			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation,
+					false);
 
 			XMLReader reader = factory.createEXIReader();
 			// EXI Features
-			reader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY,
-					exiBodyOnly);
+			reader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY, exiBodyOnly);
 			// SAX Features
 			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 					true);
-			reader.setProperty("http://xml.org/sax/properties/lexical-handler", s2dHandler);
-			reader.setProperty("http://xml.org/sax/properties/declaration-handler", s2dHandler);
+			reader.setProperty("http://xml.org/sax/properties/lexical-handler",
+					s2dHandler);
+			reader.setProperty(
+					"http://xml.org/sax/properties/declaration-handler",
+					s2dHandler);
 			reader.setContentHandler(s2dHandler);
 			reader.setDTDHandler(s2dHandler);
 
 			reader.parse(new InputSource(is));
-			
+
 			// return document;
 			return s2dHandler.getDocument();
 		} catch (Exception e) {

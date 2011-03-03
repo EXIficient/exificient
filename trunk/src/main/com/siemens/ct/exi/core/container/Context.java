@@ -33,24 +33,24 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class Context {
-	
+
 	final List<Value> values;
 	final List<Datatype> valueDatatypes;
-	
+
 	public Context() {
 		values = new ArrayList<Value>();
 		valueDatatypes = new ArrayList<Datatype>();
 	}
-	
+
 	public void addValue(Value value, Datatype datatype) {
 		values.add(value);
 		valueDatatypes.add(datatype);
 	}
-	
+
 	public List<Value> getValues() {
 		return values;
 	}
-	
+
 	public List<Datatype> getValueDatatypes() {
 		return valueDatatypes;
 	}

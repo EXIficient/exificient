@@ -39,7 +39,9 @@ import com.siemens.ct.exi.values.StringValue;
 /**
  * EXI Header (see http://www.w3.org/TR/exi/#header)
  * 
- * <p>Encoder</p>
+ * <p>
+ * Encoder
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -49,11 +51,12 @@ import com.siemens.ct.exi.values.StringValue;
 
 public class EXIHeaderEncoder extends AbstractEXIHeader {
 
-	protected static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(true);
-	
+	protected static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(
+			true);
+
 	public EXIHeaderEncoder() throws EXIException {
 	}
-	
+
 	/**
 	 * Writes the EXI header according to the header options with optional
 	 * cookie, EXI options, ..
@@ -108,14 +111,14 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 
 	protected void writeEXIOptions(EXIFactory f, EncoderChannel encoderChannel)
 			throws EXIException, IOException {
-	
+
 		EXIBodyEncoderInOrder encoder = (EXIBodyEncoderInOrder) getHeaderFactory()
 				.createEXIBodyEncoder();
 		encoder.setOutputChannel(encoderChannel);
-	
+
 		encoder.encodeStartDocument();
 		encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, HEADER, null);
-	
+
 		/*
 		 * lesscommon
 		 */
@@ -142,7 +145,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				if (isAlignment(f)) {
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							ALIGNMENT, null);
-	
+
 					/*
 					 * byte
 					 */
@@ -159,10 +162,10 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 								PRE_COMPRESS, null);
 						encoder.encodeEndElement(); // pre-compress
 					}
-	
+
 					encoder.encodeEndElement(); // alignment
 				}
-	
+
 				/*
 				 * selfContained
 				 */
@@ -171,7 +174,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 							SELF_CONTAINED, null);
 					encoder.encodeEndElement();
 				}
-	
+
 				/*
 				 * valueMaxLength
 				 */
@@ -179,66 +182,69 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							VALUE_MAX_LENGTH, null);
 					// encoder.encodeCharacters(f.getValueMaxLength() + "");
-					encoder.encodeCharacters(new IntegerValue(f.getValueMaxLength()));
+					encoder.encodeCharacters(IntegerValue.valueOf(f
+							.getValueMaxLength()));
 					encoder.encodeEndElement();
 				}
-	
+
 				/*
 				 * valuePartitionCapacity
 				 */
 				if (isValuePartitionCapacity(f)) {
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							VALUE_PARTITION_CAPACITY, null);
-					// encoder.encodeCharacters(f.getValuePartitionCapacity()+ "");
-					encoder.encodeCharacters(new IntegerValue(f.getValuePartitionCapacity()));
+					// encoder.encodeCharacters(f.getValuePartitionCapacity()+
+					// "");
+					encoder.encodeCharacters(IntegerValue.valueOf(f
+							.getValuePartitionCapacity()));
 					encoder.encodeEndElement();
 				}
-	
+
 				/*
 				 * datatypeRepresentationMap
 				 */
 				if (isDatatypeRepresentationMap(f)) {
-	
+
 					QName[] types = f.getDatatypeRepresentationMapTypes();
 					QName[] representations = f
 							.getDatatypeRepresentationMapRepresentations();
 					assert (types.length == representations.length);
-	
+
 					// sequence "schema datatype" + datatype representation
 					for (int i = 0; i < types.length; i++) {
 						encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 								DATATYPE_REPRESENTATION_MAP, null);
-	
+
 						// schema datatype
 						QName type = types[i];
-						encoder.encodeStartElement(type.getNamespaceURI(), type
-								.getLocalPart(), null);
+						encoder.encodeStartElement(type.getNamespaceURI(),
+								type.getLocalPart(), null);
 						encoder.encodeEndElement();
-	
+
 						// datatype representation
 						QName representation = representations[i];
-						encoder.encodeStartElement(representation
-								.getNamespaceURI(), representation
-								.getLocalPart(), null);
+						encoder.encodeStartElement(
+								representation.getNamespaceURI(),
+								representation.getLocalPart(), null);
 						encoder.encodeEndElement();
-	
+
 						encoder.encodeEndElement(); // datatypeRepresentationMap
 					}
-	
+
 				}
-	
+
 				encoder.encodeEndElement(); // uncommon
 			}
-	
+
 			/*
 			 * preserve
 			 */
 			if (isPreserve(f)) {
 				encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, PRESERVE,
 						null);
-	
+
 				FidelityOptions fo = f.getFidelityOptions();
-	
+
 				/*
 				 * dtd
 				 */
@@ -279,10 +285,10 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 							null);
 					encoder.encodeEndElement();
 				}
-	
+
 				encoder.encodeEndElement(); // preserve
 			}
-	
+
 			/*
 			 * blockSize
 			 */
@@ -291,13 +297,13 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						BLOCK_SIZE, null);
 				// TODO typed fashion
 				// encoder.encodeCharacters(f.getBlockSize() + "");
-				encoder.encodeCharacters(new IntegerValue(f.getBlockSize()));
+				encoder.encodeCharacters(IntegerValue.valueOf(f.getBlockSize()));
 				encoder.encodeEndElement();
 			}
-	
+
 			encoder.encodeEndElement(); // lesscommon
 		}
-	
+
 		/*
 		 * common
 		 */
@@ -325,9 +331,9 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 			if (isSchemaId(f)) {
 				encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, SCHEMA_ID,
 						null);
-	
+
 				Grammar g = f.getGrammar();
-	
+
 				// When the value of the "schemaID" element is empty, no user
 				// defined schema information is used for processing the EXI
 				// body; however, the built-in XML schema types are available
@@ -342,7 +348,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// An example schemaID scheme is the use of URI that is
 						// apt for globally identifying schema resources on the
 						// Web.
-	
+
 						// HeaderOptions ho = f.getHeaderOptions();
 						// Object schemaId =
 						// ho.getOptionValue(HeaderOptions.INCLUDE_SCHEMA_ID);
@@ -362,13 +368,13 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						encoder.encodeAttributeXsiNil(BOOLEAN_VALUE_TRUE, null);
 					}
 				}
-	
+
 				encoder.encodeEndElement();
 			}
-	
+
 			encoder.encodeEndElement(); // common
 		}
-	
+
 		/*
 		 * strict
 		 */
@@ -376,7 +382,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 			encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, STRICT, null);
 			encoder.encodeEndElement();
 		}
-	
+
 		encoder.encodeEndElement(); // header
 		encoder.encodeEndDocument();
 	}

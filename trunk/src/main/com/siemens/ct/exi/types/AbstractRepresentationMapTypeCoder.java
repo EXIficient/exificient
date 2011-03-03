@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.datatype.BigIntegerDatatype;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -33,6 +32,7 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
+import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -59,7 +59,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
 		this.grammar = grammar;
 		dtrMap = new HashMap<QName, Datatype>();
-		
+
 		assert (dtrMapTypes.length == dtrMapRepresentations.length);
 		/*
 		 * When there are built-in or user-defined datatype representations
@@ -68,74 +68,77 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		 * associated datatype representation is used to determine the EXI
 		 * datatype representation.
 		 */
-		for(int i=0; i<dtrMapTypes.length; i++) {
+		for (int i = 0; i < dtrMapTypes.length; i++) {
 			Datatype datatypeRep = getDatatypeRepresentation(dtrMapRepresentations[i]);
 			registerDatatype(datatypeRep, dtrMapTypes[i], dtrMapTypes);
 		}
-		
-		
-//		int[] ancestorOrder = getAncestorOrder(new AncestorTypeComparator(
-//				grammar), dtrMapTypes);
-//		assert (ancestorOrder.length == dtrMapTypes.length);
-//
-//		
-//
-//		// detect all subtypes and map datatype representation
-//		for (int i = 0; i < ancestorOrder.length; i++) {
-//			int ancIndex = ancestorOrder[i];
-//
-//			Datatype datatypeRep = getDatatypeRepresentation(dtrMapRepresentations[ancIndex]);
-//			registerDatatype(datatypeRep, dtrMapTypes[ancIndex], dtrMapTypes);
-//		}
+
+		// int[] ancestorOrder = getAncestorOrder(new AncestorTypeComparator(
+		// grammar), dtrMapTypes);
+		// assert (ancestorOrder.length == dtrMapTypes.length);
+		//
+		//
+		//
+		// // detect all subtypes and map datatype representation
+		// for (int i = 0; i < ancestorOrder.length; i++) {
+		// int ancIndex = ancestorOrder[i];
+		//
+		// Datatype datatypeRep =
+		// getDatatypeRepresentation(dtrMapRepresentations[ancIndex]);
+		// registerDatatype(datatypeRep, dtrMapTypes[ancIndex], dtrMapTypes);
+		// }
 	}
 
 	protected Datatype getRecentDtrMapDatatype() {
 		return recentDtrDataype;
 	}
-	
+
 	private boolean isDerivedFrom(QName type, QName ancestor) {
 		// type itself
 		if (type.equals(ancestor)) {
 			return true;
 		}
-		
+
 		// subtypes
 		List<QName> subtypes = grammar.getSimpleTypeSubtypes(ancestor);
 		if (subtypes != null) {
 			for (QName subtype : subtypes) {
-				if ( isDerivedFrom(type, subtype) ) {
+				if (isDerivedFrom(type, subtype)) {
 					return true;
 				}
-			}	
+			}
 		}
-		
+
 		return false;
 	}
 
-	protected void registerDatatype(Datatype representation, QName type, QName[] dtrMapTypes) {
+	protected void registerDatatype(Datatype representation, QName type,
+			QName[] dtrMapTypes) {
 		// Integer types are special (exi:integer)
 		if (representation.getBuiltInType() == BuiltInType.INTEGER_BIG) {
 			// Note: exi:integer == BuiltInType.INTEGER_BIG
-			
+
 			// Detect whether type is derived from xsd:integer
-			boolean isDerivedFromXsdInteger = isDerivedFrom(type, BuiltIn.XSD_INTEGER);
-			
+			boolean isDerivedFromXsdInteger = isDerivedFrom(type,
+					BuiltIn.XSD_INTEGER);
+
 			if (isDerivedFromXsdInteger) {
 				// built-in types set already (n-bit and unsigned integers)
 				return;
 			}
-			
-			//  other types uses default full exi:integer coding
+
+			// other types uses default full exi:integer coding
 		}
-		
+
 		dtrMap.put(type, representation);
-		
+
 		List<QName> subtypes = grammar.getSimpleTypeSubtypes(type);
 		if (subtypes != null) {
 			for (QName subtype : subtypes) {
-				// register subtypes unless a default mapping is 
+				// register subtypes unless a default mapping is
 				// is present OR there is another DTR map for this type
-				// see http://www.w3.org/XML/Group/EXI/docs/format/exi.html#builtInEXITypes
+				// see
+				// http://www.w3.org/XML/Group/EXI/docs/format/exi.html#builtInEXITypes
 				if (BuiltIn.XSD_BASE64BINARY.equals(subtype)
 						|| BuiltIn.XSD_HEXBINARY.equals(subtype)) {
 					// Binary built-In
@@ -168,14 +171,14 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 			}
 		}
 	}
-	
+
 	protected boolean contains(QName q, QName[] qnames) {
-		for(QName qn: qnames) {
+		for (QName qn : qnames) {
 			if (qn.equals(q)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -213,7 +216,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 				} else if ("double".equals(localPart)) {
 					datatype = new FloatDatatype(BuiltInType.DOUBLE, null);
 				} else if ("integer".equals(localPart)) {
-					datatype = new BigIntegerDatatype(BuiltInType.INTEGER_BIG,
+					datatype = new IntegerDatatype(BuiltInType.INTEGER_BIG,
 							null);
 				} else if ("string".equals(localPart)) {
 					datatype = new StringDatatype(null);
@@ -241,72 +244,72 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		}
 	}
 
-//	protected int[] getAncestorOrder(AncestorTypeComparator atc,
-//			QName[] dtrMapTypes) {
-//		int order[] = new int[dtrMapTypes.length];
-//
-//		QName[] copyTypes = new QName[dtrMapTypes.length];
-//		System.arraycopy(dtrMapTypes, 0, copyTypes, 0, dtrMapTypes.length);
-//
-//		// sort types in ancestor-type order
-//		Arrays.sort(copyTypes, atc);
-//
-//		// save Index order
-//		for (int i = 0; i < order.length; i++) {
-//			QName ctype = copyTypes[i];
-//			for (int k = 0; k < dtrMapTypes.length; k++) {
-//				if (ctype.equals(dtrMapTypes[k])) {
-//					// found "k" as index position
-//					order[i] = k;
-//				}
-//			}
-//		}
-//
-//		return order;
-//	}
-//
-//	// inverse type hierarchy
-//	// [int, long, integer] --> [integer, long, int]
-//	class AncestorTypeComparator implements Comparator<QName> {
-//
-//		protected Grammar grammar;
-//
-//		public AncestorTypeComparator(Grammar grammar) {
-//			this.grammar = grammar;
-//		}
-//
-//		public int compare(QName o1, QName o2) {
-//			if (o1.equals(o2)) {
-//				return 0;
-//			} else {
-//				if (isSubType(o1, o2)) {
-//					// return -1;
-//					return 1;
-//				} else {
-//					// return 1;
-//					return -1;
-//				}
-//			}
-//		}
-//
-//		// is q1 subytpe of q2
-//		public boolean isSubType(QName q1, QName q2) {
-//			List<QName> subtypes = grammar.getSimpleTypeSubtypes(q2);
-//			if (subtypes == null || subtypes.size() == 0) {
-//				return false;
-//			}
-//
-//			for (QName stype : subtypes) {
-//				if (q1.equals(stype)) {
-//					return true;
-//				}
-//
-//				if (isSubType(q1, stype)) {
-//					return true;
-//				}
-//			}
-//
-//			return false;
-//		}
-//	}
+	// protected int[] getAncestorOrder(AncestorTypeComparator atc,
+	// QName[] dtrMapTypes) {
+	// int order[] = new int[dtrMapTypes.length];
+	//
+	// QName[] copyTypes = new QName[dtrMapTypes.length];
+	// System.arraycopy(dtrMapTypes, 0, copyTypes, 0, dtrMapTypes.length);
+	//
+	// // sort types in ancestor-type order
+	// Arrays.sort(copyTypes, atc);
+	//
+	// // save Index order
+	// for (int i = 0; i < order.length; i++) {
+	// QName ctype = copyTypes[i];
+	// for (int k = 0; k < dtrMapTypes.length; k++) {
+	// if (ctype.equals(dtrMapTypes[k])) {
+	// // found "k" as index position
+	// order[i] = k;
+	// }
+	// }
+	// }
+	//
+	// return order;
+	// }
+	//
+	// // inverse type hierarchy
+	// // [int, long, integer] --> [integer, long, int]
+	// class AncestorTypeComparator implements Comparator<QName> {
+	//
+	// protected Grammar grammar;
+	//
+	// public AncestorTypeComparator(Grammar grammar) {
+	// this.grammar = grammar;
+	// }
+	//
+	// public int compare(QName o1, QName o2) {
+	// if (o1.equals(o2)) {
+	// return 0;
+	// } else {
+	// if (isSubType(o1, o2)) {
+	// // return -1;
+	// return 1;
+	// } else {
+	// // return 1;
+	// return -1;
+	// }
+	// }
+	// }
+	//
+	// // is q1 subytpe of q2
+	// public boolean isSubType(QName q1, QName q2) {
+	// List<QName> subtypes = grammar.getSimpleTypeSubtypes(q2);
+	// if (subtypes == null || subtypes.size() == 0) {
+	// return false;
+	// }
+	//
+	// for (QName stype : subtypes) {
+	// if (q1.equals(stype)) {
+	// return true;
+	// }
+	//
+	// if (isSubType(q1, stype)) {
+	// return true;
+	// }
+	// }
+	//
+	// return false;
+	// }
+	// }
 }

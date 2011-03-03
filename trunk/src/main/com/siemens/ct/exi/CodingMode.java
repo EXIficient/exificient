@@ -69,7 +69,7 @@ public enum CodingMode {
 
 	private final boolean usesDeflate;
 	private final boolean usesRechanneling;
-	
+
 	private int deflateLevel = Deflater.DEFAULT_COMPRESSION;
 
 	private CodingMode(boolean deflate, boolean rechanneling) {
@@ -80,14 +80,14 @@ public enum CodingMode {
 	public boolean usesDeflate() {
 		return usesDeflate;
 	}
-	
+
 	public int getDeflateLevel() {
-		assert(usesDeflate);
+		assert (usesDeflate);
 		return deflateLevel;
 	}
-	
+
 	public void setDeflateLevel(int deflateLevel) {
-		assert(usesDeflate);
+		assert (usesDeflate);
 		this.deflateLevel = deflateLevel;
 	}
 

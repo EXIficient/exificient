@@ -41,14 +41,14 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementGeneric;
 
 public abstract class AbstractRule implements Rule {
-	
+
 	private static final long serialVersionUID = -1626120406315756322L;
-	
+
 	protected static final SchemaInformedRule END_RULE = new SchemaInformedElement();
 	static {
 		END_RULE.setLabel("<END>");
 	}
-	
+
 	protected static final Event START_ELEMENT_GENERIC = new StartElementGeneric();
 	protected static final Event END_ELEMENT = new EndElement();
 
@@ -69,10 +69,9 @@ public abstract class AbstractRule implements Rule {
 		addRule(event, END_RULE);
 	}
 
-	
-//	public boolean isFirstElementRule() {
-//		return false;
-//	}
+	// public boolean isFirstElementRule() {
+	// return false;
+	// }
 
 	/*
 	 * Do NOT learn per default (non-Javadoc)
@@ -177,9 +176,9 @@ public abstract class AbstractRule implements Rule {
 		return this;
 	}
 
-//	public Rule getElementContentRuleForUndeclaredSE() {
-//		return this;
-//	}
+	// public Rule getElementContentRuleForUndeclaredSE() {
+	// return this;
+	// }
 
 	@Override
 	public boolean equals(Object obj) {
@@ -205,12 +204,13 @@ public abstract class AbstractRule implements Rule {
 
 		return false;
 	}
-	
+
 	public int hashCode() {
 		return super.hashCode();
 	}
-	
-	protected static boolean checkQualifiedName(QName c, String namespaceURI, String localName) {
+
+	protected static boolean checkQualifiedName(QName c, String namespaceURI,
+			String localName) {
 		return (c.getLocalPart().equals(localName) && c.getNamespaceURI()
 				.equals(namespaceURI));
 	}

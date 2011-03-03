@@ -30,8 +30,9 @@ import com.siemens.ct.exi.values.StringValue;
  */
 
 public interface StringCoder {
-	
-	public static final StringValue EMPTY_STRING_VALUE = new StringValue(Constants.EMPTY_STRING);
-	
+
+	public static final StringValue EMPTY_STRING_VALUE = new StringValue(
+			Constants.EMPTY_STRING);
+
 	public void clear();
 }

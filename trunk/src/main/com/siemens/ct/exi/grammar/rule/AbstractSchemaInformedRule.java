@@ -55,13 +55,13 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	protected int codeLengthA; // 1st level only
 	protected int codeLengthB; // 2nd OR 3rd level
 
-//	// subtype (xsi:type) OR nillable (xsi:nill) ?
-//	protected boolean isTypeCastable = false;
-//	protected boolean isNillable = false;
+	// // subtype (xsi:type) OR nillable (xsi:nill) ?
+	// protected boolean isTypeCastable = false;
+	// protected boolean isNillable = false;
 	// EE present
 	protected boolean hasEndElement = false;
 
-//	protected SchemaInformedRule typeEmpty;
+	// protected SchemaInformedRule typeEmpty;
 
 	/*
 	 * schema-deviated attributes
@@ -100,19 +100,19 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 				: codeLengthA);
 	}
 
-//	public void setTypeCastable(boolean isTypeCastable) {
-//		this.isTypeCastable = isTypeCastable;
-//	}
-//
-//	public void setNillable(boolean nil) {
-//		this.isNillable = nil;
-//		// setTypeEmpty(typeEmpty);
-//	}
-//	
-//	public void setFirstElementRule() {
-//		throw new RuntimeException(
-//				"Not allowed to set first element, only in StartTag");
-//	}
+	// public void setTypeCastable(boolean isTypeCastable) {
+	// this.isTypeCastable = isTypeCastable;
+	// }
+	//
+	// public void setNillable(boolean nil) {
+	// this.isNillable = nil;
+	// // setTypeEmpty(typeEmpty);
+	// }
+	//
+	// public void setFirstElementRule() {
+	// throw new RuntimeException(
+	// "Not allowed to set first element, only in StartTag");
+	// }
 
 	public int getNumberOfDeclaredAttributes() {
 		return numberOfDeclaredAttributes;
@@ -135,8 +135,8 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 		// minor consistency check
 		// TODO more
-		if ((event.isEventType(EventType.END_ELEMENT) || event
-				.isEventType(EventType.ATTRIBUTE_GENERIC) || event
+		if ((event.isEventType(EventType.END_ELEMENT)
+				|| event.isEventType(EventType.ATTRIBUTE_GENERIC) || event
 				.isEventType(EventType.START_ELEMENT_GENERIC))
 				&& lookForEvent(event.getEventType()) != null) {
 			// has already event --> nothing to do
@@ -151,7 +151,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 				EventInformation ei = containers[i];
 				if (ei.event.equals(event)) {
 					if (ei.next != rule) {
-					// if (rule.equals(ei.next)) {
+						// if (rule.equals(ei.next)) {
 						throw new IllegalArgumentException("Same event "
 								+ event + " with indistinguishable 'next' rule");
 					}
@@ -220,10 +220,9 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 				numberOfDeclaredAttributes++;
 			}
 		}
-		
-		
-//		// add AT (*) [schema-invalid value]
-//		numberOfDeclaredAttributes++;
+
+		// // add AT (*) [schema-invalid value]
+		// numberOfDeclaredAttributes++;
 	}
 
 	public void joinRules(Rule rule) {
@@ -252,20 +251,19 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return sb.toString();
 	}
 
-//	public SchemaInformedRule duplicate() {
-//		return this;
-//	}
-	
+	// public SchemaInformedRule duplicate() {
+	// return this;
+	// }
+
 	@Override
 	public SchemaInformedRule clone() {
 		return this;
 	}
-	
+
 	public SchemaInformedRule duplicate() {
 		return clone();
 	}
-	
-	
+
 	// // for encoder
 	// public EventInformation lookFor(EventType eventType, String... args) {
 	// for (EventInformation ei : containers) {
@@ -367,9 +365,8 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return containers[eventCode];
 	}
 
-	
-//	public boolean isFirstElementRule() {
-//		return false;
-//	}
+	// public boolean isFirstElementRule() {
+	// return false;
+	// }
 
 }

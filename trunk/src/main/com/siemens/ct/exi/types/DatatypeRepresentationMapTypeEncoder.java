@@ -37,13 +37,14 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.6
  */
 
-public class DatatypeRepresentationMapTypeEncoder extends AbstractRepresentationMapTypeCoder implements TypeEncoder {
+public class DatatypeRepresentationMapTypeEncoder extends
+		AbstractRepresentationMapTypeCoder implements TypeEncoder {
 
 	// fallback type encoder
 	protected TypedTypeEncoder defaultEncoder;
 
 	protected StringEncoder stringEncoder;
-	
+
 	public DatatypeRepresentationMapTypeEncoder(StringEncoder stringEncoder,
 			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
 			throws EXIException {
@@ -53,22 +54,21 @@ public class DatatypeRepresentationMapTypeEncoder extends AbstractRepresentation
 		// hand over "same" string table
 		defaultEncoder = new TypedTypeEncoder(stringEncoder);
 	}
-	
-	
+
 	public void clear() {
 		stringEncoder.clear();
 	}
 
-//	public boolean isValid(Datatype datatype, String value) {
-//		QName schemaType = datatype.getSchemaType();
-//		recentDtrDataype = dtrMap.get(schemaType);
-//		if (recentDtrDataype == null) {
-//			return defaultEncoder.isValid(datatype, value);
-//		} else {
-//			return recentDtrDataype.isValid(value);
-//		}
-//	}
-	
+	// public boolean isValid(Datatype datatype, String value) {
+	// QName schemaType = datatype.getSchemaType();
+	// recentDtrDataype = dtrMap.get(schemaType);
+	// if (recentDtrDataype == null) {
+	// return defaultEncoder.isValid(datatype, value);
+	// } else {
+	// return recentDtrDataype.isValid(value);
+	// }
+	// }
+
 	public boolean isValid(Datatype datatype, Value value) {
 		QName schemaType = datatype.getSchemaType();
 		recentDtrDataype = dtrMap.get(schemaType);
@@ -87,6 +87,5 @@ public class DatatypeRepresentationMapTypeEncoder extends AbstractRepresentation
 			recentDtrDataype.writeValue(valueChannel, stringEncoder, context);
 		}
 	}
-
 
 }

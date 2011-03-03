@@ -42,7 +42,7 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	protected boolean isTypeCastable = false;
 	protected boolean isNillable = false;
 	protected SchemaInformedFirstStartTagRule typeEmpty;
-	
+
 	protected QName typeName = null;
 
 	public SchemaInformedFirstStartTag(SchemaInformedRule elementContent2) {
@@ -63,11 +63,11 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 			this.addRule(ei.event, next);
 		}
 	}
-	
+
 	public QName getTypeName() {
 		return this.typeName;
 	}
-	
+
 	public void setTypeName(QName typeName) {
 		this.typeName = typeName;
 	}

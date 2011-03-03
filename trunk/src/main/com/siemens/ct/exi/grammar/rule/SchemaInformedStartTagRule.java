@@ -31,38 +31,35 @@ package com.siemens.ct.exi.grammar.rule;
  */
 public interface SchemaInformedStartTagRule extends SchemaInformedRule {
 
-//	/*
-//	 * sets whether type is castable
-//	 */
-//	public void setTypeCastable(boolean hasNamedSubtypes);
-//
-//	/*
-//	 * sets whether element is nillable
-//	 */
-//	public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
+	// /*
+	// * sets whether type is castable
+	// */
+	// public void setTypeCastable(boolean hasNamedSubtypes);
+	//
+	// /*
+	// * sets whether element is nillable
+	// */
+	// public void setNillable(boolean nillable, SchemaInformedRule typeEmpty);
 
-	
-	
-//	/*
-//	 * first rule is different (namespace declaration, xsi:type and xsi:nil)
-//	 */
-//	public void setFirstElementRule();
-	
-	
-//	public boolean isFirstElementRule();
+	// /*
+	// * first rule is different (namespace declaration, xsi:type and xsi:nil)
+	// */
+	// public void setFirstElementRule();
 
-//	/*
-//	 * sets whether type is castable
-//	 */
-//	public void setTypeCastable(boolean hasNamedSubtypes);
-//
-//	/*
-//	 * sets whether element is nillable
-//	 */
-//	public void setNillable(boolean nillable);	
-//	
-//	
-//	public void setTypeEmpty(SchemaInformedStartTagRule typeEmpty);
-//
-//	public SchemaInformedStartTagRule getTypeEmpty();
+	// public boolean isFirstElementRule();
+
+	// /*
+	// * sets whether type is castable
+	// */
+	// public void setTypeCastable(boolean hasNamedSubtypes);
+	//
+	// /*
+	// * sets whether element is nillable
+	// */
+	// public void setNillable(boolean nillable);
+	//
+	//
+	// public void setTypeEmpty(SchemaInformedStartTagRule typeEmpty);
+	//
+	// public SchemaInformedStartTagRule getTypeEmpty();
 }

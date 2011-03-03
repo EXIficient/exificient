@@ -31,7 +31,7 @@ import com.siemens.ct.exi.datatype.Datatype;
  */
 
 public interface DatatypeEvent extends Event {
-	
+
 	public QName getValueType();
 
 	public Datatype getDatatype();

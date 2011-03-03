@@ -45,21 +45,22 @@ public class StringDecoderImpl implements StringDecoder {
 
 	// local values (per context)
 	protected Map<QName, List<StringValue>> localValues;
-	
+
 	public StringDecoderImpl() {
 		globalValues = new ArrayList<StringValue>();
 		localValues = new HashMap<QName, List<StringValue>>();
 	}
 
-//	private static final StringValue EMPTY_STRING_VALUE = new StringValue("");
-	
+	// private static final StringValue EMPTY_STRING_VALUE = new
+	// StringValue("");
+
 	public StringValue readValue(QName context, DecoderChannel valueChannel)
 			throws IOException {
 		StringValue value;
-		
+
 		int i = valueChannel.decodeUnsignedInteger();
-		
-		switch(i) {
+
+		switch (i) {
 		case 0:
 			// local value partition
 			value = readValueLocalHit(context, valueChannel);
@@ -74,14 +75,15 @@ public class StringDecoderImpl implements StringDecoder {
 			// incremented by two.
 			int L = i - 2;
 			/*
-			 * If length L is greater than zero the string S is added 
+			 * If length L is greater than zero the string S is added
 			 */
 			if (L > 0) {
 				value = new StringValue(valueChannel.decodeStringOnly(L));
 				// After encoding the string value, it is added to both the
-				// associated "local" value string table partition and the global
+				// associated "local" value string table partition and the
+				// global
 				// value string table partition.
-				addValue(context, value);	
+				addValue(context, value);
 			} else {
 				// value = EMPTY_STRING_VALUE;
 				value = StringCoder.EMPTY_STRING_VALUE;
@@ -102,7 +104,7 @@ public class StringDecoderImpl implements StringDecoder {
 		int localID = valueChannel.decodeNBitUnsignedInteger(n);
 		return localChars.get(localID);
 	}
-	
+
 	public StringValue readValueGlobalHit(QName context,
 			DecoderChannel valueChannel) throws IOException {
 		int n = MethodsBag.getCodingLength(globalValues.size());
@@ -124,16 +126,16 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!lvs.contains(value));
 		lvs.add(value);
 	}
-	
-//	protected void updateLocalValues(QName context, Value value) {
-//		List<Value> lvs = localValues.get(context);
-//		if (lvs == null) {
-//			lvs = new ArrayList<Value>();
-//			localValues.put(context, lvs);
-//		}
-//		assert (!lvs.contains(value));
-//		lvs.add(value);
-//	}
+
+	// protected void updateLocalValues(QName context, Value value) {
+	// List<Value> lvs = localValues.get(context);
+	// if (lvs == null) {
+	// lvs = new ArrayList<Value>();
+	// localValues.put(context, lvs);
+	// }
+	// assert (!lvs.contains(value));
+	// lvs.add(value);
+	// }
 
 	public void clear() {
 		globalValues.clear();

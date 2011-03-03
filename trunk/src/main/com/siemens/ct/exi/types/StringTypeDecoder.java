@@ -36,7 +36,7 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class StringTypeDecoder extends AbstractTypeDecoder {
-	
+
 	public StringTypeDecoder(StringDecoder stringDecoder) {
 		super(stringDecoder);
 	}

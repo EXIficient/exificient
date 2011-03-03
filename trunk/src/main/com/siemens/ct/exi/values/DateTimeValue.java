@@ -36,7 +36,7 @@ import com.siemens.ct.exi.util.MethodsBag;
 public class DateTimeValue extends AbstractValue {
 
 	private static final long serialVersionUID = 298943383646546462L;
-	
+
 	public static final int NUMBER_BITS_MONTHDAY = 9;
 	public static final int NUMBER_BITS_TIME = 17;
 	public static final int NUMBER_BITS_TIMEZONE = 11;
@@ -515,7 +515,7 @@ public class DateTimeValue extends AbstractValue {
 			default:
 				throw new UnsupportedOperationException();
 			}
-			
+
 			// [TimeZone]
 			if (presenceTimezone) {
 				slen += timezone == 0 ? 1 : 6;
@@ -739,12 +739,12 @@ public class DateTimeValue extends AbstractValue {
 		if (o instanceof DateTimeValue) {
 			return _equals((DateTimeValue) o);
 		} else if (o instanceof String || o instanceof StringValue) {
-			// TODO right type assumption 
+			// TODO right type assumption
 			DateTimeValue d = DateTimeValue.parse(o.toString(), type);
 			if (d == null) {
 				return false;
 			} else {
-				return _equals(d);	
+				return _equals(d);
 			}
 		} else {
 			return false;

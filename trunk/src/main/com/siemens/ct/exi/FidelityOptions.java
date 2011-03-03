@@ -38,15 +38,15 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
  */
 
 public class FidelityOptions implements Serializable {
-	
+
 	private static final long serialVersionUID = 2403291078846997571L;
-	
+
 	/* Comments, ProcessingInstructions, DTDs and Prefixes are preserved */
 	public static final String FEATURE_COMMENT = "PRESERVE_COMMENTS";
 	public static final String FEATURE_PI = "PRESERVE_PIS";
 	public static final String FEATURE_DTD = "PRESERVE_DTDS";
 	public static final String FEATURE_PREFIX = "PRESERVE_PREFIXES";
-	
+
 	/*
 	 * Lexical form of element and attribute values is preserved in value
 	 * content items
@@ -169,7 +169,7 @@ public class FidelityOptions implements Serializable {
 				|| key.equals(FEATURE_DTD) || key.equals(FEATURE_PREFIX)
 				|| key.equals(FEATURE_SC)) {
 			if (decision) {
-				//	
+				//
 				if (isStrict()) {
 					options.remove(FEATURE_STRICT);
 					this.isStrict = false;

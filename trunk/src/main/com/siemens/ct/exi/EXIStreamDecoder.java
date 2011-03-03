@@ -26,9 +26,9 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 
 /**
- * An EXI stream is an EXI header followed by an EXI body. The EXI
- * body carries the content of the document, while the EXI header communicates
- * the options used for encoding the EXI body.
+ * An EXI stream is an EXI header followed by an EXI body. The EXI body carries
+ * the content of the document, while the EXI header communicates the options
+ * used for encoding the EXI body.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -39,27 +39,29 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 public class EXIStreamDecoder {
 
 	protected final EXIHeaderDecoder exiHeader;
-	
+
 	public EXIStreamDecoder() throws EXIException {
 		exiHeader = new EXIHeaderDecoder();
 	}
 
-	public EXIBodyDecoder decodeHeader(EXIFactory noOptionsFactory, InputStream is) throws EXIException, IOException {
+	public EXIBodyDecoder decodeHeader(EXIFactory noOptionsFactory,
+			InputStream is) throws EXIException, IOException {
 
-//		is = new BufferedInputStream(is);
-		
+		// is = new BufferedInputStream(is);
+
 		// read header
 		BitDecoderChannel headerChannel = new BitDecoderChannel(is);
-		EXIFactory exiFactory = exiHeader.parse(headerChannel, noOptionsFactory);
+		EXIFactory exiFactory = exiHeader
+				.parse(headerChannel, noOptionsFactory);
 
 		// setup data-stream for body and create decoder
 		EXIBodyDecoder exiBody = exiFactory.createEXIBodyDecoder();
-		if(exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
+		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
 			// bit-packed re-uses the header channel
 			exiBody.setInputChannel(headerChannel);
 		} else {
 			exiBody.setInputStream(is);
 		}
 		return exiBody;
-	}	
+	}
 }

@@ -69,20 +69,16 @@ public interface Rule extends Serializable {
 	public EventType get3rdLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions);
 
-
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
-
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	/*
-	 * TODO move to SchemaInformedRule 
+	 * TODO move to SchemaInformedRule
 	 */
 	public void addRule(Event event, Rule rule);
-
-	
 
 	/*
 	 * learning grammar
@@ -99,11 +95,9 @@ public interface Rule extends Serializable {
 	 * For moving to element grammar
 	 */
 	public Rule getElementContentRule();
-	
 
 	/*
-	 * TODO move to SchemaInformedRule
-	 * Schema-deviated attributes
+	 * TODO move to SchemaInformedRule Schema-deviated attributes
 	 */
 	public int getNumberOfDeclaredAttributes();
 
@@ -117,17 +111,21 @@ public interface Rule extends Serializable {
 	 * 
 	 * 
 	 */
-	
-	// for encoder	
-	public EventInformation lookForEvent( EventType eventType );
-	
-	public EventInformation lookForStartElement( String namespaceURI, String localName);
-	public EventInformation lookForStartElementNS( String namespaceURI );
 
-	public EventInformation lookForAttribute( String namespaceURI, String localName);
-	public EventInformation lookForAttributeNS( String namespaceURI );
-	
-	//	for decoder
-	public EventInformation lookFor( int eventCode );
-	
+	// for encoder
+	public EventInformation lookForEvent(EventType eventType);
+
+	public EventInformation lookForStartElement(String namespaceURI,
+			String localName);
+
+	public EventInformation lookForStartElementNS(String namespaceURI);
+
+	public EventInformation lookForAttribute(String namespaceURI,
+			String localName);
+
+	public EventInformation lookForAttributeNS(String namespaceURI);
+
+	// for decoder
+	public EventInformation lookFor(int eventCode);
+
 }

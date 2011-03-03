@@ -47,23 +47,24 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class EnumerationDatatype extends AbstractDatatype {
-	
+
 	private static final long serialVersionUID = -5065239322174326749L;
-	
+
 	protected int codingLength;
 	protected Value[] enumValues;
 	protected BuiltInType bitEnumValues;
 	protected int lastValidIndex;
 
-	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues, QName schemaType) {
+	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues,
+			QName schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;
 		this.bitEnumValues = bitEnumValues;
 		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
-		
+
 		// restricted character set
-		switch(bitEnumValues) {
+		switch (bitEnumValues) {
 		/* Binary */
 		case BINARY_BASE64:
 			this.rcs = new XSDBase64CharacterSet();
@@ -84,7 +85,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		case FLOAT:
 		case DOUBLE:
 			this.rcs = new XSDDoubleCharacterSet();
-		/* N-Bit Integer */ /* Unsigned Integer */ /* (Signed) Integer */
+			/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
 		case NBIT_INTEGER_32:
 		case NBIT_INTEGER_64:
 		case NBIT_INTEGER_BIG:
@@ -115,7 +116,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		default:
 			this.rcs = new XSDStringCharacterSet(); // String
 		}
-		
+
 	}
 
 	public int getEnumerationSize() {
@@ -131,79 +132,75 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public boolean isValid(String value) {
 		int index = 0;
 		while (index < enumValues.length) {
-			if ( enumValues[index].equals(value) ) {
-				lastValidIndex = index; 
+			if (enumValues[index].equals(value)) {
+				lastValidIndex = index;
 				return true;
 			}
 			index++;
 		}
 		return false;
 	}
-	
+
 	public boolean isValid(Value value) {
 		int index = 0;
 		while (index < enumValues.length) {
-			if ( enumValues[index].equals(value) ) {
-				lastValidIndex = index; 
+			if (enumValues[index].equals(value)) {
+				lastValidIndex = index;
 				return true;
 			}
 			index++;
 		}
-		
+
 		return false;
 	}
-	
-	
-//	public Value getValue() {
-//		return enumValues[lastValidIndex];
-//	}
+
+	// public Value getValue() {
+	// return enumValues[lastValidIndex];
+	// }
 
 	public Value getEnumValue(int i) {
-		assert(i>=0 && i< enumValues.length);
+		assert (i >= 0 && i < enumValues.length);
 		return enumValues[i];
 	}
 
 	public BuiltInType getEnumValueBuiltInType() {
 		return bitEnumValues;
 	}
-	
-//	@Override
-//	// When the preserve.lexicalValues option is true, enumerated values are
-//	// encoded as String
-//	public boolean isValidRCS(String value) {
-//		// super.isValidRCS(value);
-//		this.lastRCSValue = value;
-//		return true;
-//	}
-//
-//	@Override
-//	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-//			EncoderChannel valueChannel, StringEncoder stringEncoder,
-//			QName context) throws IOException {
-//		// super.writeValueRCS(rcsEncoder, valueChannel, stringEncoder, context)
-//		stringEncoder.writeValue(context, valueChannel, lastRCSValue);
-//	}
-	
-	
+
+	// @Override
+	// // When the preserve.lexicalValues option is true, enumerated values are
+	// // encoded as String
+	// public boolean isValidRCS(String value) {
+	// // super.isValidRCS(value);
+	// this.lastRCSValue = value;
+	// return true;
+	// }
+	//
+	// @Override
+	// public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+	// EncoderChannel valueChannel, StringEncoder stringEncoder,
+	// QName context) throws IOException {
+	// // super.writeValueRCS(rcsEncoder, valueChannel, stringEncoder, context)
+	// stringEncoder.writeValue(context, valueChannel, lastRCSValue);
+	// }
+
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidIndex, codingLength);
 	}
 
-
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
 		int index = valueChannel.decodeNBitUnsignedInteger(codingLength);
-		assert(index >= 0 && index <enumValues.length);
+		assert (index >= 0 && index < enumValues.length);
 		return enumValues[index];
 	}
 
-
-//	@Override
-//	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-//			DecoderChannel valueChannel, StringDecoder stringDecoder,
-//			QName context) throws IOException {
-//		return stringDecoder.readValue(context, valueChannel);
-//	}
+	// @Override
+	// public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+	// DecoderChannel valueChannel, StringDecoder stringDecoder,
+	// QName context) throws IOException {
+	// return stringDecoder.readValue(context, valueChannel);
+	// }
 
 }

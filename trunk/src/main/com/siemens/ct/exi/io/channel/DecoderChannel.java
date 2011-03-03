@@ -25,9 +25,7 @@ import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
-import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.IntegerValue;
-import com.siemens.ct.exi.values.LongValue;
 
 /**
  * 
@@ -47,23 +45,27 @@ public interface DecoderChannel {
 	public int decode() throws IOException;
 
 	/**
-	 * Align to next byte-aligned boundary in the stream if it is not already at such a boundary
+	 * Align to next byte-aligned boundary in the stream if it is not already at
+	 * such a boundary
+	 * 
 	 * @throws IOException
 	 */
 	public void align() throws IOException;
-	
-    /**
-     * Skips over and discards <code>n</code> bytes of data from this channel.
-     * @throws IOException
-     */
-    public void skip(long n) throws IOException;
-	
+
+	/**
+	 * Skips over and discards <code>n</code> bytes of data from this channel.
+	 * 
+	 * @throws IOException
+	 */
+	public void skip(long n) throws IOException;
+
 	/**
 	 * Decodes and returns an n-bit unsigned integer.
 	 */
 	public int decodeNBitUnsignedInteger(int n) throws IOException;
 
-	public IntegerValue decodeNBitUnsignedIntegerValue(int n) throws IOException;
+	public IntegerValue decodeNBitUnsignedIntegerValue(int n)
+			throws IOException;
 
 	/**
 	 * Decode a single boolean value. The value false is represented by the bit
@@ -95,7 +97,7 @@ public interface DecoderChannel {
 	 * @return The character sequence
 	 */
 	public char[] decodeStringOnly(int length) throws IOException;
-	
+
 	/**
 	 * Decode an arbitrary precision non negative integer using a sequence of
 	 * octets. The most significant bit of the last octet is set to zero to
@@ -103,12 +105,8 @@ public interface DecoderChannel {
 	 * store the integer's value.
 	 */
 	public int decodeUnsignedInteger() throws IOException;
-	
+
 	public IntegerValue decodeUnsignedIntegerValue() throws IOException;
-	
-	public LongValue decodeUnsignedLongValue() throws IOException;
-	
-	public HugeIntegerValue decodeUnsignedHugeIntegerValue() throws IOException;
 
 	/**
 	 * Decode an arbitrary precision integer using a sign bit followed by a
@@ -117,11 +115,7 @@ public interface DecoderChannel {
 	 * to store the integer's value.
 	 */
 	public IntegerValue decodeIntegerValue() throws IOException;
-	
-	public LongValue decodeLongValue() throws IOException;
-	
-	public HugeIntegerValue decodeHugeIntegerValue() throws IOException;
-	
+
 	/**
 	 * Decode a decimal represented as a Boolean sign followed by two Unsigned
 	 * Integers. A sign value of zero (0) is used to represent positive Decimal
@@ -143,6 +137,7 @@ public interface DecoderChannel {
 	 * Decode Date-Time as sequence of values representing the individual
 	 * components of the Date-Time.
 	 */
-	public DateTimeValue decodeDateTimeValue(DateTimeType type) throws IOException;
+	public DateTimeValue decodeDateTimeValue(DateTimeType type)
+			throws IOException;
 
 }

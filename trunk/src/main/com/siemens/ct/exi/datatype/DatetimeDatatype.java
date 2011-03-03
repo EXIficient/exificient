@@ -45,7 +45,7 @@ public class DatetimeDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = -3235729895220215225L;
 
 	DateTimeType datetimeType;
-	
+
 	private DateTimeValue lastValidDatetime;
 
 	public DatetimeDatatype(DateTimeType dateType, QName schemaType) {
@@ -57,12 +57,12 @@ public class DatetimeDatatype extends AbstractDatatype {
 	public DateTimeType getDatetimeType() {
 		return datetimeType;
 	}
-	
+
 	public boolean isValid(String value) {
 		lastValidDatetime = DateTimeValue.parse(value, datetimeType);
 		return (lastValidDatetime != null);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof DateTimeValue) {
 			lastValidDatetime = ((DateTimeValue) value);
@@ -73,19 +73,18 @@ public class DatetimeDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
-//	public Value getValue() {
-//		return lastValidDatetime;
-//	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	// public Value getValue() {
+	// return lastValidDatetime;
+	// }
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeDateTime(lastValidDatetime);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeDateTimeValue(datetimeType);
 	}
 

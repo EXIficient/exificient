@@ -40,11 +40,11 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class BooleanDatatype extends AbstractDatatype {
-	
+
 	private static final long serialVersionUID = -6150310956233103627L;
-	
+
 	protected BooleanValue bool;
-	
+
 	public BooleanDatatype(QName schemaType) {
 		super(BuiltInType.BOOLEAN, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
@@ -54,7 +54,7 @@ public class BooleanDatatype extends AbstractDatatype {
 		bool = BooleanValue.parse(value);
 		return (bool != null);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof BooleanValue) {
 			bool = (BooleanValue) value;
@@ -65,14 +65,15 @@ public class BooleanDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
-//	public Value getValue() {
-//		return new BooleanValue(bool);
-//	}
-	
+
+	// public Value getValue() {
+	// return new BooleanValue(bool);
+	// }
+
 	@Override
 	public boolean isValidRCS(String value) {
-		// Note: boolean really needs to do a check since it can be used for xsi:nil
+		// Note: boolean really needs to do a check since it can be used for
+		// xsi:nil
 		super.isValidRCS(value);
 		return isValid(value);
 	}
@@ -80,15 +81,14 @@ public class BooleanDatatype extends AbstractDatatype {
 	public boolean getBoolean() {
 		return bool.toBoolean();
 	}
-	
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeBoolean(bool.toBoolean());
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return valueChannel.decodeBooleanValue();
 	}
 }

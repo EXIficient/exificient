@@ -40,7 +40,7 @@ public class DocEnd extends AbstractSchemaInformedRule {
 
 	public DocEnd() {
 		super();
-		//	add EE rule
+		// add EE rule
 		addTerminalRule(new EndDocument());
 	}
 
@@ -52,7 +52,7 @@ public class DocEnd extends AbstractSchemaInformedRule {
 	public String toString() {
 		return "DocEnd" + super.toString();
 	}
-	
+
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		// has second or third level (CM or PI)

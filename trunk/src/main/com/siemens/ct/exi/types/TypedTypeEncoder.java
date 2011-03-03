@@ -36,24 +36,25 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class TypedTypeEncoder extends AbstractTypeEncoder {
-	
+
 	protected Datatype lastDatatype;
-	
+
 	public TypedTypeEncoder(StringEncoder stringEncoder) {
 		super(stringEncoder);
 	}
 
-//	public boolean isValid(Datatype datatype, String value) {
-//		lastDatatype = datatype;
-//		return datatype.isValid(value);
-//	}
-	
+	// public boolean isValid(Datatype datatype, String value) {
+	// lastDatatype = datatype;
+	// return datatype.isValid(value);
+	// }
+
 	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
 		return datatype.isValid(value);
 	}
-	
-	public void writeValue(QName context, EncoderChannel valueChannel) throws IOException {
+
+	public void writeValue(QName context, EncoderChannel valueChannel)
+			throws IOException {
 		lastDatatype.writeValue(valueChannel, stringEncoder, context);
 	}
 }

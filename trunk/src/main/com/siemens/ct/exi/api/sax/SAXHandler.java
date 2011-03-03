@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.ext.LexicalHandler;
 
-
 public class SAXHandler extends DefaultHandler2 {
 	ContentHandler contentHandler;
 

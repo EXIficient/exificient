@@ -39,13 +39,12 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * FragmentContent (n+1).1.0 PI FragmentContent (n+1).1.1
  */
 
-public class SchemaInformedFragmentContent extends
-		AbstractSchemaInformedRule {
+public class SchemaInformedFragmentContent extends AbstractSchemaInformedRule {
 
 	private static final long serialVersionUID = 2041418874823084368L;
 
 	public SchemaInformedFragmentContent() {
-		//		SE(*) --> FragmentContent
+		// SE(*) --> FragmentContent
 		this.addRule(START_ELEMENT_GENERIC, this);
 		addTerminalRule(new EndDocument());
 	}
@@ -58,22 +57,21 @@ public class SchemaInformedFragmentContent extends
 	public String toString() {
 		return "FragmentContent" + super.toString();
 	}
-	
+
 	public EventType get2ndLevelEvent(int eventCode,
 			FidelityOptions fidelityOptions) {
 		return null;
 	}
-	
+
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
 		// No events on 2nd level
 		return Constants.NOT_FOUND;
 	}
-	
+
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
 		return get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
 	}
-
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {

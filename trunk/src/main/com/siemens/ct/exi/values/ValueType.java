@@ -40,8 +40,8 @@ public enum ValueType {
 	INT_INTEGER,
 	/* long Integer */
 	LONG_INTEGER,
-	/* huge Integer */
-	HUGE_INTEGER,
+	/* Big Integer */
+	BIG_INTEGER,
 	/* Datetime */
 	DATETIME,
 	/* String */

@@ -27,29 +27,30 @@ package com.siemens.ct.exi.values;
  */
 
 public abstract class AbstractValue implements Value {
-	
+
 	private static final long serialVersionUID = 7617762856524097078L;
-	
+
 	protected int slen = -1;
-	
+
 	protected final ValueType valueType;
-	
+
 	public AbstractValue(ValueType valueType) {
 		this.valueType = valueType;
 	}
-	
+
 	public final ValueType getValueType() {
 		return valueType;
 	}
-	
+
 	@Override
 	public String toString() {
 		char[] cbuffer = new char[getCharactersLength()];
 		return new String(toCharacters(cbuffer, 0));
 	}
-	
+
 	public String toString(char[] cbuffer, int offset) {
-		return new String(toCharacters(cbuffer, offset), offset, getCharactersLength());
+		return new String(toCharacters(cbuffer, offset), offset,
+				getCharactersLength());
 	}
 
 }

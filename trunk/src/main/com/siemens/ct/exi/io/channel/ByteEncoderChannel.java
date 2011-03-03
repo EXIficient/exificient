@@ -44,7 +44,7 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 	public OutputStream getOutputStream() {
 		return os;
 	}
-	
+
 	public int getLength() {
 		return len;
 	}
@@ -52,9 +52,9 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 	public void flush() throws IOException {
 		os.flush();
 	}
-	
+
 	public void align() throws IOException {
-		//	already byte aligned
+		// already byte aligned
 	}
 
 	public void encode(int b) throws IOException {

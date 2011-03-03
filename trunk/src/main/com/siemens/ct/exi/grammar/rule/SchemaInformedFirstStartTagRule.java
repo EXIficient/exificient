@@ -31,33 +31,32 @@ import javax.xml.namespace.QName;
 /*
  * first rule is different (namespace declaration, xsi:type and xsi:nil)
  */
-public interface SchemaInformedFirstStartTagRule extends SchemaInformedStartTagRule {
+public interface SchemaInformedFirstStartTagRule extends
+		SchemaInformedStartTagRule {
 
 	/*
 	 * returns type-name or null if anonymous type or element
 	 */
 	public QName getTypeName();
-	
+
 	public void setTypeName(QName typeName);
-	
+
 	/*
 	 * sets whether type is castable
 	 */
 	public void setTypeCastable(boolean hasNamedSubtypes);
 
 	public boolean isTypeCastable();
-	
+
 	/*
 	 * sets whether element is nillable
 	 */
 	public void setNillable(boolean nillable);
-	
+
 	public boolean isNillable();
-	
-	
-	
+
 	public void setTypeEmpty(SchemaInformedFirstStartTagRule typeEmpty);
 
 	public SchemaInformedFirstStartTagRule getTypeEmpty();
-	
+
 }

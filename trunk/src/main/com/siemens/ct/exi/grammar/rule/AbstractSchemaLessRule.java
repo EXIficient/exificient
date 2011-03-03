@@ -41,9 +41,9 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		SchemaLessRule {
-	
+
 	private static final long serialVersionUID = -4412097592336436189L;
-	
+
 	protected List<EventInformation> containers;
 	protected int eventCount;
 
@@ -56,21 +56,20 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	public final boolean isSchemaInformed() {
 		return false;
 	}
-	
+
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return true;
 	}
-	
+
 	public Rule getTypeEmpty() {
 		return this;
 	}
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
-	 		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
-	 				.getCodingLength(eventCount + 1) : MethodsBag
-	 				.getCodingLength(eventCount));
+		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
+				.getCodingLength(eventCount + 1) : MethodsBag
+				.getCodingLength(eventCount));
 	}
-
 
 	public int getNumberOfEvents() {
 		return containers.size();
@@ -83,19 +82,20 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 		// assert (!isTerminalRule());
 		assert (!this.contains(event));
 
-		containers.add(new SchemaLessEventInformation(this, rule, event, getNumberOfEvents()));
+		containers.add(new SchemaLessEventInformation(this, rule, event,
+				getNumberOfEvents()));
 		eventCount = containers.size();
 	}
 
 	protected boolean contains(Event event) {
 		Iterator<EventInformation> iter = containers.iterator();
-		
-		while(iter.hasNext()) {
-			if( iter.next().event.equals(event) ) {
+
+		while (iter.hasNext()) {
+			if (iter.next().event.equals(event)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -115,48 +115,48 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer (this.getLabel() + "//" + "\t");
+		StringBuffer sb = new StringBuffer(this.getLabel() + "//" + "\t");
 
-//		if (this.isTerminalRule()) {
-//			sb.append( "<END_RULE>");
-//		} else {
-			sb.append("[");
-			for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
-				sb.append("," + lookFor(ec).event);
-			}
-			sb.append("]");
-//		}
+		// if (this.isTerminalRule()) {
+		// sb.append( "<END_RULE>");
+		// } else {
+		sb.append("[");
+		for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
+			sb.append("," + lookFor(ec).event);
+		}
+		sb.append("]");
+		// }
 
 		return sb.toString();
 	}
-	
-	
-	
-//	// for encoder
-//	public EventInformation lookFor(EventType eventType, String ... args ) {
-//		for (EventInformation ei : containers) {
-//			if (ei.event.isEventType(eventType)) {
-//				switch(eventType) {
-//				case START_ELEMENT:
-//					if (checkQualifiedName(((StartElement)ei.event).getQName(), args[0], args[1])) {
-//						return ei;
-//					}
-//					break;
-//				case ATTRIBUTE:
-//					if (checkQualifiedName(((Attribute)ei.event).getQName(), args[0], args[1])) {
-//						return ei;
-//					}
-//					break;
-//				default:
-//					return ei;
-//				}
-//			}
-//		}
-//
-//		// nothing found
-//		return null;
-//	}
-	
+
+	// // for encoder
+	// public EventInformation lookFor(EventType eventType, String ... args ) {
+	// for (EventInformation ei : containers) {
+	// if (ei.event.isEventType(eventType)) {
+	// switch(eventType) {
+	// case START_ELEMENT:
+	// if (checkQualifiedName(((StartElement)ei.event).getQName(), args[0],
+	// args[1])) {
+	// return ei;
+	// }
+	// break;
+	// case ATTRIBUTE:
+	// if (checkQualifiedName(((Attribute)ei.event).getQName(), args[0],
+	// args[1])) {
+	// return ei;
+	// }
+	// break;
+	// default:
+	// return ei;
+	// }
+	// }
+	// }
+	//
+	// // nothing found
+	// return null;
+	// }
+
 	public EventInformation lookForEvent(EventType eventType) {
 		for (EventInformation ei : containers) {
 			if (ei.event.isEventType(eventType)) {
@@ -181,7 +181,7 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	public EventInformation lookForStartElementNS(String namespaceURI) {
 		return null; // not found
 	}
-	
+
 	public EventInformation lookForAttribute(String namespaceURI,
 			String localName) {
 		for (EventInformation ei : containers) {
@@ -197,10 +197,10 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	public EventInformation lookForAttributeNS(String namespaceURI) {
 		return null; // not found
 	}
-	
-	//	for decoder
-	public EventInformation lookFor( int eventCode ) {
-		assert(eventCode >= 0 && eventCode < containers.size());
+
+	// for decoder
+	public EventInformation lookFor(int eventCode) {
+		assert (eventCode >= 0 && eventCode < containers.size());
 		return containers.get(getNumberOfEvents() - 1 - eventCode);
 	}
 
