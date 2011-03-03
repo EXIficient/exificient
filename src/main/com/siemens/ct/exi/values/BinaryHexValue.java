@@ -67,10 +67,10 @@ public class BinaryHexValue extends AbstractBinaryValue {
 		}
 		return slen;
 	}
-	
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
 		getCharactersLength();
-		
+
 		int temp;
 		for (int i = 0; i < lengthData; i++) {
 			temp = bytes[i];

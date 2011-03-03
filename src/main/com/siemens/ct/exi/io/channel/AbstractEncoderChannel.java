@@ -23,7 +23,7 @@ import java.math.BigInteger;
 
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.DateTimeValue;
-import com.siemens.ct.exi.values.HugeIntegerValue;
+import com.siemens.ct.exi.values.IntegerValue;
 
 /**
  * 
@@ -60,7 +60,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 */
 	public void encodeStringOnly(final String s) throws IOException {
 		final int lenChars = s.length();
-		for (int i = 0; i<lenChars; i++) {
+		for (int i = 0; i < lenChars; i++) {
 			final char ch = s.charAt(i);
 
 			// Is this a UTF-16 surrogate pair?
@@ -112,12 +112,18 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 			encodeUnsignedBigInteger(bi);
 		}
 	}
-	
-	public void encodeHugeInteger(HugeIntegerValue hi) throws IOException {
-		if (hi.isLongValue) {
-			encodeLong(hi.longValue);
-		} else {
-			encodeBigInteger(hi.bigIntegerValue);
+
+	public void encodeIntegerValue(IntegerValue iv) throws IOException {
+		switch(iv.getValueType()) {
+		case INT_INTEGER:
+			encodeInteger(iv.intValue());
+			break;
+		case LONG_INTEGER:
+			encodeLong(iv.longValue());
+			break;
+		case BIG_INTEGER:
+			encodeBigInteger(iv.bigIntegerValue());
+			break;
 		}
 	}
 
@@ -194,12 +200,19 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		// 0XXXXXXX
 		encode(0 | bi.intValue());
 	}
-	
-	public void encodeUnsignedHugeInteger(HugeIntegerValue hi) throws IOException {
-		if (hi.isLongValue) {
-			encodeUnsignedLong(hi.longValue);
-		} else {
-			encodeUnsignedBigInteger(hi.bigIntegerValue);
+
+	public void encodeUnsignedIntegerValue(IntegerValue iv)
+			throws IOException {
+		switch(iv.getValueType()) {
+		case INT_INTEGER:
+			encodeUnsignedInteger(iv.intValue());
+			break;
+		case LONG_INTEGER:
+			encodeUnsignedLong(iv.longValue());
+			break;
+		case BIG_INTEGER:
+			encodeUnsignedBigInteger(iv.bigIntegerValue());
+			break;
 		}
 	}
 
@@ -212,27 +225,25 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
 
-	public void encodeDecimal(boolean negative, HugeIntegerValue integral,
-			HugeIntegerValue reverseFraction) throws IOException, RuntimeException {
+	public void encodeDecimal(boolean negative, IntegerValue integral,
+			IntegerValue reverseFraction) throws IOException,
+			RuntimeException {
 		// sign, integral, reverse fractional
 		encodeBoolean(negative);
-		encodeUnsignedHugeInteger(integral);
-		encodeUnsignedHugeInteger(reverseFraction);
+		encodeUnsignedIntegerValue(integral);
+		encodeUnsignedIntegerValue(reverseFraction);
 	}
 
 	/**
-	 * Encode a Float represented as two consecutive Integers. The first
-	 * Integer represents the mantissa of the floating point number and the
-	 * second Integer represents the 10-based exponent of the floating point
-	 * number
+	 * Encode a Float represented as two consecutive Integers. The first Integer
+	 * represents the mantissa of the floating point number and the second
+	 * Integer represents the 10-based exponent of the floating point number
 	 */
 	public void encodeFloat(long mantissa, long exponent) throws IOException {
 		// encode mantissa and exponent
 		encodeLong(mantissa);
 		encodeLong(exponent);
 	}
-
-
 
 	public void encodeDateTime(DateTimeValue datetime) throws IOException {
 		switch (datetime.type) {

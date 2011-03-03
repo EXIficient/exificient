@@ -38,17 +38,17 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
-	
+
 	private static final long serialVersionUID = -2644676723844219418L;
-	
+
 	protected Rule docEnd;
 
 	public SchemaInformedDocContent(Rule docEnd) {
 		this.docEnd = docEnd;
-		//	SE(*) --> DocEnd
+		// SE(*) --> DocEnd
 		this.addRule(START_ELEMENT_GENERIC, docEnd);
 	}
-	
+
 	public SchemaInformedDocContent(Rule docEnd, String label) {
 		this(docEnd);
 		this.setLabel(label);
@@ -57,14 +57,13 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
 	public String toString() {
 		return "DocContent" + super.toString();
 	}
-	
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {
-			if (eventType == EventType.DOC_TYPE
+		if (eventType == EventType.DOC_TYPE
 				&& fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-				return 0;
+			return 0;
 		}
 
 		return Constants.NOT_FOUND;
@@ -82,24 +81,23 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
 	}
 
 	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2 = fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
-				: 0;
+		int ch2 = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1 : 0;
 
 		ch2 += get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
 
 		return ch2;
 	}
 
-//	public Rule getElementContentRule() {
-//		System.out.println("docEnd Move");
-//		// return this.docEnd;
-//		return this;
-//	}
-	
-//	public Rule getElementContentRuleForUndeclaredSE() {
-//		return this.docEnd;
-//	}
-	
+	// public Rule getElementContentRule() {
+	// System.out.println("docEnd Move");
+	// // return this.docEnd;
+	// return this;
+	// }
+
+	// public Rule getElementContentRuleForUndeclaredSE() {
+	// return this.docEnd;
+	// }
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {

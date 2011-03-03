@@ -36,15 +36,15 @@ import com.siemens.ct.exi.values.Value;
 
 public interface TypeEncoder extends TypeCoder {
 
-//	/**
-//	 * Checks whether given value is valid according to the datatype.
-//	 * 
-//	 * @param datatype
-//	 * @param value
-//	 * @return boolean value indicating whether passed value is valid
-//	 */
-//	public boolean isValid(Datatype datatype, String value);
-	
+	// /**
+	// * Checks whether given value is valid according to the datatype.
+	// *
+	// * @param datatype
+	// * @param value
+	// * @return boolean value indicating whether passed value is valid
+	// */
+	// public boolean isValid(Datatype datatype, String value);
+
 	/**
 	 * Checks whether given value is valid according to the datatype.
 	 * 
@@ -53,7 +53,7 @@ public interface TypeEncoder extends TypeCoder {
 	 * @return boolean value indicating whether passed value is valid
 	 */
 	public boolean isValid(Datatype datatype, Value value);
-	
+
 	/**
 	 * Writes previously checked valid value to channel.
 	 * 

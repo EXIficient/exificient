@@ -30,6 +30,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
 public class ListTest extends AbstractTestCase {
@@ -117,7 +118,9 @@ public class ListTest extends AbstractTestCase {
 	public void testListNBit1() throws IOException {
 		String s = "+1 0 127 -127";
 		String sRes = "1 0 127 -127";
-		ListDatatype ldtInteger = new ListDatatype(new NBitIntegerDatatype(-128, 127, null), null);
+		IntegerValue min = IntegerValue.valueOf(-128);
+		IntegerValue max = IntegerValue.valueOf(127);
+		ListDatatype ldtInteger = new ListDatatype(new NBitIntegerDatatype(BuiltInType.INTEGER_32, min, max, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);

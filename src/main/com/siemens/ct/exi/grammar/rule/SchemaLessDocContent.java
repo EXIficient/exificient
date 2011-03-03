@@ -38,15 +38,15 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public class SchemaLessDocContent extends AbstractSchemaLessRule {
-	
+
 	private static final long serialVersionUID = 3223520398225946713L;
-	
+
 	protected Rule docEnd;
 
 	public SchemaLessDocContent(Rule docEnd) {
 		super();
 		this.docEnd = docEnd;
-		//	SE(*) --> DocEnd
+		// SE(*) --> DocEnd
 		this.addRule(START_ELEMENT_GENERIC, docEnd);
 	}
 

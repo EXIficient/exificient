@@ -45,8 +45,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		super(exiFactory);
 	}
 
-	public void setInputStream(InputStream is)
-			throws EXIException, IOException {
+	public void setInputStream(InputStream is) throws EXIException, IOException {
 
 		// buffer stream if not already
 		// TODO is there a *nice* way to detect whether a stream is buffered
@@ -56,22 +55,22 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		}
 
 		CodingMode codingMode = exiFactory.getCodingMode();
-		
+
 		// setup data-stream only
 		if (codingMode == CodingMode.BIT_PACKED) {
 			// create new bit-aligned channel
-			 setInputChannel( new BitDecoderChannel(is));
+			setInputChannel(new BitDecoderChannel(is));
 		} else {
 			assert (codingMode == CodingMode.BYTE_PACKED);
 			// create new byte-aligned channel
-			 setInputChannel( new ByteDecoderChannel(is));
+			setInputChannel(new ByteDecoderChannel(is));
 		}
 
 		initForEachRun();
 	}
 
-	public void setInputChannel(DecoderChannel decoderChannel) throws EXIException,
-			IOException {
+	public void setInputChannel(DecoderChannel decoderChannel)
+			throws EXIException, IOException {
 		this.channel = decoderChannel;
 		// this.is = decoderChannel.geInputStream();
 

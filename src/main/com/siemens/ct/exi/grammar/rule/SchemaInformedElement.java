@@ -42,30 +42,33 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * n.(m+3).1
  */
 
-public class SchemaInformedElement extends
-		AbstractSchemaInformedContent {
+public class SchemaInformedElement extends AbstractSchemaInformedContent {
 
 	private static final long serialVersionUID = 7009002330388834813L;
 
 	@Override
 	protected void buildEvents2(FidelityOptions fidelityOptions) {
 		if (fidelityOptions.isStrict()) {
-			//	STRICT element grammars do not dispose of any second level events
+			// STRICT element grammars do not dispose of any second level events
 		} else {
 			int eventCode2 = 0;
 			// EE on second level necessary ?
 			if (!hasEndElement) {
-				events2.add(new EventTypeInformation(EventType.END_ELEMENT_UNDECLARED, eventCode2++));
+				events2.add(new EventTypeInformation(
+						EventType.END_ELEMENT_UNDECLARED, eventCode2++));
 			}
 			// extensibility: SE(*), CH(*)
-			events2.add(new EventTypeInformation(EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
+			events2.add(new EventTypeInformation(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
 			// ER
 			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-				events2.add(new EventTypeInformation(EventType.ENTITY_REFERENCE, eventCode2++));
+				events2.add(new EventTypeInformation(
+						EventType.ENTITY_REFERENCE, eventCode2++));
 			}
 		}
-		
+
 		fidelityOptions2 = fidelityOptions;
 	}
 
@@ -73,7 +76,7 @@ public class SchemaInformedElement extends
 	public SchemaInformedElement clone() {
 		SchemaInformedElement clone = new SchemaInformedElement();
 
-		//	duplicate top level only
+		// duplicate top level only
 		for (int i = 0; i < getNumberOfEvents(); i++) {
 			EventInformation ei = lookFor(i);
 			clone.addRule(ei.event, ei.next);
@@ -81,29 +84,28 @@ public class SchemaInformedElement extends
 
 		return clone;
 	}
-	
-	
+
 	public String toString() {
 		return "Element" + super.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof SchemaInformedElement && super.equals(obj));
 	}
-//
-//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
-//		// TODO Auto-generated method stub
-//	}
+	//
+	// public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
+	// // TODO Auto-generated method stub
+	// }
 
-//	public StartSchemaInformedRule getTypeEmpty() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	// public StartSchemaInformedRule getTypeEmpty() {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
+	//
+	// public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
+	// // TODO Auto-generated method stub
+	//
+	// }
 
 }

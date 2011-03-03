@@ -44,9 +44,9 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 
 	public AbstractBinaryDatatype(BuiltInType binaryType, QName schemaType) {
 		super(binaryType, schemaType);
-		assert(binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
+		assert (binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof AbstractBinaryValue) {
 			bytes = ((AbstractBinaryValue) value).toBytes();
@@ -57,9 +57,9 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeBinary(bytes);
 	}
 }

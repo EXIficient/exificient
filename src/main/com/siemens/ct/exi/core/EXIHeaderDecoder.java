@@ -35,13 +35,16 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
-import com.siemens.ct.exi.values.LongValue;
+import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
+import com.siemens.ct.exi.values.ValueType;
 
 /**
  * EXI Header (see http://www.w3.org/TR/exi/#header)
  * 
- * <p>Decoder</p>
+ * <p>
+ * Decoder
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -68,8 +71,8 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		dtrMapRepresentations.clear();
 	}
 
-	public EXIFactory parse(BitDecoderChannel headerChannel, EXIFactory noOptionsFactory)
-			throws EXIException {
+	public EXIFactory parse(BitDecoderChannel headerChannel,
+			EXIFactory noOptionsFactory) throws EXIException {
 		try {
 			// EXI Cookie
 			if (headerChannel.lookAhead() == '$') {
@@ -135,33 +138,34 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			}
 
 			return exiFactory;
-			
+
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
 
 	}
 
-
-	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel, EXIFactory noOptionsFactory)
-			throws EXIException, IOException {
+	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel,
+			EXIFactory noOptionsFactory) throws EXIException, IOException {
 		EXIBodyDecoderInOrder decoder = (EXIBodyDecoderInOrder) getHeaderFactory()
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
-		
+
 		// clone factory
 		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
-		
-		// STRICT is special, there is no NON STRICT flag --> per default set to non strict
+
+		// STRICT is special, there is no NON STRICT flag --> per default set to
+		// non strict
 		if (exiOptionsFactory.getFidelityOptions().isStrict()) {
-			exiOptionsFactory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_STRICT, false);
+			exiOptionsFactory.getFidelityOptions().setFidelity(
+					FidelityOptions.FEATURE_STRICT, false);
 		}
-		
+
 		clear();
-	
+
 		EventType eventType;
 		while ((eventType = decoder.next()) != null) {
-	
+
 			switch (eventType) {
 			case START_DOCUMENT:
 				decoder.decodeStartDocument();
@@ -198,39 +202,46 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				decoder.decodeNamespaceDeclaration();
 				break;
 			case START_ELEMENT:
-				handleStartElement(decoder.decodeStartElement(), exiOptionsFactory);
+				handleStartElement(decoder.decodeStartElement(),
+						exiOptionsFactory);
 				break;
 			case START_ELEMENT_NS:
-				handleStartElement(decoder.decodeStartElementNS(), exiOptionsFactory);
+				handleStartElement(decoder.decodeStartElementNS(),
+						exiOptionsFactory);
 				break;
 			case START_ELEMENT_GENERIC:
-				handleStartElement(decoder.decodeStartElementGeneric(), exiOptionsFactory);
+				handleStartElement(decoder.decodeStartElementGeneric(),
+						exiOptionsFactory);
 				break;
 			case START_ELEMENT_GENERIC_UNDECLARED:
-				handleStartElement(decoder
-						.decodeStartElementGenericUndeclared(), exiOptionsFactory);
+				handleStartElement(
+						decoder.decodeStartElementGenericUndeclared(),
+						exiOptionsFactory);
 				break;
 			case END_ELEMENT:
 				handleEndElement(decoder.decodeEndElement(), exiOptionsFactory);
 				break;
 			case END_ELEMENT_UNDECLARED:
-				handleEndElement(decoder.decodeEndElementUndeclared(), exiOptionsFactory);
+				handleEndElement(decoder.decodeEndElementUndeclared(),
+						exiOptionsFactory);
 				break;
 			case CHARACTERS:
 				handleCharacters(decoder.decodeCharacters(), exiOptionsFactory);
 				break;
 			case CHARACTERS_GENERIC:
-				handleCharacters(decoder.decodeCharactersGeneric(), exiOptionsFactory);
+				handleCharacters(decoder.decodeCharactersGeneric(),
+						exiOptionsFactory);
 				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				handleCharacters(decoder.decodeCharactersGenericUndeclared(), exiOptionsFactory);
+				handleCharacters(decoder.decodeCharactersGenericUndeclared(),
+						exiOptionsFactory);
 				break;
 			default:
 				throw new RuntimeException("Unexpected EXI Event in Header '"
 						+ eventType + "' ");
 			}
 		}
-	
+
 		// dtr map?
 		if (dtrMapTypes.size() == dtrMapTypes.size() && dtrMapTypes.size() > 0) {
 			QName[] dtrMapTypesA = new QName[dtrMapTypes.size()];
@@ -239,11 +250,10 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 					.size()];
 			dtrMapRepresentationsA = dtrMapRepresentations
 					.toArray(dtrMapRepresentationsA);
-			exiOptionsFactory
-					.setDatatypeRepresentationMap(dtrMapTypesA,
-							dtrMapRepresentationsA);
+			exiOptionsFactory.setDatatypeRepresentationMap(dtrMapTypesA,
+					dtrMapRepresentationsA);
 		}
-		
+
 		return exiOptionsFactory;
 	}
 
@@ -290,8 +300,8 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			} else if (FRAGMENT.equals(localName)) {
 				f.setFragment(true);
 			} else if (STRICT.equals(localName)) {
-				f.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_STRICT,
-						true);
+				f.getFidelityOptions().setFidelity(
+						FidelityOptions.FEATURE_STRICT, true);
 			}
 		}
 
@@ -313,29 +323,63 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		String localName = lastSE.getLocalPart();
 
 		if (VALUE_MAX_LENGTH.equals(localName)) {
-			if (value instanceof LongValue) {
-				LongValue lv = (LongValue) value;
-				f.setValueMaxLength((int) lv.toLong());
+			if (value instanceof IntegerValue) {
+				IntegerValue iv = (IntegerValue) value;
+				if (iv.getValueType() == ValueType.INT_INTEGER) {
+					f.setValueMaxLength(iv.intValue());
+				} else {
+					throw new EXIException("[EXI-Header] ValueMaxLength other than int not supported: " + iv);
+				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
+//			if (value instanceof LongValue) {
+//				LongValue lv = (LongValue) value;
+//				f.setValueMaxLength((int) lv.toLong());
+//			} else {
+//				throw new EXIException("[EXI-Header] Failure while processing "
+//						+ localName);
+//			}
 		} else if (VALUE_PARTITION_CAPACITY.equals(localName)) {
-			if (value instanceof LongValue) {
-				LongValue lv = (LongValue) value;
-				f.setValuePartitionCapacity((int) lv.toLong());
+			if (value instanceof IntegerValue) {
+				IntegerValue iv = (IntegerValue) value;
+				if (iv.getValueType() == ValueType.INT_INTEGER) {
+					f.setValuePartitionCapacity(iv.intValue());
+				} else {
+					throw new EXIException("[EXI-Header] ValuePartitionCapacity other than int not supported: " + iv);
+				}
+				
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
+//			if (value instanceof LongValue) {
+//				LongValue lv = (LongValue) value;
+//				f.setValuePartitionCapacity((int) lv.toLong());
+//			} else {
+//				throw new EXIException("[EXI-Header] Failure while processing "
+//						+ localName);
+//			}
 		} else if (BLOCK_SIZE.equals(localName)) {
-			if (value instanceof LongValue) {
-				LongValue lv = (LongValue) value;
-				f.setBlockSize((int) lv.toLong());
+			if (value instanceof IntegerValue) {
+				IntegerValue iv = (IntegerValue) value;
+				if (iv.getValueType() == ValueType.INT_INTEGER) {
+					f.setBlockSize(iv.intValue());	
+				} else {
+					throw new EXIException("[EXI-Header] BlockSize other than int not supported: " + iv);
+				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
+//			if (value instanceof LongValue) {
+//				LongValue lv = (LongValue) value;
+//				f.setBlockSize((int) lv.toLong());
+//			} else {
+//				throw new EXIException("[EXI-Header] Failure while processing "
+//						+ localName);
+//			}
 		} else if (SCHEMA_ID.equals(localName)) {
 			String schemaId = value.toString();
 			if (Constants.EMPTY_STRING.equals(value.toString())) {
@@ -348,7 +392,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				Grammar g = grammarFactory.createGrammar(schemaId);
 				f.setGrammar(g);
 			}
-		} 
+		}
 	}
 
 	protected void handleXsiNil(Value value, EXIFactory f) throws EXIException {

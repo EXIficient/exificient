@@ -29,24 +29,23 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class PreReadValue {
-	
+
 	protected Value[] contentValues;
 	protected int index;
-	
+
 	public PreReadValue(Value[] contentValues) {
 		setValues(contentValues);
 	}
-	
+
 	protected void setValues(Value[] contentValues) {
 		this.contentValues = contentValues;
-		this.index = 0; 
+		this.index = 0;
 	}
-	
+
 	public Value[] getValues() {
 		return contentValues;
 	}
-	
-	
+
 	public Value getNextContantValue() {
 		return contentValues[index++];
 	}

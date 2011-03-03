@@ -21,21 +21,13 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
 import org.junit.Test;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.values.Value;
 
 public class RegularExpressionTest extends AbstractTestCase {
 
@@ -49,9 +41,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testCategoryEscape2() throws EXIException {
@@ -59,9 +49,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testCategoryEscape3() throws EXIException {
@@ -69,19 +57,15 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testComplEscape1() throws EXIException {
 		String regex = "\\P{M}";
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testComplEscape2() throws EXIException {
@@ -89,9 +73,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testMultiCharEsc1() throws EXIException {
@@ -99,11 +81,9 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertFalse(re.isEntireSetOfXMLCharacters());
-			Set<Integer> codePoints = re.getCodePoints();
-			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 4);
-		}
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		Set<Integer> codePoints = re.getCodePoints();
+		assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 4);
 	}
 
 	public void testMultiCharEsc2() throws EXIException {
@@ -111,9 +91,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern23() throws EXIException {
@@ -122,40 +100,15 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			assertFalse(re.isEntireSetOfXMLCharacters());
-			Set<Integer> codePoints = re.getCodePoints();
-			// <!-- 3.1.0 46 Chars -->
-			// <!-- 3.2.0 48 Chars -->
-			// <!-- 4.0 114 Chars -->
-			// <!-- 6.0.0d2 202 Chars -->
-			if (EXIRegularExpression.USE_UNICODE_4_0) {
-				assertTrue("CP Size=" + codePoints.size(),
-						codePoints.size() == 114);
-			} else {
-				assertTrue("CP Size=" + codePoints.size(),
-						codePoints.size() == 46);
-			}
-		}
-
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testNonUnicode3_1_0() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("\uFFFF");
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertFalse(re.isEntireSetOfXMLCharacters());
-			Set<Integer> codePoints = re.getCodePoints();
-			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 1);
-		} else if (EXIRegularExpression.USE_UNICODE_4_0) {
-			assertFalse(re.isEntireSetOfXMLCharacters());
-			Set<Integer> codePoints = re.getCodePoints();
-			assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 1);
-		} else {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertFalse(re.isEntireSetOfXMLCharacters());
+		Set<Integer> codePoints = re.getCodePoints();
+		assertTrue("CP Size=" + codePoints.size(), codePoints.size() == 1);
 	}
 
 	public void testNonBMP() throws Exception {
@@ -178,11 +131,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// UnicodeData-3.2.0: 03D7 .. 03DA (4 chars, 03D8 & 03D9)
 		EXIRegularExpression re = new EXIRegularExpression("[\u03D7-\u03DA]");
 		assertFalse(re.isEntireSetOfXMLCharacters());
-		if (EXIRegularExpression.USE_UNICODE_4_0) {
-			assertTrue(re.getCodePoints().size() == 4);
-		} else {
-			assertTrue(re.getCodePoints().size() == 2);
-		}
+		assertTrue(re.getCodePoints().size() == 4);
 	}
 
 	@Test
@@ -406,17 +355,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// Number decimal digit
 		String regex = "\\d";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
-			assertTrue(rcs.getCodePoint(0) == '0');
-			assertTrue(rcs.getCode('3') == 3);
-			assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
-			assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
-		}
+		
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern15() throws EXIException {
@@ -424,16 +364,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "\\p{Nd}";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
-			assertTrue(rcs.getCodePoint(1) == '1');
-			assertTrue(rcs.getCode('6') == 6);
-			assertTrue(rcs.getCode('?') == Constants.NOT_FOUND);
-			assertTrue(rcs.getCodingLength() == 8); // plenty of other stuff
-		}
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern16() throws EXIException {
@@ -520,53 +451,15 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "--0\\d --0\\d --0\\d --0\\d --\\d1 --0\\d --0\\d";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			// multi characters ...
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-
-			assertFalse(re.isEntireSetOfXMLCharacters());
-
-			String s = "--00 --00 --00 --00 --01 --00 --00";
-
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
-			RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
-					rcs, null);
-
-			boolean valid = rcsDatatype.isValid(s);
-			assertTrue(valid);
-
-			StringEncoder stringEncoder = new StringEncoderImpl();
-			StringDecoder stringDecoder = new StringDecoderImpl();
-			QName context = new QName("bla");
-
-			// Bit
-			EncoderChannel bitEC = getBitEncoder();
-			rcsDatatype.writeValue(bitEC, stringEncoder, context);
-			bitEC.flush();
-			Value v1 = rcsDatatype.readValue(getBitDecoder(), stringDecoder,
-					context);
-			assertTrue(s.equals(v1.toString()));
-
-			// Byte
-			EncoderChannel byteEC = getByteEncoder();
-			rcsDatatype.writeValue(byteEC, stringEncoder, context);
-			Value v2 = rcsDatatype.readValue(getByteDecoder(), stringDecoder,
-					context);
-			assertTrue(s.equals(v2.toString()));
-		}
+		// multi characters ...
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern25() throws EXIException {
 		// unicode database 3.2 ONLY!
 		EXIRegularExpression re = new EXIRegularExpression("\u303B");
-		if (EXIRegularExpression.USE_UNICODE_4_0) {
-			assertTrue(!re.isEntireSetOfXMLCharacters());
-			assertTrue(re.getCodePoints().size() == 1);
-		} else {
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		}
+		assertTrue(!re.isEntireSetOfXMLCharacters());
+		assertTrue(re.getCodePoints().size() == 1);
 	}
 
 	public void testPattern26() throws EXIException {
@@ -691,52 +584,16 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression(
 				"\\d{3}-[A-Z]{2}|\\d{7}");
 
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			// multi characters ...
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			Set<Integer> codePoints = re.getCodePoints();
-
-			// Note: \d stands for any decimal digit BUT contains more than just
-			// digits
-
-			assertTrue(codePoints.contains(codePoint('0')));
-			assertTrue(codePoints.contains(codePoint('3')));
-			assertTrue(codePoints.contains(codePoint('9')));
-			assertTrue(codePoints.contains(codePoint('-')));
-			assertTrue(codePoints.contains(codePoint('X')));
-			assertFalse(codePoints.contains(codePoint('a')));
-
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
-			assertTrue(rcs.getCode('1') == 2);
-			assertTrue(rcs.getCodePoint(12) == 'B');
-			assertTrue(rcs.getCodingLength() == 8);
-		}
+		// multi characters ...
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testBasicLatin() throws Exception {
 		// \p{IsBasicLatin}
 		EXIRegularExpression re = new EXIRegularExpression("\\p{IsBasicLatin}");
 		
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			// block ...
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			Set<Integer> codePoints = re.getCodePoints();
-			// System.out.println("IsBasicLatin Size = " + charSet.size());
-			assertTrue(codePoints.size() < 256);
-			assertTrue(codePoints.contains(codePoint('a')));
-			assertTrue(codePoints.contains(codePoint('n')));
-			assertTrue(codePoints.contains(codePoint('Z')));
-			assertFalse(codePoints.contains(codePoint('â')));
-			assertFalse(codePoints.contains(codePoint('ß')));
-
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
-			assertTrue(rcs.getCode('C') == 67);
-			assertTrue(rcs.getCodingLength() == 8);	
-		}
+		// block ...
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testNonBasicLatin() throws Exception {
@@ -819,14 +676,8 @@ public class RegularExpressionTest extends AbstractTestCase {
 		EXIRegularExpression re = new EXIRegularExpression(
 				"[\\p{Ll}\\p{Lu}-[\\p{IsBasicLatin}]]");
 		
-		if (EXIRegularExpression.USE_STABLE_ESCAPES_ONLY) {
-			// catEsc, block & ...
-			assertTrue(re.isEntireSetOfXMLCharacters());
-		} else {
-			Set<Integer> codePoints = re.getCodePoints();
-			// System.out.println("Size = " + charSet.size());
-			assertTrue(codePoints.size() > 256);	
-		}
+		// catEsc, block & ...
+		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testSubtraction4() throws EXIException {

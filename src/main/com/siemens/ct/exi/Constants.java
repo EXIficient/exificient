@@ -75,7 +75,8 @@ public interface Constants {
 	 * 
 	 */
 	public static final String EMPTY_STRING = "";
-	// public static final StringValue EMPTY_STRING_VALUE = new StringValue(Constants.EMPTY_STRING);
+	// public static final StringValue EMPTY_STRING_VALUE = new
+	// StringValue(Constants.EMPTY_STRING);
 
 	public static final String XSI_SCHEMA_LOCATION = "schemaLocation";
 	public static final String XSI_NONAMESPACE_SCHEMA_LOCATION = "noNamespaceSchemaLocation";
@@ -147,7 +148,7 @@ public interface Constants {
 			.toCharArray();
 
 	/* -(2^14) == -16384 */
-	public static final int FLOAT_SPECIAL_VALUES = -16384; 
+	public static final int FLOAT_SPECIAL_VALUES = -16384;
 	public static final int FLOAT_MANTISSA_INFINITY = 1;
 	public static final int FLOAT_MANTISSA_MINUS_INFINITY = -1;
 	public static final int FLOAT_MANTISSA_NOT_A_NUMBER = 0;
@@ -155,10 +156,10 @@ public interface Constants {
 	/* -(2^14-1) == -16383 */
 	public static final long FLOAT_EXPONENT_MIN_RANGE = -16383;
 	/* 2^14-1 == 16383 */
-	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383; 
+	public static final long FLOAT_EXPONENT_MAX_RANGE = 16383;
 	/* -(2^63) == -9223372036854775808L */
 	public static final long FLOAT_MANTISSA_MIN_RANGE = -9223372036854775808L;
 	/* 2^63-1 == 9223372036854775807L */
-	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L; 
+	public static final long FLOAT_MANTISSA_MAX_RANGE = 9223372036854775807L;
 
 }

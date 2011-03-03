@@ -33,6 +33,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.datatype.QNameDatatype;
+import com.siemens.ct.exi.datatype.QNameDatatypeNoAdds;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -50,7 +51,7 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
  * @version 0.6
  */
 
-public abstract class AbstractEXIBody {
+public abstract class AbstractEXIBodyCoder {
 
 	// xsi:type & nil
 	static final QName XSI_NIL = new QName(
@@ -83,10 +84,14 @@ public abstract class AbstractEXIBody {
 	// SE pool
 	protected Map<QName, StartElement> runtimeElements;
 
-	public AbstractEXIBody(EXIFactory exiFactory) throws EXIException {
+	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
 		// QName datatype (coder)
-		qnameDatatype = new QNameDatatype(this, null);
+		if (exiFactory.usesProfile(EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE)) {
+			qnameDatatype = new QNameDatatypeNoAdds(this, null);
+		} else {
+			qnameDatatype = new QNameDatatype(this, null);
+		}
 
 		initFactoryInformation();
 
@@ -104,15 +109,15 @@ public abstract class AbstractEXIBody {
 	protected void initFactoryInformation() throws EXIException {
 		this.grammar = exiFactory.getGrammar();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
-		
+
 		// preserve prefixes
 		preservePrefix = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-		
+
 		// preserve lecicalValues
 		preserveLexicalValues = fidelityOptions
-		.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
-		
+				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
+
 		qnameDatatype.setPreservePrefix(preservePrefix);
 		qnameDatatype.setGrammarURIEnties(grammar.getGrammarEntries());
 
@@ -128,9 +133,8 @@ public abstract class AbstractEXIBody {
 		runtimeElements.clear();
 
 		// possible document/fragment grammar
-		currentRule = exiFactory.isFragment() ? grammar
-				.getFragmentGrammar() : grammar
-				.getDocumentGrammar();
+		currentRule = exiFactory.isFragment() ? grammar.getFragmentGrammar()
+				: grammar.getDocumentGrammar();
 
 		// (core) context
 		elementContextStackIndex = 0;
@@ -206,14 +210,21 @@ public abstract class AbstractEXIBody {
 		// is there a global element that should be used
 		StartElement nextSE = grammar.getGlobalElement(qname);
 		if (nextSE == null) {
-			// no global element --> runtime start element
-			nextSE = runtimeElements.get(qname);
-			if (nextSE == null) {
-				// create new start element and new runtime rule
+			// ultra-constrained device profile
+			if (exiFactory
+					.usesProfile(EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE)) {
 				nextSE = new StartElement(qname);
-				nextSE.setRule(new SchemaLessStartTag());
-				// add element to runtime map
-				runtimeElements.put(qname, nextSE);
+				nextSE.setRule(grammar.getUrTypeGrammar());
+			} else {
+				// no global element --> runtime start element
+				nextSE = runtimeElements.get(qname);
+				if (nextSE == null) {
+					// create new start element and new runtime rule
+					nextSE = new StartElement(qname);
+					nextSE.setRule(new SchemaLessStartTag());
+					// add element to runtime map
+					runtimeElements.put(qname, nextSE);
+				}
 			}
 		}
 

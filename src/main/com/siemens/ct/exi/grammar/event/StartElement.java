@@ -31,30 +31,29 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public class StartElement extends AbstractEvent {
-	
+
 	private static final long serialVersionUID = -874684674312937990L;
 
 	protected final QName qname;
-	
+
 	private Rule rule;
 
 	public StartElement(QName qname) {
 		super(EventType.START_ELEMENT);
 		this.qname = qname;
 	}
-	
+
 	public QName getQName() {
 		return this.qname;
 	}
-	
+
 	public void setRule(Rule rule) {
 		this.rule = rule;
 	}
-	
+
 	public Rule getRule() {
 		return rule;
 	}
-	
 
 	public String toString() {
 		return super.toString() + "(" + qname.toString() + ")";

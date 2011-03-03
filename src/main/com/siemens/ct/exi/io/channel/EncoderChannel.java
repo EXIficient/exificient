@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 
 import com.siemens.ct.exi.values.DateTimeValue;
-import com.siemens.ct.exi.values.HugeIntegerValue;
+import com.siemens.ct.exi.values.IntegerValue;
 
 /**
  * 
@@ -42,8 +42,8 @@ public interface EncoderChannel {
 	/**
 	 * Returns the number of bytes written.
 	 * 
-	 * This feature is optional and channels that no not support this
-	 * feature are required to report -1.
+	 * This feature is optional and channels that no not support this feature
+	 * are required to report -1.
 	 * */
 	public int getLength();
 
@@ -98,7 +98,7 @@ public interface EncoderChannel {
 
 	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
 
-	public void encodeUnsignedHugeInteger(HugeIntegerValue hi)
+	public void encodeUnsignedIntegerValue(IntegerValue iv)
 			throws IOException;
 
 	/**
@@ -113,7 +113,7 @@ public interface EncoderChannel {
 
 	public void encodeBigInteger(BigInteger bi) throws IOException;
 
-	public void encodeHugeInteger(HugeIntegerValue hi) throws IOException;
+	public void encodeIntegerValue(IntegerValue iv) throws IOException;
 
 	/**
 	 * Encode a decimal represented as a Boolean sign followed by two Unsigned
@@ -123,8 +123,8 @@ public interface EncoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	public void encodeDecimal(boolean negative, HugeIntegerValue integral,
-			HugeIntegerValue reverseFraction) throws IOException;
+	public void encodeDecimal(boolean negative, IntegerValue integral,
+			IntegerValue reverseFraction) throws IOException;
 
 	/**
 	 * Encode a Float represented as two consecutive Integers. The first Integer

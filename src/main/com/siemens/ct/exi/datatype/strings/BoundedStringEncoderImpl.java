@@ -38,22 +38,22 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 
 	/* global ID */
 	protected int globalID;
-	
+
 	/* globalID mapping: index -> string value */
 	protected String[] globalIdMapping;
-	
+
 	public BoundedStringEncoderImpl(int valueMaxLength,
 			int valuePartitionCapacity) {
 		super();
 		this.valueMaxLength = valueMaxLength;
 		this.valuePartitionCapacity = valuePartitionCapacity;
-		
+
 		this.globalID = -1;
 		if (valuePartitionCapacity >= 0) {
-			globalIdMapping = new String[valuePartitionCapacity];	
+			globalIdMapping = new String[valuePartitionCapacity];
 		}
 	}
-	
+
 	@Override
 	public void addValue(QName context, String value) {
 		// first: check "valueMaxLength"
@@ -76,7 +76,7 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 				 * compact identifier permanently unassigned.
 				 */
 				assert (!stringValues.containsKey(value));
-				
+
 				int localValCnt = updateLocalValueCount(context);
 
 				/*
@@ -85,24 +85,26 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 				 * resulting value of globalID is equal to
 				 * valuePartitionCapacity, its value is reset to zero (0)
 				 */
-				if ( (++globalID) == valuePartitionCapacity) {
+				if ((++globalID) == valuePartitionCapacity) {
 					globalID = 0;
 				}
-				
+
 				if (stringValues.size() == valuePartitionCapacity) {
 					// full --> remove old value
-					// System.out.println("remove val '" + globalIdMapping[globalID] + "'");
+					// System.out.println("remove val '" +
+					// globalIdMapping[globalID] + "'");
 					// System.out.println(stringValues.toString());
 					stringValues.remove(globalIdMapping[globalID]);
 				}
-				
-				ValueContainer vc = new ValueContainer(context, localValCnt, globalID);
+
+				ValueContainer vc = new ValueContainer(context, localValCnt,
+						globalID);
 				globalIdMapping[globalID] = value;
 				stringValues.put(value, vc);
 			}
 		}
 	}
-	
+
 	@Override
 	public void clear() {
 		super.clear();

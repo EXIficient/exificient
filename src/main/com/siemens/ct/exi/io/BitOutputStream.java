@@ -139,7 +139,7 @@ public class BitOutputStream extends OutputStream {
 		capacity--;
 		flushBuffer();
 	}
-	
+
 	/**
 	 * Write the n least significant bits of parameter b starting with the most
 	 * significant, i.e. from left to right.

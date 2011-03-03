@@ -32,8 +32,7 @@ public class DocType {
 	public final char[] systemID;
 	public final char[] text;
 
-	public DocType(char[] name, char[] publicID, char[] systemID,
-			char[] text) {
+	public DocType(char[] name, char[] publicID, char[] systemID, char[] text) {
 		this.name = name;
 		this.publicID = publicID;
 		this.systemID = systemID;

@@ -81,7 +81,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	protected static final Event ATTRIBUTE_GENERIC = new AttributeGeneric();
 	protected static final Event CHARACTERS_GENERIC = new CharactersGeneric();
 
-	
 	protected static final boolean forUPA = false;
 
 	protected static final LexicographicSort lexSort = new LexicographicSort();
@@ -109,15 +108,15 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		elementPool.clear();
 		schemaParsingErrors.clear();
 	}
-	
-//	class NoXMLEntityResolver implements XMLEntityResolver {
-//		public XMLInputSource resolveEntity(
-//				org.apache.xerces.xni.XMLResourceIdentifier resourceIdentifier)
-//				throws XNIException, IOException {
-//			// Note: If the entity cannot be resolved, this method should return null
-//			return null;
-//		}
-//	}
+
+	// class NoXMLEntityResolver implements XMLEntityResolver {
+	// public XMLInputSource resolveEntity(
+	// org.apache.xerces.xni.XMLResourceIdentifier resourceIdentifier)
+	// throws XNIException, IOException {
+	// // Note: If the entity cannot be resolved, this method should return null
+	// return null;
+	// }
+	// }
 
 	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
 		try {
@@ -126,11 +125,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// load XSD schema & get XSModel
 			XMLSchemaLoader sl = new XMLSchemaLoader();
 			sl.setErrorHandler(this);
-//			sl.setEntityResolver(new NoXMLEntityResolver());
-			
+			// sl.setEntityResolver(new NoXMLEntityResolver());
+
 			SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
 
-			
 			// set XSModel
 			xsModel = g.toXSModel();
 
@@ -138,12 +136,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// NOTE: it is needed but not really used later on
 			// (substitution groups are handled separately)
 			// Xerces Version 2.9.1
-			//XSGrammarBucket grammarBucket = new XSGrammarBucket();
+			// XSGrammarBucket grammarBucket = new XSGrammarBucket();
 			// grammarBucket.putGrammar(g, true);
 			// subGroupHandler = new SubstitutionGroupHandler(grammarBucket);
 			// Xerces Version 2.11.0
 			subGroupHandler = new SubstitutionGroupHandler(sl);
-			
+
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}
@@ -196,8 +194,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		// minOccurs: value can be 0 or 1
 		assert (particle.getMaxOccurs() == 1);
 		assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
-		
-		throw new RuntimeException("All model group handling should not call createAllCM(...)");
+
+		throw new RuntimeException(
+				"All model group handling should not call createAllCM(...)");
 		// return super.createAllCM(particle);;
 	}
 
@@ -217,20 +216,22 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 		return val;
 	}
-	
-	
-	private void getMaxOccursUnboundedElements(List<XSElementDeclaration> elementsMaxOccursUnbounded, XSParticle xsParticle) {
+
+	private void getMaxOccursUnboundedElements(
+			List<XSElementDeclaration> elementsMaxOccursUnbounded,
+			XSParticle xsParticle) {
 		XSTerm xsTerm = xsParticle.getTerm();
-		
+
 		if (xsTerm instanceof XSElementDeclaration) {
 			XSElementDeclaration xse = (XSElementDeclaration) xsTerm;
-			if (xsParticle.getMaxOccursUnbounded() && !elementsMaxOccursUnbounded.contains(xse)) {
+			if (xsParticle.getMaxOccursUnbounded()
+					&& !elementsMaxOccursUnbounded.contains(xse)) {
 				elementsMaxOccursUnbounded.add(xse);
 			}
-		} else if (xsTerm instanceof XSModelGroup ) {
+		} else if (xsTerm instanceof XSModelGroup) {
 			XSModelGroup smg = (XSModelGroup) xsTerm;
 			XSObjectList particles = smg.getParticles();
-			for(int i=0; i<particles.getLength(); i++) {
+			for (int i = 0; i < particles.getLength(); i++) {
 				XSParticle xsp = (XSParticle) particles.item(i);
 				getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsp);
 			}
@@ -239,7 +240,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 	}
 
-	
 	protected SchemaInformedRule handleParticle(XSComplexTypeDefinition ctd,
 			boolean isMixedContent) throws EXIException {
 
@@ -270,26 +270,30 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					allRule.addRule(se, allRule);
 				} else {
 					throw new RuntimeException(
-							"No XSElementDeclaration for xsd:all particle, " + tt);
+							"No XSElementDeclaration for xsd:all particle, "
+									+ tt);
 				}
 			}
 
 			return allRule;
 		} else {
 			// complex types other than xsd:all model groups
-			XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd, forUPA);
-			
+			XSCMValidator xscmVal = getContentModel((XSComplexTypeDecl) ctd,
+					forUPA);
+
 			int[] state = xscmVal.startContentModel();
 			@SuppressWarnings("unchecked")
 			Vector<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
-			
+
 			// elements that have a given maxOccurs unbounded
 			List<XSElementDeclaration> elementsMaxOccursUnbounded = new ArrayList<XSElementDeclaration>();
-			getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsParticle);
-			
+			getMaxOccursUnboundedElements(elementsMaxOccursUnbounded,
+					xsParticle);
+
 			boolean isEnd = xscmVal.endContentModel(state);
-			
-			CMState startState = new CMState(possibleElements, isEnd, state, elementsMaxOccursUnbounded);
+
+			CMState startState = new CMState(possibleElements, isEnd, state,
+					elementsMaxOccursUnbounded);
 			if (DEBUG) {
 				System.out.println("Start = " + startState);
 			}
@@ -305,10 +309,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 	abstract protected StartElement translatElementDeclarationToFSA(
 			XSElementDeclaration xsElementDeclaration) throws EXIException;
-	
+
 	private void handleStateEntries(Vector<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
-			Map<CMState, SchemaInformedRule> knownStates, boolean isMixedContent, List<XSElementDeclaration> elementsMaxOccursUnbounded)
+			Map<CMState, SchemaInformedRule> knownStates,
+			boolean isMixedContent,
+			List<XSElementDeclaration> elementsMaxOccursUnbounded)
 			throws EXIException {
 		assert (knownStates.containsKey(startState));
 
@@ -320,13 +326,13 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			if (xs.getType() == XSConstants.ELEMENT_DECLARATION) {
 				// make transition
 				XSElementDeclaration nextEl = (XSElementDeclaration) xs;
-				QName qname = new QName(null, nextEl.getName(), null, nextEl
-						.getNamespace());
+				QName qname = new QName(null, nextEl.getName(), null,
+						nextEl.getNamespace());
 				Object nextRet = xscmVal.oneTransition(qname, cstate,
 						subGroupHandler);
 				// check whether right transition was taken
 				assert (xs == nextRet);
-				
+
 				// next possible state
 				@SuppressWarnings("unchecked")
 				Vector<XSObject> nextPossibleElements = xscmVal
@@ -359,7 +365,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				if (isNewState) {
 					handleStateEntries(nextPossibleElements, xscmVal, cstate,
-							nextState, knownStates, isMixedContent, elementsMaxOccursUnbounded);
+							nextState, knownStates, isMixedContent,
+							elementsMaxOccursUnbounded);
 				}
 
 			} else {
@@ -391,7 +398,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							knownStates, xsEvent, nextState, isMixedContent);
 					if (isNewState) {
 						handleStateEntries(nextPossibleElements, xscmVal,
-								cstate, nextState, knownStates, isMixedContent, elementsMaxOccursUnbounded);
+								cstate, nextState, knownStates, isMixedContent,
+								elementsMaxOccursUnbounded);
 					}
 
 				} else {
@@ -430,9 +438,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			}
 		}
 	}
-	
-	abstract protected void addLocalNameStringEntry(String namespaceURI, String localName);
-	
+
+	abstract protected void addLocalNameStringEntry(String namespaceURI,
+			String localName);
+
 	abstract protected List<String> addNamespaceStringEntry(String namespaceURI);
 
 	/**
@@ -534,7 +543,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		protected int[] state;
 		protected List<XSElementDeclaration> elementsMaxOccursUnbounded;
 
-		public CMState(Vector<XSObject> states, boolean end, int[] state, List<XSElementDeclaration> elementsMaxOccursUnbounded) {
+		public CMState(Vector<XSObject> states, boolean end, int[] state,
+				List<XSElementDeclaration> elementsMaxOccursUnbounded) {
 			this.states = states;
 			this.end = end;
 			this.elementsMaxOccursUnbounded = elementsMaxOccursUnbounded;
@@ -552,18 +562,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					// NOTE: 3rd item is counter only!
 					if (state[0] == other.state[0]
 							&& state[1] == other.state[1]) {
-						if (states.size() == 0 && other.states.size() == 0 ) {
+						if (states.size() == 0 && other.states.size() == 0) {
 							return true;
 						} else if (state[2] != other.state[2]) {
 							// any element maxOccurs unbounded
-							for(XSObject s : states) {
+							for (XSObject s : states) {
 								if (elementsMaxOccursUnbounded.contains(s)) {
 									return true;
 								}
 							}
 							return false;
 						} else {
-							return true;	
+							return true;
 						}
 					}
 				}

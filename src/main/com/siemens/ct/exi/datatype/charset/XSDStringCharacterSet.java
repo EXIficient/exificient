@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
-
 /**
  * Built-In Restricted Character Set for xsd:integer
  * http://www.w3.org/TR/exi/#builtInRestrictedStrings

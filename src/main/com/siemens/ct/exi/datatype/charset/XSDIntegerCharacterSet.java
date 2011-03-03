@@ -31,7 +31,7 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
  */
 
 public class XSDIntegerCharacterSet extends AbstractRestrictedCharacterSet {
-	
+
 	private static final long serialVersionUID = 8455249211481662492L;
 
 	/*

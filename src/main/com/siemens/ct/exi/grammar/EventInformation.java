@@ -32,9 +32,9 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public abstract class EventInformation implements Serializable {
-	
+
 	private static final long serialVersionUID = -6237642832111152869L;
-	
+
 	public final Rule next;
 	final int eventCode;
 	public final Event event;
@@ -44,9 +44,9 @@ public abstract class EventInformation implements Serializable {
 		this.event = event;
 		this.eventCode = eventCode;
 	}
-	
+
 	abstract public int getEventCode();
-	
+
 	@Override
 	public String toString() {
 		return "[" + eventCode + "] " + event + " -> " + next;

@@ -29,7 +29,7 @@ package com.siemens.ct.exi.values;
 abstract public class AbstractBinaryValue extends AbstractValue {
 
 	private static final long serialVersionUID = -7022141926130631608L;
-	
+
 	protected final byte[] bytes;
 	protected String sValue;
 
@@ -37,28 +37,28 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		super(valueType);
 		this.bytes = bytes;
 	}
-	
+
 	public byte[] toBytes() {
 		return bytes;
 	}
-	
-//	abstract protected void initString();
-//	
-//	public int getCharactersLength() {
-//		if (slen == -1) {
-//			initString();
-//		}
-//		return slen;
-//	}
-	
-//	public char[] toCharacters(char[] cbuffer, int offset) {
-//		return sValue.toCharArray();
-//	}
-	
+
+	// abstract protected void initString();
+	//
+	// public int getCharactersLength() {
+	// if (slen == -1) {
+	// initString();
+	// }
+	// return slen;
+	// }
+
+	// public char[] toCharacters(char[] cbuffer, int offset) {
+	// return sValue.toCharArray();
+	// }
+
 	protected final boolean _equals(byte[] oBytes) {
 		if (bytes.length == oBytes.length) {
-			for(int i=0; i<bytes.length; i++) {
-				if (bytes[i] != oBytes[i]){
+			for (int i = 0; i < bytes.length; i++) {
+				if (bytes[i] != oBytes[i]) {
 					return false;
 				}
 			}
@@ -66,13 +66,13 @@ abstract public class AbstractBinaryValue extends AbstractValue {
 		}
 		return false;
 	}
-	
-//	@Override
-//	public String toString() {
-//		if (slen == -1) {
-//			initString();
-//		}
-//		return sValue;
-//	}
+
+	// @Override
+	// public String toString() {
+	// if (slen == -1) {
+	// initString();
+	// }
+	// return sValue;
+	// }
 
 }

@@ -37,9 +37,9 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class LexicalTypeDecoder extends AbstractTypeDecoder {
-	
+
 	protected RestrictedCharacterSetDatatype rcsDatatype;
-	
+
 	public LexicalTypeDecoder(StringDecoder stringDecoder) {
 		super(stringDecoder);
 		rcsDatatype = new RestrictedCharacterSetDatatype(null);
@@ -48,6 +48,7 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException {
 		// datatype.getRestrictedCharacterSet();
-		return datatype.readValueRCS(rcsDatatype, valueChannel, stringDecoder, context);
+		return datatype.readValueRCS(rcsDatatype, valueChannel, stringDecoder,
+				context);
 	}
 }

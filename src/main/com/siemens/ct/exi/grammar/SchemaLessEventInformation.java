@@ -30,19 +30,20 @@ import com.siemens.ct.exi.grammar.rule.Rule;
  */
 
 public class SchemaLessEventInformation extends EventInformation {
-	
+
 	private static final long serialVersionUID = 2559182995076922136L;
-	
+
 	protected final Rule father;
-	
-	public SchemaLessEventInformation(Rule father, Rule next, Event event, int eventCode) {
+
+	public SchemaLessEventInformation(Rule father, Rule next, Event event,
+			int eventCode) {
 		super(next, event, eventCode);
 		this.father = father;
 	}
 
 	@Override
 	public int getEventCode() {
-		//	internal eventCodes in schema-less do have the reverse order
+		// internal eventCodes in schema-less do have the reverse order
 		return father.getNumberOfEvents() - 1 - this.eventCode;
 
 	}

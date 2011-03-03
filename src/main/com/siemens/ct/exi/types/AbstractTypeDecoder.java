@@ -30,17 +30,17 @@ import com.siemens.ct.exi.datatype.strings.StringDecoder;
 
 public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		TypeDecoder {
-	
+
 	protected StringDecoder stringDecoder;
-	
+
 	public AbstractTypeDecoder(StringDecoder stringDecoder) {
 		this.stringDecoder = stringDecoder;
 	}
-	
+
 	public StringDecoder getStringDecoder() {
 		return stringDecoder;
 	}
-	
+
 	public void clear() {
 		stringDecoder.clear();
 	}

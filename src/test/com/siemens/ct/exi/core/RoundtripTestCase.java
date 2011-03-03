@@ -45,7 +45,7 @@ public class RoundtripTestCase extends TestCase {
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		
 		QName qnameRoot = new QName("", "root");
-		Value vint = new IntegerValue(654);
+		Value vint = IntegerValue.valueOf(654);
 		
 		/*
 		 * Encoder
@@ -112,7 +112,7 @@ public class RoundtripTestCase extends TestCase {
 		fo.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 		
 		QName qnameRoot = new QName("", "root");
-		Value vint = new IntegerValue(654);
+		Value vint = IntegerValue.valueOf(654);
 		
 		/*
 		 * Encoder

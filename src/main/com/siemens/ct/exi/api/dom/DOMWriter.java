@@ -61,19 +61,20 @@ public class DOMWriter {
 	protected boolean preserveWhitespaces;
 	protected boolean preserveComments;
 	protected boolean preservePIs;
-	
-	//	collect char events (e.g. textA CM textB --> textA+textB if CM is not preserved)
+
+	// collect char events (e.g. textA CM textB --> textA+textB if CM is not
+	// preserved)
 	protected StringBuilder sbChars;
 
 	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
-		
+
 		this.exiStream = new EXIStreamEncoder();
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
-		
+
 		// characters
 		sbChars = new StringBuilder();
 
@@ -122,14 +123,15 @@ public class DOMWriter {
 
 	protected void encodeNode(Node root) throws EXIException, IOException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
-		
+
 		// start element
 		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
 				: root.getNamespaceURI();
 		String localName = root.getLocalName();
 		if (localName == null) {
-			//	namespace-awareness ??
-			throw new EXIException("EXI requires namespace-aware DOM (nodes) " + root.getNodeName());
+			// namespace-awareness ??
+			throw new EXIException("EXI requires namespace-aware DOM (nodes) "
+					+ root.getNodeName());
 		}
 
 		exiBody.encodeStartElement(namespaceURI, localName, root.getPrefix());
@@ -154,24 +156,28 @@ public class DOMWriter {
 
 		// xsi:type
 		if (exiAttributes.hasXsiType()) {
-			exiBody.encodeAttributeXsiType(new StringValue(exiAttributes.getXsiTypeRaw()), exiAttributes.getXsiTypePrefix());
+			exiBody.encodeAttributeXsiType(
+					new StringValue(exiAttributes.getXsiTypeRaw()),
+					exiAttributes.getXsiTypePrefix());
 		}
 
 		// xsi:nil
 		if (exiAttributes.hasXsiNil()) {
-			exiBody.encodeAttributeXsiNil(new StringValue(exiAttributes.getXsiNil()), exiAttributes.getXsiNilPrefix());
+			exiBody.encodeAttributeXsiNil(
+					new StringValue(exiAttributes.getXsiNil()),
+					exiAttributes.getXsiNilPrefix());
 		}
 
 		// AT
 		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
-//			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
-//					exiAttributes.getAttributeLocalName(i), exiAttributes
-//							.getAttributePrefix(i), exiAttributes
-//							.getAttributeValue(i));
+			// exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
+			// exiAttributes.getAttributeLocalName(i), exiAttributes
+			// .getAttributePrefix(i), exiAttributes
+			// .getAttributeValue(i));
 			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
 					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), new StringValue(exiAttributes
-							.getAttributeValue(i)));
+							.getAttributePrefix(i), new StringValue(
+							exiAttributes.getAttributeValue(i)));
 		}
 
 		// children
@@ -182,7 +188,8 @@ public class DOMWriter {
 		exiBody.encodeEndElement();
 	}
 
-	protected void encodeChildNodes(NodeList children) throws EXIException, IOException {
+	protected void encodeChildNodes(NodeList children) throws EXIException,
+			IOException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {
@@ -220,14 +227,15 @@ public class DOMWriter {
 			case Node.CDATA_SECTION_NODE:
 				checkPendingChars();
 				String cdata = n.getNodeValue();
-				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START + cdata + Constants.CDATA_END));
+				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START
+						+ cdata + Constants.CDATA_END));
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {
 					checkPendingChars();
 					ProcessingInstruction pi = (ProcessingInstruction) n;
-					exiBody.encodeProcessingInstruction(pi.getTarget(), pi
-							.getData());
+					exiBody.encodeProcessingInstruction(pi.getTarget(),
+							pi.getData());
 				}
 				break;
 			default:
@@ -239,7 +247,7 @@ public class DOMWriter {
 		}
 		checkPendingChars();
 	}
-	
+
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
 			// exiBody.encodeCharacters(sbChars.toString());

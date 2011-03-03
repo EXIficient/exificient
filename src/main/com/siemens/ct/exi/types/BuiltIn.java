@@ -34,7 +34,6 @@ import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
-import com.siemens.ct.exi.datatype.BigIntegerDatatype;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -46,15 +45,10 @@ import com.siemens.ct.exi.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.datatype.ListDatatype;
-import com.siemens.ct.exi.datatype.LongDatatype;
-import com.siemens.ct.exi.datatype.NBitBigIntegerDatatype;
 import com.siemens.ct.exi.datatype.NBitIntegerDatatype;
-import com.siemens.ct.exi.datatype.NBitLongDatatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
-import com.siemens.ct.exi.datatype.UnsignedBigIntegerDatatype;
 import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
-import com.siemens.ct.exi.datatype.UnsignedLongDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.values.BinaryBase64Value;
@@ -64,9 +58,7 @@ import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
-import com.siemens.ct.exi.values.HugeIntegerValue;
 import com.siemens.ct.exi.values.IntegerValue;
-import com.siemens.ct.exi.values.LongValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -138,7 +130,7 @@ public class BuiltIn {
 	 */
 	public static final QName XSD_STRING = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
-	//	
+	//
 	public static final QName XSD_ANY_SIMPLE_TYPE = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "anySimpleType");
 
@@ -149,7 +141,7 @@ public class BuiltIn {
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "QName");
 	protected static final QName XSD_NOTATION = new QName(
 			XMLConstants.W3C_XML_SCHEMA_NS_URI, "Notation");
-	
+
 	/*
 	 * default QName / BuiltInType / Datatype
 	 */
@@ -195,8 +187,7 @@ public class BuiltIn {
 		datatypeMapping.put(XSD_ANY_SIMPLE_TYPE, XSD_STRING);
 	}
 
-	public static Datatype getDatatype(XSSimpleTypeDefinition std)
- {
+	public static Datatype getDatatype(XSSimpleTypeDefinition std) {
 		Datatype datatype = null;
 
 		// used for dtr map
@@ -266,22 +257,23 @@ public class BuiltIn {
 							// }
 							// values[k] = dtEnumValues.getValue();
 							// }
-						} else if ( XSD_QNAME.equals(getSchemaType(stdEnum)) || XSD_NOTATION.equals(getSchemaType(stdEnum)) ) {
+						} else if (XSD_QNAME.equals(getSchemaType(stdEnum))
+								|| XSD_NOTATION.equals(getSchemaType(stdEnum))) {
 							datatype = new StringDatatype(schemaType);
 						} else {
 
 							Datatype dtEnumValues = getDatatype(stdEnum);
 							Value[] values = new Value[enumList.getLength()];
-							
+
 							BuiltInType enumBIT = dtEnumValues.getBuiltInType();
 
 							for (int k = 0; k < enumList.getLength(); k++) {
-								
+
 								String tok = enumList.item(k);
 								// String sEnumValue = enumList.item(k);
-								Value sEnumValue; 
-								
-								switch(enumBIT) {
+								Value sEnumValue;
+
+								switch (enumBIT) {
 								/* Binary */
 								case BINARY_BASE64:
 									sEnumValue = BinaryBase64Value.parse(tok);
@@ -308,33 +300,27 @@ public class BuiltIn {
 								case UNSIGNED_INTEGER_16:
 								case INTEGER_16:
 								case INTEGER_32:
-									sEnumValue = IntegerValue.parse(tok);
-									break;
 								/* long */
 								case NBIT_INTEGER_64:
 								case UNSIGNED_INTEGER_32:
 								case INTEGER_64:
-									sEnumValue = LongValue.parse(tok);
-									break;
 								/* big */
 								case NBIT_INTEGER_BIG:
 								case UNSIGNED_INTEGER_64:
 								case UNSIGNED_INTEGER_BIG:
 								case INTEGER_BIG:
-									sEnumValue = HugeIntegerValue.parse(tok);
+									sEnumValue = IntegerValue.parse(tok);
 									break;
 								/* Datetime */
 								case DATETIME:
 									DatetimeDatatype datetimeDT = (DatetimeDatatype) dtEnumValues;
-									sEnumValue = DateTimeValue.parse(tok, datetimeDT.getDatetimeType());
+									sEnumValue = DateTimeValue.parse(tok,
+											datetimeDT.getDatetimeType());
 									break;
 								default:
 									sEnumValue = new StringValue(tok); // String
 								}
-								
-								
-								
-								
+
 								boolean valid = dtEnumValues
 										.isValid(sEnumValue);
 								if (!valid) {
@@ -345,15 +331,16 @@ public class BuiltIn {
 								}
 								// values[k] = dtEnumValues.getValue();
 								values[k] = sEnumValue;
-//								if (dtEnumValues.getBuiltInType() != BuiltInType.STRING) {
-//									System.err.println("XXXXXXXXX()");
-//								}
-//								values[k] = null;
-//								System.err.println("dtEnumValues.getValue()");
+								// if (dtEnumValues.getBuiltInType() !=
+								// BuiltInType.STRING) {
+								// System.err.println("XXXXXXXXX()");
+								// }
+								// values[k] = null;
+								// System.err.println("dtEnumValues.getValue()");
 							}
 
-							datatype = new EnumerationDatatype(values, dtEnumValues.getBuiltInType(),
-									schemaType);
+							datatype = new EnumerationDatatype(values,
+									dtEnumValues.getBuiltInType(), schemaType);
 						}
 					}
 					// else {
@@ -534,27 +521,19 @@ public class BuiltIn {
 			case UNSIGNED_INTEGER_BIG:
 			case INTEGER_BIG:
 			case UNSIGNED_INTEGER_64:
-				// big
-				assert (max.subtract(min).add(BigInteger.ONE)
-						.equals(boundedRange));
-				datatype = new NBitBigIntegerDatatype(min, max, schemaType);
+				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_BIG, IntegerValue.valueOf(min),
+						IntegerValue.valueOf(max), schemaType);
 				break;
 			case INTEGER_64:
 			case UNSIGNED_INTEGER_32:
-				// long
-				assert ((max.longValue() - min.longValue() + 1) == boundedRange
-						.intValue());
-				datatype = new NBitLongDatatype(min.longValue(), max
-						.longValue(), schemaType);
+				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_64, IntegerValue.valueOf(min),
+						IntegerValue.valueOf(max), schemaType);
 				break;
 			case INTEGER_32:
 			case UNSIGNED_INTEGER_16:
 			case INTEGER_16:
-				// int
-				assert ((max.intValue() - min.intValue() + 1) == boundedRange
-						.intValue());
-				datatype = new NBitIntegerDatatype(min.intValue(), max
-						.intValue(), schemaType);
+				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_32, IntegerValue.valueOf(min),
+						IntegerValue.valueOf(max), schemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected n-Bit Integer Type: "
@@ -587,13 +566,7 @@ public class BuiltIn {
 			switch (intType) {
 			case UNSIGNED_INTEGER_BIG:
 			case UNSIGNED_INTEGER_64:
-				// big
-				datatype = new UnsignedBigIntegerDatatype(intType, schemaType);
-				break;
 			case UNSIGNED_INTEGER_32:
-				// long
-				datatype = new UnsignedLongDatatype(intType, schemaType);
-				break;
 			case UNSIGNED_INTEGER_16:
 				// int
 				datatype = new UnsignedIntegerDatatype(intType, schemaType);
@@ -608,13 +581,7 @@ public class BuiltIn {
 			 */
 			switch (intType) {
 			case INTEGER_BIG:
-				// big
-				datatype = new BigIntegerDatatype(intType, schemaType);
-				break;
 			case INTEGER_64:
-				// long
-				datatype = new LongDatatype(intType, schemaType);
-				break;
 			case INTEGER_32:
 			case INTEGER_16:
 				// int
@@ -637,7 +604,7 @@ public class BuiltIn {
 			QName schemaType) {
 		Datatype datatype;
 
-		// 
+		//
 		QName schemaDatatype = getXMLSchemaDatatype(std);
 
 		if (XSD_BASE64BINARY.equals(schemaDatatype)) {

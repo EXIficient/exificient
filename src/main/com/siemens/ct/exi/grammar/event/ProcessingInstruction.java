@@ -27,7 +27,7 @@ package com.siemens.ct.exi.grammar.event;
  */
 
 public class ProcessingInstruction extends AbstractEvent {
-	
+
 	private static final long serialVersionUID = -589116641422085573L;
 
 	public ProcessingInstruction() {

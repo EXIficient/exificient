@@ -29,9 +29,9 @@ import com.siemens.ct.exi.grammar.event.Event;
  */
 
 public interface SchemaInformedRule extends Rule {
-	
+
 	public void addTerminalRule(Event event);
-	
+
 	/*
 	 * Label
 	 */

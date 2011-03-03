@@ -44,12 +44,13 @@ import com.siemens.ct.exi.values.Value;
 public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -6098764255799006920L;
-	
-//	private static final Value EMPTY_STRING_VALUE = new StringValue("");
-	
+
+	// private static final Value EMPTY_STRING_VALUE = new StringValue("");
+
 	protected String lastValidValue;
 
-	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs, QName schemaType) {
+	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
+			QName schemaType) {
 		this(schemaType);
 		this.rcs = rcs;
 	}
@@ -82,9 +83,9 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		}
 	}
 
-//	public Value getValue() {
-//		return new StringValue(lastValidValue);
-//	}
+	// public Value getValue() {
+	// return new StringValue(lastValidValue);
+	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
@@ -97,12 +98,13 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// string literal is encoded as a String with the length
 			// incremented by two.
 			final int L = lastValidValue.length();
-			// final int L = lastValidValue.codePointCount(0, lastValidValue.length());
+			// final int L = lastValidValue.codePointCount(0,
+			// lastValidValue.length());
 
 			valueChannel.encodeUnsignedInteger(L + 2);
 
 			/*
-			 * If length L is greater than zero the string S is added 
+			 * If length L is greater than zero the string S is added
 			 */
 			if (L > 0) {
 				// number of bits
@@ -118,14 +120,15 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 						valueChannel.encodeUnsignedInteger(codePoint);
 					} else {
-						valueChannel.encodeNBitUnsignedInteger(code, numberOfBits);
+						valueChannel.encodeNBitUnsignedInteger(code,
+								numberOfBits);
 					}
 				}
 
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the
 				// global value string table partition.
-				stringEncoder.addValue(context, lastValidValue);	
+				stringEncoder.addValue(context, lastValidValue);
 			}
 		}
 	}
@@ -147,9 +150,9 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 			// ==> restricted character string literal is encoded as a String
 			// with the length incremented by two.
 			int L = i - 2;
-			
+
 			/*
-			 * If length L is greater than zero the string S is added 
+			 * If length L is greater than zero the string S is added
 			 */
 			if (L > 0) {
 				// number of bits
@@ -160,7 +163,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				value = new StringValue(cValue);
 
 				for (int k = 0; k < L; k++) {
-					int code = valueChannel.decodeNBitUnsignedInteger(numberOfBits);
+					int code = valueChannel
+							.decodeNBitUnsignedInteger(numberOfBits);
 					int codePoint;
 					if (code == size) {
 						// deviation
@@ -173,9 +177,10 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				}
 
 				// After encoding the string value, it is added to both the
-				// associated "local" value string table partition and the global
+				// associated "local" value string table partition and the
+				// global
 				// value string table partition.
-				stringDecoder.addValue(context, value);	
+				stringDecoder.addValue(context, value);
 			} else {
 				// value = EMPTY_STRING_VALUE;
 				value = StringCoder.EMPTY_STRING_VALUE;

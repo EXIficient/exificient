@@ -38,7 +38,7 @@ import com.siemens.ct.exi.values.Value;
 public interface TypeDecoder extends TypeCoder {
 
 	public StringDecoder getStringDecoder();
-	
+
 	public Value readValue(Datatype datatype, QName context,
 			DecoderChannel valueChannel) throws IOException;
 

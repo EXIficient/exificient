@@ -35,9 +35,9 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public abstract class SchemaLessContent extends AbstractSchemaLessRule {
-	
+
 	private static final long serialVersionUID = -354500199734740496L;
-	
+
 	protected static final Map<FidelityOptions, List<EventType>> optionsStartTag;
 	protected static final Map<FidelityOptions, List<EventType>> optionsChildContent;
 
@@ -50,23 +50,22 @@ public abstract class SchemaLessContent extends AbstractSchemaLessRule {
 			FidelityOptions fidelityOptions) {
 		if (!optionsStartTag.containsKey(fidelityOptions)) {
 			List<EventType> events = new ArrayList<EventType>();
-			
-//			if (!fidelityOptions.isStrict()) {
-				// extensibility: EE, AT(*)
-				events.add(EventType.END_ELEMENT_UNDECLARED);
-				events.add(EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 
-				// NS
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-					events.add(EventType.NAMESPACE_DECLARATION);
-				}
-				// SC
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-					events.add(EventType.SELF_CONTAINED);
-				}
-//			}
+			// if (!fidelityOptions.isStrict()) {
+			// extensibility: EE, AT(*)
+			events.add(EventType.END_ELEMENT_UNDECLARED);
+			events.add(EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+
+			// NS
+			if (fidelityOptions
+					.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+				events.add(EventType.NAMESPACE_DECLARATION);
+			}
+			// SC
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+				events.add(EventType.SELF_CONTAINED);
+			}
+			// }
 
 			optionsStartTag.put(fidelityOptions, events);
 		}
@@ -79,18 +78,17 @@ public abstract class SchemaLessContent extends AbstractSchemaLessRule {
 		if (!optionsChildContent.containsKey(fidelityOptions)) {
 			List<EventType> events = new ArrayList<EventType>();
 
-//			if (!fidelityOptions.isStrict()) {
-				// extensibility: SE(*), CH
-				events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
+			// if (!fidelityOptions.isStrict()) {
+			// extensibility: SE(*), CH
+			events.add(EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			events.add(EventType.CHARACTERS_GENERIC_UNDECLARED);
 
-				// ER
-				if (fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-					events.add(EventType.ENTITY_REFERENCE);
-				}
+			// ER
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+				events.add(EventType.ENTITY_REFERENCE);
+			}
 
-//			}
+			// }
 
 			optionsChildContent.put(fidelityOptions, events);
 		}

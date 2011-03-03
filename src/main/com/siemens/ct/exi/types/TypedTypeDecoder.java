@@ -36,13 +36,13 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class TypedTypeDecoder extends AbstractTypeDecoder {
-	
+
 	public TypedTypeDecoder(StringDecoder stringDecoder) {
 		super(stringDecoder);
 	}
 
-	public Value readValue(Datatype datatype, QName context, DecoderChannel valueChannel)
-			throws IOException {
+	public Value readValue(Datatype datatype, QName context,
+			DecoderChannel valueChannel) throws IOException {
 		return datatype.readValue(valueChannel, stringDecoder, context);
 	}
 }

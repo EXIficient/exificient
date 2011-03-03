@@ -34,16 +34,17 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @version 0.6
  */
 
-public abstract class AbstractRestrictedCharacterSet implements RestrictedCharacterSet {
+public abstract class AbstractRestrictedCharacterSet implements
+		RestrictedCharacterSet {
 	// #x9, HT (horizontal tab)
 	// #xA, LF (line-feed)
 	// #xD, CR (carriage-return)
 	// #x20, SP (space)
 
 	private static final long serialVersionUID = 1487974340218946481L;
-	
+
 	protected Map<Integer, Integer> codeSet; // codePoint --> internal code
-	protected List<Integer> codePointList;	// internal code --> codePoint
+	protected List<Integer> codePointList; // internal code --> codePoint
 
 	protected int size;
 	protected int codingLength;
@@ -88,13 +89,13 @@ public abstract class AbstractRestrictedCharacterSet implements RestrictedCharac
 		size = codeSet.size();
 		codingLength = MethodsBag.getCodingLength(size + 1);
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof AbstractRestrictedCharacterSet) {
 			AbstractRestrictedCharacterSet other = (AbstractRestrictedCharacterSet) o;
 			if (this.size() == other.size()) {
-				for (int code = 0; code<this.size(); code++) {
+				for (int code = 0; code < this.size(); code++) {
 					if (this.getCodePoint(code) != other.getCodePoint(code)) {
 						return false;
 					}

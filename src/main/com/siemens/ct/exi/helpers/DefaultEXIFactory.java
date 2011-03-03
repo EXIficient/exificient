@@ -51,6 +51,7 @@ import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
@@ -102,6 +103,9 @@ public class DefaultEXIFactory implements EXIFactory {
 	/* default: -1 == unbounded */
 	protected int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 
+	/* default: no profile */
+	protected String profile;
+
 	protected DefaultEXIFactory() {
 	}
 
@@ -129,6 +133,27 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public FidelityOptions getFidelityOptions() {
 		return fidelityOptions;
+	}
+
+	public void setProfile(String profileName) throws UnsupportedOption {
+		if (profileName == null) {
+			// un-set profile
+			this.profile = profileName;
+		} else if (ULTRA_CONSTRAINED_DEVICE_PROFILE.equals(profileName)) {
+			this.profile = profileName;
+			// what does the profile define
+			// 1. valuePartitionCapacity == 0
+			this.setValuePartitionCapacity(0);
+			// 2. no built-in grammars --> no learning
+			// 3. no EXI Options in header
+		} else {
+			throw new UnsupportedOption("Profile '" + profileName
+					+ "' unknown.");
+		}
+	}
+
+	public boolean usesProfile(String profileName) {
+		return (profileName.equals(this.profile));
 	}
 
 	public void setEncodingOptions(EncodingOptions encodingOptions) {
@@ -242,13 +267,30 @@ public class DefaultEXIFactory implements EXIFactory {
 		return valuePartitionCapacity;
 	}
 
+	// some consistency and sanity checks
 	protected void doSanityCheck() throws EXIException {
-		// some consistency checks
+
+		// Self-contained elements do not work with re-ordered
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)
 				&& codingMode.usesRechanneling()) {
 			throw new EXIException(
 					"(Pre-)Compression and selfContained elements cannot work together");
 		}
+
+		// ultra-constrained device profile
+		if (ULTRA_CONSTRAINED_DEVICE_PROFILE.equals(profile)) {
+			if (valuePartitionCapacity != 0) {
+				throw new EXIException(
+						"Ultra-constrained device profile does not permit any string table entries");
+			}
+
+			if (getEncodingOptions().isOptionEnabled(
+					EncodingOptions.INCLUDE_OPTIONS)) {
+				throw new EXIException(
+						"Ultra-constrained device profile does not permit including Options document in EXI header");
+			}
+		}
+
 		// blockSize in NON compression mode? Just ignore it!
 	}
 
@@ -414,10 +456,10 @@ public class DefaultEXIFactory implements EXIFactory {
 				return false;
 			}
 			// datatype representation map
-			if (!(Arrays.equals(this.dtrMapTypes, other
-					.getDatatypeRepresentationMapTypes()) && Arrays.equals(
-					this.dtrMapRepresentations, other
-							.getDatatypeRepresentationMapRepresentations()))) {
+			if (!(Arrays.equals(this.dtrMapTypes,
+					other.getDatatypeRepresentationMapTypes()) && Arrays
+					.equals(this.dtrMapRepresentations,
+							other.getDatatypeRepresentationMapRepresentations()))) {
 				return false;
 			}
 			// coding mode
@@ -465,11 +507,11 @@ public class DefaultEXIFactory implements EXIFactory {
 		// dtr
 		if (this.dtrMapTypes != null && this.dtrMapTypes.length > 0) {
 			sb.append("[DTR Types=");
-			for(QName dtrMapType : dtrMapTypes) {
+			for (QName dtrMapType : dtrMapTypes) {
 				sb.append(dtrMapType + " ");
 			}
 			sb.append(", Representation=");
-			for(QName dtrMapRepresentation : dtrMapRepresentations) {
+			for (QName dtrMapRepresentation : dtrMapRepresentations) {
 				sb.append(dtrMapRepresentation + " ");
 			}
 			sb.append("]");
@@ -477,19 +519,19 @@ public class DefaultEXIFactory implements EXIFactory {
 		// sc elements
 		if (this.scElements != null && this.scElements.length > 0) {
 			sb.append("[SCElements=");
-			for(QName scElement : scElements) {
+			for (QName scElement : scElements) {
 				sb.append(scElement + " ");
 			}
 			sb.append("]");
 		}
 		// blockSize, valueMaxLength, valuePartitionCapacity
-		if (this.blockSize!= Constants.DEFAULT_BLOCK_SIZE) {
+		if (this.blockSize != Constants.DEFAULT_BLOCK_SIZE) {
 			sb.append("[blockSize=" + blockSize + "]");
 		}
-		if (this.valueMaxLength!= Constants.DEFAULT_VALUE_MAX_LENGTH) {
+		if (this.valueMaxLength != Constants.DEFAULT_VALUE_MAX_LENGTH) {
 			sb.append("[valueMaxLength=" + valueMaxLength + "]");
 		}
-		if (this.valuePartitionCapacity!= Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+		if (this.valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
 			sb.append("[valuePartitionCapacity=" + valuePartitionCapacity + "]");
 		}
 

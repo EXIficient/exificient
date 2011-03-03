@@ -32,6 +32,8 @@ public abstract class AbstractGrammar implements Grammar {
 
 	private static final long serialVersionUID = 1328500655881102889L;
 
+	protected Rule urTypeGrammar;
+
 	protected GrammarURIEntry[] grammarEntries;
 
 	/*
@@ -48,6 +50,14 @@ public abstract class AbstractGrammar implements Grammar {
 
 	public boolean isSchemaInformed() {
 		return isSchemaInformed;
+	}
+
+	public Rule getUrTypeGrammar() {
+		if (urTypeGrammar == null) {
+			urTypeGrammar = XSDGrammarBuilder.getUrTypeRule();
+		}
+
+		return urTypeGrammar;
 	}
 
 	public Rule getDocumentGrammar() {

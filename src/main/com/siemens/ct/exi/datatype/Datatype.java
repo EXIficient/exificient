@@ -40,39 +40,44 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public interface Datatype extends Serializable {
-	
+
 	// if no codec map is used
 	public BuiltInType getBuiltInType();
 
 	// used for dtr map
 	public QName getSchemaType();
-	
+
 	/*
 	 * Encoder
 	 */
 	public boolean isValid(String value);
-	public boolean isValid(Value value);
-	
-	
-//	// if value is valid
-//	public Value getValue();
-	
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
 
-//	public void finish() throws IOException;
-	
-	// restricted character set 
+	public boolean isValid(Value value);
+
+	// // if value is valid
+	// public Value getValue();
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException;
+
+	// public void finish() throws IOException;
+
+	// restricted character set
 	public RestrictedCharacterSet getRestrictedCharacterSet();
-	
+
 	public boolean isValidRCS(String value);
-	
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder, EncoderChannel valueChannel, StringEncoder stringEncoder, QName context) throws IOException;
-	
+
+	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
+			EncoderChannel valueChannel, StringEncoder stringEncoder,
+			QName context) throws IOException;
+
 	/*
 	 * Decoder
 	 */
-	public Value readValue(DecoderChannel valueChannel, StringDecoder stringDecoder, QName context)
-			throws IOException;
-	
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder, DecoderChannel valueChannel, StringDecoder stringDecoder, QName context) throws IOException;
+	public Value readValue(DecoderChannel valueChannel,
+			StringDecoder stringDecoder, QName context) throws IOException;
+
+	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
+			DecoderChannel valueChannel, StringDecoder stringDecoder,
+			QName context) throws IOException;
 }

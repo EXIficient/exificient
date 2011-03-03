@@ -74,7 +74,8 @@ public class QNameUtilities {
 			StringBuilder className = new StringBuilder();
 
 			// e.g., {http://www.w3.org/2001/XMLSchema}decimal
-			StringTokenizer st1 = new StringTokenizer(qname.getNamespaceURI(), "/");
+			StringTokenizer st1 = new StringTokenizer(qname.getNamespaceURI(),
+					"/");
 			// --> "http:" -> "www.w3.org" --> "2001" -> "XMLSchema"
 			st1.nextToken(); // protocol, e.g. "http:"
 			String domain = st1.nextToken(); // "www.w3.org"

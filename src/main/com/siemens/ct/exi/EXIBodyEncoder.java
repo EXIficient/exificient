@@ -173,8 +173,8 @@ public interface EXIBodyEncoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public void encodeAttributeXsiNil(Value nil, String pfx) throws EXIException,
-			IOException;
+	public void encodeAttributeXsiNil(Value nil, String pfx)
+			throws EXIException, IOException;
 
 	/**
 	 * Supplies an xsi:type case.
@@ -187,7 +187,7 @@ public interface EXIBodyEncoder {
 	 */
 	public void encodeAttributeXsiType(Value type, String pfx)
 			throws EXIException, IOException;
-	
+
 	/**
 	 * Supplies characters value.
 	 * 

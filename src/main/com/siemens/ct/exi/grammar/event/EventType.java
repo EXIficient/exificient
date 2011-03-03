@@ -101,6 +101,6 @@ public enum EventType {
 	NAMESPACE_DECLARATION, // ns declaration
 	SELF_CONTAINED, // start of self-contained fragment
 	ENTITY_REFERENCE, // entity reference
-	COMMENT, // 
+	COMMENT, //
 	PROCESSING_INSTRUCTION
 }

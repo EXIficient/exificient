@@ -55,14 +55,13 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 			return true;
 		}
 	}
-	
-//	public Value getValue() {
-//		return new BinaryBase64Value(bytes);
-//	}
-	
+
+	// public Value getValue() {
+	// return new BinaryBase64Value(bytes);
+	// }
+
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		return new BinaryBase64Value(valueChannel.decodeBinary());
 	}
 

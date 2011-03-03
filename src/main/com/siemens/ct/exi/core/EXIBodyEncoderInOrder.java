@@ -45,9 +45,9 @@ public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 		super(exiFactory);
 	}
 
-	public void setOutputStream(OutputStream os)
-			throws EXIException, IOException {
-		
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException {
+
 		CodingMode codingMode = exiFactory.getCodingMode();
 
 		// setup data-stream only

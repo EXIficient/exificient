@@ -48,18 +48,7 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 // http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#regexs
 // http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.txt
 public class EXIRegularExpression extends RegularExpression {
-
-	// Java 1.5 supports Unicode 4.0
-	public static final boolean USE_UNICODE_4_0 = true;
-
-	// For stability and interoperability of restricted character sets across
-	// different versions of the Unicode standard, certain pattern facets cannot
-	// be used for deriving restricted character sets. In particular, pattern
-	// facets that contain one or more category escapesXS2, category complement
-	// escapesXS2 or multi-character escapesXS2 other than \s do not have
-	// restricted character sets.
-	public static final boolean USE_STABLE_ESCAPES_ONLY = true;
-
+	
 	/*
 	 * If the resulting set of characters contains less than 256 characters and
 	 * contains only BMP characters, the string value has a restricted character
@@ -92,9 +81,9 @@ public class EXIRegularExpression extends RegularExpression {
 	static String Others = "C" + "[cfon]?";
 	// [28] IsCategory ::= Letters | Marks | Numbers | Punctuation | Separators
 	// | Symbols | Others
-	static String IsCategory = "(" + Letters + ")|(" + Marks + ")|("
-			+ Numbers + ")|(" + Punctuation + ")|(" + Separators + ")|("
-			+ Symbols + ")|(" + Others + ")";
+	static String IsCategory = "(" + Letters + ")|(" + Marks + ")|(" + Numbers
+			+ ")|(" + Punctuation + ")|(" + Separators + ")|(" + Symbols
+			+ ")|(" + Others + ")";
 	// [36] IsBlock ::= 'Is' [a-zA-Z0-9#x2D]+
 	// #x2D == '-'
 	static String IsBlock = "Is" + "[a-zA-Z0-9-]+";
@@ -114,84 +103,48 @@ public class EXIRegularExpression extends RegularExpression {
 		set = new HashSet<Integer>();
 		isRestrictedSet = true;
 
-		if (USE_STABLE_ESCAPES_ONLY) {
+		// To remove all non-BMP characters, the following should work:
+		String sanitizedString = regex.replaceAll("[^\u0000-\uFFFF]", "");
+		if (sanitizedString.length() != regex.length()) {
+			isRestrictedSet = false;
+			return;
+		}
 
-			// To remove all non-BMP characters, the following should work:
-			String sanitizedString = regex.replaceAll("[^\u0000-\uFFFF]", "");
-			if (sanitizedString.length() != regex.length()) {
+		// category escapes
+		// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-catEsc
+		Pattern pCatEsc = Pattern.compile(catEsc);
+		Matcher mCatEsc = pCatEsc.matcher(regex);
+		if (mCatEsc.find()) {
+			isRestrictedSet = false;
+			return;
+		}
+
+		// category complement escapes
+		// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-complEsc
+		Pattern pComplexEsc = Pattern.compile(complEsc);
+		Matcher mComplexEsc = pComplexEsc.matcher(regex);
+		if (mComplexEsc.find()) {
+			isRestrictedSet = false;
+			return;
+		}
+
+		// multi-character escapes other than \s
+		// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-MultiCharEsc
+		Pattern pMultiCharEsc2 = Pattern.compile(MultiCharEsc2);
+		Matcher mMultiCharEsc2 = pMultiCharEsc2.matcher(regex);
+		while (mMultiCharEsc2.find()) {
+			int start = mMultiCharEsc2.start();
+			if (start > 0 && regex.charAt(start) == '\\'
+					&& regex.charAt(start - 1) == '\\') {
+				// two consecutive backslashes ONLY
+			} else {
 				isRestrictedSet = false;
 				return;
-			}
-
-			// category escapes
-			// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-catEsc
-			Pattern pCatEsc = Pattern.compile(catEsc);
-			Matcher mCatEsc = pCatEsc.matcher(regex);
-			if (mCatEsc.find()) {
-				isRestrictedSet = false;
-				return;
-			}
-
-			// category complement escapes
-			// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-complEsc
-			Pattern pComplexEsc = Pattern.compile(complEsc);
-			Matcher mComplexEsc = pComplexEsc.matcher(regex);
-			if (mComplexEsc.find()) {
-				isRestrictedSet = false;
-				return;
-			}
-
-			// multi-character escapes other than \s
-			// http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nt-MultiCharEsc
-			Pattern pMultiCharEsc2 = Pattern.compile(MultiCharEsc2);
-			Matcher mMultiCharEsc2 = pMultiCharEsc2.matcher(regex);
-			while (mMultiCharEsc2.find()) {
-				int start = mMultiCharEsc2.start();
-				if (start > 0 && regex.charAt(start) == '\\' && regex.charAt(start-1) == '\\' ) {
-					// two consecutive backslashes ONLY
-				} else {
-					isRestrictedSet = false;
-					return;					
-				}
-			}
-
-			// analyze set
-			handleToken(this.tokentree);
-
-		} else {
-
-			// non-BMP characters ?
-			final int lenChars = regex.length();
-			for (int i = 0; i < lenChars; i++) {
-				final char ch = regex.charAt(i);
-
-				// Is this a UTF-16 surrogate pair?
-				if (Character.isHighSurrogate(ch)) {
-					isRestrictedSet = false;
-					return;
-				}
-			}
-
-			// analyze set
-			handleToken(this.tokentree);
-
-			if (!USE_UNICODE_4_0) {
-				// detect whether we deal with BMP characters
-				// and whether the characters are part of Unicode 3.1.0
-				Set<Integer> toRemove = new HashSet<Integer>();
-				for (Integer cp : set) {
-					if (!Unicode_3_1_0_BMP.isRelevantCodepoint(cp)) {
-						toRemove.add(cp);
-						// isRestrictedSet = false;
-						// return;
-					}
-				}
-				for (Integer toRem : toRemove) {
-					set.remove(toRem);
-				}
 			}
 		}
 
+		// analyze set
+		handleToken(this.tokentree);
 	}
 
 	protected void addChar(int cp) {
@@ -232,18 +185,6 @@ public class EXIRegularExpression extends RegularExpression {
 		case Token.STRING:
 			StringToken st = (StringToken) t;
 			String str = st.getString();
-
-			// final int lenChars = str.length();
-			// for (int i = 0; i<lenChars; i++) {
-			// final char ch = str.charAt(i);
-			// // Is this a UTF-16 surrogate pair?
-			// if (Character.isHighSurrogate(ch)) {
-			// // use code-point and increment loop count (2 char's)
-			// addChar(str.codePointAt(i++));
-			// } else {
-			// addChar(ch);
-			// }
-			// }
 
 			final int L = str.codePointCount(0, str.length());
 			// for (int i = 0; i < str.length(); i++) {

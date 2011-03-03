@@ -43,7 +43,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaLessFragmentContent;
  */
 
 public class SchemaLessGrammar extends AbstractGrammar {
-	
+
 	private static final long serialVersionUID = -6969262948282161888L;
 
 	public SchemaLessGrammar() {
@@ -75,14 +75,13 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		Rule builtInDocContentGrammar = new SchemaLessDocContent(
 				builtInDocEndGrammar, "DocContent");
 		// Document rule
-		documentGrammar = new Document(builtInDocContentGrammar,
-				"Document");
+		documentGrammar = new Document(builtInDocContentGrammar, "Document");
 	}
-	
+
 	public final boolean isBuiltInXMLSchemaTypesOnly() {
 		return false;
 	}
-	
+
 	public final String getSchemaId() {
 		return null;
 	}
@@ -100,10 +99,10 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		/*
 		 * Fragment
 		 */
-		fragmentGrammar = new Fragment(
-				builtInFragmentContentGrammar, "Fragment");
-//		fragmentGrammar.addRule(new StartDocument(),
-//				builtInFragmentContentGrammar);
+		fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
+				"Fragment");
+		// fragmentGrammar.addRule(new StartDocument(),
+		// builtInFragmentContentGrammar);
 
 		return fragmentGrammar;
 	}

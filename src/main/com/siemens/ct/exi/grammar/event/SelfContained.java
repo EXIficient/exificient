@@ -27,7 +27,7 @@ package com.siemens.ct.exi.grammar.event;
  */
 
 public class SelfContained extends AbstractEvent {
-	
+
 	private static final long serialVersionUID = -8181855298467326060L;
 
 	public SelfContained() {

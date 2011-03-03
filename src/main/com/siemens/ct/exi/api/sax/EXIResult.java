@@ -39,13 +39,14 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  */
 
 public class EXIResult extends SAXResult {
-	
+
 	public EXIResult(OutputStream os) throws IOException, EXIException {
 		// use default exi-factory
 		this(os, DefaultEXIFactory.newInstance());
 	}
 
-	public EXIResult(OutputStream os, EXIFactory exiFactory) throws IOException, EXIException {
+	public EXIResult(OutputStream os, EXIFactory exiFactory)
+			throws IOException, EXIException {
 		DefaultHandler2 handler = exiFactory.createEXIWriter(os);
 		// set internal states
 		setHandler(handler);

@@ -42,19 +42,21 @@ import com.siemens.ct.exi.values.Value;
 public class UnsignedIntegerDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 8260894749324499802L;
-	
+
 	protected IntegerValue lastUnsignedInteger;
 
 	public UnsignedIntegerDatatype(BuiltInType builtInType, QName schemaType) {
 		super(builtInType, schemaType);
-		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_16);
+		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_BIG
+				|| builtInType == BuiltInType.UNSIGNED_INTEGER_64
+				|| builtInType == BuiltInType.UNSIGNED_INTEGER_32 || builtInType == BuiltInType.UNSIGNED_INTEGER_16);
 		this.rcs = new XSDIntegerCharacterSet();
 	}
 
 	public boolean isValid(String value) {
 		lastUnsignedInteger = IntegerValue.parse(value);
 		if (lastUnsignedInteger != null) {
-			return (lastUnsignedInteger.toInteger() >= 0);
+			return (lastUnsignedInteger.isPositive());
 		} else {
 			return false;
 		}
@@ -63,7 +65,7 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			lastUnsignedInteger = ((IntegerValue) value);
-			return (lastUnsignedInteger.toInteger() >= 0);
+			return (lastUnsignedInteger.isPositive());
 		} else if (isValid(value.toString())) {
 			return true;
 		} else {
@@ -71,13 +73,9 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 		}
 	}
 
-//	public Value getValue() {
-//		return lastUnsignedInteger;
-//	}
-
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		valueChannel.encodeUnsignedInteger(lastUnsignedInteger.toInteger());
+		valueChannel.encodeUnsignedIntegerValue(lastUnsignedInteger);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

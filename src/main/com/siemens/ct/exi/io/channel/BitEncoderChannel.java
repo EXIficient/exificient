@@ -48,7 +48,7 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 	public OutputStream getOutputStream() {
 		return ostream;
 	}
-	
+
 	public int getLength() {
 		return -1;
 	}
@@ -59,7 +59,7 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 	public void flush() throws IOException {
 		ostream.flush();
 	}
-	
+
 	public void align() throws IOException {
 		ostream.align();
 	}

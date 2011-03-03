@@ -37,28 +37,30 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class LexicalTypeEncoder extends AbstractTypeEncoder {
-	
+
 	protected RestrictedCharacterSetDatatype rcsDatatype;
 	protected Datatype lastDatatype;
-	
+
 	public LexicalTypeEncoder(StringEncoder stringEncoder) {
 		super(stringEncoder);
 		rcsDatatype = new RestrictedCharacterSetDatatype(null);
 	}
 
-//	public boolean isValid(Datatype datatype, String value) {
-//		lastDatatype = datatype;
-//		return datatype.isValidRCS(value);
-//	}
-	
+	// public boolean isValid(Datatype datatype, String value) {
+	// lastDatatype = datatype;
+	// return datatype.isValidRCS(value);
+	// }
+
 	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
 		return datatype.isValidRCS(value.toString());
-//		return this.isValid(datatype, value.toString());
+		// return this.isValid(datatype, value.toString());
 	}
-	
-	public void writeValue(QName context, EncoderChannel valueChannel) throws IOException {
-		lastDatatype.writeValueRCS(rcsDatatype, valueChannel, stringEncoder, context);
+
+	public void writeValue(QName context, EncoderChannel valueChannel)
+			throws IOException {
+		lastDatatype.writeValueRCS(rcsDatatype, valueChannel, stringEncoder,
+				context);
 	}
-	
+
 }

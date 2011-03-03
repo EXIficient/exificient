@@ -69,13 +69,16 @@ public interface Grammar extends Serializable {
 	 * Note: the grammar is schema-informed also (see isSchemaInformed())
 	 * </p>
 	 * 
-	 * @return boolean value indicating whether the grammar uses built-in types only
+	 * @return boolean value indicating whether the grammar uses built-in types
+	 *         only
 	 */
 	public boolean isBuiltInXMLSchemaTypesOnly();
 
 	public Rule getDocumentGrammar();
 
 	public Rule getFragmentGrammar();
+
+	public Rule getUrTypeGrammar();
 
 	public GrammarURIEntry[] getGrammarEntries();
 

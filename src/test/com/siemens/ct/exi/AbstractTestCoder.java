@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
@@ -50,7 +51,7 @@ public abstract class AbstractTestCoder {
 		return DefaultEXIFactory.newInstance();
 	}
 
-	protected EXIFactory getFactoryNoSchema() {
+	protected EXIFactory getFactoryNoSchema() throws UnsupportedOption {
 		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
@@ -60,7 +61,8 @@ public abstract class AbstractTestCoder {
 		}
 		if (QuickTestConfiguration.valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
 			ef.setValuePartitionCapacity(QuickTestConfiguration.valuePartitionCapacity);
-		}		
+		}
+		ef.setProfile(QuickTestConfiguration.PROFILE);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
 		ef.setDatatypeRepresentationMap(QuickTestConfiguration.dtrMapTypes, QuickTestConfiguration.dtrMapRepresentations);

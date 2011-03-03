@@ -41,21 +41,21 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class BooleanPatternDatatype extends AbstractDatatype {
-	
+
 	private static final long serialVersionUID = 3601744720431415L;
-	
+
 	private int lastValidBooleanID;
 	private boolean lastValidBoolean;
-	
+
 	public BooleanPatternDatatype(QName schemaType) {
 		super(BuiltInType.BOOLEAN_PATTERN, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
 	}
-	
+
 	public boolean isValid(String value) {
 		value = value.trim();
 		boolean retValue = true;
-		
+
 		if (value.equals(Constants.XSD_BOOLEAN_FALSE)) {
 			lastValidBooleanID = 0;
 			lastValidBoolean = false;
@@ -74,7 +74,7 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 
 		return retValue;
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof BooleanValue) {
 			lastValidBoolean = ((BooleanValue) value).toBoolean();
@@ -87,20 +87,18 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
-	
-//	public Value getValue() {
-//		return new BooleanValue(lastValidBoolean);
-//	}
 
-	public void writeValue(EncoderChannel valueChannel, StringEncoder stringEncoder, QName context)
-			throws IOException {
+	// public Value getValue() {
+	// return new BooleanValue(lastValidBoolean);
+	// }
+
+	public void writeValue(EncoderChannel valueChannel,
+			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context)
-			throws IOException {
+			StringDecoder stringDecoder, QName context) throws IOException {
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
 		return new BooleanValue(booleanID);
 	}

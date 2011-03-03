@@ -31,60 +31,60 @@ import javax.xml.namespace.QName;
 public class QNameValue extends AbstractValue {
 
 	private static final long serialVersionUID = -6092774558055449492L;
-	
+
 	protected final QName qname;
 	protected final String prefix;
 
 	protected char[] characters;
 	protected String sValue;
-	
+
 	public QNameValue(QName qname, String prefix) {
 		super(ValueType.QNAME);
 		this.qname = qname;
 		this.prefix = prefix;
-		
-		if (prefix == null || prefix.length() == 0 ) {
+
+		if (prefix == null || prefix.length() == 0) {
 			sValue = qname.getLocalPart();
 		} else {
 			sValue = prefix + ":" + qname.getLocalPart();
 		}
 	}
-	
+
 	public QName toQName() {
 		return qname;
 	}
-	
-	public String getPrefix()  {
+
+	public String getPrefix() {
 		return prefix;
 	}
-	
+
 	public int getCharactersLength() {
 		return sValue.length();
 	}
-	
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
-		for(int i=0; i<sValue.length(); i++) {
-			cbuffer[i+offset] = sValue.charAt(i);
+		for (int i = 0; i < sValue.length(); i++) {
+			cbuffer[i + offset] = sValue.charAt(i);
 		}
 		return cbuffer;
 	}
-	
+
 	@Override
 	public String toString() {
 		return sValue;
 	}
-	
+
 	@Override
 	public String toString(char[] cbuffer, int offset) {
 		return sValue;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof QNameValue) {
-			return qname.equals((QNameValue)o);
+			return qname.equals((QNameValue) o);
 		} else {
-			return false;	
+			return false;
 		}
 	}
 

@@ -27,6 +27,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.types.TypeEncoder;
@@ -42,6 +43,9 @@ import com.siemens.ct.exi.types.TypeEncoder;
  */
 
 public interface EXIFactory extends Cloneable {
+
+	public static final String ULTRA_CONSTRAINED_DEVICE_PROFILE = "ULTRA_CONSTRAINED_DEVICE_PROFILE";
+
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
 	 * comments or DTDs).
@@ -61,6 +65,23 @@ public interface EXIFactory extends Cloneable {
 	 * @see FidelityOptions
 	 */
 	public FidelityOptions getFidelityOptions();
+
+	/**
+	 * Sets an EXI profile that configures tha factory.
+	 * 
+	 * @param profileName
+	 * @throws UnsupportedOption
+	 *             if profile is not supported
+	 */
+	public void setProfile(String profileName) throws UnsupportedOption;
+
+	/**
+	 * Returns whether a certain profile name is in use.
+	 * 
+	 * @param profileName
+	 * @return boolean value indicating the use of the profile
+	 */
+	public boolean usesProfile(String profileName);
 
 	/**
 	 * Sets the header options used by the EXI Encoder(e.g., include EXI Cookie,
@@ -121,18 +142,6 @@ public interface EXIFactory extends Cloneable {
 	 * @return coding-mode used by the factory
 	 */
 	public CodingMode getCodingMode();
-
-//	/**
-//	 * Sets whether an EXI Body is preceded by an EXI Header. By default any EXI
-//	 * stream consists of an EXI header followed by an EXI Body. e.g.
-//	 * SelfContained Fragments are treated differently and no additional header
-//	 * is added.
-//	 * 
-//	 * @param exiBodyOnly
-//	 */
-//	public void setEXIBodyOnly(boolean exiBodyOnly);
-//
-//	public boolean isEXIBodyOnly();
 
 	/**
 	 * The default blockSize is intentionally large (1,000,000) but can be
@@ -207,26 +216,25 @@ public interface EXIFactory extends Cloneable {
 	 */
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations);
-	
-	
+
 	/**
-	 * EXI processors MAY provide the capability to specify different built-in EXI datatype
-	 * representations or user-defined datatype representations for representing
-	 * specific schema datatypes.
+	 * EXI processors MAY provide the capability to specify different built-in
+	 * EXI datatype representations or user-defined datatype representations for
+	 * representing specific schema datatypes.
 	 * 
 	 * @return qualified name array for dtr types OR <code>null</code>
 	 */
 	public QName[] getDatatypeRepresentationMapTypes();
 
 	/**
-	 * EXI processors MAY provide the capability to specify different built-in EXI datatype
-	 * representations or user-defined datatype representations for representing
-	 * specific schema datatypes.
+	 * EXI processors MAY provide the capability to specify different built-in
+	 * EXI datatype representations or user-defined datatype representations for
+	 * representing specific schema datatypes.
 	 * 
 	 * @return qualified name array for dtr representations OR <code>null</code>
 	 */
 	public QName[] getDatatypeRepresentationMapRepresentations();
-	
+
 	/**
 	 * Self-contained elements may be read independently from the rest of the
 	 * EXI body, allowing them to be indexed for random access. The
@@ -264,7 +272,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 */
 	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException;
-	
+
 	/**
 	 * Returns an <code>EXIBodyDecoder</code>
 	 * 

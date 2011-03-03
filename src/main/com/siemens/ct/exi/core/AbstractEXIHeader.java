@@ -73,7 +73,8 @@ public abstract class AbstractEXIHeader {
 
 	protected EXIFactory getHeaderFactory() throws EXIException {
 		if (headerFactory == null) {
-			InputStream is = new ByteArrayInputStream(EXI_OPTIONS_XSD.getBytes());
+			InputStream is = new ByteArrayInputStream(
+					EXI_OPTIONS_XSD.getBytes());
 			Grammar headerGrammar = grammarFactory.createGrammar(is);
 
 			headerFactory = DefaultEXIFactory.newInstance();

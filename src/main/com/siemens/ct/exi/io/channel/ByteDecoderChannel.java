@@ -45,92 +45,16 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public int decode() throws IOException {
 		return is.read();
 	}
-	
+
 	public void align() throws IOException {
 	}
-	
+
 	public void skip(long n) throws IOException {
-		while(n != 0) {
+		while (n != 0) {
 			n -= is.skip(n);
 		}
 	}
 	
-
-	/**
-	 * Decode a single boolean value. The value false is represented by the byte
-	 * 0, and the value true is represented by the byte 1.
-	 */
-	public boolean decodeBoolean() throws IOException {
-		return (is.read() == 0 ? false : true);
-	}
-	
-	/**
-	 * Decode an arbitrary precision non negative integer using a sequence of
-	 * octets. The most significant bit of the last octet is set to zero to
-	 * indicate sequence termination. Only seven bits per octet are used to
-	 * store the integer's value.
-	 */
-	public int decodeUnsignedInteger() throws IOException {
-		int result = 0;
-
-		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		// int multiplier = 1;
-		int mShift = 0;
-		int b;
-		
-		do {
-			// 1. Read the next octet
-			b = decode();
-			// 2. Multiply the value of the unsigned number represented by
-			// the 7
-			// least significant
-			// bits of the octet by the current multiplier and add the
-			// result to
-			// the current value.
-			// result += (b & 127) * multiplier;
-			result += (b & 127) << mShift;
-			// 3. Multiply the multiplier by 128
-			// multiplier = multiplier << 7;
-			mShift += 7;
-			// 4. If the most significant bit of the octet was 1, go back to
-			// step 1
-		} while ((b >>> 7) == 1);
-
-		return result;
-	}
-	
-	protected long decodeUnsignedLong() throws IOException {
-		long lResult = 0L;
-		int mShift = 0;
-		int b;
-
-		do {
-			b = decode();
-			lResult += ((long) (b & 127)) << mShift;
-			mShift += 7;
-		} while ((b >>> 7) == 1);
-
-		return lResult;
-	}
-	
-
-	/**
-	 * Decode a binary value as a length-prefixed sequence of octets.
-	 */
-	public byte[] decodeBinary() throws IOException {
-		final int length = decodeUnsignedInteger();
-		byte[] result = new byte[length];
-		
-		int readBytes = is.read(result);
-		if(readBytes < length) {
-			//	special case: not all bytes are read 
-			while( (readBytes += is.read(result, readBytes, length-readBytes)) < length ) {
-			}
-		}
-		
-		return result;
-	}
-
 	/**
 	 * Decodes and returns an n-bit unsigned integer using the minimum number of
 	 * bytes required for n bits.
@@ -146,6 +70,31 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 			result += (is.read() << bitsRead);
 			bitsRead += 8;
 		}
+		return result;
+	}
+
+	/**
+	 * Decode a single boolean value. The value false is represented by the byte
+	 * 0, and the value true is represented by the byte 1.
+	 */
+	public boolean decodeBoolean() throws IOException {
+		return (is.read() == 0 ? false : true);
+	}
+	
+	/**
+	 * Decode a binary value as a length-prefixed sequence of octets.
+	 */
+	public byte[] decodeBinary() throws IOException {
+		final int length = decodeUnsignedInteger();
+		byte[] result = new byte[length];
+
+		int readBytes = is.read(result);
+		if (readBytes < length) {
+			// special case: not all bytes are read
+			while ((readBytes += is.read(result, readBytes, length - readBytes)) < length) {
+			}
+		}
+
 		return result;
 	}
 

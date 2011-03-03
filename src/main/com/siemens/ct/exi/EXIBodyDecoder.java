@@ -43,11 +43,12 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public interface EXIBodyDecoder {
-	
+
 	public void setInputStream(InputStream is) throws EXIException, IOException;
 
-	public void setInputChannel(DecoderChannel channel) throws EXIException, IOException;
-	
+	public void setInputChannel(DecoderChannel channel) throws EXIException,
+			IOException;
+
 	/**
 	 * Reports the next available EXI event-type or <code>null</code> if no more
 	 * EXI event is available.

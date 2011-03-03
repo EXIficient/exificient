@@ -44,31 +44,31 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 
 	/* global ID */
 	protected int globalID;
-	
+
 	/* localID mapping, globalID index --> localID & values (in given context) */
 	protected LocalIDMap[] localIdMapping;
-	
+
 	class LocalIDMap {
 		final int localID;
-		final QName context; /* debug info*/
+		final QName context; /* debug info */
 		final List<StringValue> values;
-		
+
 		public LocalIDMap(int localID, QName context, List<StringValue> values) {
 			this.localID = localID;
 			this.context = context;
 			this.values = values;
 		}
 	}
-	
+
 	public BoundedStringDecoderImpl(int valueMaxLength,
 			int valuePartitionCapacity) {
 		super();
 		this.valueMaxLength = valueMaxLength;
 		this.valuePartitionCapacity = valuePartitionCapacity;
-		
+
 		this.globalID = -1;
 		if (valuePartitionCapacity >= 0) {
-			localIdMapping = new LocalIDMap[valuePartitionCapacity];	
+			localIdMapping = new LocalIDMap[valuePartitionCapacity];
 		}
 	}
 
@@ -94,7 +94,7 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 				 * compact identifier permanently unassigned.
 				 */
 				assert (!globalValues.contains(value));
-				
+
 				// updateLocalValues(context, value);
 				// TODO BLAAAAAAAAAAAAAAAAAAA
 				List<StringValue> lvs = localValues.get(context);
@@ -111,37 +111,38 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 				 * resulting value of globalID is equal to
 				 * valuePartitionCapacity, its value is reset to zero (0)
 				 */
-				if ( (++globalID) == valuePartitionCapacity) {
+				if ((++globalID) == valuePartitionCapacity) {
 					globalID = 0;
 				}
-				
-				if (globalValues.size()>globalID) {
+
+				if (globalValues.size() > globalID) {
 					Value prev = globalValues.set(globalID, value);
 					if (prev != null) {
 						// free memory
 						LocalIDMap lvsFree = localIdMapping[globalID];
-						assert(lvsFree != null);
-						// System.out.println("Remove " + lvsFree.values.get(lvsFree.localID) + " in " + lvsFree.context);
+						assert (lvsFree != null);
+						// System.out.println("Remove " +
+						// lvsFree.values.get(lvsFree.localID) + " in " +
+						// lvsFree.context);
 						lvsFree.values.set(lvsFree.localID, null);
-					}					
+					}
 				} else {
 					globalValues.add(value);
 				}
-				
-				
+
 				// update local ID mapping
-				localIdMapping[globalID] = new LocalIDMap(lvs.size()-1, context, lvs);
-				// System.out.println("Global " + globalID +  ": " + context );
+				localIdMapping[globalID] = new LocalIDMap(lvs.size() - 1,
+						context, lvs);
+				// System.out.println("Global " + globalID + ": " + context );
 
 			}
 		}
 	}
-	
+
 	@Override
 	public void clear() {
 		super.clear();
 		globalID = -1;
 	}
-
 
 }

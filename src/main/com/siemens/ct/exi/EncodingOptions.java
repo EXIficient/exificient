@@ -42,19 +42,22 @@ public class EncodingOptions {
 	public static final String INCLUDE_OPTIONS = "INCLUDE_OPTIONS";
 	/* schemaID as part of EXI Options */
 	public static final String INCLUDE_SCHEMA_ID = "INCLUDE_SCHEMA_ID";
-	
+
 	/* encode entity references as ER event instead of trying to resolve them */
 	public static final String RETAIN_ENTITY_REFERENCE = "KEEP_ENTITY_REFERENCES_UNRESOLVED";
-	
+
 	/* attribute "schemaLocation" and "noNamespaceSchemaLocation" */
 	public static final String INCLUDE_XSI_SCHEMALOCATION = "INCLUDE_XSI_SCHEMALOCATION";
-	
+
 	/* Insignificant xsi:nil values e.g., xsi:nil="false" */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
 
-	/* Insignificant xsi:type values e.g., xsi:type="xs:string" where type is already string */
+	/*
+	 * Insignificant xsi:type values e.g., xsi:type="xs:string" where type is
+	 * already string
+	 */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE = "INCLUDE_INSIGNIFICANT_XSI_TYPE";
-	
+
 	/* contains options and according values */
 	protected Set<String> options;
 
@@ -78,7 +81,7 @@ public class EncodingOptions {
 	 * 
 	 * @param key
 	 *            referring to a specific option
-	 *            
+	 * 
 	 * @throws UnsupportedOption
 	 */
 	public void setOption(String key) throws UnsupportedOption {
@@ -101,17 +104,17 @@ public class EncodingOptions {
 					+ "' is unknown!");
 		}
 	}
+
 	/**
 	 * Disables given option.
 	 * 
 	 * @param key
 	 *            referring to a specific option
-	 *            
+	 * 
 	 */
 	public boolean unsetOption(String key) {
 		return options.remove(key);
 	}
-	
 
 	/**
 	 * Informs whether the specified option is enabled.
@@ -123,16 +126,16 @@ public class EncodingOptions {
 	public boolean isOptionEnabled(String key) {
 		return options.contains(key);
 	}
-	
-//	/**
-//	 * Reports the value for a given option key.
-//	 * 
-//	 * @param key option
-//	 * @return value
-//	 */
-//	public Object getOptionValue(String key) {
-//		return options.get(key);
-//	}
+
+	// /**
+	// * Reports the value for a given option key.
+	// *
+	// * @param key option
+	// * @return value
+	// */
+	// public Object getOptionValue(String key) {
+	// return options.get(key);
+	// }
 
 	@Override
 	public boolean equals(Object o) {

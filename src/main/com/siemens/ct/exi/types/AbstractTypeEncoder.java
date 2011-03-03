@@ -32,11 +32,11 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 		TypeEncoder {
 
 	protected StringEncoder stringEncoder;
-	
+
 	public AbstractTypeEncoder(StringEncoder stringEncoder) {
 		this.stringEncoder = stringEncoder;
 	}
-	
+
 	public void clear() {
 		stringEncoder.clear();
 	}

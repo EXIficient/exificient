@@ -55,39 +55,38 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 
 	protected Document document;
 	protected DocumentFragment docFragment;
-	
+
 	protected DOMImplementation domImplementation;
 	protected boolean fragment;
-	
+
 	protected Node currentNode;
-	
+
 	protected DocumentType dt;
-	
+
 	protected List<PrefixMapping> prefixes;
 
 	public SaxToDomHandler(DOMImplementation domImplementation, boolean fragment) {
 		this.domImplementation = domImplementation;
 		this.fragment = fragment;
-		
+
 		prefixes = new ArrayList<PrefixMapping>();
 	}
 
 	protected Document checkDocument() {
 		if (document == null) {
 			// create empty document
-			document = domImplementation.createDocument(null, null,
-					dt);
-			
+			document = domImplementation.createDocument(null, null, dt);
+
 			if (fragment) {
 				docFragment = document.createDocumentFragment();
 				currentNode = docFragment;
 			} else {
-				currentNode = document;	
-			}	
+				currentNode = document;
+			}
 		}
 		return document;
 	}
-	
+
 	public Document getDocument() {
 		return this.document;
 	}
@@ -95,21 +94,23 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 	public DocumentFragment getDocumentFragment() {
 		return this.docFragment;
 	}
-	
+
 	public void startElement(String uri, String name, String qName,
 			Attributes attrs) throws SAXException {
 		// create element
 		Element element = checkDocument().createElementNS(uri, qName);
 
 		// add NS declarations
-		for(PrefixMapping pm : prefixes) {
-			String qname = pm.prefix.length() == 0 ? XMLConstants.XMLNS_ATTRIBUTE : XMLConstants.XMLNS_ATTRIBUTE  + ":" + pm.prefix;
-			Attr attr = checkDocument().createAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, qname);
+		for (PrefixMapping pm : prefixes) {
+			String qname = pm.prefix.length() == 0 ? XMLConstants.XMLNS_ATTRIBUTE
+					: XMLConstants.XMLNS_ATTRIBUTE + ":" + pm.prefix;
+			Attr attr = checkDocument().createAttributeNS(
+					XMLConstants.XMLNS_ATTRIBUTE_NS_URI, qname);
 			attr.setValue(pm.uri);
 			element.setAttributeNodeNS(attr);
 		}
 		prefixes.clear(); // re-set
-		
+
 		// add attribute per attribute
 		for (int i = 0; i < attrs.getLength(); ++i) {
 			String value = attrs.getValue(i);
@@ -121,26 +122,25 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 			attr.setValue(value);
 			element.setAttributeNodeNS(attr);
 		}
-		
 
 		// add initially created element to tree, and adjust current node
 		currentNode.appendChild(element);
 		currentNode = element;
 	}
-	
 
 	class PrefixMapping {
 		public final String prefix;
 		public final String uri;
+
 		public PrefixMapping(String prefix, String uri) {
 			this.prefix = prefix;
 			this.uri = uri;
 		}
 	}
-	
+
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
-		// System.out.println("PfxMapping " + prefix + " --> " +  uri);
+		// System.out.println("PfxMapping " + prefix + " --> " + uri);
 		prefixes.add(new PrefixMapping(prefix, uri));
 	}
 
@@ -154,31 +154,30 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 			// add new text node
 			String ss = new String(ch, start, length);
 			Text text = checkDocument().createTextNode(ss);
-			currentNode.appendChild(text);	
+			currentNode.appendChild(text);
 		}
 	}
 
 	public void processingInstruction(String target, String data) {
 		// add new processing instruction
-		ProcessingInstruction pi = checkDocument().createProcessingInstruction(target,
-				data);
+		ProcessingInstruction pi = checkDocument().createProcessingInstruction(
+				target, data);
 		currentNode.appendChild(pi);
 	}
 
 	public void comment(char[] ch, int start, int length) throws SAXException {
 		// add comment node
-		Comment cm = checkDocument().createComment(new String(ch, start, length));
+		Comment cm = checkDocument().createComment(
+				new String(ch, start, length));
 		currentNode.appendChild(cm);
 	}
 
 	public void startDTD(String name, String publicId, String systemId)
 			throws SAXException {
-		dt = domImplementation.createDocumentType(
-				name, publicId, systemId);
-		
+		dt = domImplementation.createDocumentType(name, publicId, systemId);
+
 		checkDocument();
-		
-		
+
 		// currentNode.appendChild(dt);
 		// document.appendChild(dt);
 	}
@@ -212,7 +211,7 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 			String systemId, String notationName) throws SAXException {
 		// TODO unparsedEntityDecl
 	}
-	
+
 	/*
 	 * Decl-Handler
 	 */
@@ -235,13 +234,12 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 			throws SAXException {
 		if (dt != null) {
 			// NamedNodeMap nnm = dt.getEntities();
-			EntityReference er =  checkDocument().createEntityReference(name);
+			EntityReference er = checkDocument().createEntityReference(name);
 			er.setNodeValue(value);
 		}
-		// TODO internalEntityDecl		
+		// TODO internalEntityDecl
 	}
 
-	
 	// TODO error handlers
 
 }

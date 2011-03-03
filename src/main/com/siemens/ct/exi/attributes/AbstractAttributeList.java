@@ -66,8 +66,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 
 	public AbstractAttributeList(EXIFactory exiFactory) {
 		// options
-		preserveSchemaLocation = exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
-		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+		preserveSchemaLocation = exiFactory.getEncodingOptions()
+				.isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PREFIX);
 
 		// attributes
 		attributeURI = new ArrayList<String>();
@@ -96,7 +98,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public String getXsiTypeRaw() {
 		return xsiTypeRaw;
 	}
-	
+
 	public String getXsiTypePrefix() {
 		return this.xsiTypePrefix;
 	}
@@ -111,7 +113,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public String getXsiNil() {
 		return xsiNil;
 	}
-	
+
 	public String getXsiNilPrefix() {
 		return this.xsiNilPrefix;
 	}
@@ -144,7 +146,7 @@ public abstract class AbstractAttributeList implements AttributeList {
 		this.xsiTypeRaw = rawType;
 		this.xsiTypePrefix = xsiPrefix;
 	}
-	
+
 	private void setXsiNil(String rawNil, String xsiPrefix) {
 		this.hasXsiNil = true;
 		this.xsiNil = rawNil;

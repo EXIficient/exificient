@@ -19,11 +19,11 @@
 package com.siemens.ct.exi.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
+
+import com.siemens.ct.exi.Constants;
 
 /**
  * 
@@ -37,29 +37,42 @@ public class RuntimeURIEntry {
 
 	public final String namespaceURI;
 	public final int id;
+	protected final String[] grammarPrefixes;
 
 	protected final List<QName> localNames;
-	protected final Map<String, Integer> localNameIDs;
-
 	protected final List<String> prefixes;
-	protected final Map<String, Integer> prefixIDs;
+
+	protected static final String[] EMPTY_PREFIXES = new String[0];
 
 	public RuntimeURIEntry(String namespaceURI, int id) {
+		this(namespaceURI, id, EMPTY_PREFIXES);
+	}
+
+	public RuntimeURIEntry(String namespaceURI, int id, String[] grammarPrefixes) {
 		this.namespaceURI = namespaceURI;
 		this.id = id;
-
+		this.grammarPrefixes = grammarPrefixes;
+		// localNames
 		localNames = new ArrayList<QName>();
-		localNameIDs = new HashMap<String, Integer>();
-
+		// prefixes
 		prefixes = new ArrayList<String>();
-		prefixIDs = new HashMap<String, Integer>();
+		initPrefixes();
 	}
 
-	public Integer getLocalNameID(final String localName) {
-		return localNameIDs.get(localName);
+	private void initPrefixes() {
+		assert (grammarPrefixes != null);
+		for (int i = 0; i < grammarPrefixes.length; i++) {
+			addPrefix(grammarPrefixes[i]);
+		}
 	}
 
-	public QName getNameContext(final int localNameID) {
+	public void clear() {
+		localNames.clear();
+		prefixes.clear();
+		initPrefixes();
+	}
+
+	public QName getQName(final int localNameID) {
 		return localNames.get(localNameID);
 	}
 
@@ -67,15 +80,8 @@ public class RuntimeURIEntry {
 	 * LocalNames
 	 */
 	public QName addLocalName(final String localName) {
-		localNameIDs.put(localName, localNames.size());
 		QName qname = new QName(namespaceURI, localName);
 		localNames.add(qname);
-		return qname;
-	}
-
-	public QName removeLocalName(final int localNameID) {
-		QName qname = localNames.remove(localNameID);
-		localNameIDs.remove(qname.getLocalPart());
 		return qname;
 	}
 
@@ -88,26 +94,24 @@ public class RuntimeURIEntry {
 	 */
 	public void addPrefix(final String prefix) {
 		assert (!prefixes.contains(prefix));
-		int prefixID = prefixes.size();
-		prefixIDs.put(prefix, prefixID);
 		prefixes.add(prefix);
-	}
-
-	public String removePrefix(final int prefixID) {
-		String pfx = prefixes.remove(prefixID);
-		prefixIDs.remove(pfx);
-		return pfx;
 	}
 
 	public List<String> getPrefixes() {
 		return this.prefixes;
 	}
 
-	public Integer getPrefixID(String prefix) {
-		return prefixIDs.get(prefix);
+	public int getPrefixID(String prefix) {
+		for (int i = 0; i < prefixes.size(); i++) {
+			if (prefixes.get(i).equals(prefix)) {
+				return i;
+			}
+		}
+		return Constants.NOT_FOUND;
 	}
 
 	public String getPrefix(final int prefixID) {
+		assert (prefixID >= 0 && prefixID < prefixes.size());
 		return prefixes.get(prefixID);
 	}
 
