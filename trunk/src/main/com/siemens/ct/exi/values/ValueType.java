@@ -36,12 +36,10 @@ public enum ValueType {
 	DECIMAL,
 	/* Float */
 	FLOAT,
-	/* int Integer */
-	INT_INTEGER,
-	/* long Integer */
-	LONG_INTEGER,
-	/* Big Integer */
-	BIG_INTEGER,
+	/* Integer int, long, BigInteger*/
+	INTEGER_INT,
+	INTEGER_LONG,
+	INTEGER_BIG,
 	/* Datetime */
 	DATETIME,
 	/* String */

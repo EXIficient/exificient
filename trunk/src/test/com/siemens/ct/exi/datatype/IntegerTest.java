@@ -38,12 +38,12 @@ public class IntegerTest extends AbstractTestCase {
 		bitEC.encodeInteger(0);
 		bitEC.flush();
 		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
-		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec1.intValue() == 0);
 		// Byte
 		getByteEncoder().encodeInteger(0);
 		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
-		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec2.intValue() == 0);
 	}
 
@@ -53,12 +53,12 @@ public class IntegerTest extends AbstractTestCase {
 		bitEC.encodeInteger(1);
 		bitEC.flush();
 		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
-		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec1.intValue() == 1);
 		// Byte
 		getByteEncoder().encodeInteger(1);
 		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
-		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec2.intValue() == 1);
 	}
 
@@ -68,12 +68,12 @@ public class IntegerTest extends AbstractTestCase {
 		bitEC.encodeInteger(Integer.MIN_VALUE);
 		bitEC.flush();
 		IntegerValue dec1 = getBitDecoder().decodeIntegerValue();
-		assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec1.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec1.intValue() == Integer.MIN_VALUE);
 		// Byte
 		getByteEncoder().encodeInteger(Integer.MIN_VALUE);
 		IntegerValue dec2 = getByteDecoder().decodeIntegerValue();
-		assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+		assertTrue(dec2.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec2.intValue() == Integer.MIN_VALUE);
 	}
 
@@ -215,10 +215,10 @@ public class IntegerTest extends AbstractTestCase {
 		DecoderChannel dcByte = getByteDecoder();
 		for (int i = 0; i < 100000; i++) {
 			IntegerValue dec1 = dcBit.decodeIntegerValue();
-			assertTrue(dec1.getValueType() == ValueType.INT_INTEGER);
+			assertTrue(dec1.getValueType() == ValueType.INTEGER_INT);
 			assertEquals(dec1.intValue(), i);
 			IntegerValue dec2 = dcByte.decodeIntegerValue();
-			assertTrue(dec2.getValueType() == ValueType.INT_INTEGER);
+			assertTrue(dec2.getValueType() == ValueType.INTEGER_INT);
 			assertEquals(dec2.intValue(), i);
 		}
 	}

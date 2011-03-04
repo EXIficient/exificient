@@ -229,6 +229,24 @@ public class DecimalTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 	
+	// deviation 8
+	public void testDecimalBig2() throws IOException {
+		String s = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890.1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678912345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+		DecimalValue d = DecimalValue.parse(s);
+		assertTrue(d != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.flush();
+		DecimalValue dv1 = getBitDecoder().decodeDecimalValue();
+		String sBit = dv1.toString();
+		assertTrue(new String(sBit) + "!=" + s, s.equals(sBit));
+		// Byte
+		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
+	}
+	
 	public void testDecimalFail1() throws IOException {
 		String s = "9.213.456";
 		DecimalValue d = DecimalValue.parse(s);

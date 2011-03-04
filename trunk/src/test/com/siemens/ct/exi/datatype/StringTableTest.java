@@ -416,12 +416,12 @@ public class StringTableTest extends AbstractTestCase {
 		assertTrue("root".equals(localNames0[0]));
 		
 		// urn:bla
-		assertTrue("urn:bla".equals(gue[4].uri));
+		assertTrue("urn:bla".equals(gue[4].namespaceURI));
 		String[] localNames4 = gue[4].localNames;
 		assertTrue(localNames4.length == 0);
 		
 		// urn:foo
-		assertTrue("urn:foo".equals(gue[5].uri));
+		assertTrue("urn:foo".equals(gue[5].namespaceURI));
 		String[] localNames5 = gue[5].localNames;
 		assertTrue(localNames5.length == 0);
 	}

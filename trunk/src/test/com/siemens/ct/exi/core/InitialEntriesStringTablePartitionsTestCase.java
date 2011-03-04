@@ -38,9 +38,9 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 3);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 
 		// Initial Entries in Prefix Partitions
@@ -72,11 +72,11 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 4);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 
 		// Initial Entries in Prefix Partitions
 		assertTrue(gue[0].prefixes.length == 1);
@@ -126,11 +126,11 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 4);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 
 		// Initial Entries in Prefix Partitions
 		assertTrue(gue[0].prefixes.length == 1);
@@ -195,11 +195,11 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 4);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 		
 		// Initial Entries in Local-Name Partitions
 		assertTrue(gue[0].localNames.length == 7);
@@ -242,12 +242,12 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 5);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
-		assertTrue(gue[4].uri.equals("http://www.foo.com"));
+		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gue[4].namespaceURI.equals("http://www.foo.com"));
 		
 		// Initial Entries in Local-Name Partitions
 		assertTrue(gue[0].localNames.length == 0);
@@ -275,11 +275,11 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		
 		// Initial Entries in Uri Partition
 		assertTrue(gue.length == 4);
-		assertTrue(gue[0].uri.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].uri.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].uri
+		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
+		assertTrue(gue[2].namespaceURI
 				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 		
 		// Initial Entries in Local-Name Partitions
 		// some more than usual, #34

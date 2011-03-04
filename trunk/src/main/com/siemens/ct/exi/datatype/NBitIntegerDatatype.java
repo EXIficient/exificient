@@ -47,8 +47,6 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 
 	protected IntegerValue validValue;
 
-//	protected final int lowerBound;
-//	protected final int upperBound;
 	protected final IntegerValue lowerBound;
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
@@ -64,7 +62,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 
 		// calculate number of bits to represent range
 		IntegerValue diff = upperBound.subtract(lowerBound);
-		if (diff.getValueType() == ValueType.INT_INTEGER) {
+		if (diff.getValueType() == ValueType.INTEGER_INT) {
 			numberOfBits4Range = MethodsBag.getCodingLength(diff.intValue() + 1);			
 		} else {
 			throw new RuntimeException("Unexpected NBit bound difference: " + diff);
@@ -109,24 +107,12 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	// check lower & upper bound
 	protected boolean checkBounds() {
 		return (validValue.compareTo(lowerBound) >= 0 && validValue.compareTo(upperBound) <= 0);
-//		int iValidValue = validValue.toInteger();
-//		if (iValidValue >= lowerBound && iValidValue <= upperBound) {
-//			return true;
-//		} else {
-//			return false;
-//		}
 	}
-
-	
-	// public Value getValue() {
-	// return validValue;
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		// valueChannel.encodeNBitUnsignedInteger(validValue.toInteger() - lowerBound, numberOfBits4Range);
 		IntegerValue iv = validValue.subtract(lowerBound);
-		if (iv.getValueType() == ValueType.INT_INTEGER) {
+		if (iv.getValueType() == ValueType.INTEGER_INT) {
 			valueChannel.encodeNBitUnsignedInteger(iv.intValue(), numberOfBits4Range);
 		} else {
 			throw new IOException("N-Bit Value exceeds int range: " +  iv);
@@ -138,10 +124,6 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		IntegerValue iv = valueChannel
 				.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
 		return iv.add(lowerBound);
-//		if (lowerBound != 0) {
-//			iv = IntegerValue.valueOf(iv.toInteger() + lowerBound);
-//		}
-//		return iv;
 	}
 
 }
