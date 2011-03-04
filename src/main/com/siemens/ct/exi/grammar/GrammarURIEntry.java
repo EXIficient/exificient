@@ -34,7 +34,7 @@ public class GrammarURIEntry implements Serializable {
 
 	private static final long serialVersionUID = 352521635962295594L;
 
-	public final String uri;
+	public final String namespaceURI;
 	public final String[] localNames;
 	public final String[] prefixes;
 	public final QName[] qNames;
@@ -43,7 +43,7 @@ public class GrammarURIEntry implements Serializable {
 		assert (uri != null);
 		assert (localNames != null);
 		assert (prefixes != null);
-		this.uri = uri;
+		this.namespaceURI = uri;
 		this.localNames = localNames;
 		this.qNames = new QName[localNames.length];
 		for (int i = 0; i < localNames.length; i++) {
@@ -54,7 +54,7 @@ public class GrammarURIEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "{" + uri + "}(localNames#" + localNames.length + ", prefixes#"
+		return "{" + namespaceURI + "}(localNames#" + localNames.length + ", prefixes#"
 				+ prefixes.length + ")";
 	}
 

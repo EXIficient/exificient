@@ -424,15 +424,19 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				nsEntries.add(super.decodeNamespaceDeclaration());
 				break;
 			case ATTRIBUTE_XSI_TYPE:
-				attributePrefix = qnameDatatype.decodeQNamePrefix(
-						XSI_TYPE.getNamespaceURI(), channel);
+				attributeQName = XSI_TYPE;
+				handleAttributePrefix();
+//				attributePrefix = qnameDatatype.decodeQNamePrefix(
+//						XSI_TYPE.getNamespaceURI(), channel);
 				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiTypeStructure();
 				xsiValues.add(attributeValue);
 				break;
 			case ATTRIBUTE_XSI_NIL:
-				attributePrefix = qnameDatatype.decodeQNamePrefix(
-						XSI_NIL.getNamespaceURI(), channel);
+				attributeQName = XSI_NIL;
+				handleAttributePrefix();
+//				attributePrefix = qnameDatatype.decodeQNamePrefix(
+//						XSI_NIL.getNamespaceURI(), channel);
 				xsiPrefixes.add(attributePrefix);
 				decodeAttributeXsiNilStructure();
 				xsiValues.add(attributeValue);

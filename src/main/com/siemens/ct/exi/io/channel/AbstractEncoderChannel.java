@@ -115,13 +115,13 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 
 	public void encodeIntegerValue(IntegerValue iv) throws IOException {
 		switch(iv.getValueType()) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			encodeInteger(iv.intValue());
 			break;
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			encodeLong(iv.longValue());
 			break;
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			encodeBigInteger(iv.bigIntegerValue());
 			break;
 		}
@@ -204,13 +204,13 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	public void encodeUnsignedIntegerValue(IntegerValue iv)
 			throws IOException {
 		switch(iv.getValueType()) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			encodeUnsignedInteger(iv.intValue());
 			break;
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			encodeUnsignedLong(iv.longValue());
 			break;
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			encodeUnsignedBigInteger(iv.bigIntegerValue());
 			break;
 		}

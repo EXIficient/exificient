@@ -33,7 +33,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.datatype.QNameDatatype;
-import com.siemens.ct.exi.datatype.QNameDatatypeNoAdds;
+import com.siemens.ct.exi.datatype.QNameDatatypeUCDProfile;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -88,7 +88,7 @@ public abstract class AbstractEXIBodyCoder {
 		this.exiFactory = exiFactory;
 		// QName datatype (coder)
 		if (exiFactory.usesProfile(EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE)) {
-			qnameDatatype = new QNameDatatypeNoAdds(this, null);
+			qnameDatatype = new QNameDatatypeUCDProfile(this, null);
 		} else {
 			qnameDatatype = new QNameDatatype(this, null);
 		}

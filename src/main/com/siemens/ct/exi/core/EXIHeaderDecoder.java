@@ -325,7 +325,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		if (VALUE_MAX_LENGTH.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INT_INTEGER) {
+				if (iv.getValueType() == ValueType.INTEGER_INT) {
 					f.setValueMaxLength(iv.intValue());
 				} else {
 					throw new EXIException("[EXI-Header] ValueMaxLength other than int not supported: " + iv);
@@ -344,7 +344,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		} else if (VALUE_PARTITION_CAPACITY.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INT_INTEGER) {
+				if (iv.getValueType() == ValueType.INTEGER_INT) {
 					f.setValuePartitionCapacity(iv.intValue());
 				} else {
 					throw new EXIException("[EXI-Header] ValuePartitionCapacity other than int not supported: " + iv);
@@ -364,7 +364,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		} else if (BLOCK_SIZE.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INT_INTEGER) {
+				if (iv.getValueType() == ValueType.INTEGER_INT) {
 					f.setBlockSize(iv.intValue());	
 				} else {
 					throw new EXIException("[EXI-Header] BlockSize other than int not supported: " + iv);

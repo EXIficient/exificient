@@ -316,10 +316,20 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	private final void handleAttributePrefix() throws IOException {
-		attributePrefix = qnameDatatype.decodeQNamePrefix(
-				attributeQName.getNamespaceURI(), channel);
-		if (attributePrefix == null) {
+	protected final void handleElementPrefix() throws IOException {
+		if (preservePrefix) {
+			elementPrefix = qnameDatatype.decodeQNamePrefix(
+					elementQName.getNamespaceURI(), channel);	
+		} else {
+			elementPrefix = null;
+		}
+	}
+	
+	protected final void handleAttributePrefix() throws IOException {
+		if (preservePrefix) {
+			attributePrefix = qnameDatatype.decodeQNamePrefix(
+					attributeQName.getNamespaceURI(), channel);			
+		} else {
 			attributePrefix = checkPrefixMapping(attributeQName
 					.getNamespaceURI());
 		}
@@ -461,9 +471,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		StartElement se = ((StartElement) nextEvent);
 		// store SE qname
 		elementQName = se.getQName();
-		// handle element prefixes
-		elementPrefix = qnameDatatype.decodeQNamePrefix(
-				elementQName.getNamespaceURI(), channel);
+		// handle element prefix
+		handleElementPrefix();
 		// push element
 		pushElement(se, nextRule);
 		return elementQName;
@@ -476,9 +485,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// decode local-name
 		elementQName = qnameDatatype.decodeLocalName(seNS.getNamespaceURI(),
 				channel);
-		// handle element prefixes
-		elementPrefix = qnameDatatype.decodeQNamePrefix(
-				elementQName.getNamespaceURI(), channel);
+		// handle element prefix
+		handleElementPrefix();
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// push element
@@ -490,9 +498,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
 		elementQName = qnameDatatype.decodeQName(channel);
-		// handle element prefixes
-		elementPrefix = qnameDatatype.decodeQNamePrefix(
-				elementQName.getNamespaceURI(), channel);
+		// handle element prefix
+		handleElementPrefix();
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// learn start-element ?
@@ -507,10 +514,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
 		elementQName = qnameDatatype.decodeQName(channel);
-		// handle element prefixes
-		elementPrefix = qnameDatatype.decodeQNamePrefix(
-				elementQName.getNamespaceURI(), channel);
-
+		// handle element prefix
+		handleElementPrefix();
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// learn start-element ?
@@ -541,8 +546,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	public QName decodeAttributeXsiNil() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
 		attributeQName = XSI_NIL;
-		attributePrefix = qnameDatatype.decodeQNamePrefix(
-				XSI_NIL.getNamespaceURI(), channel);
+		// handle AT prefix
+		handleAttributePrefix();
 
 		decodeAttributeXsiNilStructure();
 		return attributeQName;
@@ -551,8 +556,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	public QName decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		attributeQName = XSI_TYPE;
-		attributePrefix = qnameDatatype.decodeQNamePrefix(
-				XSI_TYPE.getNamespaceURI(), channel);
+		// handle AT prefix
+		handleAttributePrefix();
 
 		decodeAttributeXsiTypeStructure();
 		return attributeQName;

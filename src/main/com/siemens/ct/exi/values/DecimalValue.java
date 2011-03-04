@@ -127,13 +127,13 @@ public class DecimalValue extends AbstractValue {
 		cbuffer[offset++] = '.';
 		// fractional
 		switch(revFractional.valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			MethodsBag.itosReverse(revFractional.ival, offset, cbuffer);
 			break;
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			MethodsBag.itosReverse(revFractional.lval, offset, cbuffer);
 			break;
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			// TODO look for a more suitable way, big integer
 			StringBuilder sb = new StringBuilder(revFractional.bval.toString());
 			char[] bi = sb.reverse().toString().toCharArray();

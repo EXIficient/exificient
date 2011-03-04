@@ -80,7 +80,7 @@ public class QNameDatatype extends AbstractDatatype {
 		this.grammarURIEntries = grammarURIEntries;
 		runtimeURIEntries.clear();
 		for (int i = 0; i < grammarURIEntries.length; i++) {
-			RuntimeURIEntry rue = new RuntimeURIEntry(grammarURIEntries[i].uri,
+			RuntimeURIEntry rue = new RuntimeURIEntry(grammarURIEntries[i].namespaceURI,
 					i, grammarURIEntries[i].prefixes);
 			runtimeURIEntries.add(rue);
 		}
@@ -103,10 +103,10 @@ public class QNameDatatype extends AbstractDatatype {
 		}
 	}
 
-	private final int getUriID(final String uri) {
+	protected final int getUriID(final String uri) {
 		// grammar uris
 		for (int i = 0; i < grammarURIEntries.length; i++) {
-			if (grammarURIEntries[i].uri.equals(uri)) {
+			if (grammarURIEntries[i].namespaceURI.equals(uri)) {
 				return i;
 			}
 		}
@@ -120,7 +120,7 @@ public class QNameDatatype extends AbstractDatatype {
 		return Constants.NOT_FOUND;
 	}
 
-	private final int getLocalNameID(String localName, int uriID) {
+	protected int getLocalNameID(String localName, int uriID) {
 		assert (uriID >= 0 && uriID < runtimeURIEntries.size());
 
 		int grammarEntries = 0;
@@ -272,7 +272,7 @@ public class QNameDatatype extends AbstractDatatype {
 	}
 
 	// throws error if URI is unknown
-	private final int requireUriID(String uri) {
+	protected final int requireUriID(String uri) {
 		int uriID = getUriID(uri);
 		if (uriID == Constants.NOT_FOUND) {
 			throw new RuntimeException("URI unknown: " + uri);
@@ -465,12 +465,16 @@ public class QNameDatatype extends AbstractDatatype {
 
 	public String decodeQNamePrefix(String uri, DecoderChannel channel)
 			throws IOException {
-		return decodeQNamePrefix(requireUriID(uri), channel);
+		if (preservePrefix) {
+			return decodeQNamePrefix(requireUriID(uri), channel);	
+		} else {
+			return null;
+		}
 	}
 
-	public String decodeQNamePrefix(int uriID, DecoderChannel channel)
+	protected String decodeQNamePrefix(int uriID, DecoderChannel channel)
 			throws IOException {
-		if (preservePrefix) {
+//		if (preservePrefix) {
 			String prefix = null;
 			if (uriID == 0) {
 				// XMLConstants.DEFAULT_NS_PREFIX
@@ -494,9 +498,9 @@ public class QNameDatatype extends AbstractDatatype {
 				}
 			}
 			return prefix;
-		} else {
-			return null;
-		}
+//		} else {
+//			return null;
+//		}
 	}
 
 	public String decodeNamespacePrefix(int uriID, DecoderChannel channel)

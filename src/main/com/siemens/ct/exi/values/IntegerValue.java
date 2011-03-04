@@ -52,17 +52,17 @@ public class IntegerValue extends AbstractValue implements
 	protected BigInteger bval;
 
 	private IntegerValue(int ival) {
-		super(ValueType.INT_INTEGER);
+		super(ValueType.INTEGER_INT);
 		this.ival = ival;
 	}
 
 	private IntegerValue(long lval) {
-		super(ValueType.LONG_INTEGER);
+		super(ValueType.INTEGER_LONG);
 		this.lval = lval;
 	}
 
 	private IntegerValue(BigInteger bval) {
-		super(ValueType.BIG_INTEGER);
+		super(ValueType.INTEGER_BIG);
 		this.bval = bval;
 	}
 
@@ -80,11 +80,11 @@ public class IntegerValue extends AbstractValue implements
 
 	public boolean isPositive() {
 		switch (valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			return (this.ival >= 0);
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			return (this.lval >= 0);
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			return (this.bval.signum() != -1);
 		}
 		return false;
@@ -96,35 +96,35 @@ public class IntegerValue extends AbstractValue implements
 		}
 
 		switch (valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.ival + val.ival);
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.ival + val.lval);
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(BigInteger.valueOf(this.ival).add(
 						val.bval));
 			}
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.lval + val.ival);
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.lval + val.lval);
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(BigInteger.valueOf(this.lval).add(
 						val.bval));
 			}
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.bval.add(BigInteger
 						.valueOf(val.ival)));
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.bval.add(BigInteger
 						.valueOf(val.lval)));
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(this.bval.add(val.bval));
 			}
 		}
@@ -137,35 +137,35 @@ public class IntegerValue extends AbstractValue implements
 		}
 
 		switch (valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.ival - val.ival);
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.ival - val.lval);
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(BigInteger.valueOf(this.ival)
 						.subtract(val.bval));
 			}
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.lval - val.ival);
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.lval - val.lval);
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(BigInteger.valueOf(this.lval)
 						.subtract(val.bval));
 			}
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			switch (val.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return new IntegerValue(this.bval.subtract(BigInteger
 						.valueOf(val.ival)));
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				return IntegerValue.valueOf(this.bval.subtract(BigInteger
 						.valueOf(val.lval)));
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return IntegerValue.valueOf(this.bval.subtract(val.bval));
 			}
 		}
@@ -259,21 +259,21 @@ public class IntegerValue extends AbstractValue implements
 	public int getCharactersLength() {
 		if (slen == -1) {
 			switch (this.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				if (ival == Integer.MIN_VALUE) {
 					slen = MethodsBag.INTEGER_MIN_VALUE_CHARARRAY.length;
 				} else {
 					slen = MethodsBag.getStringSize(ival);
 				}
 				break;
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				if (lval == Long.MIN_VALUE) {
 					slen = MethodsBag.LONG_MIN_VALUE_CHARARRAY.length;
 				} else {
 					slen = MethodsBag.getStringSize(lval);
 				}
 				break;
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				slen = bval.toString().length();
 				break;
 			default:
@@ -285,7 +285,7 @@ public class IntegerValue extends AbstractValue implements
 
 	public char[] toCharacters(char[] cbuffer, int offset) {
 		switch (this.valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			if (ival == Integer.MIN_VALUE) {
 				return MethodsBag.INTEGER_MIN_VALUE_CHARARRAY;
 			} else {
@@ -293,7 +293,7 @@ public class IntegerValue extends AbstractValue implements
 				MethodsBag.itos(ival, offset + getCharactersLength(), cbuffer);
 				return cbuffer;
 			}
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			if (lval == Long.MIN_VALUE) {
 				return MethodsBag.LONG_MIN_VALUE_CHARARRAY;
 			} else {
@@ -301,11 +301,12 @@ public class IntegerValue extends AbstractValue implements
 				MethodsBag.itos(lval, offset + getCharactersLength(), cbuffer);
 				return cbuffer;
 			}
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			// TODO look for a more suitable way, big integer
-			return bval.toString().toCharArray();
-			// char[] bi = bval.toString().toCharArray();
-			// System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+			// return bval.toString().toCharArray();
+			char[] bi = bval.toString().toCharArray();
+			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+			return cbuffer;
 		default:
 			return null;
 		}
@@ -313,20 +314,20 @@ public class IntegerValue extends AbstractValue implements
 
 	private final boolean _equals(IntegerValue o) {
 		switch (this.valueType) {
-		case INT_INTEGER:
-			if (o.valueType == ValueType.INT_INTEGER && this.ival == o.ival) {
+		case INTEGER_INT:
+			if (o.valueType == ValueType.INTEGER_INT && this.ival == o.ival) {
 				return true;
 			} else {
 				return false;
 			}
-		case LONG_INTEGER:
-			if (o.valueType == ValueType.LONG_INTEGER && this.lval == o.lval) {
+		case INTEGER_LONG:
+			if (o.valueType == ValueType.INTEGER_LONG && this.lval == o.lval) {
 				return true;
 			} else {
 				return false;
 			}
-		case BIG_INTEGER:
-			if (o.valueType == ValueType.BIG_INTEGER
+		case INTEGER_BIG:
+			if (o.valueType == ValueType.INTEGER_BIG
 					&& this.bval.equals(o.lval)) {
 				return true;
 			} else {
@@ -359,9 +360,9 @@ public class IntegerValue extends AbstractValue implements
 		 * object is less than, equal to, or greater than the specified object.
 		 */
 		switch (this.valueType) {
-		case INT_INTEGER:
+		case INTEGER_INT:
 			switch (o.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				if (this.ival == o.ival) {
 					return 0;
 				} else if (this.ival < o.ival) {
@@ -369,15 +370,15 @@ public class IntegerValue extends AbstractValue implements
 				} else {
 					return 1;
 				}
-			case LONG_INTEGER:
-			case BIG_INTEGER:
+			case INTEGER_LONG:
+			case INTEGER_BIG:
 				return -1;
 			}
-		case LONG_INTEGER:
+		case INTEGER_LONG:
 			switch (o.valueType) {
-			case INT_INTEGER:
+			case INTEGER_INT:
 				return 1;
-			case LONG_INTEGER:
+			case INTEGER_LONG:
 				if (this.lval == o.lval) {
 					return 0;
 				} else if (this.lval < o.lval) {
@@ -385,15 +386,15 @@ public class IntegerValue extends AbstractValue implements
 				} else {
 					return 1;
 				}
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return -1;
 			}
-		case BIG_INTEGER:
+		case INTEGER_BIG:
 			switch (o.valueType) {
-			case INT_INTEGER:
-			case LONG_INTEGER:
+			case INTEGER_INT:
+			case INTEGER_LONG:
 				return 1;
-			case BIG_INTEGER:
+			case INTEGER_BIG:
 				return this.bval.compareTo(o.bval);
 			}
 		default:
