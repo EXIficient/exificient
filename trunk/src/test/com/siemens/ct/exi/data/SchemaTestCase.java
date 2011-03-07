@@ -52,8 +52,8 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaMixed ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard ( );
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
-		// SchemaTestCase.setConfigurationSchemaWildcard3();
-		SchemaTestCase.setConfigurationSchemaNillable1 ( );
+		SchemaTestCase.setConfigurationSchemaWildcard3();
+		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
 		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
@@ -114,6 +114,8 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
+		testCaseOptions.lastElement().getEncodingOptions().setOption(
+				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 

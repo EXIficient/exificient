@@ -145,27 +145,63 @@ public abstract class AbstractEXIBodyCoder {
 	}
 
 	protected final void declarePrefix(String pfx, String uri) {
+		declarePrefix(new NamespaceDeclaration(uri, pfx));
+//		if (elementContext.nsDeclarations == null) {
+//			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
+//		}
+//		assert (elementContext.nsDeclarations
+//				.contains(new NamespaceDeclaration(uri, pfx)) == false);
+//		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));
+	}
+	
+	protected final void declarePrefix(NamespaceDeclaration nsDecl) {
 		if (elementContext.nsDeclarations == null) {
 			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
 		}
-		assert (elementContext.nsDeclarations
-				.contains(new NamespaceDeclaration(uri, pfx)) == false);
-		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));
+		assert (!elementContext.nsDeclarations.contains(nsDecl));
+		elementContext.nsDeclarations.add(nsDecl);
 	}
+	
+//	protected final List<NamespaceDeclaration> undeclarePrefixes() {
+//		List<NamespaceDeclaration> undeclPfxes = elementContext.nsDeclarations;
+//		elementContext.nsDeclarations = null;
+//		return undeclPfxes;
+////		if (undeclPfxes != null) {
+////			for (NamespaceDeclaration ns : undeclPfxes) {
+////				uriToPrefix.remove(ns.namespaceURI);
+////			}
+////		}
+//	}
 
-	// // just works for decoder
-	// public final String getPrefix(String uri) {
-	// return uriToPrefix.get(uri);
-	// }
 
 	public final String getURI(String prefix) {
-		// check all stack items expect last one (in reverse order)
+		// check all stack items except last one (in reverse order)
 		for (int i = elementContextStackIndex; i > 0; i--) {
 			ElementContext ec = elementContextStack[i];
 			if (ec.nsDeclarations != null) {
 				for (NamespaceDeclaration ns : ec.nsDeclarations) {
 					if (ns.prefix.equals(prefix)) {
 						return ns.namespaceURI;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public final String getPrefix(String uri) {
+		if (XMLConstants.NULL_NS_URI.equals(uri)) {
+			return XMLConstants.DEFAULT_NS_PREFIX;
+		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
+			return XMLConstants.XML_NS_PREFIX;
+		}
+		// check all stack items except last one (in reverse order)
+		for (int i = elementContextStackIndex; i > 0; i--) {
+			ElementContext ec = elementContextStack[i];
+			if (ec.nsDeclarations != null) {
+				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+					if (ns.namespaceURI.equals(uri)) {
+						return ns.prefix;
 					}
 				}
 			}
@@ -196,14 +232,17 @@ public abstract class AbstractEXIBodyCoder {
 		elementContextStack[elementContextStackIndex] = elementContext;
 	}
 
-	protected final void popElement() {
+	protected final ElementContext popElement() {
 		assert (this.elementContextStackIndex > 0);
 		// pop element from stack
-		elementContextStack[elementContextStackIndex--] = null; // let gc do the
-																// rest
+		ElementContext poppedEC = elementContextStack[elementContextStackIndex--];
+//		elementContextStack[elementContextStackIndex--] = null; // let gc do the
+//																// rest
 		elementContext = elementContextStack[elementContextStackIndex];
 		// update current rule to new (old) element stack
 		currentRule = elementContext.rule;
+		
+		return poppedEC;
 	}
 
 	protected StartElement getGenericStartElement(QName qname) {
@@ -235,13 +274,13 @@ public abstract class AbstractEXIBodyCoder {
 		return elementContextStack[elementContextStackIndex].qname;
 	}
 
-	protected void setQNameAsString(String sqname) {
-		elementContextStack[elementContextStackIndex].sqname = sqname;
-	}
-
-	protected String getQNameAsString() {
-		return elementContextStack[elementContextStackIndex].sqname;
-	}
+//	protected void setQNameAsString(String sqname) {
+//		elementContextStack[elementContextStackIndex].sqname = sqname;
+//	}
+//
+//	protected String getQNameAsString() {
+//		return elementContextStack[elementContextStackIndex].sqname;
+//	}
 
 	/*
 	 * 
@@ -254,7 +293,7 @@ public abstract class AbstractEXIBodyCoder {
 
 	static final class ElementContext {
 		final QName qname;
-		public String sqname;
+		String prefix;
 		Rule rule; // may be modified while coding
 		// prefix declarations
 		List<NamespaceDeclaration> nsDeclarations;

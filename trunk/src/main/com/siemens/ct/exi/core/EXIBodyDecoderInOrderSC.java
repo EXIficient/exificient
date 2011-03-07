@@ -59,6 +59,24 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		scDecoder = null;
 	}
 
+//	@Override
+//	protected final void handleElementPrefix() throws IOException {
+//		if (scDecoder == null) {
+//			super.handleElementPrefix();
+//		} else {
+//			scDecoder.handleElementPrefix();
+//		}
+//	}
+//	
+//	@Override
+//	protected final void handleAttributePrefix() throws IOException {
+//		if (scDecoder == null) {
+//			super.handleAttributePrefix();
+//		} else {
+//			scDecoder.handleAttributePrefix();
+//		}
+//	}
+	
 	// @Override
 	// public void setInputStream(InputStream is)
 	// throws EXIException, IOException {
@@ -186,7 +204,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 				throw new RuntimeException("[EXI] Unsupported EventType " + et
 						+ " in SelfContained Element");
 			}
-
 		} else {
 			//
 			scDecoder.decodeStartSelfContainedFragment();
@@ -369,22 +386,34 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		}
 	}
 
+//	@Override
+//	public String getStartElementQNameAsString() {
+//		return (scDecoder == null ? super.getStartElementQNameAsString()
+//				: scDecoder.getStartElementQNameAsString());
+//	}
+//
+//	@Override
+//	public String getEndElementQNameAsString() {
+//		return (scDecoder == null ? super.getEndElementQNameAsString()
+//				: scDecoder.getEndElementQNameAsString());
+//	}
+//
+//	@Override
+//	public String getAttributeQNameAsString() {
+//		return (scDecoder == null ? super.getAttributeQNameAsString()
+//				: scDecoder.getAttributeQNameAsString());
+//	}
+	
 	@Override
-	public String getStartElementQNameAsString() {
-		return (scDecoder == null ? super.getStartElementQNameAsString()
-				: scDecoder.getStartElementQNameAsString());
+	public String getElementPrefix() {
+		return (scDecoder == null ? super.getElementPrefix()
+				: scDecoder.getElementPrefix());
 	}
-
+	
 	@Override
-	public String getEndElementQNameAsString() {
-		return (scDecoder == null ? super.getEndElementQNameAsString()
-				: scDecoder.getEndElementQNameAsString());
-	}
-
-	@Override
-	public String getAttributeQNameAsString() {
-		return (scDecoder == null ? super.getAttributeQNameAsString()
-				: scDecoder.getAttributeQNameAsString());
+	public String getAttributePrefix() {
+		return (scDecoder == null ? super.getAttributePrefix()
+				: scDecoder.getAttributePrefix());
 	}
 
 	@Override

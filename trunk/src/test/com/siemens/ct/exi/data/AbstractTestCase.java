@@ -278,6 +278,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// test options
 		for (int i = 0; i < testCaseOptions.size(); i++) {
 			TestCaseOption tco = testCaseOptions.get(i);
+			
 			// update schema
 			tco.setSchemaLocation(schemaLocation);
 			// test both encode APIs
