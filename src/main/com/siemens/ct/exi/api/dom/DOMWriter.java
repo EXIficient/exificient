@@ -134,7 +134,11 @@ public class DOMWriter {
 					+ root.getNodeName());
 		}
 
-		exiBody.encodeStartElement(namespaceURI, localName, root.getPrefix());
+		String prefix = root.getPrefix();
+		if (prefix == null) {
+			prefix = XMLConstants.DEFAULT_NS_PREFIX;
+		}
+		exiBody.encodeStartElement(namespaceURI, localName, prefix);
 
 		// attributes
 		NamedNodeMap attributes = root.getAttributes();

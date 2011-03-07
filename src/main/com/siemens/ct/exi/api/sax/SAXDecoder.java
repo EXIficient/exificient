@@ -83,8 +83,8 @@ public class SAXDecoder implements XMLReader {
 	protected boolean namespacePrefixes = false;
 	protected boolean exiBodyOnly = false;
 
-	protected String seQNameAsString = Constants.EMPTY_STRING;
-	protected String atQNameAsString = Constants.EMPTY_STRING;
+// protected String seQNameAsString = Constants.EMPTY_STRING;
+//	protected String atQNameAsString = Constants.EMPTY_STRING;
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
@@ -235,8 +235,9 @@ public class SAXDecoder implements XMLReader {
 
 		EventType eventType;
 
-		String eeQNameAsString = Constants.EMPTY_STRING;
+		// String eeQNameAsString = Constants.EMPTY_STRING;
 		List<NamespaceDeclaration> eePrefixes = null;
+		String eePrefix = null;
 
 		QName deferredStartElement = null;
 
@@ -329,20 +330,24 @@ public class SAXDecoder implements XMLReader {
 				break;
 			/* END ELEMENT */
 			case END_ELEMENT:
+				eePrefixes = decoder.getDeclaredPrefixDeclarations();
+				eePrefix = decoder.getElementPrefix();
 				QName eeQName = decoder.decodeEndElement();
-				if (namespacePrefixes) {
-					eeQNameAsString = decoder.getEndElementQNameAsString();
-				}
-				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
-				handleEndElement(eeQName, eeQNameAsString, eePrefixes);
+//				if (namespacePrefixes) {
+//					eeQNameAsString = decoder.getEndElementQNameAsString();
+//				}
+//				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
+				handleEndElement(eeQName, eePrefix, eePrefixes);
 				break;
 			case END_ELEMENT_UNDECLARED:
+				eePrefixes = decoder.getDeclaredPrefixDeclarations();
+				eePrefix = decoder.getElementPrefix();
 				eeQName = decoder.decodeEndElementUndeclared();
-				if (namespacePrefixes) {
-					eeQNameAsString = decoder.getEndElementQNameAsString();
-				}
-				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
-				handleEndElement(eeQName, eeQNameAsString, eePrefixes);
+//				if (namespacePrefixes) {
+//					eeQNameAsString = decoder.getEndElementQNameAsString();
+//				}
+//				eePrefixes = decoder.getUndeclaredPrefixDeclarations();
+				handleEndElement(eeQName, eePrefix, eePrefixes);
 				break;
 			/* CHARACTERS */
 			case CHARACTERS:
@@ -395,18 +400,28 @@ public class SAXDecoder implements XMLReader {
 			}
 		}
 	}
+	
+	protected final String getQualifiedName(QName qname, String pfx) {
+		String localName = qname.getLocalPart();
+		if (pfx == null) {
+			System.err.println("EMPTY DD");
+		}
+		return pfx.length() == 0 ? localName
+				: (pfx + Constants.COLON + localName);
+	}
+	
 
 	/*
 	 * SAX Content Handler
 	 */
 	protected void handleDeferredStartElement(QName deferredStartElement)
 			throws SAXException, IOException, EXIException {
-
-		// NOTE: getting qname needs to be done before starting prefix
-		// mapping given that the qname may require a new qname prefix.
-		if (namespacePrefixes) {
-			seQNameAsString = decoder.getStartElementQNameAsString();
-		}
+		
+//		// NOTE: getting qname needs to be done before starting prefix
+//		// mapping given that the qname may require a new qname prefix.
+//		if (namespacePrefixes) {
+//			seQNameAsString = decoder.getStartElementQNameAsString();
+//		}
 
 		if (namespaces) {
 			startPrefixMappings(decoder.getDeclaredPrefixDeclarations());
@@ -417,7 +432,11 @@ public class SAXDecoder implements XMLReader {
 		 * is true, and is optional when the namespace-prefixes property is
 		 * false (the default).
 		 */
-
+		String seQNameAsString = Constants.EMPTY_STRING;
+		if (namespacePrefixes) {
+			seQNameAsString = getQualifiedName(deferredStartElement, decoder.getElementPrefix());
+		}
+		 
 		// start so far deferred start element
 		contentHandler.startElement(deferredStartElement.getNamespaceURI(),
 				deferredStartElement.getLocalPart(), seQNameAsString,
@@ -427,9 +446,16 @@ public class SAXDecoder implements XMLReader {
 		attributes.clear();
 	}
 
-	protected void handleEndElement(QName eeQName, String eeQNameAsString,
+	protected void handleEndElement(QName eeQName, String eePrefix,
 			List<NamespaceDeclaration> eePrefixes) throws SAXException,
 			IOException {
+		// sqname
+		String eeQNameAsString = Constants.EMPTY_STRING;
+		if (namespacePrefixes) {
+			// eeQNameAsString = decoder.getEndElementQNameAsString();
+			eeQNameAsString = getQualifiedName(eeQName, eePrefix);
+		}
+		
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(),
 				eeQName.getLocalPart(), eeQNameAsString);
@@ -463,8 +489,10 @@ public class SAXDecoder implements XMLReader {
 		ensureBufferCapacity(slen);
 
 		// empty string if no qualified name is necessary
+		String atQNameAsString = Constants.EMPTY_STRING;
 		if (namespacePrefixes) {
-			atQNameAsString = decoder.getAttributeQNameAsString();
+			// atQNameAsString = decoder.getAttributeQNameAsString();
+			atQNameAsString = getQualifiedName(atQName, decoder.getAttributePrefix());
 		}
 		// QName atQName = decoder.getAttributeQName();
 		String sVal = val.toString(cbuffer, 0);

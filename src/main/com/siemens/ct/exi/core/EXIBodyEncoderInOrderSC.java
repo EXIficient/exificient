@@ -182,6 +182,10 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		// NO SC again
 		scEncoder.encodeStartElementNoSC(uri, localName, prefix);
 		// from now on events are forwarded to the scEncoder
+		if (preservePrefix) {
+			// encode NS inner declaration for SE
+			scEncoder.encodeNamespaceDeclaration(uri, prefix);
+		}
 	}
 
 	protected void encodeStartElementNoSC(String uri, String localName,

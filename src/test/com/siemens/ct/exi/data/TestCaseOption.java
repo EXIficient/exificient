@@ -186,6 +186,14 @@ public class TestCaseOption {
 		s += "codingMode=" + codingMode + ", ";
 		// fidelityOptions
 		s += "fidelityOptions=" + getFidelityOptions().toString();
+		// selfContained elements
+		if (this.scElements != null && this.scElements.length > 0 ) {
+			s += ", scElements=[";
+			for(QName sc : scElements) {
+				s += sc+",";
+			}
+			s += "]";
+		}
 		// blockSize
 		if (blockSize != Constants.DEFAULT_BLOCK_SIZE) {
 			s += ",bs=" + blockSize;

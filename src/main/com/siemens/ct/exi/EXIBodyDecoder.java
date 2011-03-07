@@ -136,8 +136,14 @@ public interface EXIBodyDecoder {
 	 * 
 	 * @return <code>String</code> for qname
 	 */
-	public String getStartElementQNameAsString();
+//	public String getStartElementQNameAsString();
 
+	/*
+	 * NOTE: IF Preserve.Prefixes set to TRUE ONLY callable all NS events
+	 */
+	public String getElementPrefix();	
+	
+	
 	/**
 	 * Reads EXI a self-contained start element.
 	 * 
@@ -167,17 +173,19 @@ public interface EXIBodyDecoder {
 	 */
 	public QName decodeEndElementUndeclared() throws EXIException, IOException;
 
-	/**
-	 * Returns qualified name for end element name as String (the one previously
-	 * created for SE event)
-	 * 
-	 * <p>
-	 * see getStartElementQNameAsString()
-	 * </p>
-	 * 
-	 * @return <code>String</code> for qname
-	 */
-	public String getEndElementQNameAsString();
+//	/**
+//	 * Returns qualified name for end element name as String (the one previously
+//	 * created for SE event)
+//	 * 
+//	 * <p>
+//	 * see getStartElementQNameAsString()
+//	 * </p>
+//	 * 
+//	 * @return <code>String</code> for qname
+//	 */
+//	public String getEndElementQNameAsString();
+//	
+//	public String getEndElementPrefix();	
 
 	/**
 	 * Parses xsi:nil attribute
@@ -273,7 +281,8 @@ public interface EXIBodyDecoder {
 	 * 
 	 * @return <code>String</code> for qname
 	 */
-	public String getAttributeQNameAsString();
+//	public String getAttributeQNameAsString();
+	public String getAttributePrefix();
 
 	/**
 	 * Provides attribute value
@@ -300,12 +309,12 @@ public interface EXIBodyDecoder {
 	 */
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations();
 
-	/**
-	 * Recently undeclared prefix declarations for popped (element) context
-	 * 
-	 * @return list or null if no mappings are available
-	 */
-	public List<NamespaceDeclaration> getUndeclaredPrefixDeclarations();
+//	/**
+//	 * Recently undeclared prefix declarations for popped (element) context
+//	 * 
+//	 * @return list or null if no mappings are available
+//	 */
+//	public List<NamespaceDeclaration> getUndeclaredPrefixDeclarations();
 
 	/**
 	 * Decodes characters and reports them.

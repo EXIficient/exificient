@@ -118,18 +118,6 @@ public class BlockSizeTestCase extends XMLTestCase {
 		}
 	}
 	
-	public void testPreCompression2() throws SAXException, IOException, EXIException {
-		_test(CodingMode.PRE_COMPRESSION, 2);
-	}
-
-	public void testCompression3() throws SAXException, IOException, EXIException {
-		_test(CodingMode.COMPRESSION, 3);
-	}
-
-	public void testCompression4() throws SAXException, IOException, EXIException {
-		_test(CodingMode.COMPRESSION, 4);
-	}
-
 	/*
 	 * empty stream in the end?
 	 */
@@ -202,6 +190,18 @@ public class BlockSizeTestCase extends XMLTestCase {
 		assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("root"));
 		assertTrue(exiDecoder.next() == EventType.END_DOCUMENT);
 		exiDecoder.decodeEndDocument();
+	}
+
+	public void testPreCompression2() throws SAXException, IOException, EXIException {
+		_test(CodingMode.PRE_COMPRESSION, 2);
+	}
+
+	public void testCompression3() throws SAXException, IOException, EXIException {
+		_test(CodingMode.COMPRESSION, 3);
+	}
+
+	public void testCompression4() throws SAXException, IOException, EXIException {
+		_test(CodingMode.COMPRESSION, 4);
 	}
 	
 

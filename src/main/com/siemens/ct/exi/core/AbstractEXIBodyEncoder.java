@@ -324,6 +324,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		}
 
+//		// NS
+//		undeclarePrefixes();
 		// pop element from stack
 		popElement();
 	}

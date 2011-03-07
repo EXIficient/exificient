@@ -103,8 +103,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		// new block goes directly after value
 		if (++blockValues == exiFactory.getBlockSize()) {
 			// blockValues larger than set blockSize
-			// System.out.println("new block " + blockValues + " after " +
-			// valueContext + " = '" + lastValue + "'");
+//			 System.out.println("new block " + blockValues + " after " +
+//			 valueContext + " = '" + lastValue + "'");
 
 			// close this block and setup new one
 			closeBlock();
