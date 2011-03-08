@@ -169,8 +169,6 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	public QName decodeAttribute() throws EXIException, IOException {
 		// structure & content
 		Datatype dt = decodeAttributeStructure();
-		// // handle attribute prefix
-		// handleAttributePrefix();
 
 		if (attributeQName.equals(XSI_TYPE)) {
 			decodeAttributeXsiTypeStructure();

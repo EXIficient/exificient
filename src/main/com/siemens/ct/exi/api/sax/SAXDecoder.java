@@ -403,9 +403,6 @@ public class SAXDecoder implements XMLReader {
 	
 	protected final String getQualifiedName(QName qname, String pfx) {
 		String localName = qname.getLocalPart();
-		if (pfx == null) {
-			System.err.println("EMPTY DD");
-		}
 		return pfx.length() == 0 ? localName
 				: (pfx + Constants.COLON + localName);
 	}
@@ -417,16 +414,10 @@ public class SAXDecoder implements XMLReader {
 	protected void handleDeferredStartElement(QName deferredStartElement)
 			throws SAXException, IOException, EXIException {
 		
-//		// NOTE: getting qname needs to be done before starting prefix
-//		// mapping given that the qname may require a new qname prefix.
-//		if (namespacePrefixes) {
-//			seQNameAsString = decoder.getStartElementQNameAsString();
-//		}
-
 		if (namespaces) {
 			startPrefixMappings(decoder.getDeclaredPrefixDeclarations());
 		}
-
+		
 		/*
 		 * the qualified name is required when the namespace-prefixes property
 		 * is true, and is optional when the namespace-prefixes property is
@@ -452,7 +443,6 @@ public class SAXDecoder implements XMLReader {
 		// sqname
 		String eeQNameAsString = Constants.EMPTY_STRING;
 		if (namespacePrefixes) {
-			// eeQNameAsString = decoder.getEndElementQNameAsString();
 			eeQNameAsString = getQualifiedName(eeQName, eePrefix);
 		}
 		

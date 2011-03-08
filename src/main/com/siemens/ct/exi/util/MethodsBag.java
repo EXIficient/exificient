@@ -200,23 +200,6 @@ public class MethodsBag {
 		}
 	}
 
-	// public static char[] itos(int i) {
-	// if (i == Integer.MIN_VALUE) {
-	// return INTEGER_MIN_VALUE_CHARARRAY;
-	// } else {
-	// int size = getStringSize(i);
-	// char[] buf = new char[size];
-	// itos(i, size, buf);
-	//
-	// return buf;
-	// }
-	// }
-
-	// public static void itos(int i, int leastExclIndex, char[] buf) {
-	// assert(!(i == Integer.MIN_VALUE));
-	// getChars(i, leastExclIndex, buf);
-	// }
-
 	/**
 	 * Places characters representing the integer i into the character array
 	 * buf. The characters are placed into the buffer backwards starting with
@@ -260,22 +243,6 @@ public class MethodsBag {
 			buf[--index] = sign;
 		}
 	}
-
-	// public static char[] itos(long l) {
-	// if (l == Long.MIN_VALUE) {
-	// return LONG_MIN_VALUE_CHARARRAY;
-	// } else {
-	// int size = getStringSize(l);
-	// char[] buf = new char[size];
-	// itos(l, size, buf);
-	// return buf;
-	// }
-	// }
-
-	// public static void itos(long l, int leastExclIndex, char[] buf) {
-	// assert(!(l == Long.MIN_VALUE));
-	// getChars(l, leastExclIndex, buf);
-	// }
 
 	/**
 	 * Places characters representing the integer i into the character array
@@ -357,22 +324,6 @@ public class MethodsBag {
 		}
 	}
 
-	// public static char[] itos(BigInteger bi) {
-	// // TODO look for a more sensitive way !?
-	// return bi.toString().toCharArray();
-	// }
-
-	// public static char[] itosReverse(int i) {
-	// int size = getStringSize(i);
-	// char[] buf = new char[size];
-	// getCharsReverse(i, 0, buf);
-	// return buf;
-	// }
-
-	// public static void itosReverse(int i, int firstIndex, char[] buf) {
-	// getCharsReverse(i, firstIndex, buf);
-	// }
-
 	/**
 	 * Places characters representing the integer i into the character array buf
 	 * in reverse order.
@@ -407,11 +358,6 @@ public class MethodsBag {
 
 		return (posChar - index); // number of written chars
 	}
-
-	// public static void itosReverse(long l, int firstIndex, char[] buf) {
-	// getCharsReverse(l, firstIndex, buf);
-	// }
-	//
 
 	/**
 	 * Places characters representing the integer i into the character array buf
@@ -457,34 +403,5 @@ public class MethodsBag {
 				break;
 		}
 	}
-
-	// public static char[] itosReverse(long l) {
-	// int size = getStringSize(l);
-	// char[] buf = new char[size];
-	// getCharsReverse(l, 0, buf);
-	// return buf;
-	// }
-
-	// public static char[] itosReverse(BigInteger bi) {
-	// // TODO look for a more sensitive way !?
-	// StringBuilder sb = new StringBuilder(bi.toString());
-	// return sb.reverse().toString().toCharArray();
-	// }
-
-	// public static void main(String[] args) {
-	// // int i = 8710;
-	// long i = 8710;
-	// int size = getStringSize(i);
-	//
-	// // normal
-	// char[] buf = new char[size];
-	// getChars(i, size, buf);
-	// System.out.println(buf);
-	//
-	// // rev
-	// char[] bufRev = new char[size];
-	// getCharsReverse(i, bufRev);
-	// System.out.println(bufRev);
-	// }
 
 }

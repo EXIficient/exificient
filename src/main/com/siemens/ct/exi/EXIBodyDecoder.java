@@ -126,20 +126,11 @@ public interface EXIBodyDecoder {
 			IOException;
 
 	/**
-	 * Returns qualified name for current start element name as String.
+	 * Returns element prefix for current element as String.
 	 * 
-	 * <p>
-	 * QName ::= PrefixedName | UnprefixedName <br />
-	 * PrefixedName ::= Prefix ':' LocalPart <br />
-	 * UnprefixedName ::= LocalPart
-	 * </p>
+	 * <p>Note: IF Preserve.Prefixes set to TRUE ONLY callable after all NS events</p>
 	 * 
-	 * @return <code>String</code> for qname
-	 */
-//	public String getStartElementQNameAsString();
-
-	/*
-	 * NOTE: IF Preserve.Prefixes set to TRUE ONLY callable all NS events
+	 * @return <code>String</code> for prefix
 	 */
 	public String getElementPrefix();	
 	
@@ -172,20 +163,6 @@ public interface EXIBodyDecoder {
 	 * @throws IOException
 	 */
 	public QName decodeEndElementUndeclared() throws EXIException, IOException;
-
-//	/**
-//	 * Returns qualified name for end element name as String (the one previously
-//	 * created for SE event)
-//	 * 
-//	 * <p>
-//	 * see getStartElementQNameAsString()
-//	 * </p>
-//	 * 
-//	 * @return <code>String</code> for qname
-//	 */
-//	public String getEndElementQNameAsString();
-//	
-//	public String getEndElementPrefix();	
 
 	/**
 	 * Parses xsi:nil attribute
@@ -271,17 +248,10 @@ public interface EXIBodyDecoder {
 			IOException;
 
 	/**
-	 * Returns qualified name for (last) attribute as String
+	 * Returns attribute prefix for (last) attribute as String
 	 * 
-	 * <p>
-	 * QName ::= PrefixedName | UnprefixedName <br />
-	 * PrefixedName ::= Prefix ':' LocalPart <br />
-	 * UnprefixedName ::= LocalPart
-	 * </p>
-	 * 
-	 * @return <code>String</code> for qname
+	 * @return <code>String</code> for prefix
 	 */
-//	public String getAttributeQNameAsString();
 	public String getAttributePrefix();
 
 	/**
@@ -308,13 +278,6 @@ public interface EXIBodyDecoder {
 	 * @return list or null if no mappings are available
 	 */
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations();
-
-//	/**
-//	 * Recently undeclared prefix declarations for popped (element) context
-//	 * 
-//	 * @return list or null if no mappings are available
-//	 */
-//	public List<NamespaceDeclaration> getUndeclaredPrefixDeclarations();
 
 	/**
 	 * Decodes characters and reports them.
