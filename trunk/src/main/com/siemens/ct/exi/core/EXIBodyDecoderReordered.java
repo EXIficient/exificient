@@ -62,7 +62,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	protected int eventTypeIndex;
 
 	// elements and end elements
-	// protected List<ElementEntry> elementEntries;
 	protected List<ElementContext> startElementEntries;
 	protected int startElementEntryIndex;
 	protected List<EndElementEntry> endElementEntries;
@@ -85,9 +84,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	// processing instructions
 	protected List<ProcessingInstruction> processingEntries;
 	protected int processingEntryIndex;
-
-	String elementQNameAsString;
-	List<String> endElementQNames;
 
 	// count value items
 	protected int blockValues;
@@ -151,8 +147,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		xsiValues = new ArrayList<Value>();
 		xsiPrefixes = new ArrayList<String>();
 
-		endElementQNames = new ArrayList<String>();
-
 		codingMode = exiFactory.getCodingMode();
 	}
 
@@ -185,8 +179,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		nsEntryIndex = 0;
 		processingEntries.clear();
 		processingEntryIndex = 0;
-
-		endElementQNames.clear();
 
 		stillNoEndOfDocument = true;
 		lastBlockElementContext = null;

@@ -146,12 +146,6 @@ public abstract class AbstractEXIBodyCoder {
 
 	protected final void declarePrefix(String pfx, String uri) {
 		declarePrefix(new NamespaceDeclaration(uri, pfx));
-//		if (elementContext.nsDeclarations == null) {
-//			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
-//		}
-//		assert (elementContext.nsDeclarations
-//				.contains(new NamespaceDeclaration(uri, pfx)) == false);
-//		elementContext.nsDeclarations.add(new NamespaceDeclaration(uri, pfx));
 	}
 	
 	protected final void declarePrefix(NamespaceDeclaration nsDecl) {
@@ -161,18 +155,6 @@ public abstract class AbstractEXIBodyCoder {
 		assert (!elementContext.nsDeclarations.contains(nsDecl));
 		elementContext.nsDeclarations.add(nsDecl);
 	}
-	
-//	protected final List<NamespaceDeclaration> undeclarePrefixes() {
-//		List<NamespaceDeclaration> undeclPfxes = elementContext.nsDeclarations;
-//		elementContext.nsDeclarations = null;
-//		return undeclPfxes;
-////		if (undeclPfxes != null) {
-////			for (NamespaceDeclaration ns : undeclPfxes) {
-////				uriToPrefix.remove(ns.namespaceURI);
-////			}
-////		}
-//	}
-
 
 	public final String getURI(String prefix) {
 		// check all stack items except last one (in reverse order)
@@ -211,7 +193,6 @@ public abstract class AbstractEXIBodyCoder {
 
 	protected final void pushElement(StartElement se, Rule contextRule) {
 		// update "rule" item of current peak (for popElement() later on)
-		// elementContext.rule = currentRule;
 		elementContext.rule = contextRule;
 		// set "new" current-rule
 		currentRule = se.getRule();
@@ -273,14 +254,6 @@ public abstract class AbstractEXIBodyCoder {
 	protected QName getElementContextQName() {
 		return elementContextStack[elementContextStackIndex].qname;
 	}
-
-//	protected void setQNameAsString(String sqname) {
-//		elementContextStack[elementContextStackIndex].sqname = sqname;
-//	}
-//
-//	protected String getQNameAsString() {
-//		return elementContextStack[elementContextStackIndex].sqname;
-//	}
 
 	/*
 	 * 

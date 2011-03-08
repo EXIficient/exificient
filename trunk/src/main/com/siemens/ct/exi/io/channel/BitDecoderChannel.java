@@ -80,69 +80,6 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 		return (istream.readBit() == 1);
 	}
 
-//	/**
-//	 * Decode an arbitrary precision non negative integer using a sequence of
-//	 * octets. The most significant bit of the last octet is set to zero to
-//	 * indicate sequence termination. Only seven bits per octet are used to
-//	 * store the integer's value.
-//	 */
-//	
-//	public int decodeUnsignedInteger() throws IOException {
-//		int result = 0;
-//		int shift = 0;
-//
-//		boolean anotherOctet;
-//		do {
-//			anotherOctet = decodeBoolean();
-//			result += decodeNBitUnsignedInteger(7) << shift;
-//			shift += 7;
-//		} while (anotherOctet);
-//
-//		return result;
-//	}
-//
-//	protected long decodeUnsignedLong() throws IOException {
-//		long result = 0L;
-//		int shift = 0;
-//
-//		boolean anotherOctet;
-//		do {
-//			anotherOctet = decodeBoolean();
-//			result += ((long) decodeNBitUnsignedInteger(7)) << shift;
-//			shift += 7;
-//		} while (anotherOctet);
-//
-//		return result;
-//	}
-
-	// @Override
-	// protected HugeIntegerValue decodeUnsignedHugeIntegerValue(boolean
-	// negative) throws IOException {
-	// // long lResult = 0L;
-	// // int mShift = 0;
-	// // int b;
-	//
-	// // long == 64 bits
-	// // 9 x 7 bits --> 63
-	// // int cntBytes = 0;
-	// // boolean isLongValue = true;
-	//
-	// long result = 0L;
-	// int shift = 0;
-	//
-	// for(int i=0; i<9; i++) {
-	// boolean anotherOctet = decodeBoolean();
-	// result += ((long)decodeNBitUnsignedInteger(7)) << shift;
-	// if (!anotherOctet) {
-	// return new HugeIntegerValue(result);
-	// }
-	// shift += 7;
-	// }
-	//
-	//
-	// return null;
-	// }
-
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */
