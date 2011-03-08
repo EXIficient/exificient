@@ -671,7 +671,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		// Don't we want to prune insignificant whitespace characters
 		if (fidelityOptions.isStrict()
-				|| !fidelityOptions
+				&& !fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 			String schars = chars.toString().trim();
 			if (schars.length() == 0) {
