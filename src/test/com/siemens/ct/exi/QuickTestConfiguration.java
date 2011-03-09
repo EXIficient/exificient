@@ -20,7 +20,8 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.SchemaTestCase;
+import com.siemens.ct.exi.data.W3CTestCase;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -96,17 +97,18 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
-//		try {
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		// fidelityOptions = FidelityOptions.createAll();
+		try {
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 // 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-//		} catch (UnsupportedOption e) {
-//		}
+ 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		} catch (UnsupportedOption e) {
+		}
 	}
 	
 	// ///////////////////////////////////////////////////
@@ -116,7 +118,7 @@ public class QuickTestConfiguration {
 //		selfContainedElements[0] = new QName("http://www.foo.com", "person");
 		// blockSize = 9013;
 		// blockSize = 40;
-//		 blockSize = 200;
+//		blockSize = 200;
 //		valueMaxLength = 0;
 //		valuePartitionCapacity = 5;
 //		dtrMapTypes = new QName[1];
@@ -129,10 +131,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest ( );
+		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

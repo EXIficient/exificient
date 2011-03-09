@@ -227,6 +227,19 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return scDecoder.decodeEndElementUndeclared();
 		}
 	}
+	
+	
+	@Override
+	public String getElementPrefix() {
+		return (scDecoder == null ? super.getElementPrefix()
+				: scDecoder.getElementPrefix());
+	}
+	
+	@Override
+	public String getElementQNameAsString() {
+		return (scDecoder == null ? super.getElementQNameAsString()
+				: scDecoder.getElementQNameAsString());
+	}
 
 	@Override
 	public QName decodeAttributeXsiNil() throws EXIException, IOException {
@@ -300,6 +313,26 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		} else {
 			return scDecoder.decodeAttributeGenericUndeclared();
 		}
+	}
+	
+	
+	@Override
+	public String getAttributePrefix() {
+		return (scDecoder == null ? super.getAttributePrefix()
+				: scDecoder.getAttributePrefix());
+	}
+
+	@Override
+	public String getAttributeQNameAsString() {
+		return (scDecoder == null ? super.getAttributeQNameAsString()
+				: scDecoder.getAttributeQNameAsString());
+	}
+
+	
+	@Override
+	public Value getAttributeValue() {
+		return (scDecoder == null ? super.getAttributeValue() : scDecoder
+				.getAttributeValue());
 	}
 
 	@Override
@@ -384,41 +417,5 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		} else {
 			return scDecoder.decodeProcessingInstruction();
 		}
-	}
-
-//	@Override
-//	public String getStartElementQNameAsString() {
-//		return (scDecoder == null ? super.getStartElementQNameAsString()
-//				: scDecoder.getStartElementQNameAsString());
-//	}
-//
-//	@Override
-//	public String getEndElementQNameAsString() {
-//		return (scDecoder == null ? super.getEndElementQNameAsString()
-//				: scDecoder.getEndElementQNameAsString());
-//	}
-//
-//	@Override
-//	public String getAttributeQNameAsString() {
-//		return (scDecoder == null ? super.getAttributeQNameAsString()
-//				: scDecoder.getAttributeQNameAsString());
-//	}
-	
-	@Override
-	public String getElementPrefix() {
-		return (scDecoder == null ? super.getElementPrefix()
-				: scDecoder.getElementPrefix());
-	}
-	
-	@Override
-	public String getAttributePrefix() {
-		return (scDecoder == null ? super.getAttributePrefix()
-				: scDecoder.getAttributePrefix());
-	}
-
-	@Override
-	public Value getAttributeValue() {
-		return (scDecoder == null ? super.getAttributeValue() : scDecoder
-				.getAttributeValue());
 	}
 }

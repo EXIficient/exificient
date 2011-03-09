@@ -636,10 +636,14 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	public void decodeStartDocument() {
 	}
 
+	/* local storage to avoid blockSize value problems */
+	ElementContext ecStartElement;
 	
 	public QName decodeStartElement() throws IOException, EXIException {
-		this.elementContext = startElementEntries.get(startElementEntryIndex++);
-		return elementContext.qname;
+//		this.elementContext = startElementEntries.get(startElementEntryIndex++);
+//		return elementContext.qname;
+		ecStartElement = startElementEntries.get(startElementEntryIndex++);
+		return ecStartElement.qname;
 	}
 
 	public QName decodeStartElementNS() throws IOException, EXIException {
@@ -657,14 +661,33 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	public QName decodeEndElement() throws EXIException {
 		EndElementEntry eeEntry = endElementEntries.get(endElementEntryIndex++);
-		this.elementContext = eeEntry.after;
-		return eeEntry.before.qname;
+//		this.elementContext = eeEntry.after;
+//		return eeEntry.before.qname;
+		QName eeQName = ecStartElement.qname;
+		ecStartElement = eeEntry.after;
+		return eeQName;
 	}
 
 	public QName decodeEndElementUndeclared() throws EXIException {
 		return decodeEndElement();
 	}
 
+	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
+//		return elementContext.nsDeclarations;
+		return ecStartElement.nsDeclarations;
+	}
+
+	public String getElementPrefix() {
+//		return this.elementContext.prefix;
+		return ecStartElement.prefix;
+	}
+	
+	public String getElementQNameAsString() {
+//		return this.elementContext.getQNameAsString();
+		return ecStartElement.getQNameAsString();
+	}
+	
+	
 	public NamespaceDeclaration decodeNamespaceDeclaration()
 			throws EXIException {
 		return nsEntries.get(nsEntryIndex++);
@@ -682,7 +705,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 		
-		this.handleAttributeXsiTypeValue();
+		// this.handleAttributeXsiTypeValue();
 		return attributeQName;
 	}
 

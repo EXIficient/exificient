@@ -41,6 +41,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * Shared functionality between EXI Body Encoder and EXI Body Decoder.
@@ -267,6 +268,7 @@ public abstract class AbstractEXIBodyCoder {
 	static final class ElementContext {
 		final QName qname;
 		String prefix;
+		String sqname;
 		Rule rule; // may be modified while coding
 		// prefix declarations
 		List<NamespaceDeclaration> nsDeclarations;
@@ -274,6 +276,13 @@ public abstract class AbstractEXIBodyCoder {
 		public ElementContext(QName qname, Rule rule) {
 			this.qname = qname;
 			this.rule = rule;
+		}
+		
+		String getQNameAsString() {
+			if (sqname == null) {
+				sqname = QNameUtilities.getQualifiedName(qname.getLocalPart(), prefix);
+			}
+			return sqname;
 		}
 	}
 }

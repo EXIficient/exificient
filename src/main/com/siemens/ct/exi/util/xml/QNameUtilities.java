@@ -24,6 +24,8 @@ import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.Constants;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -60,6 +62,25 @@ public class QNameUtilities {
 
 		return (index >= 0) ? qname.substring(0, index) : "";
 	}
+	
+	
+	/**
+	 * Returns qualified name as String
+	 * 
+	 * <p>
+	 * QName ::= PrefixedName | UnprefixedName <br />
+	 * PrefixedName ::= Prefix ':' LocalPart <br />
+	 * UnprefixedName ::= LocalPart
+	 * </p>
+	 * 
+	 * @return <code>String</code> for qname
+	 */
+	public static final String getQualifiedName(String localName, String pfx) {
+		return pfx.length() == 0 ? localName
+				: (pfx + Constants.COLON + localName);
+	}
+	
+	
 
 	/**
 	 * Returns the className for a given qname e.g.,

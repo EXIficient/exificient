@@ -21,6 +21,7 @@ package com.siemens.ct.exi.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -142,6 +143,18 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return decodeEndElementUndeclaredStructure().qname;
 	}
 
+	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
+		return elementContext.nsDeclarations;
+	}
+
+	public String getElementPrefix() {
+		return this.elementContext.prefix;
+	}
+	
+	public String getElementQNameAsString() {
+		return this.elementContext.getQNameAsString();
+	}
+	
 	public NamespaceDeclaration decodeNamespaceDeclaration()
 			throws EXIException, IOException {
 		return decodeNamespaceDeclarationStructure();

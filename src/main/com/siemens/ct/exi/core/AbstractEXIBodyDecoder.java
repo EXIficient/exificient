@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -46,6 +45,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
@@ -151,16 +151,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
-		return elementContext.nsDeclarations;
-	}
-
-	public String getElementPrefix() {
-		return this.elementContext.prefix;
-	}
-
 	public String getAttributePrefix() {
 		return attributePrefix;
+	}
+	
+	public String getAttributeQNameAsString() {
+		return QNameUtilities.getQualifiedName(attributeQName.getLocalPart(), attributePrefix);
 	}
 
 	public Value getAttributeValue() {
@@ -435,6 +431,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		String pfx = getPrefix(uri);
 
 		if (pfx == null) {
+			// TODO: Use default namespace prefix for first uri?
 			pfx = "ns" + createdPfxCnt++;
 			declarePrefix(pfx, uri);
 		}
