@@ -134,6 +134,18 @@ public interface EXIBodyDecoder {
 	 */
 	public String getElementPrefix();	
 	
+	/**
+	 * Returns qualified name for element name as String
+	 * 
+	 * <p>
+	 * QName ::= PrefixedName | UnprefixedName <br />
+	 * PrefixedName ::= Prefix ':' LocalPart <br />
+	 * UnprefixedName ::= LocalPart
+	 * </p>
+	 * 
+	 * @return <code>String</code> for qname
+	 */
+	public String getElementQNameAsString();
 	
 	/**
 	 * Reads EXI a self-contained start element.
@@ -253,6 +265,19 @@ public interface EXIBodyDecoder {
 	 * @return <code>String</code> for prefix
 	 */
 	public String getAttributePrefix();
+	
+	/**
+	 * Returns qualified name for (last) attribute as String
+	 * 
+	 * <p>
+	 * QName ::= PrefixedName | UnprefixedName <br />
+	 * PrefixedName ::= Prefix ':' LocalPart <br />
+	 * UnprefixedName ::= LocalPart
+	 * </p>
+	 * 
+	 * @return <code>String</code> for qname
+	 */
+	public String getAttributeQNameAsString();
 
 	/**
 	 * Provides attribute value
