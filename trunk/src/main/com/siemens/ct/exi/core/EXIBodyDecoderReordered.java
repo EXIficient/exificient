@@ -62,10 +62,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	protected int eventTypeIndex;
 
 	// elements and end elements
-	protected List<ElementContext> startElementEntries;
-	protected int startElementEntryIndex;
-	protected List<EndElementEntry> endElementEntries;
-	protected int endElementEntryIndex;
+	protected List<ElementContext> elementEntries;
+	protected int elementEntryIndex;
 	// attributes and character value entries
 	protected List<QNameEntry> qnameEntries;
 	protected int qnameEntryIndex;
@@ -101,6 +99,9 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	// Channel and Compression stuff
 	protected CodingMode codingMode;
 
+	// local element context (to avoid blockSize value problems)
+	ElementContext currElementEntry;
+
 	// content values
 	protected Map<QName, PreReadValue> contentValues;
 
@@ -125,9 +126,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		// events
 		eventTypes = new ArrayList<EventType>();
 		// element entries
-		// elementEntries = new ArrayList<ElementEntry>();
-		startElementEntries = new ArrayList<ElementContext>();
-		endElementEntries = new ArrayList<EndElementEntry>();
+		elementEntries = new ArrayList<ElementContext>();
 		// qname entries
 		qnameEntries = new ArrayList<QNameEntry>();
 		// misc
@@ -160,10 +159,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		nextEventType = EventType.START_DOCUMENT;
 
 		// element entries
-		startElementEntries.clear();
-		startElementEntryIndex = 0;
-		endElementEntries.clear();
-		endElementEntryIndex = 0;
+		elementEntries.clear();
+		elementEntryIndex = 0;
 		// qname entries
 		qnameEntries.clear();
 		qnameEntryIndex = 0;
@@ -335,8 +332,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		boolean stillBlockReadable = true;
 		boolean deferredStartElement = false;
-
-		ElementContext eeBefore;
 		
 		if (lastBlockElementContext != null) {
 			this.elementContext = lastBlockElementContext;
@@ -369,7 +364,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				case PROCESSING_INSTRUCTION:
 					// No Attribute or NS event --> start deferred element with
 					// prefix
-					startElementEntries.add(this.elementContext);
+					elementEntries.add(this.elementContext);
 					deferredStartElement = false;
 				}
 			}
@@ -460,12 +455,14 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				addQNameEntry(new QNameEntry(elementContext.qname, null));
 				break;
 			case END_ELEMENT:
-				eeBefore = decodeEndElementStructure();
-				endElementEntries.add(new EndElementEntry(eeBefore, this.elementContext));
+				// eeBefore = 
+				decodeEndElementStructure();
+				elementEntries.add(this.elementContext);
 				break;
 			case END_ELEMENT_UNDECLARED:
-				eeBefore = decodeEndElementUndeclaredStructure();
-				endElementEntries.add(new EndElementEntry(eeBefore, this.elementContext));
+				// eeBefore = 
+				decodeEndElementUndeclaredStructure();
+				elementEntries.add(this.elementContext);
 				break;
 			case END_DOCUMENT:
 				decodeEndDocumentStructure();
@@ -635,15 +632,13 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	public void decodeStartDocument() {
 	}
-
-	/* local storage to avoid blockSize value problems */
-	ElementContext ecStartElement;
+	
+	protected final ElementContext setNextElemementEntry() {
+		return ( currElementEntry = elementEntries.get(elementEntryIndex++));
+	}
 	
 	public QName decodeStartElement() throws IOException, EXIException {
-//		this.elementContext = startElementEntries.get(startElementEntryIndex++);
-//		return elementContext.qname;
-		ecStartElement = startElementEntries.get(startElementEntryIndex++);
-		return ecStartElement.qname;
+		return setNextElemementEntry().qname;
 	}
 
 	public QName decodeStartElementNS() throws IOException, EXIException {
@@ -660,12 +655,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	}
 
 	public QName decodeEndElement() throws EXIException {
-		EndElementEntry eeEntry = endElementEntries.get(endElementEntryIndex++);
-//		this.elementContext = eeEntry.after;
-//		return eeEntry.before.qname;
-		QName eeQName = ecStartElement.qname;
-		ecStartElement = eeEntry.after;
-		return eeQName;
+		// before
+		QName eeBefore = currElementEntry.qname;
+		// after
+		setNextElemementEntry();
+		
+		return eeBefore;
 	}
 
 	public QName decodeEndElementUndeclared() throws EXIException {
@@ -674,17 +669,17 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
 //		return elementContext.nsDeclarations;
-		return ecStartElement.nsDeclarations;
+		return currElementEntry.nsDeclarations;
 	}
 
 	public String getElementPrefix() {
 //		return this.elementContext.prefix;
-		return ecStartElement.prefix;
+		return currElementEntry.prefix;
 	}
 	
 	public String getElementQNameAsString() {
 //		return this.elementContext.getQNameAsString();
-		return ecStartElement.getQNameAsString();
+		return currElementEntry.getQNameAsString();
 	}
 	
 	
