@@ -67,6 +67,8 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 	protected void decodeTo(EXIFactory ef, InputStream exiDocument,
 			OutputStream xmlOutput, Transformer transformer) throws TransformerException, ParserConfigurationException, SAXException, IOException, EXIException {
 		
+//		exiDocument = new BufferedInputStream(exiDocument);
+		
 		InputSource is = new InputSource(exiDocument);
 		XMLReader exiReader = ef.createEXIReader();
 		

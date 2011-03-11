@@ -41,13 +41,13 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 
 	private static final long serialVersionUID = -5388595112370214500L;
 
-	public QNameDatatypeUCDProfile(AbstractEXIBodyCoder namespaces, QName schemaType) {
+	public QNameDatatypeUCDProfile(AbstractEXIBodyCoder namespaces,
+			QName schemaType) {
 		super(namespaces, schemaType);
 	}
-	
-//	String lastAddedURI;
-	
-	
+
+	// String lastAddedURI;
+
 	@Override
 	protected int addURI(final String namespaceURI) {
 		// no "real" addition, we just have one fall-in URI
@@ -56,12 +56,13 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 			runtimeURIEntries.add(new RuntimeURIEntry(namespaceURI, uriID));
 		} else {
 			// replace old entry
-			runtimeURIEntries.set(uriID, new RuntimeURIEntry(namespaceURI, uriID));
+			runtimeURIEntries.set(uriID, new RuntimeURIEntry(namespaceURI,
+					uriID));
 		}
-//		lastAddedURI = namespaceURI;
+		// lastAddedURI = namespaceURI;
 		return uriID;
 	}
-	
+
 	@Override
 	protected int getLocalNameID(String localName, int uriID) {
 		// grammar entries
@@ -73,11 +74,11 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 				return bs;
 			}
 		}
-		
+
 		// no appropriate local-name ID found
 		return Constants.NOT_FOUND;
 	}
-	
+
 	@Override
 	protected QName addLocalName(final String localName, int uriID) {
 		// no "real" addition
@@ -85,11 +86,13 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 			// grammar entries
 			return new QName(grammarURIEntries[uriID].namespaceURI, localName);
 		} else {
-			return new QName(runtimeURIEntries.get(grammarURIEntries.length).namespaceURI, localName);
+			return new QName(
+					runtimeURIEntries.get(grammarURIEntries.length).namespaceURI,
+					localName);
 		}
-		//return runtimeURIEntries.get(uriID).addLocalName(localName);
+		// return runtimeURIEntries.get(uriID).addLocalName(localName);
 	}
-	
+
 	@Override
 	protected void addPrefix(final String prefix, int uriID) {
 		// no additions
@@ -100,7 +103,7 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 			EncoderChannel channel) throws IOException {
 		encodeQNamePrefix(prefix, requireUriID(uri), channel);
 	}
-	
+
 	@Override
 	public void encodeQNamePrefix(String prefix, int uriID,
 			EncoderChannel channel) throws IOException {
@@ -110,5 +113,5 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 			super.encodeQNamePrefix(prefix, 0, channel);
 		}
 	}
-	
+
 }

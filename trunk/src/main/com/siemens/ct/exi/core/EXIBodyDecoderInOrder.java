@@ -100,20 +100,14 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	}
 
 	public EventType next() throws EXIException, IOException {
-		if (nextEventType == EventType.END_DOCUMENT) {
-			// last was ED --> no more events
-			return null;
-		} else {
-			// decode event code
-			decodeEventCode();
-			return nextEventType;
-		}
+		return nextEventType == EventType.END_DOCUMENT ? null
+				: decodeEventCode();
 	}
-	
+
 	public void decodeStartDocument() throws EXIException {
 		decodeStartDocumentStructure();
 	}
-	
+
 	public void decodeEndDocument() throws EXIException, IOException {
 		decodeEndDocumentStructure();
 	}
@@ -150,11 +144,11 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	public String getElementPrefix() {
 		return this.elementContext.prefix;
 	}
-	
+
 	public String getElementQNameAsString() {
 		return this.elementContext.getQNameAsString();
 	}
-	
+
 	public NamespaceDeclaration decodeNamespaceDeclaration()
 			throws EXIException, IOException {
 		return decodeNamespaceDeclarationStructure();
@@ -253,7 +247,6 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return attributeQName;
 	}
 
-
 	public Value decodeCharacters() throws EXIException, IOException {
 		// structure & content
 		return typeDecoder.readValue(decodeCharactersStructure(),
@@ -284,12 +277,11 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	public char[] decodeComment() throws EXIException, IOException {
 		return decodeCommentStructure();
 	}
-	
+
 	public ProcessingInstruction decodeProcessingInstruction()
 			throws EXIException, IOException {
 		return decodeProcessingInstructionStructure();
 	}
-
 
 	public DocType decodeDocType() throws EXIException, IOException {
 		return decodeDocTypeStructure();

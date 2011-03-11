@@ -98,8 +98,7 @@ public interface EncoderChannel {
 
 	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
 
-	public void encodeUnsignedIntegerValue(IntegerValue iv)
-			throws IOException;
+	public void encodeUnsignedIntegerValue(IntegerValue iv) throws IOException;
 
 	/**
 	 * Encode an arbitrary precision integer using a sign bit followed by a

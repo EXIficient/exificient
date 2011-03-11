@@ -80,8 +80,9 @@ public class QNameDatatype extends AbstractDatatype {
 		this.grammarURIEntries = grammarURIEntries;
 		runtimeURIEntries.clear();
 		for (int i = 0; i < grammarURIEntries.length; i++) {
-			RuntimeURIEntry rue = new RuntimeURIEntry(grammarURIEntries[i].namespaceURI,
-					i, grammarURIEntries[i].prefixes);
+			RuntimeURIEntry rue = new RuntimeURIEntry(
+					grammarURIEntries[i].namespaceURI, i,
+					grammarURIEntries[i].prefixes);
 			runtimeURIEntries.add(rue);
 		}
 	}
@@ -466,7 +467,7 @@ public class QNameDatatype extends AbstractDatatype {
 	public String decodeQNamePrefix(String uri, DecoderChannel channel)
 			throws IOException {
 		if (preservePrefix) {
-			return decodeQNamePrefix(requireUriID(uri), channel);	
+			return decodeQNamePrefix(requireUriID(uri), channel);
 		} else {
 			return null;
 		}
@@ -474,33 +475,32 @@ public class QNameDatatype extends AbstractDatatype {
 
 	protected String decodeQNamePrefix(int uriID, DecoderChannel channel)
 			throws IOException {
-//		if (preservePrefix) {
-			String prefix = null;
-			if (uriID == 0) {
-				// XMLConstants.DEFAULT_NS_PREFIX
-				prefix = XMLConstants.NULL_NS_URI;
-			} else {
-				List<String> prefixes = runtimeURIEntries.get(uriID)
-						.getPrefixes();
-				int numberOfPrefixes = prefixes.size();
+		// if (preservePrefix) {
+		String prefix = null;
+		if (uriID == 0) {
+			// XMLConstants.DEFAULT_NS_PREFIX
+			prefix = XMLConstants.NULL_NS_URI;
+		} else {
+			List<String> prefixes = runtimeURIEntries.get(uriID).getPrefixes();
+			int numberOfPrefixes = prefixes.size();
 
-				if (numberOfPrefixes > 0) {
-					int id = 0;
-					if (numberOfPrefixes > 1) {
-						id = channel.decodeNBitUnsignedInteger(MethodsBag
-								.getCodingLength(numberOfPrefixes));
-					}
-					prefix = prefixes.get(id);
-				} else {
-					// no previous NS mapping in charge
-					// Note: should only happen for SE events where NS appears
-					// afterwards
+			if (numberOfPrefixes > 0) {
+				int id = 0;
+				if (numberOfPrefixes > 1) {
+					id = channel.decodeNBitUnsignedInteger(MethodsBag
+							.getCodingLength(numberOfPrefixes));
 				}
+				prefix = prefixes.get(id);
+			} else {
+				// no previous NS mapping in charge
+				// Note: should only happen for SE events where NS appears
+				// afterwards
 			}
-			return prefix;
-//		} else {
-//			return null;
-//		}
+		}
+		return prefix;
+		// } else {
+		// return null;
+		// }
 	}
 
 	public String decodeNamespacePrefix(int uriID, DecoderChannel channel)

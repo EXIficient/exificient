@@ -48,7 +48,7 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 // http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#regexs
 // http://www.unicode.org/Public/3.1-Update/UnicodeData-3.1.0.txt
 public class EXIRegularExpression extends RegularExpression {
-	
+
 	/*
 	 * If the resulting set of characters contains less than 256 characters and
 	 * contains only BMP characters, the string value has a restricted character

@@ -328,58 +328,64 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				if (iv.getValueType() == ValueType.INTEGER_INT) {
 					f.setValueMaxLength(iv.intValue());
 				} else {
-					throw new EXIException("[EXI-Header] ValueMaxLength other than int not supported: " + iv);
+					throw new EXIException(
+							"[EXI-Header] ValueMaxLength other than int not supported: "
+									+ iv);
 				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-//			if (value instanceof LongValue) {
-//				LongValue lv = (LongValue) value;
-//				f.setValueMaxLength((int) lv.toLong());
-//			} else {
-//				throw new EXIException("[EXI-Header] Failure while processing "
-//						+ localName);
-//			}
+			// if (value instanceof LongValue) {
+			// LongValue lv = (LongValue) value;
+			// f.setValueMaxLength((int) lv.toLong());
+			// } else {
+			// throw new EXIException("[EXI-Header] Failure while processing "
+			// + localName);
+			// }
 		} else if (VALUE_PARTITION_CAPACITY.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
 				if (iv.getValueType() == ValueType.INTEGER_INT) {
 					f.setValuePartitionCapacity(iv.intValue());
 				} else {
-					throw new EXIException("[EXI-Header] ValuePartitionCapacity other than int not supported: " + iv);
+					throw new EXIException(
+							"[EXI-Header] ValuePartitionCapacity other than int not supported: "
+									+ iv);
 				}
-				
+
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-//			if (value instanceof LongValue) {
-//				LongValue lv = (LongValue) value;
-//				f.setValuePartitionCapacity((int) lv.toLong());
-//			} else {
-//				throw new EXIException("[EXI-Header] Failure while processing "
-//						+ localName);
-//			}
+			// if (value instanceof LongValue) {
+			// LongValue lv = (LongValue) value;
+			// f.setValuePartitionCapacity((int) lv.toLong());
+			// } else {
+			// throw new EXIException("[EXI-Header] Failure while processing "
+			// + localName);
+			// }
 		} else if (BLOCK_SIZE.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
 				if (iv.getValueType() == ValueType.INTEGER_INT) {
-					f.setBlockSize(iv.intValue());	
+					f.setBlockSize(iv.intValue());
 				} else {
-					throw new EXIException("[EXI-Header] BlockSize other than int not supported: " + iv);
+					throw new EXIException(
+							"[EXI-Header] BlockSize other than int not supported: "
+									+ iv);
 				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-//			if (value instanceof LongValue) {
-//				LongValue lv = (LongValue) value;
-//				f.setBlockSize((int) lv.toLong());
-//			} else {
-//				throw new EXIException("[EXI-Header] Failure while processing "
-//						+ localName);
-//			}
+			// if (value instanceof LongValue) {
+			// LongValue lv = (LongValue) value;
+			// f.setBlockSize((int) lv.toLong());
+			// } else {
+			// throw new EXIException("[EXI-Header] Failure while processing "
+			// + localName);
+			// }
 		} else if (SCHEMA_ID.equals(localName)) {
 			String schemaId = value.toString();
 			if (Constants.EMPTY_STRING.equals(value.toString())) {

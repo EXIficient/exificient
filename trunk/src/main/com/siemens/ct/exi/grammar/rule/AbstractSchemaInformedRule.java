@@ -122,7 +122,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return leastAttributeEventCode;
 	}
 
-	public int getNumberOfEvents() {
+	public final int getNumberOfEvents() {
 		return containers.length;
 	}
 
@@ -360,7 +360,7 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	}
 
 	// for decoder
-	public EventInformation lookFor(int eventCode) {
+	public final EventInformation lookFor(int eventCode) {
 		assert (eventCode >= 0 && eventCode < containers.length);
 		return containers[eventCode];
 	}

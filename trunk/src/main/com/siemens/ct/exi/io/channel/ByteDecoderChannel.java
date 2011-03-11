@@ -54,7 +54,7 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 			n -= is.skip(n);
 		}
 	}
-	
+
 	/**
 	 * Decodes and returns an n-bit unsigned integer using the minimum number of
 	 * bytes required for n bits.
@@ -80,7 +80,7 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	public boolean decodeBoolean() throws IOException {
 		return (is.read() == 0 ? false : true);
 	}
-	
+
 	/**
 	 * Decode a binary value as a length-prefixed sequence of octets.
 	 */

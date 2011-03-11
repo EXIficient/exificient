@@ -200,7 +200,6 @@ public class IntegerValue extends AbstractValue implements
 			return new IntegerValue(bval.intValue());
 		}
 	}
-	
 
 	protected static String getAdjustedValue(String value) {
 		// trim leading and trailing whitespaces
@@ -217,7 +216,8 @@ public class IntegerValue extends AbstractValue implements
 			value = getAdjustedValue(value);
 			int len = value.length();
 			// int: -2147483648 (len==11) ... 2147483647 (len==10)
-			// long: -9223372036854775808 (len==20) ... 9223372036854775807 (len==19)
+			// long: -9223372036854775808 (len==20) ... 9223372036854775807
+			// (len==19)
 			if (len > 0) {
 				if (value.charAt(0) == '-') {
 					// negative

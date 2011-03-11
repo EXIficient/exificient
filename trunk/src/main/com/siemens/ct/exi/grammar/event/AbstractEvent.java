@@ -36,7 +36,7 @@ public abstract class AbstractEvent implements Event {
 		this.eventType = eventType;
 	}
 
-	public EventType getEventType() {
+	public final EventType getEventType() {
 		return eventType;
 	}
 

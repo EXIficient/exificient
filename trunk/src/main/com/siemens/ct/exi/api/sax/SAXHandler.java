@@ -24,6 +24,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.ext.LexicalHandler;
 
+/**
+ * Serializes SAX events to EXI stream.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.6
+ */
+
 public class SAXHandler extends DefaultHandler2 {
 	ContentHandler contentHandler;
 

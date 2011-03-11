@@ -300,11 +300,11 @@ public class BuiltIn {
 								case UNSIGNED_INTEGER_16:
 								case INTEGER_16:
 								case INTEGER_32:
-								/* long */
+									/* long */
 								case NBIT_INTEGER_64:
 								case UNSIGNED_INTEGER_32:
 								case INTEGER_64:
-								/* big */
+									/* big */
 								case NBIT_INTEGER_BIG:
 								case UNSIGNED_INTEGER_64:
 								case UNSIGNED_INTEGER_BIG:
@@ -521,19 +521,23 @@ public class BuiltIn {
 			case UNSIGNED_INTEGER_BIG:
 			case INTEGER_BIG:
 			case UNSIGNED_INTEGER_64:
-				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_BIG, IntegerValue.valueOf(min),
-						IntegerValue.valueOf(max), schemaType);
+				datatype = new NBitIntegerDatatype(
+						BuiltInType.NBIT_INTEGER_BIG,
+						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
+						schemaType);
 				break;
 			case INTEGER_64:
 			case UNSIGNED_INTEGER_32:
-				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_64, IntegerValue.valueOf(min),
-						IntegerValue.valueOf(max), schemaType);
+				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_64,
+						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
+						schemaType);
 				break;
 			case INTEGER_32:
 			case UNSIGNED_INTEGER_16:
 			case INTEGER_16:
-				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_32, IntegerValue.valueOf(min),
-						IntegerValue.valueOf(max), schemaType);
+				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_32,
+						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
+						schemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected n-Bit Integer Type: "

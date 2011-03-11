@@ -68,7 +68,7 @@ public class IntegerDatatype extends AbstractDatatype {
 			return false;
 		}
 	}
-	
+
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
 		valueChannel.encodeIntegerValue(lastInteger);
