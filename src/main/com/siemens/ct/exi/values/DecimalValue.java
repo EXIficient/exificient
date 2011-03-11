@@ -76,15 +76,14 @@ public class DecimalValue extends AbstractValue {
 			} else if (decPoint == 0) {
 				// e.g. ".234"
 				sIntegral = IntegerValue.ZERO;
-				sRevFractional = IntegerValue.parse(new StringBuilder(
-						decimal.substring(decPoint + 1, decimal.length()))
-						.reverse().toString());
+				sRevFractional = IntegerValue.parse(new StringBuilder(decimal
+						.substring(decPoint + 1, decimal.length())).reverse()
+						.toString());
 			} else {
-				sIntegral = IntegerValue.parse(decimal.substring(0,
-						decPoint));
-				sRevFractional = IntegerValue.parse(new StringBuilder(
-						decimal.substring(decPoint + 1, decimal.length()))
-						.reverse().toString());
+				sIntegral = IntegerValue.parse(decimal.substring(0, decPoint));
+				sRevFractional = IntegerValue.parse(new StringBuilder(decimal
+						.substring(decPoint + 1, decimal.length())).reverse()
+						.toString());
 			}
 			if (sIntegral == null || sRevFractional == null) {
 				return null;
@@ -126,7 +125,7 @@ public class DecimalValue extends AbstractValue {
 		// dot
 		cbuffer[offset++] = '.';
 		// fractional
-		switch(revFractional.valueType) {
+		switch (revFractional.valueType) {
 		case INTEGER_INT:
 			MethodsBag.itosReverse(revFractional.ival, offset, cbuffer);
 			break;
@@ -141,7 +140,8 @@ public class DecimalValue extends AbstractValue {
 			break;
 		default:
 			/* ERROR */
-			throw new RuntimeException("Unknown Int Type: " + revFractional.valueType);
+			throw new RuntimeException("Unknown Int Type: "
+					+ revFractional.valueType);
 		}
 		// revFractional.toCharactersReverse(cbuffer, offset);
 

@@ -128,12 +128,14 @@ public interface EXIBodyDecoder {
 	/**
 	 * Returns element prefix for current element as String.
 	 * 
-	 * <p>Note: IF Preserve.Prefixes set to TRUE ONLY callable after all NS events</p>
+	 * <p>
+	 * Note: IF Preserve.Prefixes set to TRUE ONLY callable after all NS events
+	 * </p>
 	 * 
 	 * @return <code>String</code> for prefix
 	 */
-	public String getElementPrefix();	
-	
+	public String getElementPrefix();
+
 	/**
 	 * Returns qualified name for element name as String
 	 * 
@@ -146,7 +148,7 @@ public interface EXIBodyDecoder {
 	 * @return <code>String</code> for qname
 	 */
 	public String getElementQNameAsString();
-	
+
 	/**
 	 * Reads EXI a self-contained start element.
 	 * 
@@ -265,7 +267,7 @@ public interface EXIBodyDecoder {
 	 * @return <code>String</code> for prefix
 	 */
 	public String getAttributePrefix();
-	
+
 	/**
 	 * Returns qualified name for (last) attribute as String
 	 * 

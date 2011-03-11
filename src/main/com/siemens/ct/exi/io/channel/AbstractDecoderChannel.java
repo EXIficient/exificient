@@ -249,7 +249,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		if (negative) {
 			bResult = bResult.add(BigInteger.ONE).negate();
 		}
-		
+
 		return IntegerValue.valueOf(bResult);
 	}
 

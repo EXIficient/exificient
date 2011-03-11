@@ -55,6 +55,11 @@ public class StringValue extends AbstractValue {
 		return characters.length;
 	}
 
+	public char[] toCharacters() {
+		checkCharacters();
+		return this.characters;
+	}
+
 	public char[] toCharacters(char[] cbuffer, int offset) {
 		checkCharacters();
 		// return internal char buffer to indicate that this should be used

@@ -106,12 +106,13 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		typeDecoder.clear();
 	}
 
-	protected final void decodeEventCode() throws EXIException, IOException {
+	protected final EventType decodeEventCode() throws EXIException,
+			IOException {
 		// 1st level
 		int codeLength = currentRule
 				.get1stLevelEventCodeLength(fidelityOptions);
-		int ec = codeLength > 0 ? channel.decodeNBitUnsignedInteger(codeLength)
-				: 0;
+		int ec = codeLength == 0 ? 0 : channel
+				.decodeNBitUnsignedInteger(codeLength);
 
 		assert (ec >= 0);
 
@@ -134,7 +135,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				// un-set event
 				nextEvent = null;
 				nextRule = null;
-				// nextEventRule = null;
 			} else {
 				nextEventType = currentRule.get2ndLevelEvent(ec2,
 						fidelityOptions);
@@ -145,18 +145,20 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 					// un-set event
 					nextEvent = null;
 					nextRule = null;
-					// nextEventRule = null;
 				}
 			}
 		}
+
+		return nextEventType;
 	}
 
 	public String getAttributePrefix() {
 		return attributePrefix;
 	}
-	
+
 	public String getAttributeQNameAsString() {
-		return QNameUtilities.getQualifiedName(attributeQName.getLocalPart(), attributePrefix);
+		return QNameUtilities.getQualifiedName(attributeQName.getLocalPart(),
+				attributePrefix);
 	}
 
 	public Value getAttributeValue() {
@@ -208,16 +210,16 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				.getCodingLength(ch3));
 	}
 
-
 	protected final void decodeStartDocumentStructure() throws EXIException {
 		// update current rule
 		currentRule = currentRule.lookFor(0).next;
 	}
-	
-	protected final void decodeEndDocumentStructure() throws EXIException, IOException {
+
+	protected final void decodeEndDocumentStructure() throws EXIException,
+			IOException {
 		// assert (elementContextStack.size() == 1);
 	}
-	
+
 	protected final QName decodeStartElementStructure() throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
@@ -247,7 +249,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		return elementQName;
 	}
 
-	protected final QName decodeStartElementGenericStructure() throws IOException {
+	protected final QName decodeStartElementGenericStructure()
+			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
 		QName elementQName = qnameDatatype.decodeQName(channel);
@@ -281,8 +284,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		return elementQName;
 	}
 
-	protected final ElementContext decodeEndElementStructure() throws EXIException,
-			IOException {
+	protected final ElementContext decodeEndElementStructure()
+			throws EXIException, IOException {
 		return popElement();
 	}
 
@@ -425,7 +428,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 					.getNamespaceURI());
 		}
 	}
-	
+
 	private final String checkPrefixMapping(String uri) {
 		assert (!preservePrefix);
 		String pfx = getPrefix(uri);
@@ -446,7 +449,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		attributeQName = at.getQName();
 		// handle attribute prefix
 		handleAttributePrefix();
-		
+
 		// update current rule
 		currentRule = nextRule;
 
@@ -492,8 +495,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	private final void decodeAttributeGenericStructureOnly() throws EXIException,
-			IOException {
+	private final void decodeAttributeGenericStructureOnly()
+			throws EXIException, IOException {
 		// decode uri & local-name
 		attributeQName = qnameDatatype.decodeLocalName(
 				qnameDatatype.decodeUri(channel), channel);
@@ -528,7 +531,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// prefix mapping
 		int uriID = qnameDatatype.decodeUri(channel);
 		String nsURI = qnameDatatype.getUriForID(uriID);
-		
+
 		String nsPrefix = qnameDatatype.decodeNamespacePrefix(uriID, channel);
 
 		boolean local_element_ns = channel.decodeBoolean();
@@ -540,23 +543,23 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		declarePrefix(nsDecl);
 		return nsDecl;
 	}
-	
 
-	protected final char[] decodeEntityReferenceStructure() throws EXIException, IOException {
+	protected final char[] decodeEntityReferenceStructure()
+			throws EXIException, IOException {
 		// decode name AS string
 		char[] er = channel.decodeString();
 		// update current rule
 		currentRule = currentRule.getElementContentRule();
 		return er;
 	}
-	
-	protected final char[] decodeCommentStructure() throws EXIException, IOException {
+
+	protected final char[] decodeCommentStructure() throws EXIException,
+			IOException {
 		char[] comment = channel.decodeString();
 		// update current rule
 		currentRule = currentRule.getElementContentRule();
 		return comment;
 	}
-	
 
 	protected final ProcessingInstruction decodeProcessingInstructionStructure()
 			throws EXIException, IOException {
@@ -568,7 +571,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		return new ProcessingInstruction(piTarget, piData);
 	}
 
-	protected final DocType decodeDocTypeStructure() throws EXIException, IOException {
+	protected final DocType decodeDocTypeStructure() throws EXIException,
+			IOException {
 		// decode name, public, system, text AS string
 		char[] name = channel.decodeString();
 		char[] publicID = channel.decodeString();

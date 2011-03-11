@@ -62,8 +62,7 @@ public class QNameUtilities {
 
 		return (index >= 0) ? qname.substring(0, index) : "";
 	}
-	
-	
+
 	/**
 	 * Returns qualified name as String
 	 * 
@@ -79,8 +78,6 @@ public class QNameUtilities {
 		return pfx.length() == 0 ? localName
 				: (pfx + Constants.COLON + localName);
 	}
-	
-	
 
 	/**
 	 * Returns the className for a given qname e.g.,

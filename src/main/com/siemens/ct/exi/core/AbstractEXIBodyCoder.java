@@ -148,7 +148,7 @@ public abstract class AbstractEXIBodyCoder {
 	protected final void declarePrefix(String pfx, String uri) {
 		declarePrefix(new NamespaceDeclaration(uri, pfx));
 	}
-	
+
 	protected final void declarePrefix(NamespaceDeclaration nsDecl) {
 		if (elementContext.nsDeclarations == null) {
 			elementContext.nsDeclarations = new ArrayList<NamespaceDeclaration>();
@@ -171,7 +171,7 @@ public abstract class AbstractEXIBodyCoder {
 		}
 		return null;
 	}
-	
+
 	public final String getPrefix(String uri) {
 		if (XMLConstants.NULL_NS_URI.equals(uri)) {
 			return XMLConstants.DEFAULT_NS_PREFIX;
@@ -198,14 +198,9 @@ public abstract class AbstractEXIBodyCoder {
 		// set "new" current-rule
 		currentRule = se.getRule();
 		// create new stack item & push it
-		pushElementContext(new ElementContext(se.getQName(), currentRule));
-	}
-
-	protected final void pushElementContext(ElementContext elementContext) {
-		this.elementContext = elementContext;
-		++elementContextStackIndex;
-		// array needs to be extended?
-		if (elementContextStack.length == elementContextStackIndex) {
+		elementContext = new ElementContext(se.getQName(), currentRule);
+		// needs array to be extended?
+		if (elementContextStack.length == ++elementContextStackIndex) {
 			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
 			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0,
 					elementContextStack.length);
@@ -218,12 +213,10 @@ public abstract class AbstractEXIBodyCoder {
 		assert (this.elementContextStackIndex > 0);
 		// pop element from stack
 		ElementContext poppedEC = elementContextStack[elementContextStackIndex--];
-//		elementContextStack[elementContextStackIndex--] = null; // let gc do the
-//																// rest
 		elementContext = elementContextStack[elementContextStackIndex];
 		// update current rule to new (old) element stack
 		currentRule = elementContext.rule;
-		
+
 		return poppedEC;
 	}
 
@@ -277,10 +270,11 @@ public abstract class AbstractEXIBodyCoder {
 			this.qname = qname;
 			this.rule = rule;
 		}
-		
+
 		String getQNameAsString() {
 			if (sqname == null) {
-				sqname = QNameUtilities.getQualifiedName(qname.getLocalPart(), prefix);
+				sqname = QNameUtilities.getQualifiedName(qname.getLocalPart(),
+						prefix);
 			}
 			return sqname;
 		}

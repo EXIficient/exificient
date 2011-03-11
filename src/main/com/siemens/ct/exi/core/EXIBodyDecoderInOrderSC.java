@@ -59,24 +59,24 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		scDecoder = null;
 	}
 
-//	@Override
-//	protected final void handleElementPrefix() throws IOException {
-//		if (scDecoder == null) {
-//			super.handleElementPrefix();
-//		} else {
-//			scDecoder.handleElementPrefix();
-//		}
-//	}
-//	
-//	@Override
-//	protected final void handleAttributePrefix() throws IOException {
-//		if (scDecoder == null) {
-//			super.handleAttributePrefix();
-//		} else {
-//			scDecoder.handleAttributePrefix();
-//		}
-//	}
-	
+	// @Override
+	// protected final void handleElementPrefix() throws IOException {
+	// if (scDecoder == null) {
+	// super.handleElementPrefix();
+	// } else {
+	// scDecoder.handleElementPrefix();
+	// }
+	// }
+	//
+	// @Override
+	// protected final void handleAttributePrefix() throws IOException {
+	// if (scDecoder == null) {
+	// super.handleAttributePrefix();
+	// } else {
+	// scDecoder.handleAttributePrefix();
+	// }
+	// }
+
 	// @Override
 	// public void setInputStream(InputStream is)
 	// throws EXIException, IOException {
@@ -227,18 +227,17 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return scDecoder.decodeEndElementUndeclared();
 		}
 	}
-	
-	
+
 	@Override
 	public String getElementPrefix() {
-		return (scDecoder == null ? super.getElementPrefix()
-				: scDecoder.getElementPrefix());
+		return (scDecoder == null ? super.getElementPrefix() : scDecoder
+				.getElementPrefix());
 	}
-	
+
 	@Override
 	public String getElementQNameAsString() {
-		return (scDecoder == null ? super.getElementQNameAsString()
-				: scDecoder.getElementQNameAsString());
+		return (scDecoder == null ? super.getElementQNameAsString() : scDecoder
+				.getElementQNameAsString());
 	}
 
 	@Override
@@ -314,12 +313,11 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return scDecoder.decodeAttributeGenericUndeclared();
 		}
 	}
-	
-	
+
 	@Override
 	public String getAttributePrefix() {
-		return (scDecoder == null ? super.getAttributePrefix()
-				: scDecoder.getAttributePrefix());
+		return (scDecoder == null ? super.getAttributePrefix() : scDecoder
+				.getAttributePrefix());
 	}
 
 	@Override
@@ -328,7 +326,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 				: scDecoder.getAttributeQNameAsString());
 	}
 
-	
 	@Override
 	public Value getAttributeValue() {
 		return (scDecoder == null ? super.getAttributeValue() : scDecoder

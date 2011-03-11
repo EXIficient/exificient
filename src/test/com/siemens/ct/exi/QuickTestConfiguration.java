@@ -21,7 +21,6 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.W3CTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -100,15 +99,15 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+//		try {
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
- 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////

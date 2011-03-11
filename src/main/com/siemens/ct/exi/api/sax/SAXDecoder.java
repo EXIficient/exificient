@@ -66,7 +66,10 @@ public class SAXDecoder implements XMLReader {
 
 	protected EXIBodyDecoder decoder;
 
+	protected final static boolean USE_VALUE_CONTENT_HANDLER = false;
+
 	protected ContentHandler contentHandler;
+	protected ValueContentHandler valueContentHandler;
 	protected DTDHandler dtdHandler;
 	protected LexicalHandler lexicalHandler;
 	protected DeclHandler declHandler;
@@ -83,12 +86,10 @@ public class SAXDecoder implements XMLReader {
 	protected boolean namespacePrefixes = false;
 	protected boolean exiBodyOnly = false;
 
-// protected String seQNameAsString = Constants.EMPTY_STRING;
-//	protected String atQNameAsString = Constants.EMPTY_STRING;
-
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
 		this.exiStream = new EXIStreamDecoder();
+		this.valueContentHandler = new ValueContentHandler();
 		attributes = new AttributesImpl();
 		// switch namespace prefixes to TRUE if the stream preserves prefixes
 		if (noOptionsFactory.getFidelityOptions().isFidelityEnabled(
@@ -106,6 +107,9 @@ public class SAXDecoder implements XMLReader {
 	 */
 	public void setContentHandler(ContentHandler handler) {
 		this.contentHandler = handler;
+		if (USE_VALUE_CONTENT_HANDLER) {
+			this.valueContentHandler.setContentHandler(handler);
+		}
 	}
 
 	public ContentHandler getContentHandler() {
@@ -393,18 +397,17 @@ public class SAXDecoder implements XMLReader {
 			}
 		}
 	}
-	
 
 	/*
 	 * SAX Content Handler
 	 */
 	protected void handleDeferredStartElement(QName deferredStartElement)
 			throws SAXException, IOException, EXIException {
-		
+
 		if (namespaces) {
 			startPrefixMappings(decoder.getDeclaredPrefixDeclarations());
 		}
-		
+
 		/*
 		 * the qualified name is required when the namespace-prefixes property
 		 * is true, and is optional when the namespace-prefixes property is
@@ -414,7 +417,7 @@ public class SAXDecoder implements XMLReader {
 		if (namespacePrefixes) {
 			seQNameAsString = decoder.getElementQNameAsString();
 		}
-		 
+
 		// start so far deferred start element
 		contentHandler.startElement(deferredStartElement.getNamespaceURI(),
 				deferredStartElement.getLocalPart(), seQNameAsString,
@@ -427,12 +430,7 @@ public class SAXDecoder implements XMLReader {
 	protected void handleEndElement(QName eeQName, String eeQNameAsString,
 			List<NamespaceDeclaration> eePrefixes) throws SAXException,
 			IOException {
-//		// sqname
-//		String eeQNameAsString = Constants.EMPTY_STRING;
-//		if (namespacePrefixes) {
-//			eeQNameAsString = getQualifiedName(eeQName, eePrefix);
-//		}
-		
+
 		// start sax end element
 		contentHandler.endElement(eeQName.getNamespaceURI(),
 				eeQName.getLocalPart(), eeQNameAsString);
@@ -449,11 +447,6 @@ public class SAXDecoder implements XMLReader {
 				newSize = newSize << 2;
 			} while (newSize < reqSize);
 
-			// newSize = reqSize;
-
-			// need to create a new (expanded) buffer
-			// System.out.println("Expand buffer size: " + cbuffer.length +
-			// " --> " + newSize);
 			cbuffer = new char[newSize];
 		}
 	}
@@ -461,32 +454,39 @@ public class SAXDecoder implements XMLReader {
 	protected void handleAttribute(QName atQName) throws SAXException,
 			IOException, EXIException {
 		Value val = decoder.getAttributeValue();
+		String sVal;
 
-		int slen = val.getCharactersLength();
-		ensureBufferCapacity(slen);
+		if (USE_VALUE_CONTENT_HANDLER) {
+			sVal = valueContentHandler.reportAttributeString(val);
+		} else {
+			int slen = val.getCharactersLength();
+			ensureBufferCapacity(slen);
+			sVal = val.toString(cbuffer, 0);
+		}
 
 		// empty string if no qualified name is necessary
 		String atQNameAsString = Constants.EMPTY_STRING;
 		if (namespacePrefixes) {
 			atQNameAsString = decoder.getAttributeQNameAsString();
 		}
-		// QName atQName = decoder.getAttributeQName();
-		String sVal = val.toString(cbuffer, 0);
-		// System.out.println("[EXIficient AT] " + atQName + ", " +
-		// atQNameAsString + " = " + sVal);
+
 		attributes.addAttribute(atQName.getNamespaceURI(),
 				atQName.getLocalPart(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
 	}
 
 	protected void handleCharacters(Value val) throws SAXException, IOException {
-		int slen = val.getCharactersLength();
-		ensureBufferCapacity(slen);
+		if (USE_VALUE_CONTENT_HANDLER) {
+			valueContentHandler.reportCharacters(val);
+		} else {
+			int slen = val.getCharactersLength();
+			ensureBufferCapacity(slen);
 
-		// returns char array that contains value
-		// Note: can be a different array than the one passed
-		char[] sres = val.toCharacters(cbuffer, 0);
+			// returns char array that contains value
+			// Note: can be a different array than the one passed
+			char[] sres = val.toCharacters(cbuffer, 0);
 
-		contentHandler.characters(sres, 0, slen);
+			contentHandler.characters(sres, 0, slen);
+		}
 	}
 
 	/*

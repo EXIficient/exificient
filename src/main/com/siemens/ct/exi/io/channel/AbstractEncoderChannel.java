@@ -114,7 +114,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	}
 
 	public void encodeIntegerValue(IntegerValue iv) throws IOException {
-		switch(iv.getValueType()) {
+		switch (iv.getValueType()) {
 		case INTEGER_INT:
 			encodeInteger(iv.intValue());
 			break;
@@ -201,9 +201,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		encode(0 | bi.intValue());
 	}
 
-	public void encodeUnsignedIntegerValue(IntegerValue iv)
-			throws IOException {
-		switch(iv.getValueType()) {
+	public void encodeUnsignedIntegerValue(IntegerValue iv) throws IOException {
+		switch (iv.getValueType()) {
 		case INTEGER_INT:
 			encodeUnsignedInteger(iv.intValue());
 			break;
@@ -226,8 +225,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 */
 
 	public void encodeDecimal(boolean negative, IntegerValue integral,
-			IntegerValue reverseFraction) throws IOException,
-			RuntimeException {
+			IntegerValue reverseFraction) throws IOException, RuntimeException {
 		// sign, integral, reverse fractional
 		encodeBoolean(negative);
 		encodeUnsignedIntegerValue(integral);

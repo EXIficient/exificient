@@ -54,8 +54,8 @@ public class GrammarURIEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "{" + namespaceURI + "}(localNames#" + localNames.length + ", prefixes#"
-				+ prefixes.length + ")";
+		return "{" + namespaceURI + "}(localNames#" + localNames.length
+				+ ", prefixes#" + prefixes.length + ")";
 	}
 
 }

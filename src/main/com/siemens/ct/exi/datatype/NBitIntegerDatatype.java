@@ -51,7 +51,8 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitIntegerDatatype(BuiltInType builtInType, IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
+	public NBitIntegerDatatype(BuiltInType builtInType,
+			IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
 		super(builtInType, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
@@ -63,9 +64,11 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		// calculate number of bits to represent range
 		IntegerValue diff = upperBound.subtract(lowerBound);
 		if (diff.getValueType() == ValueType.INTEGER_INT) {
-			numberOfBits4Range = MethodsBag.getCodingLength(diff.intValue() + 1);			
+			numberOfBits4Range = MethodsBag
+					.getCodingLength(diff.intValue() + 1);
 		} else {
-			throw new RuntimeException("Unexpected NBit bound difference: " + diff);
+			throw new RuntimeException("Unexpected NBit bound difference: "
+					+ diff);
 		}
 
 	}
@@ -91,7 +94,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 			return checkBounds();
 		}
 	}
-	
+
 	public boolean isValid(Value value) {
 		if (value instanceof IntegerValue) {
 			validValue = ((IntegerValue) value);
@@ -103,19 +106,20 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		}
 	}
 
-
 	// check lower & upper bound
 	protected boolean checkBounds() {
-		return (validValue.compareTo(lowerBound) >= 0 && validValue.compareTo(upperBound) <= 0);
+		return (validValue.compareTo(lowerBound) >= 0 && validValue
+				.compareTo(upperBound) <= 0);
 	}
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
 		IntegerValue iv = validValue.subtract(lowerBound);
 		if (iv.getValueType() == ValueType.INTEGER_INT) {
-			valueChannel.encodeNBitUnsignedInteger(iv.intValue(), numberOfBits4Range);
+			valueChannel.encodeNBitUnsignedInteger(iv.intValue(),
+					numberOfBits4Range);
 		} else {
-			throw new IOException("N-Bit Value exceeds int range: " +  iv);
+			throw new IOException("N-Bit Value exceeds int range: " + iv);
 		}
 	}
 

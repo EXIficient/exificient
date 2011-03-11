@@ -324,8 +324,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		}
 
-//		// NS
-//		undeclarePrefixes();
+		// // NS
+		// undeclarePrefixes();
 		// pop element from stack
 		popElement();
 	}
@@ -670,11 +670,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		// Don't we want to prune insignificant whitespace characters
-		if (fidelityOptions.isStrict()
-				&& !fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-			String schars = chars.toString().trim();
-			if (schars.length() == 0) {
+		if (!preserveLexicalValues) {
+			String tchars = chars.toString().trim();
+			if (tchars.length() == 0) {
 				return;
 			}
 		}
