@@ -141,7 +141,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// subGroupHandler = new SubstitutionGroupHandler(grammarBucket);
 			// Xerces Version 2.11.0
 			subGroupHandler = new SubstitutionGroupHandler(sl);
-
 		} catch (Exception e) {
 			throw new EXIException(e);
 		}

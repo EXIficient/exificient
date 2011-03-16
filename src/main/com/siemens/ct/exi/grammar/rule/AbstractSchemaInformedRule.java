@@ -91,28 +91,15 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return true;
 	}
 
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (!fidelityOptions.isStrict());
-	}
+	public abstract boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions);
+//	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+//		return (!fidelityOptions.isStrict());
+//	}
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
 		return (hasSecondOrThirdLevel(fidelityOptions) ? codeLengthB
 				: codeLengthA);
 	}
-
-	// public void setTypeCastable(boolean isTypeCastable) {
-	// this.isTypeCastable = isTypeCastable;
-	// }
-	//
-	// public void setNillable(boolean nil) {
-	// this.isNillable = nil;
-	// // setTypeEmpty(typeEmpty);
-	// }
-	//
-	// public void setFirstElementRule() {
-	// throw new RuntimeException(
-	// "Not allowed to set first element, only in StartTag");
-	// }
 
 	public int getNumberOfDeclaredAttributes() {
 		return numberOfDeclaredAttributes;
@@ -251,10 +238,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		return sb.toString();
 	}
 
-	// public SchemaInformedRule duplicate() {
-	// return this;
-	// }
-
 	@Override
 	public SchemaInformedRule clone() {
 		return this;
@@ -263,46 +246,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	public SchemaInformedRule duplicate() {
 		return clone();
 	}
-
-	// // for encoder
-	// public EventInformation lookFor(EventType eventType, String... args) {
-	// for (EventInformation ei : containers) {
-	// if (ei.event.isEventType(eventType)) {
-	// switch (eventType) {
-	// case START_ELEMENT:
-	// if (checkQualifiedName(
-	// ((StartElement) ei.event).getQName(), args[0],
-	// args[1])) {
-	// return ei;
-	// }
-	// break;
-	// case START_ELEMENT_NS:
-	// if (((StartElementNS) ei.event).getNamespaceURI().equals(
-	// args[0])) {
-	// return ei;
-	// }
-	// break;
-	// case ATTRIBUTE:
-	// if (checkQualifiedName(((Attribute) ei.event).getQName(),
-	// args[0], args[1])) {
-	// return ei;
-	// }
-	// break;
-	// case ATTRIBUTE_NS:
-	// if (((AttributeNS) ei.event).getNamespaceURI().equals(
-	// args[0])) {
-	// return ei;
-	// }
-	// break;
-	// default:
-	// return ei;
-	// }
-	// }
-	// }
-	//
-	// // nothing found
-	// return null;
-	// }
 
 	public EventInformation lookForEvent(EventType eventType) {
 		for (EventInformation ei : containers) {
@@ -364,9 +307,5 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 		assert (eventCode >= 0 && eventCode < containers.length);
 		return containers[eventCode];
 	}
-
-	// public boolean isFirstElementRule() {
-	// return false;
-	// }
 
 }

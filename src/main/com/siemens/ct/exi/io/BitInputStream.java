@@ -146,7 +146,7 @@ final public class BitInputStream {
 
 		readBuffer();
 		int result;
-
+		
 		if (n <= capacity) {
 			// buffer already holds all necessary bits
 			capacity -= n;

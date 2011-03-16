@@ -54,15 +54,11 @@ public class DocEnd extends AbstractSchemaInformedRule {
 	}
 
 	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		// has second or third level (CM or PI)
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
-			return true;
-		} else {
-			return false;
-		}
+		return (fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
 
 	public int get2ndLevelEventCode(EventType eventType,

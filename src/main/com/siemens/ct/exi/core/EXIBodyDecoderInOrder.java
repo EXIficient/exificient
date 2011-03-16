@@ -164,8 +164,8 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	public QName decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		decodeAttributeXsiTypeStructure();
-
-		handleAttributeXsiTypeValue();
+//		handleAttributeXsiTypeValue();
+		
 		return attributeQName;
 	}
 
@@ -179,7 +179,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 
 		if (attributeQName.equals(XSI_TYPE)) {
 			decodeAttributeXsiTypeStructure();
-			handleAttributeXsiTypeValue();
+//			handleAttributeXsiTypeValue();
 		} else {
 			readAttributeContent(dt);
 		}
@@ -207,7 +207,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	protected void readAttributeContent() throws IOException, EXIException {
 		if (XSI_TYPE.equals(attributeQName)) {
 			decodeAttributeXsiTypeStructure();
-			handleAttributeXsiTypeValue();
+//			handleAttributeXsiTypeValue();
 		} else if (XSI_NIL.equals(attributeQName)
 				&& currentRule.isSchemaInformed()) {
 			decodeAttributeXsiNilStructure();
