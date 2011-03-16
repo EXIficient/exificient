@@ -73,7 +73,7 @@ public class Document extends AbstractSchemaInformedRule {
 	}
 
 	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return false;
 	}
 

@@ -153,13 +153,14 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	}
 
 	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		// Note: in non-STRICT xsi:nil and type is always present
-		if (fidelityOptions.isStrict()) {
-			return (isTypeCastable || isNillable);
-		} else {
-			return true;
-		}
+		return (isTypeCastable || isNillable || !fidelityOptions.isStrict());
+//		if (fidelityOptions.isStrict()) {
+//			return (isTypeCastable || isNillable);
+//		} else {
+//			return true;
+//		}
 	}
 
 	@Override

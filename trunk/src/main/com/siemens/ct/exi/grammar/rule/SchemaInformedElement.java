@@ -73,6 +73,11 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent {
 	}
 
 	@Override
+	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+		return (!fidelityOptions.isStrict());
+	}
+
+	@Override
 	public SchemaInformedElement clone() {
 		SchemaInformedElement clone = new SchemaInformedElement();
 

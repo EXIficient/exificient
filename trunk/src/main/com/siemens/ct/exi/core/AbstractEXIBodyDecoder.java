@@ -329,7 +329,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	protected final void handleAttributeXsiTypeValue() throws EXIException {
+	private final void handleAttributeXsiTypeValue() throws EXIException {
 
 		if (!preservePrefix) {
 			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
@@ -404,6 +404,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			// update current rule
 			currentRule = tg;
 		}
+		
+		// handle value, eventually add prefix
+		handleAttributeXsiTypeValue();
 	}
 
 	protected final void handleElementPrefix() throws IOException {

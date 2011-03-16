@@ -100,7 +100,7 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
 	// }
 
 	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
+	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return get2ndLevelCharacteristics(fidelityOptions) > 0;
 	}
 
