@@ -329,40 +329,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	private final void handleAttributeXsiTypeValue() throws EXIException {
-
-		if (!preservePrefix) {
-			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-		}
-
-		QName xsiTypeQName;
-
-		if (attributeValue instanceof QNameValue) {
-			QNameValue qnv = (QNameValue) attributeValue;
-			xsiTypeQName = qnv.toQName();
-			if (!preservePrefix) {
-				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
-				attributeValue = new QNameValue(qnv.toQName(), pfx);
-			}
-		} else {
-			// parse string value again (lexical value mode)
-			if (qnameDatatype.isValid(attributeValue.toString())) {
-				xsiTypeQName = qnameDatatype.getQName();
-				if (!preservePrefix) {
-					String pfx = qnameDatatype.getPrefix();
-					// System.out.println("No prefix preservation -> " + pfx );
-
-					declarePrefix(pfx, xsiTypeQName.getNamespaceURI());
-					attributeValue = new QNameValue(xsiTypeQName, pfx);
-				}
-			} else {
-				throw new EXIException("[EXI] no valid xsi:type='"
-						+ attributeValue + "'");
-			}
-
-		}
-	}
-
 	/*
 	 * Handles and xsi:type attributes
 	 */
@@ -372,9 +338,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle AT prefix
 		handleAttributePrefix();
 
-		// type qname & prefix
-		QName xsiTypeQName;
-
 		if (this.preserveLexicalValues) {
 			attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE,
 					channel);
@@ -383,13 +346,25 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
 		}
 
+		// type qname
+		QName xsiTypeQName;
 		if (attributeValue instanceof QNameValue) {
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
-		} else {
+			if (!preservePrefix) {
+				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
+				attributeValue = new QNameValue(qnv.toQName(), pfx);
+			}
+		} else {			
 			// parse string value again (lexical value mode)
 			if (qnameDatatype.isValid(attributeValue.toString())) {
 				xsiTypeQName = qnameDatatype.getQName();
+				if (!preservePrefix) {
+					String pfx = qnameDatatype.getPrefix();
+
+					declarePrefix(pfx, xsiTypeQName.getNamespaceURI());
+					attributeValue = new QNameValue(xsiTypeQName, pfx);
+				}
 			} else {
 				throw new EXIException("[EXI] no valid xsi:type='"
 						+ attributeValue + "'");
@@ -404,9 +379,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			// update current rule
 			currentRule = tg;
 		}
-		
-		// handle value, eventually add prefix
-		handleAttributeXsiTypeValue();
 	}
 
 	protected final void handleElementPrefix() throws IOException {
