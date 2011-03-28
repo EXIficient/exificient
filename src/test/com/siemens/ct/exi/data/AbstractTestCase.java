@@ -86,16 +86,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setValuePartitionCapacity(tco.getValuePartitionCapacity());
 		}
 		ef.setEncodingOptions(tco.getEncodingOptions());
-
-		// if (tco.getEncodingOptions() .isIncludeCookie()) {
-		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_COOKIE);
-		// }
-		// if (tco.isIncludeOptions()) {
-		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_OPTIONS);
-		// }
-		// if (tco.isIncludeSchemaId()) {
-		// ef.getHeaderOptions().setOption(HeaderOptions.INCLUDE_SCHEMA_ID);
-		// }
+		
+		if (tco.getProfile() != null) {
+			ef.setProfile(tco.getProfile());
+		}
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {

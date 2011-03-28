@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
@@ -227,7 +228,26 @@ public class GeneralTestCase extends AbstractTestCase {
 				"string") };
 		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes,
 				dtrRepresentations);
+		
+		
+		// #13 UCD Profile
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
 
+		// #13 UCD Profile Byte-Aligned
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
+		
 	}
 
 	@Test

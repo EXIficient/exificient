@@ -88,7 +88,7 @@ public abstract class AbstractEXIBodyCoder {
 	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
 		// QName datatype (coder)
-		if (exiFactory.usesProfile(EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE)) {
+		if (exiFactory.usesProfile(EXIFactory.UCD_PROFILE)) {
 			qnameDatatype = new QNameDatatypeUCDProfile(this, null);
 		} else {
 			qnameDatatype = new QNameDatatype(this, null);
@@ -226,7 +226,7 @@ public abstract class AbstractEXIBodyCoder {
 		if (nextSE == null) {
 			// ultra-constrained device profile
 			if (exiFactory
-					.usesProfile(EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE)) {
+					.usesProfile(EXIFactory.UCD_PROFILE)) {
 				nextSE = new StartElement(qname);
 				nextSE.setRule(grammar.getUrTypeGrammar());
 			} else {

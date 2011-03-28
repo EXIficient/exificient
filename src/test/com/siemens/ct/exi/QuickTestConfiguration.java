@@ -28,8 +28,8 @@ public class QuickTestConfiguration {
 	public static final boolean USE_SCHEMA = false;
 	
 	// profile
-	public static final String PROFILE = null;
-	// public static final String PROFILE = EXIFactory.ULTRA_CONSTRAINED_DEVICE_PROFILE;
+	// public static final String PROFILE = null;
+	public static final String PROFILE = EXIFactory.UCD_PROFILE;
 	
 	
 	// encoding options: include Cookie, EXI Options, SchemaId
@@ -87,10 +87,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
@@ -101,11 +101,11 @@ public class QuickTestConfiguration {
 		// fidelityOptions = FidelityOptions.createAll();
 //		try {
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 //// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 //// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
 ////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
 //		} catch (UnsupportedOption e) {
 //		}
 	}
