@@ -107,11 +107,13 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 	@Override
 	public void encodeQNamePrefix(String prefix, int uriID,
 			EncoderChannel channel) throws IOException {
-		if (uriID < grammarURIEntries.length) {
-			super.encodeQNamePrefix(prefix, uriID, channel);
-		} else {
-			super.encodeQNamePrefix(prefix, 0, channel);
-		}
+		super.encodeQNamePrefix(prefix, uriID, channel);
+		
+//		if (uriID < grammarURIEntries.length) {
+//			super.encodeQNamePrefix(prefix, uriID, channel);
+//		} else {
+//			super.encodeQNamePrefix(prefix, 0, channel);
+//		}
 	}
 
 }

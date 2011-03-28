@@ -139,7 +139,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (profileName == null) {
 			// un-set profile
 			this.profile = profileName;
-		} else if (ULTRA_CONSTRAINED_DEVICE_PROFILE.equals(profileName)) {
+		} else if (UCD_PROFILE.equals(profileName)) {
 			this.profile = profileName;
 			// what does the profile define
 			// 1. valuePartitionCapacity == 0
@@ -278,7 +278,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 
 		// ultra-constrained device profile
-		if (ULTRA_CONSTRAINED_DEVICE_PROFILE.equals(profile)) {
+		if (UCD_PROFILE.equals(profile)) {
 			if (valuePartitionCapacity != 0) {
 				throw new EXIException(
 						"Ultra-constrained device profile does not permit any string table entries");
@@ -289,6 +289,19 @@ public class DefaultEXIFactory implements EXIFactory {
 				throw new EXIException(
 						"Ultra-constrained device profile does not permit including Options document in EXI header");
 			}
+
+			if (getFidelityOptions().isFidelityEnabled(
+					FidelityOptions.FEATURE_PREFIX)) {
+				throw new EXIException(
+						"Ultra-constrained device profile does not permit preserving preifxes");
+			}
+
+			if (getCodingMode() == CodingMode.PRE_COMPRESSION
+					&& getCodingMode() == CodingMode.COMPRESSION) {
+				throw new EXIException(
+						"Ultra-constrained device profile does not support (Pre-)Compression");
+			}
+
 		}
 
 		// blockSize in NON compression mode? Just ignore it!

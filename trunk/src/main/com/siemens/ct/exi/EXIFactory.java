@@ -44,8 +44,9 @@ import com.siemens.ct.exi.types.TypeEncoder;
 
 public interface EXIFactory extends Cloneable {
 
-	public static final String ULTRA_CONSTRAINED_DEVICE_PROFILE = "ULTRA_CONSTRAINED_DEVICE_PROFILE";
-
+	/** Ultra-constrained device profile */
+	public static final String UCD_PROFILE = "UCD";
+	
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
 	 * comments or DTDs).
@@ -67,7 +68,7 @@ public interface EXIFactory extends Cloneable {
 	public FidelityOptions getFidelityOptions();
 
 	/**
-	 * Sets an EXI profile that configures tha factory.
+	 * Sets an EXI profile that configures the factory.
 	 * 
 	 * @param profileName
 	 * @throws UnsupportedOption

@@ -409,7 +409,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		}
 
 		// xsi:type value "content" as qname
-		if (this.preserveLexicalValues) {
+		if (preserveLexicalValues) {
 			// as string
 			typeEncoder.isValid(qnameDatatype, type);
 			typeEncoder.writeValue(XSI_TYPE, channel);
@@ -429,8 +429,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
-
-			if (typeEncoder.isValid(booleanDatatype, nil)) {
+			
+			// if (typeEncoder.isValid(booleanDatatype, nil)) {
+			if (booleanDatatype.isValid(nil)) {
 
 				// Note: in some cases we can simply skip the xsi:nil event
 				if (!preserveLexicalValues
@@ -452,8 +453,16 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 							channel);
 
-					// encode nil value as Boolean
-					typeEncoder.writeValue(XSI_NIL, channel);
+					// encode nil value "content" as Boolean
+					// typeEncoder.writeValue(XSI_NIL, channel);
+					if (preserveLexicalValues) {
+						// as string
+						typeEncoder.isValid(booleanDatatype, nil);
+						typeEncoder.writeValue(XSI_NIL, channel);
+					} else {
+						// typed
+						booleanDatatype.writeValue(channel, null, XSI_NIL);
+					}
 
 					if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 						// update current rule
@@ -470,8 +479,16 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 								Constants.XSI_NIL, pfx, channel);
 
-						// encode nil value as Boolean
-						typeEncoder.writeValue(XSI_NIL, channel);
+						// encode nil value "content" as Boolean
+						// typeEncoder.writeValue(XSI_NIL, channel);
+						if (preserveLexicalValues) {
+							// as string
+							typeEncoder.isValid(booleanDatatype, nil);
+							typeEncoder.writeValue(XSI_NIL, channel);
+						} else {
+							// typed
+							booleanDatatype.writeValue(channel, null, XSI_NIL);
+						}
 
 						if (booleanDatatype.getBoolean()) { // jump to typeEmpty
 							// update current rule

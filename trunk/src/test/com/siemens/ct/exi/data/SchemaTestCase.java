@@ -21,6 +21,7 @@ package com.siemens.ct.exi.data;
 import org.junit.Test;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.QuickTestConfiguration;
@@ -54,10 +55,10 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaWildcard2();
 		// SchemaTestCase.setConfigurationSchemaWildcard3();
 		// SchemaTestCase.setConfigurationSchemaNillable1 ( );
-		// SchemaTestCase.setConfigurationSchemaNillable2 ( );
+		SchemaTestCase.setConfigurationSchemaNillable2 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType();
 		// SchemaTestCase.setConfigurationSchemaXsiType2 ( );
-		SchemaTestCase.setConfigurationSchemaXsiType3 ( );
+		// SchemaTestCase.setConfigurationSchemaXsiType3 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType4 ( );
 		// SchemaTestCase.setConfigurationSchemaXsiType5 ( );
 		// SchemaTestCase.setConfigurationSchemaAnyAttributes ( );
@@ -174,6 +175,25 @@ public class SchemaTestCase extends AbstractTestCase {
 //		testCaseOptions.lastElement().setIncludeCookie(true);
 //		testCaseOptions.lastElement().setIncludeOptions(true);
 //		testCaseOptions.lastElement().setIncludeSchemaId(true);
+		
+		
+		// #9 UCD Profile
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
+
+		// #10 UCD Profile Byte-Aligned
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
 	}
 
 	@Test

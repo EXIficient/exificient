@@ -39,10 +39,8 @@ public class TestCaseOption {
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
 	private EncodingOptions encodingOptions;
-//	private boolean includeCookie;
-//	private boolean includeOptions;
-//	private boolean includeSchemaId;
-	
+	private String profile;
+
 	public TestCaseOption() {
 		encodingOptions = EncodingOptions.createDefault();
 	}
@@ -149,29 +147,14 @@ public class TestCaseOption {
 		return encodingOptions;
 	}
 	
-//	public void setIncludeCookie(boolean includeCookie) {
-//		this.includeCookie = includeCookie;
-//	}
-//	
-//	public boolean isIncludeCookie() {
-//		return includeCookie;
-//	}
-//	
-//	public void setIncludeOptions(boolean includeOptions) {
-//		this.includeOptions = includeOptions;
-//	}
-//	
-//	public boolean isIncludeOptions() {
-//		return includeOptions;
-//	}
-//	
-//	public void setIncludeSchemaId(boolean includeSchemaId) {
-//		this.includeSchemaId = includeSchemaId;
-//	}
-//	
-//	public boolean isIncludeSchemaId() {
-//		return includeSchemaId;
-//	}
+	
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 
 	@Override
 	public String toString() {
@@ -205,6 +188,10 @@ public class TestCaseOption {
 		// valuePartitionCapacity
 		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY ) {
 			s += ",vpc=" + valuePartitionCapacity;
+		}
+		// profile
+		if (this.profile != null) {
+			s += ",profile=" + profile;
 		}
 
 		return s;

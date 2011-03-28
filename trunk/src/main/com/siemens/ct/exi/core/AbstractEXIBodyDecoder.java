@@ -306,8 +306,16 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle AT prefix
 		handleAttributePrefix();
 
-		attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL,
-				channel);
+		// attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
+		if(preserveLexicalValues) {
+			// as String
+			attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
+		} else {
+			// as Boolean
+			attributeValue = booleanDatatype.readValue(channel, null, XSI_NIL);
+		}
+
+		
 		if (!preservePrefix) {
 			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 		}
