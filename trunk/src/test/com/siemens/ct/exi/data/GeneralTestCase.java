@@ -42,10 +42,10 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypeInteger();
 		// GeneralTestCase.setConfigurationDatatypeFloat();
-		// GeneralTestCase.setConfigurationDatatypes();
+		GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
-		GeneralTestCase.setConfigurationRandj();
+		// GeneralTestCase.setConfigurationRandj();
 		// GeneralTestCase.setConfigurationPurchaseOrder ( );
 		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest1Pfx ( );
@@ -73,7 +73,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	protected void setUp() throws Exception {
-		
+
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -111,8 +111,8 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().getEncodingOptions().setOption(
-				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		testCaseOptions.lastElement().getEncodingOptions()
+				.setOption(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
 		// FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
@@ -123,8 +123,8 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
 		testCaseOptions.lastElement().setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().getEncodingOptions().setOption(
-				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+		testCaseOptions.lastElement().getEncodingOptions()
+				.setOption(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
 		// FidelityOptions.FEATURE_XSI_SCHEMALOCATION, true);
 		testCaseOptions.lastElement().setFragments(false);
@@ -139,16 +139,16 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
-		// // #7b (strict & lexical-values)
-		// testCaseOptions.add(new TestCaseOption());
-		// testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-		// testCaseOptions.lastElement().setFidelityOptions(
-		// FidelityOptions.createStrict());
-		// testCaseOptions.lastElement().getFidelityOptions().setFidelity(
-		// FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-		// testCaseOptions.lastElement().setFragments(false);
-		// testCaseOptions.lastElement().setXmlEqual(false);
-		// testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		// #7b (strict & lexical-values)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().getFidelityOptions()
+				.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());
@@ -190,7 +190,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setValueMaxLength(8);
 		testCaseOptions.lastElement().setValuePartitionCapacity(16);
 
-		
 		// #11 valuePartitionCapacity
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -200,7 +199,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(5);
 
-		
 		// #11a valuePartitionCapacity + Header Cookie & Options & SchemaId
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -209,13 +207,12 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(4);
-		testCaseOptions.lastElement().getEncodingOptions().setOption(
-				EncodingOptions.INCLUDE_COOKIE);
-		testCaseOptions.lastElement().getEncodingOptions().setOption(
-				EncodingOptions.INCLUDE_OPTIONS);
-		testCaseOptions.lastElement().getEncodingOptions().setOption(
-				EncodingOptions.INCLUDE_SCHEMA_ID);
-		
+		testCaseOptions.lastElement().getEncodingOptions()
+				.setOption(EncodingOptions.INCLUDE_COOKIE);
+		testCaseOptions.lastElement().getEncodingOptions()
+				.setOption(EncodingOptions.INCLUDE_OPTIONS);
+		testCaseOptions.lastElement().getEncodingOptions()
+				.setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
 
 		// #12 dtr map
 		testCaseOptions.add(new TestCaseOption());
@@ -228,8 +225,7 @@ public class GeneralTestCase extends AbstractTestCase {
 				"string") };
 		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes,
 				dtrRepresentations);
-		
-		
+
 		// #13 UCD Profile
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -247,7 +243,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
-		
+
 	}
 
 	@Test
@@ -678,8 +674,12 @@ public class GeneralTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationEntityReference1();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationEntityReference1() {
@@ -695,8 +695,12 @@ public class GeneralTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationEntityReference2();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationEntityReference2() {
@@ -707,22 +711,22 @@ public class GeneralTestCase extends AbstractTestCase {
 				.setExiLocation("./out/general/entityReference2.xml.exi");
 	}
 
-//	@Test
-//	public void testEntityReferenceUnresolved1() throws Exception {
-//		// set up configuration
-//		setConfigurationEntityReferenceUnresolved1();
-//
-//		// execute test
-//		_test();
-//	}
-//
-//	public static void setConfigurationEntityReferenceUnresolved1() {
-//		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
-//		QuickTestConfiguration
-//				.setXmlLocation("./data/general/entityReferenceUnresolved1.xml");
-//		QuickTestConfiguration
-//				.setExiLocation("./out/general/entityReferenceUnresolved1.xml.exi");
-//	}
+	// @Test
+	// public void testEntityReferenceUnresolved1() throws Exception {
+	// // set up configuration
+	// setConfigurationEntityReferenceUnresolved1();
+	//
+	// // execute test
+	// _test();
+	// }
+	//
+	// public static void setConfigurationEntityReferenceUnresolved1() {
+	// QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+	// QuickTestConfiguration
+	// .setXmlLocation("./data/general/entityReferenceUnresolved1.xml");
+	// QuickTestConfiguration
+	// .setExiLocation("./out/general/entityReferenceUnresolved1.xml.exi");
+	// }
 
 	@Test
 	public void XtestCData1() throws Exception {

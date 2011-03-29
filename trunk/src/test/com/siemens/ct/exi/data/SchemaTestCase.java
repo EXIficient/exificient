@@ -137,16 +137,16 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 		
-//		// #7b (strict & lexical-values)
-//		testCaseOptions.add(new TestCaseOption());
-//		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-//		testCaseOptions.lastElement().setFidelityOptions(
-//				FidelityOptions.createStrict());
-//			testCaseOptions.lastElement().getFidelityOptions().setFidelity(
-//					FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-//		testCaseOptions.lastElement().setFragments(false);
-//		testCaseOptions.lastElement().setXmlEqual(false);
-//		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		// #7b (strict & lexical-values)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+			testCaseOptions.lastElement().getFidelityOptions().setFidelity(
+					FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());
@@ -554,8 +554,12 @@ public class SchemaTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationSchemaWildcard2();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaWildcard2() {
@@ -614,9 +618,13 @@ public class SchemaTestCase extends AbstractTestCase {
 	public void testSchemaXsiType() throws Exception {
 		// set up configuration
 		setConfigurationSchemaXsiType();
+		
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaXsiType() {
@@ -645,8 +653,12 @@ public class SchemaTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationSchemaXsiType3();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaXsiType3() {
@@ -660,8 +672,12 @@ public class SchemaTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationSchemaXsiType4();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaXsiType4() {
@@ -675,8 +691,12 @@ public class SchemaTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationSchemaXsiType5();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaXsiType5() {
@@ -690,8 +710,12 @@ public class SchemaTestCase extends AbstractTestCase {
 		// set up configuration
 		setConfigurationSchemaVehicle();
 
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
 		// execute test
-		_test();
+		_test(noValidOptions);
 	}
 
 	public static void setConfigurationSchemaVehicle() {

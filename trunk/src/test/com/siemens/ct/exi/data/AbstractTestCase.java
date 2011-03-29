@@ -41,6 +41,7 @@ import com.siemens.ct.exi.AbstractTestDecoder;
 import com.siemens.ct.exi.AbstractTestEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.QuickTestConfiguration;
 import com.siemens.ct.exi.TestDOMDecoder;
@@ -260,18 +261,27 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// assertXMLEqual(new InputSource(control), new InputSource(test));
 	}
 
-	protected void _test() throws Exception {
+	protected void _test(FidelityOptions noValidOptions) throws Exception {
 		// schema-less
-		_test(null);
+		_test(null, noValidOptions);
 
 		// schema-informed
-		_test(QuickTestConfiguration.getXsdLocation());
+		_test(QuickTestConfiguration.getXsdLocation(), noValidOptions);
+	}
+	
+	protected void _test() throws Exception {
+		_test(null);
 	}
 
-	private void _test(String schemaLocation) throws Exception {
+	private void _test(String schemaLocation, FidelityOptions noValidOptions) throws Exception {
 		// test options
 		for (int i = 0; i < testCaseOptions.size(); i++) {
 			TestCaseOption tco = testCaseOptions.get(i);
+			
+			if (tco.getFidelityOptions().equals(noValidOptions)) {
+				continue;
+			}
+			
 			
 			// update schema
 			tco.setSchemaLocation(schemaLocation);

@@ -734,8 +734,10 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if (exiFactory.isFragment()) {
 						// characters in "outer" fragment element
 						throwWarning("Skip CH: '" + chars + "'");
+					} else if (fidelityOptions.isStrict() && chars.toString().trim().length() == 0) {
+						// empty characters in STRICT
+						throwWarning("Skip CH: '" + chars + "'");
 					} else {
-						assert (fidelityOptions.isStrict());
 						throw new EXIException("Characters '" + chars
 								+ "' cannot be encoded!");
 					}
