@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="order.xsd" >
+    <product sku="X555" color="#000000">
+        <quantity xmlns:sss="dasdasdas" >12</quantity>
+        <price>13.55</price>
+    </product>
+</order>

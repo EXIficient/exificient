@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="root" type="uuvTelemetryElementType"/>
+
+	<xsd:complexType name="uuvTelemetryElementType">
+		<xsd:all>
+			<xsd:element name="a" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="b" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="c" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="d" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="e" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="f" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="g" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+</xsd:schema>

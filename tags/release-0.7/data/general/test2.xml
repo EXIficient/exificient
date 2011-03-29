@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="test2.xsd">
+    <text>
+        <info/><!-- empty element  -->
+    </text>
+    <sss>AAA gonz a komischo Schas!</sss>
+</info>

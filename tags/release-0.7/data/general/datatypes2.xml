@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="datatypes2.xsd">
+    <!-- Built-in Type: Binary -->
+    <rBase64Binary>SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0g
+        TmFtZW4sIHfDpHJlbiBzaWUgbcO2Z2xpY2hlcndlaXNlIGtlaW5lIEjDvHRlIG1laHIsDQpzb25kZXJuIEjDvMOfZS4NCg==</rBase64Binary>
+    <rHexBinary>0FB7</rHexBinary>
+    
+    <!-- Built-in Type: Boolean -->
+    <rBoolean>true</rBoolean>
+    <rBoolean>1</rBoolean>
+    <rBoolean>false</rBoolean>
+    <rBoolean>0</rBoolean>
+    
+    <!-- Built-in Type: Date-Time -->
+<dateTime>0001-01-01T01:03:12</dateTime>
+    <dateTime>2005-01-01T00:00:00Z</dateTime>
+    <dateTime>1979-01-01T00:00:00.0120</dateTime>
+    <dateTime>0001-01-01T00:00:00.111+00:33</dateTime>
+    <time>12:34:56</time>
+    
+    <date>2002-10-11+13:00</date>
+    <gYearMonth>1999-10</gYearMonth>
+    <gYearMonth>1999-10Z</gYearMonth>
+    <gYearMonth>1999-10-12:11</gYearMonth>
+    <gYearMonth>1999-10+00:33</gYearMonth>
+   
+    
+    <gYear>2007</gYear>
+    <gYear>-0007</gYear>
+    <gYear>2001Z</gYear>
+    <gYear>2001+05:00</gYear>
+
+    <gMonthDay>--01-28</gMonthDay>
+    <gMonthDay>--01-28+00:00</gMonthDay>
+    <gDay>---16</gDay>
+    <gMonth>--12</gMonth>
+    <gMonth>--12Z</gMonth>
+ 
+    <!-- Built-in Type: Decimal -->
+<decimal>-1.23</decimal>
+    <decimal>321.00045</decimal>
+    <decimal>12678967.543233</decimal>
+    <decimal>+100000.00</decimal>
+    <decimal>210</decimal>
+
+    <!-- Built-in Type: Float -->
+    <float>-1E4</float>
+    <float>1267.43233E12</float>
+    <float>12.78e-2</float>
+    <float>12</float>
+    <float>-0</float>
+    <float>0</float>
+    <float>INF</float>
+    <float>NaN </float>
+    <double>-1E4</double>
+    <double>1267.43233E12</double>
+    <double>12.78e-2</double>
+    <double>12</double>
+    <double>-0</double>
+    <double>0</double>
+    <double>INF</double>
+    <double>NaN</double>
+
+    <!-- Built-in Type: Integer -->
+    <integer>121</integer>
+    <nonPositiveInteger>-552</nonPositiveInteger>
+    <negativeInteger>-4</negativeInteger>
+    <long>2135151351</long>
+    <int>5435</int>
+    <short>14155</short>
+    <byte>106</byte>
+    <nonNegativeInteger>0</nonNegativeInteger>
+    <unsignedLong>12678967543233</unsignedLong> 
+    <positiveInteger>12135</positiveInteger>
+    <unsignedInt>5858</unsignedInt>
+    <unsignedShort>19955</unsignedShort>
+    <unsignedByte>199</unsignedByte>
+    
+    <!-- Built-in Type: QName -->
+    <qName>ss</qName>
+    <!-- ???
+    <qName>http://www.w3.org/TR/xmlschema-2:sayHello</qName>
+    <qName>ss:aa</qName>
+    -->
+    
+    <!-- Built-in Type: List -->
+    <!-- TODO -->
+    
+    <!-- Built-in Type: String  -->
+    <string>ss ss </string>
+    <normalizedString> dasdas     dasdas</normalizedString>
+    <token>dasdasdas</token>
+    <language>en</language>
+    <name>dasda</name>
+   <nCName>ww</nCName>
+    <iD>s55</iD>
+    <iD>ID000</iD>
+    <iDREF>ID000</iDREF>
+    <nMTOKEN>da</nMTOKEN>
+    <anySimpleType>ssd</anySimpleType>
+    <anyURI>http://www.w3.org/TR/xmlschema-2/#anyURI</anyURI>
+    <!-- 
+    <Notation></Notation>
+    -->
+    <duration>P1Y2MT2H</duration>
+    <duration>P0Y1347M0D</duration>
+    <duration>-P1347M</duration>
+
+    
+</root>
