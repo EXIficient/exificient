@@ -47,7 +47,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 class SaxToDomHandler extends DefaultHandler implements LexicalHandler,

@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 public interface Value extends Serializable {
