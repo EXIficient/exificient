@@ -32,7 +32,7 @@ import com.siemens.ct.exi.grammar.event.StartElement;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 public interface Rule extends Serializable {

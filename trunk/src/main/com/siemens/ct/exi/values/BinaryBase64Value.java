@@ -25,7 +25,7 @@ import org.apache.xerces.impl.dv.util.Base64;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 // re-uses code from org.apache.xerces.impl.dv.util.Base64Bin;
 public class BinaryBase64Value extends AbstractBinaryValue {

@@ -38,7 +38,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 public class SchemaInformedGrammar extends AbstractGrammar implements
@@ -64,7 +64,7 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 
 	protected String schemaId;
 
-	// public @version 0.6(GrammarURIEntry[] grammarEntries, Document document,
+	// public @version 0.7(GrammarURIEntry[] grammarEntries, Document document,
 	// Fragment fragment, Collection<StartElement> elements) {
 	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
 			Document document, Fragment fragment) {

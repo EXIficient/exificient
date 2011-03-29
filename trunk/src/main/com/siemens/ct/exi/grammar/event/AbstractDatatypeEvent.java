@@ -27,7 +27,7 @@ import com.siemens.ct.exi.datatype.Datatype;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 public abstract class AbstractDatatypeEvent extends AbstractEvent implements

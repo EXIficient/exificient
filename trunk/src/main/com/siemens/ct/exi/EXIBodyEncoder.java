@@ -34,7 +34,7 @@ import com.siemens.ct.exi.values.Value;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.6
+ * @version 0.7
  */
 
 public interface EXIBodyEncoder {
@@ -168,7 +168,7 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies an xsi:nil attribute.
 	 * 
-	 * @param val
+	 * @param nil
 	 * @param pfx
 	 * @throws EXIException
 	 * @throws IOException
@@ -179,8 +179,7 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies an xsi:type case.
 	 * 
-	 * @param xsiTypeRaw
-	 *            xsi:type value
+	 * @param type xsi:type value
 	 * @param pfx
 	 * @throws EXIException
 	 * @throws IOException
@@ -191,7 +190,7 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies characters value.
 	 * 
-	 * @param value
+	 * @param chars
 	 * @throws EXIException
 	 * @throws IOException
 	 */
