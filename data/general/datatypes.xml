@@ -13,6 +13,9 @@
     </base64Binary>
     <hexBinary>0FB7</hexBinary>
     <hexBinary>0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef0123456789ABCDEFabcdef</hexBinary>
+    <hexBinary>
+        
+        0FB8</hexBinary>
     
     <!-- Built-in Type: Boolean -->
     <boolean>true</boolean>
@@ -36,6 +39,9 @@
     <gYearMonth>1999-10-12:11</gYearMonth>
     <gYearMonth>1999-10+00:33</gYearMonth>
     <gYearMonth>1809-02Z</gYearMonth>
+    <gYearMonth>
+        
+        1809-03Z</gYearMonth>
     
     <gYear>2007</gYear>
     <gYear>-0007</gYear>
