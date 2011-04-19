@@ -86,6 +86,7 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 	public byte[] decodeBinary() throws IOException {
 		final int length = decodeUnsignedInteger();
 		byte[] result = new byte[length];
+		
 		istream.read(result, 0, length);
 		return result;
 	}

@@ -100,15 +100,15 @@ public class QuickTestConfiguration {
 		// fidelityOptions = FidelityOptions.createDefault();
 		fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		try {
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
-//// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
-////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+//		try {
+//////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+////// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
+////// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
+//////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
+////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//		} catch (UnsupportedOption e) {
+//		}
 	}
 	
 	// ///////////////////////////////////////////////////

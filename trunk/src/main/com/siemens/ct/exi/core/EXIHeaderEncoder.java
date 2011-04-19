@@ -89,8 +89,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS);
 			headerChannel.encodeBoolean(includeOptions);
 
-			// EXI Format Preview Version 1-0000
-			headerChannel.encodeBoolean(true); // preview
+			// EXI Format Version 0-0000
+			headerChannel.encodeBoolean(false); // preview
 			headerChannel.encodeNBitUnsignedInteger(0, 4);
 
 			// EXI Header options and so forth
