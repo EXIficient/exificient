@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
@@ -156,14 +155,14 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void startCDATA() throws SAXException {
 		// <![CDATA[
-		super.characters(Constants.CDATA_START_ARRAY, 0,
-				Constants.CDATA_START_ARRAY.length);
+		// super.characters(Constants.CDATA_START_ARRAY, 0,
+		// Constants.CDATA_START_ARRAY.length);
 	}
 
 	public void endCDATA() throws SAXException {
 		// ]]>
-		super.characters(Constants.CDATA_END_ARRAY, 0,
-				Constants.CDATA_END_ARRAY.length);
+		// super.characters(Constants.CDATA_END_ARRAY, 0,
+		// Constants.CDATA_END_ARRAY.length);
 	}
 
 	public void startDTD(String name, String publicId, String systemId)

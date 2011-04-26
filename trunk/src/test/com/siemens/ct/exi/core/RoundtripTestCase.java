@@ -19,6 +19,7 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.EXIStreamEncoder;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
@@ -218,6 +219,148 @@ public class RoundtripTestCase extends TestCase {
 				break;
 			case CHARACTERS:
 				Value chv = dec.decodeCharacters();
+				enc2.encodeCharacters(chv);
+				break;
+			case END_ELEMENT:
+				dec.decodeEndElement();
+				enc2.encodeEndElement();
+				break;
+			case END_DOCUMENT:
+				dec.decodeEndDocument();
+				enc2.encodeEndDocument();
+				break;
+			default:
+				throw new RuntimeException("Unexpected event: " + event);
+			}
+		}
+		
+		/*
+		 * Check equality of streams
+		 */
+		assertTrue(os1.size() == os2.size());
+		assertTrue(Arrays.equals(os1.toByteArray(),os2.toByteArray()));
+	}
+
+	
+	// CDATA, BYTE_PACKED, INCLUDE_COOKIE, INCLUDE_OPTIONS 
+	public void testBugID3290090_a() throws Exception {
+		String xml = "./data/bugs/ID3290090/test.xml";
+	
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setCodingMode(CodingMode.BYTE_PACKED);
+		EncodingOptions eo = factory.getEncodingOptions();
+		eo.setOption(EncodingOptions.INCLUDE_COOKIE);
+		eo.setOption(EncodingOptions.INCLUDE_OPTIONS);
+		
+		/*
+		 * Encode to EXI
+		 */
+		EXIBodyEncoder enc1 = factory.createEXIBodyEncoder();
+		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+		enc1.setOutputStream(os1);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		SAXResult saxResult = new EXIResult(os1, factory);
+		xmlReader.setContentHandler(saxResult.getHandler());
+		xmlReader.parse(new InputSource(xml));
+		
+		/*
+		 * Decode EXI and Encode EXI again
+		 */
+		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
+		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
+		
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
+		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
+		
+		EventType event;
+		while( (event = dec.next()) != null) {
+			switch(event) {
+			case START_DOCUMENT:
+				dec.decodeStartDocument();
+				enc2.encodeStartDocument();
+				break;
+			case START_ELEMENT_GENERIC:
+				QName se = dec.decodeStartElementGeneric();
+				assertTrue(se.getLocalPart().equals("a"));
+				enc2.encodeStartElement(se);
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				Value chv = dec.decodeCharactersGenericUndeclared();
+				assertTrue(chv.toString().equals("x < 0"));
+				enc2.encodeCharacters(chv);
+				break;
+			case END_ELEMENT:
+				dec.decodeEndElement();
+				enc2.encodeEndElement();
+				break;
+			case END_DOCUMENT:
+				dec.decodeEndDocument();
+				enc2.encodeEndDocument();
+				break;
+			default:
+				throw new RuntimeException("Unexpected event: " + event);
+			}
+		}
+		
+		/*
+		 * Check equality of streams
+		 */
+		assertTrue(os1.size() == os2.size());
+		assertTrue(Arrays.equals(os1.toByteArray(),os2.toByteArray()));
+	}
+
+	// CDATA BYTE_PACKED, INCLUDE_COOKIE, INCLUDE_OPTIONS, PRESERVE_COMMENTS
+	public void testBugID3290090_b() throws Exception {
+		String xml = "./data/bugs/ID3290090/test.xml";
+	
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setCodingMode(CodingMode.BYTE_PACKED);
+		EncodingOptions eo = factory.getEncodingOptions();
+		eo.setOption(EncodingOptions.INCLUDE_COOKIE);
+		eo.setOption(EncodingOptions.INCLUDE_OPTIONS);
+		
+		/* with comments */
+		FidelityOptions fo = factory.getFidelityOptions();
+		fo.setFidelity(FidelityOptions.FEATURE_COMMENT, true);
+		
+		
+		/*
+		 * Encode to EXI
+		 */
+		EXIBodyEncoder enc1 = factory.createEXIBodyEncoder();
+		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+		enc1.setOutputStream(os1);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		SAXResult saxResult = new EXIResult(os1, factory);
+		xmlReader.setContentHandler(saxResult.getHandler());
+		xmlReader.parse(new InputSource(xml));
+		
+		/*
+		 * Decode EXI and Encode EXI again
+		 */
+		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
+		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
+		
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
+		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
+		
+		EventType event;
+		while( (event = dec.next()) != null) {
+			switch(event) {
+			case START_DOCUMENT:
+				dec.decodeStartDocument();
+				enc2.encodeStartDocument();
+				break;
+			case START_ELEMENT_GENERIC:
+				QName se = dec.decodeStartElementGeneric();
+				assertTrue(se.getLocalPart().equals("a"));
+				enc2.encodeStartElement(se);
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				Value chv = dec.decodeCharactersGenericUndeclared();
+				assertTrue(chv.toString().equals("x < 0"));
 				enc2.encodeCharacters(chv);
 				break;
 			case END_ELEMENT:
