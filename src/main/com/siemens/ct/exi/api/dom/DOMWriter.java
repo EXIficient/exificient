@@ -31,7 +31,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamEncoder;
@@ -230,9 +229,10 @@ public class DOMWriter {
 				break;
 			case Node.CDATA_SECTION_NODE:
 				checkPendingChars();
-				String cdata = n.getNodeValue();
-				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START
-						+ cdata + Constants.CDATA_END));
+//				String cdata = n.getNodeValue();
+//				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START
+//						+ cdata + Constants.CDATA_END));
+				exiBody.encodeCharacters(new StringValue(n.getNodeValue()));
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {

@@ -91,10 +91,10 @@ public interface Constants {
 	public static final String XSD_LIST_DELIM = " ";
 	public static final char XSD_LIST_DELIM_CHAR = ' ';
 
-	public static final String CDATA_START = "<![CDATA[";
-	public static final char[] CDATA_START_ARRAY = CDATA_START.toCharArray();
-	public static final String CDATA_END = "]]>";
-	public static final char[] CDATA_END_ARRAY = CDATA_END.toCharArray();
+	// public static final String CDATA_START = "<![CDATA[";
+	// public static final char[] CDATA_START_ARRAY = CDATA_START.toCharArray();
+	// public static final String CDATA_END = "]]>";
+	// public static final char[] CDATA_END_ARRAY = CDATA_END.toCharArray();
 
 	public static final String XSD_ANY_TYPE = "anyType";
 

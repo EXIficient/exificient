@@ -21,7 +21,6 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
