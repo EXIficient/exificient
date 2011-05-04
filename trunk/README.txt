@@ -35,7 +35,8 @@ EXIficient supports the following specifications:
 EXIficient requires:
 
 * Java 1.5 or higher
-* Xerces2 Java Parser 2.9 or higher (schema-informed mode only)
+* Xerces2 Java Parser 2.9.11 or higher (schema-informed mode only)
+  (xercesImpl.jar & xml-apis.jar)
 
 For usage information, please see the usage documentation available at
 http://exificient.sourceforge.net/.
