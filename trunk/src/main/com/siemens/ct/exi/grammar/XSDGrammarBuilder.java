@@ -30,7 +30,6 @@ import java.util.TreeSet;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import org.apache.xerces.impl.xs.models.EXIContentModelBuilder;
 import org.apache.xerces.xs.StringList;
 import org.apache.xerces.xs.XSAttributeDeclaration;
 import org.apache.xerces.xs.XSAttributeUse;

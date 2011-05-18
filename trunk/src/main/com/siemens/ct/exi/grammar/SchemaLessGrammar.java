@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.grammar;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -115,6 +116,11 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		// no type grammar available
 		return null;
 	}
+	
+	public Set<QName> getTypeGrammars() {
+		// no type grammar available
+		return null;
+	}
 
 	public List<QName> getSimpleTypeSubtypes(QName type) {
 		// no type nor sub-types
@@ -124,4 +130,5 @@ public class SchemaLessGrammar extends AbstractGrammar {
 	public StartElement getGlobalElement(QName qname) {
 		return null;
 	}
+
 }
