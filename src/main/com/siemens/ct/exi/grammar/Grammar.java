@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -87,6 +88,8 @@ public interface Grammar extends Serializable {
 	public Attribute getGlobalAttribute(QName qname);
 
 	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname);
+	
+	public Set<QName> getTypeGrammars();
 
 	/**
 	 * Returns (direct) simple types in type hierarchy

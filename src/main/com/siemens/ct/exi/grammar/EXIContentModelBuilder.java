@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.apache.xerces.impl.xs.models;
+package com.siemens.ct.exi.grammar;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,7 +33,9 @@ import org.apache.xerces.impl.xs.SchemaGrammar;
 import org.apache.xerces.impl.xs.SubstitutionGroupHandler;
 import org.apache.xerces.impl.xs.XMLSchemaLoader;
 import org.apache.xerces.impl.xs.XSComplexTypeDecl;
-import org.apache.xerces.impl.xs.XSParticleDecl;
+import org.apache.xerces.impl.xs.models.CMBuilder;
+import org.apache.xerces.impl.xs.models.CMNodeFactory;
+import org.apache.xerces.impl.xs.models.XSCMValidator;
 import org.apache.xerces.xni.QName;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLErrorHandler;
@@ -109,15 +111,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		schemaParsingErrors.clear();
 	}
 
-	// class NoXMLEntityResolver implements XMLEntityResolver {
-	// public XMLInputSource resolveEntity(
-	// org.apache.xerces.xni.XMLResourceIdentifier resourceIdentifier)
-	// throws XNIException, IOException {
-	// // Note: If the entity cannot be resolved, this method should return null
-	// return null;
-	// }
-	// }
-
 	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
 		try {
 			initEachRun();
@@ -131,7 +124,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 			// set XSModel
 			xsModel = g.toXSModel();
-
+			
 			// create substitution group-handler
 			// NOTE: it is needed but not really used later on
 			// (substitution groups are handled separately)
@@ -186,18 +179,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		return this.xsModel;
 	}
 
-	@Override
-	XSCMValidator createAllCM(XSParticleDecl particle) {
-		// Note: xsd:all is allowed to contain elements only
-		// maxOccurs: value must be 1
-		// minOccurs: value can be 0 or 1
-		assert (particle.getMaxOccurs() == 1);
-		assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
-
-		throw new RuntimeException(
-				"All model group handling should not call createAllCM(...)");
-		// return super.createAllCM(particle);;
-	}
+//	@Override
+//	XSCMValidator createAllCM(XSParticleDecl particle) {
+//		// Note: xsd:all is allowed to contain elements only
+//		// maxOccurs: value must be 1
+//		// minOccurs: value can be 0 or 1
+//		assert (particle.getMaxOccurs() == 1);
+//		assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
+//
+//		throw new RuntimeException(
+//				"All model group handling should not call createAllCM(...)");
+//		// return super.createAllCM(particle);;
+//	}
 
 	private static SchemaInformedRule addNewState(
 			Map<CMState, SchemaInformedRule> states, CMState key,
@@ -245,7 +238,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		XSParticle xsParticle = ctd.getParticle();
 		XSTerm xsTerm = xsParticle.getTerm();
 		XSModelGroup mg;
-		// special behaviour for xsd:all
+		// special behavior for xsd:all
 		if (xsTerm instanceof XSModelGroup
 				&& (mg = (XSModelGroup) xsTerm).getCompositor() == XSModelGroup.COMPOSITOR_ALL) {
 			// http://www.w3.org/TR/exi/#allGroupTerms
@@ -327,8 +320,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 				XSElementDeclaration nextEl = (XSElementDeclaration) xs;
 				QName qname = new QName(null, nextEl.getName(), null,
 						nextEl.getNamespace());
+				
 				Object nextRet = xscmVal.oneTransition(qname, cstate,
 						subGroupHandler);
+				
 				// check whether right transition was taken
 				assert (xs == nextRet);
 
