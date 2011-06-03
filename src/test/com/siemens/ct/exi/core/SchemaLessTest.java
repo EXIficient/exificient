@@ -624,4 +624,110 @@ public class SchemaLessTest extends TestCase {
 			}
 		}
 
+		/*
+			 * Bug-ID: ID: 3310940
+			 * 
+			 * Kenji: EE for <b/> is not correct.
+			 * 
+			 * <a>
+			 * <b>t</b>
+			 * <b/>
+			 * </a>
+			 */
+			public void testSchemaLess5() throws IOException, SAXException,
+					EXIException {
+				EXIFactory factory = DefaultEXIFactory.newInstance();
+			
+				factory.setFidelityOptions(FidelityOptions.createDefault());
+				factory.setCodingMode(CodingMode.BYTE_PACKED);
+				// factory.setGrammar ( GrammarFactory.getSchemaLessGrammar ( ) );
+			
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				QName a = new QName("", "root");
+				QName b = new QName("", "b");
+				
+				// encoder
+				{
+					EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+					encoder.setOutputStream(baos);
+			
+					encoder.encodeStartDocument();
+					encoder.encodeStartElement(a);
+			
+					encoder.encodeStartElement(b);
+					encoder.encodeCharacters(new StringValue("t"));
+					encoder.encodeEndElement();
+					
+					encoder.encodeStartElement(b);
+					encoder.encodeEndElement();
+			
+					encoder.encodeEndElement(); // a
+		
+					encoder.encodeEndDocument();
+					encoder.flush();
+				}
+			
+				baos.flush();
+				byte[] bytes = baos.toByteArray();
+				
+//				for(int i=0; i<bytes.length; i++) {
+//					byte bb = bytes[i];
+//					// System.out.print(Integer.toHexString(bb) + " ");
+//					System.out.print(bb + " ");
+//				}
+//				System.out.println();
+				
+				
+				
+			
+				// decoder
+				{
+					EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+					decoder.setInputStream(
+							new ByteArrayInputStream(bytes));
+			
+					assertTrue(decoder.next() == EventType.START_DOCUMENT);
+					decoder.decodeStartDocument();
+			
+					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+					assertTrue(decoder.decodeStartElementGeneric().equals(a));
+			
+					/*
+					 * first b
+					 */
+					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+					assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					assertTrue(decoder.decodeCharactersGenericUndeclared().toString().equals("t"));
+					
+					assertTrue(decoder.next() == EventType.END_ELEMENT);
+					decoder.decodeEndElement();
+			
+					/*
+					 * second b
+					 */
+					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+					assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					
+					// empty char event
+					EventType et = decoder.next();
+					if (et == EventType.CHARACTERS) {
+						assertTrue(decoder.decodeCharacters().toString().equals(""));
+						assertTrue(decoder.next() == EventType.END_ELEMENT);
+						decoder.decodeEndElement();
+					} else {
+						assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+						decoder.decodeEndElementUndeclared();
+					}
+					
+					// end root a
+					assertTrue(decoder.next() == EventType.END_ELEMENT);
+					decoder.decodeEndElement();
+			
+					assertTrue(decoder.next() == EventType.END_DOCUMENT);
+					decoder.decodeEndDocument();
+				}
+			}
+
 }

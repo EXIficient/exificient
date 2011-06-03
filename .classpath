@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/test/junit-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/test/xmlunit-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/test/sjsxp.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
