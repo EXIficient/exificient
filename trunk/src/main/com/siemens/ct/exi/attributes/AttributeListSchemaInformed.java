@@ -60,9 +60,16 @@ public class AttributeListSchemaInformed extends AbstractAttributeList {
 	protected final boolean isGreaterAttribute(int attributeIndex, String uri,
 			String localName) {
 
-		if (getAttributeLocalName(attributeIndex).compareTo(localName) > 0) {
+		int compLocalName = getAttributeLocalName(attributeIndex).compareTo(localName);
+		
+		if (compLocalName > 0 ) {
+			// localName is greater
 			return true;
+		} else if (compLocalName < 0 ) {
+			// localName is smaller
+			return false;
 		} else {
+			// localName's are equal 
 			return (getAttributeURI(attributeIndex).compareTo(uri) > 0);
 		}
 	}
