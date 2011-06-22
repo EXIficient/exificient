@@ -200,6 +200,27 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
 	
+	public void testDatetimeGYearMonth5() throws IOException {
+		String s = "1999-10-12:11";
+		DateTimeType type = DateTimeType.gYearMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		DateTimeValue dtv = getBitDecoder().decodeDateTimeValue(type);
+		assertTrue(datetime.presenceTimezone == dtv.presenceTimezone);
+		if (datetime.presenceTimezone) {
+			assertTrue(datetime.timezone == dtv.timezone);
+		}
+		assertTrue(s.equals(dtv.toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
+	
 	
 
 	/*

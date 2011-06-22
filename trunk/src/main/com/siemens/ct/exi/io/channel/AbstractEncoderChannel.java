@@ -282,7 +282,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		// [TimeZone]
 		if (datetime.presenceTimezone) {
 			encodeBoolean(true);
-			encodeNBitUnsignedInteger(datetime.timezone,
+			encodeNBitUnsignedInteger(datetime.timezone + DateTimeValue.TIMEZONE_OFFSET_IN_MINUTES,
 					DateTimeValue.NUMBER_BITS_TIMEZONE);
 		} else {
 			encodeBoolean(false);

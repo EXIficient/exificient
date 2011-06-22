@@ -163,7 +163,8 @@ public class DateTimeValue extends AbstractValue {
 			} else if (sbCal.length() == 1 && sbCal.charAt(0) == 'Z') {
 				sbCal.delete(0, 1);
 				sPresenceTimezone = true;
-				sTimezone = TIMEZONE_OFFSET_IN_MINUTES;
+				// sTimezone = TIMEZONE_OFFSET_IN_MINUTES;
+				sTimezone = 0;
 			} else {
 				sPresenceTimezone = true;
 				int multiplicator;
@@ -183,8 +184,8 @@ public class DateTimeValue extends AbstractValue {
 				// minutes
 				int minutes = Integer.parseInt(sbCal.substring(4, 6));
 
-				sTimezone = (multiplicator) * (hours * 64 + minutes)
-						+ TIMEZONE_OFFSET_IN_MINUTES;
+				// sTimezone = (multiplicator) * (hours * 64 + minutes) + TIMEZONE_OFFSET_IN_MINUTES;
+				sTimezone = (multiplicator) * (hours * 64 + minutes);
 			}
 
 			return new DateTimeValue(type, sYear, sMonthDay, sTime,
