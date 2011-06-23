@@ -214,9 +214,6 @@ public class BuiltIn {
 						// TODO enumeration not type-castable !?
 						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
 								.getBaseType();
-
-						// Value[] values = new Value[enumList.getLength()];
-
 						/*
 						 * Exceptions are for schema types derived from others
 						 * by union and their subtypes, QName or Notation and
@@ -225,52 +222,19 @@ public class BuiltIn {
 						 * EXI datatype representations instead of being
 						 * represented as enumerations.
 						 */
-
 						if (stdEnum.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
 							datatype = new StringDatatype(schemaType);
-							// XSObjectList unionMemberTypes = stdEnum
-							// .getMemberTypes();
-							//
-							// for (int k = 0; k < enumList.getLength(); k++) {
-							// String sEnumValue = enumList.item(k);
-							//
-							// Datatype dtEnumValues = null;
-							// boolean valid = false;
-							// int j = 0;
-							//
-							// while (!valid
-							// && j < unionMemberTypes.getLength()) {
-							// XSSimpleTypeDefinition stdEnumUnion =
-							// (XSSimpleTypeDefinition) unionMemberTypes
-							// .item(j);
-							// dtEnumValues = getDatatype(stdEnumUnion);
-							// valid = dtEnumValues.isValid(sEnumValue);
-							//
-							// j++;
-							// }
-							//
-							// if (!valid) {
-							// throw new RuntimeException(
-							// "No valid enumeration value '"
-							// + sEnumValue + "', "
-							// + stdEnum);
-							// }
-							// values[k] = dtEnumValues.getValue();
-							// }
 						} else if (XSD_QNAME.equals(getSchemaType(stdEnum))
 								|| XSD_NOTATION.equals(getSchemaType(stdEnum))) {
 							datatype = new StringDatatype(schemaType);
 						} else {
-
 							Datatype dtEnumValues = getDatatype(stdEnum);
 							Value[] values = new Value[enumList.getLength()];
 
 							BuiltInType enumBIT = dtEnumValues.getBuiltInType();
 
 							for (int k = 0; k < enumList.getLength(); k++) {
-
 								String tok = enumList.item(k);
-								// String sEnumValue = enumList.item(k);
 								Value sEnumValue;
 
 								switch (enumBIT) {
@@ -319,6 +283,7 @@ public class BuiltIn {
 									break;
 								default:
 									sEnumValue = new StringValue(tok); // String
+									enumBIT = BuiltInType.STRING; // override
 								}
 
 								boolean valid = dtEnumValues
@@ -329,26 +294,13 @@ public class BuiltIn {
 													+ sEnumValue + "', "
 													+ stdEnum);
 								}
-								// values[k] = dtEnumValues.getValue();
 								values[k] = sEnumValue;
-								// if (dtEnumValues.getBuiltInType() !=
-								// BuiltInType.STRING) {
-								// System.err.println("XXXXXXXXX()");
-								// }
-								// values[k] = null;
-								// System.err.println("dtEnumValues.getValue()");
 							}
 
-							datatype = new EnumerationDatatype(values,
-									dtEnumValues.getBuiltInType(), schemaType);
+							datatype = new EnumerationDatatype(values, enumBIT,
+									schemaType);
 						}
 					}
-					// else {
-					// System.err.println("XSMultiValueFacet " +
-					// enumer.getFacetKind());
-					// // throw new RuntimeException("XSMultiValueFacet " +
-					// enumer.getFacetKind());
-					// }
 				}
 			}
 		} else {
