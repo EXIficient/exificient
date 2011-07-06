@@ -254,6 +254,27 @@ public interface EXIFactory extends Cloneable {
 	 * @param element
 	 */
 	public boolean isSelfContainedElement(QName element);
+	
+	
+	/**
+	 * Allows to use another body encoder implementation.
+	 * The provided class needs to implement the EXIBodyEncoder interface.
+	 * 
+	 * @see EXIBodyEncoder
+	 * @param className
+	 * @throws EXIException
+	 */
+	public void setEXIBodyEncoder(String className) throws EXIException;
+	
+	/**
+	 * Allows to use another body decoder implementation.
+	 * The provided class needs to implement the EXIBodyDecoder interface.
+	 * 
+	 * @see EXIBodyDecoder
+	 * @param className
+	 * @throws EXIException
+	 */
+	public void setEXIBodyDecoder(String className) throws EXIException;
 
 	/**
 	 * Returns an <code>EXIBodyEncoder</code>

@@ -52,6 +52,9 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 
 		// get factory
 		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
+		
+//		ef.setEXIBodyEncoder("com.siemens.ct.exi.gen.EXIBodyEncoderGen");
+//		ef.setEXIBodyDecoder("com.siemens.ct.exi.gen.EXIBodyDecoderGen");
 
 		for (int i = 0; i < N_RUNS; i++) {
 
