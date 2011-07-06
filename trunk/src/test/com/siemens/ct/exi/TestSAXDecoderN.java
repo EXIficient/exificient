@@ -22,7 +22,10 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 		TestSAXDecoderN testDecoderN = new TestSAXDecoderN();
 
 		// get factory
-		 EXIFactory ef = testDecoderN.getQuickTestEXIactory();
+		EXIFactory ef = testDecoderN.getQuickTestEXIactory();
+		
+//		ef.setEXIBodyEncoder("com.siemens.ct.exi.gen.EXIBodyEncoderGen");
+//		ef.setEXIBodyDecoder("com.siemens.ct.exi.gen.EXIBodyDecoderGen");
 
 		// exi document
 		InputStream exiDocument = new BufferedInputStream(new FileInputStream(exiLocation));

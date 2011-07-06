@@ -227,9 +227,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// push element
 		pushElement(se, nextRule);
 		// handle element prefix
-		handleElementPrefix();
+		QName elementQName = se.getQName();
+		handleElementPrefix(elementQName);
 
-		return se.getQName();
+		return elementQName;
 	}
 
 	protected final QName decodeStartElementNSStructure() throws IOException {
@@ -244,7 +245,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// push element
 		pushElement(nextSE, nextRule);
 		// handle element prefix
-		handleElementPrefix();
+		handleElementPrefix(elementQName);
 
 		return elementQName;
 	}
@@ -261,7 +262,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// push element
 		pushElement(nextSE, nextRule.getElementContentRule());
 		// handle element prefix
-		handleElementPrefix();
+		handleElementPrefix(elementQName);
 
 		return elementQName;
 	}
@@ -279,7 +280,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// push element
 		pushElement(nextSE, currentRule.getElementContentRule());
 		// handle element prefix
-		handleElementPrefix();
+		handleElementPrefix(elementQName);
 
 		return elementQName;
 	}
@@ -304,7 +305,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		attributeQName = XSI_NIL;
 		// handle AT prefix
-		handleAttributePrefix();
+		handleAttributePrefix(XSI_NIL);
 
 		// attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
 		if(preserveLexicalValues) {
@@ -344,7 +345,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		attributeQName = XSI_TYPE;
 		// handle AT prefix
-		handleAttributePrefix();
+		handleAttributePrefix(XSI_TYPE);
 
 		if (this.preserveLexicalValues) {
 			attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE,
@@ -389,25 +390,25 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		}
 	}
 
-	protected final void handleElementPrefix() throws IOException {
+	protected final void handleElementPrefix(QName qname) throws IOException {
 		if (preservePrefix) {
 			elementContext.prefix = qnameDatatype.decodeQNamePrefix(
-					elementContext.qname.getNamespaceURI(), channel);
+					qname.getNamespaceURI(), channel);
 			// Note: IF elementPrefix is still null it will be determined by a
 			// subsequently following NS event
 		} else {
 			// determine element prefix
-			elementContext.prefix = checkPrefixMapping(elementContext.qname
+			elementContext.prefix = checkPrefixMapping(qname
 					.getNamespaceURI());
 		}
 	}
 
-	protected final void handleAttributePrefix() throws IOException {
+	protected final void handleAttributePrefix(QName qname) throws IOException {
 		if (preservePrefix) {
 			attributePrefix = qnameDatatype.decodeQNamePrefix(
-					attributeQName.getNamespaceURI(), channel);
+					qname.getNamespaceURI(), channel);
 		} else {
-			attributePrefix = checkPrefixMapping(attributeQName
+			attributePrefix = checkPrefixMapping(qname
 					.getNamespaceURI());
 		}
 	}
@@ -431,7 +432,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// qname
 		attributeQName = at.getQName();
 		// handle attribute prefix
-		handleAttributePrefix();
+		handleAttributePrefix(attributeQName);
 
 		// update current rule
 		currentRule = nextRule;
@@ -446,7 +447,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		attributeQName = qnameDatatype.decodeLocalName(atNS.getNamespaceURI(),
 				channel);
 		// handle attribute prefix
-		handleAttributePrefix();
+		handleAttributePrefix(attributeQName);
 		// update current rule
 		currentRule = nextRule;
 	}
@@ -484,7 +485,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		attributeQName = qnameDatatype.decodeLocalName(
 				qnameDatatype.decodeUri(channel), channel);
 		// handle attribute prefix
-		handleAttributePrefix();
+		handleAttributePrefix(attributeQName);
 	}
 
 	protected final Datatype decodeCharactersStructure() throws EXIException {

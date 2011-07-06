@@ -303,9 +303,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
 			break;
 		case gYearMonth: // Year, MonthDay, [TimeZone]
-			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
-			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
-			break;
 		case date: // Year, MonthDay, [TimeZone]
 			year = decodeInteger() + DateTimeValue.YEAR_OFFSET;
 			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
@@ -324,12 +321,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			break;
 		case gMonth: // MonthDay, [TimeZone]
 			// e.g. "--12"
-			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
-			break;
 		case gMonthDay: // MonthDay, [TimeZone]
 			// e.g. "--01-28"
-			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
-			break;
 		case gDay: // MonthDay, [TimeZone]
 			// "---16";
 			monthDay = decodeNBitUnsignedInteger(DateTimeValue.NUMBER_BITS_MONTHDAY);
