@@ -390,12 +390,12 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			String schemaId = value.toString();
 			if (Constants.EMPTY_STRING.equals(value.toString())) {
 				// xsd types grammar
-				Grammar g = grammarFactory.createXSDTypesOnlyGrammar();
+				Grammar g = getGrammarFactory().createXSDTypesOnlyGrammar();
 				f.setGrammar(g);
 			} else {
 				// TODO what is the right approach, interpret schemaId as xsd
 				// location?
-				Grammar g = grammarFactory.createGrammar(schemaId);
+				Grammar g = getGrammarFactory().createGrammar(schemaId);
 				f.setGrammar(g);
 			}
 		}
