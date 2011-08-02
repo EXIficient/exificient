@@ -41,6 +41,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
+import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.Value;
@@ -296,13 +297,35 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// Check special case: SAX does not inform about empty ("") CH
 			// events
 			// --> if EE is not found check whether an empty CH event *helps*
-			if (currentRule.lookForEvent(EventType.CHARACTERS) != null) {
-				// encode empty characters first
-				this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
-				// try the EE event once again
-				ei = currentRule.lookForEvent(EventType.END_ELEMENT);
+			if ((ei = currentRule.lookForEvent(EventType.CHARACTERS)) != null) {
+				BuiltInType bit = ((DatatypeEvent) ei.event).getDatatype()
+						.getBuiltInType();
+				switch (bit) {
+				/* empty values possible */
+				case BINARY_BASE64:
+				case BINARY_HEX:
+				case STRING:
+				case LIST:
+				case RESTRICTED_CHARACTER_SET:
+					if ((ei = ei.next.lookForEvent(EventType.END_ELEMENT)) != null) {
+						// encode empty characters first
+						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
+						// try EE again
+					}
+					break;
+				/* no empty value possible */
+				default:
+					ei = null;
+				}
 			}
 
+			// if (currentRule.lookForEvent(EventType.CHARACTERS) != null) {
+			// // encode empty characters first
+			// this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
+			// // try the EE event once again
+			// ei = currentRule.lookForEvent(EventType.END_ELEMENT);
+			// }
+			//
 			if (ei != null) {
 				// encode EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -429,7 +452,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
-			
+
 			// if (typeEncoder.isValid(booleanDatatype, nil)) {
 			if (booleanDatatype.isValid(nil)) {
 
@@ -734,7 +757,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if (exiFactory.isFragment()) {
 						// characters in "outer" fragment element
 						throwWarning("Skip CH: '" + chars + "'");
-					} else if (fidelityOptions.isStrict() && chars.toString().trim().length() == 0) {
+					} else if (fidelityOptions.isStrict()
+							&& chars.toString().trim().length() == 0) {
 						// empty characters in STRICT
 						throwWarning("Skip CH: '" + chars + "'");
 					} else {

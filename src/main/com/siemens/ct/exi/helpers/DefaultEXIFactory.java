@@ -33,7 +33,6 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
 import com.siemens.ct.exi.api.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
@@ -54,6 +53,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammar.SchemaLessGrammar;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
 import com.siemens.ct.exi.types.LexicalTypeDecoder;
@@ -105,7 +105,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	/* default: no profile */
 	protected String profile;
-	
+
 	/* default: use no specify bod coder */
 	protected EXIBodyEncoder bodyEncoder;
 	protected EXIBodyDecoder bodyDecoder;
@@ -118,8 +118,9 @@ public class DefaultEXIFactory implements EXIFactory {
 		factory.setEncodingOptions(EncodingOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setFragment(false);
-		factory.setGrammar(GrammarFactory.newInstance()
-				.createSchemaLessGrammar());
+		// factory.setGrammar(GrammarFactory.newInstance()
+		// .createSchemaLessGrammar());
+		factory.setGrammar(new SchemaLessGrammar());
 	}
 
 	public static EXIFactory newInstance() {
@@ -311,7 +312,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		// blockSize in NON compression mode? Just ignore it!
 	}
 
-	
 	public void setEXIBodyEncoder(String className) throws EXIException {
 		try {
 			ClassLoader classLoader = DefaultEXIFactory.class.getClassLoader();
@@ -358,7 +358,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (bodyEncoder != null) {
 			return bodyEncoder;
 		}
-		
+
 		doSanityCheck();
 
 		if (codingMode.usesRechanneling()) {
@@ -390,7 +390,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (bodyDecoder != null) {
 			return bodyDecoder;
 		}
-		
+
 		doSanityCheck();
 
 		if (codingMode.usesRechanneling()) {

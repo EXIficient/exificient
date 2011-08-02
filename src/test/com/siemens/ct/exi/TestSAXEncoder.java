@@ -68,7 +68,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		xmlReader = XMLReaderFactory
 				.createXMLReader("org.apache.xerces.parsers.SAXParser");
-		// xmlReader = XMLReaderFactory.createXMLReader();
+//		 xmlReader = XMLReaderFactory.createXMLReader();
 
 		//	set XMLReader features
 		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
