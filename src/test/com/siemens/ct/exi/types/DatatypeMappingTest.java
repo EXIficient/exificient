@@ -84,7 +84,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue("SimpleType expected",
 				td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE);
 
-		Datatype dt = BuiltIn.getDatatype((XSSimpleTypeDefinition) td);
+		Datatype dt = xsdGB.getDatatype((XSSimpleTypeDefinition) td);
 
 		return dt;
 	}

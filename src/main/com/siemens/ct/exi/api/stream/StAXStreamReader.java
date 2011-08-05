@@ -30,8 +30,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.xerces.stax.EmptyLocation;
-
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
@@ -610,4 +608,6 @@ public class StAXStreamReader implements XMLStreamReader {
 		return false;
 	}
 
+	
+	
 }
