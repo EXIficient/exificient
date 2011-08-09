@@ -16,13 +16,10 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 		super();
 	}
 	
-	protected static void test(String exiLocation, String decodedXMLLocation) throws Exception {
+	protected void test(String exiLocation, String decodedXMLLocation, EXIFactory ef ) throws Exception {
 
 		// create test-decoder
 		TestSAXDecoderN testDecoderN = new TestSAXDecoderN();
-
-		// get factory
-		EXIFactory ef = testDecoderN.getQuickTestEXIactory();
 		
 //		ef.setEXIBodyEncoder("com.siemens.ct.exi.gen.EXIBodyEncoderGen");
 //		ef.setEXIBodyDecoder("com.siemens.ct.exi.gen.EXIBodyDecoderGen");
@@ -58,7 +55,14 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 		String exiLocation = QuickTestConfiguration.getExiLocation() + "_"
 				+ TestSAXEncoderN.N_RUNS;
 		String decodedXMLLocation = exiLocation + ".xml";
-		test(exiLocation, decodedXMLLocation);
+		
+		// create test-decoder
+		TestSAXDecoderN testDecoderN = new TestSAXDecoderN();
+		
+		// get factory
+		EXIFactory ef = testDecoderN.getQuickTestEXIactory();
+		
+		testDecoderN.test(exiLocation, decodedXMLLocation, ef);
 	}
 
 }

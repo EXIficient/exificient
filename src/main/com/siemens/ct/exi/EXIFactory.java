@@ -267,6 +267,15 @@ public interface EXIFactory extends Cloneable {
 	public void setEXIBodyEncoder(String className) throws EXIException;
 	
 	/**
+	 * Allows to use another body encoder implementation.
+	 * 
+	 * @see EXIBodyEncoder
+	 * @param bodyEncoder
+	 * @throws EXIException
+	 */
+	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder) throws EXIException;
+	
+	/**
 	 * Allows to use another body decoder implementation.
 	 * The provided class needs to implement the EXIBodyDecoder interface.
 	 * 
@@ -275,6 +284,15 @@ public interface EXIFactory extends Cloneable {
 	 * @throws EXIException
 	 */
 	public void setEXIBodyDecoder(String className) throws EXIException;
+	
+	/**
+	 * Allows to use another body decoder implementation.
+	 * 
+	 * @see EXIBodyDecoder
+	 * @param bodyDecoder
+	 * @throws EXIException
+	 */
+	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder) throws EXIException;
 
 	/**
 	 * Returns an <code>EXIBodyEncoder</code>

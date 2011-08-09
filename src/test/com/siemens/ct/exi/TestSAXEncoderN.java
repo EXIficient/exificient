@@ -22,20 +22,44 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.siemens.ct.exi.exceptions.EXIException;
+
 public class TestSAXEncoderN extends TestSAXEncoder {
 	public static final int N_RUNS = 100;
 
-	public TestSAXEncoderN(OutputStream exiOuput) {
-		super(exiOuput);
+	public TestSAXEncoderN(OutputStream exiOutput) {
+		super(exiOutput);
 	}
 
-	protected static void test(String xmlLocation, String exiLocation)
+	protected void test(String xmlLocation, String exiLocation, EXIFactory ef)
 			throws Exception {
 
+		long startTime = System.currentTimeMillis();
+
+		for (int i = 0; i < N_RUNS; i++) {
+
+			// XML input stream
+			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
+					xmlLocation));
+
+			encodeTo(ef, xmlInput);
+		}
+		
+		exiOutput.flush();
+
+		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()
+				+ " --> " + exiLocation);
+		long duration = System.currentTimeMillis() - startTime;
+		System.out.println("Runtime: " + duration + " msecs for " + N_RUNS
+				+ " runs.");
+	}
+	
+	protected static OutputStream getOutputStream(String exiLocation) throws FileNotFoundException {
 		// EXI output stream
 		File f = new File(exiLocation);
 		File path = f.getParentFile();
@@ -44,40 +68,21 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		}
 		OutputStream encodedOutput = new BufferedOutputStream(
 				new FileOutputStream(f));
-
-		// create test-encoder
-		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(encodedOutput);
-
-		long startTime = System.currentTimeMillis();
-
-		// get factory
-		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
 		
-//		ef.setEXIBodyEncoder("com.siemens.ct.exi.gen.EXIBodyEncoderGen");
-//		ef.setEXIBodyDecoder("com.siemens.ct.exi.gen.EXIBodyDecoderGen");
-
-		for (int i = 0; i < N_RUNS; i++) {
-
-			// XML input stream
-			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
-					xmlLocation));
-
-			testEncoderN.encodeTo(ef, xmlInput);
-		}
-		
-		encodedOutput.flush();
-
-		System.out.println("[ENC] " + QuickTestConfiguration.getXmlLocation()
-				+ " --> " + exiLocation);
-		long duration = System.currentTimeMillis() - startTime;
-		System.out.println("Runtime: " + duration + " msecs for " + N_RUNS
-				+ " runs.");
+		return encodedOutput;
 	}
 
 	public static void main(String[] args) throws Exception {
 		String xmlLocation = QuickTestConfiguration.getXmlLocation();
 		String exiLocation = QuickTestConfiguration.getExiLocation() + "_"
 				+ N_RUNS;
-		test(xmlLocation, exiLocation);
+		
+		// create test-encoder
+		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(getOutputStream(exiLocation));
+		
+		// get factory
+		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
+		
+		testEncoderN.test(xmlLocation, exiLocation, ef);
 	}
 }

@@ -322,8 +322,8 @@ public class DefaultEXIFactory implements EXIFactory {
 						+ EXIBodyEncoder.class);
 			}
 
-			bodyEncoder = (EXIBodyEncoder) aObject;
-
+			setEXIBodyEncoder((EXIBodyEncoder) aObject);
+			
 		} catch (ClassNotFoundException e) {
 			throw new EXIException(e);
 		} catch (InstantiationException e) {
@@ -331,6 +331,10 @@ public class DefaultEXIFactory implements EXIFactory {
 		} catch (IllegalAccessException e) {
 			throw new EXIException(e);
 		}
+	}
+	
+	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder) throws EXIException {
+		this.bodyEncoder = bodyEncoder;
 	}
 
 	public void setEXIBodyDecoder(String className) throws EXIException {
@@ -343,7 +347,7 @@ public class DefaultEXIFactory implements EXIFactory {
 						+ EXIBodyDecoder.class);
 			}
 
-			bodyDecoder = (EXIBodyDecoder) aObject;
+			setEXIBodyDecoder((EXIBodyDecoder) aObject);
 
 		} catch (ClassNotFoundException e) {
 			throw new EXIException(e);
@@ -352,6 +356,10 @@ public class DefaultEXIFactory implements EXIFactory {
 		} catch (IllegalAccessException e) {
 			throw new EXIException(e);
 		}
+	}
+	
+	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder) throws EXIException {
+		this.bodyDecoder = bodyDecoder;
 	}
 
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException {
