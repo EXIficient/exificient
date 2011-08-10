@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.api.sax;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -70,8 +72,16 @@ public class SAXEncoder extends DefaultHandler2 {
 
 			// exi stream
 			EXIStreamEncoder exiStream = new EXIStreamEncoder();
+			
+			// buffer stream if not already
+			// TODO is there a *nice* way to detect whether a stream is buffered
+			if (!(os instanceof BufferedOutputStream)) {
+				os = new BufferedOutputStream(os);
+			}
+			
 			// write header & get body encoder
 			this.encoder = exiStream.encodeHeader(factory, os);
+			
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
