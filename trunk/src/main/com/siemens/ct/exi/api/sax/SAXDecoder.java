@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.api.sax;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -213,6 +214,12 @@ public class SAXDecoder implements XMLReader {
 		try {
 			// setup (bit) input stream
 			InputStream is = inputSource.getByteStream();
+			
+			// buffer stream if not already
+			// TODO is there a *nice* way to detect whether a stream is buffered
+			if (!(is instanceof BufferedInputStream)) {
+				is = new BufferedInputStream(is);
+			}
 
 			if (exiBodyOnly) {
 				// no EXI header

@@ -48,12 +48,12 @@ public class EXIStreamDecoder {
 	public EXIBodyDecoder decodeHeader(EXIFactory noOptionsFactory,
 			InputStream is) throws EXIException, IOException {
 
-		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered
-		// already
-		if (!(is instanceof BufferedInputStream)) {
-			is = new BufferedInputStream(is);
-		}
+//		// buffer stream if not already
+//		// TODO is there a *nice* way to detect whether a stream is buffered
+//		// already
+//		if (!(is instanceof BufferedInputStream)) {
+//			is = new BufferedInputStream(is);
+//		}
 		// is = new BufferedInputStream(is);
 
 		// read header

@@ -57,12 +57,12 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 
 	public void setInputStream(InputStream is) throws EXIException, IOException {
 
-		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered
-		// already
-		if (!(is instanceof BufferedInputStream)) {
-			is = new BufferedInputStream(is);
-		}
+//		// buffer stream if not already
+//		// TODO is there a *nice* way to detect whether a stream is buffered
+//		// already
+//		if (!(is instanceof BufferedInputStream)) {
+//			is = new BufferedInputStream(is);
+//		}
 
 		CodingMode codingMode = exiFactory.getCodingMode();
 
