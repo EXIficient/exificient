@@ -81,7 +81,11 @@ public class StringValue extends AbstractValue {
 
 	@Override
 	public boolean equals(Object o) {
-		return toString().equals(o.toString());
+		if (o == null) {
+			return false;
+		} else {
+			return this == o ? true : toString().equals(o.toString());	
+		}
 	}
 
 }
