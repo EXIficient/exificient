@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.io.channel;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,7 +34,8 @@ public class ByteDecoderChannel extends AbstractDecoderChannel implements
 	protected InputStream is;
 
 	public ByteDecoderChannel(InputStream istream) {
-		is = new BufferedInputStream(istream);
+		// is = new BufferedInputStream(istream);
+		this.is = istream;
 	}
 
 	public InputStream getInputStream() {

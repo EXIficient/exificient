@@ -89,8 +89,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
-		// CODING_MODE = CodingMode.BYTE_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
 		// CODING_MODE = CodingMode.COMPRESSION;
 	}

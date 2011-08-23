@@ -75,27 +75,43 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		char[] ca = new char[length];
 
 		for (int i = 0; i < length; i++) {
-			int codePoint = decodeUnsignedInteger();
+			int b = decode();
 
-			if (Character.isSupplementaryCodePoint(codePoint)) {
-				// (first) supplementary code-point
-				// Note: this SHOULD be done differently and is not optimal at
-				// all
-				StringBuilder sb = new StringBuilder();
-				sb.append(ca, 0, i); // append chars so far
-				sb.appendCodePoint(codePoint); // append current code-point
-				for (int k = i + 1; k < length; k++) {
-					sb.appendCodePoint(decodeUnsignedInteger());
-				}
-				ca = sb.toString().toCharArray(); // reset char array
-				break; // STOP for loop
+			if (b < 128) {
+				// ASCII character
+				ca[i] = (char) b;
 			} else {
-				ca[i] = (char) codePoint;
+				// non-ASCII character
+				int codePoint = decodeUnsignedIntegerBytePreread(b);
+				
+				if (Character.isSupplementaryCodePoint(codePoint)) {
+					// supplementary code-point
+					// Assumption: it doesn't happen very often
+					return decodeStringOnlySupplementaryCodePoints(ca, length, i, codePoint);
+				} else {
+					ca[i] = (char) codePoint;
+				}
 			}
 		}
 
 		return ca;
 	}
+	
+	private char[] decodeStringOnlySupplementaryCodePoints(char[] ca, int length, int i, int codePoint) throws IOException {
+		assert(Character.isSupplementaryCodePoint(codePoint));
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(ca, 0, i); // append chars so far
+		sb.appendCodePoint(codePoint); // append current code-point
+		for (int k = i + 1; k < length; k++) {
+			sb.appendCodePoint(decodeUnsignedInteger());
+		}
+		
+		return  sb.toString().toCharArray(); // return char array
+	}
+	
+
+	
 
 	/**
 	 * Decode an arbitrary precision non negative integer using a sequence of
@@ -104,12 +120,19 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * store the integer's value.
 	 */
 	public int decodeUnsignedInteger() throws IOException {
-		int result = 0;
-
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		// int multiplier = 1;
-		int mShift = 0;
-		int b;
+		int b = decode();
+
+		// < 128: just one byte, optimal case
+		// ELSE: multiple bytes...
+		return b < 128 ? b : decodeUnsignedIntegerBytePreread(b);
+	}
+
+	private int decodeUnsignedIntegerBytePreread(int b) throws IOException {
+		assert (b > 127);
+
+		int result = (b & 127);
+		int mShift = 7;
 
 		do {
 			// 1. Read the next octet
@@ -123,7 +146,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			mShift += 7;
 			// 4. If the most significant bit of the octet was 1, go back to
 			// step 1
-		} while ((b >>> 7) == 1);
+		} while (b > 127);
 
 		return result;
 	}
@@ -188,7 +211,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			maskedOctets[i] = (b & 127);
 			// If the most significant bit of the octet was 1,
 			// another octet is going to come
-			if ((b >>> 7) != 1) {
+			// if ((b >>> 7) != 1) {
+			if (b < 128) {
 				// Yep, it fits into int or long
 				int shift = 0;
 				if (i < MAX_OCTETS_FOR_INT) {
@@ -242,7 +266,8 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			multiplier = multiplier.shiftLeft(7);
 			// If the most significant bit of the octet was 1,
 			// another is going to come
-		} while ((b >>> 7) == 1);
+			// } while ((b >>> 7) == 1);
+		} while (b > 127);
 
 		// For negative values, the Unsigned Integer holds the
 		// magnitude of the value minus 1
