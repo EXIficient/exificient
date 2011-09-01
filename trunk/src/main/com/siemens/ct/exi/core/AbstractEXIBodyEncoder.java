@@ -370,7 +370,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		SchemaInformedFirstStartTagRule tg = grammar.getTypeGrammar(xsiQName);
 
 		// Note: in some cases we can simply skip the xsi:type event
-		assert (currentRule instanceof SchemaInformedFirstStartTagRule);
 		if (!preserveLexicalValues
 				&& tg != null
 				&& currentRule.isSchemaInformed()

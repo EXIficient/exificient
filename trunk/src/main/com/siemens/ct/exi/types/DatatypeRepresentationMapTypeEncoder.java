@@ -70,8 +70,13 @@ public class DatatypeRepresentationMapTypeEncoder extends
 	// }
 
 	public boolean isValid(Datatype datatype, Value value) {
+//		// Note: according to EXI errata enumerations are not handled by DTR maps
+//		if (datatype.getBuiltInType() == BuiltInType.ENUMERATION) {
+//			recentDtrDataype = null;
+//		} else {
 		QName schemaType = datatype.getSchemaType();
-		recentDtrDataype = dtrMap.get(schemaType);
+		recentDtrDataype = dtrMap.get(schemaType);	
+//		}
 		if (recentDtrDataype == null) {
 			return defaultEncoder.isValid(datatype, value);
 		} else {

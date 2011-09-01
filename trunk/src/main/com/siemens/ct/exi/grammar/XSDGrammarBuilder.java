@@ -1337,29 +1337,29 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 							for (int k = 0; k < enumList.getLength(); k++) {
 								String tok = enumList.item(k);
-								Value sEnumValue;
+								Value enumValue;
 
 								switch (enumBIT) {
 								/* Binary */
 								case BINARY_BASE64:
-									sEnumValue = BinaryBase64Value.parse(tok);
+									enumValue = BinaryBase64Value.parse(tok);
 									break;
 								case BINARY_HEX:
-									sEnumValue = BinaryHexValue.parse(tok);
+									enumValue = BinaryHexValue.parse(tok);
 									break;
 								/* Boolean */
 								case BOOLEAN:
 								case BOOLEAN_PATTERN:
-									sEnumValue = BooleanValue.parse(tok);
+									enumValue = BooleanValue.parse(tok);
 									break;
 								/* Decimal */
 								case DECIMAL:
-									sEnumValue = DecimalValue.parse(tok);
+									enumValue = DecimalValue.parse(tok);
 									break;
 								/* Float */
 								case FLOAT:
 								case DOUBLE:
-									sEnumValue = FloatValue.parse(tok);
+									enumValue = FloatValue.parse(tok);
 									break;
 								/* int */
 								case NBIT_INTEGER_32:
@@ -1375,28 +1375,35 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 								case UNSIGNED_INTEGER_64:
 								case UNSIGNED_INTEGER_BIG:
 								case INTEGER_BIG:
-									sEnumValue = IntegerValue.parse(tok);
+									enumValue = IntegerValue.parse(tok);
 									break;
 								/* Datetime */
 								case DATETIME:
 									DatetimeDatatype datetimeDT = (DatetimeDatatype) dtEnumValues;
-									sEnumValue = DateTimeValue.parse(tok,
+									enumValue = DateTimeValue.parse(tok,
 											datetimeDT.getDatetimeType());
 									break;
 								default:
-									sEnumValue = new StringValue(tok); // String
+									enumValue = new StringValue(tok); // String
 									enumBIT = BuiltInType.STRING; // override
 								}
 
+								if (enumValue == null) {
+									throw new RuntimeException(
+											"Enum value cannot be parsed properly, "
+													+ enumValue + "', "
+													+ stdEnum);
+								}
+								
 								boolean valid = dtEnumValues
-										.isValid(sEnumValue);
+										.isValid(enumValue);
 								if (!valid) {
 									throw new RuntimeException(
 											"No valid enumeration value '"
-													+ sEnumValue + "', "
+													+ enumValue + "', "
 													+ stdEnum);
 								}
-								values[k] = sEnumValue;
+								values[k] = enumValue;
 							}
 
 							datatype = new EnumerationDatatype(values, enumBIT,

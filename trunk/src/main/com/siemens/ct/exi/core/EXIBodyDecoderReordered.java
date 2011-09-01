@@ -44,7 +44,6 @@ import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
-import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -295,7 +294,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		// value content
 		decodeAttributeXsiTypeStructure();
 		xsiValues.add(attributeValue);
-		assert (attributeValue instanceof QNameValue);
 		// prefix
 		xsiPrefixes.add(attributePrefix);
 	}
