@@ -397,6 +397,23 @@ public class DatetimeTest extends AbstractTestCase {
 		getByteEncoder().encodeDateTime(datetime);
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
 	}
+	
+	public void testDatetimeGMonth3() throws IOException {
+		String s = "--07--+09:00";
+		String sr = "--07+09:00";
+		DateTimeType type = DateTimeType.gMonth;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+	
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		assertTrue(sr.equals(getBitDecoder().decodeDateTimeValue(type).toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(sr.equals(getByteDecoder().decodeDateTimeValue(type).toString()));
+	}
 
 	/*
 	 * gMonthDay

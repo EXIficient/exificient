@@ -129,6 +129,10 @@ public class DateTimeValue extends AbstractValue {
 				checkCharacter(sbCal, '-'); // hyphen
 				checkCharacter(sbCal, '-'); // hyphen
 				sMonthDay = parseMonth(sbCal) * MONTH_MULTIPLICATOR;
+				if (sbCal.length() > 1 && sbCal.charAt(0) == sbCal.charAt(1) && sbCal.charAt(0)  == '-' ) {
+					checkCharacter(sbCal, '-'); // hyphen
+					checkCharacter(sbCal, '-'); // hyphen
+				}
 				break;
 			case gMonthDay: // gMonthDay MonthDay, [TimeZone]
 				checkCharacter(sbCal, '-'); // hyphen
