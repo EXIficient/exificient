@@ -247,6 +247,20 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 
+
+	@Test
+	public void testEntityReference1() throws Exception {
+		// set up configuration
+		setConfigurationEntityReference1();
+	
+		// Strict & LexicalValues is not working (Prefixes required)
+		FidelityOptions noValidOptions = FidelityOptions.createStrict();
+		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		
+		// execute test
+		_test(noValidOptions);
+	}
+
 	@Test
 	public void testPerson() throws Exception {
 		// set up configuration
@@ -681,19 +695,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/docType3.xml.exi");
 	}
 
-
-	@Test
-	public void testEntityReference1() throws Exception {
-		// set up configuration
-		setConfigurationEntityReference1();
-	
-		// Strict & LexicalValues is not working (Prefixes required)
-		FidelityOptions noValidOptions = FidelityOptions.createStrict();
-		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-		
-		// execute test
-		_test(noValidOptions);
-	}
 
 	public static void setConfigurationEntityReference1() {
 		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
