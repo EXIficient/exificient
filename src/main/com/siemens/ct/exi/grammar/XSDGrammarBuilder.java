@@ -561,7 +561,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		/*
-		 * Simple sub-type hierarchy
+		 * Simple sub-type hierarchy (for DTRM)
 		 */
 		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
 		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
@@ -573,18 +573,23 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
 					&& !td.getAnonymous()) {
 				XSTypeDefinition baseType = getBaseType(td);
-
+				
+				// subtypes
 				if (baseType == null) {
 					// http://www.w3.org/2001/XMLSchema,anySimpleType
 				} else {
 					QName baseTypeQName = getValueType(baseType);
-
-					List<QName> sub = subtypes.get(baseTypeQName);
-					if (sub == null) {
-						sub = new ArrayList<QName>();
-						subtypes.put(baseTypeQName, sub);
+					
+					// Note: according to EXI errata enumerations are not handled by DTR maps
+					Datatype dt = this.getDatatype((XSSimpleTypeDefinition)baseType);
+					if (dt.getBuiltInType() != BuiltInType.ENUMERATION) {
+						List<QName> sub = subtypes.get(baseTypeQName);
+						if (sub == null) {
+							sub = new ArrayList<QName>();
+							subtypes.put(baseTypeQName, sub);
+						}
+						sub.add(getValueType(td));						
 					}
-					sub.add(getValueType(td));
 				}
 			}
 		}

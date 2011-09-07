@@ -55,6 +55,7 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		// *skip* resolving entities like DTDs
 		documentBuilder.setEntityResolver(new NoEntityResolver());
 
+		documentBuilder.setErrorHandler(null);
 		Document doc = documentBuilder.parse(is);
 
 		return doc;
@@ -113,6 +114,9 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		// EXI input stream
 		InputStream xmlInput = new FileInputStream(
 				QuickTestConfiguration.XML_FILE_LOCATION);
+		
+		// setup encoding options
+		setupEncodingOptions(exiFactory);
 
 		// generate EXI
 		testEncoder.encodeTo(exiFactory, xmlInput);

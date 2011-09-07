@@ -141,9 +141,7 @@ public class DOMWriter {
 
 		// attributes
 		NamedNodeMap attributes = root.getAttributes();
-		exiAttributes.parse(root.getAttributes());
 
-		// NS
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node at = attributes.item(i);
 
@@ -152,36 +150,19 @@ public class DOMWriter {
 					.equals(at.getNamespaceURI())) {
 				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
 						: at.getLocalName();
-
-				exiBody.encodeNamespaceDeclaration(at.getNodeValue(), pfx);
+				exiAttributes.addNamespaceDeclaration(at.getNodeValue(), pfx);
+			} else {
+				String uri = at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
+						: at.getNamespaceURI();
+				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+						: at.getPrefix();				
+				exiAttributes.addAttribute(uri, at.getLocalName(), pfx, at.getNodeValue());
 			}
+			
 		}
-
-		// xsi:type
-		if (exiAttributes.hasXsiType()) {
-			exiBody.encodeAttributeXsiType(
-					new StringValue(exiAttributes.getXsiTypeRaw()),
-					exiAttributes.getXsiTypePrefix());
-		}
-
-		// xsi:nil
-		if (exiAttributes.hasXsiNil()) {
-			exiBody.encodeAttributeXsiNil(
-					new StringValue(exiAttributes.getXsiNil()),
-					exiAttributes.getXsiNilPrefix());
-		}
-
-		// AT
-		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
-			// exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
-			// exiAttributes.getAttributeLocalName(i), exiAttributes
-			// .getAttributePrefix(i), exiAttributes
-			// .getAttributeValue(i));
-			exiBody.encodeAttribute(exiAttributes.getAttributeURI(i),
-					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), new StringValue(
-							exiAttributes.getAttributeValue(i)));
-		}
+		
+		exiBody.encodeAttributeList(exiAttributes);
+		exiAttributes.clear();
 
 		// children
 		NodeList children = root.getChildNodes();
@@ -229,9 +210,10 @@ public class DOMWriter {
 				break;
 			case Node.CDATA_SECTION_NODE:
 				checkPendingChars();
-//				String cdata = n.getNodeValue();
-//				exiBody.encodeCharacters(new StringValue(Constants.CDATA_START
-//						+ cdata + Constants.CDATA_END));
+				// String cdata = n.getNodeValue();
+				// exiBody.encodeCharacters(new
+				// StringValue(Constants.CDATA_START
+				// + cdata + Constants.CDATA_END));
 				exiBody.encodeCharacters(new StringValue(n.getNodeValue()));
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:

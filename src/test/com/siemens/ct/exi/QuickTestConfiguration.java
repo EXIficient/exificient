@@ -21,8 +21,6 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.data.W3CTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -99,8 +97,8 @@ public class QuickTestConfiguration {
 	// FIDELITY OPTIONS
 	static {
 		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		// fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createAll();
 //		try {
 //////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
@@ -117,6 +115,8 @@ public class QuickTestConfiguration {
 	static {
 //		selfContainedElements = new QName[1];
 //		selfContainedElements[0] = new QName("http://www.foo.com", "person");
+//		selfContainedElements = new QName[1];
+//		selfContainedElements[0] = new QName("", "note");
 		// blockSize = 9013;
 		// blockSize = 40;
 //		blockSize = 200;
@@ -134,8 +134,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest ( );
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

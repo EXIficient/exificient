@@ -23,14 +23,11 @@ import java.util.List;
 
 import javax.xml.XMLConstants;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.xml.sax.Attributes;
-
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 
 /**
  * 
@@ -63,6 +60,9 @@ public abstract class AbstractAttributeList implements AttributeList {
 	protected List<String> attributeLocalName;
 	protected List<String> attributeValue;
 	protected List<String> attributePrefix;
+	
+	// NS, prefix mappings
+	protected List<NamespaceDeclaration> nsDecls;
 
 	public AbstractAttributeList(EXIFactory exiFactory) {
 		// options
@@ -76,9 +76,11 @@ public abstract class AbstractAttributeList implements AttributeList {
 		attributeLocalName = new ArrayList<String>();
 		attributeValue = new ArrayList<String>();
 		attributePrefix = new ArrayList<String>();
+		// prefix to NS mappings
+		nsDecls = new ArrayList<NamespaceDeclaration>();
 	}
 
-	protected void init() {
+	public void clear() {
 		hasXsiType = false;
 		hasXsiNil = false;
 
@@ -86,6 +88,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 		attributeLocalName.clear();
 		attributeValue.clear();
 		attributePrefix.clear();
+		
+		xsiTypeRaw = null;
+		
+		nsDecls.clear();
 	}
 
 	/*
@@ -153,102 +159,141 @@ public abstract class AbstractAttributeList implements AttributeList {
 		this.xsiNilPrefix = xsiPrefix;
 	}
 
-	public void parse(Attributes atts) {
-
-		init();
-
-		xsiTypeRaw = null;
-
-		for (int i = 0; i < atts.getLength(); i++) {
-			String localName = atts.getLocalName(i);
-			String uri = atts.getURI(i);
-
-			// xsi:*
-			if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
-				// xsi:type
-				if (localName.equals(Constants.XSI_TYPE)) {
-					// Note: prefix to uri mapping is done later on
-					setXsiType(atts.getValue(i), getPrefixOf(atts, i));
-				}
-				// xsi:nil
-				else if (localName.equals(Constants.XSI_NIL)) {
-					setXsiNil(atts.getValue(i), getPrefixOf(atts, i));
-				} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
-						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
-						&& !preserveSchemaLocation) {
-					// prune xsi:schemaLocation
-				} else {
-					insertAttribute(atts.getURI(i), atts.getLocalName(i),
-							getPrefixOf(atts, i), atts.getValue(i));
-				}
-			}
-			// == Attribute (AT)
-			// When schemas are used, attribute events occur in lexical order
-			// sorted first by qname localName then by qname uri.
-			else {
-				insertAttribute(atts.getURI(i), atts.getLocalName(i),
-						getPrefixOf(atts, i), atts.getValue(i));
-			}
-		}
+//	public void parse(Attributes atts) {
+//		clear();
+//
+//		for (int i = 0; i < atts.getLength(); i++) {
+//			String localName = atts.getLocalName(i);
+//			String uri = atts.getURI(i);
+//
+//			// xsi:*
+//			if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+//				// xsi:type
+//				if (localName.equals(Constants.XSI_TYPE)) {
+//					// Note: prefix to uri mapping is done later on
+//					setXsiType(atts.getValue(i), getPrefixOf(atts, i));
+//				}
+//				// xsi:nil
+//				else if (localName.equals(Constants.XSI_NIL)) {
+//					setXsiNil(atts.getValue(i), getPrefixOf(atts, i));
+//				} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
+//						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+//						&& !preserveSchemaLocation) {
+//					// prune xsi:schemaLocation
+//				} else {
+//					insertAttribute(atts.getURI(i), atts.getLocalName(i),
+//							getPrefixOf(atts, i), atts.getValue(i));
+//				}
+//			}
+//			// == Attribute (AT)
+//			// When schemas are used, attribute events occur in lexical order
+//			// sorted first by qname localName then by qname uri.
+//			else {
+//				insertAttribute(atts.getURI(i), atts.getLocalName(i),
+//						getPrefixOf(atts, i), atts.getValue(i));
+//			}
+//		}
+//	}
+	
+	
+	public void addNamespaceDeclaration(String uri, String pfx) {
+		this.nsDecls.add(new NamespaceDeclaration(uri, pfx));
 	}
-
-	public void parse(NamedNodeMap attributes) {
-		init();
-
-		xsiTypeRaw = null;
-
-		for (int i = 0; i < attributes.getLength(); i++) {
-			Node at = attributes.item(i);
-
-			// NS
-			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
-					.equals(at.getNamespaceURI())) {
-				// do not care about NS
+	
+	
+	public int getNumberOfNamespaceDeclarations() {
+		return nsDecls.size();
+	}
+	
+	public NamespaceDeclaration getNamespaceDeclaration(int index) {
+		assert(index >= 0 && index < nsDecls.size());
+		return nsDecls.get(index);
+	}
+	
+	public void addAttribute(String uri, String localName, String pfx, String value) {
+		// xsi:*
+		if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+			// xsi:type
+			if (localName.equals(Constants.XSI_TYPE)) {
+				// Note: prefix to uri mapping is done later on
+				setXsiType(value, pfx);
 			}
-			// xsi:*
-			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
-					.getNamespaceURI())) {
-				// xsi:type
-				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
-					// Note: prefix to uri mapping is done later on
-					setXsiType(at.getNodeValue(), at.getPrefix());
-				}
-				// xsi:nil
-				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
-					setXsiNil(at.getNodeValue(), at.getPrefix());
-				} else if ((at.getLocalName().equals(
-						Constants.XSI_SCHEMA_LOCATION) || at.getLocalName()
-						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
-						&& !preserveSchemaLocation) {
-					// prune xsi:schemaLocation
-				} else {
-					insertAttribute(
-							at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-									: at.getNamespaceURI(),
-							at.getLocalName(),
-							at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-									: at.getPrefix(), at.getNodeValue());
-				}
+			// xsi:nil
+			else if (localName.equals(Constants.XSI_NIL)) {
+				setXsiNil(value, pfx);
+			} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
+					.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+					&& !preserveSchemaLocation) {
+				// prune xsi:schemaLocation
 			} else {
-				insertAttribute(
-						at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-								: at.getNamespaceURI(), at.getLocalName(),
-						at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-								: at.getPrefix(), at.getNodeValue());
+				insertAttribute(uri, localName, pfx, value);
 			}
 		}
+		// == Attribute (AT)
+		// When schemas are used, attribute events occur in lexical order
+		// sorted first by qname localName then by qname uri.
+		else {
+			insertAttribute(uri, localName, pfx, value);
+		}
 	}
+	
 
-	private String getPrefixOf(Attributes atts, int index) {
-		String qname = atts.getQName(index);
-		String localName = atts.getLocalName(index);
-
-		int lengthDifference = qname.length() - localName.length();
-		return (lengthDifference == 0 ? XMLConstants.DEFAULT_NS_PREFIX : qname
-				.substring(0, lengthDifference - 1));
-	}
+//	public void parse(NamedNodeMap attributes) {
+//		clear();
+//
+//		for (int i = 0; i < attributes.getLength(); i++) {
+//			Node at = attributes.item(i);
+//
+//			// NS
+//			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
+//					.equals(at.getNamespaceURI())) {
+//				// do not care about NS
+//			}
+//			// xsi:*
+//			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
+//					.getNamespaceURI())) {
+//				// xsi:type
+//				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
+//					// Note: prefix to uri mapping is done later on
+//					setXsiType(at.getNodeValue(), at.getPrefix());
+//				}
+//				// xsi:nil
+//				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
+//					setXsiNil(at.getNodeValue(), at.getPrefix());
+//				} else if ((at.getLocalName().equals(
+//						Constants.XSI_SCHEMA_LOCATION) || at.getLocalName()
+//						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+//						&& !preserveSchemaLocation) {
+//					// prune xsi:schemaLocation
+//				} else {
+//					insertAttribute(
+//							at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
+//									: at.getNamespaceURI(),
+//							at.getLocalName(),
+//							at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+//									: at.getPrefix(), at.getNodeValue());
+//				}
+//			} else {
+//				insertAttribute(
+//						at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
+//								: at.getNamespaceURI(), at.getLocalName(),
+//						at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+//								: at.getPrefix(), at.getNodeValue());
+//			}
+//		}
+//	}
 
 	abstract protected void insertAttribute(String uri, String localName,
 			String pfx, String value);
 
+	
+//	static final class PrefixMapping {
+//		final String prefix;
+//		final String uri;
+//
+//		public PrefixMapping(String prefix, String uri) {
+//			this.prefix = prefix;
+//			this.uri = uri;
+//		}
+//	}
 }
