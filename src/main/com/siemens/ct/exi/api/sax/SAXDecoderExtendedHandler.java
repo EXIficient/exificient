@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
-import javax.xml.transform.Result;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -174,13 +172,13 @@ public class SAXDecoderExtendedHandler extends SAXDecoder {
 		contentHandler.skippedEntity(entityReferenceName);
 
 
-		 // JAXP ?
-		 char[] entity = ("&" + entityReferenceName + ";").toCharArray();
-		 contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
-		 "");
-		 contentHandler.characters(entity, 0, entity.length);
-		 contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
-		 "");
+//		 // JAXP ?
+//		 char[] entity = ("&" + entityReferenceName + ";").toCharArray();
+//		 contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
+//		 "");
+//		 contentHandler.characters(entity, 0, entity.length);
+//		 contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
+//		 "");
 	}
 
 	@Override
