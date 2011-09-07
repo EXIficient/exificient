@@ -36,7 +36,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		// GeneralTestCase.setConfigurationPerson ( );
+		GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
@@ -66,7 +66,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationEntityReference2();
 		// GeneralTestCase.setConfigurationEntityReferenceUnresolved1();
-		GeneralTestCase.setConfigurationCData1();
+		// GeneralTestCase.setConfigurationCData1();
 		// GeneralTestCase.setConfigurationPatterns ( );
 		// GeneralTestCase.setConfigurationStringTable1 ( );
 		// GeneralTestCase.setConfigurationStringTable2 ( );
@@ -245,6 +245,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
 
 	}
+
 
 	@Test
 	public void testPerson() throws Exception {
@@ -594,6 +595,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/pi1.xml.exi");
 	}
 
+
 	@Test
 	public void testDocType() throws Exception {
 		// set up configuration
@@ -603,11 +605,15 @@ public class GeneralTestCase extends AbstractTestCase {
 		_test();
 	}
 
+	
 	public static void setConfigurationDocType() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/general/docType.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType.xml.exi");
 	}
+	
+
+	
 
 	@Test
 	public void testDocType0() throws Exception {
@@ -618,11 +624,14 @@ public class GeneralTestCase extends AbstractTestCase {
 		_test();
 	}
 
+
 	public static void setConfigurationDocType0() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/general/docType0.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType0.xml.exi");
 	}
+
+	
 
 	@Test
 	public void testDocType1() throws Exception {
@@ -632,6 +641,9 @@ public class GeneralTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
+
+
+
 
 	public static void setConfigurationDocType1() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
@@ -669,11 +681,12 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/docType3.xml.exi");
 	}
 
+
 	@Test
 	public void testEntityReference1() throws Exception {
 		// set up configuration
 		setConfigurationEntityReference1();
-
+	
 		// Strict & LexicalValues is not working (Prefixes required)
 		FidelityOptions noValidOptions = FidelityOptions.createStrict();
 		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
@@ -690,6 +703,17 @@ public class GeneralTestCase extends AbstractTestCase {
 				.setExiLocation("./out/general/entityReference1.xml.exi");
 	}
 
+
+
+	public static void setConfigurationEntityReference2() {
+		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/general/entityReference2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/general/entityReference2.xml.exi");
+	}
+
+	
 	@Test
 	public void testEntityReference2() throws Exception {
 		// set up configuration
@@ -702,15 +726,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// execute test
 		_test(noValidOptions);
 	}
-
-	public static void setConfigurationEntityReference2() {
-		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
-		QuickTestConfiguration
-				.setXmlLocation("./data/general/entityReference2.xml");
-		QuickTestConfiguration
-				.setExiLocation("./out/general/entityReference2.xml.exi");
-	}
-
+	
 	// @Test
 	// public void testEntityReferenceUnresolved1() throws Exception {
 	// // set up configuration

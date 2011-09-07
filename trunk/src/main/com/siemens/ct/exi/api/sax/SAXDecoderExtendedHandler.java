@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import javax.xml.transform.Result;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -31,6 +33,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.util.NoEntityResolver;
 
 /**
  * Parses EXI stream to SAX events with extended features such as entity
@@ -48,7 +51,9 @@ public class SAXDecoderExtendedHandler extends SAXDecoder {
 		super(exiFactory);
 	}
 
-	static class DocTypeTextLexicalHandler implements DeclHandler {
+	static class DocTypeTextLexicalHandler
+//	implements DeclHandler
+	{
 
 		// e.g. (a) Internal DTD
 		// <!DOCTYPE foo [
@@ -76,6 +81,13 @@ public class SAXDecoderExtendedHandler extends SAXDecoder {
 			// xmlReader.setProperty(
 			// "http://xml.org/sax/properties/lexical-handler",
 			// lh);
+			
+			// DTD
+			xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
+					false);
+			// *skip* resolving entities like DTDs
+			xmlReader.setEntityResolver(new NoEntityResolver());
+			
 
 			xmlReader.setProperty(
 					"http://xml.org/sax/properties/declaration-handler", dh);
@@ -92,28 +104,28 @@ public class SAXDecoderExtendedHandler extends SAXDecoder {
 			xmlReader.parse(new InputSource(r));
 		}
 
-		/*
-		 * DeclHandler
-		 */
-
-		public void attributeDecl(String eName, String aName, String type,
-				String mode, String value) throws SAXException {
-			dh.attributeDecl(eName, aName, type, mode, value);
-		}
-
-		public void elementDecl(String name, String model) throws SAXException {
-			dh.elementDecl(name, model);
-		}
-
-		public void externalEntityDecl(String name, String publicId,
-				String systemId) throws SAXException {
-			dh.externalEntityDecl(name, publicId, systemId);
-		}
-
-		public void internalEntityDecl(String name, String value)
-				throws SAXException {
-			dh.internalEntityDecl(name, value);
-		}
+//		/*
+//		 * DeclHandler
+//		 */
+//
+//		public void attributeDecl(String eName, String aName, String type,
+//				String mode, String value) throws SAXException {
+//			dh.attributeDecl(eName, aName, type, mode, value);
+//		}
+//
+//		public void elementDecl(String name, String model) throws SAXException {
+//			dh.elementDecl(name, model);
+//		}
+//
+//		public void externalEntityDecl(String name, String publicId,
+//				String systemId) throws SAXException {
+//			dh.externalEntityDecl(name, publicId, systemId);
+//		}
+//
+//		public void internalEntityDecl(String name, String value)
+//				throws SAXException {
+//			dh.internalEntityDecl(name, value);
+//		}
 	}
 
 	@Override
@@ -161,13 +173,14 @@ public class SAXDecoderExtendedHandler extends SAXDecoder {
 		String entityReferenceName = new String(erName);
 		contentHandler.skippedEntity(entityReferenceName);
 
-		// // JAXP ?
-		// char[] entity = ("&" + entityReferenceName + ";").toCharArray();
-		// contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
-		// "");
-		// contentHandler.characters(entity, 0, entity.length);
-		// contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
-		// "");
+
+		 // JAXP ?
+		 char[] entity = ("&" + entityReferenceName + ";").toCharArray();
+		 contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
+		 "");
+		 contentHandler.characters(entity, 0, entity.length);
+		 contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
+		 "");
 	}
 
 	@Override

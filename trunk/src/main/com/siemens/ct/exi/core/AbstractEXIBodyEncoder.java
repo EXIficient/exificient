@@ -28,6 +28,8 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.attributes.AttributeList;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -44,6 +46,7 @@ import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -353,6 +356,36 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		popElement();
 	}
 
+	public void encodeAttributeList(AttributeList attributes) throws EXIException, IOException {
+		// 1. NS
+		for(int i=0; i<attributes.getNumberOfNamespaceDeclarations(); i++) {
+			NamespaceDeclaration ns = attributes.getNamespaceDeclaration(i);
+			this.encodeNamespaceDeclaration(ns.namespaceURI, ns.prefix);
+		}
+		
+		// 2. XSI-Type
+		if (attributes.hasXsiType()) {
+			encodeAttributeXsiType(
+					new StringValue(attributes.getXsiTypeRaw()),
+					attributes.getXsiTypePrefix());
+		}
+
+		// 3. XSI-Nil
+		if (attributes.hasXsiNil()) {
+			encodeAttributeXsiNil(
+					new StringValue(attributes.getXsiNil()),
+					attributes.getXsiNilPrefix());
+		}
+
+		// 4. Remaining Attributes
+		for (int i = 0; i < attributes.getNumberOfAttributes(); i++) {
+			encodeAttribute(attributes.getAttributeURI(i),
+					attributes.getAttributeLocalName(i), attributes
+							.getAttributePrefix(i), new StringValue(
+									attributes.getAttributeValue(i)));
+		}
+	}
+	
 	public void encodeAttributeXsiType(Value type, String pfx)
 			throws EXIException, IOException {
 		/*

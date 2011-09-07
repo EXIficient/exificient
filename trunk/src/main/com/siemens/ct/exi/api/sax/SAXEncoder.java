@@ -21,8 +21,8 @@ package com.siemens.ct.exi.api.sax;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.xml.XMLConstants;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -54,16 +54,16 @@ public class SAXEncoder extends DefaultHandler2 {
 	// attributes
 	protected AttributeList exiAttributes;
 
-	// prefix mappings
-	protected List<PrefixMapping> prefixMappings;
+//	// prefix mappings
+//	protected List<PrefixMapping> prefixMappings;
 
 	public SAXEncoder(EXIFactory factory, OutputStream os) throws EXIException {
 		try {
 			// initialize char buffer
 			sbChars = new StringBuilder();
 
-			// prefix to NS mappings
-			prefixMappings = new ArrayList<PrefixMapping>();
+//			// prefix to NS mappings
+//			prefixMappings = new ArrayList<PrefixMapping>();
 
 			// attribute list
 			AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -95,7 +95,7 @@ public class SAXEncoder extends DefaultHandler2 {
 	@Override
 	public void startPrefixMapping(String prefix, String uri)
 			throws SAXException {
-		prefixMappings.add(new PrefixMapping(prefix, uri));
+		this.exiAttributes.addNamespaceDeclaration(uri, prefix);
 	}
 
 	// @Override
@@ -119,65 +119,30 @@ public class SAXEncoder extends DefaultHandler2 {
 
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
-
-		// handle NS declarations
-		handleNamespaceDeclarations();
-
-		// attributes
-		if (attributes != null && attributes.getLength() > 0) {
-			handleAttributes(attributes);
+		
+		// add remaining attributes (if any)
+		if (attributes != null) {
+			for (int i = 0; i < attributes.getLength(); i++) {
+				exiAttributes.addAttribute(attributes.getURI(i), attributes.getLocalName(i), getPrefixOf(attributes, i), attributes.getValue(i));
+			}	
 		}
+		
+		// encode NS and attributes
+		encoder.encodeAttributeList(exiAttributes);
+		exiAttributes.clear();
 	}
 
-	protected void handleNamespaceDeclarations() throws EXIException,
-			IOException {
-		int size = prefixMappings.size();
-		if (size > 0) {
-			for (int i = 0; i < size; i++) {
-				PrefixMapping pm = prefixMappings.get(i);
-				encoder.encodeNamespaceDeclaration(pm.uri, pm.prefix);
-			}
 
-			prefixMappings.clear();
-		}
+	private String getPrefixOf(Attributes atts, int index) {
+		String qname = atts.getQName(index);
+		String localName = atts.getLocalName(index);
+
+		int lengthDifference = qname.length() - localName.length();
+		return (lengthDifference == 0 ? XMLConstants.DEFAULT_NS_PREFIX : qname
+				.substring(0, lengthDifference - 1));
 	}
 
-	protected void handleAttributes(Attributes attributes) throws EXIException,
-			IOException {
-		// 1. Namespace declaration(s)
-		// (done via startPrefixMapping et cetera)
-
-		// parse remaining attributes
-		exiAttributes.parse(attributes);
-
-		// 2. XSI-Type
-		if (exiAttributes.hasXsiType()) {
-
-			encoder.encodeAttributeXsiType(
-					new StringValue(exiAttributes.getXsiTypeRaw()),
-					exiAttributes.getXsiTypePrefix());
-		}
-
-		// 3. XSI-Nil
-		if (exiAttributes.hasXsiNil()) {
-			encoder.encodeAttributeXsiNil(
-					new StringValue(exiAttributes.getXsiNil()),
-					exiAttributes.getXsiNilPrefix());
-		}
-
-		// 4. Remaining Attributes
-		for (int i = 0; i < exiAttributes.getNumberOfAttributes(); i++) {
-			// encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
-			// exiAttributes.getAttributeLocalName(i), exiAttributes
-			// .getAttributePrefix(i), exiAttributes
-			// .getAttributeValue(i));
-			encoder.encodeAttribute(exiAttributes.getAttributeURI(i),
-					exiAttributes.getAttributeLocalName(i), exiAttributes
-							.getAttributePrefix(i), new StringValue(
-							exiAttributes.getAttributeValue(i)));
-		}
-	}
-
+	
 	public void startDocument() throws SAXException {
 		try {
 			encoder.encodeStartDocument();
@@ -218,16 +183,6 @@ public class SAXEncoder extends DefaultHandler2 {
 			// encoder.encodeCharacters(sbChars.toString());
 			encoder.encodeCharacters(new StringValue(sbChars.toString()));
 			sbChars.setLength(0);
-		}
-	}
-
-	static final class PrefixMapping {
-		final String prefix;
-		final String uri;
-
-		public PrefixMapping(String prefix, String uri) {
-			this.prefix = prefix;
-			this.uri = uri;
 		}
 	}
 

@@ -18,8 +18,7 @@
 
 package com.siemens.ct.exi.attributes;
 
-import org.w3c.dom.NamedNodeMap;
-import org.xml.sax.Attributes;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 
 /**
  * Namespace (NS) and attribute (AT) events are encoded in a specific order
@@ -36,15 +35,23 @@ import org.xml.sax.Attributes;
  */
 
 public interface AttributeList {
+	
+	public void clear();
+
 	/*
-	 * Initialization Method
+	 * NS
 	 */
-	// SAX
-	public void parse(Attributes attributes);
-
-	// DOM
-	public void parse(NamedNodeMap attributes);
-
+	public void addNamespaceDeclaration(String uri, String pfx);
+	
+	public int getNumberOfNamespaceDeclarations();
+	
+	public NamespaceDeclaration getNamespaceDeclaration(int index);
+	
+	/*
+	 * Any attribute other than NS
+	 */
+	public void addAttribute(String uri, String localName, String pfx, String value);
+	
 	/*
 	 * XSI-Type
 	 */
