@@ -41,18 +41,18 @@ public class DatatypeRepresentationMapTypeDecoder extends
 		AbstractRepresentationMapTypeCoder implements TypeDecoder {
 
 	// fallback type decoder
-	protected TypedTypeDecoder defaultDecoder;
+	protected TypeDecoder defaultDecoder;
 
 	protected StringDecoder stringDecoder;
 
-	public DatatypeRepresentationMapTypeDecoder(StringDecoder stringDecoder,
-			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
-			throws EXIException {
+	public DatatypeRepresentationMapTypeDecoder(TypeDecoder defaultDecoder,
+			StringDecoder stringDecoder, QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations, grammar);
 		this.stringDecoder = stringDecoder;
 
-		// hand over "same" string table
-		defaultDecoder = new TypedTypeDecoder(stringDecoder);
+		// hand over "default" type decoder
+		this.defaultDecoder = defaultDecoder;
 	}
 
 	public StringDecoder getStringDecoder() {
@@ -67,12 +67,8 @@ public class DatatypeRepresentationMapTypeDecoder extends
 			DecoderChannel valueChannel) throws IOException {
 		QName schemaType = datatype.getSchemaType();
 		Datatype recentDtrDataype = dtrMap.get(schemaType);
-		if (recentDtrDataype == null) {
-			return defaultDecoder.readValue(datatype, context, valueChannel);
-		} else {
-			return recentDtrDataype.readValue(valueChannel, stringDecoder,
-					context);
-		}
+		return defaultDecoder.readValue(recentDtrDataype == null ? datatype
+				: recentDtrDataype, context, valueChannel);
 	}
 
 }

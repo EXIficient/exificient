@@ -72,21 +72,6 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 			Datatype datatypeRep = getDatatypeRepresentation(dtrMapRepresentations[i]);
 			registerDatatype(datatypeRep, dtrMapTypes[i], dtrMapTypes);
 		}
-
-		// int[] ancestorOrder = getAncestorOrder(new AncestorTypeComparator(
-		// grammar), dtrMapTypes);
-		// assert (ancestorOrder.length == dtrMapTypes.length);
-		//
-		//
-		//
-		// // detect all subtypes and map datatype representation
-		// for (int i = 0; i < ancestorOrder.length; i++) {
-		// int ancIndex = ancestorOrder[i];
-		//
-		// Datatype datatypeRep =
-		// getDatatypeRepresentation(dtrMapRepresentations[ancIndex]);
-		// registerDatatype(datatypeRep, dtrMapTypes[ancIndex], dtrMapTypes);
-		// }
 	}
 
 	protected Datatype getRecentDtrMapDatatype() {

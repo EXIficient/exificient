@@ -323,7 +323,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			}
 
 			setEXIBodyEncoder((EXIBodyEncoder) aObject);
-			
+
 		} catch (ClassNotFoundException e) {
 			throw new EXIException(e);
 		} catch (InstantiationException e) {
@@ -332,8 +332,9 @@ public class DefaultEXIFactory implements EXIFactory {
 			throw new EXIException(e);
 		}
 	}
-	
-	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder) throws EXIException {
+
+	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder)
+			throws EXIException {
 		this.bodyEncoder = bodyEncoder;
 	}
 
@@ -357,8 +358,9 @@ public class DefaultEXIFactory implements EXIFactory {
 			throw new EXIException(e);
 		}
 	}
-	
-	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder) throws EXIException {
+
+	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder)
+			throws EXIException {
 		this.bodyDecoder = bodyDecoder;
 	}
 
@@ -439,21 +441,21 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		// create new type encoder
 		if (isSchemaInformed()) {
+			// default type encoders
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				// use restricted characters sets
 				typeEncoder = new LexicalTypeEncoder(stringEncoder);
 			} else {
-				if (dtrMapTypes != null) {
-					assert (dtrMapTypes.length == dtrMapRepresentations.length);
-					typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-							stringEncoder, dtrMapTypes, dtrMapRepresentations,
-							grammar);
-				} else {
-					// use default type encoders
-					typeEncoder = new TypedTypeEncoder(stringEncoder);
-				}
+				typeEncoder = new TypedTypeEncoder(stringEncoder);
 			}
+
+			if (dtrMapTypes != null) {
+				assert (dtrMapTypes.length == dtrMapRepresentations.length);
+				typeEncoder = new DatatypeRepresentationMapTypeEncoder(
+						typeEncoder, stringEncoder, dtrMapTypes,
+						dtrMapRepresentations, grammar);
+			}
+
 		} else {
 			// use strings only
 			typeEncoder = new StringTypeEncoder(stringEncoder);
@@ -477,19 +479,19 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		// create new type-decoder
 		if (isSchemaInformed()) {
+			// default type decoders
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
 				typeDecoder = new LexicalTypeDecoder(stringDecoder);
 			} else {
-				if (dtrMapTypes != null) {
-					assert (dtrMapTypes.length == dtrMapRepresentations.length);
-					typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-							stringDecoder, dtrMapTypes, dtrMapRepresentations,
-							grammar);
-				} else {
-					// use default type decoders
-					typeDecoder = new TypedTypeDecoder(stringDecoder);
-				}
+				typeDecoder = new TypedTypeDecoder(stringDecoder);
+			}
+
+			if (dtrMapTypes != null) {
+				assert (dtrMapTypes.length == dtrMapRepresentations.length);
+				typeDecoder = new DatatypeRepresentationMapTypeDecoder(
+						typeDecoder, stringDecoder, dtrMapTypes,
+						dtrMapRepresentations, grammar);
 			}
 		} else {
 			// strings only

@@ -41,18 +41,18 @@ public class DatatypeRepresentationMapTypeEncoder extends
 		AbstractRepresentationMapTypeCoder implements TypeEncoder {
 
 	// fallback type encoder
-	protected TypedTypeEncoder defaultEncoder;
+	protected TypeEncoder defaultEncoder;
 
 	protected StringEncoder stringEncoder;
 
-	public DatatypeRepresentationMapTypeEncoder(StringEncoder stringEncoder,
+	public DatatypeRepresentationMapTypeEncoder(TypeEncoder defaultEncoder, StringEncoder stringEncoder,
 			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
 			throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations, grammar);
 		this.stringEncoder = stringEncoder;
 
-		// hand over "same" string table
-		defaultEncoder = new TypedTypeEncoder(stringEncoder);
+		// hand over "default" encoder
+		this.defaultEncoder = defaultEncoder;
 	}
 
 	public void clear() {
@@ -63,20 +63,12 @@ public class DatatypeRepresentationMapTypeEncoder extends
 		QName schemaType = datatype.getSchemaType();
 		recentDtrDataype = dtrMap.get(schemaType);	
 
-		if (recentDtrDataype == null) {
-			return defaultEncoder.isValid(datatype, value);
-		} else {
-			return recentDtrDataype.isValid(value);
-		}
+		return defaultEncoder.isValid(recentDtrDataype == null ? datatype: recentDtrDataype, value);
 	}
 
 	public void writeValue(QName context, EncoderChannel valueChannel)
 			throws IOException {
-		if (recentDtrDataype == null) {
-			defaultEncoder.writeValue(context, valueChannel);
-		} else {
-			recentDtrDataype.writeValue(valueChannel, stringEncoder, context);
-		}
+		defaultEncoder.writeValue(context, valueChannel);
 	}
 
 }
