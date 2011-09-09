@@ -25,9 +25,11 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 
 public class GrammarTest extends TestCase {
 	String schema;
@@ -383,6 +385,75 @@ public class GrammarTest extends TestCase {
 			EventInformation er3 = rule.lookFor(3);
 			assertTrue(er3.event.isEventType(EventType.END_ELEMENT));
 		}
+	}
+	
+	
+	public void testLearning1() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='root'>"
+				+ "  <xs:complexType>"
+				+ "   <xs:sequence minOccurs='1' maxOccurs='unbounded'>"
+				+ "    <xs:element name='a' type='xs:string' minOccurs='0' maxOccurs='unbounded'/> "
+				+ "    <xs:element name='b' type='xs:string' minOccurs='0' maxOccurs='unbounded'/> "
+				+ "    <xs:element name='c' type='xs:string' minOccurs='0' maxOccurs='unbounded'/> "
+				+ "   </xs:sequence>" + "  </xs:complexType>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammar g = getGrammarFromSchemaAsString(schema);
+
+		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+
+		assertTrue(rule.getNumberOfEvents() == 4);
+		
+		// schema-informed grammars should not expand
+		rule.learnAttribute(new Attribute(new QName("a"), null, null));
+		rule.learnStartElement(new StartElement(new QName("s")));
+		rule.learnEndElement();
+		rule.learnCharacters();
+		
+		assertTrue(rule.getNumberOfEvents() == 4);
+	}
+	
+	public void testLearning2() throws Exception {
+		// schema-less grammars
+		Rule startTag = new SchemaLessStartTag();
+		Rule content = startTag.getElementContentRule();
+
+		assertTrue(startTag.getNumberOfEvents() == 0);
+		assertTrue(content.getNumberOfEvents() == 1); // EE
+		
+		// learn multiple EE --> at most one EE 
+		startTag.learnEndElement();
+		startTag.learnEndElement();
+		assertTrue(startTag.getNumberOfEvents() == 1);
+		content.learnEndElement();
+		content.learnEndElement();
+		assertTrue(content.getNumberOfEvents() == 1);
+		
+		// learn multiple CH --> at most one CH
+		startTag.learnCharacters();
+		startTag.learnCharacters();
+		assertTrue(startTag.getNumberOfEvents() == 2);
+		content.learnCharacters();
+		content.learnCharacters();
+		assertTrue(content.getNumberOfEvents() == 2);
+
+		// learn SE, can have multiple events even if similar
+		StartElement s = new StartElement(new QName("s"));
+		startTag.learnStartElement(s);
+		startTag.learnStartElement(s);
+		assertTrue(startTag.getNumberOfEvents() == 4);
+		content.learnStartElement(s);
+		content.learnStartElement(s);
+		assertTrue(content.getNumberOfEvents() == 4);
+		
+		// learn AT, can have multiple events even if similar
+		Attribute a = new Attribute(new QName("a"), null, null);
+		startTag.learnAttribute(a);
+		startTag.learnAttribute(a);
+		assertTrue(startTag.getNumberOfEvents() == 6);
+		// Note: element cannot learn AT
+		
 	}
 
 }

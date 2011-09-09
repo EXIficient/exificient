@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.types.BuiltIn;
 
 /**
  * 
@@ -45,6 +47,9 @@ public abstract class SchemaLessContent extends AbstractSchemaLessRule {
 		optionsStartTag = new HashMap<FidelityOptions, List<EventType>>();
 		optionsChildContent = new HashMap<FidelityOptions, List<EventType>>();
 	}
+	
+
+	protected boolean learnedCH = false;
 
 	protected static List<EventType> get2ndLevelEventsStartTagItems(
 			FidelityOptions fidelityOptions) {
@@ -95,5 +100,19 @@ public abstract class SchemaLessContent extends AbstractSchemaLessRule {
 
 		return optionsChildContent.get(fidelityOptions);
 	}
+	
+	@Override
+	public void learnCharacters() {
+		/*
+		 * If a production CH with an event code of length 1 does not exist in
+		 * the current element grammar create one add the production created
+		 */
+		if (!learnedCH) {
+			addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
+					BuiltIn.DEFAULT_DATATYPE), getElementContentRule());
+			learnedCH = true;
+		}
+	}
+
 
 }

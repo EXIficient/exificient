@@ -23,10 +23,8 @@ import java.util.List;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.types.BuiltIn;
 
 /**
  * 
@@ -53,6 +51,8 @@ public class SchemaLessStartTag extends SchemaLessContent {
 
 	protected SchemaLessElement elementContent;
 
+	protected boolean learnedEE = false;
+	
 	public SchemaLessStartTag() {
 		super();
 
@@ -123,21 +123,19 @@ public class SchemaLessStartTag extends SchemaLessContent {
 
 	@Override
 	public void learnEndElement() {
-		addTerminalRule(END_ELEMENT);
+		/*
+		 * If a production EE with an event code of length 1 does not exist in
+		 * the current element grammar create one add the production created
+		 */
+		if (!learnedEE) {
+			addTerminalRule(END_ELEMENT);
+			learnedEE = true;
+		}
 	}
 
 	@Override
 	public void learnAttribute(Attribute at) {
 		addRule(at, this);
 	}
-
-	@Override
-	public void learnCharacters() {
-		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
-				BuiltIn.DEFAULT_DATATYPE), getElementContentRule());
-	}
-
-	// public boolean isFirstElementRule() {
-	// return true;
-	// }
+	
 }
