@@ -80,7 +80,7 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	 */
 	public void addRule(Event event, Rule rule) {
 		// assert (!isTerminalRule());
-		assert (!this.contains(event));
+		// assert (!this.contains(event));
 
 		containers.add(new SchemaLessEventInformation(this, rule, event,
 				getNumberOfEvents()));
