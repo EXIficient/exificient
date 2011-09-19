@@ -37,6 +37,45 @@ import com.siemens.ct.exi.values.Value;
 
 public class DtrMapTestCase extends AbstractTestCase {
 
+	// The codec used for an enumerated type is not affected by DTRM entry attached to its ancestral type.
+	// value="{http://www.w3.org/2001/XMLSchema}string {http://www.w3.org/2009/exi}integer"
+	public void testEnumerationToInteger3() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='stringDerived'>"
+				+ "    <xs:restriction base='xs:string'>"
+				+ "      <xs:enumeration value='Tokyo'/>"
+				+ "      <xs:enumeration value='Osaka'/>"
+				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "  <xs:simpleType name='stringDerived2'>"
+				+ "    <xs:restriction base='stringDerived'/>"
+				+ "  </xs:simpleType>" + "</xs:schema>";
+		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+	
+		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "stringDerived2", "");
+		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
+		QName schemaTypeStringDerived2 = new QName("", "stringDerived2");
+		assertTrue(dtEnum.getSchemaType().equals(schemaTypeStringDerived2));
+	
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		TypeEncoder defaultEncoder = new TypedTypeEncoder(null);
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+				defaultEncoder, null, dtrMapTypes, dtrMapRepresentations, g);
+	
+		// can encode only enum values
+		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
+		assertTrue(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
+	
+		// indicates that NO dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+	}
+
 	// Note: according to EXI errata ONLY directly referenced enumeration types
 	// are not handled by DTR maps
 	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
@@ -75,8 +114,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER_BIG);
 	}
 
-	// Note: according to EXI errata ONLY directly referenced enumeration types
-	// are not handled by DTR maps
+	// Note: according to EXI errata ONLY  referenced enumeration types
 	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
 	public void testEnumerationToInteger2() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
@@ -107,14 +145,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
 				defaultEncoder, null, dtrMapTypes, dtrMapRepresentations, g);
 
-		// can encode only enum values
-		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
-		assertTrue(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
+		// can encode only int values
+		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
+		assertFalse(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
 
-		// indicates that NO dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		// indicates that an dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype() != null);
 	}
-
+	
+	
 	// register type directly
 	public void testIntegerToString1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
