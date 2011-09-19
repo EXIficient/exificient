@@ -119,7 +119,7 @@ public interface EXIBodyEncoder {
 	public void encodeEndElement() throws EXIException, IOException;
 
 	/**
-	 * Supplies a list of namespace declarations, xsi:type and xsI:nil values and the remaining attributes.
+	 * Supplies a list of namespace declarations, xsi:type and xsi:nil values and the remaining attributes.
 	 * 
 	 * 
 	 * @param uri

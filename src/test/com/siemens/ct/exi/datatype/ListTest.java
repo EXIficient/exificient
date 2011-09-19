@@ -187,5 +187,23 @@ public class ListTest extends AbstractTestCase {
 
 		assertFalse(dt.isValid("bla"));
 	}
+	
+	public void testListFloat2() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='List'>"
+				+ "    <xs:list itemType='xs:float'/>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"List", "");
+
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+
+		assertTrue(dt.isValid("  1e4 -10000 5.234e-2 \n 11.22 \t\t 4 \r\n999  "));
+
+		assertFalse(dt.isValid("bla"));
+	}
 
 }
