@@ -580,15 +580,20 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				} else {
 					QName baseTypeQName = getValueType(baseType);
 					
-					// Note: according to EXI errata enumerations are not handled by DTR maps
-					Datatype dt = this.getDatatype((XSSimpleTypeDefinition)baseType);
-					if (dt.getBuiltInType() != BuiltInType.ENUMERATION) {
+					// Note: according to EXI errata enumerations are not handled by simple DTR maps
+					// There are only other enum types in hierarchy
+					Datatype dtBase = this.getDatatype((XSSimpleTypeDefinition)baseType);
+					Datatype dt = this.getDatatype((XSSimpleTypeDefinition)td);
+					
+					if (dt.getBuiltInType() == BuiltInType.ENUMERATION && dtBase.getBuiltInType() != BuiltInType.ENUMERATION ) {
+						// not added as sub-type
+					} else {
 						List<QName> sub = subtypes.get(baseTypeQName);
 						if (sub == null) {
 							sub = new ArrayList<QName>();
 							subtypes.put(baseTypeQName, sub);
 						}
-						sub.add(getValueType(td));						
+						sub.add(getValueType(td));							
 					}
 				}
 			}
