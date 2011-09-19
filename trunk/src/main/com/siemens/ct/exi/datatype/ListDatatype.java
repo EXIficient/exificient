@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -71,8 +70,8 @@ public class ListDatatype extends AbstractDatatype {
 
 	public boolean isValid(String value) {
 		// iterate over all tokens
-		StringTokenizer st = new StringTokenizer(value,
-				Constants.XSD_LIST_DELIM);
+		StringTokenizer st = new StringTokenizer(value);
+		// Constants.XSD_LIST_DELIM
 		values.clear();
 
 		while (st.hasMoreTokens()) {
