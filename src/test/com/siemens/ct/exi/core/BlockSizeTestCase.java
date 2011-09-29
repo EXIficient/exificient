@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import javax.xml.transform.sax.SAXResult;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -63,8 +61,9 @@ public class BlockSizeTestCase extends XMLTestCase {
 			{
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-				SAXResult saxResult = new EXIResult(os, factory);
-				xmlReader.setContentHandler(saxResult.getHandler());
+				EXIResult exiResult = new EXIResult(factory);
+				exiResult.setOutputStream(os);
+				xmlReader.setContentHandler(exiResult.getHandler());
 
 				xmlReader.parse(new InputSource(new StringReader(xml)));
 			}
@@ -155,8 +154,9 @@ public class BlockSizeTestCase extends XMLTestCase {
 		// write EXI stream (1st time)
 		{
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			SAXResult saxResult = new EXIResult(os, factory);
-			xmlReader.setContentHandler(saxResult.getHandler());
+			EXIResult exiResult = new EXIResult(factory);
+			exiResult.setOutputStream(os);
+			xmlReader.setContentHandler(exiResult.getHandler());
 			xmlReader.parse(new InputSource(new StringReader(xmlEmpty)));
 			os.flush();
 			// extra empty deflate would result in 8 bytes

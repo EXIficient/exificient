@@ -21,36 +21,23 @@ package com.siemens.ct.exi;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
 import com.siemens.ct.exi.api.stream.StAXDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 @SuppressWarnings("all")
 public class TestStAXDecoder extends AbstractTestDecoder {
@@ -58,18 +45,18 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 	public static final boolean JRE6_OR_GREATER = false;
 	
 	protected TransformerFactory tf;
+	protected Transformer transformer;
+	protected boolean isFragment;
+	protected StAXDecoder exiReader;
 
-	public TestStAXDecoder() {
+	public TestStAXDecoder(EXIFactory ef) throws TransformerConfigurationException, EXIException {
 		super();
 
 		tf = TransformerFactory.newInstance();
-	}
-
-	public void decodeTo(EXIFactory ef, InputStream exiDocument,
-			OutputStream xmlOutput) throws Exception {
 		
-		Transformer transformer = tf.newTransformer();
+		transformer = tf.newTransformer();
 		
+		isFragment = ef.isFragment();
 		if (ef.isFragment()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
@@ -77,18 +64,37 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 		transformer.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // ASCII
 		
-		this.decodeTo(ef, exiDocument, xmlOutput, transformer);
+		exiReader =  new StAXDecoder(ef);
 	}
 	
-	protected void decodeTo(EXIFactory ef, InputStream exiDocument,
-			OutputStream xmlOutput, Transformer transformer) throws TransformerException, ParserConfigurationException, SAXException, IOException, EXIException, XMLStreamException {
-		
+
+//	@Override
+//	public void setupEXIReader(EXIFactory ef) throws Exception {
+//		transformer = tf.newTransformer();
+//		
+//		isFragment = ef.isFragment();
+//		if (ef.isFragment()) {
+//			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+//					"yes");
+//		}
+//		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//		transformer.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // ASCII
+//		
+//		exiReader =  new StAXDecoder(ef);
+//	}
+
+
+	@Override
+	public void decodeTo(InputStream exiDocument,
+			OutputStream xmlOutput) throws Exception {
+			
 		if ( JRE6_OR_GREATER ) {
 		    // Note: The following code works with Java 1.6+ only
 			// Note: Some events seem not be fully supported e.g., handleComment() { // no-op }
 			// see http://www.docjar.com/html/api/com/sun/org/apache/xalan/internal/xsltc/trax/StAXStream2SAX.java.html
 			Result result = new StreamResult(xmlOutput);
-			StAXSource exiSource = new StAXSource(new StAXDecoder(ef, exiDocument));
+			exiReader.setInputStream(exiDocument);
+			StAXSource exiSource = new StAXSource(exiReader);
 			transformer.transform(exiSource, result);
 		} else {
 			
@@ -96,19 +102,20 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 			
 			XMLStreamWriter xmlw;
 			ByteArrayOutputStream baosFrags = new ByteArrayOutputStream();
-			if (ef.isFragment()) {
+			if (isFragment) {
 				 xmlw = xmlof.createXMLStreamWriter(baosFrags);
 			} else {
 				 xmlw = xmlof.createXMLStreamWriter(xmlOutput);
 			}
 		   
-		    XMLStreamReader exiReader = new StAXDecoder(ef, exiDocument);
-		    
+		    // XMLStreamReader exiReader = new StAXDecoder(ef, exiDocument);
+			exiReader.setInputStream(exiDocument);
+			
 		    xmlw.writeStartDocument();
 		    
 		    String lnFragment = "xml-fragment";
 		    
-		    if (ef.isFragment()) {
+		    if (isFragment) {
 		    	xmlw.writeStartElement("", lnFragment, "");
 		    }
 		    
@@ -121,7 +128,7 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 			    	throw new EXIException("Unexpected START_DOCUMENT event");
 			    case XMLStreamConstants.END_DOCUMENT:
 			    	
-				    if (ef.isFragment()) {
+				    if (isFragment) {
 				    	xmlw.writeEndElement();
 				    }
 				    
@@ -190,7 +197,7 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 		    // Close the writer to flush the output
 		    xmlw.close();
 		    
-		    if (ef.isFragment()) {
+		    if (isFragment) {
 		    	String s = baosFrags.toString();
 		    	int index1 = s.indexOf(lnFragment);
 		    	s = s.substring(index1 + lnFragment.length()+1);
@@ -210,17 +217,17 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 	public static void main(String[] args) throws Exception {
 		
 		// create test-decoder
-		TestStAXDecoder testDecoder = new TestStAXDecoder();
+		TestStAXDecoder testDecoder = new TestStAXDecoder(TestStAXDecoder.getQuickTestEXIactory());
 		
-		// get factory
-		EXIFactory ef;
-		if(QuickTestConfiguration.INCLUDE_OPTIONS && QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
-			// decoder should be able to decode file without settings: 
-			// EXI Options document carries necessary information
-			ef = DefaultEXIFactory.newInstance();
-		} else {
-			ef = testDecoder.getQuickTestEXIactory();
-		}
+//		// get factory
+//		EXIFactory ef;
+//		if(QuickTestConfiguration.INCLUDE_OPTIONS && QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
+//			// decoder should be able to decode file without settings: 
+//			// EXI Options document carries necessary information
+//			ef = DefaultEXIFactory.newInstance();
+//		} else {
+//			ef = testDecoder.getQuickTestEXIactory();
+//		}
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration
@@ -233,11 +240,13 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 		OutputStream xmlOutput = new FileOutputStream(decodedXMLLocation);
 
 		// decode EXI to XML
-		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
+//		testDecoder.setupEXIReader(ef);
+		testDecoder.decodeTo(exiDocument, xmlOutput);
 
 		System.out.println("[DEC-StAX] "
 				+ QuickTestConfiguration.getExiLocation() + " --> "
 				+ decodedXMLLocation);
 	}
+
 
 }

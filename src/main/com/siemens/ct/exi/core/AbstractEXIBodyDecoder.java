@@ -20,18 +20,19 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
+import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
@@ -45,7 +46,6 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
@@ -72,13 +72,13 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected DecoderChannel channel;
 
 	// namespaces/prefixes
-	protected int createdPfxCnt;
+	protected int createdPfxCnt;	
 
 	// Type Decoder (including string decoder etc.)
 	protected TypeDecoder typeDecoder;
 
 	// current AT values
-	protected QName attributeQName;
+	protected EnhancedQName attributeEnhancedQName;
 	protected String attributePrefix;
 	protected Value attributeValue;
 
@@ -94,6 +94,29 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		typeDecoder = exiFactory.createTypeDecoder();
 	}
+	
+	@Override
+	protected void pushElement(StartElement se, Rule contextRule) {
+		super.pushElement(se, contextRule);
+		if (!preservePrefix) {
+			if (elementContextStackIndex == 1) {
+				GrammarURIEntry[] gues = this.grammar.getGrammarEntries();
+				for (int i=2; i<gues.length; i++) {
+					GrammarURIEntry gue = gues[i];
+					if (gue.prefixes.length > 0) {
+						declarePrefix(gue.prefixes[0], gue.namespaceURI);	
+					} else {
+						declarePrefix("ns" + i, gue.namespaceURI);
+					}
+				}
+				createdPfxCnt += gues.length;
+			}	
+		}
+	}
+	
+
+	
+	
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
@@ -157,8 +180,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	public String getAttributeQNameAsString() {
-		return QNameUtilities.getQualifiedName(attributeQName.getLocalPart(),
-				attributePrefix);
+		return qnameDatatype.getQNameAsString(this.attributeEnhancedQName, this.attributePrefix);
 	}
 
 	public Value getAttributeValue() {
@@ -182,7 +204,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			EventInformation ei = currentRule.lookFor(ec);
 			nextEvent = ei.event;
 			nextRule = ei.next;
-			// nextEventRule = currentRule.get1stLevelEventRule(ec);
 		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
 			// ANY deviated attribute (no qname present)
 			nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
@@ -217,7 +238,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
 			IOException {
-		// assert (elementContextStack.size() == 1);
 	}
 
 	protected final QName decodeStartElementStructure() throws IOException {
@@ -227,10 +247,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// push element
 		pushElement(se, nextRule);
 		// handle element prefix
-		QName elementQName = se.getQName();
-		handleElementPrefix(elementQName);
+		handleElementPrefix(se.getEnhancedQName());
 
-		return elementQName;
+		return  se.getQName();
 	}
 
 	protected final QName decodeStartElementNSStructure() throws IOException {
@@ -238,8 +257,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
 		// decode local-name
-		QName elementQName = qnameDatatype.decodeLocalName(
-				seNS.getNamespaceURI(), channel);
+		EnhancedQName elementQName = qnameDatatype.decodeLocalName(seNS.getNamespaceURI(), channel);
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// push element
@@ -247,14 +265,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(elementQName);
 
-		return elementQName;
+		return elementQName.getQName();
 	}
 
 	protected final QName decodeStartElementGenericStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
-		QName elementQName = qnameDatatype.decodeQName(channel);
+		EnhancedQName elementQName = qnameDatatype.decodeQName(channel);
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
 		// learn start-element ?
@@ -264,14 +282,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(elementQName);
 
-		return elementQName;
+		return elementQName.getQName();
 	}
 
 	protected final QName decodeStartElementGenericUndeclaredStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
-		QName elementQName = qnameDatatype.decodeQName(channel);
+		EnhancedQName elementQName = qnameDatatype.decodeQName(channel);
 
 		// next SE ...
 		StartElement nextSE = getGenericStartElement(elementQName);
@@ -282,7 +300,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(elementQName);
 
-		return elementQName;
+		return elementQName.getQName();
 	}
 
 	protected final ElementContext decodeEndElementStructure()
@@ -303,9 +321,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	 */
 	protected final void decodeAttributeXsiNilStructure() throws EXIException,
 			IOException {
-		attributeQName = XSI_NIL;
+		attributeEnhancedQName = XSI_NIL_ENHANCED;
 		// handle AT prefix
-		handleAttributePrefix(XSI_NIL);
+		handleAttributePrefix(attributeEnhancedQName);
 
 		// attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
 		if(preserveLexicalValues) {
@@ -316,10 +334,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			attributeValue = booleanDatatype.readValue(channel, null, XSI_NIL);
 		}
 
-		
-		if (!preservePrefix) {
-			checkPrefixMapping(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-		}
 		boolean xsiNil;
 
 		if (attributeValue instanceof BooleanValue) {
@@ -343,9 +357,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	 */
 	protected final void decodeAttributeXsiTypeStructure() throws EXIException,
 			IOException {
-		attributeQName = XSI_TYPE;
+		attributeEnhancedQName = XSI_TYPE_ENHANCED;
 		// handle AT prefix
-		handleAttributePrefix(XSI_TYPE);
+		handleAttributePrefix(attributeEnhancedQName);
 
 		if (this.preserveLexicalValues) {
 			attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE,
@@ -361,8 +375,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			QNameValue qnv = (QNameValue) attributeValue;
 			xsiTypeQName = qnv.toQName();
 			if (!preservePrefix) {
-				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI());
-				attributeValue = new QNameValue(qnv.toQName(), pfx);
+				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI()); 				
+				attributeValue = new QNameValue(xsiTypeQName, pfx);
 			}
 		} else {			
 			// parse string value again (lexical value mode)
@@ -370,7 +384,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				xsiTypeQName = qnameDatatype.getQName();
 				if (!preservePrefix) {
 					String pfx = qnameDatatype.getPrefix();
-
 					declarePrefix(pfx, xsiTypeQName.getNamespaceURI());
 					attributeValue = new QNameValue(xsiTypeQName, pfx);
 				}
@@ -389,36 +402,32 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			currentRule = tg;
 		}
 	}
-
-	protected final void handleElementPrefix(QName qname) throws IOException {
+	
+	protected final void handleElementPrefix(EnhancedQName eqname) throws IOException {
 		if (preservePrefix) {
-			elementContext.prefix = qnameDatatype.decodeQNamePrefix(
-					qname.getNamespaceURI(), channel);
+			elementContext.prefix = qnameDatatype.decodeQNamePrefix(eqname.getNamespaceUriID(), channel);
 			// Note: IF elementPrefix is still null it will be determined by a
 			// subsequently following NS event
-		} else {
+		} else {			
 			// determine element prefix
-			elementContext.prefix = checkPrefixMapping(qname
-					.getNamespaceURI());
+			elementContext.prefix = checkPrefixMapping(eqname.getQName().getNamespaceURI());
 		}
 	}
 
-	protected final void handleAttributePrefix(QName qname) throws IOException {
+	protected final void handleAttributePrefix(EnhancedQName eqname) throws IOException {
 		if (preservePrefix) {
-			attributePrefix = qnameDatatype.decodeQNamePrefix(
-					qname.getNamespaceURI(), channel);
+			attributePrefix = qnameDatatype.decodeQNamePrefix(eqname.getNamespaceUriID(), channel);
 		} else {
-			attributePrefix = checkPrefixMapping(qname
-					.getNamespaceURI());
+			attributePrefix = checkPrefixMapping(eqname.getQName().getNamespaceURI());
 		}
 	}
 
 	private final String checkPrefixMapping(String uri) {
 		assert (!preservePrefix);
+		
 		String pfx = getPrefix(uri);
 
 		if (pfx == null) {
-			// TODO: Use default namespace prefix for first uri?
 			pfx = "ns" + createdPfxCnt++;
 			declarePrefix(pfx, uri);
 		}
@@ -430,9 +439,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		Attribute at = ((Attribute) nextEvent);
 		// qname
-		attributeQName = at.getQName();
+		attributeEnhancedQName = at.getEnhancedQName();
 		// handle attribute prefix
-		handleAttributePrefix(attributeQName);
+		handleAttributePrefix(attributeEnhancedQName);
 
 		// update current rule
 		currentRule = nextRule;
@@ -444,10 +453,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		// AttributeEventNS
 		AttributeNS atNS = ((AttributeNS) nextEvent);
-		attributeQName = qnameDatatype.decodeLocalName(atNS.getNamespaceURI(),
-				channel);
+		attributeEnhancedQName = qnameDatatype.decodeLocalName(atNS.getNamespaceURI(), channel);
 		// handle attribute prefix
-		handleAttributePrefix(attributeQName);
+		handleAttributePrefix(attributeEnhancedQName);
 		// update current rule
 		currentRule = nextRule;
 	}
@@ -470,22 +478,15 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
 
-		// update grammar
-		if (attributeQName.equals(XSI_TYPE)) {
-			currentRule.learnAttribute(new Attribute(XSI_TYPE, null,
-					qnameDatatype));
-		} else {
-			currentRule.learnAttribute(new Attribute(attributeQName));
-		}
+		currentRule.learnAttribute(new Attribute(attributeEnhancedQName));
 	}
 
 	private final void decodeAttributeGenericStructureOnly()
 			throws EXIException, IOException {
 		// decode uri & local-name
-		attributeQName = qnameDatatype.decodeLocalName(
-				qnameDatatype.decodeUri(channel), channel);
+		attributeEnhancedQName = qnameDatatype.decodeLocalName(qnameDatatype.decodeUri(channel), channel);
 		// handle attribute prefix
-		handleAttributePrefix(attributeQName);
+		handleAttributePrefix(attributeEnhancedQName);
 	}
 
 	protected final Datatype decodeCharactersStructure() throws EXIException {
@@ -514,7 +515,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		// prefix mapping
 		int uriID = qnameDatatype.decodeUri(channel);
-		String nsURI = qnameDatatype.getUriForID(uriID);
+		String nsURI = qnameDatatype.getURI(uriID);
 
 		String nsPrefix = qnameDatatype.decodeNamespacePrefix(uriID, channel);
 

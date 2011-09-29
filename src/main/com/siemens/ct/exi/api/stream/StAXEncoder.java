@@ -65,6 +65,7 @@ public class StAXEncoder
 {
 
 	protected EXIBodyEncoder encoder;
+	protected EXIStreamEncoder exiStream;
 
 	protected StringBuilder sbChars;
 	
@@ -81,23 +82,27 @@ public class StAXEncoder
 	// attributes
 	protected AttributeList exiAttributes;
 
-	public StAXEncoder(EXIFactory factory, OutputStream os)
-			throws EXIException, IOException, XMLStreamException {
+	public StAXEncoder(EXIFactory factory)
+			throws EXIException {
 		// initialize char buffer
 		sbChars = new StringBuilder();
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
 		// exi stream
-		EXIStreamEncoder exiStream = new EXIStreamEncoder();
-		// write header & get body encoder
-		this.encoder = exiStream.encodeHeader(factory, os);
+		exiStream = new EXIStreamEncoder(factory);
 		// preserve options
 		FidelityOptions fo = factory.getFidelityOptions();
 		preserveDTD = fo.isFidelityEnabled(FidelityOptions.FEATURE_DTD);
 		preserveComment = fo.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT);
 		preservePI = fo.isFidelityEnabled(FidelityOptions.FEATURE_PI);
 	}
+	
+	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+		// write header & get body encoder
+		this.encoder = exiStream.encodeHeader(os);
+	}
+	
 	
 	protected void init(){
 		pendingATs = false;
@@ -289,135 +294,6 @@ public class StAXEncoder
 		}
 	}
 
-//	/*
-//	 * Close this writer and free any resources associated with the writer.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#close()
-//	 */
-//	public void close() throws XMLStreamException {
-//		this.flush();
-//	}
-
-//	/*
-//	 * Write any cached data to the underlying output mechanism.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#flush()
-//	 */
-//	public void flush() throws XMLStreamException {
-//		try {
-////			encoder.flush();
-//		} catch (Exception e) {
-//			throw new XMLStreamException(e);
-//		}
-//	}
-
-//	/*
-//	 * Returns the current namespace context.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#getNamespaceContext()
-//	 */
-//	public NamespaceContext getNamespaceContext() {
-//
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-//	/*
-//	 * Gets the prefix the uri is bound to
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#getPrefix(java.lang.String)
-//	 */
-//	public String getPrefix(String uri) throws XMLStreamException {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-//	/*
-//	 * Get the value of a feature/property from the underlying implementation
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#getProperty(java.lang.String)
-//	 */
-//	public Object getProperty(String name) throws IllegalArgumentException {
-//		return null;
-//	}
-
-//	/*
-//	 * Binds a URI to the default namespace This URI is bound in the scope of
-//	 * the current START_ELEMENT / END_ELEMENT pair.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * javax.xml.stream.XMLStreamWriter#setDefaultNamespace(java.lang.String)
-//	 */
-//	public void setDefaultNamespace(String arg0) throws XMLStreamException {
-//		// TODO Auto-generated method stub
-//
-//	}
-
-//	/*
-//	 * Sets the current namespace context for prefix and uri bindings.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * javax.xml.stream.XMLStreamWriter#setNamespaceContext(javax.xml.namespace
-//	 * .NamespaceContext)
-//	 */
-//	public void setNamespaceContext(NamespaceContext context)
-//			throws XMLStreamException {
-//		// TODO Auto-generated method stub
-//	}
-//
-//	/*
-//	 * Sets the prefix the uri is bound to.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#setPrefix(java.lang.String,
-//	 * java.lang.String)
-//	 */
-//	public void setPrefix(String prefix, String uri) throws XMLStreamException {
-//		// TODO Auto-generated method stub
-//	}
-
-//	/*
-//	 * Writes an attribute to the output stream without a prefix.
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#writeAttribute(java.lang.String,
-//	 * java.lang.String)
-//	 */
-//	public void writeAttribute(String localName, String value)
-//			throws XMLStreamException {
-//		this.writeAttribute(XMLConstants.NULL_NS_URI, localName, value);
-//	}
-
-//	/*
-//	 * Writes an attribute to the output stream
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#writeAttribute(java.lang.String,
-//	 * java.lang.String, java.lang.String)
-//	 */
-//	public void writeAttribute(String namespaceURI, String localName,
-//			String value) throws XMLStreamException {
-//		this.writeAttribute(XMLConstants.DEFAULT_NS_PREFIX, namespaceURI,
-//				localName, value);
-//	}
-
 	/*
 	 * Writes an attribute to the output stream
 	 * 
@@ -518,59 +394,6 @@ public class StAXEncoder
 		}
 	}
 
-//	/*
-//	 * Writes the default namespace to the stream
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see
-//	 * javax.xml.stream.XMLStreamWriter#writeDefaultNamespace(java.lang.String)
-//	 */
-//	public void writeDefaultNamespace(String namespaceURI) throws XMLStreamException {
-//		this.writeNamespace(XMLConstants.DEFAULT_NS_PREFIX, namespaceURI);
-//	}
-
-//	/*
-//	 * Writes an empty element tag to the output
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String)
-//	 */
-//	public void writeEmptyElement(String localName) throws XMLStreamException {
-//		this.writeEmptyElement(XMLConstants.NULL_NS_URI, localName);
-//	}
-
-//	/*
-//	 * Writes an empty element tag to the output
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String,
-//	 * java.lang.String)
-//	 */
-//	public void writeEmptyElement(String namespaceURI, String localName)
-//			throws XMLStreamException {
-//		this.writeEmptyElement(null, localName, namespaceURI);
-//	}
-//
-//	/*
-//	 * Writes an empty element tag to the output
-//	 * 
-//	 * (non-Javadoc)
-//	 * 
-//	 * @see javax.xml.stream.XMLStreamWriter#writeEmptyElement(java.lang.String,
-//	 * java.lang.String, java.lang.String)
-//	 */
-//	public void writeEmptyElement(String prefix, String localName,
-//			String namespaceURI) throws XMLStreamException {
-//		try {
-//			this.writeStartElement(prefix, localName, namespaceURI);
-//			this.writeEndElement();
-//		} catch (Exception e) {
-//			throw new XMLStreamException(e);
-//		}
-//	}
 
 	/*
 	 * Closes any start tags and writes corresponding end tags.
@@ -687,48 +510,6 @@ public class StAXEncoder
 		}
 	}
 
-//	/*
-//	 *  Write the XML Declaration.
-//	 *  
-//	 * (non-Javadoc)
-//	 * @see javax.xml.stream.XMLStreamWriter#writeStartDocument(java.lang.String)
-//	 */
-//	public void writeStartDocument(String version) throws XMLStreamException {
-//		this.writeStartDocument();
-//	}
-//
-//	/*
-//	 *  Write the XML Declaration.
-//	 * (non-Javadoc)
-//	 * @see javax.xml.stream.XMLStreamWriter#writeStartDocument(java.lang.String, java.lang.String)
-//	 */
-//	public void writeStartDocument(String encoding, String version)
-//			throws XMLStreamException {
-//		this.writeStartDocument();
-//	}
-
-	
-//	/*
-//	 * Writes a start tag to the output.
-//	 * 
-//	 * (non-Javadoc)
-//	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String)
-//	 */
-//	public void writeStartElement(String localName) throws XMLStreamException {
-//		this.writeStartElement(XMLConstants.NULL_NS_URI, localName);
-//	}
-//
-//	/*
-//	 * Writes a start tag to the output.
-//	 * 
-//	 * (non-Javadoc)
-//	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String, java.lang.String)
-//	 */
-//	public void writeStartElement(String namespaceURI, String localName)
-//			throws XMLStreamException {
-//		this.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, localName,
-//				namespaceURI);
-//	}
 
 	/*
 	 * Writes a start tag to the output.

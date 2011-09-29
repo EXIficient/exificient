@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.XMLConstants;
-import javax.xml.transform.sax.SAXResult;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.Attributes;
@@ -222,6 +221,8 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					assertTrue(prefix.equals("xml"));
 				} else if (uri.equals(XMLConstants.NULL_NS_URI)) {
 					assertTrue(prefix.equals(XMLConstants.DEFAULT_NS_PREFIX));
+				} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+					assertTrue(prefix.equals("xsi"));
 				} else {
 					fail("No exptected URI: " + uri);
 				}
@@ -319,6 +320,10 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					assertTrue(prefix.equals("xml"));
 				} else if (uri.equals(XMLConstants.NULL_NS_URI)) {
 					assertTrue(prefix.equals(XMLConstants.DEFAULT_NS_PREFIX));
+				} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+					assertTrue(prefix.equals("ns3"));
+				} else if (uri.equals("http://www.w3.org/2000/09/xmldsig#")) {
+					assertTrue(prefix.equals("ns6"));
 				} else {
 					fail("No exptected URI: " + uri);
 				}
@@ -449,8 +454,9 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			{
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-				SAXResult saxResult = new EXIResult(os, factory);
-				xmlReader.setContentHandler(saxResult.getHandler());
+				EXIResult exiResult = new EXIResult(factory);
+				exiResult.setOutputStream(os);
+				xmlReader.setContentHandler(exiResult.getHandler());
 
 				xmlReader.parse(new InputSource(new StringReader(xml)));
 			}

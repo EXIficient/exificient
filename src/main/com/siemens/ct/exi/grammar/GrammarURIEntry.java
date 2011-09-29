@@ -22,6 +22,8 @@ import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.EnhancedQName;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -34,28 +36,32 @@ public class GrammarURIEntry implements Serializable {
 
 	private static final long serialVersionUID = 352521635962295594L;
 
+	public final int namespaceUriID;
 	public final String namespaceURI;
 	public final String[] localNames;
 	public final String[] prefixes;
-	public final QName[] qNames;
+	public final EnhancedQName[] eQNames;
 
-	public GrammarURIEntry(String uri, String[] localNames, String[] prefixes) {
+	public GrammarURIEntry(int namespaceUriID, String uri, String[] localNames, String[] prefixes) {
 		assert (uri != null);
 		assert (localNames != null);
 		assert (prefixes != null);
+		this.namespaceUriID = namespaceUriID;
 		this.namespaceURI = uri;
 		this.localNames = localNames;
-		this.qNames = new QName[localNames.length];
+		this.eQNames = new EnhancedQName[localNames.length];
 		for (int i = 0; i < localNames.length; i++) {
-			this.qNames[i] = new QName(uri, localNames[i]);
+			this.eQNames[i] = new EnhancedQName( new QName(uri, localNames[i]), namespaceUriID, i);
 		}
 		this.prefixes = prefixes;
 	}
 
+	
 	@Override
 	public String toString() {
 		return "{" + namespaceURI + "}(localNames#" + localNames.length
 				+ ", prefixes#" + prefixes.length + ")";
 	}
+	
 
 }

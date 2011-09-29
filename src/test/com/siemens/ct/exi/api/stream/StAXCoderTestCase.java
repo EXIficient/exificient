@@ -71,16 +71,16 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		// encode
 		OutputStream exiOut = new FileOutputStream(exiOutput);
 		InputStream xmlIn =  new FileInputStream(xmlInput);
-		TestStAXEncoder tse = new TestStAXEncoder(exiOut);
-		tse.encodeTo(exiFactory, xmlIn);
+		TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
+		tse.encodeTo(xmlIn, exiOut);
 		exiOut.close();
 		xmlIn.close();
 		
 		// decode
 		InputStream exiIn = new FileInputStream(exiOutput);
-		TestStAXDecoder tsd = new TestStAXDecoder();
+		TestStAXDecoder tsd = new TestStAXDecoder(exiFactory);
 		OutputStream xmlOut = new FileOutputStream(xmlOutput);
-		tsd.decodeTo(exiFactory, exiIn, xmlOut);
+		tsd.decodeTo(exiIn, xmlOut);
 		xmlOut.close();
 		
 		// check equality

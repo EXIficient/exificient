@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import javax.xml.namespace.QName;
-import javax.xml.transform.sax.SAXResult;
 
 import junit.framework.TestCase;
 
@@ -187,19 +186,20 @@ public class RoundtripTestCase extends TestCase {
 		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
 		enc1.setOutputStream(os1);
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		SAXResult saxResult = new EXIResult(os1, factory);
-		xmlReader.setContentHandler(saxResult.getHandler());
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(os1);
+		xmlReader.setContentHandler(exiResult.getHandler());
 		xmlReader.parse(new InputSource(xml));
 		
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
-		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
+		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIBodyDecoder dec = streamDecoder.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 		
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 		
 		EventType event;
 		while( (event = dec.next()) != null) {
@@ -259,19 +259,20 @@ public class RoundtripTestCase extends TestCase {
 		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
 		enc1.setOutputStream(os1);
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		SAXResult saxResult = new EXIResult(os1, factory);
-		xmlReader.setContentHandler(saxResult.getHandler());
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(os1);
+		xmlReader.setContentHandler(exiResult.getHandler());
 		xmlReader.parse(new InputSource(xml));
 		
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
-		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
+		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIBodyDecoder dec = streamDecoder.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 		
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 		
 		EventType event;
 		while( (event = dec.next()) != null) {
@@ -332,19 +333,20 @@ public class RoundtripTestCase extends TestCase {
 		ByteArrayOutputStream os1 = new ByteArrayOutputStream();
 		enc1.setOutputStream(os1);
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		SAXResult saxResult = new EXIResult(os1, factory);
-		xmlReader.setContentHandler(saxResult.getHandler());
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(os1);
+		xmlReader.setContentHandler(exiResult.getHandler());
 		xmlReader.parse(new InputSource(xml));
 		
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder();
-		EXIBodyDecoder dec = streamDecoder.decodeHeader(factory, new ByteArrayInputStream(os1.toByteArray()));
+		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIBodyDecoder dec = streamDecoder.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 		
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder();
+		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
-		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(factory, os2);
+		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 		
 		EventType event;
 		while( (event = dec.next()) != null) {

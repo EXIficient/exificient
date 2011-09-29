@@ -39,35 +39,40 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 public class EXIStreamDecoder {
 
 	protected final EXIHeaderDecoder exiHeader;
+	protected EXIBodyDecoder exiBody;
+	protected final EXIFactory noOptionsFactory;
 
-	public EXIStreamDecoder() throws EXIException {
+	public EXIStreamDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		exiHeader = new EXIHeaderDecoder();
+		// assume the default factory
+		exiBody = noOptionsFactory.createEXIBodyDecoder();
+		this.noOptionsFactory = noOptionsFactory; 
+	}
+	
+	public EXIBodyDecoder getBodyOnlyDecoder(InputStream is) throws EXIException, IOException {
+		exiBody.setInputStream(is);
+		return exiBody;
 	}
 
-	public EXIBodyDecoder decodeHeader(EXIFactory noOptionsFactory,
-			InputStream is) throws EXIException, IOException {
-
-//		// buffer stream if not already
-//		// TODO is there a *nice* way to detect whether a stream is buffered
-//		// already
-//		if (!(is instanceof BufferedInputStream)) {
-//			is = new BufferedInputStream(is);
-//		}
-		// is = new BufferedInputStream(is);
-
+	public EXIBodyDecoder decodeHeader(InputStream is) throws EXIException, IOException {
 		// read header
 		BitDecoderChannel headerChannel = new BitDecoderChannel(is);
 		EXIFactory exiFactory = exiHeader
 				.parse(headerChannel, noOptionsFactory);
 
-		// setup data-stream for body and create decoder
-		EXIBodyDecoder exiBody = exiFactory.createEXIBodyDecoder();
+		// update body decoder if EXI options tell to do so
+		if (exiFactory != noOptionsFactory) {
+			// exiBody = noOptionsFactory.createEXIBodyDecoder();
+			exiBody = exiFactory.createEXIBodyDecoder();
+		}
+		// setup data-stream for body
 		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
 			// bit-packed re-uses the header channel
 			exiBody.setInputChannel(headerChannel);
 		} else {
 			exiBody.setInputStream(is);
 		}
+		
 		return exiBody;
 	}
 }

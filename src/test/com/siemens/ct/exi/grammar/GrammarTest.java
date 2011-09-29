@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -55,8 +56,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -89,8 +92,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		
 		//	SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -130,8 +135,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -174,8 +181,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		
 		//	SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
@@ -237,8 +246,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule c = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule c = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 
 		// SE(c), EE
 		// maxOccurs = "0" --> same rule over and over again
@@ -265,9 +276,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
-
+		// Rule rule = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
+		
 		// SE(a), SE(c), EE
 		{
 			assertTrue(rule.getNumberOfEvents() == 3);
@@ -364,8 +377,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rule = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 
 		{
 			assertTrue(rule.getNumberOfEvents() == 4);
@@ -400,14 +415,16 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rule = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 
 		assertTrue(rule.getNumberOfEvents() == 4);
 		
 		// schema-informed grammars should not expand
-		rule.learnAttribute(new Attribute(new QName("a"), null, null));
-		rule.learnStartElement(new StartElement(new QName("s")));
+		rule.learnAttribute(new Attribute(new EnhancedQName(new QName("a")), null, null));
+		rule.learnStartElement(new StartElement(new EnhancedQName(new QName("s"))));
 		rule.learnEndElement();
 		rule.learnCharacters();
 		
@@ -439,7 +456,7 @@ public class GrammarTest extends TestCase {
 		assertTrue(content.getNumberOfEvents() == 2);
 
 		// learn SE, can have multiple events even if similar
-		StartElement s = new StartElement(new QName("s"));
+		StartElement s = new StartElement(new EnhancedQName(new QName("s")));
 		startTag.learnStartElement(s);
 		startTag.learnStartElement(s);
 		assertTrue(startTag.getNumberOfEvents() == 4);
@@ -448,7 +465,7 @@ public class GrammarTest extends TestCase {
 		assertTrue(content.getNumberOfEvents() == 4);
 		
 		// learn AT, can have multiple events even if similar
-		Attribute a = new Attribute(new QName("a"), null, null);
+		Attribute a = new Attribute(new EnhancedQName(new QName("a")), null, null);
 		startTag.learnAttribute(a);
 		startTag.learnAttribute(a);
 		assertTrue(startTag.getNumberOfEvents() == 6);

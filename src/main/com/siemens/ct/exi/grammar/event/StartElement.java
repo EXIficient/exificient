@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
@@ -35,18 +36,24 @@ public class StartElement extends AbstractEvent {
 	private static final long serialVersionUID = -874684674312937990L;
 
 	protected final QName qname;
+	protected final EnhancedQName eqname;
 
 	private Rule rule;
 
-	public StartElement(QName qname) {
+	public StartElement(EnhancedQName eqname) {
 		super(EventType.START_ELEMENT);
-		this.qname = qname;
+		this.eqname = eqname;
+		this.qname = eqname == null ? null : eqname.getQName();
 	}
 
 	public QName getQName() {
 		return this.qname;
 	}
-
+	
+	public EnhancedQName getEnhancedQName() {
+		return eqname;
+	}
+	
 	public void setRule(Rule rule) {
 		this.rule = rule;
 	}

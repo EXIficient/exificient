@@ -93,12 +93,15 @@ public class StAXDecoder implements XMLStreamReader
 		}
 	}
 
-	public StAXDecoder(EXIFactory noOptionsFactory, InputStream is)
-			throws EXIException, IOException, XMLStreamException {
+	public StAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		this.exiStream = new EXIStreamDecoder();
+		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
 		this.attributes = new ArrayList<AttributeContainer>();
 		this.nsContext = new EXINamespaceContext();
+		
+	}
+	
+	public void setInputStream(InputStream is) throws EXIException, IOException, XMLStreamException {
 		parseHeader(is);
 	}
 
@@ -128,11 +131,10 @@ public class StAXDecoder implements XMLStreamReader
 
 		if (exiBodyOnly) {
 			// no EXI header
-			decoder = noOptionsFactory.createEXIBodyDecoder();
-			decoder.setInputStream(is);
+			decoder = exiStream.getBodyOnlyDecoder(is);
 		} else {
 			// read header (default)
-			decoder = exiStream.decodeHeader(noOptionsFactory, is);
+			decoder = exiStream.decodeHeader(is);
 		}
 
 		// init
@@ -141,12 +143,9 @@ public class StAXDecoder implements XMLStreamReader
 		eventType = decoder.next();
 		assert (eventType == EventType.START_DOCUMENT);
 		decoder.decodeStartDocument();
-		// decodeEvent(eventType);
-		// this.next(); // prepare START_DOCUMENT
 	}
 
 	public int getEventType() {
-//		System.err.println("getEventType()");
 		return getEventType(this.eventType);
 	}
 
@@ -198,7 +197,6 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public int next() throws XMLStreamException {
-//		System.err.println("next()");
 		try {
 			int ev;
 			if (this.preReadEventType == null) {
@@ -213,7 +211,6 @@ public class StAXDecoder implements XMLStreamReader
 			if (ev == XMLStreamConstants.START_ELEMENT) {
 				handleAttributes();
 			}
-			// System.out.println("next = " + eventType);
 			
 			return ev;
 		} catch (Exception e) {
@@ -350,9 +347,6 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public void close() throws XMLStreamException {
-		System.err.println("close()");
-		// TODO Auto-generated method stub
-
 	}
 
 	protected void handleAttributes() throws EXIException, IOException {
@@ -374,27 +368,22 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public int getAttributeCount() {
-		// System.err.println("getAttributeCount()");
 		return this.attributes.size();
 	}
 
 	public String getAttributeLocalName(int index) {
-		// System.err.println("getAttributeLocalName()");
 		return attributes.get(index).qname.getLocalPart();
 	}
 
 	public QName getAttributeName(int index) {
-		// System.err.println("getAttributeName()");
 		return attributes.get(index).qname;
 	}
 
 	public String getAttributeNamespace(int index) {
-		// System.err.println("getAttributeNamespace()");
 		return attributes.get(index).qname.getNamespaceURI();
 	}
 
 	public String getAttributePrefix(int index) {
-		// System.err.println("getAttributePrefix()");
 		return attributes.get(index).prefix;
 	}
 
@@ -405,7 +394,6 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getAttributeValue(int index) {
-		// System.err.println("getAttributeValue()");
 		return attributes.get(index).value.toString();
 	}
 
@@ -434,13 +422,11 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getLocalName() {
-		// System.err.println("getLocalName()");
 		// Returns the (local) name of the current event.
 		return element.getLocalPart();
 	}
 
 	public Location getLocation() {
-		// System.err.println("getLocation()");
 		// TODO Auto-generated method stub
 		return EmptyLocation.getInstance();
 	}
@@ -452,10 +438,8 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getName()
 	 */
 	public QName getName() {
-		// System.err.println("getName()");
 		// Returns a QName for the current START_ELEMENT or END_ELEMENT event
 		QName qn = new QName( element.getNamespaceURI(), element.getLocalPart(), this.getPrefix());
-//		System.out.println(qn);
 		return qn;
 	}
 
@@ -543,15 +527,10 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getPIData() {
-		// TODO Auto-generated method stub
-		// System.err.println("getPIData()");
 		return this.processingInstruction.data;
 	}
 
 	public String getPITarget() {
-		// TODO Auto-generated method stub
-		// System.err.println("getPITarget()");
-		// return null;
 		return this.processingInstruction.target;
 	}
 
@@ -560,7 +539,6 @@ public class StAXDecoder implements XMLStreamReader
 			return endElementPrefix;
 		}
 		
-//		System.err.println("getPrefix()");
 		// Returns the prefix of the current event or null if the event does not
 		// have a prefix
 		if (getEventType() == XMLStreamConstants.START_ELEMENT
@@ -633,7 +611,6 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public char[] getTextCharacters() {
-//		System.err.println("getTextCharacters()");
 		// Returns an array which contains the characters from this event.
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
@@ -700,9 +677,6 @@ public class StAXDecoder implements XMLStreamReader
 			throw new RuntimeException("Unexpected event, id=" + getEventType());
 		}
 		
-		
-//		throw new RuntimeException(
-//				"Not supported method: getTextCharacters(int sourceStart, char[] target, int targetStart, int length)");
 	}
 
 	public int getTextLength() {
@@ -730,7 +704,6 @@ public class StAXDecoder implements XMLStreamReader
 	public String getVersion() {
 		// Get the xml version declared on the xml declaration Returns null if
 		// none was declared
-		// System.err.println("getVersion()");
 		return null;
 	}
 
@@ -742,23 +715,13 @@ public class StAXDecoder implements XMLStreamReader
 		default:
 			return false;
 		}
-
-		// // TODO Auto-generated method stub
-		// System.err.println("hasName()");
-		// return false;
 	}
 
 	public boolean hasNext() throws XMLStreamException {
-		// TODO Auto-generated method stub
-		// System.err.println("hasNext()");
 		return (this.eventType != EventType.END_DOCUMENT);
 	}
 
 	public boolean hasText() {
-		// TODO Auto-generated method stub
-		// System.err.println("hasText()");
-		// return false;
-
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
 		case XMLStreamConstants.CDATA:
@@ -779,21 +742,15 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#isAttributeSpecified(int)
 	 */
 	public boolean isAttributeSpecified(int arg0) {
-		// // TODO Auto-generated method stub
-		// System.err.println("isAttributeSpecified()");
 		return false;
 	}
 
 	public boolean isCharacters() {
-		// TODO Auto-generated method stub
-		// System.err.println("isCharacters()");
 		return getEventType() == XMLStreamConstants.CHARACTERS;
 	}
 
 	public boolean isEndElement() {
-		// TODO Auto-generated method stub
-		System.err.println("isEndElement()");
-		return false;
+		return  getEventType() == XMLStreamConstants.END_ELEMENT ;
 	}
 
 	/*
@@ -804,14 +761,10 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#isStandalone()
 	 */
 	public boolean isStandalone() {
-		// TODO Auto-generated method stub
-		// System.err.println("isStandalone()");
-		return false;
+		return true;
 	}
 
 	public boolean isStartElement() {
-		// TODO Auto-generated method stub
-		// System.err.println("isStartElement()");
 		return getEventType() == XMLStreamConstants.START_ELEMENT;
 	}
 
@@ -824,9 +777,6 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#isWhiteSpace()
 	 */
 	public boolean isWhiteSpace() {
-		// TODO Auto-generated method stub
-		// System.err.println("isWhiteSpace()");
-
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
 			return this.characters.toString().trim().length() == 0;
@@ -912,9 +862,6 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public boolean standaloneSet() {
-		// TODO Auto-generated method stub
-
-//		System.err.println("standaloneSet()");
 		return false;
 	}
 
@@ -969,19 +916,5 @@ public class StAXDecoder implements XMLStreamReader
 		}
 
 	}
-//
-//	public void remove() {
-//		throw new RuntimeException("remove() not supported");
-//	}
-//
-//	public XMLEvent nextEvent() throws XMLStreamException {
-//		this.next();
-//		return null;
-//	}
-//
-//	public XMLEvent peek() throws XMLStreamException {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 }

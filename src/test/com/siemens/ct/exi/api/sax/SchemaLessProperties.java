@@ -23,8 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
-import javax.xml.transform.sax.SAXResult;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -35,8 +33,9 @@ public class SchemaLessProperties extends AbstractProperties {
 		// start encoding process
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-		SAXResult saxResult = new EXIResult(osEXI, factory);
-		xmlReader.setContentHandler(saxResult.getHandler());
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(osEXI);
+		xmlReader.setContentHandler(exiResult.getHandler());
 
 		xmlReader.parse(new InputSource(new StringReader(xml)));
 	}
@@ -59,6 +58,12 @@ public class SchemaLessProperties extends AbstractProperties {
 	}
 
 	
+	public void testXsiType() throws Exception {
+		xml = XSI_TYPE_XML;
+	
+		startTest();
+	}
+
 	public void testSimple1() throws Exception {
 		xml = SIMPLE_XML;
 
@@ -67,13 +72,6 @@ public class SchemaLessProperties extends AbstractProperties {
 
 	public void testUnexpectedRoot() throws Exception {
 		xml = UNEXPECTED_ROOT_XML;
-
-		startTest();
-	}
-
-
-	public void testXsiType() throws Exception {
-		xml = XSI_TYPE_XML;
 
 		startTest();
 	}

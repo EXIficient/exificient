@@ -78,16 +78,6 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		scEncoder = null;
 	}
 
-	// @Override
-	// public void setOutput(OutputStream os, boolean exiBodyOnly)
-	// throws EXIException, IOException {
-	// if (scEncoder == null) {
-	// super.setOutput(os, exiBodyOnly);
-	// } else {
-	// scEncoder.setOutput(os, exiBodyOnly);
-	// }
-	// }
-
 	@Override
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		if (scEncoder == null) {
@@ -142,7 +132,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		// business as usual
 		if (scEncoder == null) {
 			super.encodeStartElement(uri, localName, prefix);
-			qname = elementContext.qname;
+			qname = elementContext.eqname.getQName();
 
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
@@ -151,8 +141,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 				encode2ndLevelEventCode(ec2);
 
 				// Skip to the next byte-aligned boundary in the stream if it is
-				// not
-				// already at such a boundary
+				// not already at such a boundary
 				this.channel.align();
 
 				// start SC element
@@ -160,7 +149,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			}
 		} else {
 			scEncoder.encodeStartElement(uri, localName, prefix);
-			qname = scEncoder.elementContext.qname;
+			qname = scEncoder.elementContext.eqname.getQName();
 		}
 	}
 
@@ -168,11 +157,9 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			throws EXIException, IOException {
 		// SC Factory & Encoder
 		EXIFactory scEXIFactory = exiFactory.clone();
-		// scEXIFactory.setEXIBodyOnly(true);
 		scEXIFactory.setFragment(true);
 		scEncoder = (EXIBodyEncoderInOrderSC) scEXIFactory
 				.createEXIBodyEncoder();
-		// scEncoder.os = this.os; // needs to be unequal null
 		scEncoder.channel = this.channel;
 		scEncoder.setErrorHandler(this.errorHandler);
 
@@ -199,7 +186,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			super.encodeEndElement();
 		} else {
 			// fetch qname before EE
-			QName qname = scEncoder.elementContext.qname;
+			QName qname = scEncoder.elementContext.eqname.getQName();
 			// EE
 			scEncoder.encodeEndElement();
 			if (getElementContextQName().equals(qname)

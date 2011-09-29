@@ -23,8 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 
-import javax.xml.transform.sax.SAXResult;
-
 import org.custommonkey.xmlunit.Validator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -75,8 +73,9 @@ public class SchemaProperties extends AbstractProperties {
 		// start encoding process
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-		SAXResult saxResult = new EXIResult(osEXI, factory);
-		xmlReader.setContentHandler(saxResult.getHandler());
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(osEXI);
+		xmlReader.setContentHandler(exiResult.getHandler());
 
 		xmlReader.parse(new InputSource(new StringReader(xml)));
 	}

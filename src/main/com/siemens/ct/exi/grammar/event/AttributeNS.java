@@ -18,7 +18,7 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-import javax.xml.XMLConstants;
+import com.siemens.ct.exi.EnhancedNamespaceURI;
 
 /**
  * 
@@ -32,20 +32,31 @@ public class AttributeNS extends AbstractEvent {
 
 	private static final long serialVersionUID = 6004967457126269590L;
 
-	private String namespaceURI;
+	protected final EnhancedNamespaceURI eNamespaceURI;
+	protected final String namespaceURI;
+	protected int namespaceUriID;
 
-	public AttributeNS(String uri) {
+	public AttributeNS(EnhancedNamespaceURI uri) {
 		super(EventType.ATTRIBUTE_NS);
 
-		this.namespaceURI = uri == null ? XMLConstants.NULL_NS_URI : uri;
+		this.eNamespaceURI = uri;
+		this.namespaceURI = uri.getNamespaceURI();
 	}
 
+	public EnhancedNamespaceURI getEnhancedNamespaceURI() {
+		return eNamespaceURI;
+	}
+	
 	public String getNamespaceURI() {
 		return namespaceURI;
 	}
+	
+	public int getNamespaceUriID() {
+		return namespaceUriID;
+	}
 
-	public void setNamespaceURI(String namespaceURI) {
-		this.namespaceURI = namespaceURI;
+	public void setNamespaceUriID(int namespaceUriID) {
+		this.namespaceUriID = namespaceUriID;
 	}
 
 	public String toString() {

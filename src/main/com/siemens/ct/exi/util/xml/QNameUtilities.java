@@ -75,6 +75,7 @@ public class QNameUtilities {
 	 * @return <code>String</code> for qname
 	 */
 	public static final String getQualifiedName(String localName, String pfx) {
+		// System.out.println("getQualifiedName " + localName + " & "  + pfx);
 		return pfx.length() == 0 ? localName
 				: (pfx + Constants.COLON + localName);
 	}

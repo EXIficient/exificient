@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.api.sax;
 
-import java.io.OutputStream;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -59,9 +57,9 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 */
 	protected boolean retainEntityReference;
 
-	public SAXEncoderExtendedHandler(EXIFactory factory, OutputStream os)
+	public SAXEncoderExtendedHandler(EXIFactory factory)
 			throws EXIException {
-		super(factory, os);
+		super(factory);
 
 		FidelityOptions fo = factory.getFidelityOptions();
 		preserveDTD = fo.isFidelityEnabled(FidelityOptions.FEATURE_DTD);
@@ -109,7 +107,6 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		} else {
 			super.characters(ch, start, length);
 		}
-		// new String(ch, start, length);
 	}
 
 	/*
@@ -251,12 +248,10 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	 */
 	public void notationDecl(String name, String publicId, String systemId)
 			throws SAXException {
-		// System.out.println("DAPE Encode notationDecl = " + name);
 	}
 
 	public void unparsedEntityDecl(String name, String publicId,
 			String systemId, String notationName) throws SAXException {
-		// System.out.println("DAPE Encode unparsedEntityDecl = " + name);
 	}
 
 	/*
@@ -291,7 +286,6 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void externalEntityDecl(String name, String publicId, String systemId)
 			throws SAXException {
-		// System.out.println("DAPE Encode externalEntityDecl = " + name);
 	}
 
 }

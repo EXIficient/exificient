@@ -27,6 +27,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.core.AbstractEXIBodyCoder;
 import com.siemens.ct.exi.core.RuntimeURIEntry;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
@@ -72,17 +73,16 @@ public class QNameDatatype extends AbstractDatatype {
 		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
 	}
 
-	public void setPreservePrefix(boolean preservePrefix) {
+	public void setFactoryInformation(boolean preservePrefix,
+			GrammarURIEntry[] grammarURIEntries) {
 		this.preservePrefix = preservePrefix;
-	}
-
-	public void setGrammarURIEnties(GrammarURIEntry[] grammarURIEntries) {
 		this.grammarURIEntries = grammarURIEntries;
 		runtimeURIEntries.clear();
 		for (int i = 0; i < grammarURIEntries.length; i++) {
 			RuntimeURIEntry rue = new RuntimeURIEntry(
 					grammarURIEntries[i].namespaceURI, i,
-					grammarURIEntries[i].prefixes);
+					grammarURIEntries[i].eQNames,
+					grammarURIEntries[i].prefixes, preservePrefix);
 			runtimeURIEntries.add(rue);
 		}
 	}
@@ -104,7 +104,7 @@ public class QNameDatatype extends AbstractDatatype {
 		}
 	}
 
-	protected final int getUriID(final String uri) {
+	public final int getUriID(final String uri) {
 		// grammar uris
 		for (int i = 0; i < grammarURIEntries.length; i++) {
 			if (grammarURIEntries[i].namespaceURI.equals(uri)) {
@@ -121,19 +121,15 @@ public class QNameDatatype extends AbstractDatatype {
 		return Constants.NOT_FOUND;
 	}
 
-	protected int getLocalNameID(String localName, int uriID) {
+	public EnhancedQName getEnhancedQName(String localName, int uriID) {
 		assert (uriID >= 0 && uriID < runtimeURIEntries.size());
-
-		int grammarEntries = 0;
-
 		// grammar entries
 		if (uriID < grammarURIEntries.length) {
 			GrammarURIEntry gue = grammarURIEntries[uriID];
-			grammarEntries = gue.localNames.length;
 			// binary search given that localName grammar entries are sorted
-			int bs = Arrays.binarySearch(gue.localNames, localName);
-			if (bs >= 0) {
-				return bs;
+			int localNameID = Arrays.binarySearch(gue.localNames, localName);
+			if (localNameID >= 0) {
+				return gue.eQNames[localNameID];
 			}
 		}
 
@@ -141,22 +137,36 @@ public class QNameDatatype extends AbstractDatatype {
 		RuntimeURIEntry rue = runtimeURIEntries.get(uriID);
 		// linear search, runtime entries are not sorted
 		for (int i = 0; i < rue.getLocalNameSize(); i++) {
-			QName qn = rue.getQName(i);
-			if (qn.getLocalPart().equals(localName)) {
-				return i + grammarEntries;
+			EnhancedQName eqn = rue.getEnhancedQName(i);
+			if (eqn.getQName().getLocalPart().equals(localName)) {
+				return eqn;
 			}
 		}
 
-		return Constants.NOT_FOUND;
+		// return Constants.NOT_FOUND;
+		return null;
+	}
+
+	public EnhancedQName getEnhancedQName(String uri, String localName) {
+		int namespaceUriID = getUriID(uri);
+		if (namespaceUriID == Constants.NOT_FOUND) {
+			return null;
+		}
+		return getEnhancedQName(localName, namespaceUriID);
+	}
+
+	public EnhancedQName getEnhancedQName(int uriID, int localNameID) {
+		return runtimeURIEntries.get(uriID).getEnhancedQName(localNameID);
 	}
 
 	protected int addURI(final String namespaceURI) {
 		int uriID = runtimeURIEntries.size();
-		runtimeURIEntries.add(new RuntimeURIEntry(namespaceURI, uriID));
+		runtimeURIEntries.add(new RuntimeURIEntry(namespaceURI, uriID,
+				preservePrefix));
 		return uriID;
 	}
 
-	protected QName addLocalName(final String localName, int uriID) {
+	protected EnhancedQName addLocalName(final String localName, int uriID) {
 		return runtimeURIEntries.get(uriID).addLocalName(localName);
 	}
 
@@ -172,21 +182,8 @@ public class QNameDatatype extends AbstractDatatype {
 				+ grammarLocalNameSize;
 	}
 
-	protected QName getLocalName(int uriID, int localNameID) {
-		int grammarLocalNameSize = 0;
-
-		// grammar entries
-		if (uriID < grammarURIEntries.length) {
-			GrammarURIEntry gue = grammarURIEntries[uriID];
-			grammarLocalNameSize = gue.localNames.length;
-			if (localNameID < grammarLocalNameSize) {
-				return gue.qNames[localNameID];
-			}
-		}
-
-		// runtime entries
-		return runtimeURIEntries.get(uriID).getQName(
-				localNameID - grammarLocalNameSize);
+	public String getURI(int uriID) {
+		return runtimeURIEntries.get(uriID).namespaceURI;
 	}
 
 	protected void addPrefix(final String prefix, int uriID) {
@@ -200,14 +197,15 @@ public class QNameDatatype extends AbstractDatatype {
 		qnamePrefix = QNameUtilities.getPrefixPart(value);
 		// retrieve uri
 		String qnameURI = namespaces.getURI(qnamePrefix);
+		String qnameLocalName;
 
 		/*
 		 * If there is no namespace in scope for the specified qname prefix, the
 		 * QName uri is set to empty ("") and the QName localName is set to the
 		 * full lexical value of the QName, including the prefix.
 		 */
-		String qnameLocalName;
 		if (qnameURI == null) {
+			/* uri in scope for prefix */
 			qnameURI = XMLConstants.NULL_NS_URI;
 			qnameLocalName = value;
 		} else {
@@ -222,6 +220,7 @@ public class QNameDatatype extends AbstractDatatype {
 		if (value instanceof QNameValue) {
 			QNameValue qv = ((QNameValue) value);
 			qname = qv.toQName();
+			// eqname = qv.toEnhancedQName();
 			qnamePrefix = qv.getPrefix();
 			return true;
 		} else if (isValid(value.toString())) {
@@ -241,15 +240,16 @@ public class QNameDatatype extends AbstractDatatype {
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		encodeQName(qname.getNamespaceURI(), qname.getLocalPart(), qnamePrefix,
-				valueChannel);
+		EnhancedQName eqname = encodeQName(this.qname.getNamespaceURI(),
+				this.qname.getLocalPart(), valueChannel);
+		encodeQNamePrefix(qnamePrefix, eqname.getNamespaceUriID(), valueChannel);
 	}
 
-	public QName encodeQName(String uri, String localName, String prefix,
+	public EnhancedQName encodeQName(String uri, String localName,
 			EncoderChannel channel) throws IOException {
 		// encode expanded name (uri followed by localName)
-		return encodeLocalName(localName, encodeUri(uri, channel), prefix,
-				channel);
+		int uriID = encodeUri(uri, channel);
+		return encodeLocalName(localName, uriID, channel);
 	}
 
 	public int encodeUri(final String uri, EncoderChannel channel)
@@ -281,21 +281,22 @@ public class QNameDatatype extends AbstractDatatype {
 		return uriID;
 	}
 
-	public QName encodeLocalName(String localName, String uri, String prefix,
-			EncoderChannel channel) throws IOException {
-		return encodeLocalName(localName, requireUriID(uri), prefix, channel);
+	public EnhancedQName encodeLocalName(String localName, String uri,
+			String prefix, EncoderChannel channel) throws IOException {
+		// local-name
+		int uriID = requireUriID(uri);
+		return encodeLocalName(localName, uriID, channel);
 	}
 
-	public QName encodeLocalName(String localName, int uriID, String prefix,
+	protected EnhancedQName encodeLocalName(String localName, int uriID,
 			EncoderChannel channel) throws IOException {
 		// Note: URI context has to be known before writing localName
 		assert (uriID >= 0 && uriID < runtimeURIEntries.size());
 
 		// look for localNameID
-		int localNameID = getLocalNameID(localName, uriID);
+		EnhancedQName eqname = getEnhancedQName(localName, uriID);
 
-		QName qname;
-		if (localNameID == Constants.NOT_FOUND) {
+		if (eqname == null) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
 			// with the length of the string incremented by one
@@ -304,7 +305,7 @@ public class QNameDatatype extends AbstractDatatype {
 			// After encoding the string value, it is added to the string
 			// table partition and assigned the next available compact
 			// identifier.
-			qname = addLocalName(localName, uriID);
+			eqname = addLocalName(localName, uriID);
 		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
@@ -312,18 +313,11 @@ public class QNameDatatype extends AbstractDatatype {
 			// string value as an n-bit unsigned integer n is log2 m and m is
 			// the number of entries in the string table partition
 			channel.encodeUnsignedInteger(0);
-			// int n =
-			// MethodsBag.getCodingLength(uriContext.getLocalNameSize());
 			int n = MethodsBag.getCodingLength(getLocalNameSize(uriID));
-			channel.encodeNBitUnsignedInteger(localNameID, n);
-			// qname = uriContext.getNameContext(localNameID);
-			qname = getLocalName(uriID, localNameID);
+			channel.encodeNBitUnsignedInteger(eqname.getLocalNameID(), n);
 		}
 
-		// writing qname prefix ?
-		encodeQNamePrefix(prefix, uriID, channel);
-
-		return qname;
+		return eqname;
 	}
 
 	public void encodeQNamePrefix(String prefix, String uri,
@@ -331,7 +325,7 @@ public class QNameDatatype extends AbstractDatatype {
 		encodeQNamePrefix(prefix, requireUriID(uri), channel);
 	}
 
-	public void encodeQNamePrefix(String prefix, int uriID,
+	protected void encodeQNamePrefix(String prefix, int uriID,
 			EncoderChannel channel) throws IOException {
 		if (preservePrefix) {
 			if (uriID == 0) {
@@ -398,10 +392,6 @@ public class QNameDatatype extends AbstractDatatype {
 		}
 	}
 
-	public String getUriForID(int uriID) throws IOException {
-		return runtimeURIEntries.get(uriID).namespaceURI;
-	}
-
 	public int decodeUri(DecoderChannel channel) throws IOException {
 		int numberBitsUri = MethodsBag
 				.getCodingLength(runtimeURIEntries.size() + 1); // numberEntries+1
@@ -423,22 +413,22 @@ public class QNameDatatype extends AbstractDatatype {
 		return uriID;
 	}
 
-	public QName decodeQName(DecoderChannel channel) throws IOException {
+	public EnhancedQName decodeQName(DecoderChannel channel) throws IOException {
 		// decode uri & local-name
 		return decodeLocalName(decodeUri(channel), channel);
 	}
 
-	public QName decodeLocalName(String uri, DecoderChannel channel)
+	public EnhancedQName decodeLocalName(String uri, DecoderChannel channel)
 			throws IOException {
 		return decodeLocalName(requireUriID(uri), channel);
 	}
 
-	public QName decodeLocalName(int uriID, DecoderChannel channel)
+	public EnhancedQName decodeLocalName(int uriID, DecoderChannel channel)
 			throws IOException {
 
 		int length = channel.decodeUnsignedInteger();
 
-		QName qname;
+		EnhancedQName eqname;
 		if (length > 0) {
 			// string value was not found in local partition
 			// ==> string literal is encoded as a String
@@ -446,7 +436,7 @@ public class QNameDatatype extends AbstractDatatype {
 			String localName = new String(channel.decodeStringOnly(length - 1));
 			// After encoding the string value, it is added to the string table
 			// partition and assigned the next available compact identifier.
-			qname = addLocalName(localName, uriID);
+			eqname = addLocalName(localName, uriID);
 		} else {
 			// string value found in local partition
 			// ==> string value is represented as zero (0) encoded as an
@@ -457,26 +447,23 @@ public class QNameDatatype extends AbstractDatatype {
 			// partition
 			int n = MethodsBag.getCodingLength(getLocalNameSize(uriID));
 			int localNameID = channel.decodeNBitUnsignedInteger(n);
-			// qname = uriContext.getNameContext(localNameID);
-			qname = getLocalName(uriID, localNameID);
+			eqname = this.getEnhancedQName(uriID, localNameID);
 		}
 
-		return qname;
+		return eqname;
 	}
 
-	public String decodeQNamePrefix(String uri, DecoderChannel channel)
-			throws IOException {
-		if (preservePrefix) {
-			return decodeQNamePrefix(requireUriID(uri), channel);
-		} else {
-			return null;
-		}
+	public String getQNameAsString(EnhancedQName eqname, String prefix) {
+		RuntimeURIEntry rue = this.runtimeURIEntries.get(eqname
+				.getNamespaceUriID());
+		return rue.getQNameAsString(eqname, prefix);
 	}
 
-	protected String decodeQNamePrefix(int uriID, DecoderChannel channel)
+	public String decodeQNamePrefix(int uriID, DecoderChannel channel)
 			throws IOException {
-		// if (preservePrefix) {
+
 		String prefix = null;
+
 		if (uriID == 0) {
 			// XMLConstants.DEFAULT_NS_PREFIX
 			prefix = XMLConstants.NULL_NS_URI;
@@ -497,10 +484,8 @@ public class QNameDatatype extends AbstractDatatype {
 				// afterwards
 			}
 		}
+
 		return prefix;
-		// } else {
-		// return null;
-		// }
 	}
 
 	public String decodeNamespacePrefix(int uriID, DecoderChannel channel)
@@ -528,14 +513,14 @@ public class QNameDatatype extends AbstractDatatype {
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
-		qname = decodeQName(valueChannel);
+		EnhancedQName eqname = decodeQName(valueChannel);
 		String prefix;
 		if (preservePrefix) {
-			prefix = decodeQNamePrefix(qname.getNamespaceURI(), valueChannel);
+			prefix = decodeQNamePrefix(eqname.getNamespaceUriID(), valueChannel);
 		} else {
 			prefix = null;
 		}
 
-		return new QNameValue(qname, prefix);
+		return new QNameValue(eqname.getQName(), prefix);
 	}
 }

@@ -46,6 +46,9 @@ import com.siemens.ct.exi.values.StringValue;
  */
 
 public class SAXEncoder extends DefaultHandler2 {
+	protected EXIFactory factory;
+	
+	protected EXIStreamEncoder exiStream;
 	protected EXIBodyEncoder encoder;
 
 	// buffers the characters of the characters() callback
@@ -54,36 +57,29 @@ public class SAXEncoder extends DefaultHandler2 {
 	// attributes
 	protected AttributeList exiAttributes;
 
-//	// prefix mappings
-//	protected List<PrefixMapping> prefixMappings;
-
-	public SAXEncoder(EXIFactory factory, OutputStream os) throws EXIException {
-		try {
-			// initialize char buffer
-			sbChars = new StringBuilder();
-
-//			// prefix to NS mappings
-//			prefixMappings = new ArrayList<PrefixMapping>();
-
-			// attribute list
-			AttributeFactory attFactory = AttributeFactory.newInstance();
-			exiAttributes = attFactory.createAttributeListInstance(factory);
-
-			// exi stream
-			EXIStreamEncoder exiStream = new EXIStreamEncoder();
-			
-			// buffer stream if not already
-			// TODO is there a *nice* way to detect whether a stream is buffered
-			if (!(os instanceof BufferedOutputStream)) {
-				os = new BufferedOutputStream(os);
-			}
-			
-			// write header & get body encoder
-			this.encoder = exiStream.encodeHeader(factory, os);
-			
-		} catch (IOException e) {
-			throw new EXIException(e);
+	public SAXEncoder(EXIFactory factory) throws EXIException {
+		this.factory = factory;
+		
+		// exi stream
+		exiStream = new EXIStreamEncoder(factory);
+		
+		// initialize char buffer
+		sbChars = new StringBuilder();
+		
+		// attribute list
+		AttributeFactory attFactory = AttributeFactory.newInstance();
+		exiAttributes = attFactory.createAttributeListInstance(factory);
+	}
+	
+	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered
+		if (!(os instanceof BufferedOutputStream)) {
+			os = new BufferedOutputStream(os);
 		}
+		
+		// write header & get body encoder
+		this.encoder = exiStream.encodeHeader(os);
 	}
 
 	/*
@@ -175,12 +171,10 @@ public class SAXEncoder extends DefaultHandler2 {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		sbChars.append(ch, start, length);
-		// new String(ch, start, length);
 	}
 
 	protected void checkPendingChars() throws EXIException, IOException {
 		if (sbChars.length() > 0) {
-			// encoder.encodeCharacters(sbChars.toString());
 			encoder.encodeCharacters(new StringValue(sbChars.toString()));
 			sbChars.setLength(0);
 		}

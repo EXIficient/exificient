@@ -18,13 +18,11 @@
 
 package com.siemens.ct.exi.helpers;
 
-import java.io.OutputStream;
 import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
 import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DefaultHandler2;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
@@ -91,9 +89,6 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected QName[] scElements;
 
-	// /* default: false */
-	// protected boolean exiBodyOnly = false;
-
 	/* default: 1,000,000 */
 	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 
@@ -144,13 +139,14 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (profileName == null) {
 			// un-set profile
 			this.profile = profileName;
-		} else if (UCD_PROFILE.equals(profileName)) {
-			this.profile = profileName;
-			// what does the profile define
-			// 1. valuePartitionCapacity == 0
-			this.setValuePartitionCapacity(0);
-			// 2. no built-in grammars --> no learning
-			// 3. no EXI Options in header
+			// TODO profile(s)
+//		} else if (UCD_PROFILE.equals(profileName)) {
+//			this.profile = profileName;
+//			// what does the profile define
+//			// 1. valuePartitionCapacity == 0
+//			this.setValuePartitionCapacity(0);
+//			// 2. no built-in grammars --> no learning
+//			// 3. no EXI Options in header
 		} else {
 			throw new UnsupportedOption("Profile '" + profileName
 					+ "' unknown.");
@@ -236,14 +232,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		return this.codingMode;
 	}
 
-	// public void setEXIBodyOnly(boolean exiBodyOnly) {
-	// this.exiBodyOnly = exiBodyOnly;
-	// }
-	//
-	// public boolean isEXIBodyOnly() {
-	// return exiBodyOnly;
-	// }
-
 	public void setBlockSize(int blockSize) {
 		if (blockSize < 0) {
 			throw new RuntimeException(
@@ -282,32 +270,32 @@ public class DefaultEXIFactory implements EXIFactory {
 					"(Pre-)Compression and selfContained elements cannot work together");
 		}
 
-		// ultra-constrained device profile
-		if (UCD_PROFILE.equals(profile)) {
-			if (valuePartitionCapacity != 0) {
-				throw new EXIException(
-						"Ultra-constrained device profile does not permit any string table entries");
-			}
-
-			if (getEncodingOptions().isOptionEnabled(
-					EncodingOptions.INCLUDE_OPTIONS)) {
-				throw new EXIException(
-						"Ultra-constrained device profile does not permit including Options document in EXI header");
-			}
-
-			if (getFidelityOptions().isFidelityEnabled(
-					FidelityOptions.FEATURE_PREFIX)) {
-				throw new EXIException(
-						"Ultra-constrained device profile does not permit preserving preifxes");
-			}
-
-			if (getCodingMode() == CodingMode.PRE_COMPRESSION
-					&& getCodingMode() == CodingMode.COMPRESSION) {
-				throw new EXIException(
-						"Ultra-constrained device profile does not support (Pre-)Compression");
-			}
-
-		}
+//		// ultra-constrained device profile
+//		if (UCD_PROFILE.equals(profile)) {
+//			if (valuePartitionCapacity != 0) {
+//				throw new EXIException(
+//						"Ultra-constrained device profile does not permit any string table entries");
+//			}
+//
+//			if (getEncodingOptions().isOptionEnabled(
+//					EncodingOptions.INCLUDE_OPTIONS)) {
+//				throw new EXIException(
+//						"Ultra-constrained device profile does not permit including Options document in EXI header");
+//			}
+//
+//			if (getFidelityOptions().isFidelityEnabled(
+//					FidelityOptions.FEATURE_PREFIX)) {
+//				throw new EXIException(
+//						"Ultra-constrained device profile does not permit preserving preifxes");
+//			}
+//
+//			if (getCodingMode() == CodingMode.PRE_COMPRESSION
+//					&& getCodingMode() == CodingMode.COMPRESSION) {
+//				throw new EXIException(
+//						"Ultra-constrained device profile does not support (Pre-)Compression");
+//			}
+//
+//		}
 
 		// blockSize in NON compression mode? Just ignore it!
 	}
@@ -382,7 +370,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException {
+	public SAXEncoder createEXIWriter() throws EXIException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
@@ -390,9 +378,9 @@ public class DefaultEXIFactory implements EXIFactory {
 						.isFidelityEnabled(FidelityOptions.FEATURE_PI)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return new SAXEncoderExtendedHandler(this, os);
+			return new SAXEncoderExtendedHandler(this);
 		} else {
-			return new SAXEncoder(this, os);
+			return new SAXEncoder(this);
 		}
 	}
 
@@ -508,7 +496,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		// shallow copy
 		copy.setCodingMode(codingMode);
 		copy.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		// copy.setEXIBodyOnly(exiBodyOnly);
 		copy.setFidelityOptions(fidelityOptions);
 		copy.setFragment(isFragment);
 		copy.setGrammar(grammar);
@@ -525,10 +512,6 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (!fidelityOptions.equals(other.getFidelityOptions())) {
 				return false;
 			}
-			// // header options
-			// if(!headerOptions.equals(other.getHeaderOptions())) {
-			// return false;
-			// }
 			// fragment
 			if (isFragment != other.isFragment()) {
 				return false;

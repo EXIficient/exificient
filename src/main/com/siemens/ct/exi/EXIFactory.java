@@ -19,13 +19,12 @@
 package com.siemens.ct.exi;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
 
 import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DefaultHandler2;
 
+import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -44,8 +43,8 @@ import com.siemens.ct.exi.types.TypeEncoder;
 
 public interface EXIFactory extends Cloneable {
 
-	/** Ultra-constrained device profile */
-	public static final String UCD_PROFILE = "UCD";
+//	/** Ultra-constrained device profile */
+//	public static final String UCD_PROFILE = "UCD";
 	
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
@@ -304,14 +303,16 @@ public interface EXIFactory extends Cloneable {
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException;
 
 	/**
-	 * Returns an <code>DefaultHandler2</code>
+	 * Returns a <code>SAXEncoder</code> that implements <code>DefaultHandler2</code>
+	 * 
+	 * <p>Note that the output stream MUST be set.</p>
 	 * 
 	 * @return writer using the previously set coding options.
 	 * @throws EXIException
 	 * @throws IOException
 	 * 
 	 */
-	public DefaultHandler2 createEXIWriter(OutputStream os) throws EXIException;
+	public SAXEncoder createEXIWriter() throws EXIException;
 
 	/**
 	 * Returns an <code>EXIBodyDecoder</code>

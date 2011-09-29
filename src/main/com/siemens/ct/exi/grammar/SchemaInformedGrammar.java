@@ -50,12 +50,9 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 	private static final long serialVersionUID = 7647530843802602241L;
 
 	protected Map<QName, StartElement> globalElements;
-
 	protected Map<QName, Attribute> globalAttributes;
 
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
-
-	// protected Collection<StartElement> elements;
 
 	/* (direct) simple sub-types for given qname */
 	protected Map<QName, List<QName>> subtypes;
@@ -64,8 +61,6 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 
 	protected String schemaId;
 
-	// public @version 0.7(GrammarURIEntry[] grammarEntries, Document document,
-	// Fragment fragment, Collection<StartElement> elements) {
 	public SchemaInformedGrammar(GrammarURIEntry[] grammarEntries,
 			Document document, Fragment fragment) {
 		super(true);
@@ -76,8 +71,6 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 		// set document & fragment grammar
 		documentGrammar = document;
 		fragmentGrammar = fragment;
-
-		// this.elements = elements;
 	}
 
 	public void setBuiltInXMLSchemaTypesOnly(boolean builtInXMLSchemaTypesOnly) {
@@ -96,10 +89,6 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 	public boolean isBuiltInXMLSchemaTypesOnly() {
 		return builtInXMLSchemaTypesOnly;
 	}
-
-	// public Collection<StartElement> getElements() {
-	// return this.elements;
-	// }
 
 	public void setGlobalElements(Map<QName, StartElement> globalElements) {
 		assert (globalElements != null);

@@ -6,20 +6,20 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerConfigurationException;
+
+import com.siemens.ct.exi.exceptions.EXIException;
 
 public class TestSAXDecoderN extends TestSAXDecoder {
 
-	public TestSAXDecoderN() {
-		super();
+	public TestSAXDecoderN(EXIFactory ef) throws TransformerConfigurationException, EXIException {
+		super(ef);
 	}
 	
-	protected void test(String exiLocation, String decodedXMLLocation, EXIFactory ef ) throws Exception {
+	protected void test(String exiLocation, String decodedXMLLocation) throws Exception {
 
-		// create test-decoder
-		TestSAXDecoderN testDecoderN = new TestSAXDecoderN();
+//		// create test-decoder
+//		TestSAXDecoderN testDecoderN = new TestSAXDecoderN(ef);
 		
 //		ef.setEXIBodyEncoder("com.siemens.ct.exi.gen.EXIBodyEncoderGen");
 //		ef.setEXIBodyDecoder("com.siemens.ct.exi.gen.EXIBodyDecoderGen");
@@ -32,14 +32,15 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 
 		long startTime = System.currentTimeMillis();
 		
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer = tf.newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-		"yes");
+//		TransformerFactory tf = TransformerFactory.newInstance();
+//		Transformer transformer = tf.newTransformer();
+//		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+//		"yes");
 
 		// decode EXI to XML
+//		testDecoderN.setupEXIReader(ef);
 		for (int i = 0; i < TestSAXEncoderN.N_RUNS; i++) {
-			testDecoderN.decodeTo(ef, exiDocument, xmlOutput, transformer);
+			decodeTo(exiDocument, xmlOutput); // , transformer);
 		}
 
 		System.out.println("[DEC-SAX] "
@@ -57,12 +58,12 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 		String decodedXMLLocation = exiLocation + ".xml";
 		
 		// create test-decoder
-		TestSAXDecoderN testDecoderN = new TestSAXDecoderN();
+		TestSAXDecoderN testDecoderN = new TestSAXDecoderN(TestSAXDecoderN.getQuickTestEXIactory());
 		
 		// get factory
-		EXIFactory ef = testDecoderN.getQuickTestEXIactory();
+//		EXIFactory ef = testDecoderN.getQuickTestEXIactory();
 		
-		testDecoderN.test(exiLocation, decodedXMLLocation, ef);
+		testDecoderN.test(exiLocation, decodedXMLLocation);
 	}
 
 }

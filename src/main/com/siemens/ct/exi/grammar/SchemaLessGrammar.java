@@ -53,15 +53,15 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		grammarEntries = new GrammarURIEntry[3];
 
 		// "", empty string
-		grammarEntries[0] = new GrammarURIEntry(Constants.EMPTY_STRING,
+		grammarEntries[0] = new GrammarURIEntry(0, Constants.EMPTY_STRING,
 				Constants.LOCAL_NAMES_EMPTY, Constants.PREFIXES_EMPTY);
 
 		// "http://www.w3.org/XML/1998/namespace"
-		grammarEntries[1] = new GrammarURIEntry(XMLConstants.XML_NS_URI,
+		grammarEntries[1] = new GrammarURIEntry(1, XMLConstants.XML_NS_URI,
 				Constants.LOCAL_NAMES_XML, Constants.PREFIXES_XML);
 
 		// "http://www.w3.org/2001/XMLSchema-instance", xsi
-		grammarEntries[2] = new GrammarURIEntry(
+		grammarEntries[2] = new GrammarURIEntry(2, 
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 				Constants.LOCAL_NAMES_XSI, Constants.PREFIXES_XSI);
 		;

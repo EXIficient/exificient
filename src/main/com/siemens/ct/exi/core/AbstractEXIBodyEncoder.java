@@ -27,6 +27,7 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
@@ -111,9 +112,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		channel.encodeString(text);
 	}
 
-	// protected boolean isTypeValid(Datatype datatype, String value) {
-	// return typeEncoder.isValid(datatype, value);
-	// }
 	protected boolean isTypeValid(Datatype datatype, Value value) {
 		return typeEncoder.isValid(datatype, value);
 	}
@@ -220,12 +218,12 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 			// encode local-name (and prefix)
-			QName qname = qnameDatatype.encodeLocalName(localName, uri, prefix,
-					channel);
+			EnhancedQName eqname = qnameDatatype.encodeLocalName(localName, uri, prefix, channel);
+			qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 			// next rule at the top
 			nextTopRule = ei.next;
 			// next SE ...
-			nextSE = getGenericStartElement(qname);
+			nextSE = getGenericStartElement(eqname);
 		} else {
 			// try SE(*), generic SE on first level
 			if ((ei = currentRule.lookForEvent(EventType.START_ELEMENT_GENERIC)) != null) {
@@ -254,10 +252,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 
 			// encode entire qualified name
-			QName qname = qnameDatatype.encodeQName(uri, localName, prefix,
-					channel);
+			EnhancedQName eqname = qnameDatatype.encodeQName(uri, localName, channel);
+			qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
+			
 			// next SE ...
-			nextSE = getGenericStartElement(qname);
+			nextSE = getGenericStartElement(eqname);
 
 			// learning for built-in grammar,
 			currentRule.learnStartElement(nextSE);
@@ -290,7 +289,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	}
 
 	public void encodeEndElement() throws EXIException, IOException {
-		// int ec = currentRule.get1stLevelEventCode(eventEE);
 		EventInformation ei = currentRule.lookForEvent(EventType.END_ELEMENT);
 
 		if (ei != null) {
@@ -322,13 +320,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				}
 			}
 
-			// if (currentRule.lookForEvent(EventType.CHARACTERS) != null) {
-			// // encode empty characters first
-			// this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
-			// // try the EE event once again
-			// ei = currentRule.lookForEvent(EventType.END_ELEMENT);
-			// }
-			//
 			if (ei != null) {
 				// encode EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -350,8 +341,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		}
 
-		// // NS
-		// undeclarePrefixes();
 		// pop element from stack
 		popElement();
 	}
@@ -395,9 +384,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throw new EXIException("[EXI] xsi:type='" + type
 					+ "' not encodable");
 		}
-		// typeEncoder.isValid(qnameDatatype, raw);
-		// boolean valid = typeEncoder.isValid(qnameDatatype, raw);
-		// System.out.println("Valid " + raw + ": " + valid);
 
 		QName xsiQName = qnameDatatype.getQName();
 		SchemaInformedFirstStartTagRule tg = grammar.getTypeGrammar(xsiQName);
@@ -450,7 +436,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 							fidelityOptions);
 					if (ec2 != Constants.NOT_FOUND) {
 						encode2ndLevelEventCode(ec2);
-						currentRule.learnAttribute(new Attribute(XSI_TYPE));
+						currentRule.learnAttribute(new Attribute(XSI_TYPE_ENHANCED));
 					} else {
 						throw new EXIException("TypeCast " + type
 								+ " not encodable!");
@@ -459,7 +445,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				// xsi:type as qname
 				qnameDatatype.encodeQName(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_TYPE, pfx, channel);
+						Constants.XSI_TYPE, channel);
+				qnameDatatype.encodeQNamePrefix(pfx, XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
 			}
 		}
 
@@ -485,7 +472,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		if (currentRule.isSchemaInformed()) {
 			SchemaInformedRule siCurrentRule = (SchemaInformedRule) currentRule;
 
-			// if (typeEncoder.isValid(booleanDatatype, nil)) {
 			if (booleanDatatype.isValid(nil)) {
 
 				// Note: in some cases we can simply skip the xsi:nil event
@@ -509,7 +495,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 							channel);
 
 					// encode nil value "content" as Boolean
-					// typeEncoder.writeValue(XSI_NIL, channel);
 					if (preserveLexicalValues) {
 						// as string
 						typeEncoder.isValid(booleanDatatype, nil);
@@ -532,10 +517,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						// qname & prefix
 						qnameDatatype.encodeQName(
 								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-								Constants.XSI_NIL, pfx, channel);
-
+								Constants.XSI_NIL, channel);
+						qnameDatatype.encodeQNamePrefix(pfx, XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
 						// encode nil value "content" as Boolean
-						// typeEncoder.writeValue(XSI_NIL, channel);
 						if (preserveLexicalValues) {
 							// as string
 							typeEncoder.isValid(booleanDatatype, nil);
@@ -563,7 +547,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						.getNumberOfDeclaredAttributes());
 				qnameDatatype.encodeQName(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						Constants.XSI_NIL, pfx, channel);
+						Constants.XSI_NIL, channel);
+				qnameDatatype.encodeQNamePrefix(pfx, XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
 				Datatype datatype = BuiltIn.DEFAULT_DATATYPE;
 				// isTypeValid(datatype, value);
 				isTypeValid(datatype, nil);
@@ -601,13 +586,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			String prefix, Value value) throws EXIException, IOException {
 		EventInformation ei;
 		Datatype datatype;
-		QName atContext;
+		EnhancedQName atContext;
 		Rule next;
 
 		if ((ei = currentRule.lookForAttribute(uri, localName)) != null) {
 			// declared AT(uri:localName)
 			Attribute at = (Attribute) (ei.event);
-			atContext = at.getQName();
+			atContext = at.getEnhancedQName();
 			datatype = at.getDatatype();
 			next = ei.next;
 			if (isTypeValid(datatype, value)) {
@@ -625,14 +610,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		} else if ((ei = currentRule.lookForAttributeNS(uri)) != null
 				|| (ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC)) != null) {
 			// declared AT(uri:*) OR declared AT(*)
-			atContext = new QName(uri, localName);
-			// next = ei.next;
+			atContext = qnameDatatype.getEnhancedQName(uri, localName);
 			next = currentRule;
 			/*
 			 * If a global attribute definition exists for qname, let
 			 * global-type be the datatype of the global attribute.
 			 */
-			Attribute globalAT = grammar.getGlobalAttribute(atContext);
+			Attribute globalAT = atContext == null ? null : grammar.getGlobalAttribute(atContext.getQName());
 			if (globalAT != null) {
 				datatype = globalAT.getDatatype();
 				if (isTypeValid(datatype, value)) {
@@ -667,12 +651,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 			// qname
 			if (ei.event.isEventType(EventType.ATTRIBUTE_GENERIC)) {
-				qnameDatatype.encodeQName(uri, localName, prefix, channel);
+				atContext = qnameDatatype.encodeQName(uri, localName, channel);
 			} else {
 				assert (ei.event.isEventType(EventType.ATTRIBUTE_NS));
-				qnameDatatype.encodeLocalName(localName, uri, prefix, channel);
+				atContext = qnameDatatype.encodeLocalName(localName, uri, prefix, channel);
 			}
-
+			// prefix
+			qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 		} else {
 			// Undeclared AT(*) can be found on 2nd level
 			next = currentRule;
@@ -687,10 +672,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 			assert (ecATundeclared != Constants.NOT_FOUND);
 
+			atContext = qnameDatatype.getEnhancedQName(uri, localName);
 			Attribute globalAT;
-			if (currentRule.isSchemaInformed()
-					&& (globalAT = grammar.getGlobalAttribute(new QName(uri,
-							localName))) != null) {
+			if (currentRule.isSchemaInformed() && atContext != null &&(globalAT = grammar.getGlobalAttribute(atContext.getQName())) != null) {
 				datatype = globalAT.getDatatype();
 				if (isTypeValid(datatype, value)) {
 					/*
@@ -714,16 +698,17 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					datatype = BuiltIn.DEFAULT_DATATYPE;
 					isTypeValid(datatype, value);
 				}
-				atContext = qnameDatatype.encodeQName(uri, localName, prefix,
-						channel);
+				atContext = qnameDatatype.encodeQName(uri, localName, channel);
+				qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
 			} else {
 				// schema-less
 				// encode event-code
 				encode2ndLevelEventCode(ecATundeclared);
 				// encode unexpected attribute & learn attribute event ?
-				atContext = qnameDatatype.encodeQName(uri, localName, prefix,
-						channel);
-				currentRule.learnAttribute(new Attribute(atContext));
+				atContext = qnameDatatype.encodeQName(uri, localName, channel);
+				qnameDatatype.encodeQNamePrefix(prefix, uri, channel);
+				Attribute at = new Attribute(atContext);
+				currentRule.learnAttribute(at);
 				// datatype value
 				datatype = BuiltIn.DEFAULT_DATATYPE;
 				isTypeValid(datatype, value);
@@ -734,7 +719,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// the actual value is still missing
 		assert (datatype != null);
 		assert (atContext != null);
-		writeValue(atContext);
+		writeValue(atContext.getQName());
 
 		// update current rule
 		currentRule = next;
@@ -764,7 +749,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// --> encode EventCode, schema-valid content plus grammar moves
 			// on
 			encode1stLevelEventCode(ei.getEventCode());
-			writeValue(elementContext.qname);
+			writeValue(elementContext.eqname.getQName());
 			// update current rule
 			currentRule = ei.next;
 		} else {
@@ -776,7 +761,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				encode1stLevelEventCode(ei.getEventCode());
 				// encode schema-invalid content as string
 				isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
-				writeValue(elementContext.qname);
+				writeValue(elementContext.eqname.getQName());
 				// update current rule
 				currentRule = ei.next;
 			} else {
@@ -804,86 +789,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					currentRule.learnCharacters();
 					// content as string
 					isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
-					writeValue(elementContext.qname);
+					writeValue(elementContext.eqname.getQName());
 					// update current rule
 					currentRule = currentRule.getElementContentRule();
 				}
 			}
 		}
 	}
-
-	// public void encodeCharacters(String chars) throws EXIException,
-	// IOException {
-	// // Don't we want to prune insignificant whitespace characters
-	// if (!fidelityOptions
-	// .isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-	// chars = chars.trim();
-	// if (chars.length() == 0) {
-	// return;
-	// }
-	// }
-	//
-	// encodeCharactersForce(chars);
-	// }
-
-	// // use this method if you want the characters to be encoded in any case
-	// // (e.g., also whitespace chars)
-	// protected final void encodeCharactersForce(String chars)
-	// throws EXIException, IOException {
-	//
-	// EventInformation ei = currentRule.lookForEvent(EventType.CHARACTERS);
-	//
-	// // valid value and valid event-code ?
-	// if (ei != null
-	// && isTypeValid(((DatatypeEvent) ei.event).getDatatype(), chars)) {
-	// // right characters event found & data type-valid
-	// // --> encode EventCode, schema-valid content plus grammar moves
-	// // on
-	// encode1stLevelEventCode(ei.getEventCode());
-	// writeValue(elementContext.qname);
-	// // update current rule
-	// currentRule = ei.next;
-	// } else {
-	// // generic CH (on first level)
-	// ei = currentRule.lookForEvent(EventType.CHARACTERS_GENERIC);
-	//
-	// if (ei != null) {
-	// // encode EventCode
-	// encode1stLevelEventCode(ei.getEventCode());
-	// // encode schema-invalid content as string
-	// isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
-	// writeValue(elementContext.qname);
-	// // update current rule
-	// currentRule = ei.next;
-	// } else {
-	// // Undeclared CH can be found on 2nd level
-	// int ecCHundeclared = currentRule.get2ndLevelEventCode(
-	// EventType.CHARACTERS_GENERIC_UNDECLARED,
-	// fidelityOptions);
-	//
-	// if (ecCHundeclared == Constants.NOT_FOUND) {
-	// if (exiFactory.isFragment()) {
-	// // characters in "outer" fragment element
-	// throwWarning("Skip CH: '" + chars + "'");
-	// } else {
-	// assert (fidelityOptions.isStrict());
-	// throw new EXIException("Characters '" + chars
-	// + "' cannot be encoded!");
-	// }
-	// } else {
-	// // encode [undeclared] event-code
-	// encode2ndLevelEventCode(ecCHundeclared);
-	// // learn characters event ?
-	// currentRule.learnCharacters();
-	// // content as string
-	// isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
-	// writeValue(elementContext.qname);
-	// // update current rule
-	// currentRule = currentRule.getElementContentRule();
-	// }
-	// }
-	// }
-	// }
 
 	public void encodeDocType(String name, String publicID, String systemID,
 			String text) throws EXIException, IOException {

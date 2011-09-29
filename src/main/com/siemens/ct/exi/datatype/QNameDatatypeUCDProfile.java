@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.core.AbstractEXIBodyCoder;
 import com.siemens.ct.exi.core.RuntimeURIEntry;
 import com.siemens.ct.exi.grammar.GrammarURIEntry;
@@ -53,43 +53,47 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 		// no "real" addition, we just have one fall-in URI
 		int uriID = grammarURIEntries.length;
 		if (runtimeURIEntries.size() == grammarURIEntries.length) {
-			runtimeURIEntries.add(new RuntimeURIEntry(namespaceURI, uriID));
+			runtimeURIEntries.add(new RuntimeURIEntry(namespaceURI, uriID, preservePrefix));
 		} else {
 			// replace old entry
 			runtimeURIEntries.set(uriID, new RuntimeURIEntry(namespaceURI,
-					uriID));
+					uriID, preservePrefix));
 		}
 		// lastAddedURI = namespaceURI;
 		return uriID;
 	}
 
 	@Override
-	protected int getLocalNameID(String localName, int uriID) {
+	public EnhancedQName getEnhancedQName(String localName, int uriID) {
 		// grammar entries
 		if (uriID < grammarURIEntries.length) {
 			GrammarURIEntry gue = grammarURIEntries[uriID];
 			// binary search given that localName grammar entries are sorted
-			int bs = Arrays.binarySearch(gue.localNames, localName);
-			if (bs >= 0) {
-				return bs;
+			int localNameID = Arrays.binarySearch(gue.localNames, localName);
+			if (localNameID >= 0) {
+				// return localNameID;
+				return grammarURIEntries[uriID].eQNames[localNameID];
 			}
 		}
 
 		// no appropriate local-name ID found
-		return Constants.NOT_FOUND;
+		// return Constants.NOT_FOUND;
+		return null;
 	}
 
 	@Override
-	protected QName addLocalName(final String localName, int uriID) {
+	protected EnhancedQName addLocalName(final String localName, int uriID) {
 		// no "real" addition
-		if (uriID < grammarURIEntries.length) {
-			// grammar entries
-			return new QName(grammarURIEntries[uriID].namespaceURI, localName);
-		} else {
-			return new QName(
-					runtimeURIEntries.get(grammarURIEntries.length).namespaceURI,
-					localName);
-		}
+//		if (uriID < grammarURIEntries.length) {
+//			// grammar entries
+//			return new QName(grammarURIEntries[uriID].namespaceURI, localName);
+//		} else {
+//			return new QName(
+//					runtimeURIEntries.get(grammarURIEntries.length).namespaceURI,
+//					localName);
+//		}
+//		return -1;
+		return null;
 		// return runtimeURIEntries.get(uriID).addLocalName(localName);
 	}
 

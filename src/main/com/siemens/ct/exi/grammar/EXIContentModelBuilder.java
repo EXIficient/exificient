@@ -299,6 +299,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 	}
 
+	abstract protected StartElementNS createStartElementNS(String uri);
+	
 	abstract protected StartElement translatElementDeclarationToFSA(
 			XSElementDeclaration xsElementDeclaration) throws EXIException;
 
@@ -419,7 +421,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					for (int i = 0; i < sl.getLength(); i++) {
 						String namespaceURI = sl.item(i);
 						addNamespaceStringEntry(namespaceURI);
-						Event xsEvent = new StartElementNS(namespaceURI);
+						// Event xsEvent = new StartElementNS(namespaceURI);
+						Event xsEvent = createStartElementNS(namespaceURI);
 						boolean isNewState = handleStateEntry(startState,
 								knownStates, xsEvent, nextState, isMixedContent);
 						if (isNewState) {
@@ -491,8 +494,6 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			for (int i = 0; i < listSG.getLength(); i++) {
 				XSElementDeclaration ed = (XSElementDeclaration) listSG.item(i);
 				listElements.add(ed);
-				// listElements.add(new ExpandedName(ed.getNamespace(),
-				// ed.getName()));
 			}
 		}
 

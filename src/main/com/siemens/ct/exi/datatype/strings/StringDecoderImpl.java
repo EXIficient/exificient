@@ -51,9 +51,6 @@ public class StringDecoderImpl implements StringDecoder {
 		localValues = new HashMap<QName, List<StringValue>>();
 	}
 
-	// private static final StringValue EMPTY_STRING_VALUE = new
-	// StringValue("");
-
 	public StringValue readValue(QName context, DecoderChannel valueChannel)
 			throws IOException {
 		StringValue value;
@@ -85,7 +82,6 @@ public class StringDecoderImpl implements StringDecoder {
 				// value string table partition.
 				addValue(context, value);
 			} else {
-				// value = EMPTY_STRING_VALUE;
 				value = StringCoder.EMPTY_STRING_VALUE;
 			}
 			break;
@@ -117,7 +113,6 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
 		// local
-		// updateLocalValues(context, value);
 		List<StringValue> lvs = localValues.get(context);
 		if (lvs == null) {
 			lvs = new ArrayList<StringValue>();
@@ -126,16 +121,6 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!lvs.contains(value));
 		lvs.add(value);
 	}
-
-	// protected void updateLocalValues(QName context, Value value) {
-	// List<Value> lvs = localValues.get(context);
-	// if (lvs == null) {
-	// lvs = new ArrayList<Value>();
-	// localValues.put(context, lvs);
-	// }
-	// assert (!lvs.contains(value));
-	// lvs.add(value);
-	// }
 
 	public void clear() {
 		globalValues.clear();

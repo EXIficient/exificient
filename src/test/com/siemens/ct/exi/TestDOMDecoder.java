@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -38,13 +39,26 @@ import com.siemens.ct.exi.api.dom.DOMBuilder;
 
 public class TestDOMDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
+	protected boolean isFragment;
+	protected DOMBuilder domBuilder;
 
-	public TestDOMDecoder() {
+	public TestDOMDecoder(EXIFactory ef) throws ParserConfigurationException {
 		super();
 
 		tf = TransformerFactory.newInstance();
+		
+		domBuilder = new DOMBuilder(ef);
+		isFragment = ef.isFragment();
 	}
 
+
+//	@Override
+//	public void setupEXIReader(EXIFactory ef) throws Exception {
+//		domBuilder = new DOMBuilder(ef);
+//		isFragment = ef.isFragment();
+//	}
+
+	
 	public static void nodeToWriter(Node n, Writer writer)
 			throws TransformerException {
 		// set up a transformer
@@ -78,19 +92,19 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		DOMSource source = new DOMSource(n);
 		trans.transform(source, result);
 	}
+	
 
-	public void decodeTo(EXIFactory ef, InputStream exiDocument,
+
+	@Override
+	public void decodeTo(InputStream exiDocument,
 			OutputStream xmlOutput) throws Exception {
-		
 		// decode to DOM
-		DOMBuilder domBuilder = new DOMBuilder(ef);
 		Node doc;
-		if (ef.isFragment()) {
+		if (isFragment) {
 			doc = domBuilder.parseFragment(exiDocument);
 		} else {
 			doc = domBuilder.parse(exiDocument);
 		}
-
 		// create string from xml tree
 		StringWriter sw = new StringWriter();
 		nodeToWriter(doc, sw);
@@ -102,10 +116,10 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 
 	public static void main(String[] args) throws Exception {
 		// create test-decoder
-		TestDOMDecoder testDecoder = new TestDOMDecoder();
+		TestDOMDecoder testDecoder = new TestDOMDecoder(TestDOMDecoder.getQuickTestEXIactory());
 
 		// get factory
-		EXIFactory ef = testDecoder.getQuickTestEXIactory();
+//		EXIFactory ef = testDecoder.getQuickTestEXIactory();
 
 		// exi document
 		InputStream exiDocument = new FileInputStream(QuickTestConfiguration
@@ -117,11 +131,14 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		OutputStream xmlOutput = new FileOutputStream(decodedXMLLocation);
 
 		// decode EXI to XML
-		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
+//		testDecoder.setupEXIReader(ef);
+		testDecoder.decodeTo(exiDocument, xmlOutput);
 
 		System.out.println("[DEC_DOM] "
 				+ QuickTestConfiguration.getExiLocation() + " --> "
 				+ decodedXMLLocation);
 	}
+
+
 
 }
