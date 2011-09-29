@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 
 import javax.xml.namespace.QName;
-import javax.xml.transform.sax.SAXResult;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.InputSource;
@@ -64,8 +63,9 @@ public class BoundedTableTestCase extends XMLTestCase {
 			{
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 
-				SAXResult saxResult = new EXIResult(os, factory);
-				xmlReader.setContentHandler(saxResult.getHandler());
+				EXIResult exiResult = new EXIResult(factory);
+				exiResult.setOutputStream(os);
+				xmlReader.setContentHandler(exiResult.getHandler());
 
 				xmlReader.parse(new InputSource(new StringReader(xml)));
 			}

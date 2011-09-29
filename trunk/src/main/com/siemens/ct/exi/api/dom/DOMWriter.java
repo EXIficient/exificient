@@ -68,7 +68,7 @@ public class DOMWriter {
 	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 
-		this.exiStream = new EXIStreamEncoder();
+		this.exiStream = new EXIStreamEncoder(factory);
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -85,7 +85,7 @@ public class DOMWriter {
 	}
 
 	public void setOutput(OutputStream os) throws EXIException, IOException {
-		exiBody = exiStream.encodeHeader(this.factory, os);
+		exiBody = exiStream.encodeHeader(os);
 	}
 
 	public void encode(Document doc) throws EXIException, IOException {

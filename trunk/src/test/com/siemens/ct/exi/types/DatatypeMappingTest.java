@@ -774,9 +774,10 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				+ "</xs:schema>";
 	
 		Grammar grammar = getGrammar(schemaAsString);
+		//GrammarURIEntry[] gues = grammar.getGrammarEntries();
 	
-		StartElement se = grammar.getGlobalElement(new QName("",
-				"myNonPositiveInteger"));
+		StartElement se = grammar.getGlobalElement(new QName("","myNonPositiveInteger"));
+		// StartElement se = grammar.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "myNonPositiveInteger"));
 	
 		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) se
 				.getRule();

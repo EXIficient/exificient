@@ -89,7 +89,7 @@ public class SAXDecoder implements XMLReader {
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		this.exiStream = new EXIStreamDecoder();
+		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
 		this.valueContentHandler = new ValueContentHandler();
 		attributes = new AttributesImpl();
 		// switch namespace prefixes to TRUE if the stream preserves prefixes
@@ -223,11 +223,12 @@ public class SAXDecoder implements XMLReader {
 
 			if (exiBodyOnly) {
 				// no EXI header
-				decoder = noOptionsFactory.createEXIBodyDecoder();
-				decoder.setInputStream(is);
+				decoder = exiStream.getBodyOnlyDecoder(is);
+				// decoder = noOptionsFactory.createEXIBodyDecoder();
+				// decoder.setInputStream(is);
 			} else {
 				// read header (default)
-				decoder = exiStream.decodeHeader(noOptionsFactory, is);
+				decoder = exiStream.decodeHeader(is);
 			}
 
 			// init

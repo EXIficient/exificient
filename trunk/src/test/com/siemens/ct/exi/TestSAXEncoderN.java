@@ -27,25 +27,30 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class TestSAXEncoderN extends TestSAXEncoder {
-	public static final int N_RUNS = 1000;
+import com.siemens.ct.exi.exceptions.EXIException;
 
-	public TestSAXEncoderN(OutputStream exiOutput) {
-		super(exiOutput);
+public class TestSAXEncoderN extends TestSAXEncoder {
+	public static final int N_RUNS = 1;
+
+	public TestSAXEncoderN(EXIFactory ef) throws EXIException {
+		super(ef);
 	}
 
-	protected void test(String xmlLocation, String exiLocation, EXIFactory ef)
+	protected void test(String xmlLocation, String exiLocation)
 			throws Exception {
 
 		long startTime = System.currentTimeMillis();
 
+		OutputStream exiOutput = new FileOutputStream(exiLocation);
+		
 		for (int i = 0; i < N_RUNS; i++) {
 
 			// XML input stream
 			InputStream xmlInput = new BufferedInputStream(new FileInputStream(
 					xmlLocation));
 
-			encodeTo(ef, xmlInput);
+			this.encodeTo(xmlInput, exiOutput);
+			// encodeTo(ef, xmlInput);
 		}
 		
 		exiOutput.flush();
@@ -76,11 +81,12 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 				+ N_RUNS;
 		
 		// create test-encoder
-		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(getOutputStream(exiLocation));
+		TestSAXEncoderN testEncoderN = new TestSAXEncoderN(TestSAXEncoderN.getQuickTestEXIactory());
 		
 		// get factory
-		EXIFactory ef = testEncoderN.getQuickTestEXIactory();
+//		EXIFactory ef = TestSAXEncoderN.getQuickTestEXIactory();
+//		testEncoderN.setupEXIWriter(ef);
 		
-		testEncoderN.test(xmlLocation, exiLocation, ef);
+		testEncoderN.test(xmlLocation, exiLocation);
 	}
 }

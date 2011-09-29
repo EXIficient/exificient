@@ -37,6 +37,7 @@ public class QuickTestConfiguration {
 	public static final boolean INCLUDE_OPTIONS = false;
 	public static final boolean INCLUDE_SCHEMA_ID = false;
 	public static final boolean RETAIN_ENTITY_REFERENCE = false;
+	public static final boolean INCLUDE_XSI_SCHEMALOCATION = false;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -87,8 +88,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
-		CODING_MODE = CodingMode.BYTE_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
 		// CODING_MODE = CodingMode.COMPRESSION;
 	}
@@ -96,16 +97,16 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
+		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
+		// fidelityOptions = FidelityOptions.createAll();
 //		try {
 //////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 // 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 //// 			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
 //////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+//			fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
 //		} catch (UnsupportedOption e) {
 //		}
 	}
@@ -121,7 +122,7 @@ public class QuickTestConfiguration {
 		// blockSize = 40;
 //		blockSize = 200;
 //		valueMaxLength = 0;
-//		valuePartitionCapacity = 0;
+//		valuePartitionCapacity = 4;
 //		dtrMapTypes = new QName[1];
 //		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 //		dtrMapRepresentations = new QName[1];

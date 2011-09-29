@@ -11,7 +11,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -283,9 +282,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		// encode
 		{
-			SAXResult saxResult = new EXIResult(baos, exiFactory);
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			xmlReader.setContentHandler(saxResult.getHandler());
+			xmlReader.setContentHandler(exiResult.getHandler());
 			xmlReader.parse(new InputSource(new ByteArrayInputStream(
 					xmlAsString.getBytes())));
 		}
@@ -361,9 +361,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 		try {
 			// encode
 			{
-				SAXResult saxResult = new EXIResult(baos, exiFactory);
+				EXIResult exiResult = new EXIResult(exiFactory);
+				exiResult.setOutputStream(baos);
 				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-				xmlReader.setContentHandler(saxResult.getHandler());
+				xmlReader.setContentHandler(exiResult.getHandler());
 				xmlReader.parse(new InputSource(new ByteArrayInputStream(
 						xmlAsString.getBytes())));
 			}
@@ -416,9 +417,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		// encode
 		{
-			SAXResult saxResult = new EXIResult(baos, exiFactory);
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			xmlReader.setContentHandler(saxResult.getHandler());
+			xmlReader.setContentHandler(exiResult.getHandler());
 			xmlReader.parse(new InputSource(new ByteArrayInputStream(
 					xmlAsString.getBytes())));
 		}

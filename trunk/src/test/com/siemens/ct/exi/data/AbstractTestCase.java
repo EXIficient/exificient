@@ -23,12 +23,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 
 import junit.framework.AssertionFailedError;
 
@@ -51,6 +51,7 @@ import com.siemens.ct.exi.TestSAXDecoder;
 import com.siemens.ct.exi.TestSAXEncoder;
 import com.siemens.ct.exi.TestStAXDecoder;
 import com.siemens.ct.exi.TestStAXEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.util.FragmentUtilities;
@@ -116,10 +117,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		String xmlLocation = QuickTestConfiguration.getXmlLocation();
 		InputStream xmlInput = new FileInputStream(xmlLocation);
 
-		AbstractTestEncoder testEncoder = getTestEncoder(api, exiEncodedOutput);
+		AbstractTestEncoder testEncoder = getTestEncoder(api, ef);
 
 		// --> encode
-		testEncoder.encodeTo(ef, xmlInput);
+		testEncoder.encodeTo(xmlInput, exiEncodedOutput);
 		exiEncodedOutput.flush();
 
 		// EXI input stream
@@ -169,9 +170,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 
 		// decode
-		AbstractTestDecoder testDecoder = getTestDecoder(api);
+		AbstractTestDecoder testDecoder = getTestDecoder(api, ef);
 		// AbstractTestDecoder testDecoder = getTestDecoder(API.SAX);
-		testDecoder.decodeTo(ef, exiDocument, xmlOutput);
+		testDecoder.decodeTo(exiDocument, xmlOutput);
 		xmlOutput.flush();
 
 		// check XML validity OR equal
@@ -203,25 +204,25 @@ public abstract class AbstractTestCase extends XMLTestCase {
 	}
 
 	protected AbstractTestEncoder getTestEncoder(API api,
-			OutputStream encodedOutput) {
+			EXIFactory ef) throws EXIException {
 		if (api == API.SAX) {
-			return new TestSAXEncoder(encodedOutput);
+			return new TestSAXEncoder(ef);
 		} else if (api == API.DOM) {
-			return new TestDOMEncoder(encodedOutput);
+			return new TestDOMEncoder(ef);
 		} else {
 			assert (api == API.StAX);
-			return new TestStAXEncoder(encodedOutput);
+			return new TestStAXEncoder(ef);
 		}
 	}
 
-	protected AbstractTestDecoder getTestDecoder(API api) {
+	protected AbstractTestDecoder getTestDecoder(API api, EXIFactory ef) throws TransformerConfigurationException, EXIException, ParserConfigurationException {
 		if (api == API.SAX) {
-			return new TestSAXDecoder();
+			return new TestSAXDecoder(ef);
 		} else if (api == API.DOM) {
-			return new TestDOMDecoder();
+			return new TestDOMDecoder(ef);
 		} else {
 			assert (api == API.StAX);
-			return new TestStAXDecoder();
+			return new TestStAXDecoder(ef);
 		}
 	}
 

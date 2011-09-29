@@ -43,6 +43,7 @@ public class EventCodeTest extends TestCase {
 
 		return grammar;
 	}
+	
 
 	// Sort all productions with G i, j on the left hand side in the following
 	// order:
@@ -76,9 +77,11 @@ public class EventCodeTest extends TestCase {
 				+ "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 		
 		// Rule r = g.getNamedElement("", "optional").getUniqueRule();
 		Rule rRoot = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rRoot = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		StartElement seOptional = (StartElement) rRoot.lookForStartElement("", "optional").event;
 		Rule rOptional = seOptional.getRule();
 
@@ -129,9 +132,13 @@ public class EventCodeTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		
 		Rule Use_color_0 = g.getGlobalElement(new QName("", "product")).getRule();
+		// Rule Use_color_0 = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "product")).getRule();
+		
 		// assertTrue(g.isGlobalElement("", "product"));
 		assertTrue(g.getGlobalElement(new QName("", "product")) != null);
+		// assertTrue(g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "product")) != null);
 		
 		// default fidelity options
 		FidelityOptions fo = FidelityOptions.createDefault();
@@ -283,7 +290,11 @@ public class EventCodeTest extends TestCase {
 				+ "</xs:schema>";
 	
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		// GrammarURIEntry[] gues = g.getGrammarEntries();
 		Rule G_00 = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule G_00 = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
+		
+		
 		
 		/*
 		 *  G_00:                        

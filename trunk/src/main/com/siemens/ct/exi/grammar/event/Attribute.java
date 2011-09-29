@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar.event;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.types.BuiltIn;
 
@@ -35,19 +36,25 @@ public class Attribute extends AbstractDatatypeEvent {
 
 	private static final long serialVersionUID = -8354368786561188680L;
 
-	protected QName qname;
+	protected final QName qname;
+	protected final EnhancedQName eqname;
 
-	public Attribute(QName qname, QName valueType, Datatype datatype) {
+	public Attribute(EnhancedQName eqname, QName valueType, Datatype datatype) {
 		super(EventType.ATTRIBUTE, valueType, datatype);
-		this.qname = qname;
+		this.eqname = eqname;
+		this.qname = eqname.getQName();
 	}
 
-	public Attribute(QName qname) {
-		this(qname, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
+	public Attribute(EnhancedQName eqname) {
+		this(eqname, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
 	}
 
 	public QName getQName() {
 		return this.qname;
+	}
+	
+	public EnhancedQName getEnhancedQName() {
+		return eqname;
 	}
 
 	public String toString() {

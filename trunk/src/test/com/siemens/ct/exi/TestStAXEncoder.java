@@ -29,18 +29,31 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 
 import com.siemens.ct.exi.api.stream.StAXEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.SkipRootElementXMLEventReader;
 
 public class TestStAXEncoder extends AbstractTestEncoder {
+	
+	protected boolean isFragment;
+	protected StAXEncoder exiWriter;
 
-	protected OutputStream exiOutput;
-
-	public TestStAXEncoder(OutputStream exiOutput) {
+	public TestStAXEncoder(EXIFactory ef) throws EXIException {
 		super();
-		this.exiOutput = exiOutput;
+		exiWriter = new StAXEncoder(ef);
+		isFragment = ef.isFragment();
 	}
 
-	public void encodeTo(EXIFactory ef, InputStream xmlInput) throws Exception {		
+
+//	@Override
+//	public void setupEXIWriter(EXIFactory ef) throws EXIException {
+//		exiWriter = new StAXEncoder(ef);
+//		isFragment = ef.isFragment();
+//	}
+	
+
+	@Override
+	public void encodeTo(InputStream xmlInput, OutputStream exiOutput)
+			throws Exception {
 		XMLInputFactory xmlFactory = XMLInputFactory.newInstance(); 
 		
 		// do not resolve DTDs
@@ -48,7 +61,7 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		// requires the parser to replace internal entity references with their replacement text and report them as characters
 		xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
 
-		if (ef.isFragment()) {
+		if (isFragment) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int b;
 			baos.write("<root>".getBytes());
@@ -64,12 +77,11 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		// XMLStreamReader xmlReader = xmlFactory.createXMLStreamReader(xmlInput); 
 		XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput); 
 		
-		if (ef.isFragment()) {
+		if (isFragment) {
 			xmlReader = new SkipRootElementXMLEventReader(xmlReader);
 		}
 		
-		StAXEncoder exiWriter = new StAXEncoder(ef, exiOutput);
-		
+		exiWriter.setOutputStream(exiOutput);
 		exiWriter.encode(xmlReader);
 	}
 
@@ -84,12 +96,13 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 				QuickTestConfiguration.getXmlLocation()));
 
 		// create test-encoder & encode to EXI
-		TestStAXEncoder testEncoder = new TestStAXEncoder(encodedOutput);
-		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory		
-		// setup encoding options
-		setupEncodingOptions(ef);
+		TestStAXEncoder testEncoder = new TestStAXEncoder(TestStAXEncoder.getQuickTestEXIactory());
+//		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory		
+//		// setup encoding options
+//		setupEncodingOptions(ef);
 
-		testEncoder.encodeTo(ef, xmlInput);
+//		testEncoder.setupEXIWriter(ef);
+		testEncoder.encodeTo(xmlInput, encodedOutput);
 
 		encodedOutput.flush();
 
@@ -97,4 +110,6 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 				+ QuickTestConfiguration.getXmlLocation() + " --> "
 				+ QuickTestConfiguration.getExiLocation());
 	}
+
+
 }

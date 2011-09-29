@@ -23,8 +23,6 @@ import java.io.OutputStream;
 
 import javax.xml.transform.sax.SAXResult;
 
-import org.xml.sax.ext.DefaultHandler2;
-
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -40,17 +38,23 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class EXIResult extends SAXResult {
 
-	public EXIResult(OutputStream os) throws IOException, EXIException {
+	protected SAXEncoder handler;
+	
+	public EXIResult() throws IOException, EXIException {
 		// use default exi-factory
-		this(os, DefaultEXIFactory.newInstance());
+		this(DefaultEXIFactory.newInstance());
 	}
 
-	public EXIResult(OutputStream os, EXIFactory exiFactory)
-			throws IOException, EXIException {
-		DefaultHandler2 handler = exiFactory.createEXIWriter(os);
+	public EXIResult(EXIFactory exiFactory) throws EXIException {
+		// DefaultHandler2 handler = exiFactory.createEXIWriter(os);
+		handler = exiFactory.createEXIWriter();
 		// set internal states
 		setHandler(handler);
 		setLexicalHandler(handler);
+	}
+	
+	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+		handler.setOutputStream(os);
 	}
 
 }

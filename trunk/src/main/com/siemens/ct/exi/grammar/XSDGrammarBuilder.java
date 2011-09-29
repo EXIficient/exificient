@@ -20,6 +20,7 @@ package com.siemens.ct.exi.grammar;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +48,8 @@ import org.apache.xerces.xs.XSTypeDefinition;
 import org.apache.xerces.xs.XSWildcard;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.EnhancedNamespaceURI;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -70,6 +73,7 @@ import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
@@ -114,6 +118,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected final SchemaInformedFirstStartTagRule SIMPLE_END_ELEMENT_EMPTY_RULE_TYPABLE;
 
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
+	
+	protected List<EnhancedQName> enhancedQNames;
+	protected List<EnhancedNamespaceURI> enhancedNamespaceURIs;
 
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
@@ -123,8 +130,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
 
 	// when schema information is available to describe the contents of an EXI
-	// stream
-	// and more than one element is declared with the same qname
+	// stream and more than one element is declared with the same qname
 	protected SchemaInformedFirstStartTagRule elementFragment0;
 	
 
@@ -158,6 +164,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initOnce();
 
 		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagRule>();
+		enhancedQNames = new ArrayList<EnhancedQName>();
+		enhancedNamespaceURIs = new ArrayList<EnhancedNamespaceURI>();
 		schemaLocalNames = new HashMap<String, List<String>>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 		
@@ -197,6 +205,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initEachRun();
 
 		grammarTypes.clear();
+		enhancedQNames.clear();
+		enhancedNamespaceURIs.clear();
 		attributePool.clear();
 
 		elementFragment0 = null;
@@ -222,6 +232,53 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
+	protected EnhancedQName createEnhancedQName(QName qname) {
+		EnhancedQName eQName = new EnhancedQName(qname);
+		// avoid duplicates
+		int index =  enhancedQNames.lastIndexOf(eQName);
+		if (index == -1) {
+			this.enhancedQNames.add(eQName);
+		} else {
+			eQName = enhancedQNames.get(index);
+		}
+		
+		return eQName;
+	}
+	
+	protected EnhancedNamespaceURI createEnhancedNamespaceURI(String namespaceURI) {
+		EnhancedNamespaceURI eNamespace = new EnhancedNamespaceURI(namespaceURI);
+		// avoid duplicates
+		int index =  enhancedNamespaceURIs.lastIndexOf(eNamespace);
+		if (index == -1) {
+			this.enhancedNamespaceURIs.add(eNamespace);
+		} else {
+			eNamespace = enhancedNamespaceURIs.get(index);
+		}
+		
+		return eNamespace;
+	}
+	
+	protected StartElement createStartElement(QName qname) {
+		StartElement se = new StartElement(createEnhancedQName(qname));
+		return se;
+	}
+
+	protected StartElementNS createStartElementNS(String uri) {
+		StartElementNS seNS = new StartElementNS(createEnhancedNamespaceURI(uri));
+		return seNS;
+	}
+	
+	
+	protected Attribute createAttribute(QName qname, QName valueType, Datatype datatype) {
+		Attribute at = new Attribute(createEnhancedQName(qname), valueType, datatype);
+		return at;
+	}
+
+	protected AttributeNS createAttributeNS(String uri) {
+		AttributeNS atNS = new AttributeNS(createEnhancedNamespaceURI(uri));
+		return atNS;
+	}
+	
 	protected boolean isSameElementGrammar(List<XSElementDeclaration> elements) {
 		assert (elements.size() > 1);
 		/*
@@ -272,7 +329,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		// create unique qname map
 		Map<QName, List<XSElementDeclaration>> uniqueNamedElements = new HashMap<QName, List<XSElementDeclaration>>();
-		// for (XSElementDeclaration elDecl : handledElements) {
 		for (XSElementDeclaration elDecl : elementPool.keySet()) {
 			QName en = new QName(elDecl.getNamespace(), elDecl.getName());
 			if (uniqueNamedElements.containsKey(en)) {
@@ -307,7 +363,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 							.get(0));
 					fragmentElements.add(se);
 				} else {
-					StartElement se = new StartElement(qname);
+					StartElement se = createStartElement(qname); // new StartElement(qname);
 					Rule elementFragmentGrammar = getSchemaInformedElementFragmentGrammar(uniqueNamedElements);
 					se.setRule(elementFragmentGrammar);
 					fragmentElements.add(se);
@@ -370,7 +426,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			} else {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
-				se = new StartElement(fm);
+				se =  createStartElement(fm);  // new StartElement(fm);
 				se.setRule(elementFragment0);
 			}
 			elementFragment1.addRule(se, elementFragment1);
@@ -452,7 +508,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				at = getAttribute(attributes.get(0));
 			} else {
 				// represented as a String
-				at = new Attribute(an);
+				// at = new Attribute(an);
+				at = createAttribute(an, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
 			}
 			elementFragment0.addRule(at, elementFragment0);
 		}
@@ -470,7 +527,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			} else {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
-				se = new StartElement(fm);
+				se =  createStartElement(fm); // new StartElement(fm);
 				se.setRule(elementFragment0);
 			}
 			elementFragment0.addRule(se, elementFragment1);
@@ -502,7 +559,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				at = getAttribute(attributes.get(0));
 			} else {
 				// represented as a String
-				at = new Attribute(an);
+				// at = new Attribute(an);
+				at = createAttribute(an, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
 			}
 			elementFragmentEmpty0.addRule(at, elementFragmentEmpty0);
 		}
@@ -531,6 +589,31 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		return elementFragment0;
 	}
+	
+	private static int getEfficientNamespaceUriID(GrammarURIEntry[] grammarEntries, String namespaceURI) {
+		// get namespace ID
+		int namespaceUriID = -1;
+		for (int i=0; i<grammarEntries.length; i++) {
+			GrammarURIEntry gue = grammarEntries[i];
+			if (gue.namespaceURI.equals(namespaceURI)) {
+				namespaceUriID = i;
+				break;
+			}
+		}
+		if (namespaceUriID < 0) {
+			throw new RuntimeException("No appropriate uri id found for " + namespaceURI);
+		}
+		return namespaceUriID;
+	}
+	
+	private static int getEfficientLocalNameID(GrammarURIEntry[] grammarEntries, int namespaceUriID, String localName) {
+		String[] localNames = grammarEntries[namespaceUriID].localNames;
+		int localNameID = Arrays.binarySearch(localNames, localName);
+		if (localNameID < 0) {
+			throw new RuntimeException("No appropriate local-name id found for " + localName);
+		}
+		return localNameID;
+	}
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
@@ -553,12 +636,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// sort both lists (declared & global elements)
 		Collections.sort(globalElements, lexSort);
 		Collections.sort(fragmentElements, lexSort);
-
-		// global element
-		Map<QName, StartElement> mapGlobalElements = new HashMap<QName, StartElement>();
-		for (StartElement globalElement : globalElements) {
-			mapGlobalElements.put(globalElement.getQName(), globalElement);
-		}
 
 		/*
 		 * Simple sub-type hierarchy (for DTRM)
@@ -598,20 +675,33 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				}
 			}
 		}
-
+		
+		/*
+		 *  global elements
+		 */
+		Map<QName, StartElement> mapGlobalElements = new HashMap<QName, StartElement>();
+		for (StartElement globalElement : globalElements) {
+			QName qname = globalElement.getQName();
+			mapGlobalElements.put(qname, globalElement);
+		}
+		
 		/*
 		 * global attributes
 		 */
-		XSNamedMap nm = xsModel
+		XSNamedMap nmGlobalAtts = xsModel
 				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
 		Map<QName, Attribute> mapGlobalAttributes = new HashMap<QName, Attribute>();
-		for (int i = 0; i < nm.getLength(); i++) {
-			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nm.item(i);
+		for (int i = 0; i < nmGlobalAtts.getLength(); i++) {
+			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nmGlobalAtts.item(i);
 			Attribute at = getAttribute(atDecl);
-			mapGlobalAttributes.put(at.getQName(), at);
+			QName qname = at.getQName();
+			mapGlobalAttributes.put(qname, at);
 		}
+		
 
-		// schema URIs and (sorted) localNames
+		/*
+		 * Schema URIs and (sorted) localNames
+		 */
 		String[] uris = getURITableEntries();
 		GrammarURIEntry[] grammarEntries = new GrammarURIEntry[uris.length];
 		for (int i = 0; i < uris.length; i++) {
@@ -646,8 +736,24 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			}
 
 			// add schema entry
-			grammarEntries[i] = new GrammarURIEntry(uri, localNamesArray,
+			grammarEntries[i] = new GrammarURIEntry(i, uri, localNamesArray,
 					prefixes);
+		}
+		
+		// update all enhanced qnames with appropriate uri and localName ID
+		for(EnhancedQName eqname : enhancedQNames) {
+			QName qname = eqname.getQName();
+			int namespaceUriID = getEfficientNamespaceUriID(grammarEntries, qname.getNamespaceURI());
+			eqname.setNamespaceUriID(namespaceUriID);
+			int localNameID = getEfficientLocalNameID(grammarEntries, namespaceUriID, qname.getLocalPart());
+			eqname.setLocalNameID(localNameID);
+			// EnhancedQName eqname = getEfficientQName(grammarEntries, qname.getNamespaceURI(), qname.getLocalPart());
+			//se.setEQName(eqname);
+		}
+		for(EnhancedNamespaceURI eNamespace : enhancedNamespaceURIs) {
+			String uri = eNamespace.getNamespaceURI();
+			int namespaceUriID = getEfficientNamespaceUriID(grammarEntries, uri);
+			eNamespace.setNamespaceUriID(namespaceUriID);
 		}
 
 		/*
@@ -831,7 +937,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			QName valueType = getValueType(std);
 			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
-			at = new Attribute(qname, valueType, getDatatype(std));
+			at = createAttribute(qname, valueType, getDatatype(std)); //  new Attribute(qname, valueType, getDatatype(std));
 			attributePool.put(attrDecl, at);
 		}
 
@@ -968,7 +1074,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			StringList sl = attributeWC.getNsConstraintList();
 			for (int k = 0; k < sl.getLength(); k++) {
 				String namespace = sl.item(k);
-				rule.addRule(new AttributeNS(namespace), rule);
+				// rule.addRule(new AttributeNS(namespace), rule);
+				rule.addRule(createAttributeNS(namespace), rule);
 				// add attribute wildcard URI
 				addNamespaceStringEntry(namespace);
 				// if (!atWildcardNamespaces.contains(namespace)) {
@@ -997,7 +1104,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			String localName = xsElementDeclaration.getName();
 			javax.xml.namespace.QName qname = new javax.xml.namespace.QName(
 					namespaceURI, localName);
-			se = new StartElement(qname);
+			se =  createStartElement(qname); // new StartElement(qname);
 			addLocalNameStringEntry(namespaceURI, localName);
 			elementPool.put(xsElementDeclaration, se);
 		}

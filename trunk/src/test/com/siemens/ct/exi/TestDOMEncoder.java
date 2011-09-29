@@ -34,17 +34,30 @@ import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.api.dom.DOMWriter;
 import com.siemens.ct.exi.api.dom.DocumentFragmentBuilder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.NoEntityResolver;
 
 public class TestDOMEncoder extends AbstractTestEncoder {
 
-	protected OutputStream exiOutput;
+	protected DOMWriter enc;
+	protected boolean isFragment;
 
-	public TestDOMEncoder(OutputStream exiOutput) {
+	public TestDOMEncoder(EXIFactory ef) throws EXIException {
 		super();
-		this.exiOutput = exiOutput;
+		// dom encoder
+		enc = new DOMWriter(ef);
+		isFragment = ef.isFragment();
 	}
 
+
+//	@Override
+//	public void setupEXIWriter(EXIFactory ef) throws EXIException {
+//		// dom encoder
+//		enc = new DOMWriter(ef);
+//		isFragment = ef.isFragment();
+//	}
+
+	
 	public static Document getDocument(InputStream is)
 			throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
@@ -76,10 +89,11 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		return docFragment;
 	}
 
-	public void encodeTo(EXIFactory ef, InputStream xmlInput) throws Exception {
+	public void encodeTo(InputStream xmlInput, OutputStream exiOutput)
+	throws Exception {
 		// document
 		Node doc;
-		if (ef.isFragment()) {
+		if (isFragment) {
 			doc = getDocumentFragment(xmlInput);
 		} else {
 			doc = getDocument(xmlInput);
@@ -91,8 +105,7 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		// TestDOMDecoder.nodeToWriter(doc, sw);
 		// System.out.println(sw.toString());
 
-		// dom encoder
-		DOMWriter enc = new DOMWriter(ef);
+
 		enc.setOutput(exiOutput);
 
 		enc.encode(doc);
@@ -101,29 +114,34 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 
 	public static void main(String[] args) throws Exception {
 
-		// EXI output stream
-		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
-				.getExiLocation());
 
 		// create DOM encoder
-		TestDOMEncoder testEncoder = new TestDOMEncoder(encodedOutput);
+		TestDOMEncoder testEncoder = new TestDOMEncoder(TestDOMEncoder.getQuickTestEXIactory());
 
-		// get factory
-		EXIFactory exiFactory = testEncoder.getQuickTestEXIactory();
+//		// get factory
+//		EXIFactory exiFactory = testEncoder.getQuickTestEXIactory();
+//		testEncoder.setupEXIWriter(exiFactory);
 
 		// EXI input stream
 		InputStream xmlInput = new FileInputStream(
 				QuickTestConfiguration.XML_FILE_LOCATION);
 		
-		// setup encoding options
-		setupEncodingOptions(exiFactory);
+
+		// EXI output stream
+		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
+				.getExiLocation());
+		
+//		// setup encoding options
+//		setupEncodingOptions(exiFactory);
 
 		// generate EXI
-		testEncoder.encodeTo(exiFactory, xmlInput);
+//		testEncoder.setupEXIWriter(exiFactory);
+		testEncoder.encodeTo(xmlInput, encodedOutput);
 		encodedOutput.close();
 
 		System.out.println("[ENC-DOM] "
 				+ QuickTestConfiguration.getXmlLocation() + " --> "
 				+ QuickTestConfiguration.getExiLocation());
 	}
+
 }

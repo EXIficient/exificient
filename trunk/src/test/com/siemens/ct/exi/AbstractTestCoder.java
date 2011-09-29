@@ -39,19 +39,43 @@ public abstract class AbstractTestCoder {
 	public AbstractTestCoder() {
 	}
 
-	protected EXIFactory getQuickTestEXIactory() throws Exception {
+	protected static EXIFactory getQuickTestEXIactory() throws Exception {
+		EXIFactory ef;
 		if (QuickTestConfiguration.USE_SCHEMA) {
-			return getFactorySchema();
+			ef = getFactorySchema();
 		} else {
-			return getFactoryNoSchema();
+			ef = getFactoryNoSchema();
+		}
+		
+		setupEncodingOptions(ef);
+		
+		return ef;
+	}
+	
+	protected static void setupEncodingOptions(EXIFactory ef) throws UnsupportedOption {
+		if (QuickTestConfiguration.INCLUDE_COOKIE) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
+		}
+		if (QuickTestConfiguration.INCLUDE_OPTIONS) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		}
+		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
+		}
+		if (QuickTestConfiguration.RETAIN_ENTITY_REFERENCE) {
+			ef.getEncodingOptions().setOption(EncodingOptions.RETAIN_ENTITY_REFERENCE);
+		}
+		if (QuickTestConfiguration.INCLUDE_XSI_SCHEMALOCATION) {
+			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		}
 	}
+	
 
-	protected EXIFactory getFactory() {
+	protected static EXIFactory getFactory() {
 		return DefaultEXIFactory.newInstance();
 	}
 
-	protected EXIFactory getFactoryNoSchema() throws UnsupportedOption {
+	protected static EXIFactory getFactoryNoSchema() throws UnsupportedOption {
 		EXIFactory ef = getFactory();
 		ef.setCodingMode(QuickTestConfiguration.CODING_MODE);
 		ef.setFidelityOptions(QuickTestConfiguration.fidelityOptions);
@@ -70,7 +94,7 @@ public abstract class AbstractTestCoder {
 		return ef;
 	}
 
-	protected EXIFactory getFactorySchema() throws EXIException {
+	protected static EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
 		String xsdLocation = QuickTestConfiguration.getXsdLocation();
 		if (xsdLocation == null || xsdLocation.length() == 0) {

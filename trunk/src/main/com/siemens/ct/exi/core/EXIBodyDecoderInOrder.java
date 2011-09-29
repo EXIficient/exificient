@@ -56,13 +56,6 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 
 	public void setInputStream(InputStream is) throws EXIException, IOException {
 
-//		// buffer stream if not already
-//		// TODO is there a *nice* way to detect whether a stream is buffered
-//		// already
-//		if (!(is instanceof BufferedInputStream)) {
-//			is = new BufferedInputStream(is);
-//		}
-
 		CodingMode codingMode = exiFactory.getCodingMode();
 
 		// setup data-stream only
@@ -81,7 +74,6 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	public void setInputChannel(DecoderChannel decoderChannel)
 			throws EXIException, IOException {
 		this.channel = decoderChannel;
-		// this.is = decoderChannel.geInputStream();
 
 		initForEachRun();
 	}
@@ -129,11 +121,11 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	}
 
 	public QName decodeEndElement() throws EXIException, IOException {
-		return decodeEndElementStructure().qname;
+		return decodeEndElementStructure().eqname.getQName();
 	}
 
 	public QName decodeEndElementUndeclared() throws EXIException, IOException {
-		return decodeEndElementUndeclaredStructure().qname;
+		return decodeEndElementUndeclaredStructure().eqname.getQName();
 	}
 
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
@@ -157,32 +149,31 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
 		decodeAttributeXsiNilStructure();
 
-		return attributeQName;
+		// return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		decodeAttributeXsiTypeStructure();
-//		handleAttributeXsiTypeValue();
 		
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	protected void readAttributeContent(Datatype dt) throws IOException {
-		attributeValue = typeDecoder.readValue(dt, attributeQName, channel);
+		attributeValue = typeDecoder.readValue(dt, attributeEnhancedQName.getQName(), channel);
 	}
 
 	public QName decodeAttribute() throws EXIException, IOException {
 		// structure & content
 		Datatype dt = decodeAttributeStructure();
 
-		if (attributeQName.equals(XSI_TYPE)) {
+		if (attributeEnhancedQName.getQName().equals(XSI_TYPE)) {
 			decodeAttributeXsiTypeStructure();
-//			handleAttributeXsiTypeValue();
 		} else {
 			readAttributeContent(dt);
 		}
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeInvalidValue() throws EXIException, IOException {
@@ -191,7 +182,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 
 		// Note: attribute content datatype is not the right one (invalid)
 		readAttributeContent(BuiltIn.DEFAULT_DATATYPE);
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeAnyInvalidValue() throws EXIException,
@@ -200,21 +191,21 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeAttributeAnyInvalidValueStructure();
 		// content
 		readAttributeContent(BuiltIn.DEFAULT_DATATYPE);
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	protected void readAttributeContent() throws IOException, EXIException {
-		if (XSI_TYPE.equals(attributeQName)) {
+		QName qname = attributeEnhancedQName.getQName();
+		if (XSI_TYPE.equals(qname)) {
 			decodeAttributeXsiTypeStructure();
-//			handleAttributeXsiTypeValue();
-		} else if (XSI_NIL.equals(attributeQName)
+		} else if (XSI_NIL.equals(qname)
 				&& currentRule.isSchemaInformed()) {
 			decodeAttributeXsiNilStructure();
 		} else {
 			Attribute globalAT;
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
 			if (currentRule.isSchemaInformed()
-					&& (globalAT = grammar.getGlobalAttribute(attributeQName)) != null) {
+					&& (globalAT = grammar.getGlobalAttribute(qname)) != null) {
 				dt = globalAT.getDatatype();
 			}
 			readAttributeContent(dt);
@@ -226,7 +217,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeAttributeNSStructure();
 		// content
 		readAttributeContent();
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeGeneric() throws EXIException, IOException {
@@ -234,7 +225,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeAttributeGenericStructure();
 		// content
 		readAttributeContent();
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeGenericUndeclared() throws EXIException,
@@ -243,13 +234,13 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeAttributeGenericUndeclaredStructure();
 		// content
 		readAttributeContent();
-		return attributeQName;
+		return attributeEnhancedQName.getQName();
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {
 		// structure & content
 		return typeDecoder.readValue(decodeCharactersStructure(),
-				elementContext.qname, channel);
+				elementContext.eqname.getQName(), channel);
 	}
 
 	public Value decodeCharactersGeneric() throws EXIException, IOException {
@@ -257,7 +248,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeCharactersGenericStructure();
 		// content
 		return typeDecoder.readValue(BuiltIn.DEFAULT_DATATYPE,
-				elementContext.qname, channel);
+				elementContext.eqname.getQName(), channel);
 	}
 
 	public Value decodeCharactersGenericUndeclared() throws EXIException,
@@ -266,7 +257,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeCharactersGenericUndeclaredStructure();
 		// content
 		return typeDecoder.readValue(BuiltIn.DEFAULT_DATATYPE,
-				elementContext.qname, channel);
+				elementContext.eqname.getQName(), channel);
 	}
 
 	public char[] decodeEntityReference() throws EXIException, IOException {

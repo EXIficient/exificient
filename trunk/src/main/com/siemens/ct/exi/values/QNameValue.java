@@ -53,7 +53,7 @@ public class QNameValue extends AbstractValue {
 	public QName toQName() {
 		return qname;
 	}
-
+	
 	public String getPrefix() {
 		return prefix;
 	}
@@ -82,7 +82,8 @@ public class QNameValue extends AbstractValue {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof QNameValue) {
-			return qname.equals((QNameValue) o);
+			QNameValue other = (QNameValue) o;
+			return qname.equals(other.qname);
 		} else {
 			return false;
 		}
