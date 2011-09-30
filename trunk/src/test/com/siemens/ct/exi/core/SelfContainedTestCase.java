@@ -121,20 +121,24 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.decodeStartDocument();
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			assertTrue(decoder.decodeStartElement().equals(root));
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			assertTrue(s.equals(decoder.decodeCharacters().toString()));
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			//	<sc> #1
-			decoder.decodeStartElementGenericUndeclared();
+			// decoder.decodeStartElementGenericUndeclared();
+			decoder.decodeStartElement();
 			{
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 				decoder.decodeStartSelfContainedFragment();
 				
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				assertTrue(s.equals(decoder.decodeCharacters().toString()));
 				
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
@@ -148,7 +152,8 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.decodeStartSelfContainedFragment();
 				
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				assertTrue(s.equals(decoder.decodeCharacters().toString()));
 				
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
@@ -178,10 +183,12 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.decodeStartDocument();
 			
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			decoder.decodeStartElementGeneric();
+			// decoder.decodeStartElementGeneric();
+			decoder.decodeStartElement();
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			assertTrue(s.equals(decoder.decodeCharacters().toString()));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -201,10 +208,12 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.decodeStartDocument();
 			
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			decoder.decodeStartElementGeneric();
+			// decoder.decodeStartElementGeneric();
+			decoder.decodeStartElement();
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+			assertTrue(s.equals(decoder.decodeCharacters().toString()));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -284,20 +293,23 @@ public class SelfContainedTestCase extends TestCase {
 		
 				// <sc> #1
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				assertTrue(decoder.decodeStartElementGeneric().equals(foo));
+				// assertTrue(decoder.decodeStartElementGeneric().equals(foo));
+				assertTrue(decoder.decodeStartElement().equals(foo));
 
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 				decoder.decodeStartSelfContainedFragment();
 				
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				//	<sc> #2
-				decoder.decodeStartElementGenericUndeclared();
+				// decoder.decodeStartElementGenericUndeclared();
+				decoder.decodeStartElement();
 				{
 					assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 					decoder.decodeStartSelfContainedFragment();
 					
 					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-					assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					assertTrue(s.equals(decoder.decodeCharacters().toString()));
 					
 					assertTrue(decoder.next() == EventType.END_ELEMENT);
 					decoder.decodeEndElement();
@@ -328,17 +340,20 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.decodeStartDocument();
 				
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				decoder.decodeStartElementGeneric();
+				// decoder.decodeStartElementGeneric();
+				decoder.decodeStartElement();
 				
 				{
 					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-					decoder.decodeStartElementGenericUndeclared();
+					// decoder.decodeStartElementGenericUndeclared();
+					decoder.decodeStartElement();
 					
 					assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 					decoder.decodeStartSelfContainedFragment();
 					
 					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-					assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+					assertTrue(s.equals(decoder.decodeCharacters().toString()));
 					
 					assertTrue(decoder.next() == EventType.END_ELEMENT);
 					decoder.decodeEndElement();					
@@ -362,10 +377,12 @@ public class SelfContainedTestCase extends TestCase {
 				decoder.decodeStartDocument();
 				
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				decoder.decodeStartElementGeneric();
+				// decoder.decodeStartElementGeneric();
+				decoder.decodeStartElement();
 				
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-				assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
+				assertTrue(s.equals(decoder.decodeCharacters().toString()));
 				
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();

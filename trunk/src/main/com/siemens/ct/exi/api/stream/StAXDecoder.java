@@ -116,10 +116,6 @@ public class StAXDecoder implements XMLStreamReader
 		}
 	}
 
-	// public void setXMLStreamReader(XMLStreamReader xmlStream) {
-	// this.xmlStream = xmlStream;
-	// }
-
 	protected void parseHeader(InputStream is) throws EXIException,
 			IOException, XMLStreamException {
 		assert (is != null);
@@ -235,14 +231,6 @@ public class StAXDecoder implements XMLStreamReader
 			decoder.decodeEndDocument();
 			break;
 		/* ATTRIBUTES */
-		case ATTRIBUTE:
-			attributes.add(new AttributeContainer(decoder.decodeAttribute(),
-					decoder.getAttributeValue(), decoder.getAttributePrefix()));
-			break;
-		case ATTRIBUTE_NS:
-			attributes.add(new AttributeContainer(decoder.decodeAttributeNS(),
-					decoder.getAttributeValue(), decoder.getAttributePrefix()));
-			break;
 		case ATTRIBUTE_XSI_NIL:
 			attributes.add(new AttributeContainer(decoder
 					.decodeAttributeXsiNil(), decoder.getAttributeValue(),
@@ -253,25 +241,14 @@ public class StAXDecoder implements XMLStreamReader
 					.decodeAttributeXsiType(), decoder.getAttributeValue(),
 					decoder.getAttributePrefix()));
 			break;
-		case ATTRIBUTE_INVALID_VALUE:
-			attributes.add(new AttributeContainer(decoder
-					.decodeAttributeInvalidValue(),
-					decoder.getAttributeValue(), decoder.getAttributePrefix()));
-			break;
-		case ATTRIBUTE_ANY_INVALID_VALUE:
-			attributes.add(new AttributeContainer(decoder
-					.decodeAttributeAnyInvalidValue(), decoder
-					.getAttributeValue(), decoder.getAttributePrefix()));
-			break;
+		case ATTRIBUTE:
+		case ATTRIBUTE_NS:
 		case ATTRIBUTE_GENERIC:
-			attributes.add(new AttributeContainer(decoder
-					.decodeAttributeGeneric(), decoder.getAttributeValue(),
-					decoder.getAttributePrefix()));
-			break;
 		case ATTRIBUTE_GENERIC_UNDECLARED:
-			attributes.add(new AttributeContainer(decoder
-					.decodeAttributeGenericUndeclared(), decoder
-					.getAttributeValue(), decoder.getAttributePrefix()));
+		case ATTRIBUTE_INVALID_VALUE:
+		case ATTRIBUTE_ANY_INVALID_VALUE:
+			attributes.add(new AttributeContainer(decoder.decodeAttribute(),
+					decoder.getAttributeValue(), decoder.getAttributePrefix()));
 			break;
 		/* NAMESPACE DECLARATION */
 		case NAMESPACE_DECLARATION:
@@ -285,19 +262,14 @@ public class StAXDecoder implements XMLStreamReader
 		/* ELEMENT CONTENT EVENTS */
 		/* START ELEMENT */
 		case START_ELEMENT:
-			element = decoder.decodeStartElement();
-			break;
 		case START_ELEMENT_NS:
-			element = decoder.decodeStartElementNS();
-			break;
 		case START_ELEMENT_GENERIC:
-			element = decoder.decodeStartElementGeneric();
-			break;
 		case START_ELEMENT_GENERIC_UNDECLARED:
-			element = decoder.decodeStartElementGenericUndeclared();
+			element = decoder.decodeStartElement();
 			break;
 		/* END ELEMENT */
 		case END_ELEMENT:
+		case END_ELEMENT_UNDECLARED:
 			@SuppressWarnings("unused")
 			List<NamespaceDeclaration> eePrefixes = decoder
 					.getDeclaredPrefixDeclarations();
@@ -307,23 +279,11 @@ public class StAXDecoder implements XMLStreamReader
 			endElementPrefix = decoder.getElementPrefix();
 			element = decoder.decodeEndElement();
 			break;
-		case END_ELEMENT_UNDECLARED:
-			eePrefixes = decoder.getDeclaredPrefixDeclarations();
-			if (namespacePrefixes) {
-				// eeQNameAsString = decoder.getElementQNameAsString();
-			}
-			endElementPrefix = decoder.getElementPrefix();
-			element = decoder.decodeEndElementUndeclared();
-			break;
 		/* CHARACTERS */
 		case CHARACTERS:
-			characters = decoder.decodeCharacters();
-			break;
 		case CHARACTERS_GENERIC:
-			characters = decoder.decodeCharactersGeneric();
-			break;
 		case CHARACTERS_GENERIC_UNDECLARED:
-			characters = decoder.decodeCharactersGenericUndeclared();
+			characters = decoder.decodeCharacters();
 			break;
 		/* MISC */
 		case DOC_TYPE:

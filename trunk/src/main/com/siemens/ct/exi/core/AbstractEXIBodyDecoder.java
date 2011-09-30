@@ -458,6 +458,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		handleAttributePrefix(attributeEnhancedQName);
 		// update current rule
 		currentRule = nextRule;
+		
+		// return BuiltIn.DEFAULT_DATATYPE;
 	}
 
 	protected final void decodeAttributeAnyInvalidValueStructure()
@@ -472,6 +474,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		// update current rule
 		currentRule = nextRule;
+		
+//		return BuiltIn.DEFAULT_DATATYPE;
 	}
 
 	protected final void decodeAttributeGenericUndeclaredStructure()
@@ -479,6 +483,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		decodeAttributeGenericStructureOnly();
 
 		currentRule.learnAttribute(new Attribute(attributeEnhancedQName));
+		
+		// return BuiltIn.DEFAULT_DATATYPE;
 	}
 
 	private final void decodeAttributeGenericStructureOnly()

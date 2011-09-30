@@ -95,7 +95,7 @@ public class SchemaInformedTest extends TestCase {
 			assertTrue(decoder.decodeCharacters().equals(""));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
-			decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
@@ -160,7 +160,7 @@ public class SchemaInformedTest extends TestCase {
 			assertTrue(decoder.decodeCharacters().equals(""));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
-			decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 	
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
@@ -217,7 +217,7 @@ public class SchemaInformedTest extends TestCase {
 			assertTrue(decoder.decodeCharacters().equals(""));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
-			decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 	
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
@@ -284,7 +284,7 @@ public class SchemaInformedTest extends TestCase {
 			assertTrue(decoder.decodeCharacters().equals(""));
 			
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
-			decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 	
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();

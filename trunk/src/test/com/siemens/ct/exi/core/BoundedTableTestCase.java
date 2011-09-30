@@ -91,11 +91,13 @@ public class BoundedTableTestCase extends XMLTestCase {
 					testSE(se); 
 					break;
 				case START_ELEMENT_GENERIC:
-					se = exiDecoder.decodeStartElementGeneric();
+					// se = exiDecoder.decodeStartElementGeneric();
+					se = exiDecoder.decodeStartElement();
 					testSE(se); 
 					break;
 				case START_ELEMENT_GENERIC_UNDECLARED:
-					se = exiDecoder.decodeStartElementGenericUndeclared();
+					// se = exiDecoder.decodeStartElementGenericUndeclared();
+					se = exiDecoder.decodeStartElement();
 					testSE(se); 
 					break;
 				case CHARACTERS:
@@ -103,7 +105,8 @@ public class BoundedTableTestCase extends XMLTestCase {
 					testValue(val);
 					break;
 				case CHARACTERS_GENERIC_UNDECLARED:
-					val= exiDecoder.decodeCharactersGenericUndeclared();
+					// val= exiDecoder.decodeCharactersGenericUndeclared();
+					val= exiDecoder.decodeCharacters();
 					testValue(val);
 					break;
 				case END_ELEMENT:

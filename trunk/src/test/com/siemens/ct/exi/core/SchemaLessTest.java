@@ -79,10 +79,12 @@ public class SchemaLessTest extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(s1));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(s1));
+			assertTrue(decoder.decodeStartElement().equals(s1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-			decoder.decodeEndElementUndeclared();
+			// decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
@@ -152,31 +154,38 @@ public class SchemaLessTest extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			assertTrue(decoder.decodeStartElement().equals(root));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			assertTrue(decoder.decodeStartElement().equals(el1));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			assertTrue(decoder.decodeCharacters().equals(ch1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el2));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el2));
+			assertTrue(decoder.decodeStartElement().equals(el2));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			assertTrue(decoder.decodeCharacters().equals(ch2));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el3));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el3));
+			assertTrue(decoder.decodeStartElement().equals(el3));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch3));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch3));
+			assertTrue(decoder.decodeCharacters().equals(ch3));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -256,30 +265,37 @@ public class SchemaLessTest extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			assertTrue(decoder.decodeStartElement().equals(root));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			assertTrue(decoder.decodeAttribute().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			assertTrue(decoder.decodeStartElement().equals(el1));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			assertTrue(decoder.decodeCharacters().equals(ch1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el2));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el2));
+			assertTrue(decoder.decodeStartElement().equals(el2));
 			
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			assertTrue(decoder.decodeAttribute().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			assertTrue(decoder.decodeCharacters().equals(ch2));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -400,35 +416,43 @@ public class SchemaLessTest extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(root));
+			assertTrue(decoder.decodeStartElement().equals(root));
 
 			/*
 			 * first el1
 			 */
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			assertTrue(decoder.decodeStartElement().equals(el1));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			assertTrue(decoder.decodeAttribute().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx1));
+			assertTrue(decoder.decodeStartElement().equals(elx1));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elxx1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elxx1));
+			assertTrue(decoder.decodeStartElement().equals(elxx1));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch1));
+			assertTrue(decoder.decodeCharacters().equals(ch1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elxx2));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elxx2));
+			assertTrue(decoder.decodeStartElement().equals(elxx2));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			assertTrue(decoder.decodeCharacters().equals(ch2));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -437,19 +461,23 @@ public class SchemaLessTest extends TestCase {
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx2));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx2));
+			assertTrue(decoder.decodeStartElement().equals(elx2));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch2));
+			assertTrue(decoder.decodeCharacters().equals(ch2));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx3));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(elx3));
+			assertTrue(decoder.decodeStartElement().equals(elx3));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch3));
+			// assertTrue(decoder.decodeCharactersGenericUndeclared().equals(ch3));
+			assertTrue(decoder.decodeCharacters().equals(ch3));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -463,7 +491,8 @@ public class SchemaLessTest extends TestCase {
 			// still generic start element, because first el1 was a StartTag
 			// rule, this is a Content rule
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(el1));
+			assertTrue(decoder.decodeStartElement().equals(el1));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
 			assertTrue(decoder.decodeAttribute().equals(at1));
@@ -588,25 +617,30 @@ public class SchemaLessTest extends TestCase {
 				decoder.decodeStartDocument();
 		
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				assertTrue(decoder.decodeStartElementGeneric().equals(a));
+				// assertTrue(decoder.decodeStartElementGeneric().equals(a));
+				assertTrue(decoder.decodeStartElement().equals(a));
 		
 				/*
 				 * first b
 				 */
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+				// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+				assertTrue(decoder.decodeStartElement().equals(b));
 				
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeAttributeGenericUndeclared().equals(atXsiType));
+				// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(atXsiType));
+				assertTrue(decoder.decodeAttribute().equals(atXsiType));
 				
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-				decoder.decodeEndElementUndeclared();
+				// decoder.decodeEndElementUndeclared();
+				decoder.decodeEndElement();
 		
 				/*
 				 * second b
 				 */
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+				// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+				assertTrue(decoder.decodeStartElement().equals(b));
 		
 				assertTrue(decoder.next() == EventType.ATTRIBUTE);
 				QName at = decoder.decodeAttribute();
@@ -690,16 +724,19 @@ public class SchemaLessTest extends TestCase {
 					decoder.decodeStartDocument();
 			
 					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-					assertTrue(decoder.decodeStartElementGeneric().equals(a));
+					// assertTrue(decoder.decodeStartElementGeneric().equals(a));
+					assertTrue(decoder.decodeStartElement().equals(a));
 			
 					/*
 					 * first b
 					 */
 					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-					assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					assertTrue(decoder.decodeStartElement().equals(b));
 					
 					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
-					assertTrue(decoder.decodeCharactersGenericUndeclared().toString().equals("t"));
+					// assertTrue(decoder.decodeCharactersGenericUndeclared().toString().equals("t"));
+					assertTrue(decoder.decodeCharacters().toString().equals("t"));
 					
 					assertTrue(decoder.next() == EventType.END_ELEMENT);
 					decoder.decodeEndElement();
@@ -708,7 +745,8 @@ public class SchemaLessTest extends TestCase {
 					 * second b
 					 */
 					assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-					assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(b));
+					assertTrue(decoder.decodeStartElement().equals(b));
 					
 					// empty char event
 					EventType et = decoder.next();
@@ -718,7 +756,8 @@ public class SchemaLessTest extends TestCase {
 						decoder.decodeEndElement();
 					} else {
 						assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-						decoder.decodeEndElementUndeclared();
+						// decoder.decodeEndElementUndeclared();
+						decoder.decodeEndElement();
 					}
 					
 					// end root a

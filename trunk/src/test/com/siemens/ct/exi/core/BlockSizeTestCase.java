@@ -79,30 +79,37 @@ public class BlockSizeTestCase extends XMLTestCase {
 			exiDecoder.decodeStartDocument();
 			
 			assertTrue(exiDecoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(exiDecoder.decodeStartElementGeneric().getLocalPart().equals("root"));
+			// assertTrue(exiDecoder.decodeStartElementGeneric().getLocalPart().equals("root"));
+			assertTrue(exiDecoder.decodeStartElement().getLocalPart().equals("root"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atA"));
+			//assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atA"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atA"));
 			assertTrue(exiDecoder.getAttributeValue().equals("a"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atB"));
+			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atB"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atB"));
 			assertTrue(exiDecoder.getAttributeValue().equals("b"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atC"));
+			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atC"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atC"));
 			assertTrue(exiDecoder.getAttributeValue().equals("c"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atD"));
+			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atD"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atD"));
 			assertTrue(exiDecoder.getAttributeValue().equals("d"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
-			assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atE"));
+			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atE"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atE"));
 			assertTrue(exiDecoder.getAttributeValue().equals("e"));
 			
 			assertTrue(exiDecoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);	
-			assertTrue(exiDecoder.decodeCharactersGenericUndeclared().toString().equals("... TEXT ..."));
+			// assertTrue(exiDecoder.decodeCharactersGenericUndeclared().toString().equals("... TEXT ..."));
+			assertTrue(exiDecoder.decodeCharacters().toString().equals("... TEXT ..."));
 
 			assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
 			assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("root"));
