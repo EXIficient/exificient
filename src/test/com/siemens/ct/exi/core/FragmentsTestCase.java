@@ -110,17 +110,21 @@ public class FragmentsTestCase extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-			assertTrue(decoder.decodeStartElementGeneric().equals(s1));
+			// assertTrue(decoder.decodeStartElementGeneric().equals(s1));
+			assertTrue(decoder.decodeStartElement().equals(s1));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeStartElementGenericUndeclared().equals(s2));
+			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(s2));
+			assertTrue(decoder.decodeStartElement().equals(s2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
+			assertTrue(decoder.decodeAttribute().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-			decoder.decodeEndElementUndeclared();
+			// decoder.decodeEndElementUndeclared();
+			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -136,7 +140,8 @@ public class FragmentsTestCase extends TestCase {
 			assertTrue(decoder.getAttributeValue().equals(atCh2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at2));
+			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at2));
+			assertTrue(decoder.decodeAttribute().equals(at2));
 			assertTrue(decoder.getAttributeValue().equals(atCh3));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);

@@ -643,19 +643,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		return setNextElemementEntry().eqname.getQName();
 	}
 
-	public QName decodeStartElementNS() throws IOException, EXIException {
-		return decodeStartElement();
-	}
-
-	public QName decodeStartElementGeneric() throws IOException, EXIException {
-		return decodeStartElement();
-	}
-
-	public QName decodeStartElementGenericUndeclared() throws IOException,
-			EXIException {
-		return decodeStartElement();
-	}
-
 	public QName decodeEndElement() throws EXIException {
 		// before
 		QName eeBefore = currElementEntry.eqname.getQName();
@@ -663,10 +650,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		setNextElemementEntry();
 
 		return eeBefore;
-	}
-
-	public QName decodeEndElementUndeclared() throws EXIException {
-		return decodeEndElement();
 	}
 
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
@@ -717,28 +700,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		attributePrefix = at.prefix;
 		attributeValue = getNextContentValue(qname);
 		return qname;
-	}
-
-	public QName decodeAttributeNS() throws EXIException, IOException {
-		return decodeAttribute();
-	}
-
-	public QName decodeAttributeInvalidValue() throws EXIException, IOException {
-		return decodeAttribute();
-	}
-
-	public QName decodeAttributeAnyInvalidValue() throws EXIException,
-			IOException {
-		return decodeAttribute();
-	}
-
-	public QName decodeAttributeGeneric() throws EXIException, IOException {
-		return decodeAttribute();
-	}
-
-	public QName decodeAttributeGenericUndeclared() throws EXIException,
-			IOException {
-		return decodeAttribute();
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {

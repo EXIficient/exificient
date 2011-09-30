@@ -86,46 +86,6 @@ public interface EXIBodyDecoder {
 	public QName decodeStartElement() throws EXIException, IOException;
 
 	/**
-	 * Reads start element where only the URI is known and returns qualified
-	 * name.
-	 * 
-	 * <p>
-	 * Expected start element with given namespaceURI
-	 * </p>
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeStartElementNS() throws EXIException, IOException;
-
-	/**
-	 * Reads generic start element and returns qualified name.
-	 * 
-	 * <p>
-	 * Expected generic start element
-	 * </p>
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeStartElementGeneric() throws EXIException, IOException;
-
-	/**
-	 * Parses unexpected start element and returns qualified name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeStartElementGenericUndeclared() throws EXIException,
-			IOException;
-
-	/**
 	 * Returns element prefix for current element as String.
 	 * 
 	 * <p>
@@ -169,16 +129,6 @@ public interface EXIBodyDecoder {
 	public QName decodeEndElement() throws EXIException, IOException;
 
 	/**
-	 * Reads unexpected EXI end element and returns qualified name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeEndElementUndeclared() throws EXIException, IOException;
-
-	/**
 	 * Parses xsi:nil attribute
 	 * 
 	 * @throws EXIException
@@ -205,61 +155,6 @@ public interface EXIBodyDecoder {
 	 * @throws IOException
 	 */
 	public QName decodeAttribute() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with given namespaceURI and returns qualified
-	 * name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeAttributeNS() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with schema-invalid value (qname given) and
-	 * returns qualified name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeAttributeInvalidValue() throws EXIException, IOException;
-
-	/**
-	 * Parses expected attribute with schema-invalid value (NO qname given) and
-	 * returns qualified name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeAttributeAnyInvalidValue() throws EXIException,
-			IOException;
-
-	/**
-	 * Parses expected generic attribute and returns qualified name.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeAttributeGeneric() throws EXIException, IOException;
-
-	/**
-	 * Parses unexpected attribute.
-	 * 
-	 * @return <code>QName</code> for qualified name
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public QName decodeAttributeGenericUndeclared() throws EXIException,
-			IOException;
 
 	/**
 	 * Returns attribute prefix for (last) attribute as String
@@ -315,27 +210,6 @@ public interface EXIBodyDecoder {
 	 * @throws IOException
 	 */
 	public Value decodeCharacters() throws EXIException, IOException;
-
-	/**
-	 * Decodes generic characters.
-	 * 
-	 * @return <code>Value</code> for XML characters item
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public Value decodeCharactersGeneric() throws EXIException, IOException;
-
-	/**
-	 * Decodes unexpected (generic) characters and reports them.
-	 * 
-	 * @return <code>Value</code> for XML characters item
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public Value decodeCharactersGenericUndeclared() throws EXIException,
-			IOException;
 
 	/**
 	 * Parses DOCTYPE with information items (name, publicID, systemID, text).

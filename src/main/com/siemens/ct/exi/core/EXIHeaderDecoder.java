@@ -173,12 +173,6 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			case END_DOCUMENT:
 				decoder.decodeEndDocument();
 				break;
-			case ATTRIBUTE:
-				decoder.decodeAttribute();
-				break;
-			case ATTRIBUTE_NS:
-				decoder.decodeAttributeNS();
-				break;
 			case ATTRIBUTE_XSI_NIL:
 				decoder.decodeAttributeXsiNil();
 				handleXsiNil(decoder.getAttributeValue(), exiOptionsFactory);
@@ -186,55 +180,32 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			case ATTRIBUTE_XSI_TYPE:
 				decoder.decodeAttributeXsiType();
 				break;
-			case ATTRIBUTE_INVALID_VALUE:
-				decoder.decodeAttributeInvalidValue();
-				break;
-			case ATTRIBUTE_ANY_INVALID_VALUE:
-				decoder.decodeAttributeAnyInvalidValue();
-				break;
+			case ATTRIBUTE:
+			case ATTRIBUTE_NS:
 			case ATTRIBUTE_GENERIC:
-				decoder.decodeAttributeGeneric();
-				break;
 			case ATTRIBUTE_GENERIC_UNDECLARED:
-				decoder.decodeAttributeGenericUndeclared();
+			case ATTRIBUTE_INVALID_VALUE:
+			case ATTRIBUTE_ANY_INVALID_VALUE:
+				decoder.decodeAttribute();
 				break;
 			case NAMESPACE_DECLARATION:
 				decoder.decodeNamespaceDeclaration();
 				break;
 			case START_ELEMENT:
+			case START_ELEMENT_NS:
+			case START_ELEMENT_GENERIC:
+			case START_ELEMENT_GENERIC_UNDECLARED:
 				handleStartElement(decoder.decodeStartElement(),
 						exiOptionsFactory);
 				break;
-			case START_ELEMENT_NS:
-				handleStartElement(decoder.decodeStartElementNS(),
-						exiOptionsFactory);
-				break;
-			case START_ELEMENT_GENERIC:
-				handleStartElement(decoder.decodeStartElementGeneric(),
-						exiOptionsFactory);
-				break;
-			case START_ELEMENT_GENERIC_UNDECLARED:
-				handleStartElement(
-						decoder.decodeStartElementGenericUndeclared(),
-						exiOptionsFactory);
-				break;
 			case END_ELEMENT:
+			case END_ELEMENT_UNDECLARED:
 				handleEndElement(decoder.decodeEndElement(), exiOptionsFactory);
 				break;
-			case END_ELEMENT_UNDECLARED:
-				handleEndElement(decoder.decodeEndElementUndeclared(),
-						exiOptionsFactory);
-				break;
 			case CHARACTERS:
-				handleCharacters(decoder.decodeCharacters(), exiOptionsFactory);
-				break;
 			case CHARACTERS_GENERIC:
-				handleCharacters(decoder.decodeCharactersGeneric(),
-						exiOptionsFactory);
-				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				handleCharacters(decoder.decodeCharactersGenericUndeclared(),
-						exiOptionsFactory);
+				handleCharacters(decoder.decodeCharacters(), exiOptionsFactory);
 				break;
 			default:
 				throw new RuntimeException("Unexpected EXI Event in Header '"
@@ -336,13 +307,6 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-			// if (value instanceof LongValue) {
-			// LongValue lv = (LongValue) value;
-			// f.setValueMaxLength((int) lv.toLong());
-			// } else {
-			// throw new EXIException("[EXI-Header] Failure while processing "
-			// + localName);
-			// }
 		} else if (VALUE_PARTITION_CAPACITY.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
@@ -358,13 +322,6 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-			// if (value instanceof LongValue) {
-			// LongValue lv = (LongValue) value;
-			// f.setValuePartitionCapacity((int) lv.toLong());
-			// } else {
-			// throw new EXIException("[EXI-Header] Failure while processing "
-			// + localName);
-			// }
 		} else if (BLOCK_SIZE.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
@@ -379,13 +336,6 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);
 			}
-			// if (value instanceof LongValue) {
-			// LongValue lv = (LongValue) value;
-			// f.setBlockSize((int) lv.toLong());
-			// } else {
-			// throw new EXIException("[EXI-Header] Failure while processing "
-			// + localName);
-			// }
 		} else if (SCHEMA_ID.equals(localName)) {
 			String schemaId = value.toString();
 			if (Constants.EMPTY_STRING.equals(value.toString())) {

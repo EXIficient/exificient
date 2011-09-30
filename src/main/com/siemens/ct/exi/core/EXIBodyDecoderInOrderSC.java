@@ -59,34 +59,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		scDecoder = null;
 	}
 
-	// @Override
-	// protected final void handleElementPrefix() throws IOException {
-	// if (scDecoder == null) {
-	// super.handleElementPrefix();
-	// } else {
-	// scDecoder.handleElementPrefix();
-	// }
-	// }
-	//
-	// @Override
-	// protected final void handleAttributePrefix() throws IOException {
-	// if (scDecoder == null) {
-	// super.handleAttributePrefix();
-	// } else {
-	// scDecoder.handleAttributePrefix();
-	// }
-	// }
-
-	// @Override
-	// public void setInputStream(InputStream is)
-	// throws EXIException, IOException {
-	// if (scDecoder == null) {
-	// super.setInputStream(is, exiBodyOnly);
-	// } else {
-	// System.err.println("TODO setInputStream");
-	// }
-	// }
-
 	@Override
 	public EventType next() throws EXIException, IOException {
 		// return (scDecoder == null ? super.next() : scDecoder.next());
@@ -137,34 +109,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeStartElementNS() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeStartElementNS();
-		} else {
-			return scDecoder.decodeStartElementNS();
-		}
-	}
-
-	@Override
-	public QName decodeStartElementGeneric() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeStartElementGeneric();
-		} else {
-			return scDecoder.decodeStartElementGeneric();
-		}
-	}
-
-	@Override
-	public QName decodeStartElementGenericUndeclared() throws EXIException,
-			IOException {
-		if (scDecoder == null) {
-			return super.decodeStartElementGenericUndeclared();
-		} else {
-			return scDecoder.decodeStartElementGenericUndeclared();
-		}
-	}
-
-	@Override
 	public void decodeStartSelfContainedFragment() throws EXIException,
 			IOException {
 		if (scDecoder == null) {
@@ -189,16 +133,10 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			EventType et = next();
 			switch (et) {
 			case START_ELEMENT:
-				scDecoder.decodeStartElement();
-				break;
-			case START_ELEMENT_GENERIC:
-				scDecoder.decodeStartElementGeneric();
-				break;
-			case START_ELEMENT_GENERIC_UNDECLARED:
-				scDecoder.decodeStartElementGenericUndeclared();
-				break;
 			case START_ELEMENT_NS:
-				scDecoder.decodeStartElementNS();
+			case START_ELEMENT_GENERIC:
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				scDecoder.decodeStartElement();
 				break;
 			default:
 				throw new RuntimeException("[EXI] Unsupported EventType " + et
@@ -216,15 +154,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return super.decodeEndElement();
 		} else {
 			return scDecoder.decodeEndElement();
-		}
-	}
-
-	@Override
-	public QName decodeEndElementUndeclared() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeEndElementUndeclared();
-		} else {
-			return scDecoder.decodeEndElementUndeclared();
 		}
 	}
 
@@ -264,53 +193,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return super.decodeAttribute();
 		} else {
 			return scDecoder.decodeAttribute();
-		}
-	}
-
-	@Override
-	public QName decodeAttributeNS() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeAttributeNS();
-		} else {
-			return scDecoder.decodeAttributeNS();
-		}
-	}
-
-	@Override
-	public QName decodeAttributeInvalidValue() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeAttributeInvalidValue();
-		} else {
-			return scDecoder.decodeAttributeInvalidValue();
-		}
-	}
-
-	@Override
-	public QName decodeAttributeAnyInvalidValue() throws EXIException,
-			IOException {
-		if (scDecoder == null) {
-			return super.decodeAttributeAnyInvalidValue();
-		} else {
-			return scDecoder.decodeAttributeAnyInvalidValue();
-		}
-	}
-
-	@Override
-	public QName decodeAttributeGeneric() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeAttributeGeneric();
-		} else {
-			return scDecoder.decodeAttributeGeneric();
-		}
-	}
-
-	@Override
-	public QName decodeAttributeGenericUndeclared() throws EXIException,
-			IOException {
-		if (scDecoder == null) {
-			return super.decodeAttributeGenericUndeclared();
-		} else {
-			return scDecoder.decodeAttributeGenericUndeclared();
 		}
 	}
 
@@ -357,25 +239,6 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 			return super.decodeCharacters();
 		} else {
 			return scDecoder.decodeCharacters();
-		}
-	}
-
-	@Override
-	public Value decodeCharactersGeneric() throws EXIException, IOException {
-		if (scDecoder == null) {
-			return super.decodeCharactersGeneric();
-		} else {
-			return scDecoder.decodeCharactersGeneric();
-		}
-	}
-
-	@Override
-	public Value decodeCharactersGenericUndeclared() throws EXIException,
-			IOException {
-		if (scDecoder == null) {
-			return super.decodeCharactersGenericUndeclared();
-		} else {
-			return scDecoder.decodeCharactersGenericUndeclared();
 		}
 	}
 

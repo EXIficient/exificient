@@ -282,12 +282,14 @@ public class RoundtripTestCase extends TestCase {
 				enc2.encodeStartDocument();
 				break;
 			case START_ELEMENT_GENERIC:
-				QName se = dec.decodeStartElementGeneric();
+				// QName se = dec.decodeStartElementGeneric();
+				QName se = dec.decodeStartElement();
 				assertTrue(se.getLocalPart().equals("a"));
 				enc2.encodeStartElement(se);
 				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				Value chv = dec.decodeCharactersGenericUndeclared();
+				// Value chv = dec.decodeCharactersGenericUndeclared();
+				Value chv = dec.decodeCharacters();
 				assertTrue(chv.toString().equals("x < 0"));
 				enc2.encodeCharacters(chv);
 				break;
@@ -356,12 +358,14 @@ public class RoundtripTestCase extends TestCase {
 				enc2.encodeStartDocument();
 				break;
 			case START_ELEMENT_GENERIC:
-				QName se = dec.decodeStartElementGeneric();
+				// QName se = dec.decodeStartElementGeneric();
+				QName se = dec.decodeStartElement();
 				assertTrue(se.getLocalPart().equals("a"));
 				enc2.encodeStartElement(se);
 				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
-				Value chv = dec.decodeCharactersGenericUndeclared();
+				// Value chv = dec.decodeCharactersGenericUndeclared();
+				Value chv = dec.decodeCharacters();
 				assertTrue(chv.toString().equals("x < 0"));
 				enc2.encodeCharacters(chv);
 				break;
