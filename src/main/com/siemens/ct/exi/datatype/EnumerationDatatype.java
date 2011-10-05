@@ -85,7 +85,8 @@ public class EnumerationDatatype extends AbstractDatatype {
 		case FLOAT:
 		case DOUBLE:
 			this.rcs = new XSDDoubleCharacterSet();
-			/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
+			break;
+		/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
 		case NBIT_INTEGER_32:
 		case NBIT_INTEGER_64:
 		case NBIT_INTEGER_BIG:
@@ -126,6 +127,14 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public int getCodingLength() {
 		return codingLength;
 	}
+	
+	@Override
+	public boolean isValidRCS(String value) {
+		// RCS is of enumeration base type
+		super.isValidRCS(value);
+		return isValid(value);
+	}
+	
 
 	// When the preserve.lexicalValues option is false, enumerated values are
 	// encoded as n-bit Unsigned Integers

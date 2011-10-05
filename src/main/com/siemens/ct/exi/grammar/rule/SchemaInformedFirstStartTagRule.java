@@ -35,7 +35,7 @@ public interface SchemaInformedFirstStartTagRule extends
 		SchemaInformedStartTagRule {
 
 	/*
-	 * returns type-name or null if anonymous type or element
+	 * returns type-name or null if anonymous type
 	 */
 	public QName getTypeName();
 
