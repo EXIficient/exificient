@@ -27,7 +27,7 @@ import com.siemens.ct.exi.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class ListValue extends AbstractValue {
@@ -86,7 +86,7 @@ public class ListValue extends AbstractValue {
 
 		return cbuffer;
 	}
-
+	
 	private void copyCharacters(char[] src, char[] dest, int destOffset) {
 		// characters were NOT written directly to buffer
 		// "cres" contains characters --> copy

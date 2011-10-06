@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public interface Value extends Serializable {
@@ -56,7 +56,7 @@ public interface Value extends Serializable {
 	 * @return string representation of value
 	 */
 	public char[] toCharacters(char[] cbuffer, int offset);
-
+	
 	/**
 	 * Length of string representation
 	 * 

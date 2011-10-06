@@ -25,7 +25,7 @@ import com.siemens.ct.exi.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class BooleanValue extends AbstractValue {
@@ -108,7 +108,7 @@ public class BooleanValue extends AbstractValue {
 		// return internal char buffer to indicate that this should be used
 		return characters;
 	}
-
+	
 	@Override
 	public String toString() {
 		return sValue;

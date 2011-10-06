@@ -31,7 +31,7 @@ import com.siemens.ct.exi.grammar.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class EventCodeAssignment implements Comparator<Event>, Serializable {

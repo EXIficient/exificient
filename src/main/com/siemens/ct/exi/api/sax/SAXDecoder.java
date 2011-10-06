@@ -57,7 +57,7 @@ import com.siemens.ct.exi.values.Value;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class SAXDecoder implements XMLReader {
@@ -438,11 +438,7 @@ public class SAXDecoder implements XMLReader {
 
 		if (USE_VALUE_CONTENT_HANDLER) {
 			sVal = valueContentHandler.reportAttributeString(val);
-		} else {
-			if(val == null) {
-				System.err.println("dasdas");
-			}
-			
+		} else {			
 			int slen = val.getCharactersLength();
 			ensureBufferCapacity(slen);
 			sVal = val.toString(cbuffer, 0);

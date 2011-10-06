@@ -40,7 +40,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class DOMBuilder {

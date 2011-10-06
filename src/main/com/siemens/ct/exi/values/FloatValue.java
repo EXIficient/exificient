@@ -28,7 +28,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class FloatValue extends AbstractValue {
@@ -312,7 +312,7 @@ public class FloatValue extends AbstractValue {
 			return cbuffer;
 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		if (exponent == Constants.FLOAT_SPECIAL_VALUES) {
