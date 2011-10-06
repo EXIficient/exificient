@@ -27,7 +27,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class DecimalValue extends AbstractValue {
@@ -147,7 +147,7 @@ public class DecimalValue extends AbstractValue {
 
 		return cbuffer;
 	}
-
+	
 	private final boolean _equals(DecimalValue o) {
 		return (negative == o.negative && integral.equals(o.integral) && revFractional
 				.equals(o.revFractional));

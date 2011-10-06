@@ -28,7 +28,7 @@ import org.xml.sax.InputSource;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class NoEntityResolver implements EntityResolver {

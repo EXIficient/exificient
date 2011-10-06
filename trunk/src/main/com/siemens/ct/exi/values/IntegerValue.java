@@ -27,7 +27,7 @@ import com.siemens.ct.exi.util.MethodsBag;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public class IntegerValue extends AbstractValue implements
@@ -303,15 +303,14 @@ public class IntegerValue extends AbstractValue implements
 			}
 		case INTEGER_BIG:
 			// TODO look for a more suitable way, big integer
-			// return bval.toString().toCharArray();
 			char[] bi = bval.toString().toCharArray();
 			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
-			return cbuffer;
+			return cbuffer;	
 		default:
 			return null;
 		}
 	}
-
+	
 	private final boolean _equals(IntegerValue o) {
 		switch (this.valueType) {
 		case INTEGER_INT:

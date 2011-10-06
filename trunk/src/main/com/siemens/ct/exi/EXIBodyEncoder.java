@@ -35,7 +35,7 @@ import com.siemens.ct.exi.values.Value;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.7
+ * @version 0.8
  */
 
 public interface EXIBodyEncoder {
@@ -121,12 +121,8 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies a list of namespace declarations, xsi:type and xsi:nil values and the remaining attributes.
 	 * 
+	 * @param attributes
 	 * 
-	 * @param uri
-	 * @param localName
-	 * @param prefix
-	 *            (can be null according to fidelity options)
-	 * @param value
 	 * @throws EXIException
 	 * @throws IOException
 	 */

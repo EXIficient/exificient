@@ -25,7 +25,7 @@ import com.siemens.ct.exi.data.GeneralTestCase;
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
+	public static final boolean USE_SCHEMA = true;
 	
 	// profile
 	public static final String PROFILE = null;
@@ -37,7 +37,7 @@ public class QuickTestConfiguration {
 	public static final boolean INCLUDE_OPTIONS = false;
 	public static final boolean INCLUDE_SCHEMA_ID = false;
 	public static final boolean RETAIN_ENTITY_REFERENCE = false;
-	public static final boolean INCLUDE_XSI_SCHEMALOCATION = true;
+	public static final boolean INCLUDE_XSI_SCHEMALOCATION = false;
 
 	// fragments
 	public static boolean FRAGMENTS = false;
@@ -98,8 +98,8 @@ public class QuickTestConfiguration {
 	// FIDELITY OPTIONS
 	static {
 		// fidelityOptions = FidelityOptions.createDefault();
-		// fidelityOptions = FidelityOptions.createStrict();
-		fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createStrict();
+		// fidelityOptions = FidelityOptions.createAll();
 //		try {
 //////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
