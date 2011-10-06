@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element ref="atts"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="atts">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:restriction base="xs:anyType">
+                    <xs:attribute name="at1" type="xs:string"/>
+                    <xs:attribute name="at2" type="xs:string"/>
+                    <xs:attribute name="at3" type="xs:string" use="required"/>
+                    <xs:attribute name="at4" type="xs:string"/>
+                    <xs:attribute name="at5" type="xs:string"/>
+                </xs:restriction>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+
+
+</xs:schema>

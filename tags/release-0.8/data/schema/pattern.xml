@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="pattern.xsd" >
+    <!-- http://www.w3schools.com/schema/schema_facets.asp -->
+    
+    <pattern1>a</pattern1>
+    <pattern1>z</pattern1>
+    <!-- invalid -->
+    <!--<pattern1>X</pattern1>-->
+    
+    <pattern2>ABC</pattern2>
+    <pattern2>XYZ</pattern2>
+    <!-- invalid -->
+    <!--<pattern2>F</pattern2>-->
+    
+    <pattern3></pattern3>
+    <pattern3>zzz</pattern3>
+    <!-- invalid -->
+    <!--<pattern3>aaa</pattern3>-->
+    
+    <pattern4>_P</pattern4>
+    <pattern4>:l</pattern4>
+    <pattern4>PP</pattern4>
+    
+    <pattern5>1</pattern5>
+    <pattern5>6</pattern5>
+    
+    <!-- "([$]?([^\. ']+|'[^']+'))" -->
+    <pattern6>A</pattern6>
+    <pattern6>cdas</pattern6>
+    <pattern6>a</pattern6>
+    
+    <!-- "([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+" -->
+    <pattern7>A.B0</pattern7>
+    
+    <!-- [A-Z-[C-X]] -->
+    <!-- A, B, Y, Z -->
+    <patternSub1>A</patternSub1>
+    <patternSub1>B</patternSub1>
+    <!-- invalid -->
+    <!--<patternSub1>C</patternSub1>-->
+    <patternSub1>Y</patternSub1>
+    <patternSub1>Z</patternSub1>
+    
+    <!-- [A-Z-[C-X-[M-N]]]* -->
+    <!-- A,B,M,N,Y,Z -->
+    <patternSub2>A</patternSub2>
+    <patternSub2>B</patternSub2>
+    <patternSub2>Z</patternSub2>
+    <patternSub2>Y</patternSub2>
+    <patternSub2>M</patternSub2>
+    <patternSub2>N</patternSub2>
+    <!-- invalid -->
+    <!--<patternSub2>C</patternSub2>-->
+    <!--<patternSub2>L</patternSub2>-->
+    
+    <patternSSN>078-05-1120</patternSSN>
+    <patternSSN>078 05 1120</patternSSN>
+    <patternSSN>078051120</patternSSN>
+    
+    
+    <!-- invalid -->
+    <!--<patternSSN>987-65</patternSSN>-->
+    <!--<patternSSN>078  x  05 1120</patternSSN>-->
+    
+    
+</root>

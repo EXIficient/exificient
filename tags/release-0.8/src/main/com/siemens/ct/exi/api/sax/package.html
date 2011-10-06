@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+  @(#)package.html
+
+  Copyright (C) 2007, 2008 Siemens AG
+-->
+</head>
+<body bgcolor="white">
+
+SAX (Simple API for XML) is a serial access parser API for XML. SAX
+provides a mechanism for reading data from an XML document.
+
+<h2>Package Specification</h2>
+
+A parser which implements SAX (ie, a SAX Parser) functions as a stream
+parser, with an event-driven API.
+
+<code><pre>
+//	encode
+EXIResult saxResult = new EXIResult( ... );
+XMLReader parser = XMLReaderFactory.createXMLReader();
+parser.setContentHandler( saxResult.getHandler() );
+parser.parse( ... );
+
+//	decode
+EXISource saxSource = new EXISource();
+XMLReader xmlReader = saxSource.getXMLReader();
+xmlReader.setContentHandler ( ... );
+InputSource is =  new InputSource( ... );
+xmlReader.parse ( is );
+
+</pre></code>
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation,
+please see:
+<ul>
+	<li><a href="http://www.saxproject.org">SAX homepage</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>
