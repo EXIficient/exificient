@@ -31,6 +31,7 @@ EXIficient supports the following specifications:
 * SAX 1
 * SAX 2 
 * DOM
+* StAX
 
 EXIficient requires:
 
