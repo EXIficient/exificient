@@ -54,7 +54,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	}
 
 	public RestrictedCharacterSetDatatype(QName schemaType) {
-		super(BuiltInType.RESTRICTED_CHARACTER_SET, schemaType);
+		// super(BuiltInType.RESTRICTED_CHARACTER_SET, schemaType);
+		super(BuiltInType.STRING, schemaType);
 	}
 
 	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {

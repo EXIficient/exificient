@@ -48,7 +48,8 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	protected final IntegerType integerType;
 
 	public UnsignedIntegerDatatype(IntegerType integerType, QName schemaType) {
-		super(BuiltInType.UNSIGNED_INTEGER, schemaType);
+		// super(BuiltInType.UNSIGNED_INTEGER, schemaType);
+		super(BuiltInType.INTEGER, schemaType);
 		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
 	}

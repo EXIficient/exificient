@@ -74,7 +74,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 			break;
 		/* Boolean */
 		case BOOLEAN:
-		case BOOLEAN_PATTERN:
+		// case BOOLEAN_PATTERN:
 			this.rcs = new XSDBooleanCharacterSet();
 			break;
 		/* Decimal */
@@ -83,12 +83,9 @@ public class EnumerationDatatype extends AbstractDatatype {
 			break;
 		/* Float */
 		case FLOAT:
-		case DOUBLE:
 			this.rcs = new XSDDoubleCharacterSet();
 			break;
 		/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
-		case NBIT_INTEGER:
-		case UNSIGNED_INTEGER:
 		case INTEGER:
 			this.rcs = new XSDIntegerCharacterSet();
 			break;
@@ -96,16 +93,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 		case DATETIME:
 			this.rcs = new XSDDateTimeCharacterSet();
 			break;
-		/* String */
-		// STRING,
-		/* Enumeration */
-		// ENUMERATION,
-		/* List */
-		// LIST,
-		/* Restricted Character Set */
-		// RESTRICTED_CHARACTER_SET,
-		/* QName */
-		// QNAME;
+		/* Others */
 		default:
 			this.rcs = new XSDStringCharacterSet(); // String
 		}
