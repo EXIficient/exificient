@@ -55,7 +55,8 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 
 	public NBitIntegerDatatype(IntegerType integerType,
 			IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
-		super(BuiltInType.NBIT_INTEGER, schemaType);
+		// super(BuiltInType.NBIT_INTEGER, schemaType);
+		super(BuiltInType.INTEGER, schemaType);
 		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
 		

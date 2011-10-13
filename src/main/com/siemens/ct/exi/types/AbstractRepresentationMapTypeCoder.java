@@ -199,7 +199,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 				} else if ("decimal".equals(localPart)) {
 					datatype = new DecimalDatatype(null);
 				} else if ("double".equals(localPart)) {
-					datatype = new FloatDatatype(BuiltInType.DOUBLE, null);
+					datatype = new FloatDatatype(null);
 				} else if ("integer".equals(localPart)) {
 					datatype = new IntegerDatatype(IntegerType.INTEGER_BIG,
 							null);

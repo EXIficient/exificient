@@ -37,28 +37,22 @@ package com.siemens.ct.exi.types;
 public enum BuiltInType {
 	/* Binary */
 	BINARY_BASE64, BINARY_HEX,
-	/* Boolean */
-	BOOLEAN, BOOLEAN_PATTERN,
+	/* Boolean & Facet Boolean */
+	BOOLEAN,
 	/* Decimal */
 	DECIMAL,
-	/* Float */
-	FLOAT, DOUBLE,
-	/* N-Bit Integer */
-	NBIT_INTEGER, // NBIT_INTEGER_8, NBIT_INTEGER_16, NBIT_INTEGER_32, NBIT_INTEGER_64, NBIT_INTEGER_BIG,
-	/* Unsigned Integer */
-	UNSIGNED_INTEGER, // UNSIGNED_INTEGER_8, UNSIGNED_INTEGER_16, UNSIGNED_INTEGER_32, UNSIGNED_INTEGER_64, UNSIGNED_INTEGER_BIG,
-	/* (Signed) Integer */
-	INTEGER, // 	INTEGER_8, INTEGER_16, INTEGER_32, INTEGER_64, INTEGER_BIG,
+	/* Float & Double */
+	FLOAT,
+	/* N-Bit/Unsigned/Signed Integer */
+	INTEGER,
 	/* Datetime */
 	DATETIME,
-	/* String */
+	/* String & RestrictedCharSet */
 	STRING,
 	/* Enumeration */
 	ENUMERATION,
 	/* List */
 	LIST,
-	/* Restricted Character Set */
-	RESTRICTED_CHARACTER_SET,
 	/* QName */
 	QNAME;
 }

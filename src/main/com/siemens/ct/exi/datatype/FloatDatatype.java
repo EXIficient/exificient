@@ -45,9 +45,10 @@ public class FloatDatatype extends AbstractDatatype {
 
 	protected FloatValue lastValidFloat;
 
-	public FloatDatatype(BuiltInType builtInType, QName schemaType) {
-		super(builtInType, schemaType);
-		assert (builtInType == BuiltInType.FLOAT || builtInType == BuiltInType.DOUBLE);
+	public FloatDatatype(QName schemaType) {
+		// super(builtInType, schemaType);
+		super(BuiltInType.FLOAT, schemaType);
+		// assert (builtInType == BuiltInType.FLOAT || builtInType == BuiltInType.DOUBLE);
 		this.rcs = new XSDDoubleCharacterSet();
 	}
 

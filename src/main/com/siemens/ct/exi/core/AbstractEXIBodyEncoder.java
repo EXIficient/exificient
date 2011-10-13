@@ -307,7 +307,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				case BINARY_HEX:
 				case STRING:
 				case LIST:
-				case RESTRICTED_CHARACTER_SET:
+				// case RESTRICTED_CHARACTER_SET:
 					if ((ei = ei.next.lookForEvent(EventType.END_ELEMENT)) != null) {
 						// encode empty characters first
 						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
