@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import java.io.Serializable;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -28,8 +30,10 @@ import javax.xml.namespace.QName;
  * 
  * @version 0.8
  */
-public class EnhancedQName {
+public class EnhancedQName implements Serializable {
 
+	private static final long serialVersionUID = -5606517120408207292L;
+	
 	protected final QName qname;
 	protected int namespaceUriID;
 	protected int localNameID;
@@ -73,14 +77,10 @@ public class EnhancedQName {
         EnhancedQName eqName = (EnhancedQName) objectToTest;
         
         return this.qname.equals(eqName.qname);
-
-//        return namespaceUriID == eqName.namespaceUriID
-//            && localNameID == eqName.localNameID;
     }
 	
 	@Override
     public final int hashCode() {
-        // return namespaceUriID ^ localNameID;
 		return qname.hashCode();
     }
 	

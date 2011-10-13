@@ -155,18 +155,20 @@ public class DecimalValue extends AbstractValue {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof DecimalValue) {
-			return _equals((DecimalValue) o);
-		} else if (o instanceof String || o instanceof StringValue) {
-			DecimalValue d = DecimalValue.parse(o.toString());
-			if (d == null) {
-				return false;
-			} else {
-				return _equals(d);
-			}
-		} else {
+		if (o == null) {
 			return false;
 		}
+		if (o instanceof DecimalValue) {
+			return _equals((DecimalValue) o);
+		} else {
+			DecimalValue dv = DecimalValue.parse(o.toString());
+			return dv == null ? false : _equals(dv);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return (negative ? 1 : 0) ^ integral.hashCode() ^ revFractional.hashCode();
 	}
 
 }

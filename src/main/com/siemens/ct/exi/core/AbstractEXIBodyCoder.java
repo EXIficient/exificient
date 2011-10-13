@@ -89,8 +89,9 @@ public abstract class AbstractEXIBodyCoder {
 	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
 		// QName datatype (coder)
-		qnameDatatype = new QNameDatatype(this, null);
-
+		qnameDatatype = new QNameDatatype();
+		qnameDatatype.setNamespaces(this);
+		
 		initFactoryInformation();
 
 		// use default error handler per default

@@ -84,8 +84,8 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		xmlOut.close();
 		
 		// check equality
-		@SuppressWarnings("unused")
-		InputStream control = new FileInputStream(xmlInput);
+		// @SuppressWarnings("unused")
+		//InputStream control = new FileInputStream(xmlInput);
 		InputStream testXML = new FileInputStream(xmlOutput);
 		this.checkXMLValidity(exiFactory, testXML);
 		if (xmlEqual) {

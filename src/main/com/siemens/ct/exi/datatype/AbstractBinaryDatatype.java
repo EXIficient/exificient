@@ -46,15 +46,15 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 		super(binaryType, schemaType);
 		assert (binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
 	}
+	
+	abstract protected boolean isValidString(String value);
 
 	public boolean isValid(Value value) {
 		if (value instanceof AbstractBinaryValue) {
 			bytes = ((AbstractBinaryValue) value).toBytes();
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 

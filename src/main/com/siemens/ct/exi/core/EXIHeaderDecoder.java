@@ -103,8 +103,9 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			// preview or final version of the EXI format.
 			// A value of 0 indicates this is a final version and a value of 1
 			// indicates this is a preview version.
-			@SuppressWarnings("unused")
+			// @SuppressWarnings("unused")
 			boolean previewVersion = headerChannel.decodeBoolean();
+			assert(!previewVersion);
 
 			// one or more 4-bit unsigned integers represent the version number
 			// 1. Read next 4 bits as an unsigned integer value.
@@ -296,13 +297,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		if (VALUE_MAX_LENGTH.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INTEGER_INT) {
-					f.setValueMaxLength(iv.intValue());
-				} else {
-					throw new EXIException(
-							"[EXI-Header] ValueMaxLength other than int not supported: "
-									+ iv);
-				}
+				f.setValueMaxLength(iv.intValue());
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "
 						+ localName);

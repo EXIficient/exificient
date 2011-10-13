@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -44,16 +45,19 @@ public class IntegerDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = -7131847569262739592L;
 
 	private IntegerValue lastInteger;
+	private final IntegerType integerType;
 
-	public IntegerDatatype(BuiltInType builtInType, QName schemaType) {
-		super(builtInType, schemaType);
-		assert (builtInType == BuiltInType.INTEGER_BIG
-				|| builtInType == BuiltInType.INTEGER_64
-				|| builtInType == BuiltInType.INTEGER_32 || builtInType == BuiltInType.INTEGER_16);
+	public IntegerDatatype(IntegerType integerType, QName schemaType) {
+		super(BuiltInType.INTEGER, schemaType);
+		this.integerType= integerType; 
 		this.rcs = new XSDIntegerCharacterSet();
 	}
+	
+	public IntegerType getIntegerType() {
+		return integerType;
+	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		lastInteger = IntegerValue.parse(value);
 		return (lastInteger != null);
 	}
@@ -62,10 +66,8 @@ public class IntegerDatatype extends AbstractDatatype {
 		if (value instanceof IntegerValue) {
 			lastInteger = ((IntegerValue) value);
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 

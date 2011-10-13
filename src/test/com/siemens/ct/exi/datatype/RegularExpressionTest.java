@@ -724,10 +724,12 @@ public class RegularExpressionTest extends AbstractTestCase {
 		try {
 			// non-sense
 			String regex = "[bla{4}";
-			EXIRegularExpression re = new EXIRegularExpression(regex);
-			@SuppressWarnings("unused")
-			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-					re.getCodePoints());
+			// @SuppressWarnings("unused")
+			// EXIRegularExpression re = 
+			new EXIRegularExpression(regex);
+//			@SuppressWarnings("unused")
+//			RestrictedCharacterSet rcs = new CodePointCharacterSet(
+//					re.getCodePoints());
 			fail();
 		} catch (RuntimeException e) {
 			// an exception for invalid regex is expected

@@ -137,7 +137,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
-		assertTrue(new String(sBit) + "!=" + "110.7408", "110.7408".equals(sBit));
+		assertTrue(sBit + "!=" + "110.7408", "110.7408".equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue("110.7408".equals(getByteDecoder().decodeDecimalValue().toString()));
@@ -171,7 +171,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
-		assertTrue(new String(sBit) + "!=" + s, s.equals(sBit));
+		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
@@ -189,7 +189,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
-		assertTrue(new String(sBit) + "!=" + s2, s2.equals(sBit));
+		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
@@ -207,7 +207,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
-		assertTrue(new String(sBit) + "!=" + s2, s2.equals(sBit));
+		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
@@ -223,7 +223,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
-		assertTrue(new String(sBit) + "!=" + s, s.equals(sBit));
+		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
@@ -241,7 +241,7 @@ public class DecimalTest extends AbstractTestCase {
 		bitEC.flush();
 		DecimalValue dv1 = getBitDecoder().decodeDecimalValue();
 		String sBit = dv1.toString();
-		assertTrue(new String(sBit) + "!=" + s, s.equals(sBit));
+		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
 		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));

@@ -224,5 +224,15 @@ public class EXIHeaderTestCase extends TestCase {
 		_testOptions(ef, efStrict);
 	}
 	
+	public void testEXIOptions10() throws EXIException, IOException {		
+		// PI and Comments
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		FidelityOptions fo = ef.getFidelityOptions();
+		fo.setFidelity(FidelityOptions.FEATURE_COMMENT, true);
+		fo.setFidelity(FidelityOptions.FEATURE_PI, true);
+		
+		_testOptions(ef, null);
+	}
+	
 	
 }

@@ -42,8 +42,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	private final int[] maskedOctets = new int[MAX_OCTETS_FOR_LONG];
 	/* long == 64 bits, 9 * 7bits = 63 bits */
 	private final static int MAX_OCTETS_FOR_LONG = 9;
-	/* int == 32 bits, 4 * 7bits = 28 bits */
-	private final static int MAX_OCTETS_FOR_INT = 4;
 
 	public AbstractDecoderChannel() {
 	}
@@ -194,7 +192,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	}
 
 	public IntegerValue decodeIntegerValue() throws IOException {
-		// return decodeUnsignedHugeIntegerValue(decodeBoolean());
 		return decodeUnsignedIntegerValue(decodeBoolean());
 	}
 
@@ -207,20 +204,23 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		for (int i = 0; i < MAX_OCTETS_FOR_LONG; i++) {
 			// Read the next octet
 			int b = decode();
-			// the 7 least significant bits hold the actual value
-			maskedOctets[i] = (b & 127);
 			// If the most significant bit of the octet was 1,
 			// another octet is going to come
-			// if ((b >>> 7) != 1) {
 			if (b < 128) {
-				// Yep, it fits into int or long
-				int shift = 0;
-				if (i < MAX_OCTETS_FOR_INT) {
-					// int == 32 bits, 4 * 7bits = 28 bits
+				/* no more octets */
+				switch(i) {
+				case 0:
+					/* one octet only */
+					return IntegerValue.valueOf(negative ? -(b+1) : b);
+				case 1:
+				case 2:
+				case 3:
+					/* integer value */
+					maskedOctets[i] = b;
+					/* int == 32 bits, 4 * 7bits = 28 bits */
 					int iResult = 0;
-					for (int k = 0; k <= i; k++) {
-						iResult += maskedOctets[k] << shift;
-						shift += 7;
+					for (int k = i; k >= 0 ; k--) {
+						iResult = (iResult << 7) | maskedOctets[k];
 					}
 					// For negative values, the Unsigned Integer holds the
 					// magnitude of the value minus 1
@@ -228,12 +228,13 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 						iResult = -(iResult + 1);
 					}
 					return IntegerValue.valueOf(iResult);
-				} else {
-					// long == 64 bits, 9 * 7bits = 63 bits
+				default:
+					/* long value */
+					maskedOctets[i] = b;
+					/* long == 64 bits, 9 * 7bits = 63 bits */
 					long lResult = 0L;
-					for (int k = 0; k <= i; k++) {
-						lResult += ((long) maskedOctets[k]) << shift;
-						shift += 7;
+					for (int k = i; k >= 0 ; k--) {
+						lResult = (lResult << 7) | maskedOctets[k];
 					}
 					// For negative values, the Unsigned Integer holds the
 					// magnitude of the value minus 1
@@ -242,6 +243,9 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 					}
 					return IntegerValue.valueOf(lResult);
 				}
+			} else {
+				// the 7 least significant bits hold the actual value
+				maskedOctets[i] = (b & 127);
 			}
 		}
 
@@ -266,7 +270,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			multiplier = multiplier.shiftLeft(7);
 			// If the most significant bit of the octet was 1,
 			// another is going to come
-			// } while ((b >>> 7) == 1);
 		} while (b > 127);
 
 		// For negative values, the Unsigned Integer holds the
@@ -309,9 +312,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
 	public FloatValue decodeFloatValue() throws IOException {
-		long mantissa = decodeLong();
-		long exponent = decodeLong();
-		return new FloatValue(mantissa, exponent);
+		return new FloatValue(decodeIntegerValue(), decodeIntegerValue());
 	}
 
 	/**

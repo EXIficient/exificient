@@ -128,7 +128,7 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 		currentNode = element;
 	}
 
-	class PrefixMapping {
+	static class PrefixMapping {
 		public final String prefix;
 		public final String uri;
 

@@ -50,7 +50,7 @@ public abstract class AbstractDatatype implements Datatype {
 
 	// restricted char set
 	protected RestrictedCharacterSet rcs;
-	protected String lastRCSValue;
+	protected Value lastRCSValue;
 
 	public AbstractDatatype() {
 		this(null, null);
@@ -60,9 +60,6 @@ public abstract class AbstractDatatype implements Datatype {
 		this.builtInType = builtInType;
 		this.schemaType = schemaType;
 	}
-
-	// public void finish() throws IOException {
-	// }
 
 	public BuiltInType getBuiltInType() {
 		return builtInType;
@@ -88,7 +85,7 @@ public abstract class AbstractDatatype implements Datatype {
 		return builtInType.ordinal();
 	}
 
-	public boolean isValidRCS(String value) {
+	public boolean isValidRCS(Value value) {
 		lastRCSValue = value;
 		return true;
 	}

@@ -81,6 +81,9 @@ public class QNameValue extends AbstractValue {
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
 		if (o instanceof QNameValue) {
 			QNameValue other = (QNameValue) o;
 			return qname.equals(other.qname);
@@ -88,5 +91,11 @@ public class QNameValue extends AbstractValue {
 			return false;
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return qname.hashCode() ^ prefix.hashCode();
+	}
+	
 
 }

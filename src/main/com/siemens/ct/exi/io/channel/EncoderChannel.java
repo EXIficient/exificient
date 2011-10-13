@@ -20,9 +20,9 @@ package com.siemens.ct.exi.io.channel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
 
 import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.IntegerValue;
 
 /**
@@ -94,9 +94,9 @@ public interface EncoderChannel {
 	 */
 	public void encodeUnsignedInteger(int n) throws IOException;
 
-	public void encodeUnsignedLong(long l) throws IOException;
+//	public void encodeUnsignedLong(long l) throws IOException;
 
-	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
+//	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException;
 
 	public void encodeUnsignedIntegerValue(IntegerValue iv) throws IOException;
 
@@ -108,9 +108,9 @@ public interface EncoderChannel {
 	 */
 	public void encodeInteger(int n) throws IOException;
 
-	public void encodeLong(long l) throws IOException;
+//	public void encodeLong(long l) throws IOException;
 
-	public void encodeBigInteger(BigInteger bi) throws IOException;
+//	public void encodeBigInteger(BigInteger bi) throws IOException;
 
 	public void encodeIntegerValue(IntegerValue iv) throws IOException;
 
@@ -130,7 +130,7 @@ public interface EncoderChannel {
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public void encodeFloat(long mantissa, long exponent) throws IOException;
+	public void encodeFloat(FloatValue fv) throws IOException;
 
 	/**
 	 * The Date-Time datatype representation is a sequence of values

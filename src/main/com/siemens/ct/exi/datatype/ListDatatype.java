@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
@@ -31,7 +30,6 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.ListValue;
-import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -48,12 +46,10 @@ public class ListDatatype extends AbstractDatatype {
 
 	private Datatype listDatatype;
 
-	protected List<Value> values;
+	ListValue listValues;
 
 	public ListDatatype(Datatype listDatatype, QName schemaType) {
 		super(BuiltInType.LIST, schemaType);
-
-		values = new ArrayList<Value>();
 
 		this.rcs = listDatatype.getRestrictedCharacterSet();
 
@@ -68,49 +64,31 @@ public class ListDatatype extends AbstractDatatype {
 		return listDatatype;
 	}
 
-	public boolean isValid(String value) {
-		// iterate over all tokens
-		StringTokenizer st = new StringTokenizer(value);
-		// Constants.XSD_LIST_DELIM
-		values.clear();
-
-		while (st.hasMoreTokens()) {
-			Value nextToken = new StringValue(st.nextToken());
-			if (listDatatype.isValid(nextToken)) {
-				// values.add(listDatatype.getValue());
-				values.add(nextToken);
-			} else {
-				// invalid --> abort process
-				return false;
-			}
-		}
-		return true;
+	protected boolean isValidString(String value) {
+		listValues = ListValue.parse(value, listDatatype);
+		return listValues != null;
 	}
 
 	public boolean isValid(Value value) {
 		if (value instanceof ListValue) {
-			values = ((ListValue) value).toValues();
-			return true;
-		} else if (isValid(value.toString())) {
-			return true;
+			ListValue lv = (ListValue) value;
+			if (this.listDatatype.getBuiltInType() == lv.getListDatatype().getBuiltInType()) {
+				this.listValues = lv;
+				return true;
+			} else {
+				listValues = null;
+				return false;
+			}
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
-
-	// public Value getValue() {
-	// return new ListValue(values);
-	// }
-
-	// @Override
-	// public boolean isValidRCS(String value) {
-	// return super.isValidRCS(value);
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
 
 		// length prefixed sequence of values
+		List<Value> values = listValues.toValues();
 		valueChannel.encodeUnsignedInteger(values.size());
 
 		// iterate over all tokens
@@ -123,29 +101,6 @@ public class ListDatatype extends AbstractDatatype {
 		}
 	}
 
-	// @Override
-	// public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-	// EncoderChannel valueChannel, StringEncoder stringEncoder,
-	// QName context) throws IOException {
-	//
-	// // StringTokenizer st = new StringTokenizer(this.lastRCSValue,
-	// // Constants.XSD_LIST_DELIM);
-	// //
-	// // // length prefixed sequence of values
-	// // valueChannel.encodeUnsignedInteger(st.countTokens());
-	// //
-	// // // iterate over all tokens
-	//
-	// rcsEncoder.setRestrictedCharacterSet(rcs);
-	// rcsEncoder.isValid(lastRCSValue);
-	// rcsEncoder.writeValue(valueChannel, stringEncoder, context);
-	//
-	// // while (st.hasMoreTokens()) {
-	// // rcsEncoder.isValid(st.nextToken());
-	// // rcsEncoder.writeValue(valueChannel, stringEncoder, context);
-	// // }
-	// }
-
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {
 
@@ -157,27 +112,6 @@ public class ListDatatype extends AbstractDatatype {
 					context));
 		}
 
-		return new ListValue(values);
+		return new ListValue(values, listDatatype);
 	}
-
-	// @Override
-	// public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-	// DecoderChannel valueChannel, StringDecoder stringDecoder,
-	// QName context) throws IOException {
-	// return super.readValueRCS(rcsDecoder, valueChannel, stringDecoder,
-	// context);
-	//
-	//
-	// // int len = valueChannel.decodeUnsignedInteger();
-	// // List<Value> values = new ArrayList<Value>(len);
-	// //
-	// // rcsDecoder.setRestrictedCharacterSet(rcs);
-	// //
-	// // for (int i = 0; i < len; i++) {
-	// // values.add(rcsDecoder.readValue(valueChannel, stringDecoder,
-	// // context));
-	// // }
-	// //
-	// // return new ListValue(values);
-	// }
 }

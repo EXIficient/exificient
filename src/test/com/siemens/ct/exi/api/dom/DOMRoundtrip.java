@@ -151,8 +151,9 @@ public class DOMRoundtrip extends XMLTestCase {
 		DOMBuilder db = new DOMBuilder(exiFactory);
 
 		if (exiFactory.isFragment()) {
-			@SuppressWarnings("unused")
+			// @SuppressWarnings("unused")
 			DocumentFragment exiDocumentFragment = db.parseFragment(is);
+			assertTrue(exiDocumentFragment != null);
 		} else {
 			Document exiDocument = db.parse(is);
 			// equal ?

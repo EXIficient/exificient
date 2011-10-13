@@ -81,7 +81,7 @@ public class StAXDecoder implements XMLStreamReader
 	/* namespace context */
 	protected EXINamespaceContext nsContext;
 	
-	class AttributeContainer {
+	static class AttributeContainer {
 		final QName qname;
 		final Value value;
 		final String prefix;
@@ -270,12 +270,11 @@ public class StAXDecoder implements XMLStreamReader
 		/* END ELEMENT */
 		case END_ELEMENT:
 		case END_ELEMENT_UNDECLARED:
-			@SuppressWarnings("unused")
-			List<NamespaceDeclaration> eePrefixes = decoder
-					.getDeclaredPrefixDeclarations();
-			if (namespacePrefixes) {
-				// eeQNameAsString = decoder.getElementQNameAsString();
-			}
+//			@SuppressWarnings("unused")
+//			List<NamespaceDeclaration> eePrefixes = decoder.getDeclaredPrefixDeclarations();
+//			if (namespacePrefixes) {
+//				// eeQNameAsString = decoder.getElementQNameAsString();
+//			}
 			endElementPrefix = decoder.getElementPrefix();
 			element = decoder.decodeEndElement();
 			break;

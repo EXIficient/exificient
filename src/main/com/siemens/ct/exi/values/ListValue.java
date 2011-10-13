@@ -18,9 +18,12 @@
 
 package com.siemens.ct.exi.values;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.datatype.Datatype;
 
 /**
  * 
@@ -35,14 +38,20 @@ public class ListValue extends AbstractValue {
 	private static final long serialVersionUID = -8991265913614252729L;
 
 	protected final List<Value> values;
+	protected final Datatype listDatatype;
 
-	public ListValue(List<Value> values) {
+	public ListValue(List<Value> values, Datatype listDatatype) {
 		super(ValueType.LIST);
 		this.values = values;
+		this.listDatatype = listDatatype;
 	}
 
 	public List<Value> toValues() {
 		return values;
+	}
+	
+	public Datatype getListDatatype() {
+		return listDatatype;
 	}
 
 	public int getCharactersLength() {
@@ -93,7 +102,36 @@ public class ListValue extends AbstractValue {
 		System.arraycopy(src, 0, dest, destOffset, src.length);
 	}
 
+	
+	public static ListValue parse(String value, Datatype listDatatype) {
+		// iterate over all tokens
+		StringTokenizer st = new StringTokenizer(value);
+		List<Value> values = new ArrayList<Value>();
+		
+		while (st.hasMoreTokens()) {
+			Value nextToken = new StringValue(st.nextToken());
+			if (listDatatype.isValid(nextToken)) {
+				// values.add(listDatatype.getValue());
+				values.add(nextToken);
+			} else {
+				// invalid --> abort process
+				return null;
+			}
+		}
+		
+		return new ListValue(values, listDatatype);
+	}
+	
+
+	
+	
+	
 	protected final boolean _equals(ListValue o) {
+		// datatype
+		if ( listDatatype.getBuiltInType() != o.listDatatype.getBuiltInType() ) {
+			return false;
+		}
+		// values
 		if (values.size() == o.values.size()) {
 			for (int i = 0; i < values.size(); i++) {
 				if (!values.get(i).equals(o.values.get(i))) {
@@ -105,17 +143,27 @@ public class ListValue extends AbstractValue {
 			return false;
 		}
 	}
-
+	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ListValue) {
-			return _equals((ListValue) o);
-		} else if (o instanceof String || o instanceof StringValue) {
-			// TODO list datatype
-			return false;
-		} else {
+		if (o == null) {
 			return false;
 		}
+		if (o instanceof ListValue) {
+			return _equals((ListValue) o);
+		} else {
+			ListValue lv = ListValue.parse(o.toString(), this.listDatatype);
+			return lv == null ? false : _equals(lv);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		int hc = 0;
+		for(Value val : values) {
+			hc = (hc * 31) ^ val.hashCode();
+		}
+		return hc;
 	}
 
 }

@@ -71,12 +71,12 @@ public class ElementFragmentGrammarTest extends TestCase {
 		EventInformation eiAtC = rRoot.lookForAttribute("", "c");
 		assertTrue(eiAtC.event.isEventType(EventType.ATTRIBUTE));
 		Attribute atC = (Attribute) eiAtC.event;
-		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 		
 		EventInformation eiAtD = rRoot.lookForAttribute("", "d");
 		assertTrue(eiAtD.event.isEventType(EventType.ATTRIBUTE));
 		Attribute atD = (Attribute) eiAtD.event;
-		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 	
 	
@@ -114,7 +114,7 @@ public class ElementFragmentGrammarTest extends TestCase {
 		EventInformation eiAtD = rRoot.lookForAttribute("", "d");
 		assertTrue(eiAtD.event.isEventType(EventType.ATTRIBUTE));
 		Attribute atD = (Attribute) eiAtD.event;
-		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 }

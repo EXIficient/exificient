@@ -533,48 +533,48 @@ public class DateTimeValue extends AbstractValue {
 	public char[] toCharacters(char[] cbuffer, int offset) {
 		switch (type) {
 		case gYear: // Year, [Time-Zone]
-			offset += appendYear(cbuffer, offset, year);
+			offset = appendYear(cbuffer, offset, year);
 			break;
 		case gYearMonth: // Year, MonthDay, [TimeZone]
-			offset += appendYear(cbuffer, offset, year);
-			offset += appendMonth(cbuffer, offset, monthDay);
+			offset = appendYear(cbuffer, offset, year);
+			offset = appendMonth(cbuffer, offset, monthDay);
 			break;
 		case date: // Year, MonthDay, [TimeZone]
-			offset += appendYear(cbuffer, offset, year);
-			offset += appendMonthDay(cbuffer, offset, monthDay);
+			offset = appendYear(cbuffer, offset, year);
+			offset = appendMonthDay(cbuffer, offset, monthDay);
 			break;
 		case dateTime: // Year, MonthDay, Time, [FractionalSecs], [TimeZone]
 			// e.g. "0001-01-01T00:00:00.111+00:33";
-			offset += appendYear(cbuffer, offset, year);
-			offset += appendMonthDay(cbuffer, offset, monthDay);
+			offset = appendYear(cbuffer, offset, year);
+			offset = appendMonthDay(cbuffer, offset, monthDay);
 			cbuffer[offset++] = 'T';
-			offset += appendTime(cbuffer, offset, time);
+			offset = appendTime(cbuffer, offset, time);
 			assert (sizeFractionalSecs != -1);
-			offset += appendFractionalSeconds(cbuffer, offset, fractionalSecs,
+			offset = appendFractionalSeconds(cbuffer, offset, fractionalSecs,
 					sizeFractionalSecs - 1);
 			break;
 		case gMonth: // MonthDay, [TimeZone]
 			// e.g. "--12"
 			cbuffer[offset++] = '-';
-			offset += appendMonth(cbuffer, offset, monthDay);
+			offset = appendMonth(cbuffer, offset, monthDay);
 			break;
 		case gMonthDay: // MonthDay, [TimeZone]
 			// e.g. "--01-28"
 			cbuffer[offset++] = '-';
-			offset += appendMonthDay(cbuffer, offset, monthDay);
+			offset = appendMonthDay(cbuffer, offset, monthDay);
 			break;
 		case gDay: // MonthDay, [TimeZone]
 			// "---16";
 			cbuffer[offset++] = '-';
 			cbuffer[offset++] = '-';
 			cbuffer[offset++] = '-';
-			offset += appendDay(cbuffer, offset, monthDay);
+			offset = appendDay(cbuffer, offset, monthDay);
 			break;
 		case time: // Time, [FractionalSecs], [TimeZone]
 			// e.g. "12:34:56.135"
-			offset += appendTime(cbuffer, offset, time);
+			offset = appendTime(cbuffer, offset, time);
 			assert (sizeFractionalSecs != -1);
-			offset += appendFractionalSeconds(cbuffer, offset, fractionalSecs,
+			offset = appendFractionalSeconds(cbuffer, offset, fractionalSecs,
 					sizeFractionalSecs - 1);
 			break;
 		default:
@@ -594,7 +594,7 @@ public class DateTimeValue extends AbstractValue {
 		cal.setTimeZone(tzO);
 	}
 
-	private static void appendTimezone(char[] ca, int index, int tz) {
+	private static int appendTimezone(char[] ca, int index, int tz) {
 		if (tz == 0) {
 			// per default 'Z'
 			ca[index++] = 'Z';
@@ -608,13 +608,14 @@ public class DateTimeValue extends AbstractValue {
 			}
 			// hours
 			int hours = tz / 64;
-			index += appendTwoDigits(ca, index, hours);
+			index = appendTwoDigits(ca, index, hours);
 			// :
 			ca[index++] = ':';
 			// minutes
 			int minutes = tz - (hours * 64);
-			appendTwoDigits(ca, index, minutes);
+			index = appendTwoDigits(ca, index, minutes);
 		}
+		return index;
 	}
 
 	private static int appendFractionalSeconds(char[] ca, int index,
@@ -623,51 +624,55 @@ public class DateTimeValue extends AbstractValue {
 			// ".123"
 			ca[index++] = '.';
 			// reverse fracSecs
-			int chars = MethodsBag.itosReverse(fracSecs, index, ca);
-			return chars + 1;
-		} else {
-			return 0;
-		}
+			index += MethodsBag.itosReverse(fracSecs, index, ca);
+		} 
+		
+		return index;
 	}
 
 	private static int appendTwoDigits(char[] ca, int index, int i) {
 		if (i > 9) {
-			MethodsBag.itos(i, index + 2, ca);
-			// index++;
+			index += 2;
+			
 		} else {
 			ca[index++] = '0';
-			MethodsBag.itos(i, index + 1, ca);
+			index++;
 		}
-		return 2;
+		MethodsBag.itos(i, index, ca);
+		
+		return index;
 	}
 
 	private static int appendYear(char[] ca, int index, int year) {
-		int sLen = 4;
+		// int sLen = 4;
 
 		if (year < 0) {
 			ca[index] = '-';
 			index++;
 			year = -year;
-			sLen++;
+			// sLen++;
 		}
 
 		if (year > 999) {
-			MethodsBag.itos(year, index + 4, ca);
+			index += 4;
 		} else if (year > 99) {
 			ca[index++] = '0';
-			MethodsBag.itos(year, index + 3, ca);
+			index += 3;
 		} else if (year > 9) {
 			ca[index++] = '0';
 			ca[index++] = '0';
-			MethodsBag.itos(year, index + 2, ca);
+			index += 2;
+			
 		} else {
 			ca[index++] = '0';
 			ca[index++] = '0';
 			ca[index++] = '0';
-			MethodsBag.itos(year, index + 1, ca);
+			index++;
 		}
-
-		return sLen;
+		
+		MethodsBag.itos(year, index, ca);
+		
+		return index;
 	}
 
 	private static int appendMonth(char[] ca, int index, int monthDay) {
@@ -676,7 +681,8 @@ public class DateTimeValue extends AbstractValue {
 
 		// -MM
 		ca[index++] = '-';
-		return appendTwoDigits(ca, index, month) + 1;
+		// return appendTwoDigits(ca, index, month) + 1;
+		return appendTwoDigits(ca, index, month);
 	}
 
 	private static int appendMonthDay(char[] ca, int index, int monthDay) {
@@ -688,17 +694,17 @@ public class DateTimeValue extends AbstractValue {
 
 		// -MM-DD
 		ca[index++] = '-';
-		index += appendTwoDigits(ca, index, month);
+		index = appendTwoDigits(ca, index, month);
 		ca[index++] = '-';
-		appendTwoDigits(ca, index, day);
+		return appendTwoDigits(ca, index, day);
 
-		return 6;
+		// return 6;
 	}
 
 	private static int appendDay(char[] ca, int index, int day) {
 		assert (day < 31); // day range 0-30
-		appendTwoDigits(ca, index, day);
-		return 2;
+		return appendTwoDigits(ca, index, day);
+		// return 2;
 	}
 
 	private static int appendTime(char[] ca, int index, int time) {
@@ -712,13 +718,13 @@ public class DateTimeValue extends AbstractValue {
 		int seconds = time - minutes * secMinute;
 
 		// hh ':' mm ':' ss
-		index += appendTwoDigits(ca, index, hour);
+		index = appendTwoDigits(ca, index, hour);
 		ca[index++] = ':';
-		index += appendTwoDigits(ca, index, minutes);
+		index = appendTwoDigits(ca, index, minutes);
 		ca[index++] = ':';
-		index += appendTwoDigits(ca, index, seconds);
+		index = appendTwoDigits(ca, index, seconds);
 
-		return 8;
+		return index;
 	}
 
 	protected final boolean _equals(DateTimeValue o) {
@@ -741,19 +747,21 @@ public class DateTimeValue extends AbstractValue {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof DateTimeValue) {
-			return _equals((DateTimeValue) o);
-		} else if (o instanceof String || o instanceof StringValue) {
-			// TODO right type assumption
-			DateTimeValue d = DateTimeValue.parse(o.toString(), type);
-			if (d == null) {
-				return false;
-			} else {
-				return _equals(d);
-			}
-		} else {
+		if (o == null) {
 			return false;
 		}
+		if (o instanceof DateTimeValue) {
+			return _equals((DateTimeValue) o);
+		} else {
+			DateTimeValue dt = DateTimeValue.parse(o.toString(), type);
+			return dt == null ? false : _equals(dt);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return type.hashCode() ^ year ^ monthDay ^ time ^ (presenceFractionalSecs ? 1 : 0) ^ 
+		fractionalSecs ^ (presenceTimezone ? 1 : 0) ^ timezone;
 	}
 
 }

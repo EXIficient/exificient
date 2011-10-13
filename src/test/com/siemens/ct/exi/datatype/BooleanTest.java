@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 public class BooleanTest extends AbstractTestCase {
@@ -32,7 +33,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 
 	public void testBoolean0() throws IOException {
-		String s = "0";
+		StringValue s = new StringValue("0");
 		
 		Datatype bool = new BooleanDatatype(null);
 		boolean valid =  bool.isValid(s);
@@ -51,7 +52,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBoolean1() throws IOException {
-		String s = "1";
+		StringValue s = new StringValue("1");
 		
 		Datatype bool = new BooleanDatatype(null);
 		boolean valid =  bool.isValid(s);
@@ -70,7 +71,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanFalse() throws IOException {
-		String s = "false";
+		StringValue s = new StringValue("false");
 		boolean v = false;
 		
 		Datatype bool = new BooleanDatatype(null);
@@ -90,7 +91,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanTrue() throws IOException {
-		String s = "true";
+		StringValue s = new StringValue("true");
 		boolean v = true;
 		
 		Datatype bool = new BooleanDatatype(null);
@@ -110,7 +111,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanFalsePatternFalse() throws IOException {
-		String s = "false";
+		StringValue s = new StringValue("false");
 		
 		Datatype bool = new BooleanPatternDatatype(null);
 		boolean valid =  bool.isValid(s);
@@ -129,7 +130,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanTruePatternFalse() throws IOException {
-		String s = "true";
+		StringValue s = new StringValue("true");
 		
 		Datatype bool = new BooleanPatternDatatype(null);
 		boolean valid =  bool.isValid(s);
@@ -148,7 +149,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanFailure1() throws IOException {
-		String s = "00";
+		StringValue s = new StringValue("00");
 		
 		Datatype bool = new BooleanDatatype(null);
 		boolean valid =  bool.isValid(s);
@@ -156,7 +157,7 @@ public class BooleanTest extends AbstractTestCase {
 	}
 	
 	public void testBooleanFailure2() throws IOException {
-		String s = "fAlse";
+		StringValue s = new StringValue("fAlse");
 		
 		Datatype bool = new BooleanDatatype(null);
 		boolean valid =  bool.isValid(s);

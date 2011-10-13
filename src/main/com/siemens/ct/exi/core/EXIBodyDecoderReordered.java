@@ -32,8 +32,8 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.PreReadValue;
@@ -751,7 +751,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		final EnhancedQName eqname;
 		final String prefix;
 
-		String sqname;
+		// String sqname;
 
 		public QNameEntry(EnhancedQName eqname, String prefix) {
 			this.eqname = eqname;

@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
@@ -42,7 +41,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * n.(m+3).1
  */
 
-public class SchemaInformedElement extends AbstractSchemaInformedContent {
+public class SchemaInformedElement extends AbstractSchemaInformedContent implements Cloneable {
 
 	private static final long serialVersionUID = 7009002330388834813L;
 
@@ -79,14 +78,7 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent {
 
 	@Override
 	public SchemaInformedElement clone() {
-		SchemaInformedElement clone = new SchemaInformedElement();
-
-		// duplicate top level only
-		for (int i = 0; i < getNumberOfEvents(); i++) {
-			EventInformation ei = lookFor(i);
-			clone.addRule(ei.event, ei.next);
-		}
-
+		SchemaInformedElement clone = (SchemaInformedElement) super.clone();
 		return clone;
 	}
 
@@ -98,19 +90,5 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent {
 	public boolean equals(Object obj) {
 		return (obj instanceof SchemaInformedElement && super.equals(obj));
 	}
-	//
-	// public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
-	// // TODO Auto-generated method stub
-	// }
-
-	// public StartSchemaInformedRule getTypeEmpty() {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-	//
-	// public void setTypeEmpty(StartSchemaInformedRule typeEmpty) {
-	// // TODO Auto-generated method stub
-	//
-	// }
 
 }

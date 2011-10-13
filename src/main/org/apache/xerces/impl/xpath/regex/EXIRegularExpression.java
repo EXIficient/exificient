@@ -237,5 +237,32 @@ public class EXIRegularExpression extends RegularExpression {
 					+ " not handled!");
 		}
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+		if ( super.equals(obj) ) {
+			if (!(obj instanceof EXIRegularExpression))
+	            return false;
+	        EXIRegularExpression r = (EXIRegularExpression)obj;
+	        return (this.set.equals(r.set));
+		} else {
+			return false;
+		}
+		
+		
+//        if (obj == null)  return false;
+//        if (!(obj instanceof EXIRegularExpression))
+//            return false;
+//        EXIRegularExpression r = (EXIRegularExpression)obj;
+//        return this.regex.equals(r.regex) && this.options == r.options;
+    }
+	
+	@Override
+    public int hashCode() {
+		return super.hashCode() ^ set.hashCode();
+//		return set.hashCode();
+    }
+    
+    
 
 }

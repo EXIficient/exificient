@@ -50,7 +50,7 @@ public class BooleanDatatype extends AbstractDatatype {
 		this.rcs = new XSDBooleanCharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	public boolean isValidString(String value) {
 		bool = BooleanValue.parse(value);
 		return (bool != null);
 	}
@@ -59,19 +59,13 @@ public class BooleanDatatype extends AbstractDatatype {
 		if (value instanceof BooleanValue) {
 			bool = (BooleanValue) value;
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 
-	// public Value getValue() {
-	// return new BooleanValue(bool);
-	// }
-
 	@Override
-	public boolean isValidRCS(String value) {
+	public boolean isValidRCS(Value value) {
 		// Note: boolean really needs to do a check since it can be used for
 		// xsi:nil
 		super.isValidRCS(value);

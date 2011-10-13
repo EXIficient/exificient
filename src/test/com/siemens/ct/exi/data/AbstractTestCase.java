@@ -235,8 +235,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		// try to read stream and create DOM
 		try {
-			@SuppressWarnings("unused")
+			// @SuppressWarnings("unused")
 			Document docTest = TestDOMEncoder.getDocument(testXML);
+			assertTrue(docTest != null);
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if (msg.contains("The entity \"ent\" was referenced, but not declared")) {

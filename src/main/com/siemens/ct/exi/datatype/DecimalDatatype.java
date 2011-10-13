@@ -50,7 +50,7 @@ public class DecimalDatatype extends AbstractDatatype {
 		this.rcs = new XSDDecimalCharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		lastValidDecimal = DecimalValue.parse(value);
 		return (lastValidDecimal != null);
 	}
@@ -59,16 +59,10 @@ public class DecimalDatatype extends AbstractDatatype {
 		if (value instanceof DecimalValue) {
 			lastValidDecimal = ((DecimalValue) value);
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
-
-	// public Value getValue() {
-	// return lastValidDecimal;
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

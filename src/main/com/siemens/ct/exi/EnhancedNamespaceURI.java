@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import java.io.Serializable;
+
 import javax.xml.XMLConstants;
 
 /**
@@ -28,8 +30,10 @@ import javax.xml.XMLConstants;
  * 
  * @version 0.8
  */
-public class EnhancedNamespaceURI {
+public class EnhancedNamespaceURI implements Serializable {
 
+	private static final long serialVersionUID = 4926376840076118448L;
+	
 	protected final String namespaceUri;
 	protected int namespaceUriID;
 	
@@ -67,7 +71,6 @@ public class EnhancedNamespaceURI {
 	
 	@Override
     public final int hashCode() {
-        // return namespaceUriID;
 		return namespaceUri.hashCode();
     }
 	

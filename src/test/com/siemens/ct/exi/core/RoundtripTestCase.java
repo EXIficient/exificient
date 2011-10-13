@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.xml.sax.InputSource;
@@ -22,11 +23,13 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.GrammarTest;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 import com.siemens.ct.exi.values.ValueType;
 
@@ -387,5 +390,49 @@ public class RoundtripTestCase extends TestCase {
 		 */
 		assertTrue(os1.size() == os2.size());
 		assertTrue(Arrays.equals(os1.toByteArray(),os2.toByteArray()));
+	}
+	
+	public void testBugID3420173() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createAll());
+
+		QName name = new QName("http://foo", "alice", "foo");
+		
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		EXIBodyEncoder encoder = new EXIStreamEncoder(factory).encodeHeader(output);
+		encoder.encodeStartDocument();
+		encoder.encodeStartElement(name);
+		encoder.encodeNamespaceDeclaration(name.getNamespaceURI(), name.getPrefix());
+		encoder.encodeCharacters(new StringValue("bob"));
+		encoder.encodeEndElement();
+		encoder.encodeEndDocument();
+		encoder.flush();
+		output.close();
+
+		ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+		EXIBodyDecoder decoder = new EXIStreamDecoder(factory).decodeHeader(input);
+		Assert.assertEquals(EventType.START_DOCUMENT, decoder.next());
+		decoder.decodeStartDocument();
+		Assert.assertEquals(EventType.START_ELEMENT_GENERIC, decoder.next());
+		QName actual = decoder.decodeStartElement();
+		// prefix not known yet
+		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
+		Assert.assertEquals(name, actual);
+		Assert.assertEquals(EventType.NAMESPACE_DECLARATION, decoder.next());
+		NamespaceDeclaration nsdecl = decoder.decodeNamespaceDeclaration();
+		Assert.assertEquals(name.getNamespaceURI(), nsdecl.namespaceURI);
+		Assert.assertEquals(name.getPrefix(), nsdecl.prefix);
+		Assert.assertEquals(EventType.CHARACTERS_GENERIC_UNDECLARED, decoder.next());
+		Assert.assertEquals("bob", decoder.decodeCharacters().toString());
+		Assert.assertEquals(EventType.END_ELEMENT, decoder.next());
+		// prefix is known as long as EndElement wasn't called
+		Assert.assertEquals(name.getPrefix(), decoder.getElementPrefix());
+		actual = decoder.decodeEndElement();
+		Assert.assertEquals(name, actual);
+		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
+		Assert.assertEquals(EventType.END_DOCUMENT, decoder.next());
+		decoder.decodeEndDocument();
+		Assert.assertNull(decoder.next());
+		
 	}
 }

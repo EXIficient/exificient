@@ -105,5 +105,11 @@ public abstract class AbstractRestrictedCharacterSet implements
 		}
 		return false;
 	}
+	
+	
+	@Override
+	public int hashCode() {
+		return codeSet.hashCode();
+	}
 
 }

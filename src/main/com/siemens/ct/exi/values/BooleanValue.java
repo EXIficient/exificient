@@ -119,20 +119,27 @@ public class BooleanValue extends AbstractValue {
 		return sValue;
 	}
 
+	
+	private final boolean _equals(BooleanValue o) {
+		return (bool == ((BooleanValue) o).bool);
+	}
+	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof BooleanValue) {
-			return (bool == ((BooleanValue) o).bool);
-		} else if (o instanceof String || o instanceof StringValue) {
-			BooleanValue b = BooleanValue.parse(o.toString());
-			if (b == null) {
-				return false;
-			} else {
-				return (bool == b.bool);
-			}
-		} else {
+		if (o == null) {
 			return false;
 		}
+		if (o instanceof BooleanValue) {
+			return _equals((BooleanValue) o);
+		} else {
+			BooleanValue bv = BooleanValue.parse(o.toString());
+			return bv == null ? false : _equals(bv);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return bool ? 1 : 0;
 	}
 
 }

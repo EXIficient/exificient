@@ -176,7 +176,11 @@ public class SelfContainedTestCase extends TestCase {
 		{
 			EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
-			is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+			// is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+			int toSkip = offsetSC1-MINUS_BYTE_OFFSET;
+			while (toSkip != 0) {
+				toSkip -= is.skip(toSkip);
+			}
 			decoder.setInputStream(is);
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
@@ -201,7 +205,11 @@ public class SelfContainedTestCase extends TestCase {
 		{
 			EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 			InputStream is = new ByteArrayInputStream(baos.toByteArray());
-			is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+			// is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+			int toSkip = offsetSC2-MINUS_BYTE_OFFSET;
+			while (toSkip != 0) {
+				toSkip -= is.skip(toSkip);
+			}
 			decoder.setInputStream(is);
 			
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
@@ -333,7 +341,11 @@ public class SelfContainedTestCase extends TestCase {
 			{
 				EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 				InputStream is = new ByteArrayInputStream(baos.toByteArray());
-				is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+				// is.skip(offsetSC1-MINUS_BYTE_OFFSET);
+				int toSkip = offsetSC1-MINUS_BYTE_OFFSET;
+				while (toSkip != 0) {
+					toSkip -= is.skip(toSkip);
+				}
 				decoder.setInputStream(is);
 				
 				assertTrue(decoder.next() == EventType.START_DOCUMENT);
@@ -370,7 +382,11 @@ public class SelfContainedTestCase extends TestCase {
 			{
 				EXIBodyDecoder decoder = scEXIFactory.createEXIBodyDecoder();
 				InputStream is = new ByteArrayInputStream(baos.toByteArray());
-				is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+				// is.skip(offsetSC2-MINUS_BYTE_OFFSET);
+				int toSkip = offsetSC2-MINUS_BYTE_OFFSET;
+				while (toSkip != 0) {
+					toSkip -= is.skip(toSkip);
+				}
 				decoder.setInputStream(is);
 				
 				assertTrue(decoder.next() == EventType.START_DOCUMENT);

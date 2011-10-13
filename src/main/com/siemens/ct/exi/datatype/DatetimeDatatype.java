@@ -58,7 +58,8 @@ public class DatetimeDatatype extends AbstractDatatype {
 		return datetimeType;
 	}
 
-	public boolean isValid(String value) {
+	// public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		lastValidDatetime = DateTimeValue.parse(value, datetimeType);
 		return (lastValidDatetime != null);
 	}
@@ -67,16 +68,10 @@ public class DatetimeDatatype extends AbstractDatatype {
 		if (value instanceof DateTimeValue) {
 			lastValidDatetime = ((DateTimeValue) value);
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
-
-	// public Value getValue() {
-	// return lastValidDatetime;
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
