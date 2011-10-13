@@ -44,4 +44,9 @@ public class NamespaceDeclaration {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return namespaceURI.hashCode() ^ prefix.hashCode();
+	}
 }

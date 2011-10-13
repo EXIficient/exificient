@@ -46,26 +46,19 @@ public interface Datatype extends Serializable {
 
 	// used for dtr map
 	public QName getSchemaType();
+	
+	// restricted character set
+	public RestrictedCharacterSet getRestrictedCharacterSet();
 
 	/*
 	 * Encoder
 	 */
-	public boolean isValid(String value);
-
 	public boolean isValid(Value value);
-
-	// // if value is valid
-	// public Value getValue();
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException;
 
-	// public void finish() throws IOException;
-
-	// restricted character set
-	public RestrictedCharacterSet getRestrictedCharacterSet();
-
-	public boolean isValidRCS(String value);
+	public boolean isValidRCS(Value value);
 
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
 			EncoderChannel valueChannel, StringEncoder stringEncoder,

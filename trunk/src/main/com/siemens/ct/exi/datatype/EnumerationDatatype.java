@@ -87,17 +87,9 @@ public class EnumerationDatatype extends AbstractDatatype {
 			this.rcs = new XSDDoubleCharacterSet();
 			break;
 		/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
-		case NBIT_INTEGER_32:
-		case NBIT_INTEGER_64:
-		case NBIT_INTEGER_BIG:
-		case UNSIGNED_INTEGER_16:
-		case UNSIGNED_INTEGER_32:
-		case UNSIGNED_INTEGER_64:
-		case UNSIGNED_INTEGER_BIG:
-		case INTEGER_16:
-		case INTEGER_32:
-		case INTEGER_64:
-		case INTEGER_BIG:
+		case NBIT_INTEGER:
+		case UNSIGNED_INTEGER:
+		case INTEGER:
 			this.rcs = new XSDIntegerCharacterSet();
 			break;
 		/* Datetime */
@@ -127,28 +119,6 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public int getCodingLength() {
 		return codingLength;
 	}
-	
-	@Override
-	public boolean isValidRCS(String value) {
-		// RCS is of enumeration base type
-		super.isValidRCS(value);
-		return isValid(value);
-	}
-	
-
-	// When the preserve.lexicalValues option is false, enumerated values are
-	// encoded as n-bit Unsigned Integers
-	public boolean isValid(String value) {
-		int index = 0;
-		while (index < enumValues.length) {
-			if (enumValues[index].equals(value)) {
-				lastValidIndex = index;
-				return true;
-			}
-			index++;
-		}
-		return false;
-	}
 
 	public boolean isValid(Value value) {
 		int index = 0;
@@ -163,10 +133,6 @@ public class EnumerationDatatype extends AbstractDatatype {
 		return false;
 	}
 
-	// public Value getValue() {
-	// return enumValues[lastValidIndex];
-	// }
-
 	public Value getEnumValue(int i) {
 		assert (i >= 0 && i < enumValues.length);
 		return enumValues[i];
@@ -175,23 +141,6 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public BuiltInType getEnumValueBuiltInType() {
 		return bitEnumValues;
 	}
-
-	// @Override
-	// // When the preserve.lexicalValues option is true, enumerated values are
-	// // encoded as String
-	// public boolean isValidRCS(String value) {
-	// // super.isValidRCS(value);
-	// this.lastRCSValue = value;
-	// return true;
-	// }
-	//
-	// @Override
-	// public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-	// EncoderChannel valueChannel, StringEncoder stringEncoder,
-	// QName context) throws IOException {
-	// // super.writeValueRCS(rcsEncoder, valueChannel, stringEncoder, context)
-	// stringEncoder.writeValue(context, valueChannel, lastRCSValue);
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
@@ -204,12 +153,5 @@ public class EnumerationDatatype extends AbstractDatatype {
 		assert (index >= 0 && index < enumValues.length);
 		return enumValues[index];
 	}
-
-	// @Override
-	// public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-	// DecoderChannel valueChannel, StringDecoder stringDecoder,
-	// QName context) throws IOException {
-	// return stringDecoder.readValue(context, valueChannel);
-	// }
 
 }

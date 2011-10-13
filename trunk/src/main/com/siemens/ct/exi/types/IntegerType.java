@@ -16,16 +16,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+package com.siemens.ct.exi.types;
 
-package com.siemens.ct.exi;
+/**
+ * EXI can deal with arbitrary large integers have values. This integer-type
+ * informs about the type declared in the schema.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.8
+ */
 
-public class TestSAXCoder {
-
-	public static void main(String[] args) throws Exception {
-		// encode
-		TestSAXEncoder.main(args);
-		// decode
-		TestSAXDecoder.main(args);
-	}
-
+public enum IntegerType {
+	/* Unsigned Integer */
+	UNSIGNED_INTEGER_8, UNSIGNED_INTEGER_16, UNSIGNED_INTEGER_32, UNSIGNED_INTEGER_64, UNSIGNED_INTEGER_BIG,
+	/* Signed Integer */
+	INTEGER_8, INTEGER_16, INTEGER_32, INTEGER_64, INTEGER_BIG
 }

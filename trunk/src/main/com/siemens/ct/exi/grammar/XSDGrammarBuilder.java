@@ -88,6 +88,7 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTagRule;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.BinaryBase64Value;
 import com.siemens.ct.exi.values.BinaryHexValue;
 import com.siemens.ct.exi.values.BooleanValue;
@@ -295,7 +296,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				// cannot have same type name
 				return false;
 			}
-			if (t0.getName() != t1.getName()
+			// if (t0.getName() != t1.getName()
+			if (!t0.getName().equals(t1.getName())
 					|| t0.getNamespace() != t1.getNamespace()
 					|| e0.getNillable() != e1.getNillable()) {
 				return false;
@@ -1479,19 +1481,22 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 									enumValue = FloatValue.parse(tok);
 									break;
 								/* int */
-								case NBIT_INTEGER_32:
-								case UNSIGNED_INTEGER_16:
-								case INTEGER_16:
-								case INTEGER_32:
-									/* long */
-								case NBIT_INTEGER_64:
-								case UNSIGNED_INTEGER_32:
-								case INTEGER_64:
-									/* big */
-								case NBIT_INTEGER_BIG:
-								case UNSIGNED_INTEGER_64:
-								case UNSIGNED_INTEGER_BIG:
-								case INTEGER_BIG:
+								case NBIT_INTEGER:
+								case UNSIGNED_INTEGER:
+								case INTEGER:
+//								case NBIT_INTEGER_32:
+//								case UNSIGNED_INTEGER_16:
+//								case INTEGER_16:
+//								case INTEGER_32:
+//									/* long */
+//								case NBIT_INTEGER_64:
+//								case UNSIGNED_INTEGER_32:
+//								case INTEGER_64:
+//									/* big */
+//								case NBIT_INTEGER_BIG:
+//								case UNSIGNED_INTEGER_64:
+//								case UNSIGNED_INTEGER_BIG:
+//								case INTEGER_BIG:
 									enumValue = IntegerValue.parse(tok);
 									break;
 								/* Datetime */
@@ -1574,9 +1579,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		String name, uri;
 		if (std.getAnonymous()) {
 			XSTypeDefinition baseType = std;
-			do {
-				baseType = baseType.getBaseType();
-			} while (baseType == null || baseType.getAnonymous());
+			while( ( baseType = baseType.getBaseType()).getAnonymous() ) {
+			}
 			uri = baseType.getNamespace();
 			name = baseType.getName();
 		} else {
@@ -1600,43 +1604,50 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 
 		// set appropriate integer type
-		BuiltInType intType;
+		IntegerType intType;
+		
 		// big
 		if (xsdSTD.getName().equals("integer")
 				|| xsdSTD.getName().equals("nonPositiveInteger")
 				|| xsdSTD.getName().equals("negativeInteger")) {
-			intType = BuiltInType.INTEGER_BIG;
+			intType = IntegerType.INTEGER_BIG;
 		}
 		// unsigned big
 		else if (xsdSTD.getName().equals("nonNegativeInteger")
 				|| xsdSTD.getName().equals("positiveInteger")) {
-			intType = BuiltInType.UNSIGNED_INTEGER_BIG;
+			intType = IntegerType.UNSIGNED_INTEGER_BIG;
 		}
 		// int 64
 		else if (xsdSTD.getName().equals("long")) {
-			intType = BuiltInType.INTEGER_64;
+			intType = IntegerType.INTEGER_64;
 		}
 		// unsigned int 64
 		else if (xsdSTD.getName().equals("unsignedLong")) {
-			intType = BuiltInType.UNSIGNED_INTEGER_64;
+			intType = IntegerType.UNSIGNED_INTEGER_64;
 		}
 		// int 32
 		else if (xsdSTD.getName().equals("int")) {
-			intType = BuiltInType.INTEGER_32;
+			intType = IntegerType.INTEGER_32;
 		}
 		// unsigned int 32
 		else if (xsdSTD.getName().equals("unsignedInt")) {
-			intType = BuiltInType.UNSIGNED_INTEGER_32;
+			intType = IntegerType.UNSIGNED_INTEGER_32;
 		}
 		// int 16
-		else if (xsdSTD.getName().equals("short")
-				|| xsdSTD.getName().equals("byte")) {
-			intType = BuiltInType.INTEGER_16;
+		else if (xsdSTD.getName().equals("short")) {
+			intType = IntegerType.INTEGER_16;
 		}
 		// unsigned int 16
-		else if (xsdSTD.getName().equals("unsignedShort")
-				|| xsdSTD.getName().equals("unsignedByte")) {
-			intType = BuiltInType.UNSIGNED_INTEGER_16;
+		else if (xsdSTD.getName().equals("unsignedShort")) {
+			intType = IntegerType.UNSIGNED_INTEGER_16;
+		}
+		// int 8
+		else if (xsdSTD.getName().equals("byte")) {
+			intType = IntegerType.INTEGER_8;
+		}
+		// unsigned int 8
+		else if (xsdSTD.getName().equals("unsignedByte")) {
+			intType = IntegerType.UNSIGNED_INTEGER_8;
 		}
 		// ERROR ??
 		else {
@@ -1697,23 +1708,16 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			 */
 			switch (intType) {
 			case UNSIGNED_INTEGER_BIG:
-			case INTEGER_BIG:
 			case UNSIGNED_INTEGER_64:
-				datatype = new NBitIntegerDatatype(
-						BuiltInType.NBIT_INTEGER_BIG,
-						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
-						schemaType);
-				break;
-			case INTEGER_64:
 			case UNSIGNED_INTEGER_32:
-				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_64,
-						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
-						schemaType);
-				break;
-			case INTEGER_32:
 			case UNSIGNED_INTEGER_16:
+			case UNSIGNED_INTEGER_8:
+			case INTEGER_BIG:
+			case INTEGER_64:
+			case INTEGER_32:
 			case INTEGER_16:
-				datatype = new NBitIntegerDatatype(BuiltInType.NBIT_INTEGER_32,
+			case INTEGER_8:
+				datatype = new NBitIntegerDatatype(intType,
 						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
 						schemaType);
 				break;
@@ -1735,14 +1739,22 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			/*
 			 * update int-type according to facet restrictions, val >= 0
 			 */
-			if (intType == BuiltInType.INTEGER_BIG) {
-				intType = BuiltInType.UNSIGNED_INTEGER_BIG;
-			} else if (intType == BuiltInType.INTEGER_64) {
-				intType = BuiltInType.UNSIGNED_INTEGER_64;
-			} else if (intType == BuiltInType.INTEGER_32) {
-				intType = BuiltInType.UNSIGNED_INTEGER_32;
-			} else if (intType == BuiltInType.INTEGER_16) {
-				intType = BuiltInType.UNSIGNED_INTEGER_16;
+			switch(intType) {
+			case INTEGER_BIG:
+				intType = IntegerType.UNSIGNED_INTEGER_BIG;
+				break;
+			case INTEGER_64:
+				intType = IntegerType.UNSIGNED_INTEGER_64;
+				break;
+			case INTEGER_32:
+				intType = IntegerType.UNSIGNED_INTEGER_32;
+				break;
+			case INTEGER_16:
+				intType = IntegerType.UNSIGNED_INTEGER_16;
+				break;
+			case INTEGER_8:
+				intType = IntegerType.UNSIGNED_INTEGER_8;
+				break;
 			}
 
 			switch (intType) {
@@ -1750,6 +1762,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case UNSIGNED_INTEGER_64:
 			case UNSIGNED_INTEGER_32:
 			case UNSIGNED_INTEGER_16:
+			case UNSIGNED_INTEGER_8:
 				// int
 				datatype = new UnsignedIntegerDatatype(intType, schemaType);
 				break;
@@ -1766,6 +1779,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case INTEGER_64:
 			case INTEGER_32:
 			case INTEGER_16:
+			case INTEGER_8: // should be n-bit
 				// int
 				datatype = new IntegerDatatype(intType, schemaType);
 				break;

@@ -158,43 +158,43 @@ public class TestCaseOption {
 
 	@Override
 	public String toString() {
-		String s = new String();
+		StringBuilder sb = new StringBuilder();
 		// schemaLocation ?
 		if (schemaLocation == null) {
-			s += "noSchema, ";
+			sb.append("noSchema, ");
 		} else {
-			s += "schema=" + schemaLocation + ", ";
+			sb.append("schema=" + schemaLocation + ", ");
 		}
 		// coding mode
-		s += "codingMode=" + codingMode + ", ";
+		sb.append("codingMode=" + codingMode + ", ");
 		// fidelityOptions
-		s += "fidelityOptions=" + getFidelityOptions().toString();
+		sb.append("fidelityOptions=" + getFidelityOptions().toString());
 		// selfContained elements
 		if (this.scElements != null && this.scElements.length > 0 ) {
-			s += ", scElements=[";
+			sb.append(", scElements=[");
 			for(QName sc : scElements) {
-				s += sc+",";
+				sb.append(sc+",");
 			}
-			s += "]";
+			sb.append("]");
 		}
 		// blockSize
 		if (blockSize != Constants.DEFAULT_BLOCK_SIZE) {
-			s += ",bs=" + blockSize;
+			sb.append(",bs=" + blockSize);
 		}
 		//  valueMaxLength
 		if (valueMaxLength != Constants.DEFAULT_VALUE_MAX_LENGTH) {
-			s += ",vml=" + valueMaxLength;
+			sb.append(",vml=" + valueMaxLength);
 		}
 		// valuePartitionCapacity
 		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY ) {
-			s += ",vpc=" + valuePartitionCapacity;
+			sb.append(",vpc=" + valuePartitionCapacity);
 		}
 		// profile
 		if (this.profile != null) {
-			s += ",profile=" + profile;
+			sb.append(",profile=" + profile);
 		}
 
-		return s;
+		return sb.toString();
 	}
 
 }

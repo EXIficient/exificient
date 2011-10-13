@@ -31,19 +31,7 @@ public class BinaryHexValue extends AbstractBinaryValue {
 
 	private static final long serialVersionUID = 4914135099644891193L;
 
-	// static private final int LOOKUPLENGTH = 16;
-	// static final private char[] lookUpHexAlphabet = new char[LOOKUPLENGTH];
-
 	private int lengthData;
-
-	// static {
-	// for (int i = 0; i < 10; i++) {
-	// lookUpHexAlphabet[i] = (char) ('0' + i);
-	// }
-	// for (int i = 10; i <= 15; i++) {
-	// lookUpHexAlphabet[i] = (char) ('A' + i - 10);
-	// }
-	// }
 
 	public BinaryHexValue(byte[] bytes) {
 		super(ValueType.BINARY_HEX, bytes);
@@ -83,20 +71,29 @@ public class BinaryHexValue extends AbstractBinaryValue {
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
 		if (o instanceof BinaryHexValue) {
 			return _equals(((BinaryHexValue) o).bytes);
-		} else if (o instanceof String || o instanceof StringValue) {
-			BinaryHexValue b = BinaryHexValue.parse(o.toString());
-			if (b == null) {
-				return false;
-			} else {
-				return _equals(b.toBytes());
-			}
 		} else {
-			return false;
+			BinaryHexValue bv = BinaryHexValue.parse(o.toString());
+			return bv == null ? false : _equals(bv.bytes);
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		//
+		int hc = 0;
+		for (byte b : bytes) {
+			hc = (hc * 31) ^ b;
+		}
+
+		return hc;
+	}
+	
+	
 	/*
 	 * ****************************************************************
 	 * org.apache.xerces.impl.dv.util.HexBin
@@ -128,29 +125,6 @@ public class BinaryHexValue extends AbstractBinaryValue {
 			lookUpHexAlphabet[i] = (char) ('A' + i - 10);
 		}
 	}
-
-	// /**
-	// * Encode a byte array to hex string
-	// *
-	// * @param binaryData array of byte to encode
-	// * @return return encoded string
-	// */
-	// static public String encode(byte[] binaryData) {
-	// if (binaryData == null)
-	// return null;
-	// int lengthData = binaryData.length;
-	// int lengthEncode = lengthData * 2;
-	// char[] encodedData = new char[lengthEncode];
-	// int temp;
-	// for (int i = 0; i < lengthData; i++) {
-	// temp = binaryData[i];
-	// if (temp < 0)
-	// temp += 256;
-	// encodedData[i*2] = lookUpHexAlphabet[temp >> 4];
-	// encodedData[i*2+1] = lookUpHexAlphabet[temp & 0xf];
-	// }
-	// return new String(encodedData);
-	// }
 
 	/**
 	 * Decode hex string to a byte array

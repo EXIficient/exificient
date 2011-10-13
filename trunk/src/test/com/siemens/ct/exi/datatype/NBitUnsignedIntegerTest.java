@@ -24,6 +24,8 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
+import com.siemens.ct.exi.values.StringValue;
+import com.siemens.ct.exi.values.Value;
 
 public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
@@ -209,7 +211,7 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 				schemaAsString, "NBit", "");
 
 		// try to validate
-		assertFalse(datatype.isValid("12"));
+		assertFalse(datatype.isValid(new StringValue("12")));
 	}
 
 	public void testNBitUnsignedIntegerFacet2() throws IOException,
@@ -223,7 +225,7 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		String sValue = "-12";
+		StringValue sValue = new StringValue("-12");
 
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
@@ -238,12 +240,12 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		String sDecoded;
+		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(getBitDecoder(), null, null).toString();
+		sDecoded = datatype.readValue(getBitDecoder(), null, null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(getByteDecoder(), null, null).toString();
+		sDecoded = datatype.readValue(getByteDecoder(), null, null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
@@ -258,7 +260,7 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		String sValue = "-12";
+		StringValue sValue = new StringValue("-12");
 
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
@@ -273,12 +275,12 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		datatype.writeValue(getByteEncoder(), null, null);
 
 		// read
-		String sDecoded;
+		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(getBitDecoder(), null, null).toString();
+		sDecoded = datatype.readValue(getBitDecoder(), null, null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(getByteDecoder(), null, null).toString();
+		sDecoded = datatype.readValue(getByteDecoder(), null, null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 

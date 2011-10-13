@@ -21,6 +21,7 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
 import com.siemens.ct.exi.grammar.EventTypeInformation;
+import com.siemens.ct.exi.grammar.SchemaInformedEventInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -53,7 +54,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  * Element i, content2 n.(m+3).1
  */
 public class SchemaInformedStartTag extends AbstractSchemaInformedContent
-		implements SchemaInformedStartTagRule {
+		implements SchemaInformedStartTagRule, Cloneable {
 
 	private static final long serialVersionUID = -674782327638586700L;
 
@@ -106,21 +107,21 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 
 	@Override
 	public SchemaInformedStartTag clone() {
-		SchemaInformedStartTag clone = new SchemaInformedStartTag(
-				elementContent2);
-
-		// duplicate top level
-		for (int i = 0; i < getNumberOfEvents(); i++) {
-			EventInformation ei = lookFor(i);
-			// remove self-reference
-			Rule next = ei.next;
-			if (next == this) {
-				next = clone;
+		// SchemaInformedStartTag clone = new SchemaInformedStartTag(elementContent2);
+		SchemaInformedStartTag clone = (SchemaInformedStartTag) super.clone();
+		
+		// remove self-references
+		for(int i=0; i<clone.containers.length; i++) {
+			EventInformation ei = clone.containers[i];
+			if (ei.next == this) {
+				clone.containers[i] = new SchemaInformedEventInformation(clone, ei.event, i);
 			}
-			clone.addRule(ei.event, next);
+			
 		}
-
+		
 		return clone;
+		
+		
 	}
 
 	public String toString() {

@@ -23,6 +23,7 @@ import java.math.BigInteger;
 
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
+import com.siemens.ct.exi.values.IntegerValue;
 
 public class UnsignedIntegerTest extends AbstractTestCase {
 
@@ -184,14 +185,15 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 	public void testUnsignedLongS1() throws IOException {
 		String s = "2147483649997";
 
-		long xmlInteger = Long.parseLong(s);
+		// long xmlInteger = Long.parseLong(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedLong(xmlInteger);
+		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s.equals(getBitDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 		// Byte
-		getByteEncoder().encodeUnsignedLong(xmlInteger);
+		getByteEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
@@ -199,14 +201,15 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 	public void testUnsignedIntegerSBig1() throws IOException {
 		String s = "12678967543233";
 
-		BigInteger xmlInteger = new BigInteger(s);
+		//BigInteger xmlInteger = new BigInteger(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
-		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getByteEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
@@ -218,14 +221,15 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 		String s = bi.toString();
 
 		// 9223372036854775808
-		BigInteger xmlInteger = new BigInteger(s);
+		// BigInteger xmlInteger = new BigInteger(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
-		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getByteEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
@@ -233,14 +237,15 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 	public void testUnsignedIntegerSBig3() throws IOException {
 		String s = "87139166666670000000000000000001";
 
-		BigInteger xmlInteger = new BigInteger(s);
-
+		// BigInteger xmlInteger = new BigInteger(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
+		
 		// Bit
-		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s + "!=" + s1, s.equals(s1));
 		// Byte
-		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getByteEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
@@ -249,14 +254,15 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 		String s = "0008713916666667000000000000000000";
 		String s2 = "8713916666667000000000000000000";
 
-		BigInteger xmlInteger = new BigInteger(s);
+		// BigInteger xmlInteger = new BigInteger(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		// Bit
-		getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();
 		assertTrue(s2 + "!=" + s1, s2.equals(s1));
 		// Byte
-		getByteEncoder().encodeUnsignedBigInteger(xmlInteger);
+		getByteEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		assertTrue(s2.equals(getByteDecoder().decodeUnsignedIntegerValue()
 				.toString()));
 	}
@@ -264,11 +270,12 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 	public void testUnsignedIntegerSFailure() throws IOException {
 		String s = "-123";
 
-		BigInteger xmlInteger = new BigInteger(s);
+		// BigInteger xmlInteger = new BigInteger(s);
+		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		try {
 			// Bit
-			getBitEncoder().encodeUnsignedBigInteger(xmlInteger);
+			getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 			fail("Negative values accepted");
 		} catch (RuntimeException e) {
 			// ok

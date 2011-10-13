@@ -135,7 +135,7 @@ public class StringEncoderImpl implements StringEncoder {
 		localValueSize.clear();
 	}
 
-	class ValueContainer {
+	static class ValueContainer {
 
 		public final QName context;
 		public final int localValueID;

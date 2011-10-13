@@ -57,20 +57,24 @@ public class QNameDatatype extends AbstractDatatype {
 	protected QName qname;
 	protected String qnamePrefix;
 
-	protected AbstractEXIBodyCoder namespaces;
+	protected transient AbstractEXIBodyCoder namespaces;
 	protected boolean preservePrefix;
 
 	// Grammar & Runtime entries
 	protected GrammarURIEntry[] grammarURIEntries;
 	protected List<RuntimeURIEntry> runtimeURIEntries;
 
-	public QNameDatatype(AbstractEXIBodyCoder namespaces, QName schemaType) {
-		super(BuiltInType.QNAME, schemaType);
+	public QNameDatatype() {
+		super(BuiltInType.QNAME, null);
 		this.rcs = new XSDStringCharacterSet();
 		//
-		this.namespaces = namespaces;
+//		this.namespaces = namespaces;
 		//
 		runtimeURIEntries = new ArrayList<RuntimeURIEntry>();
+	}
+	
+	public void setNamespaces(AbstractEXIBodyCoder namespaces) {
+		this.namespaces = namespaces;
 	}
 
 	public void setFactoryInformation(boolean preservePrefix,
@@ -190,8 +194,8 @@ public class QNameDatatype extends AbstractDatatype {
 		runtimeURIEntries.get(uriID).addPrefix(prefix);
 	}
 
-	public boolean isValid(String value) {
-		super.isValidRCS(value);
+	protected boolean isValidString(String value) {
+//		super.isValidRCS(value);
 
 		// extract prefix
 		qnamePrefix = QNameUtilities.getPrefixPart(value);
@@ -223,10 +227,8 @@ public class QNameDatatype extends AbstractDatatype {
 			// eqname = qv.toEnhancedQName();
 			qnamePrefix = qv.getPrefix();
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 

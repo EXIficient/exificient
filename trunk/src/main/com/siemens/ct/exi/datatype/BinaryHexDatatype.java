@@ -46,7 +46,8 @@ public class BinaryHexDatatype extends AbstractBinaryDatatype {
 		this.rcs = new XSDHexBinaryCharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	//public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		value = value.trim();
 		BinaryHexValue bv = BinaryHexValue.parse(value);
 		if (bv == null) {

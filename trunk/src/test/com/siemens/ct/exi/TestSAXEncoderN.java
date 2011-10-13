@@ -67,7 +67,8 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		File f = new File(exiLocation);
 		File path = f.getParentFile();
 		if (!path.exists()) {
-			path.mkdirs();
+			boolean bool = path.mkdirs();
+			assert(bool);
 		}
 		OutputStream encodedOutput = new BufferedOutputStream(
 				new FileOutputStream(f));

@@ -98,8 +98,8 @@ public class QuickTestConfiguration {
 	// FIDELITY OPTIONS
 	static {
 		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		// fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createAll();
 //		try {
 //////////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 //////			fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);

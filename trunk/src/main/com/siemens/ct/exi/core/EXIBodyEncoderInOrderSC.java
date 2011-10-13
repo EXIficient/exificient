@@ -127,12 +127,12 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 	@Override
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException {
-		QName qname;
+		// QName qname;
 
 		// business as usual
 		if (scEncoder == null) {
 			super.encodeStartElement(uri, localName, prefix);
-			qname = elementContext.eqname.getQName();
+			QName qname = elementContext.eqname.getQName();
 
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
@@ -149,7 +149,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			}
 		} else {
 			scEncoder.encodeStartElement(uri, localName, prefix);
-			qname = scEncoder.elementContext.eqname.getQName();
+			// qname = scEncoder.elementContext.eqname.getQName();
 		}
 	}
 

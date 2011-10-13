@@ -55,9 +55,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	protected int codeLengthA; // 1st level only
 	protected int codeLengthB; // 2nd OR 3rd level
 
-	// // subtype (xsi:type) OR nillable (xsi:nill) ?
-	// protected boolean isTypeCastable = false;
-	// protected boolean isNillable = false;
 	// EE present
 	protected boolean hasEndElement = false;
 
@@ -92,9 +89,6 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 	}
 
 	public abstract boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions);
-//	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-//		return (!fidelityOptions.isStrict());
-//	}
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
 		return (hasSecondOrThirdLevel(fidelityOptions) ? codeLengthB
@@ -240,7 +234,11 @@ public abstract class AbstractSchemaInformedRule extends AbstractRule implements
 
 	@Override
 	public SchemaInformedRule clone() {
-		return this;
+		try {
+			return (SchemaInformedRule) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	public SchemaInformedRule duplicate() {

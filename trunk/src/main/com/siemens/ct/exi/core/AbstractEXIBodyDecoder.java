@@ -341,7 +341,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			xsiNil = bv.toBoolean();
 		} else {
 			// parse string value again (lexical value mode)
-			booleanDatatype.isValid(attributeValue.toString());
+			booleanDatatype.isValid(attributeValue);
 			xsiNil = booleanDatatype.getBoolean();
 		}
 
@@ -380,7 +380,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			}
 		} else {			
 			// parse string value again (lexical value mode)
-			if (qnameDatatype.isValid(attributeValue.toString())) {
+			if (qnameDatatype.isValid(attributeValue)) {
 				xsiTypeQName = qnameDatatype.getQName();
 				if (!preservePrefix) {
 					String pfx = qnameDatatype.getPrefix();

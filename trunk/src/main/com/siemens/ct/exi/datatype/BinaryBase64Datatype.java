@@ -46,7 +46,7 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 		this.rcs = new XSDBase64CharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		BinaryBase64Value bv = BinaryBase64Value.parse(value);
 		if (bv == null) {
 			return false;
@@ -56,9 +56,6 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 		}
 	}
 
-	// public Value getValue() {
-	// return new BinaryBase64Value(bytes);
-	// }
 
 	public Value readValue(DecoderChannel valueChannel,
 			StringDecoder stringDecoder, QName context) throws IOException {

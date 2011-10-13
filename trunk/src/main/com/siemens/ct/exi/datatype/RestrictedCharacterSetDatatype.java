@@ -45,8 +45,6 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -6098764255799006920L;
 
-	// private static final Value EMPTY_STRING_VALUE = new StringValue("");
-
 	protected String lastValidValue;
 
 	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
@@ -67,25 +65,12 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		return rcs;
 	}
 
-	public boolean isValid(String value) {
+	public boolean isValid(Value value) {
 		// Note: no validity check needed since any char-sequence can be encoded
 		// due to fallback mechanism
-		lastValidValue = value;
+		lastValidValue = value.toString();
 		return true;
 	}
-
-	public boolean isValid(Value value) {
-		if (value instanceof StringValue) {
-			lastValidValue = ((StringValue) value).toString();
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	// public Value getValue() {
-	// return new StringValue(lastValidValue);
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

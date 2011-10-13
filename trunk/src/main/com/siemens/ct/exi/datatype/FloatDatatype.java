@@ -51,7 +51,7 @@ public class FloatDatatype extends AbstractDatatype {
 		this.rcs = new XSDDoubleCharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		lastValidFloat = FloatValue.parse(value);
 		return (lastValidFloat != null);
 	}
@@ -60,22 +60,14 @@ public class FloatDatatype extends AbstractDatatype {
 		if (value instanceof FloatValue) {
 			lastValidFloat = ((FloatValue) value);
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 
-	// public Value getValue() {
-	// // return new DoubleValue(mantissa, exponent);
-	// return lastValidFloat;
-	// }
-
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
-		valueChannel.encodeFloat(lastValidFloat.mantissa,
-				lastValidFloat.exponent);
+		valueChannel.encodeFloat(lastValidFloat);
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

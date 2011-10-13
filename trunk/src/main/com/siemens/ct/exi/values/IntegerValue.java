@@ -67,15 +67,42 @@ public class IntegerValue extends AbstractValue implements
 	}
 
 	public int intValue() {
-		return this.ival;
+		switch (valueType) {
+		case INTEGER_INT:
+			return this.ival;
+		case INTEGER_LONG:
+			return (int)this.lval;
+		case INTEGER_BIG:
+			return bval.intValue();
+		default:
+			throw new RuntimeException("Unsupported Integer Type");
+		}
 	}
 
 	public long longValue() {
-		return this.lval;
+		switch (valueType) {
+		case INTEGER_INT:
+			return this.ival;
+		case INTEGER_LONG:
+			return this.lval;
+		case INTEGER_BIG:
+			return bval.longValue();
+		default:
+			throw new RuntimeException("Unsupported Integer Type");
+		}
 	}
 
 	public BigInteger bigIntegerValue() {
-		return this.bval;
+		switch (valueType) {
+		case INTEGER_INT:
+			return BigInteger.valueOf(this.ival);
+		case INTEGER_LONG:
+			return BigInteger.valueOf(this.lval);
+		case INTEGER_BIG:
+			return bval;
+		default:
+			throw new RuntimeException("Unsupported Integer Type");
+		}
 	}
 
 	public boolean isPositive() {
@@ -252,10 +279,6 @@ public class IntegerValue extends AbstractValue implements
 		}
 	}
 
-	// public int toInteger() {
-	// return ival;
-	// }
-
 	public int getCharactersLength() {
 		if (slen == -1) {
 			switch (this.valueType) {
@@ -287,7 +310,10 @@ public class IntegerValue extends AbstractValue implements
 		switch (this.valueType) {
 		case INTEGER_INT:
 			if (ival == Integer.MIN_VALUE) {
-				return MethodsBag.INTEGER_MIN_VALUE_CHARARRAY;
+				// Values are used in may places --> copy
+				System.arraycopy(MethodsBag.INTEGER_MIN_VALUE_CHARARRAY, 0, cbuffer, offset, MethodsBag.INTEGER_MIN_VALUE_CHARARRAY.length);
+				// return MethodsBag.INTEGER_MIN_VALUE_CHARARRAY;
+				return cbuffer;
 			} else {
 				assert (cbuffer.length >= getCharactersLength());
 				MethodsBag.itos(ival, offset + getCharactersLength(), cbuffer);
@@ -295,7 +321,10 @@ public class IntegerValue extends AbstractValue implements
 			}
 		case INTEGER_LONG:
 			if (lval == Long.MIN_VALUE) {
-				return MethodsBag.LONG_MIN_VALUE_CHARARRAY;
+				// Values are used in may places --> copy
+				System.arraycopy(MethodsBag.LONG_MIN_VALUE_CHARARRAY, 0, cbuffer, offset, MethodsBag.LONG_MIN_VALUE_CHARARRAY.length);
+				// return MethodsBag.LONG_MIN_VALUE_CHARARRAY;
+				return cbuffer;
 			} else {
 				assert (cbuffer.length >= getCharactersLength());
 				MethodsBag.itos(lval, offset + getCharactersLength(), cbuffer);
@@ -314,43 +343,47 @@ public class IntegerValue extends AbstractValue implements
 	private final boolean _equals(IntegerValue o) {
 		switch (this.valueType) {
 		case INTEGER_INT:
-			if (o.valueType == ValueType.INTEGER_INT && this.ival == o.ival) {
-				return true;
-			} else {
-				return false;
-			}
+			return (o.valueType == ValueType.INTEGER_INT && this.ival == o.ival);
 		case INTEGER_LONG:
-			if (o.valueType == ValueType.INTEGER_LONG && this.lval == o.lval) {
-				return true;
-			} else {
-				return false;
-			}
+			return (o.valueType == ValueType.INTEGER_LONG && this.lval == o.lval);
 		case INTEGER_BIG:
-			if (o.valueType == ValueType.INTEGER_BIG
-					&& this.bval.equals(o.lval)) {
-				return true;
-			} else {
-				return false;
-			}
+			return (o.valueType == ValueType.INTEGER_BIG
+					&& this.bval.equals(o.bval));
 		default:
 			return false;
 		}
 	}
 
+	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof IntegerValue) {
-			return _equals((IntegerValue) o);
-		} else if (o instanceof String || o instanceof StringValue) {
-			IntegerValue i = IntegerValue.parse(o.toString());
-			if (i == null) {
-				return false;
-			} else {
-				return this._equals(i);
-			}
-		} else {
+		if (o == null) {
 			return false;
 		}
+		if (o instanceof IntegerValue) {
+			return _equals((IntegerValue) o);
+		} else {
+			IntegerValue iv = IntegerValue.parse(o.toString());
+			return iv == null ? false : _equals(iv);
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		int hc = 0;
+		switch (valueType) {
+		case INTEGER_INT:
+			hc = ival;
+			break;
+		case INTEGER_LONG:
+			// Long hashCode: return (int)(value ^ (value >>> 32));
+			hc = (int)(lval ^ (lval >>> 32));
+			break;
+		case INTEGER_BIG:
+			hc = bval.hashCode();
+			break;
+		}
+		return hc;
 	}
 
 	public int compareTo(IntegerValue o) {

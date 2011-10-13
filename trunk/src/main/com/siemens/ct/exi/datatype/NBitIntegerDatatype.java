@@ -28,10 +28,10 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
-import com.siemens.ct.exi.values.ValueType;
 
 /**
  * 
@@ -46,16 +46,19 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = -7109188105049008275L;
 
 	protected IntegerValue validValue;
+	
+	protected final IntegerType integerType;
 
 	protected final IntegerValue lowerBound;
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitIntegerDatatype(BuiltInType builtInType,
+	public NBitIntegerDatatype(IntegerType integerType,
 			IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
-		super(builtInType, schemaType);
+		super(BuiltInType.NBIT_INTEGER, schemaType);
+		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
-
+		
 		// assert (upperBound >= lowerBound);
 		assert (upperBound.compareTo(lowerBound) >= 0);
 		this.lowerBound = lowerBound;
@@ -63,14 +66,12 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 
 		// calculate number of bits to represent range
 		IntegerValue diff = upperBound.subtract(lowerBound);
-		if (diff.getValueType() == ValueType.INTEGER_INT) {
-			numberOfBits4Range = MethodsBag
-					.getCodingLength(diff.intValue() + 1);
-		} else {
-			throw new RuntimeException("Unexpected NBit bound difference: "
-					+ diff);
-		}
-
+		numberOfBits4Range = MethodsBag
+				.getCodingLength(diff.intValue() + 1);
+	}
+	
+	public IntegerType getIntegerType() {
+		return integerType;
 	}
 
 	public IntegerValue getLowerBound() {
@@ -85,7 +86,7 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		return numberOfBits4Range;
 	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		validValue = IntegerValue.parse(value);
 
 		if (validValue == null) {
@@ -99,10 +100,8 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 		if (value instanceof IntegerValue) {
 			validValue = ((IntegerValue) value);
 			return checkBounds();
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 
@@ -115,12 +114,8 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {
 		IntegerValue iv = validValue.subtract(lowerBound);
-		if (iv.getValueType() == ValueType.INTEGER_INT) {
-			valueChannel.encodeNBitUnsignedInteger(iv.intValue(),
+		valueChannel.encodeNBitUnsignedInteger(iv.intValue(),
 					numberOfBits4Range);
-		} else {
-			throw new IOException("N-Bit Value exceeds int range: " + iv);
-		}
 	}
 
 	public Value readValue(DecoderChannel valueChannel,

@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
+import com.siemens.ct.exi.values.StringValue;
 
 public class EnumerationTest extends AbstractTestCase {
 
@@ -48,15 +49,15 @@ public class EnumerationTest extends AbstractTestCase {
 	
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 	
-		assertTrue(dt.isValid("BOOLEAN"));
-		assertTrue(dt.isValid("INT8"));
-		assertTrue(dt.isValid("INT16"));
-		assertTrue(dt.isValid("INT24"));
-		assertTrue(dt.isValid("INT32"));
-		assertTrue(dt.isValid("INT64"));
+		assertTrue(dt.isValid(new StringValue("BOOLEAN")));
+		assertTrue(dt.isValid(new StringValue("INT8")));
+		assertTrue(dt.isValid(new StringValue("INT16")));
+		assertTrue(dt.isValid(new StringValue("INT24")));
+		assertTrue(dt.isValid(new StringValue("INT32")));
+		assertTrue(dt.isValid(new StringValue("INT64")));
 	
-		assertFalse(dt.isValid("00"));
-		assertFalse(dt.isValid("bla"));
+		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(dt.isValid(new StringValue("bla")));
 		
 		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.STRING);
@@ -135,10 +136,10 @@ public class EnumerationTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid("+0"));
+		assertTrue(dt.isValid(new StringValue("+0")));
 
-		assertFalse(dt.isValid("+4"));
-		assertFalse(dt.isValid("-3"));
+		assertFalse(dt.isValid(new StringValue("+4")));
+		assertFalse(dt.isValid(new StringValue("-3")));
 	}
 
 	public void testEnumerationFloat1() throws IOException, EXIException {
@@ -156,13 +157,13 @@ public class EnumerationTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(" 1.5"));
-		assertTrue(dt.isValid("15E-1"));
-		assertTrue(dt.isValid(" 25 "));
-		assertTrue(dt.isValid(" 25E0 "));
+		assertTrue(dt.isValid(new StringValue(" 1.5")));
+		assertTrue(dt.isValid(new StringValue("15E-1")));
+		assertTrue(dt.isValid(new StringValue(" 25 ")));
+		assertTrue(dt.isValid(new StringValue(" 25E0 ")));
 
-		assertFalse(dt.isValid("00"));
-		assertFalse(dt.isValid("bla"));
+		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(dt.isValid(new StringValue("bla")));
 	}
 
 	public void testEnumerationFloat2() throws IOException, EXIException {
@@ -181,12 +182,12 @@ public class EnumerationTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid("1.000"));
-		assertTrue(dt.isValid("1.0e0"));
-		assertTrue(dt.isValid("3E1"));
+		assertTrue(dt.isValid(new StringValue("1.000")));
+		assertTrue(dt.isValid(new StringValue("1.0e0")));
+		assertTrue(dt.isValid(new StringValue("3E1")));
 
-		assertFalse(dt.isValid("00"));
-		assertFalse(dt.isValid("bla"));
+		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(dt.isValid(new StringValue("bla")));
 	}
 
 	public void testEnumerationGMonthDay1() throws IOException, EXIException {
@@ -211,14 +212,14 @@ public class EnumerationTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid("--01-01"));
-		assertTrue(dt.isValid("--05-01"));
-		assertTrue(dt.isValid("--07-14"));
-		assertTrue(dt.isValid("--11-11"));
-		assertTrue(dt.isValid("--12-25"));
+		assertTrue(dt.isValid(new StringValue("--01-01")));
+		assertTrue(dt.isValid(new StringValue("--05-01")));
+		assertTrue(dt.isValid(new StringValue("--07-14")));
+		assertTrue(dt.isValid(new StringValue("--11-11")));
+		assertTrue(dt.isValid(new StringValue("--12-25")));
 
-		assertFalse(dt.isValid("00"));
-		assertFalse(dt.isValid("bla"));
+		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(dt.isValid(new StringValue("bla")));
 	}
 	
 

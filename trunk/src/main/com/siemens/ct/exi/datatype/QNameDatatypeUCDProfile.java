@@ -21,10 +21,7 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.EnhancedQName;
-import com.siemens.ct.exi.core.AbstractEXIBodyCoder;
 import com.siemens.ct.exi.core.RuntimeURIEntry;
 import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -41,9 +38,8 @@ public class QNameDatatypeUCDProfile extends QNameDatatype {
 
 	private static final long serialVersionUID = -5388595112370214500L;
 
-	public QNameDatatypeUCDProfile(AbstractEXIBodyCoder namespaces,
-			QName schemaType) {
-		super(namespaces, schemaType);
+	public QNameDatatypeUCDProfile() {
+		super();
 	}
 
 	// String lastAddedURI;

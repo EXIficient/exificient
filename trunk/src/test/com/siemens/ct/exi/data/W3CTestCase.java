@@ -214,7 +214,7 @@ public class W3CTestCase extends AbstractTestCase {
 	 */
 	
 	@Test
-	public void XtestW3CXHTMLStrict1() throws Exception {
+	public void xtestW3CXHTMLStrict1() throws Exception {
 		// set up configuration
 		setConfigurationW3CXHTMLStrict1();
 
@@ -233,7 +233,7 @@ public class W3CTestCase extends AbstractTestCase {
 
 	
 	@Test
-	public void XtestW3CXHTMLTransitional1() throws Exception {
+	public void xtestW3CXHTMLTransitional1() throws Exception {
 		// set up configuration
 		setConfigurationW3CXHTMLTransitional1();
 
@@ -253,7 +253,7 @@ public class W3CTestCase extends AbstractTestCase {
 	
 	
 	@Test
-	public void XtestW3CXsdWsdl1() throws Exception {
+	public void xtestW3CXsdWsdl1() throws Exception {
 		// set up configuration
 		setConfigurationW3CXsdWsdl1();
 

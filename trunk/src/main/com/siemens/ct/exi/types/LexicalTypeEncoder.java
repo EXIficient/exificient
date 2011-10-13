@@ -46,15 +46,9 @@ public class LexicalTypeEncoder extends AbstractTypeEncoder {
 		rcsDatatype = new RestrictedCharacterSetDatatype(null);
 	}
 
-	// public boolean isValid(Datatype datatype, String value) {
-	// lastDatatype = datatype;
-	// return datatype.isValidRCS(value);
-	// }
-
 	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
-		return datatype.isValidRCS(value.toString());
-		// return this.isValid(datatype, value.toString());
+		return datatype.isValidRCS(value);
 	}
 
 	public void writeValue(QName context, EncoderChannel valueChannel)

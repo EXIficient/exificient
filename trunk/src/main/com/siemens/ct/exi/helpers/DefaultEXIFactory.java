@@ -32,7 +32,6 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
-import com.siemens.ct.exi.api.sax.SAXDecoderExtendedHandler;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.api.sax.SAXEncoderExtendedHandler;
 import com.siemens.ct.exi.core.EXIBodyDecoderInOrder;
@@ -136,21 +135,21 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public void setProfile(String profileName) throws UnsupportedOption {
-		if (profileName == null) {
-			// un-set profile
-			this.profile = profileName;
-			// TODO profile(s)
-//		} else if (UCD_PROFILE.equals(profileName)) {
+//		if (profileName == null) {
+//			// un-set profile
 //			this.profile = profileName;
-//			// what does the profile define
-//			// 1. valuePartitionCapacity == 0
-//			this.setValuePartitionCapacity(0);
-//			// 2. no built-in grammars --> no learning
-//			// 3. no EXI Options in header
-		} else {
+//			// TODO profile(s)
+////		} else if (UCD_PROFILE.equals(profileName)) {
+////			this.profile = profileName;
+////			// what does the profile define
+////			// 1. valuePartitionCapacity == 0
+////			this.setValuePartitionCapacity(0);
+////			// 2. no built-in grammars --> no learning
+////			// 3. no EXI Options in header
+//		} else {
 			throw new UnsupportedOption("Profile '" + profileName
 					+ "' unknown.");
-		}
+//		}
 	}
 
 	public boolean usesProfile(String profileName) {
@@ -403,15 +402,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public XMLReader createEXIReader() throws EXIException {
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return new SAXDecoderExtendedHandler(this);
-		} else {
-			return new SAXDecoder(this);
-		}
+		return new SAXDecoder(this);
 	}
 
 	public TypeEncoder createTypeEncoder() throws EXIException {
@@ -491,17 +482,15 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	@Override
 	public EXIFactory clone() {
-		// create new instance
-		EXIFactory copy = newInstance();
-		// shallow copy
-		copy.setCodingMode(codingMode);
-		copy.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		copy.setFidelityOptions(fidelityOptions);
-		copy.setFragment(isFragment);
-		copy.setGrammar(grammar);
-		copy.setSelfContainedElements(scElements);
-		// return...
-		return copy;
+		try {
+			// shallow copy
+			EXIFactory copy = (EXIFactory) super.clone();
+			// return...
+			return copy;
+			
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
@@ -545,6 +534,11 @@ public class DefaultEXIFactory implements EXIFactory {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return fidelityOptions.hashCode() ^ (isFragment ? 1 : 0) ^ codingMode.hashCode() ^ blockSize ^ valueMaxLength ^ valuePartitionCapacity;
 	}
 
 	@Override

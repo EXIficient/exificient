@@ -85,27 +85,27 @@ public class BlockSizeTestCase extends XMLTestCase {
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			//assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atA"));
 			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atA"));
-			assertTrue(exiDecoder.getAttributeValue().equals("a"));
+			assertTrue(exiDecoder.getAttributeValue().toString().equals("a"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atB"));
 			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atB"));
-			assertTrue(exiDecoder.getAttributeValue().equals("b"));
+			assertTrue(exiDecoder.getAttributeValue().toString().equals("b"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atC"));
 			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atC"));
-			assertTrue(exiDecoder.getAttributeValue().equals("c"));
+			assertTrue(exiDecoder.getAttributeValue().toString().equals("c"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atD"));
 			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atD"));
-			assertTrue(exiDecoder.getAttributeValue().equals("d"));
+			assertTrue(exiDecoder.getAttributeValue().toString().equals("d"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atE"));
 			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atE"));
-			assertTrue(exiDecoder.getAttributeValue().equals("e"));
+			assertTrue(exiDecoder.getAttributeValue().toString().equals("e"));
 			
 			assertTrue(exiDecoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeCharactersGenericUndeclared().toString().equals("... TEXT ..."));
@@ -118,7 +118,7 @@ public class BlockSizeTestCase extends XMLTestCase {
 			exiDecoder.decodeEndDocument();
 			
 			
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			throw new RuntimeException("codingMode="+codingMode + ", blockSize=" + blockSize
 					+ ", codingMode="+codingMode, e);
 		}

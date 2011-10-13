@@ -34,7 +34,7 @@ import com.siemens.ct.exi.grammar.event.EventType;
  */
 
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
-		implements SchemaInformedFirstStartTagRule {
+		implements SchemaInformedFirstStartTagRule, Cloneable {
 
 	private static final long serialVersionUID = -6071059051303822226L;
 
@@ -156,11 +156,6 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		// Note: in non-STRICT xsi:nil and type is always present
 		return (isTypeCastable || isNillable || !fidelityOptions.isStrict());
-//		if (fidelityOptions.isStrict()) {
-//			return (isTypeCastable || isNillable);
-//		} else {
-//			return true;
-//		}
 	}
 
 	@Override
@@ -176,31 +171,12 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 
 		return false;
 	}
-
+	
 	@Override
-	public SchemaInformedFirstStartTag clone() {
-		SchemaInformedFirstStartTag clone = new SchemaInformedFirstStartTag(
-				this.elementContent2);
-
-		// duplicate top level
-		for (int i = 0; i < getNumberOfEvents(); i++) {
-			EventInformation ei = lookFor(i);
-			// remove self-reference
-			Rule next = ei.next;
-			if (next == this) {
-				next = clone;
-			}
-			clone.addRule(ei.event, next);
-		}
-
-		// nillable and type
-		clone.setTypeCastable(this.isTypeCastable);
-		clone.setTypeEmpty(this.typeEmpty);
-		clone.setNillable(this.isNillable);
-		clone.setTypeName(this.typeName);
-
-		return clone;
+	public int hashCode() {
+		return (isTypeCastable ? 1 : 0) ^ (isNillable ? 1 : 0) ^ super.hashCode();
 	}
+
 
 	public String toString() {
 		String s = "First";

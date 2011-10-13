@@ -124,7 +124,8 @@ public abstract class AbstractTestCoder {
 
 		File path = fileEXI.getParentFile();
 		if (!path.exists()) {
-			path.mkdirs();
+			boolean bool = path.mkdirs();
+			assert(bool);
 		}
 
 		return new BufferedOutputStream(new FileOutputStream(fileEXI));

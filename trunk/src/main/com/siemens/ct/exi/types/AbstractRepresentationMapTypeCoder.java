@@ -100,7 +100,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 	protected void registerDatatype(Datatype representation, QName type,
 			QName[] dtrMapTypes) {
 		// Integer types are special (exi:integer)
-		if (representation.getBuiltInType() == BuiltInType.INTEGER_BIG) {
+		if (representation.getBuiltInType() == BuiltInType.INTEGER) {
 			// Note: exi:integer == BuiltInType.INTEGER_BIG
 
 			// Detect whether type is derived from xsd:integer
@@ -201,7 +201,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 				} else if ("double".equals(localPart)) {
 					datatype = new FloatDatatype(BuiltInType.DOUBLE, null);
 				} else if ("integer".equals(localPart)) {
-					datatype = new IntegerDatatype(BuiltInType.INTEGER_BIG,
+					datatype = new IntegerDatatype(IntegerType.INTEGER_BIG,
 							null);
 				} else if ("string".equals(localPart)) {
 					datatype = new StringDatatype(null);
@@ -229,72 +229,4 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		}
 	}
 
-	// protected int[] getAncestorOrder(AncestorTypeComparator atc,
-	// QName[] dtrMapTypes) {
-	// int order[] = new int[dtrMapTypes.length];
-	//
-	// QName[] copyTypes = new QName[dtrMapTypes.length];
-	// System.arraycopy(dtrMapTypes, 0, copyTypes, 0, dtrMapTypes.length);
-	//
-	// // sort types in ancestor-type order
-	// Arrays.sort(copyTypes, atc);
-	//
-	// // save Index order
-	// for (int i = 0; i < order.length; i++) {
-	// QName ctype = copyTypes[i];
-	// for (int k = 0; k < dtrMapTypes.length; k++) {
-	// if (ctype.equals(dtrMapTypes[k])) {
-	// // found "k" as index position
-	// order[i] = k;
-	// }
-	// }
-	// }
-	//
-	// return order;
-	// }
-	//
-	// // inverse type hierarchy
-	// // [int, long, integer] --> [integer, long, int]
-	// class AncestorTypeComparator implements Comparator<QName> {
-	//
-	// protected Grammar grammar;
-	//
-	// public AncestorTypeComparator(Grammar grammar) {
-	// this.grammar = grammar;
-	// }
-	//
-	// public int compare(QName o1, QName o2) {
-	// if (o1.equals(o2)) {
-	// return 0;
-	// } else {
-	// if (isSubType(o1, o2)) {
-	// // return -1;
-	// return 1;
-	// } else {
-	// // return 1;
-	// return -1;
-	// }
-	// }
-	// }
-	//
-	// // is q1 subytpe of q2
-	// public boolean isSubType(QName q1, QName q2) {
-	// List<QName> subtypes = grammar.getSimpleTypeSubtypes(q2);
-	// if (subtypes == null || subtypes.size() == 0) {
-	// return false;
-	// }
-	//
-	// for (QName stype : subtypes) {
-	// if (q1.equals(stype)) {
-	// return true;
-	// }
-	//
-	// if (isSubType(q1, stype)) {
-	// return true;
-	// }
-	// }
-	//
-	// return false;
-	// }
-	// }
 }

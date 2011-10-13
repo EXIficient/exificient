@@ -28,6 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -44,16 +45,19 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = 8260894749324499802L;
 
 	protected IntegerValue lastUnsignedInteger;
+	protected final IntegerType integerType;
 
-	public UnsignedIntegerDatatype(BuiltInType builtInType, QName schemaType) {
-		super(builtInType, schemaType);
-		assert (builtInType == BuiltInType.UNSIGNED_INTEGER_BIG
-				|| builtInType == BuiltInType.UNSIGNED_INTEGER_64
-				|| builtInType == BuiltInType.UNSIGNED_INTEGER_32 || builtInType == BuiltInType.UNSIGNED_INTEGER_16);
+	public UnsignedIntegerDatatype(IntegerType integerType, QName schemaType) {
+		super(BuiltInType.UNSIGNED_INTEGER, schemaType);
+		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
 	}
+	
+	public IntegerType getIntegerType() {
+		return integerType;
+	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		lastUnsignedInteger = IntegerValue.parse(value);
 		if (lastUnsignedInteger != null) {
 			return (lastUnsignedInteger.isPositive());
@@ -66,10 +70,8 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 		if (value instanceof IntegerValue) {
 			lastUnsignedInteger = ((IntegerValue) value);
 			return (lastUnsignedInteger.isPositive());
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
 

@@ -325,7 +325,7 @@ public class StAXEncoder
 			// CDATA
 			this.writeCharacters(data);
 		} catch (Exception e) {
-			new XMLStreamException(e);
+			throw new XMLStreamException(e);
 		}
 	}
 

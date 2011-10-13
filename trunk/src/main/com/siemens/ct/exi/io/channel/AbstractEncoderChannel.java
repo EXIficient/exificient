@@ -23,6 +23,7 @@ import java.math.BigInteger;
 
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.IntegerValue;
 
 /**
@@ -92,7 +93,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-	public void encodeLong(long l) throws IOException {
+	protected void encodeLong(long l) throws IOException {
 		// signalize sign
 		if (l < 0) {
 			encodeBoolean(true);
@@ -103,7 +104,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-	public void encodeBigInteger(BigInteger bi) throws IOException {
+	protected void encodeBigInteger(BigInteger bi) throws IOException {
 		if (bi.signum() < 0) {
 			encodeBoolean(true); // negative
 			encodeUnsignedBigInteger(bi.negate().subtract(BigInteger.ONE));
@@ -164,7 +165,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		}
 	}
 
-	public void encodeUnsignedLong(long l) throws IOException {
+	protected void encodeUnsignedLong(long l) throws IOException {
 		if (l < 0) {
 			throw new UnsupportedOperationException();
 		}
@@ -181,7 +182,7 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		encode(lastEncode);
 	}
 
-	public void encodeUnsignedBigInteger(BigInteger bi) throws IOException {
+	protected void encodeUnsignedBigInteger(BigInteger bi) throws IOException {
 		if (bi.signum() < 0) {
 			throw new UnsupportedOperationException();
 		}
@@ -237,10 +238,10 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
 	 */
-	public void encodeFloat(long mantissa, long exponent) throws IOException {
+	public void encodeFloat(FloatValue fv) throws IOException {
 		// encode mantissa and exponent
-		encodeLong(mantissa);
-		encodeLong(exponent);
+		encodeIntegerValue(fv.getMantissa());
+		encodeIntegerValue(fv.getExponent());
 	}
 
 	public void encodeDateTime(DateTimeValue datetime) throws IOException {

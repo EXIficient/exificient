@@ -52,7 +52,7 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 		this.rcs = new XSDBooleanCharacterSet();
 	}
 
-	public boolean isValid(String value) {
+	protected boolean isValidString(String value) {
 		value = value.trim();
 		boolean retValue = true;
 
@@ -81,16 +81,10 @@ public class BooleanPatternDatatype extends AbstractDatatype {
 			// TODO not fully correct
 			lastValidBooleanID = lastValidBoolean ? 2 : 0;
 			return true;
-		} else if (isValid(value.toString())) {
-			return true;
 		} else {
-			return false;
+			return isValidString(value.toString());
 		}
 	}
-
-	// public Value getValue() {
-	// return new BooleanValue(lastValidBoolean);
-	// }
 
 	public void writeValue(EncoderChannel valueChannel,
 			StringEncoder stringEncoder, QName context) throws IOException {

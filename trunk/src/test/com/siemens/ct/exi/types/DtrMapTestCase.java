@@ -27,6 +27,7 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.EventType;
@@ -110,7 +111,9 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// can encode integers
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
 		// indicates that dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER_BIG);
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dtrTe.getRecentDtrMapDatatype();
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 	}
 
 	// Note: according to EXI errata ONLY  referenced enumeration types
@@ -168,11 +171,13 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		QName schemaType = new QName("", "Integer");
 
-		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dt;
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		assertTrue(dt.getSchemaType().equals(schemaType));
 
-		assertTrue(dt.isValid("+10"));
-		assertFalse(dt.isValid("12:32:00"));
+		assertTrue(dt.isValid(new StringValue("+10")));
+		assertFalse(dt.isValid(new StringValue("12:32:00")));
 
 		/* DTR Map */
 		QName type = schemaType;
@@ -206,11 +211,13 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		QName schemaType = new QName("", "Integer");
 
-		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dt;
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		assertTrue(dt.getSchemaType().equals(schemaType));
 
-		assertTrue(dt.isValid("+10"));
-		assertFalse(dt.isValid("12:32:00"));
+		assertTrue(dt.isValid(new StringValue("+10")));
+		assertFalse(dt.isValid(new StringValue("12:32:00")));
 
 		/* DTR Map */
 		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
@@ -360,18 +367,20 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		try {
 			// encode
-			{
-				EXIResult exiResult = new EXIResult(exiFactory);
-				exiResult.setOutputStream(baos);
-				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-				xmlReader.setContentHandler(exiResult.getHandler());
-				xmlReader.parse(new InputSource(new ByteArrayInputStream(
-						xmlAsString.getBytes())));
-			}
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			xmlReader.setContentHandler(exiResult.getHandler());
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(
+					xmlAsString.getBytes())));
 
 			fail("Invalid short value");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// correct, error thrown
+			assertTrue(true);
+		} catch (SAXException e) {
+			// correct, error thrown
+			assertTrue(true);
 		}
 
 	}
@@ -491,7 +500,9 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
-		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dtInteger;
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
 		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
 
@@ -527,7 +538,9 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
-		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dtInteger;
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
 		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
 
@@ -559,7 +572,9 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
-		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER_32);
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.INTEGER);
+		IntegerDatatype idt = (IntegerDatatype) dtInteger;
+		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
 		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
 

@@ -48,7 +48,7 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 	/* localID mapping, globalID index --> localID & values (in given context) */
 	protected LocalIDMap[] localIdMapping;
 
-	class LocalIDMap {
+	static class LocalIDMap {
 		final int localID;
 		final QName context; /* debug info */
 		final List<StringValue> values;
