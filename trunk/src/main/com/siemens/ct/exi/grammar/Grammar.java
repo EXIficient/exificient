@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
@@ -64,6 +65,21 @@ public interface Grammar extends Serializable {
 	public String getSchemaId();
 
 	/**
+	 * Sets the schemaId passed to EXI decoder.
+	 * 
+	 * <p>
+	 * Note: Schema-less or XML-types grammars have a schema id associated with
+	 * them (null and empty string).
+	 * </p>
+	 * 
+	 * @param schemaId
+	 * @throws UnsupportedOption
+	 *             if schemaId does not respect EXI restrictions (e.g.,
+	 *             schema-less grammars: schemaId == null)
+	 */
+	public void setSchemaId(String schemaId) throws UnsupportedOption;
+
+	/**
 	 * The built-in XML schema types are available.
 	 * 
 	 * <p>
@@ -88,7 +104,7 @@ public interface Grammar extends Serializable {
 	public Attribute getGlobalAttribute(QName qname);
 
 	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname);
-	
+
 	public Set<QName> getTypeGrammars();
 
 	/**

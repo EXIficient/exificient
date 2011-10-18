@@ -62,7 +62,9 @@ public class GrammarFactory {
 	/* schema file as input stream */
 	public Grammar createGrammar(InputStream is) throws EXIException {
 		grammarBuilder.loadGrammar(is);
-		return grammarBuilder.toGrammar();
+		SchemaInformedGrammar g = grammarBuilder.toGrammar();
+		g.setSchemaId("Not-Set-InputStream");
+		return g;
 	}
 
 	/* built-in XSD types only are available */
