@@ -25,6 +25,7 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
@@ -85,6 +86,12 @@ public class SchemaLessGrammar extends AbstractGrammar {
 
 	public final String getSchemaId() {
 		return null;
+	}
+	
+	public void setSchemaId(String schemaId) throws UnsupportedOption {
+		if (schemaId != null) {
+			throw new UnsupportedOption("Schema-less grammars do have schemaId == null associated with it.");	
+		}
 	}
 
 	/*

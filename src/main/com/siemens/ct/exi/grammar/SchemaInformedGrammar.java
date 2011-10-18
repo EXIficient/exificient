@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Document;
@@ -82,7 +83,15 @@ public class SchemaInformedGrammar extends AbstractGrammar implements
 		return schemaId;
 	}
 
-	public void setSchemaId(String schemaId) {
+	public void setSchemaId(String schemaId) throws UnsupportedOption {
+		if (builtInXMLSchemaTypesOnly && !"".equals(schemaId)) {
+			throw new UnsupportedOption("XML Schema types only grammars do have schemaId == '' associated with it.");				
+		} else {
+			if (schemaId == null || "".equals(schemaId)) {
+				throw new UnsupportedOption("Schema-informed grammars do have schemaId != '' && schemaId != null associated with it.");				
+			}
+		}
+		
 		this.schemaId = schemaId;
 	}
 

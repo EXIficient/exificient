@@ -3,6 +3,7 @@ package com.siemens.ct.exi.core;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
@@ -232,6 +233,33 @@ public class EXIHeaderTestCase extends TestCase {
 		fo.setFidelity(FidelityOptions.FEATURE_PI, true);
 		
 		_testOptions(ef, null);
+	}
+	
+	
+	public void testEXIOptionsBugID3425036() throws EXIException, IOException {
+		GrammarFactory gf = GrammarFactory.newInstance();
+		
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root' type='xs:string' nillable='true' >"
+			+ " </xs:element>" + "</xs:schema>";
+		
+		InputStream is = new ByteArrayInputStream(schema.getBytes());
+		Grammar g = gf.createGrammar(is);
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.setGrammar(g);
+		
+		EncodingOptions eo = ef.getEncodingOptions();
+		eo.setOption(EncodingOptions.INCLUDE_OPTIONS);
+		eo.setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
+		
+		ef.setEncodingOptions(eo);
+		
+		// write header
+		BitEncoderChannel bec = new BitEncoderChannel(new ByteArrayOutputStream());
+		EXIHeaderEncoder he = new EXIHeaderEncoder();
+		he.write(bec, ef);
+		
+		// Note: No exception should be thrown due to null schemaId
 	}
 	
 	
