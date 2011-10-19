@@ -28,9 +28,9 @@ import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -59,7 +59,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	protected boolean dtrSection;
 	protected List<QName> dtrMapTypes = new ArrayList<QName>();
 	protected List<QName> dtrMapRepresentations = new ArrayList<QName>();
-
+	
 	public EXIHeaderDecoder() throws EXIException {
 	}
 
@@ -105,7 +105,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			// indicates this is a preview version.
 			// @SuppressWarnings("unused")
 			boolean previewVersion = headerChannel.decodeBoolean();
-			assert(!previewVersion);
+			assert (!previewVersion);
 
 			// one or more 4-bit unsigned integers represent the version number
 			// 1. Read next 4 bits as an unsigned integer value.
@@ -151,7 +151,10 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		EXIBodyDecoderInOrder decoder = (EXIBodyDecoderInOrder) getHeaderFactory()
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
-
+		
+//		schemaId = null;
+//		schemaIdSet = false;
+		
 		// clone factory
 		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
 
@@ -333,16 +336,9 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			}
 		} else if (SCHEMA_ID.equals(localName)) {
 			String schemaId = value.toString();
-			if (Constants.EMPTY_STRING.equals(value.toString())) {
-				// xsd types grammar
-				Grammar g = getGrammarFactory().createXSDTypesOnlyGrammar();
-				f.setGrammar(g);
-			} else {
-				// TODO what is the right approach, interpret schemaId as xsd
-				// location?
-				Grammar g = getGrammarFactory().createGrammar(schemaId);
-				f.setGrammar(g);
-			}
+			
+			SchemaIdResolver sir = f.getSchemaIdResolver();
+			f.setGrammar(sir.resolveSchemaId(schemaId));
 		}
 	}
 
@@ -354,7 +350,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				BooleanValue bv = (BooleanValue) value;
 				if (bv.toBoolean()) {
 					// schema-less, default
-					// TODO necessary to set schema-less grammar again?
+					f.setGrammar(f.getSchemaIdResolver().resolveSchemaId(null));
 				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "

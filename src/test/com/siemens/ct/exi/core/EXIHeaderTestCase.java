@@ -15,6 +15,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -236,15 +237,18 @@ public class EXIHeaderTestCase extends TestCase {
 	}
 	
 	
+	String schemaBla = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+		+ " <xs:element name='root' type='xs:string' nillable='true' >"
+		+ " </xs:element>" + "</xs:schema>";
+	
 	public void testEXIOptionsBugID3425036() throws EXIException, IOException {
-		GrammarFactory gf = GrammarFactory.newInstance();
+		String schemaId = "bla";
 		
-		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-			+ " <xs:element name='root' type='xs:string' nillable='true' >"
-			+ " </xs:element>" + "</xs:schema>";
+		GrammarFactory gf = GrammarFactory.newInstance();		
 		
-		InputStream is = new ByteArrayInputStream(schema.getBytes());
+		InputStream is = new ByteArrayInputStream(schemaBla.getBytes());
 		Grammar g = gf.createGrammar(is);
+		g.setSchemaId(schemaId);
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setGrammar(g);
 		
@@ -255,11 +259,37 @@ public class EXIHeaderTestCase extends TestCase {
 		ef.setEncodingOptions(eo);
 		
 		// write header
-		BitEncoderChannel bec = new BitEncoderChannel(new ByteArrayOutputStream());
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		BitEncoderChannel bec = new BitEncoderChannel(baos);
 		EXIHeaderEncoder he = new EXIHeaderEncoder();
 		he.write(bec, ef);
+		bec.flush();
+
+		// Note: No exception should be thrown due to schemaId
 		
-		// Note: No exception should be thrown due to null schemaId
+		// decoder header
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
+		EXIHeaderDecoder hd = new EXIHeaderDecoder();
+		EXIFactory fDec = DefaultEXIFactory.newInstance();
+		fDec.setSchemaIdResolver(new BlaSchemaIdResolver());
+		hd.parse(bdc, fDec);
+		
+//		assertTrue(hd.isSchemaIdSet());
+//		assertTrue(schemaId.equals(hd.getSchemaId()));
+		
+	}
+	
+	class BlaSchemaIdResolver implements SchemaIdResolver {
+
+		public Grammar resolveSchemaId(String schemaId) throws EXIException {
+			if ("bla".equals(schemaId)) {
+				InputStream is = new ByteArrayInputStream(schemaBla.getBytes());
+				return GrammarFactory.newInstance().createGrammar(is);
+			} else {
+				throw new RuntimeException("Unspoorted schemaId: " + schemaId);
+			}
+		}
+		
 	}
 	
 	
