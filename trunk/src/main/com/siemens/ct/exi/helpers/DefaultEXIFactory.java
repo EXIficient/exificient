@@ -31,6 +31,7 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.api.sax.SAXEncoderExtendedHandler;
@@ -82,6 +83,8 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected FidelityOptions fidelityOptions;
 	protected EncodingOptions encodingOptions;
+	
+	protected SchemaIdResolver schemaIdResolver;
 
 	protected QName[] dtrMapTypes;
 	protected QName[] dtrMapRepresentations;
@@ -115,6 +118,8 @@ public class DefaultEXIFactory implements EXIFactory {
 		// factory.setGrammar(GrammarFactory.newInstance()
 		// .createSchemaLessGrammar());
 		factory.setGrammar(new SchemaLessGrammar());
+		
+		factory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 	}
 
 	public static EXIFactory newInstance() {
@@ -163,7 +168,15 @@ public class DefaultEXIFactory implements EXIFactory {
 	public EncodingOptions getEncodingOptions() {
 		return encodingOptions;
 	}
+	
+	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver) {
+		this.schemaIdResolver = schemaIdResolver;
+	}
 
+	public SchemaIdResolver getSchemaIdResolver() {
+		return this.schemaIdResolver;
+	}
+	
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations) {
 		if (dtrMapTypes == null || dtrMapRepresentations == null

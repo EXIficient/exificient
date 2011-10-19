@@ -79,6 +79,12 @@ public class EncodingOptions {
 	/**
 	 * Enables given option.
 	 * 
+	 * <p>
+	 * Note: Some options (e.g. INCLUDE_SCHEMA_ID) will only take effect if the
+	 * EXI options document is set to encode options in general (see
+	 * INCLUDE_OPTIONS).
+	 * </p>
+	 * 
 	 * @param key
 	 *            referring to a specific option
 	 * 

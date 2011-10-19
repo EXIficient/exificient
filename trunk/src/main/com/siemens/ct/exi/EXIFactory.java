@@ -101,7 +101,24 @@ public interface EXIFactory extends Cloneable {
 	 * @see EncodingOptions
 	 */
 	public EncodingOptions getEncodingOptions();
+	
+	
+	/**
+	 * Sets specific schemaId resolver.
+	 * 
+	 * @param schemaIdResolver
+	 * @see SchemaIdResolver
+	 */
+	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver);
 
+	
+	/**
+	 * Returns schemaId resolver for this factory;
+	 * 
+	 * @return
+	 */
+	public SchemaIdResolver getSchemaIdResolver();
+	
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
 	 * an XML document
