@@ -122,7 +122,7 @@ public class ListTest extends AbstractTestCase {
 		String sRes = "1 0 127 -127";
 		IntegerValue min = IntegerValue.valueOf(-128);
 		IntegerValue max = IntegerValue.valueOf(127);
-		ListDatatype ldtInteger = new ListDatatype(new NBitIntegerDatatype(IntegerType.INTEGER_32, min, max, null), null);
+		ListDatatype ldtInteger = new ListDatatype(new NBitUnsignedIntegerDatatype(IntegerType.INTEGER_32, min, max, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);

@@ -28,7 +28,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.Value;
 

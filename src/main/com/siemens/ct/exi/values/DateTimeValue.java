@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import com.siemens.ct.exi.exceptions.XMLParsingException;
+import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**

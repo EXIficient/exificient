@@ -41,7 +41,7 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.8
  */
 
-public class NBitIntegerDatatype extends AbstractDatatype {
+public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -7109188105049008275L;
 
@@ -53,10 +53,9 @@ public class NBitIntegerDatatype extends AbstractDatatype {
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitIntegerDatatype(IntegerType integerType,
+	public NBitUnsignedIntegerDatatype(IntegerType integerType,
 			IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
-		// super(BuiltInType.NBIT_INTEGER, schemaType);
-		super(BuiltInType.INTEGER, schemaType);
+		super(BuiltInType.NBIT_UNSIGNED_INTEGER, schemaType);
 		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
 		

@@ -29,8 +29,43 @@ package com.siemens.ct.exi.types;
  */
 
 public enum IntegerType {
-	/* Unsigned Integer */
-	UNSIGNED_INTEGER_8, UNSIGNED_INTEGER_16, UNSIGNED_INTEGER_32, UNSIGNED_INTEGER_64, UNSIGNED_INTEGER_BIG,
-	/* Signed Integer */
-	INTEGER_8, INTEGER_16, INTEGER_32, INTEGER_64, INTEGER_BIG
+	/** Unsigned Integer with at most 8 bits */
+	UNSIGNED_INTEGER_8(true),
+
+	/** Unsigned Integer with at most 16 bits */
+	UNSIGNED_INTEGER_16(true),
+
+	/** Unsigned Integer with at most 32 bits */
+	UNSIGNED_INTEGER_32(true),
+
+	/** Unsigned Integer with at most 64 bits */
+	UNSIGNED_INTEGER_64(true),
+
+	/** Unsigned Integer with arbitrary number of bits */
+	UNSIGNED_INTEGER_BIG(true),
+
+	/** Integer with at most 8 bits */
+	INTEGER_8(false),
+
+	/** Integer with at most 16 bits */
+	INTEGER_16(false),
+
+	/** Integer with at most 32 bits */
+	INTEGER_32(false),
+
+	/** Integer with at most 64 bits */
+	INTEGER_64(false),
+
+	/** Integer with arbitrary number of bits */
+	INTEGER_BIG(false);
+
+	private final boolean isUnsigned;
+
+	private IntegerType(boolean isUnsigned) {
+		this.isUnsigned = isUnsigned;
+	}
+
+	public boolean isUnsigned() {
+		return isUnsigned;
+	}
 }

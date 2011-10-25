@@ -21,7 +21,7 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.io.channel.EncoderChannel;
-import com.siemens.ct.exi.values.DateTimeType;
+import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 
 public class DatetimeTest extends AbstractTestCase {

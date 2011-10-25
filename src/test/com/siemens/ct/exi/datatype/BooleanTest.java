@@ -113,7 +113,7 @@ public class BooleanTest extends AbstractTestCase {
 	public void testBooleanFalsePatternFalse() throws IOException {
 		StringValue s = new StringValue("false");
 		
-		Datatype bool = new BooleanPatternDatatype(null);
+		Datatype bool = new BooleanFacetDatatype(null);
 		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
 		
@@ -132,7 +132,7 @@ public class BooleanTest extends AbstractTestCase {
 	public void testBooleanTruePatternFalse() throws IOException {
 		StringValue s = new StringValue("true");
 		
-		Datatype bool = new BooleanPatternDatatype(null);
+		Datatype bool = new BooleanFacetDatatype(null);
 		boolean valid =  bool.isValid(s);
 		assertTrue(valid);
 		

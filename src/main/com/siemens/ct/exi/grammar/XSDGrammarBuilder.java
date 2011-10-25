@@ -53,7 +53,7 @@ import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
-import com.siemens.ct.exi.datatype.BooleanPatternDatatype;
+import com.siemens.ct.exi.datatype.BooleanFacetDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
@@ -61,7 +61,7 @@ import com.siemens.ct.exi.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.datatype.ListDatatype;
-import com.siemens.ct.exi.datatype.NBitIntegerDatatype;
+import com.siemens.ct.exi.datatype.NBitUnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
@@ -88,11 +88,11 @@ import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTagRule;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.BuiltInType;
+import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.BinaryBase64Value;
 import com.siemens.ct.exi.values.BinaryHexValue;
 import com.siemens.ct.exi.values.BooleanValue;
-import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
@@ -1498,22 +1498,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 									enumValue = FloatValue.parse(tok);
 									break;
 								/* int */
-								// case NBIT_INTEGER:
-								// case UNSIGNED_INTEGER:
+								case NBIT_UNSIGNED_INTEGER:
+								case UNSIGNED_INTEGER:
 								case INTEGER:
-									// case NBIT_INTEGER_32:
-									// case UNSIGNED_INTEGER_16:
-									// case INTEGER_16:
-									// case INTEGER_32:
-									// /* long */
-									// case NBIT_INTEGER_64:
-									// case UNSIGNED_INTEGER_32:
-									// case INTEGER_64:
-									// /* big */
-									// case NBIT_INTEGER_BIG:
-									// case UNSIGNED_INTEGER_64:
-									// case UNSIGNED_INTEGER_BIG:
-									// case INTEGER_BIG:
 									enumValue = IntegerValue.parse(tok);
 									break;
 								/* Datetime */
@@ -1733,7 +1720,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case INTEGER_32:
 			case INTEGER_16:
 			case INTEGER_8:
-				datatype = new NBitIntegerDatatype(intType,
+				datatype = new NBitUnsignedIntegerDatatype(intType,
 						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
 						schemaType);
 				break;
@@ -1825,7 +1812,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			datatype = new BinaryHexDatatype(schemaType);
 		} else if (BuiltIn.XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-				datatype = new BooleanPatternDatatype(schemaType);
+				datatype = new BooleanFacetDatatype(schemaType);
 			} else {
 				datatype = new BooleanDatatype(schemaType);
 			}
