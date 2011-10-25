@@ -40,16 +40,15 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.8
  */
 
-public class BooleanPatternDatatype extends AbstractDatatype {
+public class BooleanFacetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 3601744720431415L;
 
 	private int lastValidBooleanID;
 	private boolean lastValidBoolean;
 
-	public BooleanPatternDatatype(QName schemaType) {
-		// super(BuiltInType.BOOLEAN_PATTERN, schemaType);
-		super(BuiltInType.BOOLEAN, schemaType);
+	public BooleanFacetDatatype(QName schemaType) {
+		super(BuiltInType.BOOLEAN_FACET, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
 	}
 

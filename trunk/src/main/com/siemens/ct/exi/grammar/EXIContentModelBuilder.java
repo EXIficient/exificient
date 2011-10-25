@@ -124,7 +124,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 			// set XSModel
 			xsModel = g.toXSModel();
-			
+
 			// create substitution group-handler
 			// NOTE: it is needed but not really used later on
 			// (substitution groups are handled separately)
@@ -179,18 +179,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		return this.xsModel;
 	}
 
-//	@Override
-//	XSCMValidator createAllCM(XSParticleDecl particle) {
-//		// Note: xsd:all is allowed to contain elements only
-//		// maxOccurs: value must be 1
-//		// minOccurs: value can be 0 or 1
-//		assert (particle.getMaxOccurs() == 1);
-//		assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
-//
-//		throw new RuntimeException(
-//				"All model group handling should not call createAllCM(...)");
-//		// return super.createAllCM(particle);;
-//	}
+	// @Override
+	// XSCMValidator createAllCM(XSParticleDecl particle) {
+	// // Note: xsd:all is allowed to contain elements only
+	// // maxOccurs: value must be 1
+	// // minOccurs: value can be 0 or 1
+	// assert (particle.getMaxOccurs() == 1);
+	// assert (particle.getMinOccurs() == 0 || particle.getMinOccurs() == 1);
+	//
+	// throw new RuntimeException(
+	// "All model group handling should not call createAllCM(...)");
+	// // return super.createAllCM(particle);;
+	// }
 
 	private static SchemaInformedRule addNewState(
 			Map<CMState, SchemaInformedRule> states, CMState key,
@@ -283,9 +283,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					xsParticle);
 
 			boolean isEnd = xscmVal.endContentModel(state);
+			int[] occurenceInfo = xscmVal.occurenceInfo(state);
 
 			CMState startState = new CMState(possibleElements, isEnd, state,
-					elementsMaxOccursUnbounded);
+					elementsMaxOccursUnbounded, occurenceInfo);
 			if (DEBUG) {
 				System.out.println("Start = " + startState);
 			}
@@ -300,7 +301,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 
 	abstract protected StartElementNS createStartElementNS(String uri);
-	
+
 	abstract protected StartElement translatElementDeclarationToFSA(
 			XSElementDeclaration xsElementDeclaration) throws EXIException;
 
@@ -322,10 +323,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 				XSElementDeclaration nextEl = (XSElementDeclaration) xs;
 				QName qname = new QName(null, nextEl.getName(), null,
 						nextEl.getNamespace());
-				
+
 				Object nextRet = xscmVal.oneTransition(qname, cstate,
 						subGroupHandler);
-				
+
 				// check whether right transition was taken
 				assert (xs == nextRet);
 
@@ -334,8 +335,11 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 				Vector<XSObject> nextPossibleElements = xscmVal
 						.whatCanGoHere(cstate);
 				boolean isEnd = xscmVal.endContentModel(cstate);
+				int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
+				// int[] occs2 = xscmVal.occurenceInfo(originalState);
+
 				CMState nextState = new CMState(nextPossibleElements, isEnd,
-						cstate, elementsMaxOccursUnbounded);
+						cstate, elementsMaxOccursUnbounded, occurenceInfo);
 
 				printTransition(startState, xs, nextState);
 
@@ -383,8 +387,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					Vector<XSObject> nextPossibleElements = xscmVal
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
+					int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
 					CMState nextState = new CMState(nextPossibleElements,
-							isEnd, cstate, elementsMaxOccursUnbounded);
+							isEnd, cstate, elementsMaxOccursUnbounded,
+							occurenceInfo);
 
 					printTransition(startState, xs, nextState);
 
@@ -413,8 +419,10 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 					Vector<XSObject> nextPossibleElements = xscmVal
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
+					int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
 					CMState nextState = new CMState(nextPossibleElements,
-							isEnd, cstate, elementsMaxOccursUnbounded);
+							isEnd, cstate, elementsMaxOccursUnbounded,
+							occurenceInfo);
 
 					printTransition(startState, xs, nextState);
 
@@ -535,14 +543,17 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	static class CMState {
 		protected final Vector<XSObject> states;
 		protected final boolean end;
-		protected int[] state;
-		protected List<XSElementDeclaration> elementsMaxOccursUnbounded;
+		protected final int[] state;
+		protected final List<XSElementDeclaration> elementsMaxOccursUnbounded;
+		protected final int[] occurenceInfo;
 
 		public CMState(Vector<XSObject> states, boolean end, int[] state,
-				List<XSElementDeclaration> elementsMaxOccursUnbounded) {
+				List<XSElementDeclaration> elementsMaxOccursUnbounded,
+				int[] occurenceInfo) {
 			this.states = states;
 			this.end = end;
 			this.elementsMaxOccursUnbounded = elementsMaxOccursUnbounded;
+			this.occurenceInfo = occurenceInfo;
 			// copy, may get modified
 			this.state = new int[state.length];
 			System.arraycopy(state, 0, this.state, 0, state.length);
@@ -552,8 +563,9 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			if (o instanceof CMState) {
 				CMState other = (CMState) o;
 				if (end == other.end && states.equals(other.states)) {
-					// if (Arrays.equals(state, other.state)) {
+					// return(Arrays.equals(state, other.state)) ;
 					assert (state.length > 1 && other.state.length > 1);
+
 					// NOTE: 3rd item is counter only!
 					if (state[0] == other.state[0]
 							&& state[1] == other.state[1]) {
@@ -563,7 +575,22 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							// any element maxOccurs unbounded
 							for (XSObject s : states) {
 								if (elementsMaxOccursUnbounded.contains(s)) {
-									return true;
+									// If an array is returned it will have a
+									// length == 4 and will contain:
+									//
+									// a[0] :: min occurs
+									// a[1] :: max occurs
+									// a[2] :: current value of the counter
+									// a[3] :: identifier for the repeating term
+
+									int currThis = this.occurenceInfo == null ? -1
+											: this.occurenceInfo[2];
+									int currOther = other.occurenceInfo == null ? -1
+											: other.occurenceInfo[2];
+
+									assert(this.occurenceInfo[0] == other.occurenceInfo[0]);
+									return(currThis>= this.occurenceInfo[0] && currOther >= this.occurenceInfo[0]);
+									// return true;
 								}
 							}
 							return false;
@@ -571,6 +598,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							return true;
 						}
 					}
+
 				}
 			}
 			return false;

@@ -37,7 +37,6 @@ import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
-import com.siemens.ct.exi.values.DateTimeType;
 
 /**
  * 

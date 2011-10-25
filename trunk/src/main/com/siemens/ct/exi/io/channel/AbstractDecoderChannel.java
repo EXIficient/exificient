@@ -21,8 +21,8 @@ package com.siemens.ct.exi.io.channel;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.values.BooleanValue;
-import com.siemens.ct.exi.values.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
