@@ -43,17 +43,24 @@ public class DefaultSchemaIdResolver implements SchemaIdResolver {
 	protected GrammarFactory gf;
 	
 	public DefaultSchemaIdResolver() {
-		gf = GrammarFactory.newInstance();
+		
+	}
+	
+	protected GrammarFactory getGrammarFactory() {
+		if (gf == null) {
+			gf = GrammarFactory.newInstance();
+		}
+		return gf;
 	}
 	
 	public Grammar resolveSchemaId(String schemaId) throws EXIException {
 		if (schemaId == null) {
-			return gf.createSchemaLessGrammar();
+			return getGrammarFactory().createSchemaLessGrammar();
 		} else if ("".equals(schemaId)) {
-			return gf.createXSDTypesOnlyGrammar();
+			return getGrammarFactory().createXSDTypesOnlyGrammar();
 		} else {
 			// interpret schemaId as location
-			return gf.createGrammar(schemaId);
+			return getGrammarFactory().createGrammar(schemaId);
 		}
 	}
 	

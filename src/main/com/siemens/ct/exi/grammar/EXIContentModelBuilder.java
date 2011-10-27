@@ -73,8 +73,7 @@ import com.siemens.ct.exi.util.sort.LexicographicSort;
  * @version 0.8
  */
 
-public abstract class EXIContentModelBuilder extends CMBuilder implements
-		XMLErrorHandler {
+public abstract class EXIContentModelBuilder extends CMBuilder implements XMLErrorHandler {
 
 	private static final boolean DEBUG = false;
 
