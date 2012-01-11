@@ -20,10 +20,9 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -39,22 +38,18 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 
 	protected Datatype lastDatatype;
 
-	public TypedTypeEncoder(StringEncoder stringEncoder) {
-		super(stringEncoder);
+	public TypedTypeEncoder() {
+		super();
 	}
-
-	// public boolean isValid(Datatype datatype, String value) {
-	// lastDatatype = datatype;
-	// return datatype.isValid(value);
-	// }
 
 	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
 		return datatype.isValid(value);
 	}
 
-	public void writeValue(QName context, EncoderChannel valueChannel)
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
 			throws IOException {
-		lastDatatype.writeValue(valueChannel, stringEncoder, context);
+		lastDatatype.writeValue(encoderContext, qnContext, valueChannel);
 	}
 }

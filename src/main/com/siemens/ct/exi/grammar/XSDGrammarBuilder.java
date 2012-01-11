@@ -20,13 +20,14 @@ package com.siemens.ct.exi.grammar;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.xml.XMLConstants;
@@ -39,17 +40,23 @@ import org.apache.xerces.xs.XSAttributeUse;
 import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
+import org.apache.xerces.xs.XSModel;
+import org.apache.xerces.xs.XSModelGroup;
 import org.apache.xerces.xs.XSMultiValueFacet;
 import org.apache.xerces.xs.XSNamedMap;
 import org.apache.xerces.xs.XSObject;
 import org.apache.xerces.xs.XSObjectList;
+import org.apache.xerces.xs.XSParticle;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
+import org.apache.xerces.xs.XSTerm;
 import org.apache.xerces.xs.XSTypeDefinition;
 import org.apache.xerces.xs.XSWildcard;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.EnhancedNamespaceURI;
-import com.siemens.ct.exi.EnhancedQName;
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.GrammarUriContext;
+import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.context.UriContext;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -120,9 +127,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	protected Map<QName, SchemaInformedFirstStartTagRule> grammarTypes;
 
-	protected List<EnhancedQName> enhancedQNames;
-	protected List<EnhancedNamespaceURI> enhancedNamespaceURIs;
-
 	// local-names (pre-initializing LocalName Partition)
 	// uri -> localNames
 	protected Map<String, List<String>> schemaLocalNames;
@@ -136,6 +140,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 	// built-In mapping
 	protected Map<QName, QName> datatypeMapping;
+
+	//
+	GrammarUriContext[] grammarUriContexts;
 
 	protected XSDGrammarBuilder() {
 		super();
@@ -164,8 +171,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initOnce();
 
 		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagRule>();
-		enhancedQNames = new ArrayList<EnhancedQName>();
-		enhancedNamespaceURIs = new ArrayList<EnhancedNamespaceURI>();
 		schemaLocalNames = new HashMap<String, List<String>>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
 
@@ -205,8 +210,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		super.initEachRun();
 
 		grammarTypes.clear();
-		enhancedQNames.clear();
-		enhancedNamespaceURIs.clear();
 		attributePool.clear();
 
 		elementFragment0 = null;
@@ -232,53 +235,68 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	protected EnhancedQName createEnhancedQName(QName qname) {
-		EnhancedQName eQName = new EnhancedQName(qname);
-		// avoid duplicates
-		int index = enhancedQNames.lastIndexOf(eQName);
-		if (index == -1) {
-			this.enhancedQNames.add(eQName);
-		} else {
-			eQName = enhancedQNames.get(index);
-		}
-
-		return eQName;
-	}
-
-	protected EnhancedNamespaceURI createEnhancedNamespaceURI(
-			String namespaceURI) {
-		EnhancedNamespaceURI eNamespace = new EnhancedNamespaceURI(namespaceURI);
-		// avoid duplicates
-		int index = enhancedNamespaceURIs.lastIndexOf(eNamespace);
-		if (index == -1) {
-			this.enhancedNamespaceURIs.add(eNamespace);
-		} else {
-			eNamespace = enhancedNamespaceURIs.get(index);
-		}
-
-		return eNamespace;
-	}
-
 	protected StartElement createStartElement(QName qname) {
-		StartElement se = new StartElement(createEnhancedQName(qname));
+		QNameContext qnameContext = getQNameContext(qname.getNamespaceURI(),
+				qname.getLocalPart(), grammarUriContexts);
+		StartElement se = new StartElement(qnameContext);
 		return se;
 	}
 
 	protected StartElementNS createStartElementNS(String uri) {
+		GrammarUriContext uriContext = getUriContext(uri, grammarUriContexts);
 		StartElementNS seNS = new StartElementNS(
-				createEnhancedNamespaceURI(uri));
+				uriContext.getNamespaceUriID(), uriContext.getNamespaceUri());
 		return seNS;
+	}
+
+	protected static QNameContext getQNameContext(String namespaceUri,
+			String localName, GrammarUriContext[] grammarUriContexts) {
+		namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+				: namespaceUri;
+		// uri context
+		UriContext guc = getUriContext(namespaceUri, grammarUriContexts);
+
+		if (guc == null) {
+			throw new RuntimeException("No known uri : " + namespaceUri);
+		} else {
+			// qname context
+			QNameContext qnameContext = guc.getQNameContext(localName);
+			if (qnameContext == null) {
+				throw new RuntimeException("No known qname local-name: "
+						+ localName);
+			}
+			return qnameContext;
+		}
+
+	}
+
+	public static GrammarUriContext getUriContext(String namespaceUri,
+			GrammarUriContext[] grammarUriContexts) {
+		namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+				: namespaceUri;
+
+		for (GrammarUriContext guc : grammarUriContexts) {
+			if (guc.getNamespaceUri().equals(namespaceUri)) {
+				return guc;
+			}
+		}
+
+		throw new RuntimeException("No known uri context for: " + namespaceUri);
 	}
 
 	protected Attribute createAttribute(QName qname, QName valueType,
 			Datatype datatype) {
-		Attribute at = new Attribute(createEnhancedQName(qname), valueType,
-				datatype);
+		QNameContext qnameContext = getQNameContext(qname.getNamespaceURI(),
+				qname.getLocalPart(), grammarUriContexts);
+		Attribute at = new Attribute(qnameContext, valueType, datatype);
+
 		return at;
 	}
 
 	protected AttributeNS createAttributeNS(String uri) {
-		AttributeNS atNS = new AttributeNS(createEnhancedNamespaceURI(uri));
+		GrammarUriContext uriContext = getUriContext(uri, grammarUriContexts);
+		AttributeNS atNS = new AttributeNS(uriContext.getNamespaceUriID(),
+				uriContext.getNamespaceUri());
 		return atNS;
 	}
 
@@ -597,34 +615,273 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		return elementFragment0;
 	}
 
-	private static int getEfficientNamespaceUriID(
-			GrammarURIEntry[] grammarEntries, String namespaceURI) {
-		// get namespace ID
-		int namespaceUriID = -1;
-		for (int i = 0; i < grammarEntries.length; i++) {
-			GrammarURIEntry gue = grammarEntries[i];
-			if (gue.namespaceURI.equals(namespaceURI)) {
-				namespaceUriID = i;
-				break;
+	static class NamespaceUriEntry implements Comparable<NamespaceUriEntry> {
+		public final String namespaceUri;
+		public final List<String> localNames;
+
+		public NamespaceUriEntry(String namespaceUri) {
+			this.namespaceUri = namespaceUri;
+			this.localNames = new ArrayList<String>();
+		}
+
+		public int compareTo(NamespaceUriEntry o) {
+			// URI 0 "" [empty string]
+			// URI 1 "http://www.w3.org/XML/1998/namespace"
+			// URI 2 "http://www.w3.org/2001/XMLSchema-instance"
+			// URI 3 "http://www.w3.org/2001/XMLSchema"
+			// URI ? <sorted URI list>
+
+			if (XMLConstants.NULL_NS_URI.equals(this.namespaceUri)) {
+				return o.namespaceUri.equals(XMLConstants.NULL_NS_URI) ? 0 : -1;
+			} else if (XMLConstants.XML_NS_URI.equals(this.namespaceUri)) {
+				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)) {
+					return 1;
+				} else if (o.namespaceUri.equals(XMLConstants.XML_NS_URI)) {
+					return 0;
+				} else {
+					return -1;
+				}
+			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
+					.equals(this.namespaceUri)) {
+				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)
+						|| o.namespaceUri.equals(XMLConstants.XML_NS_URI)) {
+					return 1;
+				} else if (o.namespaceUri
+						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+					return 0;
+				} else {
+					return -1;
+				}
+			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI
+					.equals(this.namespaceUri)) {
+				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)
+						|| o.namespaceUri.equals(XMLConstants.XML_NS_URI)
+						|| o.namespaceUri
+								.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+					return 1;
+				} else if (o.namespaceUri
+						.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+					return 0;
+				} else {
+					return -1;
+				}
+			} else {
+				return this.namespaceUri.compareTo(o.namespaceUri);
 			}
 		}
-		if (namespaceUriID < 0) {
-			throw new RuntimeException("No appropriate uri id found for "
-					+ namespaceURI);
-		}
-		return namespaceUriID;
 	}
 
-	private static int getEfficientLocalNameID(
-			GrammarURIEntry[] grammarEntries, int namespaceUriID,
-			String localName) {
-		String[] localNames = grammarEntries[namespaceUriID].localNames;
-		int localNameID = Arrays.binarySearch(localNames, localName);
-		if (localNameID < 0) {
-			throw new RuntimeException(
-					"No appropriate local-name id found for " + localName);
+	static class StringTableEntries extends ArrayList<NamespaceUriEntry> {
+		private static final long serialVersionUID = 1L;
+		private final XSModel xsModel;
+
+		public StringTableEntries(XSModel xsModel) {
+			super();
+			this.xsModel = xsModel;
+			// init default entries
+			this.add(new NamespaceUriEntry(XMLConstants.NULL_NS_URI));
+			NamespaceUriEntry nsue1 = new NamespaceUriEntry(
+					XMLConstants.XML_NS_URI);
+			nsue1.localNames.add("base");
+			nsue1.localNames.add("id");
+			nsue1.localNames.add("lang");
+			nsue1.localNames.add("space");
+			this.add(nsue1);
+			NamespaceUriEntry nsue2 = new NamespaceUriEntry(
+					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+			nsue2.localNames.add("nil");
+			nsue2.localNames.add("type");
+			this.add(nsue2);
+			this.add(new NamespaceUriEntry(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+			// init entries
+			this.initializeEntries();
+			// sort entries
+			Collections.sort(this);
+			for (NamespaceUriEntry nsue : this) {
+				Collections.sort(nsue.localNames);
+			}
 		}
-		return localNameID;
+
+		private void initializeEntries() {
+			// namespaces
+			StringList nss = xsModel.getNamespaces();
+			for (int i = 0; i < nss.size(); i++) {
+				String ns = (String) nss.get(i);
+				checkNamespaceUriEntry(ns);
+			}
+
+			// simple types
+			XSNamedMap nm = xsModel.getComponents(XSTypeDefinition.SIMPLE_TYPE);
+			for (int k = 0; k < nm.size(); k++) {
+				XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) nm
+						.item(k);
+				handleSimpleType(std);
+			}
+
+			// complex types
+			nm = xsModel.getComponents(XSTypeDefinition.COMPLEX_TYPE);
+			for (int k = 0; k < nm.size(); k++) {
+				XSComplexTypeDefinition ctd = (XSComplexTypeDefinition) nm
+						.item(k);
+				this.handleComplexType(ctd);
+			}
+
+			// global elements
+			nm = xsModel.getComponents(XSConstants.ELEMENT_DECLARATION);
+			for (int k = 0; k < nm.size(); k++) {
+				XSElementDeclaration it = (XSElementDeclaration) nm.item(k);
+				this.handleElementDeclaration(it);
+			}
+
+			// global attributes
+			nm = xsModel.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
+			for (int k = 0; k < nm.size(); k++) {
+				XSAttributeDeclaration it = (XSAttributeDeclaration) nm.item(k);
+				this.handleAttributeDeclaration(it);
+			}
+		}
+
+		private NamespaceUriEntry checkNamespaceUriEntry(String namespaceUri) {
+			namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+					: namespaceUri;
+			for (NamespaceUriEntry nsue : this) {
+				if (nsue.namespaceUri.equals(namespaceUri)) {
+					return nsue;
+				}
+			}
+
+			// not found
+			NamespaceUriEntry nsue = new NamespaceUriEntry(namespaceUri);
+			this.add(nsue);
+			return nsue;
+		}
+
+		private void checkEntry(String namespaceUri, String localName) {
+			NamespaceUriEntry nsue = checkNamespaceUriEntry(namespaceUri);
+
+			assert (localName != null);
+			if (!nsue.localNames.contains(localName)) {
+				nsue.localNames.add(localName);
+			}
+		}
+
+		private void handleAttributeDeclaration(XSAttributeDeclaration ad) {
+			// element names
+			checkEntry(ad.getNamespace(), ad.getName());
+			// element type
+			handleType(ad.getTypeDefinition());
+		}
+
+		private void handleElementDeclaration(XSElementDeclaration ed) {
+			// element names
+			checkEntry(ed.getNamespace(), ed.getName());
+			// element type
+			handleType(ed.getTypeDefinition());
+
+			// substitution group
+			XSObjectList subs = xsModel.getSubstitutionGroup(ed);
+			if (subs != null) {
+				for (int s = 0; s < subs.getLength(); s++) {
+					XSElementDeclaration sub = (XSElementDeclaration) subs
+							.get(s);
+					// name
+					checkEntry(sub.getNamespace(), sub.getName());
+					// type
+					handleType(sub.getTypeDefinition());
+				}
+			}
+		}
+
+		private void handleType(XSTypeDefinition td) {
+			if (td.getTypeCategory() == XSTypeDefinition.COMPLEX_TYPE) {
+				this.handleComplexType((XSComplexTypeDefinition) td);
+			} else {
+				this.handleSimpleType((XSSimpleTypeDefinition) td);
+			}
+		}
+
+		private void handleSimpleType(XSSimpleTypeDefinition std) {
+			if (!std.getAnonymous()) {
+				checkEntry(std.getNamespace(), std.getName());
+			}
+		}
+
+		private void handleTerm(XSTerm t) {
+			switch (t.getType()) {
+			case XSConstants.ELEMENT_DECLARATION:
+				XSElementDeclaration ed = (XSElementDeclaration) t;
+				this.handleElementDeclaration(ed);
+				break;
+			case XSConstants.MODEL_GROUP:
+				XSModelGroup mg = (XSModelGroup) t;
+				XSObjectList particles = mg.getParticles();
+				// handle particles
+				for (int l = 0; l < particles.getLength(); l++) {
+					XSParticle part = (XSParticle) particles.get(l);
+					XSTerm tt = part.getTerm();
+					this.handleTerm(tt);
+				}
+				break;
+			case XSConstants.WILDCARD:
+				this.handleWildcard((XSWildcard) t);
+				break;
+			default:
+				throw new RuntimeException("Unexpected term");
+			}
+		}
+
+		private void handleWildcard(XSWildcard wc) {
+			if (wc != null) {
+				switch (wc.getConstraintType()) {
+				case XSWildcard.NSCONSTRAINT_LIST:
+					// namespaces in the list are allowed
+					StringList sl = wc.getNsConstraintList();
+					for (int k = 0; k < sl.getLength(); k++) {
+						String namespace = sl.item(k);
+						this.checkNamespaceUriEntry(namespace);
+					}
+					break;
+				default:
+					// no namespace declared
+				}
+			}
+		}
+
+		Set<XSComplexTypeDefinition> cTypes = new HashSet<XSComplexTypeDefinition>();
+
+		private void handleComplexType(XSComplexTypeDefinition ctd) {
+			// stop processing?
+			if (cTypes.contains(ctd)) {
+				// abort
+				return;
+			}
+			cTypes.add(ctd);
+
+			// complex type names
+			if (!ctd.getAnonymous()) {
+				checkEntry(ctd.getNamespace(), ctd.getName());
+			}
+
+			// attributes
+			XSObjectList attributes = ctd.getAttributeUses();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				XSAttributeUse at = (XSAttributeUse) attributes.get(i);
+				XSAttributeDeclaration atd = at.getAttrDeclaration();
+				checkEntry(atd.getNamespace(), atd.getName());
+			}
+
+			// attribute wildcard
+			XSWildcard attributeWC = ctd.getAttributeWildcard();
+			this.handleWildcard(attributeWC);
+
+			// term
+			XSParticle particle = ctd.getParticle();
+			if (particle != null) {
+				XSTerm t = particle.getTerm();
+				this.handleTerm(t);
+			}
+
+		}
 	}
 
 	public SchemaInformedGrammar toGrammar() throws EXIException {
@@ -639,6 +896,133 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			throw new EXIException(sb.toString());
 		}
 
+		// grammar string entries
+		StringTableEntries ste = new StringTableEntries(xsModel);
+		// System.out.println("UriSize: " + ste.size());
+		grammarUriContexts = new GrammarUriContext[ste.size()];
+		int qNameID = 0;
+		for (int i = 0; i < ste.size(); i++) {
+			NamespaceUriEntry nsue = ste.get(i);
+			String namespaceUri = nsue.namespaceUri;
+			// prefixes
+			String[] prefixes;
+			if (XMLConstants.NULL_NS_URI.equals(namespaceUri)) {
+				prefixes = Constants.PREFIXES_EMPTY;
+			} else if (XMLConstants.XML_NS_URI.equals(namespaceUri)) {
+				prefixes = Constants.PREFIXES_XML;
+			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
+					.equals(namespaceUri)) {
+				prefixes = Constants.PREFIXES_XSI;
+			} else {
+				prefixes = GrammarUriContext.EMPTY_PREFIXES;
+			}
+
+			// localName contexts
+			List<String> localNames = nsue.localNames;
+			QNameContext[] grammarLocalNames = new QNameContext[localNames
+					.size()];
+
+			for (int k = 0; k < localNames.size(); k++) {
+				String localName = localNames.get(k);
+				// add entry
+				QName qname = new QName(namespaceUri, localName);
+				grammarLocalNames[k] = new QNameContext(i, k, qname, qNameID++); // ,
+																					// grammarGlobalElement,
+																					// grammarGlobalAttribute);
+			}
+
+			// create grammar uri context
+			grammarUriContexts[i] = new GrammarUriContext(i, namespaceUri,
+					grammarLocalNames, prefixes);
+
+		}
+
+		// updates global elements, attributes and types
+		for (GrammarUriContext guc : grammarUriContexts) {
+			for (int k = 0; k < guc.getNumberOfQNames(); k++) {
+				QNameContext qnc = guc.getQNameContext(k);
+				String localName = qnc.getLocalName();
+				String namespace = guc.getNamespaceUri();
+
+				// global element
+				XSElementDeclaration globalElementDecl = xsModel
+						.getElementDeclaration(localName, namespace);
+				if (globalElementDecl != null) {
+					StartElement grammarGlobalElement = translatElementDeclarationToFSA(globalElementDecl);
+					qnc.setGlobalStartElement(grammarGlobalElement);
+				}
+
+				// global attribute
+				XSAttributeDeclaration globalAttributeDecl = xsModel
+						.getAttributeDeclaration(localName, namespace);
+				if (globalAttributeDecl != null) {
+					Attribute grammarGlobalAttribute = this
+							.getAttribute(globalAttributeDecl);
+					qnc.setGlobalAttribute(grammarGlobalAttribute);
+				}
+
+				// global types
+				XSTypeDefinition typeDef = xsModel.getTypeDefinition(localName,
+						namespace);
+				if (typeDef != null) {
+					SchemaInformedFirstStartTagRule fstr = this
+							.translateTypeDefinitionToFSA(typeDef);
+					qnc.setTypeGrammar(fstr);
+				}
+
+				// (direct) simple sub-types
+				if (typeDef != null
+						&& typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
+						&& !typeDef.getAnonymous()) {
+
+					XSTypeDefinition baseType = getBaseType(typeDef);
+					while (baseType != null && baseType.getAnonymous()) {
+						baseType = getBaseType(baseType);
+					}
+
+					// subtypes
+					if (baseType == null) {
+						// http://www.w3.org/2001/XMLSchema,anySimpleType
+					} else {
+						// Note: according to EXI errata enumerations are not
+						// handled by simple DTR maps
+						// There are only other enum types in hierarchy
+						Datatype dtBase = this
+								.getDatatype((XSSimpleTypeDefinition) baseType);
+						Datatype dt = this
+								.getDatatype((XSSimpleTypeDefinition) typeDef);
+
+						if (dt.getBuiltInType() == BuiltInType.ENUMERATION
+								&& dtBase.getBuiltInType() != BuiltInType.ENUMERATION) {
+							// not added as sub-type
+						} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI
+								.equals(baseType.getNamespace())
+								&& baseType.getName() == null) {
+							// e.g., xsd:ENTITIES
+						} else {
+							// List<QName> sub = subtypes.get(baseTypeQName);
+							// System.out.println(baseType);
+							QNameContext base = getQNameContext(
+									baseType.getNamespace(),
+									baseType.getName(), grammarUriContexts);
+							List<QNameContext> subTypes = base
+									.getSimpleTypeSubtypes();
+							// List<QNameContext> subTypes =
+							// qnc.getSimpleTypeSubtypes();
+							if (subTypes == null) {
+								subTypes = new ArrayList<QNameContext>();
+								// qnc.setSimpleTypeSubtypes(subTypes);
+								base.setSimpleTypeSubtypes(subTypes);
+							}
+							// QName baseTypeQName = getValueType(baseType);
+							// subTypes.add(base);
+							subTypes.add(qnc);
+						}
+					}
+				}
+			}
+		}
+
 		// initialize grammars --> global element)
 		List<StartElement> globalElements = initGrammars();
 
@@ -648,131 +1032,6 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// sort both lists (declared & global elements)
 		Collections.sort(globalElements, lexSort);
 		Collections.sort(fragmentElements, lexSort);
-
-		/*
-		 * Simple sub-type hierarchy (for DTRM)
-		 */
-		Map<QName, List<QName>> subtypes = new HashMap<QName, List<QName>>();
-		Iterator<QName> iterTypes = grammarTypes.keySet().iterator();
-		while (iterTypes.hasNext()) {
-			QName typeQName = iterTypes.next();
-			XSTypeDefinition td = xsModel.getTypeDefinition(
-					typeQName.getLocalPart(), typeQName.getNamespaceURI());
-
-			if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
-					&& !td.getAnonymous()) {
-				XSTypeDefinition baseType = getBaseType(td);
-
-				// subtypes
-				if (baseType == null) {
-					// http://www.w3.org/2001/XMLSchema,anySimpleType
-				} else {
-					QName baseTypeQName = getValueType(baseType);
-
-					// Note: according to EXI errata enumerations are not
-					// handled by simple DTR maps
-					// There are only other enum types in hierarchy
-					Datatype dtBase = this
-							.getDatatype((XSSimpleTypeDefinition) baseType);
-					Datatype dt = this.getDatatype((XSSimpleTypeDefinition) td);
-
-					if (dt.getBuiltInType() == BuiltInType.ENUMERATION
-							&& dtBase.getBuiltInType() != BuiltInType.ENUMERATION) {
-						// not added as sub-type
-					} else {
-						List<QName> sub = subtypes.get(baseTypeQName);
-						if (sub == null) {
-							sub = new ArrayList<QName>();
-							subtypes.put(baseTypeQName, sub);
-						}
-						sub.add(getValueType(td));
-					}
-				}
-			}
-		}
-
-		/*
-		 * global elements
-		 */
-		Map<QName, StartElement> mapGlobalElements = new HashMap<QName, StartElement>();
-		for (StartElement globalElement : globalElements) {
-			QName qname = globalElement.getQName();
-			mapGlobalElements.put(qname, globalElement);
-		}
-
-		/*
-		 * global attributes
-		 */
-		XSNamedMap nmGlobalAtts = xsModel
-				.getComponents(XSConstants.ATTRIBUTE_DECLARATION);
-		Map<QName, Attribute> mapGlobalAttributes = new HashMap<QName, Attribute>();
-		for (int i = 0; i < nmGlobalAtts.getLength(); i++) {
-			XSAttributeDeclaration atDecl = (XSAttributeDeclaration) nmGlobalAtts
-					.item(i);
-			Attribute at = getAttribute(atDecl);
-			QName qname = at.getQName();
-			mapGlobalAttributes.put(qname, at);
-		}
-
-		/*
-		 * Schema URIs and (sorted) localNames
-		 */
-		String[] uris = getURITableEntries();
-		GrammarURIEntry[] grammarEntries = new GrammarURIEntry[uris.length];
-		for (int i = 0; i < uris.length; i++) {
-			String uri = uris[i];
-
-			// local-names
-			String[] localNamesArray;
-			if (schemaLocalNames.containsKey(uri)) {
-				List<String> localNames = schemaLocalNames.get(uri);
-				// sort local-name list
-				Collections.sort(localNames);
-				// create sorted array out of it
-				localNamesArray = new String[localNames.size()];
-				localNames.toArray(localNamesArray);
-			} else {
-				// no entries, may happen for XMLConstants.NULL_NS_URI
-				localNamesArray = new String[0];
-			}
-
-			// prefixes
-			String[] prefixes;
-			if (uri.equals(XMLConstants.NULL_NS_URI)) {
-				prefixes = Constants.PREFIXES_EMPTY;
-			} else if (uri.equals(XMLConstants.XML_NS_URI)) {
-				prefixes = Constants.PREFIXES_XML;
-			} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
-				prefixes = Constants.PREFIXES_XSI;
-			} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
-				prefixes = Constants.PREFIXES_XSD;
-			} else {
-				prefixes = new String[0];
-			}
-
-			// add schema entry
-			grammarEntries[i] = new GrammarURIEntry(i, uri, localNamesArray,
-					prefixes);
-		}
-
-		// update all enhanced qnames with appropriate uri and localName ID
-		for (EnhancedQName eqname : enhancedQNames) {
-			QName qname = eqname.getQName();
-			int namespaceUriID = getEfficientNamespaceUriID(grammarEntries,
-					qname.getNamespaceURI());
-			eqname.setNamespaceUriID(namespaceUriID);
-			int localNameID = getEfficientLocalNameID(grammarEntries,
-					namespaceUriID, qname.getLocalPart());
-			eqname.setLocalNameID(localNameID);
-			// EnhancedQName eqname = getEfficientQName(grammarEntries,
-			// qname.getNamespaceURI(), qname.getLocalPart());
-			// se.setEQName(eqname);
-		}
-		for (EnhancedNamespaceURI eNamespace : enhancedNamespaceURIs) {
-			String uri = eNamespace.getNamespaceURI();
-			int namespaceUriID = getEfficientNamespaceUriID(grammarEntries, uri);
-			eNamespace.setNamespaceUriID(namespaceUriID);
-		}
 
 		/*
 		 * Global elements declared in the schema. G 0, G 1, ... G n-1 represent
@@ -811,16 +1070,12 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 				"Fragment");
 
 		/*
-		 * create schema informed grammar (+set grammarTypes, simpleSubTypes and
-		 * global attributes)
+		 * create schema informed grammar
 		 */
-		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarEntries,
-				documentGrammar, fragmentGrammar); // , elements);
-
-		sig.setTypeGrammars(grammarTypes);
-		sig.setSimpleTypeSubtypes(subtypes);
-		sig.setGlobalElements(mapGlobalElements);
-		sig.setGlobalAttributes(mapGlobalAttributes);
+		GrammarContext grammarContext = new GrammarContext(grammarUriContexts,
+				qNameID);
+		SchemaInformedGrammar sig = new SchemaInformedGrammar(grammarContext,
+				documentGrammar, fragmentGrammar);
 
 		return sig;
 	}
@@ -1486,7 +1741,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 									break;
 								/* Boolean */
 								case BOOLEAN:
-								// case BOOLEAN_PATTERN:
+									// case BOOLEAN_PATTERN:
 									enumValue = BooleanValue.parse(tok);
 									break;
 								/* Decimal */

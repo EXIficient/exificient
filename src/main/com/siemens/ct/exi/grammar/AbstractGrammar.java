@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.grammar;
 
+import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.grammar.rule.Rule;
 
 /**
@@ -34,18 +35,24 @@ public abstract class AbstractGrammar implements Grammar {
 
 	protected Rule urTypeGrammar;
 
-	protected GrammarURIEntry[] grammarEntries;
-
 	/*
 	 * Document and Fragment Grammars
 	 */
 	protected Rule documentGrammar;
 	protected Rule fragmentGrammar;
 
+	private final GrammarContext grammarContext;
+
 	private final boolean isSchemaInformed;
 
-	public AbstractGrammar(boolean isSchemaInformed) {
+	public AbstractGrammar(boolean isSchemaInformed,
+			GrammarContext grammarContext) {
 		this.isSchemaInformed = isSchemaInformed;
+		this.grammarContext = grammarContext;
+	}
+
+	public GrammarContext getGrammarContext() {
+		return this.grammarContext;
 	}
 
 	public boolean isSchemaInformed() {
@@ -64,7 +71,4 @@ public abstract class AbstractGrammar implements Grammar {
 		return documentGrammar;
 	}
 
-	public GrammarURIEntry[] getGrammarEntries() {
-		return grammarEntries;
-	}
 }

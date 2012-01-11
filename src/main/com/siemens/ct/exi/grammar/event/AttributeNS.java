@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-import com.siemens.ct.exi.EnhancedNamespaceURI;
 
 /**
  * 
@@ -31,49 +30,38 @@ import com.siemens.ct.exi.EnhancedNamespaceURI;
 public class AttributeNS extends AbstractEvent {
 
 	private static final long serialVersionUID = 6004967457126269590L;
-
-	protected final EnhancedNamespaceURI eNamespaceURI;
-	protected final String namespaceURI;
-	protected int namespaceUriID;
-
-	public AttributeNS(EnhancedNamespaceURI uri) {
+	
+	protected final String namespaceUri;
+	protected final int namespaceUriID;
+	
+	public AttributeNS(int namespaceUriID, String namespaceUri) {
 		super(EventType.ATTRIBUTE_NS);
-
-		this.eNamespaceURI = uri;
-		this.namespaceURI = uri.getNamespaceURI();
-	}
-
-	public EnhancedNamespaceURI getEnhancedNamespaceURI() {
-		return eNamespaceURI;
+		this.namespaceUriID = namespaceUriID;
+		this.namespaceUri = namespaceUri;
 	}
 	
 	public String getNamespaceURI() {
-		return namespaceURI;
+		return namespaceUri;
 	}
 	
 	public int getNamespaceUriID() {
 		return namespaceUriID;
 	}
 
-	public void setNamespaceUriID(int namespaceUriID) {
-		this.namespaceUriID = namespaceUriID;
-	}
-
 	public String toString() {
-		return super.toString() + "(" + namespaceURI + ":*)";
+		return super.toString() + "(" + getNamespaceURI() + ":*)";
 	}
 
 	@Override
 	public int hashCode() {
-		// return (eventType.ordinal() ^ namespaceURI.hashCode());
-		return (namespaceURI.hashCode());
+		return (getNamespaceURI().hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof AttributeNS) {
 			AttributeNS otherSE = (AttributeNS) obj;
-			return (namespaceURI.equals(otherSE.namespaceURI));
+			return (getNamespaceURI().equals(otherSE.getNamespaceURI()));
 		} else {
 			return false;
 		}

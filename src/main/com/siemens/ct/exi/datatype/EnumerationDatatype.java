@@ -22,6 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
@@ -30,8 +33,6 @@ import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -74,7 +75,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 			break;
 		/* Boolean */
 		case BOOLEAN:
-		// case BOOLEAN_PATTERN:
+			// case BOOLEAN_PATTERN:
 			this.rcs = new XSDBooleanCharacterSet();
 			break;
 		/* Decimal */
@@ -130,13 +131,15 @@ public class EnumerationDatatype extends AbstractDatatype {
 		return bitEnumValues;
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidIndex, codingLength);
 	}
 
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException {
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
 		int index = valueChannel.decodeNBitUnsignedInteger(codingLength);
 		assert (index >= 0 && index < enumValues.length);
 		return enumValues[index];

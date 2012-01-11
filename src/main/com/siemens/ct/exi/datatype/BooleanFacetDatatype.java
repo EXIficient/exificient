@@ -23,9 +23,10 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -86,13 +87,15 @@ public class BooleanFacetDatatype extends AbstractDatatype {
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
 		valueChannel.encodeNBitUnsignedInteger(lastValidBooleanID, 2);
 	}
 
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException {
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
 		return new BooleanValue(booleanID);
 	}

@@ -18,11 +18,8 @@
 
 package com.siemens.ct.exi.datatype.strings;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -50,13 +47,11 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 
 	static class LocalIDMap {
 		final int localID;
-		final QName context; /* debug info */
-		final List<StringValue> values;
+		final QNameContext context;
 
-		public LocalIDMap(int localID, QName context, List<StringValue> values) {
+		public LocalIDMap(int localID, QNameContext context) {
 			this.localID = localID;
 			this.context = context;
-			this.values = values;
 		}
 	}
 
@@ -73,13 +68,14 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 	}
 
 	@Override
-	public void addValue(QName context, StringValue value) {
+	public void addValue(DecoderContext coder, QNameContext context,
+			StringValue value) {
 		// first: check "valueMaxLength"
 		if (valueMaxLength < 0 || value.getCharactersLength() <= valueMaxLength) {
 			// next: check "valuePartitionCapacity"
 			if (valuePartitionCapacity < 0) {
 				// no "valuePartitionCapacity" restriction
-				super.addValue(context, value);
+				super.addValue(coder, context, value);
 			} else
 			// If valuePartitionCapacity is not zero the string S is added
 			if (valuePartitionCapacity == 0) {
@@ -94,16 +90,6 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 				 * compact identifier permanently unassigned.
 				 */
 				assert (!globalValues.contains(value));
-
-				// updateLocalValues(context, value);
-				// TODO BLAAAAAAAAAAAAAAAAAAA
-				List<StringValue> lvs = localValues.get(context);
-				if (lvs == null) {
-					lvs = new ArrayList<StringValue>();
-					localValues.put(context, lvs);
-				}
-				assert (!lvs.contains(value));
-				lvs.add(value);
 
 				/*
 				 * When the string value is added to the global value partition,
@@ -121,19 +107,17 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 						// free memory
 						LocalIDMap lvsFree = localIdMapping[globalID];
 						assert (lvsFree != null);
-						// System.out.println("Remove " +
-						// lvsFree.values.get(lvsFree.localID) + " in " +
-						// lvsFree.context);
-						lvsFree.values.set(lvsFree.localID, null);
 					}
 				} else {
 					globalValues.add(value);
 				}
 
 				// update local ID mapping
-				localIdMapping[globalID] = new LocalIDMap(lvs.size() - 1,
-						context, lvs);
-				// System.out.println("Global " + globalID + ": " + context );
+				localIdMapping[globalID] = new LocalIDMap(
+						coder.getNumberOfStringValues(context), context);
+
+				// local value
+				coder.addStringValue(context, value);
 
 			}
 		}

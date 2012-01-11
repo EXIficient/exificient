@@ -213,6 +213,12 @@ public class SchemaInformedTest extends TestCase {
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().equals(qnRoot));
 			
+			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(decoder.decodeAttributeXsiType().getLocalPart().equals("type"));
+			QNameValue qnv = (QNameValue) decoder.getAttributeValue();
+			assertTrue(qnv.getLocalName().equals("string"));
+			assertTrue(qnv.getNamespaceUri().equals("http://www.w3.org/2001/XMLSchema"));
+			
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
 			
@@ -238,8 +244,8 @@ public class SchemaInformedTest extends TestCase {
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammar ( g );
-		EncodingOptions eo = factory.getEncodingOptions();
-		eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_TYPE);
+		// EncodingOptions eo = factory.getEncodingOptions();
+		// eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_TYPE);
 	
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
@@ -278,7 +284,8 @@ public class SchemaInformedTest extends TestCase {
 			Value xsiType = decoder.getAttributeValue();
 			assertTrue(xsiType instanceof QNameValue);
 			QNameValue qv = (QNameValue) xsiType;
-			assertTrue(qv.toQName().getLocalPart().equals("string"));
+			// assertTrue(qv.toQName().getLocalPart().equals("string"));
+			assertTrue(qv.getLocalName().equals("string"));
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));

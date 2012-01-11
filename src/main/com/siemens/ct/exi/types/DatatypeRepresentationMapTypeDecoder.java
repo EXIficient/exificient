@@ -22,8 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -43,32 +44,22 @@ public class DatatypeRepresentationMapTypeDecoder extends
 	// fallback type decoder
 	protected TypeDecoder defaultDecoder;
 
-	protected StringDecoder stringDecoder;
-
 	public DatatypeRepresentationMapTypeDecoder(TypeDecoder defaultDecoder,
-			StringDecoder stringDecoder, QName[] dtrMapTypes,
-			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
+			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
+			throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations, grammar);
-		this.stringDecoder = stringDecoder;
 
 		// hand over "default" type decoder
 		this.defaultDecoder = defaultDecoder;
 	}
 
-	public StringDecoder getStringDecoder() {
-		return stringDecoder;
-	}
-
-	public void clear() {
-		stringDecoder.clear();
-	}
-
-	public Value readValue(Datatype datatype, QName context,
-			DecoderChannel valueChannel) throws IOException {
+	public Value readValue(Datatype datatype, DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
 		QName schemaType = datatype.getSchemaType();
 		Datatype recentDtrDataype = dtrMap.get(schemaType);
 		return defaultDecoder.readValue(recentDtrDataype == null ? datatype
-				: recentDtrDataype, context, valueChannel);
+				: recentDtrDataype, decoderContext, qnContext, valueChannel);
 	}
 
 }

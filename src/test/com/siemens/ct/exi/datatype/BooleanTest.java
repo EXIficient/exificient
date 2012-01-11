@@ -41,13 +41,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		Value val1 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(Constants.DECODED_BOOLEAN_FALSE.equals(val1.toString()));
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		Value val2 = bool.readValue(getBitDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		Value val2 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(Constants.DECODED_BOOLEAN_FALSE.equals(val2.toString()));
 	}
 	
@@ -60,13 +60,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		Value val1 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(Constants.DECODED_BOOLEAN_TRUE.equals(val1.toString()));
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		Value val2 = bool.readValue(getBitDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		Value val2 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(Constants.DECODED_BOOLEAN_TRUE.equals(val2.toString()));
 	}
 	
@@ -80,13 +80,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		BooleanValue val1 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		BooleanValue val1 = (BooleanValue) bool.readValue(null, null, getBitDecoder());
 		assertTrue(v == val1.toBoolean());
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		BooleanValue val2 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		BooleanValue val2 = (BooleanValue) bool.readValue(null, null, getBitDecoder());
 		assertTrue(v == val2.toBoolean() );
 	}
 	
@@ -100,13 +100,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		BooleanValue val1 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		BooleanValue val1 = (BooleanValue) bool.readValue(null, null, getBitDecoder());
 		assertTrue(v == val1.toBoolean());
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		BooleanValue val2 = (BooleanValue) bool.readValue(getBitDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		BooleanValue val2 = (BooleanValue) bool.readValue(null, null, getBitDecoder());
 		assertTrue(v == val2.toBoolean());
 	}
 	
@@ -119,13 +119,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		Value val1 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(s.equals(val1.toString()));
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		Value val2 = bool.readValue(getByteDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		Value val2 = bool.readValue(null, null, getByteDecoder());
 		assertTrue(s.equals(val2.toString()));
 	}
 	
@@ -138,13 +138,13 @@ public class BooleanTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bool.writeValue(bitEC, null, null);
+		bool.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value val1 = bool.readValue(getBitDecoder(), null, null);
+		Value val1 = bool.readValue(null, null, getBitDecoder());
 		assertTrue(s.equals(val1.toString()));
 		// Byte
-		bool.writeValue(getByteEncoder(), null, null);
-		Value val2 = bool.readValue(getByteDecoder(), null, null);
+		bool.writeValue(null, null, getByteEncoder());
+		Value val2 = bool.readValue(null, null, getByteDecoder());
 		assertTrue(s.equals(val2.toString()));
 	}
 	

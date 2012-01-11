@@ -24,8 +24,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -72,7 +73,8 @@ public class ListDatatype extends AbstractDatatype {
 	public boolean isValid(Value value) {
 		if (value instanceof ListValue) {
 			ListValue lv = (ListValue) value;
-			if (this.listDatatype.getBuiltInType() == lv.getListDatatype().getBuiltInType()) {
+			if (this.listDatatype.getBuiltInType() == lv.getListDatatype()
+					.getBuiltInType()) {
 				this.listValues = lv;
 				return true;
 			} else {
@@ -84,8 +86,9 @@ public class ListDatatype extends AbstractDatatype {
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
 
 		// length prefixed sequence of values
 		List<Value> values = listValues.toValues();
@@ -97,19 +100,20 @@ public class ListDatatype extends AbstractDatatype {
 			if (!valid) {
 				throw new RuntimeException("ListValue is not valid, " + v);
 			}
-			listDatatype.writeValue(valueChannel, stringEncoder, context);
+			listDatatype.writeValue(encoderContext, qnContext, valueChannel);
 		}
 	}
 
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException {
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
 
 		int len = valueChannel.decodeUnsignedInteger();
 		List<Value> values = new ArrayList<Value>(len);
 
 		for (int i = 0; i < len; i++) {
-			values.add(listDatatype.readValue(valueChannel, stringDecoder,
-					context));
+			values.add(listDatatype.readValue(decoderContext, qnContext,
+					valueChannel));
 		}
 
 		return new ListValue(values, listDatatype);

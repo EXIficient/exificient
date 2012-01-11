@@ -19,16 +19,10 @@
 package com.siemens.ct.exi.grammar;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 
 /**
  * 
@@ -97,21 +91,5 @@ public interface Grammar extends Serializable {
 
 	public Rule getUrTypeGrammar();
 
-	public GrammarURIEntry[] getGrammarEntries();
-
-	public StartElement getGlobalElement(QName qname);
-
-	public Attribute getGlobalAttribute(QName qname);
-
-	public SchemaInformedFirstStartTagRule getTypeGrammar(QName qname);
-
-	public Set<QName> getTypeGrammars();
-
-	/**
-	 * Returns (direct) simple types in type hierarchy
-	 * 
-	 * @param type
-	 * @return list of named sub-types or null
-	 */
-	public List<QName> getSimpleTypeSubtypes(QName type);
+	public GrammarContext getGrammarContext();
 }

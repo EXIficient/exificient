@@ -2,19 +2,15 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-
-import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.core.container.Context;
+import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.core.container.ValueAndDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
@@ -41,29 +37,23 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 	protected Value lastValue;
 	protected Datatype lastDatatype;
 
-	protected List<QName> contextOrders;
-	protected Map<QName, Context> contexts;
-
 	public EXIBodyEncoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		this.codingMode = exiFactory.getCodingMode();
-
-		contextOrders = new ArrayList<QName>();
-		contexts = new HashMap<QName, Context>();
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
 
-		initBlock();
+		blockValues = 0;
 	}
 
 	protected void initBlock() {
 		blockValues = 0;
-		contextOrders.clear();
-		contexts.clear();
+
+		encoderContext.initCompressionBlock();
 	}
 
 	public void setOutputStream(OutputStream os) throws EXIException,
@@ -88,17 +78,9 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 	}
 
 	@Override
-	protected void writeValue(QName valueContext) throws IOException {
-
-		Context cc = contexts.get(valueContext);
-		if (cc == null) {
-			cc = new Context();
-			contexts.put(valueContext, cc);
-			contextOrders.add(valueContext);
-		}
-
-		cc.addValue(lastValue, lastDatatype);
-		// blockValues++;
+	protected void writeValue(QNameContext valueContext) throws IOException {
+		encoderContext.addValueAndDatatype(valueContext, new ValueAndDatatype(
+				lastValue, lastDatatype));
 
 		// new block goes directly after value
 		if (++blockValues == exiFactory.getBlockSize()) {
@@ -146,15 +128,16 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		else if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 			// 1. structure stream already written
 			// 2. value channels in order
-			for (QName contextOrder : contextOrders) {
-				Context cc = contexts.get(contextOrder);
-				List<Value> values = cc.getValues();
-				List<Datatype> valueDatatypes = cc.getValueDatatypes();
-				for (int i = 0; i < values.size(); i++) {
-					typeEncoder.isValid(valueDatatypes.get(i), values.get(i));
-					typeEncoder.writeValue(contextOrder, channel);
+			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
+				List<ValueAndDatatype> lvd = encoderContext
+						.getValueAndDatatypes(contextOrder);
+				for (ValueAndDatatype vd : lvd) {
+					typeEncoder.isValid(vd.datatype, vd.value);
+					typeEncoder.writeValue(encoderContext, contextOrder,
+							channel);
 				}
 			}
+
 			finalizeStream();
 		}
 		/*
@@ -179,38 +162,39 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			// (as a single stream )
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
-			for (QName contextOrder : contextOrders) {
-				Context cc = contexts.get(contextOrder);
-				List<Value> values = cc.getValues();
-				if (values.size() <= Constants.MAX_NUMBER_OF_VALUES) {
-					List<Datatype> valueDatatypes = cc.getValueDatatypes();
-					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i),
-								values.get(i));
-						typeEncoder.writeValue(contextOrder, leq100);
+
+			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
+				List<ValueAndDatatype> lvd = encoderContext
+						.getValueAndDatatypes(contextOrder);
+				if (lvd.size() <= Constants.MAX_NUMBER_OF_VALUES) {
+					for (ValueAndDatatype vd : lvd) {
+						typeEncoder.isValid(vd.datatype, vd.value);
+						typeEncoder.writeValue(encoderContext, contextOrder,
+								leq100);
 					}
 					wasThereLeq100 = true;
 				}
 			}
+
 			if (wasThereLeq100) {
 				finalizeStream();
 			}
 
 			// all value channels having more than 100 values
-			for (QName contextOrder : contextOrders) {
-				Context cc = contexts.get(contextOrder);
-				List<Value> values = cc.getValues();
-				if (values.size() > Constants.MAX_NUMBER_OF_VALUES) {
-					List<Datatype> valueDatatypes = cc.getValueDatatypes();
+			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
+				List<ValueAndDatatype> lvd = encoderContext
+						.getValueAndDatatypes(contextOrder);
+				if (lvd.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					// create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
-					for (int i = 0; i < values.size(); i++) {
-						typeEncoder.isValid(valueDatatypes.get(i),
-								values.get(i));
-						typeEncoder.writeValue(contextOrder, gre100);
+					for (ValueAndDatatype vd : lvd) {
+						typeEncoder.isValid(vd.datatype, vd.value);
+						typeEncoder.writeValue(encoderContext, contextOrder,
+								gre100);
 					}
 					// finish stream
 					finalizeStream();
+
 				}
 			}
 		}
@@ -225,8 +209,10 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	@Override
 	public void flush() throws IOException {
-		// close remaining block
-		closeBlock();
+		// close remaining block (if any)
+		if (encoderContext != null) {
+			closeBlock();
+		}
 
 		// finalize document
 		os.flush();

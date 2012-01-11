@@ -22,7 +22,8 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.AbstractBinaryValue;
@@ -46,7 +47,7 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 		super(binaryType, schemaType);
 		assert (binaryType == BuiltInType.BINARY_BASE64 || binaryType == BuiltInType.BINARY_HEX);
 	}
-	
+
 	abstract protected boolean isValidString(String value);
 
 	public boolean isValid(Value value) {
@@ -58,8 +59,9 @@ public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 		}
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
 		valueChannel.encodeBinary(bytes);
 	}
 }

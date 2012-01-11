@@ -22,9 +22,10 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -46,7 +47,7 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = -7109188105049008275L;
 
 	protected IntegerValue validValue;
-	
+
 	protected final IntegerType integerType;
 
 	protected final IntegerValue lowerBound;
@@ -58,7 +59,7 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 		super(BuiltInType.NBIT_UNSIGNED_INTEGER, schemaType);
 		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
-		
+
 		// assert (upperBound >= lowerBound);
 		assert (upperBound.compareTo(lowerBound) >= 0);
 		this.lowerBound = lowerBound;
@@ -66,10 +67,9 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 
 		// calculate number of bits to represent range
 		IntegerValue diff = upperBound.subtract(lowerBound);
-		numberOfBits4Range = MethodsBag
-				.getCodingLength(diff.intValue() + 1);
+		numberOfBits4Range = MethodsBag.getCodingLength(diff.intValue() + 1);
 	}
-	
+
 	public IntegerType getIntegerType() {
 		return integerType;
 	}
@@ -111,15 +111,17 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 				.compareTo(upperBound) <= 0);
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
 		IntegerValue iv = validValue.subtract(lowerBound);
 		valueChannel.encodeNBitUnsignedInteger(iv.intValue(),
-					numberOfBits4Range);
+				numberOfBits4Range);
 	}
 
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException {
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
 		IntegerValue iv = valueChannel
 				.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
 		return iv.add(lowerBound);

@@ -24,8 +24,9 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
-import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -55,9 +56,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -95,9 +98,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -142,9 +147,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		//Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -192,9 +199,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -262,9 +271,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule c = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule c = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule c = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule c = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues,
 		// "", "root")).getRule();
 
@@ -294,9 +305,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -397,9 +410,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -439,9 +454,11 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
-		Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -449,10 +466,12 @@ public class GrammarTest extends TestCase {
 		assertTrue(rule.getNumberOfEvents() == 4);
 
 		// schema-informed grammars should not expand
-		rule.learnAttribute(new Attribute(new EnhancedQName(new QName("a")),
-				null, null));
-		rule.learnStartElement(new StartElement(new EnhancedQName(
-				new QName("s"))));
+		// EvolvingUriContext ruc = new RuntimeEvolvingUriContext(0, "");
+		int namespaceUriID = 0;
+		QNameContext qncAt = new QNameContext(namespaceUriID, 0, new QName("a"), 0);
+		rule.learnAttribute(new Attribute(qncAt, null, null));
+		QNameContext qncSE = new QNameContext(namespaceUriID, 1, new QName("s"), 1);
+		rule.learnStartElement(new StartElement(qncSE));
 		rule.learnEndElement();
 		rule.learnCharacters();
 
@@ -483,8 +502,12 @@ public class GrammarTest extends TestCase {
 		content.learnCharacters();
 		assertTrue(content.getNumberOfEvents() == 2);
 
+		// EvolvingUriContext ruc = new RuntimeEvolvingUriContext(0, "");
+		int namespaceUriID = 0;
+		
 		// learn SE, can have multiple events even if similar
-		StartElement s = new StartElement(new EnhancedQName(new QName("s")));
+		QNameContext qncSE = new QNameContext(namespaceUriID, 1, new QName("s"), 1);
+		StartElement s = new StartElement(qncSE);
 		startTag.learnStartElement(s);
 		startTag.learnStartElement(s);
 		assertTrue(startTag.getNumberOfEvents() == 4);
@@ -493,8 +516,8 @@ public class GrammarTest extends TestCase {
 		assertTrue(content.getNumberOfEvents() == 4);
 
 		// learn AT, can have multiple events even if similar
-		Attribute a = new Attribute(new EnhancedQName(new QName("a")), null,
-				null);
+		QNameContext qncAt = new QNameContext(namespaceUriID, 0, new QName("a"), 0);
+		Attribute a = new Attribute(qncAt, null, null);
 		startTag.learnAttribute(a);
 		startTag.learnAttribute(a);
 		assertTrue(startTag.getNumberOfEvents() == 6);
@@ -516,8 +539,10 @@ public class GrammarTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g2 = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc2 = g2.getGrammarContext();
 		
-		Rule Document2 = g2.getGlobalElement(qnDocument).getRule();
+		// Rule Document2 = g2.getGlobalElement(qnDocument).getRule();
+		Rule Document2 = gc2.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
 		{
 			// 1
 			assertTrue(Document2.getNumberOfEvents() == 1);
@@ -551,7 +576,10 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 		Grammar g3 = getGrammarFromSchemaAsString(schema);
-		Rule Document3 = g3.getGlobalElement(qnDocument).getRule();
+		GrammarContext gc3 = g3.getGrammarContext();
+		// Rule Document3 = g3.getGlobalElement(qnDocument).getRule();
+		Rule Document3 = gc3.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
+		
 		{
 			// 1
 			assertTrue(Document3.getNumberOfEvents() == 1);

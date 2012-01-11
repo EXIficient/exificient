@@ -52,6 +52,7 @@ public class GrammarFactory {
 		if (xsdLocation == null || xsdLocation.equals("")) {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
+			// System.out.println("Grammar for: " + xsdLocation);
 			grammarBuilder.loadGrammar(xsdLocation);
 			SchemaInformedGrammar g = grammarBuilder.toGrammar();
 			g.setSchemaId(xsdLocation);

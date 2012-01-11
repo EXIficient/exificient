@@ -59,7 +59,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	protected boolean dtrSection;
 	protected List<QName> dtrMapTypes = new ArrayList<QName>();
 	protected List<QName> dtrMapRepresentations = new ArrayList<QName>();
-	
+
 	public EXIHeaderDecoder() throws EXIException {
 	}
 
@@ -151,10 +151,10 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		EXIBodyDecoderInOrder decoder = (EXIBodyDecoderInOrder) getHeaderFactory()
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
-		
-//		schemaId = null;
-//		schemaIdSet = false;
-		
+
+		// schemaId = null;
+		// schemaIdSet = false;
+
 		// clone factory
 		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
 
@@ -336,7 +336,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			}
 		} else if (SCHEMA_ID.equals(localName)) {
 			String schemaId = value.toString();
-			
+
 			SchemaIdResolver sir = f.getSchemaIdResolver();
 			f.setGrammar(sir.resolveSchemaId(schemaId));
 		}

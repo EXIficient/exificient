@@ -22,8 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -43,32 +44,27 @@ public class DatatypeRepresentationMapTypeEncoder extends
 	// fallback type encoder
 	protected TypeEncoder defaultEncoder;
 
-	protected StringEncoder stringEncoder;
-
-	public DatatypeRepresentationMapTypeEncoder(TypeEncoder defaultEncoder, StringEncoder stringEncoder,
+	public DatatypeRepresentationMapTypeEncoder(TypeEncoder defaultEncoder,
 			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
 			throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations, grammar);
-		this.stringEncoder = stringEncoder;
 
 		// hand over "default" encoder
 		this.defaultEncoder = defaultEncoder;
 	}
 
-	public void clear() {
-		stringEncoder.clear();
-	}
-	
 	public boolean isValid(Datatype datatype, Value value) {
 		QName schemaType = datatype.getSchemaType();
-		recentDtrDataype = dtrMap.get(schemaType);	
+		recentDtrDataype = dtrMap.get(schemaType);
 
-		return defaultEncoder.isValid(recentDtrDataype == null ? datatype: recentDtrDataype, value);
+		return defaultEncoder.isValid(recentDtrDataype == null ? datatype
+				: recentDtrDataype, value);
 	}
 
-	public void writeValue(QName context, EncoderChannel valueChannel)
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
 			throws IOException {
-		defaultEncoder.writeValue(context, valueChannel);
+		defaultEncoder.writeValue(encoderContext, qnContext, valueChannel);
 	}
 
 }

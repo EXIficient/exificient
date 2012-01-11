@@ -28,5 +28,4 @@ package com.siemens.ct.exi.types;
 
 public interface TypeCoder {
 
-	public void clear();
 }

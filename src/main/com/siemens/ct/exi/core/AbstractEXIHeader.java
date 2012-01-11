@@ -84,7 +84,7 @@ public abstract class AbstractEXIHeader {
 
 		return headerFactory;
 	}
-	
+
 	protected GrammarFactory getGrammarFactory() {
 		if (grammarFactory == null) {
 			grammarFactory = GrammarFactory.newInstance();

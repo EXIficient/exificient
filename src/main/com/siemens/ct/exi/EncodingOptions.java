@@ -52,11 +52,12 @@ public class EncodingOptions {
 	/* Insignificant xsi:nil values e.g., xsi:nil="false" */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
 
-	/*
-	 * Insignificant xsi:type values e.g., xsi:type="xs:string" where type is
-	 * already string
-	 */
-	public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE = "INCLUDE_INSIGNIFICANT_XSI_TYPE";
+	// /*
+	// * Insignificant xsi:type values e.g., xsi:type="xs:string" where type is
+	// * already string
+	// */
+	// public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE =
+	// "INCLUDE_INSIGNIFICANT_XSI_TYPE";
 
 	/* contains options and according values */
 	protected Set<String> options;
@@ -103,8 +104,8 @@ public class EncodingOptions {
 			options.add(key);
 		} else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_NIL)) {
 			options.add(key);
-		} else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
-			options.add(key);
+			// } else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
+			// options.add(key);
 		} else {
 			throw new UnsupportedOption("EncodingOption '" + key
 					+ "' is unknown!");
@@ -132,16 +133,6 @@ public class EncodingOptions {
 	public boolean isOptionEnabled(String key) {
 		return options.contains(key);
 	}
-
-	// /**
-	// * Reports the value for a given option key.
-	// *
-	// * @param key option
-	// * @return value
-	// */
-	// public Object getOptionValue(String key) {
-	// return options.get(key);
-	// }
 
 	@Override
 	public boolean equals(Object o) {

@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.grammar.event;
 
-import com.siemens.ct.exi.EnhancedNamespaceURI;
 
 /**
  * 
@@ -31,42 +30,31 @@ import com.siemens.ct.exi.EnhancedNamespaceURI;
 public class StartElementNS extends AbstractEvent {
 
 	private static final long serialVersionUID = -4465373887587175179L;
-
-	protected final EnhancedNamespaceURI eNamespaceURI;
-	protected final String namespaceURI;
-	protected int namespaceUriID;
-
-	public StartElementNS(EnhancedNamespaceURI uri) {
-		super(EventType.START_ELEMENT_NS);
-
-		this.eNamespaceURI = uri;
-		this.namespaceURI = uri.getNamespaceURI();
-	}
 	
-	public EnhancedNamespaceURI getEnhancedNamespaceURI() {
-		return eNamespaceURI;
+	protected final String namespaceUri;
+	protected final int namespaceUriID;
+	
+	public StartElementNS(int namespaceUriID, String namespaceUri) {
+		super(EventType.START_ELEMENT_NS);
+		this.namespaceUriID = namespaceUriID;
+		this.namespaceUri = namespaceUri;
 	}
 	
 	public String getNamespaceURI() {
-		return namespaceURI;
+		return namespaceUri;
 	}
 	
 	public int getNamespaceUriID() {
 		return namespaceUriID;
 	}
-
-	public void setNamespaceUriID(int namespaceUriID) {
-		this.namespaceUriID = namespaceUriID;
-	}
-
+	
 	public String toString() {
-		return super.toString() + "(" + namespaceURI + ":*)";
+		return super.toString() + "(" + getNamespaceURI() + ":*)";
 	}
 
 	@Override
 	public int hashCode() {
-		// return (eventType.ordinal() ^ namespaceURI.hashCode());
-		return (namespaceURI.hashCode());
+		return (getNamespaceURI().hashCode());
 	}
 
 	@Override
@@ -75,7 +63,7 @@ public class StartElementNS extends AbstractEvent {
 			return true;
 		} else if (obj instanceof StartElementNS) {
 			StartElementNS otherSE = (StartElementNS) obj;
-			return (namespaceURI.equals(otherSE.namespaceURI));
+			return (getNamespaceURI().equals(otherSE.getNamespaceURI()));
 		} else {
 			return false;
 		}

@@ -33,14 +33,15 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.EnhancedQName;
+import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.context.RuntimeQNameContextEntries;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.PreReadValue;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
+import com.siemens.ct.exi.core.container.ValueAndDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -90,12 +91,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	ElementContext lastBlockElementContext;
 
-	// store value events (qnames) in right order
-	// plus necessary information to reconstruct value channels
-	protected List<QName> valueQNames;
-	protected Map<QName, Integer> occurrences;
-	protected Map<QName, List<Datatype>> dataTypes;
-
 	// Channel and Compression stuff
 	protected CodingMode codingMode;
 
@@ -103,7 +98,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	ElementContext currElementEntry;
 
 	// content values
-	protected Map<QName, PreReadValue> contentValues;
+	protected Map<QNameContext, PreReadValue> contentValues;
 
 	protected List<Value> xsiValues;
 	protected int xsiValueIndex;
@@ -135,13 +130,9 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		comments = new ArrayList<char[]>();
 		nsEntries = new ArrayList<NamespaceDeclaration>();
 		processingEntries = new ArrayList<ProcessingInstruction>();
-		// value events
-		valueQNames = new ArrayList<QName>();
-		occurrences = new HashMap<QName, Integer>();
-		dataTypes = new HashMap<QName, List<Datatype>>();
 
 		// content values
-		contentValues = new HashMap<QName, PreReadValue>();
+		contentValues = new HashMap<QNameContext, PreReadValue>();
 
 		xsiValues = new ArrayList<Value>();
 		xsiPrefixes = new ArrayList<String>();
@@ -199,9 +190,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		// contains value events (qnames) in right order
 		// plus necessary information to reconstruct value channels
-		valueQNames.clear();
-		occurrences.clear();
-		dataTypes.clear();
+		decoderContext.initCompressionBlock();
 
 		// content values
 		contentValues.clear();
@@ -301,12 +290,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	protected void handleSpecialAttributeCases() throws EXIException,
 			IOException {
-		QName qname = attributeEnhancedQName.getQName();
-		if (XSI_TYPE.equals(qname)) {
+		if (decoderContext.getXsiTypeContext().equals(attributeQNameContext)) {
 			// xsi:type
 			updateAttributeToXsiType();
-		} else if (XSI_NIL.equals(qname)
-				&& currentRule.isSchemaInformed()) {
+		} else if (decoderContext.getXsiNilContext().equals(
+				attributeQNameContext)
+				&& getCurrentRule().isSchemaInformed()) {
 			// xsi:nil
 			eventTypes.set(eventTypes.size() - 1, EventType.ATTRIBUTE_XSI_NIL);
 			// value content
@@ -316,14 +305,15 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			xsiPrefixes.add(attributePrefix);
 		} else {
 			// global attribute or default datatype
-			Attribute globalAT;
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
-			if (currentRule.isSchemaInformed()
-					&& (globalAT = grammar.getGlobalAttribute(qname)) != null) {
-				dt = globalAT.getDatatype();
+
+			if (getCurrentRule().isSchemaInformed()
+					&& attributeQNameContext.getGlobalAttribute() != null) {
+				dt = attributeQNameContext.getGlobalAttribute().getDatatype();
 			}
-			addQNameEntry(new QNameEntry(attributeEnhancedQName, attributePrefix));
-			incrementValues(qname, dt);
+
+			addQNameEntry(new QNameEntry(attributeQNameContext, attributePrefix));
+			incrementValues(attributeQNameContext, dt);
 		}
 	}
 
@@ -333,7 +323,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		boolean deferredStartElement = false;
 
 		if (lastBlockElementContext != null) {
-			this.elementContext = lastBlockElementContext;
+			updateElementContext(lastBlockElementContext);
 		}
 
 		while (stillNoEndOfDocument && stillBlockReadable) {
@@ -363,7 +353,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				case PROCESSING_INSTRUCTION:
 					// No Attribute or NS event --> start deferred element with
 					// prefix
-					elementEntries.add(this.elementContext);
+					elementEntries.add(getElementContext());
 					deferredStartElement = false;
 				}
 			}
@@ -406,24 +396,26 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				break;
 			case ATTRIBUTE:
 				Datatype dtAT = decodeAttributeStructure();
-				// if (attributeQName.equals(XSI_TYPE)) {
-				if (attributeEnhancedQName.getQName().equals(XSI_TYPE)) {
+				if (this.decoderContext.getXsiTypeContext().equals(
+						this.attributeQNameContext)) {
 					updateAttributeToXsiType();
 				} else {
-					addQNameEntry(new QNameEntry(attributeEnhancedQName,
+					addQNameEntry(new QNameEntry(this.attributeQNameContext,
 							attributePrefix));
-					incrementValues(attributeEnhancedQName.getQName(), dtAT);
+					incrementValues(this.attributeQNameContext, dtAT);
 				}
 				break;
 			case ATTRIBUTE_INVALID_VALUE:
 				decodeAttributeStructure();
-				addQNameEntry(new QNameEntry(attributeEnhancedQName, attributePrefix));
-				incrementValues(attributeEnhancedQName.getQName(), BuiltIn.DEFAULT_DATATYPE);
+				addQNameEntry(new QNameEntry(attributeQNameContext,
+						attributePrefix));
+				incrementValues(attributeQNameContext, BuiltIn.DEFAULT_DATATYPE);
 				break;
 			case ATTRIBUTE_ANY_INVALID_VALUE:
 				decodeAttributeAnyInvalidValueStructure();
-				addQNameEntry(new QNameEntry(attributeEnhancedQName, attributePrefix));
-				incrementValues(attributeEnhancedQName.getQName(), BuiltIn.DEFAULT_DATATYPE);
+				addQNameEntry(new QNameEntry(attributeQNameContext,
+						attributePrefix));
+				incrementValues(attributeQNameContext, BuiltIn.DEFAULT_DATATYPE);
 				break;
 			case ATTRIBUTE_NS:
 				decodeAttributeNSStructure();
@@ -441,30 +433,29 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				handleSpecialAttributeCases();
 				break;
 			case CHARACTERS:
-				EnhancedQName eqname = elementContext.eqname;
-				incrementValues(eqname.getQName(),
-						decodeCharactersStructure());
-				addQNameEntry(new QNameEntry(eqname, null));
+				QNameContext qnc = getElementContext().qnameContext;
+				incrementValues(qnc, decodeCharactersStructure());
+				addQNameEntry(new QNameEntry(qnc, null));
 				break;
 			case CHARACTERS_GENERIC:
 				decodeCharactersGenericStructure();
-				eqname = elementContext.eqname;
-				incrementValues(eqname.getQName(), BuiltIn.DEFAULT_DATATYPE);
-				addQNameEntry(new QNameEntry(eqname, null));
+				qnc = getElementContext().qnameContext;
+				incrementValues(qnc, BuiltIn.DEFAULT_DATATYPE);
+				addQNameEntry(new QNameEntry(qnc, null));
 				break;
 			case CHARACTERS_GENERIC_UNDECLARED:
 				decodeCharactersGenericUndeclaredStructure();
-				eqname = elementContext.eqname;
-				incrementValues(eqname.getQName(), BuiltIn.DEFAULT_DATATYPE);
-				addQNameEntry(new QNameEntry(eqname, null));
+				qnc = getElementContext().qnameContext;
+				incrementValues(qnc, BuiltIn.DEFAULT_DATATYPE);
+				addQNameEntry(new QNameEntry(qnc, null));
 				break;
 			case END_ELEMENT:
 				decodeEndElementStructure();
-				elementEntries.add(this.elementContext);
+				elementEntries.add(getElementContext());
 				break;
 			case END_ELEMENT_UNDECLARED:
 				decodeEndElementUndeclaredStructure();
-				elementEntries.add(this.elementContext);
+				elementEntries.add(getElementContext());
 				break;
 			case END_DOCUMENT:
 				decodeEndDocumentStructure();
@@ -491,7 +482,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				// NO events any more
 				stillBlockReadable = false;
 
-				lastBlockElementContext = this.elementContext;
+				lastBlockElementContext = getElementContext();
 
 				// Note: NS mapping has be done before opening a new block
 				assert (deferredStartElement == false);
@@ -504,50 +495,83 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		// System.out.println("No more blockvalues " + blockValues + " after " +
 		// qnameEntries.get(qnameEntries.size()-1) );
-		this.elementContext = lastBlockElementContext;
-
+		updateElementContext(lastBlockElementContext);
 	}
 
 	protected void preReadBlockContent() throws EXIException {
 		try {
 			if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 				// single compressed stream (included structure)
-				for (int i = 0; i < valueQNames.size(); i++) {
-					QName channelContext = valueQNames.get(i);
-					int occs = occurrences.get(channelContext);
-					List<Datatype> datatypes = dataTypes.get(channelContext);
-					setContentValues(channel, channelContext, occs, datatypes);
+				List<QNameContext> order = decoderContext.getChannelOrders();
+				for (QNameContext o : order) {
+					RuntimeQNameContextEntries rqnce = decoderContext
+							.getRuntimeQNameContextEntries(o);
+					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
+
+					Value[] contentValues = new Value[lvd.size()];
+					for (int i = 0; i < lvd.size(); i++) {
+						ValueAndDatatype vd = lvd.get(i);
+						contentValues[i] = typeDecoder.readValue(vd.datatype,
+								decoderContext, o, channel);
+					}
+
+					PreReadValue prv = new PreReadValue(contentValues);
+					rqnce.setPreReadValue(prv);
 				}
 			} else {
 				// first stream structure (already read)
 
 				// second stream (if any), values <= 100
-				if (areThereAnyLessEqualThan100(valueQNames, occurrences)) {
-					DecoderChannel bdcLessEqual100 = getNextChannel();
-					for (int i = 0; i < valueQNames.size(); i++) {
-						QName channelContext = valueQNames.get(i);
-						int occs = occurrences.get(channelContext);
-						if (occs <= Constants.MAX_NUMBER_OF_VALUES) {
-							List<Datatype> datatypes = dataTypes
-									.get(channelContext);
-							setContentValues(bdcLessEqual100, channelContext,
-									occs, datatypes);
+
+				DecoderChannel bdcLessEqual100 = null;
+
+				List<QNameContext> orderLeq100 = decoderContext
+						.getChannelOrders();
+				for (QNameContext o : orderLeq100) {
+					RuntimeQNameContextEntries rqnce = decoderContext
+							.getRuntimeQNameContextEntries(o);
+					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
+
+					if (lvd.size() <= Constants.MAX_NUMBER_OF_VALUES) {
+						Value[] contentValues = new Value[lvd.size()];
+						if (bdcLessEqual100 == null) {
+							bdcLessEqual100 = getNextChannel();
 						}
+						for (int i = 0; i < lvd.size(); i++) {
+							ValueAndDatatype vd = lvd.get(i);
+							contentValues[i] = typeDecoder.readValue(
+									vd.datatype, decoderContext, o,
+									bdcLessEqual100);
+						}
+						PreReadValue prv = new PreReadValue(contentValues);
+						rqnce.setPreReadValue(prv);
 					}
+
 				}
 
 				// proper stream for greater100
-				for (int i = 0; i < valueQNames.size(); i++) {
-					QName channelContext = valueQNames.get(i);
-					int occs = occurrences.get(channelContext);
-					if (occs > Constants.MAX_NUMBER_OF_VALUES) {
+				List<QNameContext> orderGr100 = decoderContext
+						.getChannelOrders();
+				for (QNameContext o : orderGr100) {
+					RuntimeQNameContextEntries rqnce = decoderContext
+							.getRuntimeQNameContextEntries(o);
+					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
+
+					if (lvd.size() > Constants.MAX_NUMBER_OF_VALUES) {
 						DecoderChannel bdcGreater100 = getNextChannel();
-						List<Datatype> datatypes = dataTypes
-								.get(channelContext);
-						setContentValues(bdcGreater100, channelContext, occs,
-								datatypes);
+						Value[] contentValues = new Value[lvd.size()];
+						for (int i = 0; i < lvd.size(); i++) {
+							ValueAndDatatype vd = lvd.get(i);
+							contentValues[i] = typeDecoder.readValue(
+									vd.datatype, decoderContext, o,
+									bdcGreater100);
+						}
+
+						PreReadValue prv = new PreReadValue(contentValues);
+						rqnce.setPreReadValue(prv);
 					}
 				}
+
 			}
 
 			// System.out.println("Block read finished");
@@ -556,25 +580,17 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		}
 	}
 
-	protected static boolean areThereAnyLessEqualThan100(List<QName> qnames,
-			Map<QName, Integer> occurrences) {
-		for (int i = 0; i < qnames.size(); i++) {
-			if (occurrences.get(qnames.get(i)) <= Constants.MAX_NUMBER_OF_VALUES) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	protected void setContentValues(DecoderChannel bdc, QName channelContext,
-			int occs, List<Datatype> datatypes) throws IOException {
+	protected void setContentValues(DecoderChannel bdc,
+			QNameContext channelContext, int occs, List<Datatype> datatypes)
+			throws IOException {
 
 		assert (datatypes.size() == occs);
 		Value[] decodedValues = new Value[occs];
 
 		for (int k = 0; k < occs; k++) {
 			Datatype dt = datatypes.get(k);
-			decodedValues[k] = typeDecoder.readValue(dt, channelContext, bdc);
+			decodedValues[k] = typeDecoder.readValue(dt, decoderContext,
+					channelContext, bdc);
 		}
 
 		// set content value
@@ -593,13 +609,14 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		preReadBlockContent();
 	}
 
-	protected Value getNextContentValue(QName qname) throws EXIException,
-			IOException {
+	protected Value getNextContentValue(QNameContext qname)
+			throws EXIException, IOException {
 
 		blockValues--;
 
-		assert (contentValues.get(qname) != null);
-		Value v = contentValues.get(qname).getNextContantValue();
+		RuntimeQNameContextEntries rqnce = decoderContext
+				.getRuntimeQNameContextEntries(qname);
+		Value v = rqnce.getPreReadValue().getNextContantValue();
 
 		return v;
 	}
@@ -617,19 +634,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		}
 	}
 
-	protected void incrementValues(QName valueContext, Datatype datatype) {
+	// protected void incrementValues(QName valueContext, Datatype datatype) {
+	protected void incrementValues(QNameContext valueContext, Datatype datatype) {
 		blockValues++;
 
-		if (valueQNames.contains(valueContext)) {
-			occurrences.put(valueContext, occurrences.get(valueContext) + 1);
-		} else {
-			// new
-			occurrences.put(valueContext, 1);
-			dataTypes.put(valueContext, new ArrayList<Datatype>());
-			valueQNames.add(valueContext);
-		}
-
-		dataTypes.get(valueContext).add(datatype);
+		this.decoderContext.addValueAndDatatype(valueContext,
+				new ValueAndDatatype(null, datatype));
 	}
 
 	public void decodeStartDocument() {
@@ -640,12 +650,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	}
 
 	public QName decodeStartElement() throws IOException, EXIException {
-		return setNextElemementEntry().eqname.getQName();
+		return setNextElemementEntry().qnameContext.getQName();
 	}
 
 	public QName decodeEndElement() throws EXIException {
 		// before
-		QName eeBefore = currElementEntry.eqname.getQName();
+		QName eeBefore = currElementEntry.qnameContext.getQName();
 		// after
 		setNextElemementEntry();
 
@@ -670,18 +680,18 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	}
 
 	public QName decodeAttributeXsiNil() throws EXIException, IOException {
-		attributeEnhancedQName = XSI_NIL_ENHANCED;
+		this.attributeQNameContext = decoderContext.getXsiNilContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
-		return attributeEnhancedQName.getQName();
+		return attributeQNameContext.getQName();
 	}
 
 	public QName decodeAttributeXsiType() throws EXIException, IOException {
-		attributeEnhancedQName = XSI_TYPE_ENHANCED;
+		this.attributeQNameContext = decoderContext.getXsiTypeContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 
-		return attributeEnhancedQName.getQName();
+		return attributeQNameContext.getQName();
 	}
 
 	protected final void addQNameEntry(QNameEntry qne) {
@@ -695,16 +705,16 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	public QName decodeAttribute() throws EXIException, IOException {
 		QNameEntry at = getNextQNameEntry();
 
-		attributeEnhancedQName = at.eqname;
-		QName qname = attributeEnhancedQName.getQName();
+		this.attributeQNameContext = at.qnContext;
 		attributePrefix = at.prefix;
-		attributeValue = getNextContentValue(qname);
-		return qname;
+		attributeValue = getNextContentValue(attributeQNameContext);
+
+		return attributeQNameContext.getQName();
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {
 		QNameEntry ch = getNextQNameEntry();
-		Value chVal = getNextContentValue(ch.eqname.getQName());
+		Value chVal = getNextContentValue(ch.qnContext);
 		return chVal;
 	}
 
@@ -748,13 +758,11 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	}
 
 	static class QNameEntry {
-		final EnhancedQName eqname;
+		final QNameContext qnContext;
 		final String prefix;
 
-		// String sqname;
-
-		public QNameEntry(EnhancedQName eqname, String prefix) {
-			this.eqname = eqname;
+		public QNameEntry(QNameContext qnContext, String prefix) {
+			this.qnContext = qnContext;
 			this.prefix = prefix;
 		}
 	}

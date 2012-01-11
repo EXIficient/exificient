@@ -20,8 +20,8 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
@@ -35,15 +35,6 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public interface TypeEncoder extends TypeCoder {
-
-	// /**
-	// * Checks whether given value is valid according to the datatype.
-	// *
-	// * @param datatype
-	// * @param value
-	// * @return boolean value indicating whether passed value is valid
-	// */
-	// public boolean isValid(Datatype datatype, String value);
 
 	/**
 	 * Checks whether given value is valid according to the datatype.
@@ -61,7 +52,8 @@ public interface TypeEncoder extends TypeCoder {
 	 * @param valueChannel
 	 * @throws IOException
 	 */
-	public void writeValue(QName context, EncoderChannel valueChannel)
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
 			throws IOException;
 
 }

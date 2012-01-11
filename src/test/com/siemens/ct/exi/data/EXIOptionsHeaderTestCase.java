@@ -31,11 +31,10 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderStrict();
+		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderStrict();
 		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderCommon ( );
-		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon (
-		// );
-		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon2 ();
+		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon();
+		EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon2 ();
 	}
 
 	protected void setUp() {

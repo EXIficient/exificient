@@ -22,11 +22,18 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.DecoderContextImpl;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.EncoderContextImpl;
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
@@ -50,69 +57,94 @@ public class ListTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValue(bitEC, null, null);
+		ldtInteger.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValue(getBitDecoder(), null, null);
+		Value v1 = ldtInteger.readValue(null, null, getBitDecoder());
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValue(byteEC, null, null);
-		Value v2 = ldtInteger.readValue(getByteDecoder(), null, null);
+		ldtInteger.writeValue(null, null, byteEC);
+		Value v2 = ldtInteger.readValue(null, null, getByteDecoder());
 		assertTrue(s.equals(v2.toString()));
 	}
 	
-	public void testListIntegerLexical1() throws IOException {
+	public void testListIntegerLexical1() throws IOException, EXIException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(IntegerType.INTEGER_32, null), null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
 
-		StringEncoder stringEncoder = new StringEncoderImpl();
-		StringDecoder stringDecoder = new StringDecoderImpl();
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setFidelityOptions(FidelityOptions.createAll());
+		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();
+		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		
+		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new StringDecoderImpl();
+		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+		
+//		StringEncoder stringEncoder = new StringEncoderImpl();
+//		StringDecoder stringDecoder = new StringDecoderImpl();
 		QName context = new QName("", "intList"); 
+		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
+		QNameContext qncContext = new QNameContext(0, 0, context, 0);
+		
 		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, bitEC, stringEncoder, context);
+		ldtInteger.writeValueRCS(rcsDatatype, encoderContext, qncContext, bitEC);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, getBitDecoder(), stringDecoder, context);
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, decoderContext, qncContext, getBitDecoder());
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, byteEC, stringEncoder, context);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, getByteDecoder(), stringDecoder, context);
+		ldtInteger.writeValueRCS(rcsDatatype, encoderContext, qncContext, byteEC);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, decoderContext, qncContext,  getByteDecoder());
 		assertTrue(s.equals(v2.toString()));
 	}
 	
 	// encodes special chars as well
-	public void testListIntegerLexical2() throws IOException {
+	public void testListIntegerLexical2() throws IOException, EXIException {
 		char special = '\u03D7';
 		StringValue s = new StringValue("100" + special);
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(IntegerType.INTEGER_32, null), null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
+		
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setFidelityOptions(FidelityOptions.createAll());
+		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		
 
-		StringEncoder stringEncoder = new StringEncoderImpl();
-		StringDecoder stringDecoder = new StringDecoderImpl();
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();
+		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		
+		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new StringDecoderImpl();
+		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+		
 		QName context = new QName("", "intList"); 
+		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
+		QNameContext qncContext = new QNameContext(0, 0, context, 0);
+		
 		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, bitEC, stringEncoder, context);
+		ldtInteger.writeValueRCS(rcsDatatype, encoderContext, qncContext, bitEC);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, getBitDecoder(), stringDecoder, context);
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, decoderContext, qncContext, getBitDecoder());
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, byteEC, stringEncoder, context);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, getByteDecoder(), stringDecoder, context);
+		ldtInteger.writeValueRCS(rcsDatatype, encoderContext, qncContext, byteEC);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, decoderContext, qncContext, getByteDecoder());
 		assertTrue(s.equals(v2.toString()));
 	}
 	
@@ -129,15 +161,15 @@ public class ListTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValue(bitEC, null, null);
+		ldtInteger.writeValue(null, null, bitEC);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValue(getBitDecoder(), null, null);
+		Value v1 = ldtInteger.readValue(null, null, getBitDecoder());
 		assertTrue(sRes.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValue(byteEC, null, null);
-		Value v2 = ldtInteger.readValue(getByteDecoder(), null, null);
+		ldtInteger.writeValue(null, null, byteEC);
+		Value v2 = ldtInteger.readValue(null, null, getByteDecoder());
 		assertTrue(sRes.equals(v2.toString()));
 	}
 
