@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.values;
 
-import javax.xml.namespace.QName;
 
 /**
  * 
@@ -32,26 +31,32 @@ public class QNameValue extends AbstractValue {
 
 	private static final long serialVersionUID = -6092774558055449492L;
 
-	protected final QName qname;
+	protected final String namespaceUri;
+	protected final String localName;
 	protected final String prefix;
 
 	protected char[] characters;
 	protected String sValue;
-
-	public QNameValue(QName qname, String prefix) {
+	
+	public QNameValue(String namespaceUri, String localName, String prefix) {
 		super(ValueType.QNAME);
-		this.qname = qname;
+		this.namespaceUri = namespaceUri;
+		this.localName = localName;
 		this.prefix = prefix;
 
 		if (prefix == null || prefix.length() == 0) {
-			sValue = qname.getLocalPart();
+			sValue = localName;
 		} else {
-			sValue = prefix + ":" + qname.getLocalPart();
+			sValue = prefix + ":" + localName; 
 		}
 	}
 
-	public QName toQName() {
-		return qname;
+	public String getNamespaceUri() {
+		return this.namespaceUri;
+	}
+	
+	public String getLocalName() {
+		return this.localName;
 	}
 	
 	public String getPrefix() {
@@ -86,7 +91,7 @@ public class QNameValue extends AbstractValue {
 		}
 		if (o instanceof QNameValue) {
 			QNameValue other = (QNameValue) o;
-			return qname.equals(other.qname);
+			return namespaceUri.equals(other.namespaceUri) && localName.equals(other.localName);
 		} else {
 			return false;
 		}
@@ -94,7 +99,7 @@ public class QNameValue extends AbstractValue {
 	
 	@Override
 	public int hashCode() {
-		return qname.hashCode() ^ prefix.hashCode();
+		return namespaceUri.hashCode() ^ localName.hashCode();
 	}
 	
 

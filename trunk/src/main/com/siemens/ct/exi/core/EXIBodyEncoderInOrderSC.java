@@ -132,11 +132,11 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 		// business as usual
 		if (scEncoder == null) {
 			super.encodeStartElement(uri, localName, prefix);
-			QName qname = elementContext.eqname.getQName();
+			QName qname = getElementContext().qnameContext.getQName();
 
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
-				int ec2 = currentRule.get2ndLevelEventCode(
+				int ec2 = getCurrentRule().get2ndLevelEventCode(
 						EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
 
@@ -186,12 +186,13 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			super.encodeEndElement();
 		} else {
 			// fetch qname before EE
-			QName qname = scEncoder.elementContext.eqname.getQName();
+			QName qname = scEncoder.getElementContext().qnameContext.getQName();
 			// EE
 			scEncoder.encodeEndElement();
-			if (getElementContextQName().equals(qname)
-					&& scEncoder.currentRule
-							.lookForEvent(EventType.END_DOCUMENT) != null) {
+			// if (getElementContextQName().equals(qname)
+			if (getElementContext().qnameContext.getQName().equals(qname)
+					&& scEncoder.getCurrentRule().lookForEvent(
+							EventType.END_DOCUMENT) != null) {
 				this.encodeEndSC();
 			}
 		}

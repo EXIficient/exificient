@@ -27,20 +27,19 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.EnhancedQName;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.CoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
-import com.siemens.ct.exi.datatype.QNameDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
  * Shared functionality between EXI Body Encoder and EXI Body Decoder.
@@ -53,14 +52,6 @@ import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 
 public abstract class AbstractEXIBodyCoder {
 
-	// xsi:type & nil
-	static final QName XSI_NIL = new QName(
-			XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_NIL);
-	static final EnhancedQName XSI_NIL_ENHANCED = new EnhancedQName(XSI_NIL, 2, 0);
-	static final QName XSI_TYPE = new QName(
-			XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, Constants.XSI_TYPE);
-	static final EnhancedQName XSI_TYPE_ENHANCED = new EnhancedQName(XSI_TYPE, 2, 1);
-
 	// factory
 	protected final EXIFactory exiFactory;
 
@@ -72,15 +63,14 @@ public abstract class AbstractEXIBodyCoder {
 	// error handler
 	protected ErrorHandler errorHandler;
 
-	// QName and Boolean datatype (coder)
-	protected QNameDatatype qnameDatatype;
+	// Boolean datatype (coder)
 	protected BooleanDatatype booleanDatatype;
 
 	// element-context and rule (stack) while traversing the EXI document
-	protected ElementContext elementContext;
-	protected Rule currentRule;
+	private ElementContext elementContext; // cached context to avoid heavy
+											// array lookup
 	protected ElementContext[] elementContextStack;
-	protected int elementContextStackIndex;
+	private int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
 
 	// SE pool
@@ -88,10 +78,12 @@ public abstract class AbstractEXIBodyCoder {
 
 	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
-		// QName datatype (coder)
-		qnameDatatype = new QNameDatatype();
-		qnameDatatype.setNamespaces(this);
-		
+		// if (exiFactory.usesProfile(EXIFactory.UCD_PROFILE)) {
+		// // qnameDatatype = new QNameDatatypeUCDProfile(); // coderContext);
+		// } else {
+		// // qnameDatatype = new QNameDatatype(); // coderContext);
+		// }
+
 		initFactoryInformation();
 
 		// use default error handler per default
@@ -105,9 +97,12 @@ public abstract class AbstractEXIBodyCoder {
 		booleanDatatype = new BooleanDatatype(null);
 	}
 
+	abstract protected CoderContext getCoderContext();
+
 	protected void initFactoryInformation() throws EXIException {
 		this.grammar = exiFactory.getGrammar();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
+		// this.qnameDatatype.setCoderContext(this.getCoderContext());
 
 		// preserve prefixes
 		preservePrefix = fidelityOptions
@@ -116,9 +111,22 @@ public abstract class AbstractEXIBodyCoder {
 		// preserve lecicalValues
 		preserveLexicalValues = fidelityOptions
 				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
+	}
 
-		qnameDatatype.setFactoryInformation(preservePrefix, grammar.getGrammarEntries());
+	protected final Rule getCurrentRule() {
+		return this.elementContext.rule;
+	}
 
+	protected final void updateCurrentRule(Rule newCurrentRule) {
+		this.elementContext.rule = newCurrentRule;
+	}
+
+	protected final ElementContext getElementContext() {
+		return elementContext;
+	}
+
+	protected final void updateElementContext(ElementContext elementContext) {
+		this.elementContext = elementContext;
 	}
 
 	public void setErrorHandler(ErrorHandler errorHandler) {
@@ -131,16 +139,13 @@ public abstract class AbstractEXIBodyCoder {
 		runtimeElements.clear();
 
 		// possible document/fragment grammar
-		currentRule = exiFactory.isFragment() ? grammar.getFragmentGrammar()
+		Rule startRule = exiFactory.isFragment() ? grammar.getFragmentGrammar()
 				: grammar.getDocumentGrammar();
 
 		// (core) context
 		elementContextStackIndex = 0;
-		StartElement outerDummy = new StartElement(null);
-		outerDummy.setRule(currentRule);
-		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(outerDummy);
-
-		qnameDatatype.initForEachRun();
+		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(
+				null, startRule);
 	}
 
 	public final void declarePrefix(String pfx, String uri) {
@@ -167,7 +172,7 @@ public abstract class AbstractEXIBodyCoder {
 				}
 			}
 		}
-		return null;
+		return prefix.length() == 0 ? XMLConstants.NULL_NS_URI : null;
 	}
 
 	public final String getPrefix(String uri) {
@@ -176,8 +181,6 @@ public abstract class AbstractEXIBodyCoder {
 		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
 			return XMLConstants.XML_NS_PREFIX;
 		}
-//		// check all stack items except last one (in reverse order)
-//		for (int i = elementContextStackIndex; i > 0; i--) {
 		// check all stack items except first one
 		for (int i = 1; i <= elementContextStackIndex; i++) {
 			ElementContext ec = elementContextStack[i];
@@ -192,21 +195,21 @@ public abstract class AbstractEXIBodyCoder {
 		return null;
 	}
 
-	protected void pushElement(StartElement se, Rule contextRule) {
+	protected void pushElement(Rule updContextRule, StartElement se) {
 		// update "rule" item of current peak (for popElement() later on)
-		elementContext.rule = contextRule;
-		// set "new" current-rule
-		currentRule = se.getRule();
-		// create new stack item & push it
-		elementContext = new ElementContext(se);
-		// needs array to be extended?
+		elementContext.rule = updContextRule;
+
+		// check element context array size
 		if (elementContextStack.length == ++elementContextStackIndex) {
 			ElementContext[] elementContextStackNew = new ElementContext[elementContextStack.length << 2];
 			System.arraycopy(elementContextStack, 0, elementContextStackNew, 0,
 					elementContextStack.length);
 			elementContextStack = elementContextStackNew;
 		}
-		elementContextStack[elementContextStackIndex] = elementContext;
+
+		// create new stack item & push it
+		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(
+				se.getQNameContext(), se.getRule());
 	}
 
 	protected final ElementContext popElement() {
@@ -214,34 +217,8 @@ public abstract class AbstractEXIBodyCoder {
 		// pop element from stack
 		ElementContext poppedEC = elementContextStack[elementContextStackIndex--];
 		elementContext = elementContextStack[elementContextStackIndex];
-		// update current rule to new (old) element stack
-		currentRule = elementContext.rule;
 
 		return poppedEC;
-	}
-
-	// protected StartElement getGenericStartElement(QName qname) {
-	protected StartElement getGenericStartElement(EnhancedQName eqname) {
-		// is there a global element that should be used
-		QName qname = eqname.getQName();
-		StartElement nextSE = grammar.getGlobalElement(qname);
-		if (nextSE == null) {
-				// no global element --> runtime start element
-				nextSE = runtimeElements.get(qname);
-				if (nextSE == null) {
-					// create new start element and add runtime rule
-					nextSE = new StartElement(eqname);
-					nextSE.setRule(new SchemaLessStartTag());
-					// add element to runtime map
-					runtimeElements.put(eqname.getQName(), nextSE);
-				}
-		}
-
-		return nextSE;
-	}
-
-	protected QName getElementContextQName() {
-		return elementContextStack[elementContextStackIndex].eqname.getQName();
 	}
 
 	/*
@@ -255,25 +232,26 @@ public abstract class AbstractEXIBodyCoder {
 
 	// static
 	final class ElementContext {
-		// final QName qname;
-		final EnhancedQName eqname;
 		String prefix;
 		String sqname;
-		final StartElement se;
 		Rule rule; // may be modified while coding
-		// prefix declarations
-		List<NamespaceDeclaration> nsDeclarations;
+		List<NamespaceDeclaration> nsDeclarations; // prefix declarations
 
-		public ElementContext(StartElement se) {
-			this.se = se;
-			// this.qname = se.getQName();
-			this.eqname = se.getEnhancedQName();
-			this.rule = se.getRule();
+		final QNameContext qnameContext;
+
+		public ElementContext(QNameContext qnameContext, Rule rule) {
+			this.qnameContext = qnameContext;
+			this.rule = rule;
 		}
 
 		String getQNameAsString() {
 			if (sqname == null) {
-				sqname = qnameDatatype.getQNameAsString(eqname, prefix);
+				if (preservePrefix) {
+					sqname = QNameUtilities.getQualifiedName(
+							qnameContext.getLocalName(), prefix);
+				} else {
+					sqname = qnameContext.getDefaultQNameAsString();
+				}
 			}
 			return sqname;
 		}

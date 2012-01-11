@@ -73,7 +73,8 @@ import com.siemens.ct.exi.util.sort.LexicographicSort;
  * @version 0.8
  */
 
-public abstract class EXIContentModelBuilder extends CMBuilder implements XMLErrorHandler {
+public abstract class EXIContentModelBuilder extends CMBuilder implements
+		XMLErrorHandler {
 
 	private static final boolean DEBUG = false;
 
@@ -587,8 +588,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements XMLErr
 									int currOther = other.occurenceInfo == null ? -1
 											: other.occurenceInfo[2];
 
-									assert(this.occurenceInfo[0] == other.occurenceInfo[0]);
-									return(currThis>= this.occurenceInfo[0] && currOther >= this.occurenceInfo[0]);
+									assert (this.occurenceInfo[0] == other.occurenceInfo[0]);
+									return (currThis >= this.occurenceInfo[0] && currOther >= this.occurenceInfo[0]);
 									// return true;
 								}
 							}

@@ -7,9 +7,14 @@ import javax.xml.XMLConstants;
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.DecoderContextImpl;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.EncoderContextImpl;
+import com.siemens.ct.exi.context.EvolvingUriContext;
+import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 
 public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
@@ -34,70 +39,71 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 	public void testSchemaLess() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammar g = gf.createSchemaLessGrammar();
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+		// GrammarURIEntry[] gue = g.getGrammarEntries();
 
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 3);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+		assertTrue(gc.getNumberOfGrammarUriContexts() == 3);
+		assertTrue(gc.getGrammarUriContext(0).getNamespaceUri().equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gc.getGrammarUriContext(1).getNamespaceUri().equals(XMLConstants.XML_NS_URI));
+		assertTrue(gc.getGrammarUriContext(2).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
 
 		// Initial Entries in Prefix Partitions
-		assertTrue(gue[0].prefixes.length == 1);
-		assertTrue(gue[0].prefixes[0].equals(XMLConstants.DEFAULT_NS_PREFIX));
-		assertTrue(gue[1].prefixes.length == 1);
-		assertTrue(gue[1].prefixes[0].equals(XMLConstants.XML_NS_PREFIX));
-		assertTrue(gue[2].prefixes.length == 1);
-		assertTrue(gue[2].prefixes[0].equals("xsi"));
+		assertTrue(gc.getGrammarUriContext(0).getNumberOfPrefixes() == 1);
+		assertTrue(gc.getGrammarUriContext(0).getPrefix(0).equals(XMLConstants.DEFAULT_NS_PREFIX));
+		assertTrue(gc.getGrammarUriContext(1).getNumberOfPrefixes()== 1);
+		assertTrue(gc.getGrammarUriContext(1).getPrefix(0).equals(XMLConstants.XML_NS_PREFIX));
+		assertTrue(gc.getGrammarUriContext(2).getNumberOfPrefixes() == 1);
+		assertTrue(gc.getGrammarUriContext(2).getPrefix(0).equals("xsi"));
 
 		// Initial Entries in Local-Name Partitions
-		assertTrue(gue[0].localNames.length == 0);
+		assertTrue(gc.getGrammarUriContext(0).getNumberOfQNames() == 0);
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
-		assertTrue(containsValue(gue[1].localNames, "base"));
-		assertTrue(containsValue(gue[1].localNames, "id"));
-		assertTrue(containsValue(gue[1].localNames, "lang"));
-		assertTrue(containsValue(gue[1].localNames, "space"));
+		assertTrue(gc.getGrammarUriContext(1).getNumberOfQNames() == 4);
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(0).getLocalName().equals("base"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(1).getLocalName().equals("id"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(2).getLocalName().equals("lang"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(3).getLocalName().equals("space"));
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
-		assertTrue(containsValue(gue[2].localNames, "nil"));
-		assertTrue(containsValue(gue[2].localNames, "type"));
+		assertTrue(gc.getGrammarUriContext(2).getNumberOfQNames() == 2);
+		assertTrue(gc.getGrammarUriContext(2).getQNameContext(0).getLocalName().equals("nil"));
+		assertTrue(gc.getGrammarUriContext(2).getQNameContext(1).getLocalName().equals("type"));
 	}
 
 	public void testXsdTypesOnly() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammar g = gf.createXSDTypesOnlyGrammar();
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+//		GrammarURIEntry[] gue = g.getGrammarEntries();
+		
 
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 4);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(gc.getNumberOfGrammarUriContexts()  == 4);
+		assertTrue(gc.getGrammarUriContext(0).getNamespaceUri().equals(XMLConstants.NULL_NS_URI));
+		assertTrue(gc.getGrammarUriContext(1).getNamespaceUri().equals(XMLConstants.XML_NS_URI));
+		assertTrue(gc.getGrammarUriContext(2).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+		assertTrue(gc.getGrammarUriContext(3).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 
 		// Initial Entries in Prefix Partitions
-		assertTrue(gue[0].prefixes.length == 1);
-		assertTrue(gue[0].prefixes[0].equals(XMLConstants.DEFAULT_NS_PREFIX));
-		assertTrue(gue[1].prefixes.length == 1);
-		assertTrue(gue[1].prefixes[0].equals(XMLConstants.XML_NS_PREFIX));
-		assertTrue(gue[2].prefixes.length == 1);
-		assertTrue(gue[2].prefixes[0].equals("xsi"));
+		assertTrue(gc.getGrammarUriContext(0).getNumberOfPrefixes() == 1);
+		assertTrue(gc.getGrammarUriContext(0).getPrefix(0).equals(XMLConstants.DEFAULT_NS_PREFIX));
+		assertTrue(gc.getGrammarUriContext(1).getNumberOfPrefixes()== 1);
+		assertTrue(gc.getGrammarUriContext(1).getPrefix(0).equals(XMLConstants.XML_NS_PREFIX));
+		assertTrue(gc.getGrammarUriContext(2).getNumberOfPrefixes() == 1);
+		assertTrue(gc.getGrammarUriContext(2).getPrefix(0).equals("xsi"));
 
 		// Initial Entries in Local-Name Partitions
-		assertTrue(gue[0].localNames.length == 0);
+		assertTrue(gc.getGrammarUriContext(0).getNumberOfQNames() == 0);
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
-		assertTrue(containsValue(gue[1].localNames, "base"));
-		assertTrue(containsValue(gue[1].localNames, "id"));
-		assertTrue(containsValue(gue[1].localNames, "lang"));
-		assertTrue(containsValue(gue[1].localNames, "space"));
+		assertTrue(gc.getGrammarUriContext(1).getNumberOfQNames() == 4);
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(0).getLocalName().equals("base"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(1).getLocalName().equals("id"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(2).getLocalName().equals("lang"));
+		assertTrue(gc.getGrammarUriContext(1).getQNameContext(3).getLocalName().equals("space"));
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
-		assertTrue(containsValue(gue[2].localNames, "nil"));
-		assertTrue(containsValue(gue[2].localNames, "type"));
+		assertTrue(gc.getGrammarUriContext(2).getNumberOfQNames() == 2);
+		assertTrue(gc.getGrammarUriContext(2).getQNameContext(0).getLocalName().equals("nil"));
+		assertTrue(gc.getGrammarUriContext(2).getQNameContext(1).getLocalName().equals("type"));
 		// XSD-NS "ENTITIES", "ENTITY", "ID", "IDREF", "IDREFS", "NCName",
 		// "NMTOKEN", "NMTOKENS", "NOTATION", "Name", "QName", "anySimpleType",
 		// "anyType", "anyURI", "base64Binary", "boolean", "byte", "date",
@@ -107,9 +113,9 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		// "nonNegativeInteger", "nonPositiveInteger", "normalizedString",
 		// "positiveInteger", "short", "string", "time", "token",
 		// "unsignedByte", "unsignedInt", "unsignedLong", "unsignedShort"
-		assertTrue(gue[3].localNames.length == 46);
-		assertTrue(gue[3].localNames[0].equals("ENTITIES"));
-		assertTrue(gue[3].localNames[45].equals("unsignedShort"));
+		assertTrue(gc.getGrammarUriContext(3).getNumberOfQNames() == 46);
+		assertTrue(gc.getGrammarUriContext(3).getQNameContext(0).getLocalName().equals("ENTITIES"));
+		assertTrue(gc.getGrammarUriContext(3).getQNameContext(45).getLocalName().equals("unsignedShort"));
 	}
 
 	// normal and simple schema
@@ -122,37 +128,40 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "</xs:schema>";
 		
 		Grammar g = getGrammarFor(schemaAsString);
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+		
+		DecoderContext decoderContext = new DecoderContextImpl(gc, null);
+		// GrammarURIEntry[] gue = g.getGrammarEntries();
+		
 		
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 4);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(decoderContext.getNumberOfUris() == 4);
+		assertTrue(decoderContext.getUriContext(0).getNamespaceUri().equals(XMLConstants.NULL_NS_URI));
+		assertTrue(decoderContext.getUriContext(1).getNamespaceUri().equals(XMLConstants.XML_NS_URI));
+		assertTrue(decoderContext.getUriContext(2).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+		assertTrue(decoderContext.getUriContext(3).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
 
 		// Initial Entries in Prefix Partitions
-		assertTrue(gue[0].prefixes.length == 1);
-		assertTrue(gue[0].prefixes[0].equals(XMLConstants.DEFAULT_NS_PREFIX));
-		assertTrue(gue[1].prefixes.length == 1);
-		assertTrue(gue[1].prefixes[0].equals(XMLConstants.XML_NS_PREFIX));
-		assertTrue(gue[2].prefixes.length == 1);
-		assertTrue(gue[2].prefixes[0].equals("xsi"));
+		assertTrue(decoderContext.getUriContext(0).getNumberOfPrefixes() == 1);
+		assertTrue(decoderContext.getUriContext(0).getPrefix(0).equals(XMLConstants.DEFAULT_NS_PREFIX));
+		assertTrue(decoderContext.getUriContext(1).getNumberOfPrefixes() == 1);
+		assertTrue(decoderContext.getUriContext(1).getPrefix(0).equals(XMLConstants.XML_NS_PREFIX));
+		assertTrue(decoderContext.getUriContext(2).getNumberOfPrefixes() == 1);
+		assertTrue(decoderContext.getUriContext(2).getPrefix(0).equals("xsi"));
 
 		// Initial Entries in Local-Name Partitions
-		assertTrue(gue[0].localNames.length == 1);
-		assertTrue(containsValue(gue[0].localNames, "Binary"));
+		assertTrue(decoderContext.getUriContext(0).getNumberOfQNames() == 1);
+		assertTrue(decoderContext.getUriContext(0).getQNameContext(0).getLocalName().equals("Binary"));
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
-		assertTrue(containsValue(gue[1].localNames, "base"));
-		assertTrue(containsValue(gue[1].localNames, "id"));
-		assertTrue(containsValue(gue[1].localNames, "lang"));
-		assertTrue(containsValue(gue[1].localNames, "space"));
+		assertTrue(decoderContext.getUriContext(1).getNumberOfQNames() == 4);
+		assertTrue(decoderContext.getUriContext(1).getQNameContext(0).getLocalName().equals("base"));
+		assertTrue(decoderContext.getUriContext(1).getQNameContext(1).getLocalName().equals("id"));
+		assertTrue(decoderContext.getUriContext(1).getQNameContext(2).getLocalName().equals("lang"));
+		assertTrue(decoderContext.getUriContext(1).getQNameContext(3).getLocalName().equals("space"));
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
-		assertTrue(containsValue(gue[2].localNames, "nil"));
-		assertTrue(containsValue(gue[2].localNames, "type"));
+		assertTrue(decoderContext.getUriContext(2).getNumberOfQNames()== 2);
+		assertTrue(decoderContext.getUriContext(2).getQNameContext(0).getLocalName().equals("nil"));
+		assertTrue(decoderContext.getUriContext(2).getQNameContext(1).getLocalName().equals("type"));
 		// XSD-NS "ENTITIES", "ENTITY", "ID", "IDREF", "IDREFS", "NCName",
 		// "NMTOKEN", "NMTOKENS", "NOTATION", "Name", "QName", "anySimpleType",
 		// "anyType", "anyURI", "base64Binary", "boolean", "byte", "date",
@@ -162,9 +171,9 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		// "nonNegativeInteger", "nonPositiveInteger", "normalizedString",
 		// "positiveInteger", "short", "string", "time", "token",
 		// "unsignedByte", "unsignedInt", "unsignedLong", "unsignedShort"
-		assertTrue(gue[3].localNames.length == 46);
-		assertTrue(gue[3].localNames[0].equals("ENTITIES"));
-		assertTrue(gue[3].localNames[45].equals("unsignedShort"));
+		assertTrue(decoderContext.getUriContext(3).getNumberOfQNames() == 46);
+		assertTrue(decoderContext.getUriContext(3).getQNameContext(0).getLocalName().equals("ENTITIES"));
+		assertTrue(decoderContext.getUriContext(3).getQNameContext(45).getLocalName().equals("unsignedShort"));
 		
 	}
 
@@ -191,31 +200,33 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "	</xs:schema>";
 		
 		Grammar g = getGrammarFor(schemaAsString);
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+		EncoderContext encoderContext = new EncoderContextImpl(gc, null);
+		//GrammarURIEntry[] gue = g.getGrammarEntries();
 		
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 4);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(encoderContext.getNumberOfUris() == 4);
+		assertTrue(encoderContext.getUriContext(XMLConstants.NULL_NS_URI).getNamespaceUriID() == 0 );
+		assertTrue(encoderContext.getUriContext(XMLConstants.XML_NS_URI).getNamespaceUriID() == 1);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI).getNamespaceUriID() == 2);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_NS_URI).getNamespaceUriID() == 3);
 		
 		// Initial Entries in Local-Name Partitions
-		assertTrue(gue[0].localNames.length == 7);
-		assertTrue(gue[0].localNames[0].equals("Note"));
-		assertTrue(gue[0].localNames[1].equals("body"));
-		assertTrue(gue[0].localNames[2].equals("category"));
-		assertTrue(gue[0].localNames[3].equals("date"));
-		assertTrue(gue[0].localNames[4].equals("note"));
-		assertTrue(gue[0].localNames[5].equals("notebook"));
-		assertTrue(gue[0].localNames[6].equals("subject"));
+		EvolvingUriContext uc0 = encoderContext.getUriContext(XMLConstants.NULL_NS_URI);
+		assertTrue(uc0.getNumberOfQNames() == 7);
+		assertTrue(uc0.getQNameContext("Note").getLocalNameID() == 0);
+		assertTrue(uc0.getQNameContext("body").getLocalNameID() == 1);
+		assertTrue(uc0.getQNameContext("category").getLocalNameID() == 2);
+		assertTrue(uc0.getQNameContext("date").getLocalNameID() == 3);
+		assertTrue(uc0.getQNameContext("note").getLocalNameID() == 4);
+		assertTrue(uc0.getQNameContext("notebook").getLocalNameID() == 5);
+		assertTrue(uc0.getQNameContext("subject").getLocalNameID() == 6);
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
+		assertTrue(encoderContext.getUriContext(XMLConstants.XML_NS_URI).getNumberOfQNames() == 4);
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI).getNumberOfQNames()  == 2);
 		// XSD-NS "ENTITIES", ...,  "unsignedShort"
-		assertTrue(gue[3].localNames.length == 46);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_NS_URI).getNumberOfQNames()== 46);
 	}
 	
 	// other NS example
@@ -238,61 +249,66 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "		</xs:schema>";
 		
 		Grammar g = getGrammarFor(schemaAsString);
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+//		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+		DecoderContext decoderContext = new DecoderContextImpl(gc, null);
 		
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 5);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
-		assertTrue(gue[4].namespaceURI.equals("http://www.foo.com"));
+		assertTrue(decoderContext.getNumberOfUris() == 5);
+		assertTrue(decoderContext.getUriContext(0).getNamespaceUri().equals(XMLConstants.NULL_NS_URI));
+		assertTrue(decoderContext.getUriContext(1).getNamespaceUri().equals(XMLConstants.XML_NS_URI));
+		assertTrue(decoderContext.getUriContext(2).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
+		assertTrue(decoderContext.getUriContext(3).getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(decoderContext.getUriContext(4).getNamespaceUri().equals("http://www.foo.com"));
 		
 		// Initial Entries in Local-Name Partitions
-		assertTrue(gue[0].localNames.length == 0);
+		assertTrue(decoderContext.getUriContext(0).getNumberOfQNames()  == 0);
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
+		assertTrue(decoderContext.getUriContext(1).getNumberOfQNames() == 4);
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
+		assertTrue(decoderContext.getUriContext(2).getNumberOfQNames() == 2);
 		// XSD-NS "ENTITIES", ...,  "unsignedShort"
-		assertTrue(gue[3].localNames.length == 46);
+		assertTrue(decoderContext.getUriContext(3).getNumberOfQNames() == 46);
 		// http://www.foo.com, Person, email, name, person, personnel
-		assertTrue(gue[4].localNames.length == 5);
-		assertTrue(gue[4].localNames[0].equals("Person"));
-		assertTrue(gue[4].localNames[1].equals("email"));
-		assertTrue(gue[4].localNames[2].equals("name"));
-		assertTrue(gue[4].localNames[3].equals("person"));
-		assertTrue(gue[4].localNames[4].equals("personnel"));
+		assertTrue(decoderContext.getUriContext(4).getNumberOfQNames() == 5);
+		EvolvingUriContext uc4 =decoderContext.getUriContext(4);
+		assertTrue(uc4.getQNameContext(0).getLocalName().equals("Person"));
+		assertTrue(uc4.getQNameContext(1).getLocalName().equals("email"));
+		assertTrue(uc4.getQNameContext(2).getLocalName().equals("name"));
+		assertTrue(uc4.getQNameContext(3).getLocalName().equals("person"));
+		assertTrue(uc4.getQNameContext(4).getLocalName().equals("personnel"));
 	}
 	
 	// TODO XML schema, adding xsd local-names
 	public void testSchema4() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammar g = gf.createGrammar("./data/W3C/xsd/XMLSchema.xsd");
-
-		GrammarURIEntry[] gue = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
+		EncoderContext encoderContext = new EncoderContextImpl(gc, null);
+//		GrammarURIEntry[] gue = g.getGrammarEntries();
 		
 		// Initial Entries in Uri Partition
-		assertTrue(gue.length == 4);
-		assertTrue(gue[0].namespaceURI.equals(XMLConstants.NULL_NS_URI));
-		assertTrue(gue[1].namespaceURI.equals(XMLConstants.XML_NS_URI));
-		assertTrue(gue[2].namespaceURI
-				.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI));
-		assertTrue(gue[3].namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+		assertTrue(encoderContext.getNumberOfUris() == 4);
+		assertTrue(encoderContext.getUriContext(XMLConstants.NULL_NS_URI).getNamespaceUriID() == 0 );
+		assertTrue(encoderContext.getUriContext(XMLConstants.XML_NS_URI).getNamespaceUriID() == 1);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI).getNamespaceUriID() == 2);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_NS_URI).getNamespaceUriID() == 3);
 		
 		// Initial Entries in Local-Name Partitions
 		// some more than usual, #34
-		assertTrue(gue[0].localNames.length > 30);
-		assertTrue(containsValue(gue[0].localNames, "elementFormDefault"));
+		EvolvingUriContext uc0 = encoderContext.getUriContext(XMLConstants.NULL_NS_URI);
+		assertTrue(uc0.getNumberOfQNames() > 30);
+		assertTrue(uc0.getQNameContext("elementFormDefault") != null);
 		// XML-NS "base", "id", "lang", "space"
-		assertTrue(gue[1].localNames.length == 4);
+		// XML-NS "base", "id", "lang", "space"
+		assertTrue(encoderContext.getUriContext(XMLConstants.XML_NS_URI).getNumberOfQNames() == 4);
 		// XSI-NS "nil", "type"
-		assertTrue(gue[2].localNames.length == 2);
+		assertTrue(encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI).getNumberOfQNames()  == 2);
+		EvolvingUriContext uc3 = encoderContext.getUriContext(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		// XSD-NS "ENTITIES", ...,  "unsignedShort"
 		// Note: there should be some more new local-names!!! # 126
-		assertTrue(gue[3].localNames.length > 120);
-		assertTrue(containsValue(gue[3].localNames, "attributeGroupRef"));
+		assertTrue(uc3.getNumberOfQNames() > 120);
+		assertTrue(uc3.getQNameContext("attributeGroupRef")!=null);
 	}
 
 }

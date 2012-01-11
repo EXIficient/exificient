@@ -113,5 +113,4 @@ public class BuiltIn {
 	public static final Datatype BOOLEAN_DATATYPE = new BooleanDatatype(
 			XSD_BOOLEAN);
 
-	
 }

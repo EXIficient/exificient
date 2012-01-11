@@ -20,8 +20,8 @@ package com.siemens.ct.exi.datatype.strings;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.StringValue;
 
@@ -35,15 +35,17 @@ import com.siemens.ct.exi.values.StringValue;
 
 public interface StringDecoder extends StringCoder {
 
-	public void addValue(QName context, StringValue value);
+	public void addValue(DecoderContext decoderContext, QNameContext qnContext,
+			StringValue value);
 
-	public StringValue readValue(QName context, DecoderChannel channel)
+	public StringValue readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel channel) throws IOException;
+
+	public StringValue readValueLocalHit(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
 			throws IOException;
 
-	public StringValue readValueLocalHit(QName context,
-			DecoderChannel valueChannel) throws IOException;
-
-	public StringValue readValueGlobalHit(QName context,
-			DecoderChannel valueChannel) throws IOException;
+	public StringValue readValueGlobalHit(DecoderChannel valueChannel)
+			throws IOException;
 
 }

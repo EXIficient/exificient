@@ -322,6 +322,7 @@ public class SAXDecoder implements XMLReader {
 			case START_ELEMENT_GENERIC_UNDECLARED:
 				// defer start element and keep on processing
 				deferredStartElement = decoder.decodeStartElement();
+				// System.out.println("> SE: " + deferredStartElement);
 				break;
 			/* END ELEMENT */
 			case END_ELEMENT:
@@ -440,6 +441,8 @@ public class SAXDecoder implements XMLReader {
 		Value val = decoder.getAttributeValue();
 		String sVal;
 
+		// System.out.println("> AT: " + atQName + ": " + val);
+		
 		if (USE_VALUE_CONTENT_HANDLER) {
 			sVal = valueContentHandler.reportAttributeString(val);
 		} else {			

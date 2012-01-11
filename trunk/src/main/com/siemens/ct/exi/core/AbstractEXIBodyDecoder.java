@@ -25,14 +25,19 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.EnhancedQName;
+import com.siemens.ct.exi.context.CoderContext;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.DecoderContextImpl;
+import com.siemens.ct.exi.context.EvolvingUriContext;
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.GrammarUriContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.GrammarURIEntry;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
@@ -44,8 +49,10 @@ import com.siemens.ct.exi.grammar.rule.Rule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
 import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.util.MethodsBag;
+import com.siemens.ct.exi.util.xml.QNameUtilities;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.Value;
@@ -72,19 +79,22 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected DecoderChannel channel;
 
 	// namespaces/prefixes
-	protected int createdPfxCnt;	
+	protected int createdPfxCnt;
+	protected boolean todoDefaultPrefixMapping;
 
 	// Type Decoder (including string decoder etc.)
 	protected TypeDecoder typeDecoder;
 
 	// current AT values
-	protected EnhancedQName attributeEnhancedQName;
+	protected QNameContext attributeQNameContext;
 	protected String attributePrefix;
 	protected Value attributeValue;
 
+	// Decoder Context
+	DecoderContext decoderContext;
+
 	public AbstractEXIBodyDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
-
 		exiHeader = new EXIHeaderDecoder();
 	}
 
@@ -93,30 +103,35 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		super.initFactoryInformation();
 
 		typeDecoder = exiFactory.createTypeDecoder();
+		decoderContext = new DecoderContextImpl(exiFactory.getGrammar()
+				.getGrammarContext(), exiFactory.createStringDecoder());
 	}
-	
+
+	public CoderContext getCoderContext() {
+		return this.decoderContext;
+	}
+
 	@Override
-	protected void pushElement(StartElement se, Rule contextRule) {
-		super.pushElement(se, contextRule);
-		if (!preservePrefix) {
-			if (elementContextStackIndex == 1) {
-				GrammarURIEntry[] gues = this.grammar.getGrammarEntries();
-				for (int i=2; i<gues.length; i++) {
-					GrammarURIEntry gue = gues[i];
-					if (gue.prefixes.length > 0) {
-						declarePrefix(gue.prefixes[0], gue.namespaceURI);	
-					} else {
-						declarePrefix("ns" + i, gue.namespaceURI);
-					}
+	protected void pushElement(Rule updContextRule, StartElement se) {
+		super.pushElement(updContextRule, se);
+		if (todoDefaultPrefixMapping && !preservePrefix) {
+			GrammarContext gc = this.grammar.getGrammarContext();
+			for (int i = 2; i < gc.getNumberOfGrammarUriContexts(); i++) {
+				GrammarUriContext guc = gc.getGrammarUriContext(i);
+				String pfx;
+				if (guc.getNumberOfPrefixes() > 0) {
+					pfx = guc.getPrefix(0);
+				} else {
+					pfx = "ns" + i;
 				}
-				createdPfxCnt += gues.length;
-			}	
+				declarePrefix(pfx, guc.getNamespaceUri());
+			}
+
+			// createdPfxCnt += gues.length;
+			createdPfxCnt += gc.getNumberOfGrammarUriContexts();
+			todoDefaultPrefixMapping = false;
 		}
 	}
-	
-
-	
-	
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
@@ -124,14 +139,16 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		// namespaces/prefixes
 		createdPfxCnt = 0;
+		todoDefaultPrefixMapping = true;
 
 		// clear string values etc.
-		typeDecoder.clear();
+		decoderContext.clear();
 	}
 
 	protected final EventType decodeEventCode() throws EXIException,
 			IOException {
 		// 1st level
+		final Rule currentRule = getCurrentRule();
 		int codeLength = currentRule
 				.get1stLevelEventCodeLength(fidelityOptions);
 		int ec = codeLength == 0 ? 0 : channel
@@ -180,7 +197,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	public String getAttributeQNameAsString() {
-		return qnameDatatype.getQNameAsString(this.attributeEnhancedQName, this.attributePrefix);
+		if (this.preservePrefix) {
+			return QNameUtilities.getQualifiedName(
+					attributeQNameContext.getLocalName(), this.attributePrefix);
+		} else {
+			return attributeQNameContext.getDefaultQNameAsString();
+		}
 	}
 
 	public Value getAttributeValue() {
@@ -188,7 +210,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected void updateInvalidValueAttribute(int ec) throws EXIException {
-		SchemaInformedRule sir = (SchemaInformedRule) currentRule;
+		SchemaInformedRule sir = (SchemaInformedRule) getCurrentRule();
 
 		int ec3AT;
 		try {
@@ -201,7 +223,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		if (ec3AT < (sir.getNumberOfDeclaredAttributes())) {
 			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode();
-			EventInformation ei = currentRule.lookFor(ec);
+			EventInformation ei = sir.lookFor(ec);
 			nextEvent = ei.event;
 			nextRule = ei.next;
 		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
@@ -214,6 +236,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode2ndLevelEventCode() throws EXIException, IOException {
+		final Rule currentRule = getCurrentRule();
 		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
 		int level2 = channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch2));
@@ -226,14 +249,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode3rdLevelEventCode() throws EXIException, IOException {
-		int ch3 = currentRule.get3rdLevelCharacteristics(fidelityOptions);
+		int ch3 = getCurrentRule().get3rdLevelCharacteristics(fidelityOptions);
 		return channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch3));
 	}
 
 	protected final void decodeStartDocumentStructure() throws EXIException {
 		// update current rule
-		currentRule = currentRule.lookFor(0).next;
+		updateCurrentRule(getCurrentRule().lookFor(0).next);
 	}
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
@@ -245,11 +268,11 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
 		// push element
-		pushElement(se, nextRule);
+		pushElement(nextRule, se);
 		// handle element prefix
-		handleElementPrefix(se.getEnhancedQName());
+		handleElementPrefix(se.getQNameContext()); // .getUriContext());
 
-		return  se.getQName();
+		return se.getQName();
 	}
 
 	protected final QName decodeStartElementNSStructure() throws IOException {
@@ -257,50 +280,61 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
 		// decode local-name
-		EnhancedQName elementQName = qnameDatatype.decodeLocalName(seNS.getNamespaceURI(), channel);
-		// next SE ...
-		StartElement nextSE = getGenericStartElement(elementQName);
-		// push element
-		pushElement(nextSE, nextRule);
-		// handle element prefix
-		handleElementPrefix(elementQName);
+		EvolvingUriContext uc = decoderContext.getUriContext(seNS
+				.getNamespaceUriID());
+		QNameContext qnc = this.decoderContext.decodeLocalName(uc, channel);
 
-		return elementQName.getQName();
+		// next SE ...
+		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
+
+		// push element
+		pushElement(nextRule, nextSE);
+		// handle element prefix
+		handleElementPrefix(qnc);
+
+		return qnc.getQName();
 	}
 
 	protected final QName decodeStartElementGenericStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
-		EnhancedQName elementQName = qnameDatatype.decodeQName(channel);
-		// next SE ...
-		StartElement nextSE = getGenericStartElement(elementQName);
-		// learn start-element ?
-		currentRule.learnStartElement(nextSE);
-		// push element
-		pushElement(nextSE, nextRule.getElementContentRule());
-		// handle element prefix
-		handleElementPrefix(elementQName);
+		QNameContext qnc = this.decoderContext.decodeQName(channel);
 
-		return elementQName.getQName();
+		// next SE ...
+		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
+
+		// learn start-element ?
+		getCurrentRule().learnStartElement(nextSE);
+		// push element
+		pushElement(nextRule.getElementContentRule(), nextSE);
+
+		// handle element prefix
+		handleElementPrefix(qnc);
+
+		return qnc.getQName();
 	}
 
 	protected final QName decodeStartElementGenericUndeclaredStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
-		EnhancedQName elementQName = qnameDatatype.decodeQName(channel);
+		QNameContext qnc = this.decoderContext.decodeQName(channel);
 
 		// next SE ...
-		StartElement nextSE = getGenericStartElement(elementQName);
-		// learn start-element ?
-		currentRule.learnStartElement(nextSE);
-		// push element
-		pushElement(nextSE, currentRule.getElementContentRule());
-		// handle element prefix
-		handleElementPrefix(elementQName);
+		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
 
-		return elementQName.getQName();
+		// learn start-element ?
+		final Rule currentRule = getCurrentRule();
+		currentRule.learnStartElement(nextSE);
+
+		// push element
+		pushElement(currentRule.getElementContentRule(), nextSE);
+
+		// handle element prefix
+		handleElementPrefix(qnc);
+
+		return qnc.getQName();
 	}
 
 	protected final ElementContext decodeEndElementStructure()
@@ -311,7 +345,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected final ElementContext decodeEndElementUndeclaredStructure()
 			throws EXIException, IOException {
 		// learn end-element event ?
-		currentRule.learnEndElement();
+		getCurrentRule().learnEndElement();
 		// pop element
 		return popElement();
 	}
@@ -321,17 +355,21 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	 */
 	protected final void decodeAttributeXsiNilStructure() throws EXIException,
 			IOException {
-		attributeEnhancedQName = XSI_NIL_ENHANCED;
+		// attributeEnhancedQName = XSI_NIL_ENHANCED;
+		attributeQNameContext = decoderContext.getXsiNilContext();
 		// handle AT prefix
-		handleAttributePrefix(attributeEnhancedQName);
+		handleAttributePrefix(attributeQNameContext);
 
-		// attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
-		if(preserveLexicalValues) {
+		// attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL,
+		// channel);
+		if (preserveLexicalValues) {
 			// as String
-			attributeValue = typeDecoder.readValue(booleanDatatype, XSI_NIL, channel);
+			attributeValue = typeDecoder.readValue(booleanDatatype,
+					decoderContext, decoderContext.getXsiNilContext(), channel);
 		} else {
 			// as Boolean
-			attributeValue = booleanDatatype.readValue(channel, null, XSI_NIL);
+			attributeValue = booleanDatatype.readValue(decoderContext, null,
+					channel);
 		}
 
 		boolean xsiNil;
@@ -345,10 +383,11 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			xsiNil = booleanDatatype.getBoolean();
 		}
 
+		final Rule currentRule = getCurrentRule();
 		if (xsiNil && currentRule.isSchemaInformed()) {
 			// jump to typeEmpty
-			currentRule = ((SchemaInformedFirstStartTagRule) currentRule)
-					.getTypeEmpty();
+			updateCurrentRule(((SchemaInformedFirstStartTagRule) currentRule)
+					.getTypeEmpty());
 		}
 	}
 
@@ -357,74 +396,81 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	 */
 	protected final void decodeAttributeXsiTypeStructure() throws EXIException,
 			IOException {
-		attributeEnhancedQName = XSI_TYPE_ENHANCED;
+		attributeQNameContext = decoderContext.getXsiTypeContext();
 		// handle AT prefix
-		handleAttributePrefix(attributeEnhancedQName);
+		handleAttributePrefix(attributeQNameContext);
 
+		QNameContext qncType = null;
+
+		// read xsi:type content
 		if (this.preserveLexicalValues) {
-			attributeValue = typeDecoder.readValue(qnameDatatype, XSI_TYPE,
-					channel);
+			// assert(preservePrefix); // Note: requirement
+			attributeValue = typeDecoder
+					.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext,
+							decoderContext.getXsiTypeContext(), channel);
+			String sType = attributeValue.toString();
+			// extract prefix
+			String qncTypePrefix = QNameUtilities.getPrefixPart(sType);
+
+			// URI
+			String qnameURI = getURI(qncTypePrefix);
+
+			EvolvingUriContext uc = decoderContext.getUriContext(qnameURI);
+			if (uc != null) {
+				// local-name
+				String qnameLocalName = QNameUtilities.getLocalPart(sType);
+				qncType = uc.getQNameContext(qnameLocalName);
+			}
 		} else {
 			// typed
-			attributeValue = qnameDatatype.readValue(channel, null, XSI_TYPE);
-		}
-
-		// type qname
-		QName xsiTypeQName;
-		if (attributeValue instanceof QNameValue) {
-			QNameValue qnv = (QNameValue) attributeValue;
-			xsiTypeQName = qnv.toQName();
-			if (!preservePrefix) {
-				String pfx = checkPrefixMapping(xsiTypeQName.getNamespaceURI()); 				
-				attributeValue = new QNameValue(xsiTypeQName, pfx);
-			}
-		} else {			
-			// parse string value again (lexical value mode)
-			if (qnameDatatype.isValid(attributeValue)) {
-				xsiTypeQName = qnameDatatype.getQName();
-				if (!preservePrefix) {
-					String pfx = qnameDatatype.getPrefix();
-					declarePrefix(pfx, xsiTypeQName.getNamespaceURI());
-					attributeValue = new QNameValue(xsiTypeQName, pfx);
-				}
+			qncType = decoderContext.decodeQName(channel);
+			String qncTypePrefix;
+			if (preservePrefix) {
+				qncTypePrefix = decoderContext.decodeQNamePrefix(decoderContext
+						.getUriContext(qncType.getNamespaceUriID()), channel);
 			} else {
-				throw new EXIException("[EXI] no valid xsi:type='"
-						+ attributeValue + "'");
+				qncTypePrefix = checkPrefixMapping(qncType.getNamespaceUri());
 			}
+			attributeValue = new QNameValue(qncType.getNamespaceUri(),
+					qncType.getLocalName(), qncTypePrefix);
 		}
 
 		// update grammar according to given xsi:type
-		SchemaInformedRule tg = grammar.getTypeGrammar(xsiTypeQName);
-
-		// grammar exists ?
-		if (tg != null) {
+		if (qncType != null && qncType.getTypeGrammar() != null) {
 			// update current rule
-			currentRule = tg;
+			updateCurrentRule(qncType.getTypeGrammar());
 		}
 	}
-	
-	protected final void handleElementPrefix(EnhancedQName eqname) throws IOException {
+
+	protected final void handleElementPrefix(QNameContext qnc)
+			throws IOException {
 		if (preservePrefix) {
-			elementContext.prefix = qnameDatatype.decodeQNamePrefix(eqname.getNamespaceUriID(), channel);
+			getElementContext().prefix = decoderContext.decodeQNamePrefix(
+					decoderContext.getUriContext(qnc.getNamespaceUriID()),
+					channel);
 			// Note: IF elementPrefix is still null it will be determined by a
 			// subsequently following NS event
-		} else {			
+		} else {
 			// determine element prefix
-			elementContext.prefix = checkPrefixMapping(eqname.getQName().getNamespaceURI());
+			getElementContext().prefix = checkPrefixMapping(qnc
+					.getNamespaceUri());
 		}
 	}
 
-	protected final void handleAttributePrefix(EnhancedQName eqname) throws IOException {
+	protected final void handleAttributePrefix(QNameContext qnc)
+			throws IOException {
 		if (preservePrefix) {
-			attributePrefix = qnameDatatype.decodeQNamePrefix(eqname.getNamespaceUriID(), channel);
+			attributePrefix = decoderContext.decodeQNamePrefix(
+					decoderContext.getUriContext(qnc.getNamespaceUriID()),
+					channel);
 		} else {
-			attributePrefix = checkPrefixMapping(eqname.getQName().getNamespaceURI());
+			attributePrefix = checkPrefixMapping(qnc.getNamespaceUri());
 		}
 	}
 
 	private final String checkPrefixMapping(String uri) {
 		assert (!preservePrefix);
-		
+
 		String pfx = getPrefix(uri);
 
 		if (pfx == null) {
@@ -439,12 +485,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		Attribute at = ((Attribute) nextEvent);
 		// qname
-		attributeEnhancedQName = at.getEnhancedQName();
+		attributeQNameContext = at.getQNameContext();
 		// handle attribute prefix
-		handleAttributePrefix(attributeEnhancedQName);
+		handleAttributePrefix(attributeQNameContext);
 
 		// update current rule
-		currentRule = nextRule;
+		updateCurrentRule(nextRule);
 
 		return at.getDatatype();
 	}
@@ -453,13 +499,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		// AttributeEventNS
 		AttributeNS atNS = ((AttributeNS) nextEvent);
-		attributeEnhancedQName = qnameDatatype.decodeLocalName(atNS.getNamespaceURI(), channel);
+		EvolvingUriContext uc = decoderContext.getUriContext(atNS
+				.getNamespaceUriID());
+		attributeQNameContext = decoderContext.decodeLocalName(uc, channel);
+
 		// handle attribute prefix
-		handleAttributePrefix(attributeEnhancedQName);
+		handleAttributePrefix(attributeQNameContext);
 		// update current rule
-		currentRule = nextRule;
-		
-		// return BuiltIn.DEFAULT_DATATYPE;
+		updateCurrentRule(nextRule);
 	}
 
 	protected final void decodeAttributeAnyInvalidValueStructure()
@@ -473,64 +520,60 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		decodeAttributeGenericStructureOnly();
 
 		// update current rule
-		currentRule = nextRule;
-		
-//		return BuiltIn.DEFAULT_DATATYPE;
+		updateCurrentRule(nextRule);
 	}
 
 	protected final void decodeAttributeGenericUndeclaredStructure()
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
-
-		currentRule.learnAttribute(new Attribute(attributeEnhancedQName));
-		
-		// return BuiltIn.DEFAULT_DATATYPE;
+		getCurrentRule().learnAttribute(new Attribute(attributeQNameContext));
 	}
 
 	private final void decodeAttributeGenericStructureOnly()
 			throws EXIException, IOException {
 		// decode uri & local-name
-		attributeEnhancedQName = qnameDatatype.decodeLocalName(qnameDatatype.decodeUri(channel), channel);
+		this.attributeQNameContext = decoderContext.decodeQName(channel);
+
 		// handle attribute prefix
-		handleAttributePrefix(attributeEnhancedQName);
+		handleAttributePrefix(attributeQNameContext);
 	}
 
 	protected final Datatype decodeCharactersStructure() throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS);
 		// update current rule
-		currentRule = nextRule;
+		updateCurrentRule(nextRule);
 		return ((Characters) nextEvent).getDatatype();
 	}
 
 	protected final void decodeCharactersGenericStructure() throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC);
 		// update current rule
-		currentRule = nextRule;
+		updateCurrentRule(nextRule);
 	}
 
 	protected final void decodeCharactersGenericUndeclaredStructure()
 			throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
 		// learn character event ?
+		final Rule currentRule = getCurrentRule();
 		currentRule.learnCharacters();
 		// update current rule
-		currentRule = currentRule.getElementContentRule();
+		updateCurrentRule(currentRule.getElementContentRule());
 	}
 
 	protected final NamespaceDeclaration decodeNamespaceDeclarationStructure()
 			throws EXIException, IOException {
 		// prefix mapping
-		int uriID = qnameDatatype.decodeUri(channel);
-		String nsURI = qnameDatatype.getURI(uriID);
-
-		String nsPrefix = qnameDatatype.decodeNamespacePrefix(uriID, channel);
+		EvolvingUriContext euc = decoderContext.decodeUri(channel);
+		String nsPrefix = decoderContext.decodeNamespacePrefix(euc, channel);
 
 		boolean local_element_ns = channel.decodeBoolean();
 		if (local_element_ns) {
-			elementContext.prefix = nsPrefix;
+			getElementContext().prefix = nsPrefix;
 		}
 		// NS
-		NamespaceDeclaration nsDecl = new NamespaceDeclaration(nsURI, nsPrefix);
+		NamespaceDeclaration nsDecl = new NamespaceDeclaration(
+				euc.getNamespaceUri(), nsPrefix);
 		declarePrefix(nsDecl);
 		return nsDecl;
 	}
@@ -540,7 +583,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// decode name AS string
 		char[] er = channel.decodeString();
 		// update current rule
-		currentRule = currentRule.getElementContentRule();
+		updateCurrentRule(getCurrentRule().getElementContentRule());
 		return er;
 	}
 
@@ -548,7 +591,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		char[] comment = channel.decodeString();
 		// update current rule
-		currentRule = currentRule.getElementContentRule();
+		updateCurrentRule(getCurrentRule().getElementContentRule());
 		return comment;
 	}
 
@@ -558,7 +601,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		String piTarget = new String(channel.decodeString());
 		String piData = new String(channel.decodeString());
 		// update current rule
-		currentRule = currentRule.getElementContentRule();
+		updateCurrentRule(getCurrentRule().getElementContentRule());
 		return new ProcessingInstruction(piTarget, piData);
 	}
 

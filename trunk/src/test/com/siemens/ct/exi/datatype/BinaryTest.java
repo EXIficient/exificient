@@ -40,12 +40,12 @@ public class BinaryTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryHexValue(getBitDecoder().decodeBinary());
 		assertTrue(src.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryHexValue(getByteDecoder().decodeBinary());
 		assertTrue(src.equals(val2.toString()));
 	}
@@ -59,12 +59,12 @@ public class BinaryTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryHexValue(getBitDecoder().decodeBinary());
 		assertTrue(src_2.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryHexValue(getByteDecoder().decodeBinary());
 		assertTrue(src_2.equals(val2.toString()));
 	}
@@ -77,12 +77,12 @@ public class BinaryTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryHexValue(getBitDecoder().decodeBinary());
 		assertTrue(src_2.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryHexValue(getByteDecoder().decodeBinary());
 		assertTrue(src_2.equals(val2.toString()));
 	}
@@ -96,12 +96,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src.equals(val2.toString()));
 	}
@@ -115,12 +115,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src_2.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src_2.equals(val2.toString()));
 	}
@@ -133,12 +133,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src.equals(val2.toString()));
 	}
@@ -151,12 +151,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src.equals(val2.toString()));
 	}
@@ -169,12 +169,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src.equals(val2.toString()));
 	}
@@ -191,12 +191,12 @@ public class BinaryTest extends AbstractTestCase {
 		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		binary.writeValue(bitEC, null, null);
+		binary.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value val1 = new BinaryBase64Value(getBitDecoder().decodeBinary());
 		assertTrue(src_2.equals(val1.toString()));
 		// Byte
-		binary.writeValue(getByteEncoder(), null, null);
+		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src_2.equals(val2.toString()));
 	}

@@ -18,7 +18,9 @@
 
 package com.siemens.ct.exi.datatype.strings;
 
-import javax.xml.namespace.QName;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.values.StringValue;
 
 /**
  * 
@@ -40,7 +42,7 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 	protected int globalID;
 
 	/* globalID mapping: index -> string value */
-	protected String[] globalIdMapping;
+	protected ValueContainer[] globalIdMapping;
 
 	public BoundedStringEncoderImpl(int valueMaxLength,
 			int valuePartitionCapacity) {
@@ -50,18 +52,20 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 
 		this.globalID = -1;
 		if (valuePartitionCapacity >= 0) {
-			globalIdMapping = new String[valuePartitionCapacity];
+			// globalIdMapping = new String[valuePartitionCapacity];
+			globalIdMapping = new ValueContainer[valuePartitionCapacity];
 		}
 	}
 
 	@Override
-	public void addValue(QName context, String value) {
+	public void addValue(EncoderContext coder, QNameContext context,
+			String value) {
 		// first: check "valueMaxLength"
 		if (valueMaxLength < 0 || value.length() <= valueMaxLength) {
 			// next: check "valuePartitionCapacity"
 			if (valuePartitionCapacity < 0) {
 				// no "valuePartitionCapacity" restriction
-				super.addValue(context, value);
+				super.addValue(coder, context, value);
 			} else
 			// If valuePartitionCapacity is not zero the string S is added
 			if (valuePartitionCapacity == 0) {
@@ -77,8 +81,6 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 				 */
 				assert (!stringValues.containsKey(value));
 
-				int localValCnt = updateLocalValueCount(context);
-
 				/*
 				 * When the string value is added to the global value partition,
 				 * the value of globalID is incremented by one (1). If the
@@ -89,18 +91,25 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 					globalID = 0;
 				}
 
+				ValueContainer vc = new ValueContainer(context,
+						coder.getNumberOfStringValues(context), globalID);
+
 				if (stringValues.size() == valuePartitionCapacity) {
 					// full --> remove old value
-					// System.out.println("remove val '" +
-					// globalIdMapping[globalID] + "'");
-					// System.out.println(stringValues.toString());
-					stringValues.remove(globalIdMapping[globalID]);
+					ValueContainer vcFree = globalIdMapping[globalID];
+
+					// free
+					StringValue prev = coder.freeStringValue(vcFree.context,
+							vcFree.localValueID);
+					stringValues.remove(prev.toString());
 				}
 
-				ValueContainer vc = new ValueContainer(context, localValCnt,
-						globalID);
-				globalIdMapping[globalID] = value;
+				// add global
 				stringValues.put(value, vc);
+				// add local
+				coder.addStringValue(context, new StringValue(value));
+
+				globalIdMapping[globalID] = vc;
 			}
 		}
 	}

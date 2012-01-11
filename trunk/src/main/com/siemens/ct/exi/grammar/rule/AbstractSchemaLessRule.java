@@ -78,12 +78,11 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	/*
 	 * a leading rule for performance reason is added to the tail
 	 */
-	public void addRule(Event event, Rule rule) {
-		// assert (!isTerminalRule());
-		// assert (!this.contains(event));
+	public final void addRule(Event event, Rule rule) {
 
 		containers.add(new SchemaLessEventInformation(this, rule, event,
 				getNumberOfEvents()));
+		// TODO pre-calculate count for log2
 		eventCount = containers.size();
 	}
 
@@ -117,45 +116,14 @@ public abstract class AbstractSchemaLessRule extends AbstractRule implements
 	public String toString() {
 		StringBuffer sb = new StringBuffer(this.getLabel() + "//" + "\t");
 
-		// if (this.isTerminalRule()) {
-		// sb.append( "<END_RULE>");
-		// } else {
 		sb.append("[");
 		for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
 			sb.append("," + lookFor(ec).event);
 		}
 		sb.append("]");
-		// }
 
 		return sb.toString();
 	}
-
-	// // for encoder
-	// public EventInformation lookFor(EventType eventType, String ... args ) {
-	// for (EventInformation ei : containers) {
-	// if (ei.event.isEventType(eventType)) {
-	// switch(eventType) {
-	// case START_ELEMENT:
-	// if (checkQualifiedName(((StartElement)ei.event).getQName(), args[0],
-	// args[1])) {
-	// return ei;
-	// }
-	// break;
-	// case ATTRIBUTE:
-	// if (checkQualifiedName(((Attribute)ei.event).getQName(), args[0],
-	// args[1])) {
-	// return ei;
-	// }
-	// break;
-	// default:
-	// return ei;
-	// }
-	// }
-	// }
-	//
-	// // nothing found
-	// return null;
-	// }
 
 	public EventInformation lookForEvent(EventType eventType) {
 		for (EventInformation ei : containers) {

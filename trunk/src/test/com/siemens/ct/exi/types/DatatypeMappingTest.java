@@ -22,12 +22,13 @@ import java.io.ByteArrayInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import org.apache.xerces.xs.XSModel;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 import org.apache.xerces.xs.XSTypeDefinition;
 
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.GrammarUriContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.BooleanFacetDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
@@ -815,8 +816,11 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		
 
 		Grammar grammar = getGrammar(schemaAsString);
-		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
-				.getTypeGrammar(new QName("", "myPositiveInteger"));
+		GrammarContext gc = grammar.getGrammarContext();
+		QNameContext qncMyPositiveInteger = gc.getGrammarUriContext("").getQNameContext("myPositiveInteger");
+//		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
+//				.getTypeGrammar(new QName("", "myPositiveInteger"));
+		SchemaInformedFirstStartTagRule r = qncMyPositiveInteger.getTypeGrammar();
 		assertTrue(!r.isTypeCastable());
 		assertTrue(!r.isNillable());
 		
@@ -833,8 +837,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 	
 		Grammar grammar = getGrammar(schemaAsString);
 		//GrammarURIEntry[] gues = grammar.getGrammarEntries();
-	
-		StartElement se = grammar.getGlobalElement(new QName("","myNonPositiveInteger"));
+		GrammarContext gc = grammar.getGrammarContext();
+		GrammarUriContext guc0 = gc.getGrammarUriContext(0);
+		QNameContext qnc = guc0.getQNameContext("myNonPositiveInteger");
+		
+		StartElement se = qnc.getGlobalStartElement();
+//		StartElement se = grammar.getGlobalElement(new QName("","myNonPositiveInteger"));
 		// StartElement se = grammar.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "myNonPositiveInteger"));
 	
 		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) se
@@ -858,8 +866,11 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 
 		Grammar grammar = getGrammar(schemaAsString);
-		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
-				.getTypeGrammar(new QName("", "myNonPositiveInteger"));
+		GrammarContext gc = grammar.getGrammarContext();
+		QNameContext myNonPositiveInteger = gc.getGrammarUriContext("").getQNameContext("myNonPositiveInteger");
+//		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
+//				.getTypeGrammar(new QName("", "myNonPositiveInteger"));
+		SchemaInformedFirstStartTagRule r = myNonPositiveInteger.getTypeGrammar();
 		assertTrue(!r.isTypeCastable());
 		assertTrue(!r.isNillable());
 		

@@ -23,6 +23,9 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -72,19 +75,19 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		return true;
 	}
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException {
-
-		if (stringEncoder.isStringHit(context, lastValidValue)) {
-			stringEncoder.writeValue(context, valueChannel, lastValidValue);
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException {
+		StringEncoder stringEncoder = encoderContext.getStringEncoder();
+		if (stringEncoder.isStringHit(lastValidValue)) {
+			stringEncoder.writeValue(encoderContext, qnContext, valueChannel,
+					lastValidValue);
 		} else {
 			// NO local or global value hit
 			// string-table miss ==> restricted character
 			// string literal is encoded as a String with the length
 			// incremented by two.
 			final int L = lastValidValue.length();
-			// final int L = lastValidValue.codePointCount(0,
-			// lastValidValue.length());
 
 			valueChannel.encodeUnsignedInteger(L + 2);
 
@@ -113,23 +116,28 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the
 				// global value string table partition.
-				stringEncoder.addValue(context, lastValidValue);
+				stringEncoder.addValue(encoderContext, qnContext,
+						lastValidValue);
 			}
 		}
 	}
 
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException {
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException {
+
+		StringDecoder stringDecoder = decoderContext.getStringDecoder();
 		StringValue value;
 
 		int i = valueChannel.decodeUnsignedInteger();
 
 		if (i == 0) {
 			// local value partition
-			value = stringDecoder.readValueLocalHit(context, valueChannel);
+			value = stringDecoder.readValueLocalHit(decoderContext, qnContext,
+					valueChannel);
 		} else if (i == 1) {
 			// found in global value partition
-			value = stringDecoder.readValueGlobalHit(context, valueChannel);
+			value = stringDecoder.readValueGlobalHit(valueChannel);
 		} else {
 			// not found in global value (and local value) partition
 			// ==> restricted character string literal is encoded as a String
@@ -165,9 +173,8 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				// associated "local" value string table partition and the
 				// global
 				// value string table partition.
-				stringDecoder.addValue(context, value);
+				stringDecoder.addValue(decoderContext, qnContext, value);
 			} else {
-				// value = EMPTY_STRING_VALUE;
 				value = StringCoder.EMPTY_STRING_VALUE;
 			}
 		}

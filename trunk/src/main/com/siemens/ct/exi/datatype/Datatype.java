@@ -23,9 +23,10 @@ import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -46,7 +47,7 @@ public interface Datatype extends Serializable {
 
 	// used for dtr map
 	public QName getSchemaType();
-	
+
 	// restricted character set
 	public RestrictedCharacterSet getRestrictedCharacterSet();
 
@@ -55,22 +56,24 @@ public interface Datatype extends Serializable {
 	 */
 	public boolean isValid(Value value);
 
-	public void writeValue(EncoderChannel valueChannel,
-			StringEncoder stringEncoder, QName context) throws IOException;
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel)
+			throws IOException;
 
 	public boolean isValidRCS(Value value);
 
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			EncoderChannel valueChannel, StringEncoder stringEncoder,
-			QName context) throws IOException;
+			EncoderContext encoderContext, QNameContext qnContext,
+			EncoderChannel valueChannel) throws IOException;
 
 	/*
 	 * Decoder
 	 */
-	public Value readValue(DecoderChannel valueChannel,
-			StringDecoder stringDecoder, QName context) throws IOException;
+	public Value readValue(DecoderContext decoderContext,
+			QNameContext qnContext, DecoderChannel valueChannel)
+			throws IOException;
 
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			QName context) throws IOException;
+			DecoderContext decoderContext, QNameContext qnContext,
+			DecoderChannel valueChannel) throws IOException;
 }

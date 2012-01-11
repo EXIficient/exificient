@@ -22,9 +22,10 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.DecoderContext;
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -91,18 +92,18 @@ public abstract class AbstractDatatype implements Datatype {
 	}
 
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			EncoderChannel valueChannel, StringEncoder stringEncoder,
-			QName context) throws IOException {
+			EncoderContext encoderContext, QNameContext qnContext,
+			EncoderChannel valueChannel) throws IOException {
 		rcsEncoder.setRestrictedCharacterSet(rcs);
 		rcsEncoder.isValid(lastRCSValue);
-		rcsEncoder.writeValue(valueChannel, stringEncoder, context);
+		rcsEncoder.writeValue(encoderContext, qnContext, valueChannel);
 	}
 
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			DecoderChannel valueChannel, StringDecoder stringDecoder,
-			QName context) throws IOException {
+			DecoderContext decoderContext, QNameContext qnContext,
+			DecoderChannel valueChannel) throws IOException {
 		rcsDecoder.setRestrictedCharacterSet(rcs);
-		return rcsDecoder.readValue(valueChannel, stringDecoder, context);
+		return rcsDecoder.readValue(decoderContext, qnContext, valueChannel);
 	}
 
 	public String toString() {

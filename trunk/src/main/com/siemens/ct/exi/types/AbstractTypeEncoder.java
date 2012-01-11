@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.types;
 
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -31,13 +29,7 @@ import com.siemens.ct.exi.datatype.strings.StringEncoder;
 public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 		TypeEncoder {
 
-	protected StringEncoder stringEncoder;
-
-	public AbstractTypeEncoder(StringEncoder stringEncoder) {
-		this.stringEncoder = stringEncoder;
+	public AbstractTypeEncoder() {
 	}
 
-	public void clear() {
-		stringEncoder.clear();
-	}
 }

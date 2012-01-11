@@ -140,21 +140,21 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public void setProfile(String profileName) throws UnsupportedOption {
-//		if (profileName == null) {
-//			// un-set profile
-//			this.profile = profileName;
-//			// TODO profile(s)
-////		} else if (UCD_PROFILE.equals(profileName)) {
-////			this.profile = profileName;
-////			// what does the profile define
-////			// 1. valuePartitionCapacity == 0
-////			this.setValuePartitionCapacity(0);
-////			// 2. no built-in grammars --> no learning
-////			// 3. no EXI Options in header
-//		} else {
+		if (profileName == null) {
+			// un-set profile
+			this.profile = profileName;
+			// TODO profile(s)
+		} else if (UCD_PROFILE.equals(profileName)) {
+			this.profile = profileName;
+			// what does the profile define
+			// 1. valuePartitionCapacity == 0
+			this.setValuePartitionCapacity(0);
+			// 2. no built-in grammars --> no learning
+			// 3. no EXI Options in header
+		} else {
 			throw new UnsupportedOption("Profile '" + profileName
 					+ "' unknown.");
-//		}
+		}
 	}
 
 	public boolean usesProfile(String profileName) {
@@ -371,15 +371,20 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		doSanityCheck();
 
-		if (codingMode.usesRechanneling()) {
-			return new EXIBodyEncoderReordered(this);
-		} else {
-			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-				return new EXIBodyEncoderInOrderSC(this);
+//		if (ContextEXIBodyEncoder.USE_CONTEXT_CODER) {
+//			return new ContextEXIBodyEncoder(this);
+//		} else {
+			if (codingMode.usesRechanneling()) {
+				return new EXIBodyEncoderReordered(this);
 			} else {
-				return new EXIBodyEncoderInOrder(this);
-			}
-		}
+				if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+					return new EXIBodyEncoderInOrderSC(this);
+				} else {
+					return new EXIBodyEncoderInOrder(this);
+				}
+			}			
+//		}
+
 	}
 
 	public SAXEncoder createEXIWriter() throws EXIException {
@@ -418,7 +423,8 @@ public class DefaultEXIFactory implements EXIFactory {
 		return new SAXDecoder(this);
 	}
 
-	public TypeEncoder createTypeEncoder() throws EXIException {
+	
+	public StringEncoder createStringEncoder() {
 		// string encoder
 		StringEncoder stringEncoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
@@ -428,7 +434,11 @@ public class DefaultEXIFactory implements EXIFactory {
 		} else {
 			stringEncoder = new StringEncoderImpl();
 		}
-
+		
+		return stringEncoder;
+	}
+	
+	public TypeEncoder createTypeEncoder() throws EXIException {
 		TypeEncoder typeEncoder;
 
 		// create new type encoder
@@ -436,27 +446,27 @@ public class DefaultEXIFactory implements EXIFactory {
 			// default type encoders
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				typeEncoder = new LexicalTypeEncoder(stringEncoder);
+				typeEncoder = new LexicalTypeEncoder();
 			} else {
-				typeEncoder = new TypedTypeEncoder(stringEncoder);
+				typeEncoder = new TypedTypeEncoder();
 			}
 
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-						typeEncoder, stringEncoder, dtrMapTypes,
+						typeEncoder, dtrMapTypes,
 						dtrMapRepresentations, grammar);
 			}
 
 		} else {
 			// use strings only
-			typeEncoder = new StringTypeEncoder(stringEncoder);
+			typeEncoder = new StringTypeEncoder();
 		}
 
 		return typeEncoder;
 	}
 
-	public TypeDecoder createTypeDecoder() throws EXIException {
+	public StringDecoder createStringDecoder(){
 		// string Decoder
 		StringDecoder stringDecoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
@@ -466,7 +476,11 @@ public class DefaultEXIFactory implements EXIFactory {
 		} else {
 			stringDecoder = new StringDecoderImpl();
 		}
-
+		
+		return stringDecoder;
+	}
+	
+	public TypeDecoder createTypeDecoder() throws EXIException {
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
@@ -474,20 +488,20 @@ public class DefaultEXIFactory implements EXIFactory {
 			// default type decoders
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				typeDecoder = new LexicalTypeDecoder(stringDecoder);
+				typeDecoder = new LexicalTypeDecoder();
 			} else {
-				typeDecoder = new TypedTypeDecoder(stringDecoder);
+				typeDecoder = new TypedTypeDecoder();
 			}
 
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-						typeDecoder, stringDecoder, dtrMapTypes,
+						typeDecoder, dtrMapTypes,
 						dtrMapRepresentations, grammar);
 			}
 		} else {
 			// strings only
-			typeDecoder = new StringTypeDecoder(stringDecoder);
+			typeDecoder = new StringTypeDecoder();
 		}
 
 		return typeDecoder;

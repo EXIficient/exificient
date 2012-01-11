@@ -20,12 +20,11 @@ package com.siemens.ct.exi.grammar;
 
 import java.io.ByteArrayInputStream;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -78,9 +77,11 @@ public class EventCodeTest extends TestCase {
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
+		GrammarContext gc = g.getGrammarContext();
 		
 		// Rule r = g.getNamedElement("", "optional").getUniqueRule();
-		Rule rRoot = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule rRoot = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule rRoot = gc.getGrammarUriContext(0).getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rRoot = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		StartElement seOptional = (StartElement) rRoot.lookForStartElement("", "optional").event;
 		Rule rOptional = seOptional.getRule();
@@ -132,12 +133,15 @@ public class EventCodeTest extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
 		
-		Rule Use_color_0 = g.getGlobalElement(new QName("", "product")).getRule();
+		// Rule Use_color_0 = g.getGlobalElement(new QName("", "product")).getRule();
+		Rule Use_color_0 = gc.getGrammarUriContext(0).getQNameContext("product").getGlobalStartElement().getRule();
 		// Rule Use_color_0 = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "product")).getRule();
 		
 		// assertTrue(g.isGlobalElement("", "product"));
-		assertTrue(g.getGlobalElement(new QName("", "product")) != null);
+		// assertTrue(g.getGlobalElement(new QName("", "product")) != null);
+		assertTrue(gc.getGrammarUriContext(0).getQNameContext("product").getGlobalStartElement() != null);
 		// assertTrue(g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "product")) != null);
 		
 		// default fidelity options
@@ -290,8 +294,11 @@ public class EventCodeTest extends TestCase {
 				+ "</xs:schema>";
 	
 		Grammar g = getGrammarFromSchemaAsString(schema);
+		GrammarContext gc = g.getGrammarContext();
+		
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
-		Rule G_00 = g.getGlobalElement(new QName("", "root")).getRule();
+		// Rule G_00 = g.getGlobalElement(new QName("", "root")).getRule();
+		Rule G_00 = gc.getGrammarUriContext(0).getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule G_00 = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
 		
 		

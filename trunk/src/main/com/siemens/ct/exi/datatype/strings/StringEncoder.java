@@ -28,16 +28,18 @@ package com.siemens.ct.exi.datatype.strings;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.EncoderContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public interface StringEncoder extends StringCoder {
 
-	public void addValue(QName context, String value);
+	public void addValue(EncoderContext encoderContext, QNameContext qnContext,
+			String value);
 
-	public void writeValue(QName context, EncoderChannel channel, String value)
+	public void writeValue(EncoderContext encoderContext,
+			QNameContext qnContext, EncoderChannel valueChannel, String value)
 			throws IOException;
 
-	public boolean isStringHit(QName context, String value) throws IOException;
+	public boolean isStringHit(String value) throws IOException;
 }

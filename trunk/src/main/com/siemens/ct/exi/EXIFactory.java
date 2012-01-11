@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.api.sax.SAXEncoder;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
@@ -43,8 +45,8 @@ import com.siemens.ct.exi.types.TypeEncoder;
 
 public interface EXIFactory extends Cloneable {
 
-//	/** Ultra-constrained device profile */
-//	public static final String UCD_PROFILE = "UCD";
+	/** Ultra-constrained device profile */
+	public static final String UCD_PROFILE = "UCD";
 	
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
@@ -350,6 +352,14 @@ public interface EXIFactory extends Cloneable {
 	public XMLReader createEXIReader() throws EXIException;
 
 	/**
+	 * Returns an EXI <code>StringEncoder</code> according coding options
+	 * 
+	 * @return
+	 * @throws EXIException
+	 */
+	public StringEncoder createStringEncoder();
+	
+	/**
 	 * Returns an EXI <code>TypeEncoder</code> according coding options such as
 	 * schema-informed or schema-less grammar and options like
 	 * Preserve.LexicalValues
@@ -359,7 +369,16 @@ public interface EXIFactory extends Cloneable {
 	 * @see TypeEncoder
 	 */
 	public TypeEncoder createTypeEncoder() throws EXIException;
-
+	
+	/**
+	 * Returns an EXI <code>StringDecoder</code> according coding options
+	 * 
+	 * @return
+	 * @throws EXIException
+	 */
+	public StringDecoder createStringDecoder();
+	
+	
 	/**
 	 * Returns an EXI <code>TypeDecoder</code> according coding options such as
 	 * schema-informed or schema-less grammar and options like

@@ -21,10 +21,9 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.ByteEncoderChannel;
@@ -66,8 +65,8 @@ public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 	}
 
 	@Override
-	protected void writeValue(QName valueContext) throws IOException {
-		typeEncoder.writeValue(valueContext, channel);
+	protected void writeValue(QNameContext valueContext) throws IOException {
+		typeEncoder.writeValue(encoderContext, valueContext, channel);
 	}
 
 }

@@ -25,6 +25,9 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.context.GrammarContext;
+import com.siemens.ct.exi.context.GrammarUriContext;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -54,10 +57,17 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 
 	protected Datatype recentDtrDataype;
 
+	protected final QNameContext qncXsdInteger;
+
 	public AbstractRepresentationMapTypeCoder(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
 		this.grammar = grammar;
 		dtrMap = new HashMap<QName, Datatype>();
+
+		GrammarContext gc = grammar.getGrammarContext();
+		qncXsdInteger = gc.getGrammarUriContext(
+				BuiltIn.XSD_INTEGER.getNamespaceURI()).getQNameContext(
+				BuiltIn.XSD_INTEGER.getLocalPart());
 
 		assert (dtrMapTypes.length == dtrMapRepresentations.length);
 		/*
@@ -68,8 +78,16 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		 * datatype representation.
 		 */
 		for (int i = 0; i < dtrMapTypes.length; i++) {
-			Datatype datatypeRep = getDatatypeRepresentation(dtrMapRepresentations[i]);
-			registerDatatype(datatypeRep, dtrMapTypes[i], dtrMapTypes);
+			Datatype representation = getDatatypeRepresentation(dtrMapRepresentations[i]);
+			QName type = dtrMapTypes[i];
+			GrammarUriContext guc = gc.getGrammarUriContext(type
+					.getNamespaceURI());
+			if (guc != null) {
+				QNameContext qncType = guc.getQNameContext(type.getLocalPart());
+				if (qncType != null) {
+					registerDatatype(representation, qncType, dtrMapTypes);
+				}
+			}
 		}
 	}
 
@@ -77,16 +95,15 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		return recentDtrDataype;
 	}
 
-	private boolean isDerivedFrom(QName type, QName ancestor) {
+	private boolean isDerivedFrom(QNameContext type, QNameContext ancestor) {
 		// type itself
 		if (type.equals(ancestor)) {
 			return true;
 		}
 
-		// subtypes
-		List<QName> subtypes = grammar.getSimpleTypeSubtypes(ancestor);
+		List<QNameContext> subtypes = ancestor.getSimpleTypeSubtypes();
 		if (subtypes != null) {
-			for (QName subtype : subtypes) {
+			for (QNameContext subtype : subtypes) {
 				if (isDerivedFrom(type, subtype)) {
 					return true;
 				}
@@ -96,29 +113,31 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		return false;
 	}
 
-	protected void registerDatatype(Datatype representation, QName type,
+	protected void registerDatatype(Datatype representation, QNameContext type,
 			QName[] dtrMapTypes) {
 		// Integer types are special (exi:integer)
 		if (representation.getBuiltInType() == BuiltInType.INTEGER) {
 			// Note: exi:integer == BuiltInType.INTEGER_BIG
 
 			// Detect whether type is derived from xsd:integer
-			boolean isDerivedFromXsdInteger = isDerivedFrom(type,
-					BuiltIn.XSD_INTEGER);
+			boolean isDerivedFromXsdInteger = isDerivedFrom(type, qncXsdInteger);
 
 			if (isDerivedFromXsdInteger) {
 				// built-in types set already (n-bit and unsigned integers)
 				return;
 			}
 
-			// other types uses default full exi:integer coding
+			// other types use default full exi:integer coding
 		}
 
-		dtrMap.put(type, representation);
+		dtrMap.put(type.getQName(), representation);
 
-		List<QName> subtypes = grammar.getSimpleTypeSubtypes(type);
+		List<QNameContext> subtypes = type.getSimpleTypeSubtypes();
+
 		if (subtypes != null) {
-			for (QName subtype : subtypes) {
+			// for (QName subtype : subtypes) {
+			for (QNameContext qncSubtype : subtypes) {
+				QName subtype = qncSubtype.getQName();
 				// register subtypes unless a default mapping is
 				// is present OR there is another DTR map for this type
 				// see
@@ -147,18 +166,18 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 				} else if (BuiltIn.XSD_STRING.equals(subtype)
 						|| BuiltIn.XSD_ANY_SIMPLE_TYPE.equals(subtype)) {
 					// String built-In
-				} else if (contains(subtype, dtrMapTypes)) {
+				} else if (contains(qncSubtype, dtrMapTypes)) {
 					// another mapping exists
 				} else {
-					registerDatatype(representation, subtype, dtrMapTypes);
+					registerDatatype(representation, qncSubtype, dtrMapTypes);
 				}
 			}
 		}
 	}
 
-	protected boolean contains(QName q, QName[] qnames) {
+	protected boolean contains(QNameContext q, QName[] qnames) {
 		for (QName qn : qnames) {
-			if (qn.equals(q)) {
+			if (qn.equals(q.getQName())) {
 				return true;
 			}
 		}

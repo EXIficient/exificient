@@ -31,7 +31,6 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
@@ -104,7 +103,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	}
 
 	public QName decodeStartElement() throws EXIException, IOException {
-		switch(this.nextEventType) {
+		switch (this.nextEventType) {
 		case START_ELEMENT:
 			return decodeStartElementStructure();
 			// break;
@@ -113,40 +112,42 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 			// break;
 		case START_ELEMENT_GENERIC:
 			return decodeStartElementGenericStructure();
-			//break;
+			// break;
 		case START_ELEMENT_GENERIC_UNDECLARED:
 			return decodeStartElementGenericUndeclaredStructure();
 			// break;
 		default:
-			throw new EXIException("Invalid decode state: " + this.nextEventType);
+			throw new EXIException("Invalid decode state: "
+					+ this.nextEventType);
 		}
 	}
 
 	public QName decodeEndElement() throws EXIException, IOException {
 		ElementContext ec;
-		switch(this.nextEventType) {
+		switch (this.nextEventType) {
 		case END_ELEMENT:
-			ec =  decodeEndElementStructure();
+			ec = decodeEndElementStructure();
 			break;
 		case END_ELEMENT_UNDECLARED:
-			ec =  decodeEndElementUndeclaredStructure();
+			ec = decodeEndElementUndeclaredStructure();
 			break;
 		default:
-			throw new EXIException("Invalid decode state: " + this.nextEventType);
+			throw new EXIException("Invalid decode state: "
+					+ this.nextEventType);
 		}
-		return ec.eqname.getQName();
+		return ec.qnameContext.getQName();
 	}
 
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
-		return elementContext.nsDeclarations;
+		return getElementContext().nsDeclarations;
 	}
 
 	public String getElementPrefix() {
-		return this.elementContext.prefix;
+		return this.getElementContext().prefix;
 	}
 
 	public String getElementQNameAsString() {
-		return this.elementContext.getQNameAsString();
+		return this.getElementContext().getQNameAsString();
 	}
 
 	public NamespaceDeclaration decodeNamespaceDeclaration()
@@ -159,51 +160,57 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeAttributeXsiNilStructure();
 
 		// return attributeQName;
-		return attributeEnhancedQName.getQName();
+		return this.attributeQNameContext.getQName();
+		// return attributeEnhancedQName.getQName();
 	}
 
 	public QName decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		decodeAttributeXsiTypeStructure();
-		
-		return attributeEnhancedQName.getQName();
+
+		return this.attributeQNameContext.getQName();
 	}
 
 	protected void readAttributeContent(Datatype dt) throws IOException {
-		attributeValue = typeDecoder.readValue(dt, attributeEnhancedQName.getQName(), channel);
+		attributeValue = typeDecoder.readValue(dt, decoderContext,
+				attributeQNameContext, channel);
 	}
 
 	protected void readAttributeContent() throws IOException, EXIException {
-		QName qname = attributeEnhancedQName.getQName();
-		if (attributeEnhancedQName.getNamespaceUriID() == XSI_TYPE_ENHANCED.getNamespaceUriID() ) {
-			int localNameID = attributeEnhancedQName.getLocalNameID();
-			if (localNameID == XSI_TYPE_ENHANCED.getLocalNameID() ) {
+		if (attributeQNameContext.getNamespaceUriID() == decoderContext
+				.getXsiTypeContext().getNamespaceUriID()) {
+			int localNameID = attributeQNameContext.getLocalNameID();
+			if (localNameID == decoderContext.getXsiTypeContext()
+					.getLocalNameID()) {
 				decodeAttributeXsiTypeStructure();
-			} else if (localNameID == XSI_NIL_ENHANCED.getLocalNameID() &&  currentRule.isSchemaInformed() ) {
+			} else if (localNameID == decoderContext.getXsiTypeContext()
+					.getLocalNameID() && getCurrentRule().isSchemaInformed()) {
 				decodeAttributeXsiNilStructure();
 			} else {
 				readAttributeContent(BuiltIn.DEFAULT_DATATYPE);
 			}
 		} else {
-			Attribute globalAT;
+			// Attribute globalAT;
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
-			if (currentRule.isSchemaInformed()
-					&& (globalAT = grammar.getGlobalAttribute(qname)) != null) {
-				dt = globalAT.getDatatype();
+
+			if (getCurrentRule().isSchemaInformed()
+					&& attributeQNameContext.getGlobalAttribute() != null) {
+				dt = attributeQNameContext.getGlobalAttribute().getDatatype();
 			}
+
 			readAttributeContent(dt);
 		}
 	}
-	
+
 	public QName decodeAttribute() throws EXIException, IOException {
-		switch(this.nextEventType) {
+		switch (this.nextEventType) {
 		case ATTRIBUTE:
 			Datatype dt = decodeAttributeStructure();
-			if (attributeEnhancedQName.getNamespaceUriID() == XSI_TYPE_ENHANCED.getNamespaceUriID() &&
-					attributeEnhancedQName.getLocalNameID() == XSI_TYPE_ENHANCED.getLocalNameID() ) {
+			if (this.attributeQNameContext.equals(decoderContext
+					.getXsiTypeContext())) {
 				decodeAttributeXsiTypeStructure();
 			} else {
-				readAttributeContent(dt);	
+				readAttributeContent(dt);
 			}
 			break;
 		case ATTRIBUTE_NS:
@@ -228,15 +235,16 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 			readAttributeContent(BuiltIn.DEFAULT_DATATYPE);
 			break;
 		default:
-			throw new EXIException("Invalid decode state: " + this.nextEventType);
+			throw new EXIException("Invalid decode state: "
+					+ this.nextEventType);
 		}
 
-		return attributeEnhancedQName.getQName();
+		return attributeQNameContext.getQName();
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {
 		Datatype dt;
-		switch(this.nextEventType) {
+		switch (this.nextEventType) {
 		case CHARACTERS:
 			dt = decodeCharactersStructure();
 			break;
@@ -249,13 +257,13 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 			dt = BuiltIn.DEFAULT_DATATYPE;
 			break;
 		default:
-			throw new EXIException("Invalid decode state: " + this.nextEventType);
+			throw new EXIException("Invalid decode state: "
+					+ this.nextEventType);
 		}
-		
-		
+
 		// structure & content
-		return typeDecoder.readValue(dt,
-				elementContext.eqname.getQName(), channel);
+		return typeDecoder.readValue(dt, decoderContext,
+				getElementContext().qnameContext, channel);
 	}
 
 	public char[] decodeEntityReference() throws EXIException, IOException {
