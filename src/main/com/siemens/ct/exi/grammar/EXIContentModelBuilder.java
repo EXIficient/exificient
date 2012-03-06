@@ -582,14 +582,18 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 									// a[1] :: max occurs
 									// a[2] :: current value of the counter
 									// a[3] :: identifier for the repeating term
+									if(this.occurenceInfo == null) {
+										return true;
+									} else {
+//										int currThis = this.occurenceInfo == null ? -1
+//												: this.occurenceInfo[2];
+//										int currOther = other.occurenceInfo == null ? -1
+//												: other.occurenceInfo[2];
 
-									int currThis = this.occurenceInfo == null ? -1
-											: this.occurenceInfo[2];
-									int currOther = other.occurenceInfo == null ? -1
-											: other.occurenceInfo[2];
-
-									assert (this.occurenceInfo[0] == other.occurenceInfo[0]);
-									return (currThis >= this.occurenceInfo[0] && currOther >= this.occurenceInfo[0]);
+										assert (this.occurenceInfo[0] == other.occurenceInfo[0]);
+										return (this.occurenceInfo[2] >= this.occurenceInfo[0] && other.occurenceInfo[2] >= this.occurenceInfo[0]);
+											
+									}
 									// return true;
 								}
 							}
