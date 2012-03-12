@@ -31,7 +31,7 @@ public class SchemaTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		// SchemaTestCase.setConfigurationSchemaChoice1 ( );
+		SchemaTestCase.setConfigurationSchemaChoice1 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice2 ( );
 		// SchemaTestCase.setConfigurationSchemaChoice3 ( );
 		// SchemaTestCase.setConfigurationSchemaChoiceN1 ( );
@@ -40,7 +40,7 @@ public class SchemaTestCase extends AbstractTestCase {
 		// SchemaTestCase.setConfigurationSchemaGroup1 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup2 ( );
 		// SchemaTestCase.setConfigurationSchemaGroup3 ( );
-		SchemaTestCase.setConfigurationSchemaUnion1();
+		// SchemaTestCase.setConfigurationSchemaUnion1();
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1a ( );
 		// SchemaTestCase.setConfigurationSchemaSubstitutionGroup1b ( );
 		// SchemaTestCase.setConfigurationSchemaAttributeGroup1a ( );

@@ -18,8 +18,8 @@
 
 package com.siemens.ct.exi.grammar.rule;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -45,35 +45,67 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent impleme
 
 	private static final long serialVersionUID = 7009002330388834813L;
 
-	@Override
-	protected void buildEvents2(FidelityOptions fidelityOptions) {
-		if (fidelityOptions.isStrict()) {
-			// STRICT element grammars do not dispose of any second level events
-		} else {
-			int eventCode2 = 0;
-			// EE on second level necessary ?
-			if (!hasEndElement) {
-				events2.add(new EventTypeInformation(
-						EventType.END_ELEMENT_UNDECLARED, eventCode2++));
-			}
-			// extensibility: SE(*), CH(*)
-			events2.add(new EventTypeInformation(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
-			// ER
-			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-				events2.add(new EventTypeInformation(
-						EventType.ENTITY_REFERENCE, eventCode2++));
-			}
-		}
-
-		fidelityOptions2 = fidelityOptions;
-	}
 
 	@Override
 	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return (!fidelityOptions.isStrict());
+	}
+	
+	public final int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		if(fidelityOptions.isStrict()) {
+			return 0;
+		} else {
+			// EE?, SE(*), CH(*), ER?
+			int ch2 = (this.hasEndElement ? 0 : 1) + 2 + (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1 : 0);
+			return get3rdLevelCharacteristics(fidelityOptions) > 0 ? ch2 + 1 : ch2;
+		}
+	}
+	
+	public final int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		int ec2 = Constants.NOT_FOUND;
+		if(!fidelityOptions.isStrict()) {
+			switch(eventType) {
+			case END_ELEMENT_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2++; // SE(*)
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 2; // SE(*), CH(*)
+				break;
+			case ENTITY_REFERENCE:
+				if(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+					ec2 += this.hasEndElement ? 0 : 1; // EE?
+					ec2 += 2; // SE(*), CH(*)
+					ec2++; // ER
+				} 
+				break;
+			}
+		}
+		return ec2;
+	}
+
+	private static final EventType[] POSSIBLE_EVENTS = {EventType.END_ELEMENT_UNDECLARED, 
+		EventType.START_ELEMENT_GENERIC_UNDECLARED, EventType.CHARACTERS_GENERIC_UNDECLARED,
+		EventType.ENTITY_REFERENCE};
+	
+	public final EventType get2ndLevelEvent(int eventCode2,
+			FidelityOptions fidelityOptions) {
+		if(fidelityOptions.isStrict()) {
+			// nothing..
+			return null;
+		} else {
+			assert(eventCode2 >= 0);
+			if(this.hasEndElement) {
+				eventCode2++;
+			}
+			assert(eventCode2 < POSSIBLE_EVENTS.length);
+			return POSSIBLE_EVENTS[eventCode2];
+		}
 	}
 
 	@Override

@@ -29,6 +29,9 @@ import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedElement;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTag;
+import com.siemens.ct.exi.grammar.rule.SchemaInformedStartTag;
 
 public class EventCodeTest extends TestCase {
 	String schema;
@@ -828,6 +831,149 @@ public class EventCodeTest extends TestCase {
 		assertTrue(root5.getNumberOfEvents() == 2);
 		assertTrue(root5.lookFor(0).event.isEventType(EventType.START_ELEMENT));
 		assertTrue(root5.lookFor(1).event.isEventType(EventType.END_ELEMENT));
+		
+	}
+	
+	public void testEventCode2ndLevel() throws Exception {
+		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+			+ " <xs:element name='root'>"
+			+ "  <xs:complexType>"
+			+ "   <xs:sequence>"
+			+ "    <xs:element name='A' minOccurs='0' /> "
+			+ "   </xs:sequence>"
+			+ "   <xs:attribute name='atB'/>"
+			+ "  </xs:complexType>"
+			+ " </xs:element>"
+			+ "</xs:schema>";
+	
+		Grammar g = getGrammarFromSchemaAsString(schema);
+		Rule document = g.getDocumentGrammar();
+		EventInformation eiSD =  document.lookFor(0);
+		Rule docContent = eiSD.next;
+		assertTrue(docContent.getNumberOfEvents() == 2);
+		EventInformation eiSE_root =  docContent.lookFor(0);
+		
+		
+		/*
+		 * 1. SE(A), AT(atB) EE
+		 */
+		Rule root1 = ((StartElement)eiSE_root.event).getRule(); // FirstStartTag
+		assertTrue(root1 instanceof SchemaInformedFirstStartTag);
+		assertTrue(root1.getNumberOfEvents() == 3);
+		assertTrue(root1.lookFor(0).event.isEventType(EventType.ATTRIBUTE));
+		assertTrue(root1.lookFor(1).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.lookFor(2).event.isEventType(EventType.END_ELEMENT));
+		
+		FidelityOptions foStrict = FidelityOptions.createStrict();
+		FidelityOptions foDef = FidelityOptions.createDefault();
+		FidelityOptions foAll = FidelityOptions.createAll();
+		
+		{
+			// strict
+			assertTrue(root1.get2ndLevelCharacteristics(foStrict) == 0);
+			
+			// default
+			assertTrue(root1.get2ndLevelCharacteristics(foDef) == 6);
+			assertTrue(root1.get2ndLevelEvent(0, foDef) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(root1.get2ndLevelEvent(1, foDef) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(root1.get2ndLevelEvent(2, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEvent(3, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root1.get2ndLevelEvent(4, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEvent(5, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE, foDef) == 0);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL, foDef) == 1);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 2);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foDef) == 3);
+			assertTrue(root1.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 4);
+			assertTrue(root1.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 5);
+			
+			// all
+			assertTrue(root1.get2ndLevelCharacteristics(foAll) == (8 + 1));
+			assertTrue(root1.get2ndLevelEvent(0, foAll) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(root1.get2ndLevelEvent(1, foAll) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(root1.get2ndLevelEvent(2, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEvent(3, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root1.get2ndLevelEvent(4, foAll) == EventType.NAMESPACE_DECLARATION);
+			assertTrue(root1.get2ndLevelEvent(5, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEvent(6, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEvent(7, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE, foAll) == 0);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL, foAll) == 1);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 2);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foAll) == 3);
+			assertTrue(root1.get2ndLevelEventCode(EventType.NAMESPACE_DECLARATION, foAll) == 4);
+			assertTrue(root1.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 5);
+			assertTrue(root1.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 6);
+			assertTrue(root1.get2ndLevelEventCode(EventType.ENTITY_REFERENCE, foAll) == 7);
+		}
+
+		
+		/*
+		 * 2.SE(A), EE
+		 */
+		Rule root2 = root1.lookFor(0).next;
+		assertTrue(root2 instanceof SchemaInformedStartTag);
+		assertTrue(root2.getNumberOfEvents() == 2);
+		assertTrue(root2.lookFor(0).event.isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.lookFor(1).event.isEventType(EventType.END_ELEMENT));
+		
+		{
+			// strict
+			assertTrue(root2.get2ndLevelCharacteristics(foStrict) == 0);
+			
+			// default
+			assertTrue(root2.get2ndLevelCharacteristics(foDef) == 4);
+			assertTrue(root2.get2ndLevelEvent(0, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEvent(1, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root2.get2ndLevelEvent(2, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEvent(3, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 0);
+			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foDef) == 1);
+			assertTrue(root2.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 2);
+			assertTrue(root2.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 3);
+			
+			// all
+			assertTrue(root2.get2ndLevelCharacteristics(foAll) == (5 + 1));
+			assertTrue(root2.get2ndLevelEvent(0, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEvent(1, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root2.get2ndLevelEvent(2, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEvent(3, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEvent(4, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 0);
+			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foAll) == 1);
+			assertTrue(root2.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 2);
+			assertTrue(root2.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 3);
+			assertTrue(root2.get2ndLevelEventCode(EventType.ENTITY_REFERENCE, foAll) == 4);
+		}
+		
+		/*
+		 * 3. 
+		 */
+		Rule root3 = root1.lookFor(1).next;
+		assertTrue(root3 instanceof SchemaInformedElement);
+		
+		{
+			// strict
+			assertTrue(root3.get2ndLevelCharacteristics(foStrict) == 0);
+			
+			// default
+			assertTrue(root3.get2ndLevelCharacteristics(foDef) == 2);
+			assertTrue(root3.get2ndLevelEvent(0, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEvent(1, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 0);
+			assertTrue(root3.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 1);
+			
+			// all
+			assertTrue(root3.get2ndLevelCharacteristics(foAll) == (3 + 1));
+			assertTrue(root3.get2ndLevelEvent(0, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEvent(1, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEvent(2, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root3.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 0);
+			assertTrue(root3.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 1);
+			assertTrue(root3.get2ndLevelEventCode(EventType.ENTITY_REFERENCE, foAll) == 2);
+		}
+		
+		
 		
 	}
 
