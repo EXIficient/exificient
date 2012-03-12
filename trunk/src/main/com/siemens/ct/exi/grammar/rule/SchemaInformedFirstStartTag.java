@@ -20,9 +20,9 @@ package com.siemens.ct.exi.grammar.rule;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.EventTypeInformation;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -95,61 +95,175 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	public SchemaInformedFirstStartTagRule getTypeEmpty() {
 		return this.typeEmpty;
 	}
-
+	
 	@Override
-	protected void buildEvents2(FidelityOptions fidelityOptions) {
-		int eventCode2 = 0;
-
-		if (fidelityOptions.isStrict()) {
-			// xsi:type
-			if (isTypeCastable) {
-				events2.add(new EventTypeInformation(
-						EventType.ATTRIBUTE_XSI_TYPE, eventCode2++));
-			}
-			// xsi:nil
-			if (isNillable) {
-				events2.add(new EventTypeInformation(
-						EventType.ATTRIBUTE_XSI_NIL, eventCode2++));
+	protected int getNumberOf2ndLevelEvents(FidelityOptions fidelityOptions) {
+		// EE?, AT(*), AT(schema-invalid), SE(*), CH(*), ER?
+		int ev2 =  super.getNumberOf2ndLevelEvents(fidelityOptions);
+		ev2 += 2; // xsi:type and xsi:nil
+		// NS, SC
+		if (fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+			ev2++;
+		}
+		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+			ev2++;
+		}
+		
+		return ev2;
+	}
+	
+	@Override
+	public final int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
+		if(fidelityOptions.isStrict()) {
+			return (isTypeCastable ? 1 : 0) + (isNillable ? 1 : 0);
+		} else {
+			int ch2 = getNumberOf2ndLevelEvents(fidelityOptions);
+			return get3rdLevelCharacteristics(fidelityOptions) > 0 ? ch2 + 1 : ch2;
+		}
+	}
+	
+	@Override
+	public final int get2ndLevelEventCode(EventType eventType,
+			FidelityOptions fidelityOptions) {
+		int ec2 = Constants.NOT_FOUND;
+		if(fidelityOptions.isStrict()) {			
+			switch(eventType) {
+			case ATTRIBUTE_XSI_TYPE:
+				ec2 += this.isTypeCastable ? 1 : 0; // AT(xsi:type)
+				break;
+			case ATTRIBUTE_XSI_NIL:
+				if(isNillable) {
+					ec2 += this.isTypeCastable ? 1 : 0; // AT(xsi:type)
+					ec2++; // AT(xsi:nil)
+				}
+				break;
 			}
 		} else {
-			// EE on second level necessary ?
-			if (!hasEndElement) {
-				events2.add(new EventTypeInformation(
-						EventType.END_ELEMENT_UNDECLARED, eventCode2++));
-			}
-			// xsi:type & xsi:nil (for first startTag rule)
-			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_TYPE,
-					eventCode2++));
-			events2.add(new EventTypeInformation(EventType.ATTRIBUTE_XSI_NIL,
-					eventCode2++));
-			// AT(*) & AT[schema-invalid]
-			events2.add(new EventTypeInformation(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(
-					EventType.ATTRIBUTE_INVALID_VALUE, eventCode2++));
-			// NS, SC (for first startTag rule)
-			if (fidelityOptions
-					.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
-				events2.add(new EventTypeInformation(
-						EventType.NAMESPACE_DECLARATION, eventCode2++));
-			}
-			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-				events2.add(new EventTypeInformation(EventType.SELF_CONTAINED,
-						eventCode2++));
-			}
-			// extensibility: SE(*), CH(*)
-			events2.add(new EventTypeInformation(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, eventCode2++));
-			events2.add(new EventTypeInformation(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, eventCode2++));
-			// ER
-			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-				events2.add(new EventTypeInformation(
-						EventType.ENTITY_REFERENCE, eventCode2++));
+			switch(eventType) {
+			case END_ELEMENT_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				break;
+			case ATTRIBUTE_XSI_TYPE:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 1; // AT(xsi:type)
+				break;
+			case ATTRIBUTE_XSI_NIL:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 2; // AT(xsi:type), AT(xsi:nil)
+				break;
+			case ATTRIBUTE_GENERIC_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 3; // AT(xsi:type), AT(xsi:nil), AT(*)
+				break;
+			case ATTRIBUTE_INVALID_VALUE:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+				break;
+			case NAMESPACE_DECLARATION:
+				if(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)) {
+					ec2 += this.hasEndElement ? 0 : 1; // EE?
+					ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+					ec2++; // NS
+				}
+				break;
+			case SELF_CONTAINED:
+				if(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+					ec2 += this.hasEndElement ? 0 : 1; // EE?
+					ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+					ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1 : 0; // NS
+					ec2++; // SC
+				}
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+				ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1 : 0; // NS
+				ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) ? 1 : 0; // SC
+				ec2++; // SE(*)
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				ec2 += this.hasEndElement ? 0 : 1; // EE?
+				ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+				ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1 : 0; // NS
+				ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) ? 1 : 0; // SC
+				ec2 += 2; // SE(*), CH(*)
+				break;
+			case ENTITY_REFERENCE:
+				if(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+					ec2 += this.hasEndElement ? 0 : 1; // EE?
+					ec2 += 4; // AT(xsi:type), AT(xsi:nil), AT(*), AT(invalid)
+					ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ? 1 : 0; // NS
+					ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) ? 1 : 0; // SC
+					ec2 += 2; // SE(*), CH(*)
+					ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1 : 0; // ER
+				} 
+				break;
 			}
 		}
-
-		fidelityOptions2 = fidelityOptions;
+		
+		return ec2;
+	}
+	
+	
+	private static final EventType[] POSSIBLE_EVENTS = {EventType.END_ELEMENT_UNDECLARED, EventType.ATTRIBUTE_XSI_TYPE, EventType.ATTRIBUTE_XSI_NIL,
+		EventType.ATTRIBUTE_GENERIC_UNDECLARED, EventType.ATTRIBUTE_INVALID_VALUE, EventType.NAMESPACE_DECLARATION,
+		EventType.SELF_CONTAINED, EventType.START_ELEMENT_GENERIC_UNDECLARED, EventType.CHARACTERS_GENERIC_UNDECLARED,
+		EventType.ENTITY_REFERENCE};
+	
+	@Override
+	public final EventType get2ndLevelEvent(int eventCode2,
+			FidelityOptions fidelityOptions) {
+		if(fidelityOptions.isStrict()) {
+			switch(eventCode2) {
+			case 0:
+				if(this.isTypeCastable) {
+					return EventType.ATTRIBUTE_XSI_TYPE;
+				} else {
+					return EventType.ATTRIBUTE_XSI_NIL;
+				}
+				// break;
+			case 1:
+				if(this.isTypeCastable) {
+					return EventType.ATTRIBUTE_XSI_NIL;
+				} 
+			}
+		} else {
+			assert(eventCode2 >= 0);			
+			if(this.hasEndElement) {
+				eventCode2++;
+			}
+			switch(eventCode2) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				return POSSIBLE_EVENTS[eventCode2];
+			default:
+				// NS?, SC?, SE(*), CH(*), ER
+				if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX) ) {
+					eventCode2++;
+				}
+				switch(eventCode2) {
+				case 5:
+					return POSSIBLE_EVENTS[eventCode2];
+				default:
+					if (!fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC) ) {
+						eventCode2++;
+					}
+					switch(eventCode2) {
+					case 6:
+					case 7:
+					case 8:
+					case 9:
+						return POSSIBLE_EVENTS[eventCode2]; // SC, SE(*), CH(*), ER
+					}
+				}
+				
+			}
+		}
+		return null;
 	}
 
 	@Override
