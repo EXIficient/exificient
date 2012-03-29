@@ -104,6 +104,7 @@ import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
 import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.ListValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -1684,17 +1685,9 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 
 		// used for dtr map
 		QName schemaType = getSchemaType(std);
-
-		// is list ?
-		if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
-			XSSimpleTypeDefinition listSTD = std.getItemType();
-
-			Datatype dtList = getDatatype(listSTD);
-
-			datatype = new ListDatatype(dtList, schemaType);
-		}
+		
 		// is enumeration ?
-		else if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
+		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
 			// datatype = getDatatypeOfEnumeration ( std );
 			XSObjectList facetList = std.getMultiValueFacets();
 			for (int i = 0; i < facetList.getLength(); i++) {
@@ -1764,6 +1757,11 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 									enumValue = DateTimeValue.parse(tok,
 											datetimeDT.getDatetimeType());
 									break;
+								/* List*/
+								case LIST:
+									ListDatatype listDT = (ListDatatype) dtEnumValues;
+									enumValue = ListValue.parse(tok, listDT.getListDatatype());
+									break;
 								default:
 									enumValue = new StringValue(tok); // String
 									enumBIT = BuiltInType.STRING; // override
@@ -1792,6 +1790,13 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 					}
 				}
 			}
+		// is list ?
+		} else if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_LIST) {
+			XSSimpleTypeDefinition listSTD = std.getItemType();
+
+			Datatype dtList = getDatatype(listSTD);
+
+			datatype = new ListDatatype(dtList, schemaType);
 		} else {
 			datatype = getDatatypeOfType(std, schemaType);
 		}
