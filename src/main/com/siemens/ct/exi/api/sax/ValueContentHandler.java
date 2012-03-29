@@ -75,22 +75,29 @@ public class ValueContentHandler {
 			break;
 		case LIST:
 			ListValue lv = (ListValue) val;
-			List<Value> values = lv.toValues();
-			if (values.size() > 0) {
-				// all values except last item
-				int vlenMinus1 = values.size() - 1;
-				for (int i = 0; i < vlenMinus1; i++) {
-					Value iVal = values.get(i);
-					reportCharacters(iVal);
-					// delimiter
-					contentHandler.characters(XSD_DELIMTER, 0, 1);
+			int llen = val.getCharactersLength();
+			
+			if(llen > cbuffer.length) {
+				// rather large list --> handle it step-wise
+				List<Value> lvals = lv.toValues();
+				int loffset = 0;
+				for(Value lval : lvals) {
+					int vslen = lval.getCharactersLength(); 
+					if ((loffset + vslen + 1) > cbuffer.length) {
+						// fire CH handler
+						contentHandler.characters(cbuffer, 0, loffset);
+						loffset = 0	;
+					}
+					lval.toCharacters(cbuffer, loffset);
+					loffset += vslen;
+					cbuffer[loffset] = Constants.XSD_LIST_DELIM_CHAR;
+					loffset++;
 				}
-
-				// last item (no delimiter)
-				Value lastVal = values.get(vlenMinus1);
-				reportCharacters(lastVal);
+				
+				break; // case break
+			} else {
+				// Note: no break --> re-use code
 			}
-			break;
 		default:
 			int slen = val.getCharactersLength();
 			ensureBufferCapacity(slen);

@@ -349,6 +349,7 @@ public class SAXDecoder implements XMLReader {
 				} else {
 					int slen = val.getCharactersLength();
 					ensureBufferCapacity(slen);
+					
 					// returns char array that contains value
 					// Note: can be a different array than the one passed
 					char[] sres = val.toCharacters(cbuffer, 0);
@@ -431,7 +432,7 @@ public class SAXDecoder implements XMLReader {
 			do {
 				newSize = newSize << 2;
 			} while (newSize < reqSize);
-
+			
 			cbuffer = new char[newSize];
 		}
 	}

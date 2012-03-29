@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 public class TestSAXEncoderN extends TestSAXEncoder {
-	public static final int N_RUNS = 1;
+	public static final int N_RUNS = 10;
 
 	public TestSAXEncoderN(EXIFactory ef) throws EXIException {
 		super(ef);
