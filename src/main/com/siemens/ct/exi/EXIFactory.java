@@ -28,7 +28,6 @@ import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.types.TypeEncoder;
@@ -45,9 +44,6 @@ import com.siemens.ct.exi.types.TypeEncoder;
 
 public interface EXIFactory extends Cloneable {
 
-	/** Ultra-constrained device profile */
-	public static final String UCD_PROFILE = "UCD";
-	
 	/**
 	 * Sets the fidelity options used by the EXI factory (e.g. preserving XML
 	 * comments or DTDs).
@@ -68,22 +64,22 @@ public interface EXIFactory extends Cloneable {
 	 */
 	public FidelityOptions getFidelityOptions();
 
-	/**
-	 * Sets an EXI profile that configures the factory.
-	 * 
-	 * @param profileName
-	 * @throws UnsupportedOption
-	 *             if profile is not supported
-	 */
-	public void setProfile(String profileName) throws UnsupportedOption;
-
-	/**
-	 * Returns whether a certain profile name is in use.
-	 * 
-	 * @param profileName
-	 * @return boolean value indicating the use of the profile
-	 */
-	public boolean usesProfile(String profileName);
+	// /**
+	// * Sets an EXI profile that configures the factory.
+	// *
+	// * @param profileName
+	// * @throws UnsupportedOption
+	// * if profile is not supported
+	// */
+	// public void setProfile(String profileName) throws UnsupportedOption;
+	//
+	// /**
+	// * Returns whether a certain profile name is in use.
+	// *
+	// * @param profileName
+	// * @return boolean value indicating the use of the profile
+	// */
+	// public boolean usesProfile(String profileName);
 
 	/**
 	 * Sets the header options used by the EXI Encoder(e.g., include EXI Cookie,
@@ -103,8 +99,7 @@ public interface EXIFactory extends Cloneable {
 	 * @see EncodingOptions
 	 */
 	public EncodingOptions getEncodingOptions();
-	
-	
+
 	/**
 	 * Sets specific schemaId resolver.
 	 * 
@@ -113,14 +108,13 @@ public interface EXIFactory extends Cloneable {
 	 */
 	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver);
 
-	
 	/**
 	 * Returns schemaId resolver for this factory;
 	 * 
 	 * @return
 	 */
 	public SchemaIdResolver getSchemaIdResolver();
-	
+
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
 	 * an XML document
@@ -272,18 +266,41 @@ public interface EXIFactory extends Cloneable {
 	 * @param element
 	 */
 	public boolean isSelfContainedElement(QName element);
-	
-	
+
 	/**
-	 * Allows to use another body encoder implementation.
-	 * The provided class needs to implement the EXIBodyEncoder interface.
+	 * The EXI profile defines a parameter that can disable the use of local
+	 * value references. Global value indexing may be controlled using the
+	 * options defined in the EXI 1.0 specification
+	 * 
+	 * <p>
+	 * The localValuePartitions option of the EXI profile is a Boolean used to
+	 * indicate whether local value partitions are used. ] The value "0"
+	 * indicates that no local value partition is used while "1" represents the
+	 * behavior of the EXI 1.0 specification
+	 * </p>
+	 */
+	public void setLocalValuePartitions(boolean useLocalValuePartitions);
+
+	/**
+	 * The localValuePartitions option of the EXI profile is a Boolean used to
+	 * indicate whether local value partitions are used. ] The value "0"
+	 * indicates that no local value partition is used while "1" represents the
+	 * behavior of the EXI 1.0 specification
+	 * 
+	 * @return
+	 */
+	public boolean isLocalValuePartitions();
+
+	/**
+	 * Allows to use another body encoder implementation. The provided class
+	 * needs to implement the EXIBodyEncoder interface.
 	 * 
 	 * @see EXIBodyEncoder
 	 * @param className
 	 * @throws EXIException
 	 */
 	public void setEXIBodyEncoder(String className) throws EXIException;
-	
+
 	/**
 	 * Allows to use another body encoder implementation.
 	 * 
@@ -291,18 +308,19 @@ public interface EXIFactory extends Cloneable {
 	 * @param bodyEncoder
 	 * @throws EXIException
 	 */
-	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder) throws EXIException;
-	
+	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder)
+			throws EXIException;
+
 	/**
-	 * Allows to use another body decoder implementation.
-	 * The provided class needs to implement the EXIBodyDecoder interface.
+	 * Allows to use another body decoder implementation. The provided class
+	 * needs to implement the EXIBodyDecoder interface.
 	 * 
 	 * @see EXIBodyDecoder
 	 * @param className
 	 * @throws EXIException
 	 */
 	public void setEXIBodyDecoder(String className) throws EXIException;
-	
+
 	/**
 	 * Allows to use another body decoder implementation.
 	 * 
@@ -310,7 +328,8 @@ public interface EXIFactory extends Cloneable {
 	 * @param bodyDecoder
 	 * @throws EXIException
 	 */
-	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder) throws EXIException;
+	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder)
+			throws EXIException;
 
 	/**
 	 * Returns an <code>EXIBodyEncoder</code>
@@ -322,9 +341,12 @@ public interface EXIFactory extends Cloneable {
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException;
 
 	/**
-	 * Returns a <code>SAXEncoder</code> that implements <code>DefaultHandler2</code>
+	 * Returns a <code>SAXEncoder</code> that implements
+	 * <code>DefaultHandler2</code>
 	 * 
-	 * <p>Note that the output stream MUST be set.</p>
+	 * <p>
+	 * Note that the output stream MUST be set.
+	 * </p>
 	 * 
 	 * @return writer using the previously set coding options.
 	 * @throws EXIException
@@ -358,7 +380,7 @@ public interface EXIFactory extends Cloneable {
 	 * @throws EXIException
 	 */
 	public StringEncoder createStringEncoder();
-	
+
 	/**
 	 * Returns an EXI <code>TypeEncoder</code> according coding options such as
 	 * schema-informed or schema-less grammar and options like
@@ -369,7 +391,7 @@ public interface EXIFactory extends Cloneable {
 	 * @see TypeEncoder
 	 */
 	public TypeEncoder createTypeEncoder() throws EXIException;
-	
+
 	/**
 	 * Returns an EXI <code>StringDecoder</code> according coding options
 	 * 
@@ -377,8 +399,7 @@ public interface EXIFactory extends Cloneable {
 	 * @throws EXIException
 	 */
 	public StringDecoder createStringDecoder();
-	
-	
+
 	/**
 	 * Returns an EXI <code>TypeDecoder</code> according coding options such as
 	 * schema-informed or schema-less grammar and options like

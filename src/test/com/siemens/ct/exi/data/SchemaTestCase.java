@@ -176,6 +176,26 @@ public class SchemaTestCase extends AbstractTestCase {
 //		testCaseOptions.lastElement().setIncludeSchemaId(true);
 		
 		
+		// #9a localValuePartitions
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setLocalValuePartitions(false);
+
+		// #9b localValuePartitions + valuePartitionCapacity
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setValuePartitionCapacity(4);
+		testCaseOptions.lastElement().setLocalValuePartitions(false);
+		
+		
 //		// #9 UCD Profile
 //		testCaseOptions.add(new TestCaseOption());
 //		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);

@@ -92,9 +92,11 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		}
 		ef.setEncodingOptions(tco.getEncodingOptions());
 		
-		if (tco.getProfile() != null) {
-			ef.setProfile(tco.getProfile());
-		}
+		ef.setLocalValuePartitions(tco.isLocalValuePartitions());
+		
+//		if (tco.getProfile() != null) {
+//			ef.setProfile(tco.getProfile());
+//		}
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {
