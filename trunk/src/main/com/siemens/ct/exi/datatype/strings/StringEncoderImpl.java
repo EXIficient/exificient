@@ -41,7 +41,11 @@ public class StringEncoderImpl implements StringEncoder {
 	// strings (all)
 	protected Map<String, ValueContainer> stringValues;
 
-	public StringEncoderImpl() {
+	// indicate whether local value partitions are used
+	protected boolean localValuePartitions;
+	
+	public StringEncoderImpl(boolean localValuePartitions) {
+		this.localValuePartitions = localValuePartitions;
 		stringValues = new HashMap<String, ValueContainer>();
 	}
 
@@ -52,7 +56,7 @@ public class StringEncoderImpl implements StringEncoder {
 
 		if (vc != null) {
 			// hit
-			if (vc.context.equals(context)) {
+			if (localValuePartitions &&  vc.context.equals(context)) {
 				/*
 				 * local value hit ==> is represented as zero (0) encoded as an
 				 * Unsigned Integer followed by the compact identifier of the
@@ -104,14 +108,16 @@ public class StringEncoderImpl implements StringEncoder {
 			String value) {
 		assert (!stringValues.containsKey(value));
 
-		ValueContainer vc = new ValueContainer(context,
+		ValueContainer vc = new ValueContainer(value, context,
 				coder.getNumberOfStringValues(context), stringValues.size());
 
 		// global context
 		stringValues.put(value, vc);
 
 		// local context
-		coder.addStringValue(context, new StringValue(value));
+		if(localValuePartitions) {
+			coder.addStringValue(context, new StringValue(value));
+		}
 	}
 
 	public void clear() {
@@ -120,12 +126,14 @@ public class StringEncoderImpl implements StringEncoder {
 
 	static class ValueContainer {
 
+		public final String value;
 		public final QNameContext context;
 		public final int localValueID;
 		public final int globalValueID;
 
-		public ValueContainer(QNameContext context, int localValueID,
+		public ValueContainer(String value, QNameContext context, int localValueID,
 				int globalValueID) {
+			this.value = value;
 			this.context = context;
 			this.localValueID = localValueID;
 			this.globalValueID = globalValueID;
@@ -133,7 +141,7 @@ public class StringEncoderImpl implements StringEncoder {
 
 		@Override
 		public String toString() {
-			return "[" + context + "," + localValueID + "," + globalValueID
+			return "['" + value + "', " + context + "," + localValueID + "," + globalValueID
 					+ "]";
 		}
 	}

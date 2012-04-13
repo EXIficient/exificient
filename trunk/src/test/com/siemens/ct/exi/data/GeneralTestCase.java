@@ -35,7 +35,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		// GeneralTestCase.setConfigurationPerson ( );
+		GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
@@ -62,7 +62,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
 		// GeneralTestCase.setConfigurationDocType3 ( );
-		GeneralTestCase.setConfigurationEntityReference1();
+		// GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationEntityReference2();
 		// GeneralTestCase.setConfigurationEntityReferenceUnresolved1();
 		// GeneralTestCase.setConfigurationCData1();
@@ -225,6 +225,26 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes,
 				dtrRepresentations);
 
+		
+		// #13a localValuePartitions
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setLocalValuePartitions(false);
+
+		// #13b localValuePartitions + valuePartitionCapacity
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createAll());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setValuePartitionCapacity(4);
+		testCaseOptions.lastElement().setLocalValuePartitions(false);
+		
 //		// #13 UCD Profile
 //		testCaseOptions.add(new TestCaseOption());
 //		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);

@@ -86,6 +86,7 @@ public abstract class AbstractTestCoder {
 		if (QuickTestConfiguration.valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
 			ef.setValuePartitionCapacity(QuickTestConfiguration.valuePartitionCapacity);
 		}
+		ef.setLocalValuePartitions(QuickTestConfiguration.localValuePartitions);
 		// ef.setProfile(QuickTestConfiguration.PROFILE);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);

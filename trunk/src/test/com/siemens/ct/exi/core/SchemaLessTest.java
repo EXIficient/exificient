@@ -773,7 +773,7 @@ public class SchemaLessTest extends TestCase {
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setCodingMode(CodingMode.BYTE_PACKED);
-		factory.setProfile(EXIFactory.UCD_PROFILE);
+		// factory.setProfile(EXIFactory.UCD_PROFILE);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName bla = new QName("", "foo");
@@ -847,7 +847,7 @@ public class SchemaLessTest extends TestCase {
 	
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setCodingMode(CodingMode.BYTE_PACKED);
-		factory.setProfile(EXIFactory.UCD_PROFILE);
+		// factory.setProfile(EXIFactory.UCD_PROFILE);
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName bla = new QName("uri:bla", "foo");

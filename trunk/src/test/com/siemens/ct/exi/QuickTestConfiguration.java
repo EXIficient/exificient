@@ -20,16 +20,12 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.SchemaTestCase;
+import com.siemens.ct.exi.data.GeneralTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;
-
-	// profile
-	public static final String PROFILE = null;
-	// public static final String PROFILE = EXIFactory.UCD_PROFILE;
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -54,6 +50,7 @@ public class QuickTestConfiguration {
 	public static int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 	public static int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	public static int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
+	public static boolean localValuePartitions = true;
 
 	public static QName[] selfContainedElements;
 
@@ -96,8 +93,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 		
 		// try {
@@ -122,7 +119,8 @@ public class QuickTestConfiguration {
 		// blockSize = 40;
 		// blockSize = 200;
 		// valueMaxLength = 0;
-		// valuePartitionCapacity = 4;
+		valuePartitionCapacity = 4;
+		localValuePartitions = false;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");
@@ -135,9 +133,9 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest();
+		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

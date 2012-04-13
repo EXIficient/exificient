@@ -41,7 +41,11 @@ public class StringDecoderImpl implements StringDecoder {
 	// global values (all)
 	protected List<StringValue> globalValues;
 
-	public StringDecoderImpl() {
+	// indicate whether local value partitions are used
+	protected boolean localValuePartitions;
+
+	public StringDecoderImpl(boolean localValuePartitions) {
+		this.localValuePartitions = localValuePartitions;
 		globalValues = new ArrayList<StringValue>();
 	}
 
@@ -54,7 +58,12 @@ public class StringDecoderImpl implements StringDecoder {
 		switch (i) {
 		case 0:
 			// local value partition
-			value = this.readValueLocalHit(coder, context, valueChannel);
+			if (localValuePartitions) {
+				value = this.readValueLocalHit(coder, context, valueChannel);
+			} else {
+				throw new IOException(
+						"EXI stream contains local-value hit even though profile options indicate otherwise.");
+			}
 			break;
 		case 1:
 			// found in global value partition
@@ -91,6 +100,7 @@ public class StringDecoderImpl implements StringDecoder {
 	public StringValue readValueLocalHit(DecoderContext coder,
 			QNameContext context, DecoderChannel valueChannel)
 			throws IOException {
+		assert (localValuePartitions);
 		int n = MethodsBag.getCodingLength(coder
 				.getNumberOfStringValues(context));
 		int localID = valueChannel.decodeNBitUnsignedInteger(n);
@@ -110,7 +120,9 @@ public class StringDecoderImpl implements StringDecoder {
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
 		// local
-		coder.addStringValue(context, value);
+		if (localValuePartitions) {
+			coder.addStringValue(context, value);
+		}
 	}
 
 	public void clear() {

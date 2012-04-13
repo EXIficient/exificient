@@ -36,6 +36,7 @@ public class TestCaseOption {
 	private int blockSize = Constants.DEFAULT_BLOCK_SIZE;
 	private int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
+	private boolean localValuePartitions = true;
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
 	private EncodingOptions encodingOptions;
@@ -137,6 +138,14 @@ public class TestCaseOption {
 	
 	public int getValuePartitionCapacity() {
 		return valuePartitionCapacity;
+	}
+	
+	public void setLocalValuePartitions(boolean localValuePartitions) {
+		this.localValuePartitions = localValuePartitions;
+	}
+	
+	public boolean isLocalValuePartitions() {
+		return localValuePartitions;
 	}
 
 	public void setEncodingOptions(EncodingOptions encodingOptions) {

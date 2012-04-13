@@ -44,9 +44,9 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 	/* globalID mapping: index -> string value */
 	protected ValueContainer[] globalIdMapping;
 
-	public BoundedStringEncoderImpl(int valueMaxLength,
+	public BoundedStringEncoderImpl(boolean localValuePartitions, int valueMaxLength,
 			int valuePartitionCapacity) {
-		super();
+		super(localValuePartitions);
 		this.valueMaxLength = valueMaxLength;
 		this.valuePartitionCapacity = valuePartitionCapacity;
 
@@ -91,23 +91,28 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 					globalID = 0;
 				}
 
-				ValueContainer vc = new ValueContainer(context,
+				ValueContainer vc = new ValueContainer(value, context,
 						coder.getNumberOfStringValues(context), globalID);
 
 				if (stringValues.size() == valuePartitionCapacity) {
 					// full --> remove old value
 					ValueContainer vcFree = globalIdMapping[globalID];
 
-					// free
-					StringValue prev = coder.freeStringValue(vcFree.context,
-							vcFree.localValueID);
-					stringValues.remove(prev.toString());
+					// free local
+					if(this.localValuePartitions) {
+						coder.freeStringValue(vcFree.context,
+								vcFree.localValueID);	
+					}
+					// remove global
+					stringValues.remove(vcFree.value);
 				}
 
 				// add global
 				stringValues.put(value, vc);
 				// add local
-				coder.addStringValue(context, new StringValue(value));
+				if(this.localValuePartitions) {
+					coder.addStringValue(context, new StringValue(value));
+				}
 
 				globalIdMapping[globalID] = vc;
 			}

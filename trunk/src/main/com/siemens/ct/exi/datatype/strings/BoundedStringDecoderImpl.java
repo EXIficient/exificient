@@ -55,14 +55,14 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 		}
 	}
 
-	public BoundedStringDecoderImpl(int valueMaxLength,
-			int valuePartitionCapacity) {
-		super();
+	public BoundedStringDecoderImpl(boolean localValuePartitions,
+			int valueMaxLength, int valuePartitionCapacity) {
+		super(localValuePartitions);
 		this.valueMaxLength = valueMaxLength;
 		this.valuePartitionCapacity = valuePartitionCapacity;
 
 		this.globalID = -1;
-		if (valuePartitionCapacity >= 0) {
+		if (valuePartitionCapacity > 0 && localValuePartitions) {
 			localIdMapping = new LocalIDMap[valuePartitionCapacity];
 		}
 	}
@@ -105,20 +105,23 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 					Value prev = globalValues.set(globalID, value);
 					if (prev != null) {
 						// free memory
-						LocalIDMap lvsFree = localIdMapping[globalID];
-						assert (lvsFree != null);
+						if(localValuePartitions) {
+							LocalIDMap lvsFree = localIdMapping[globalID];
+							assert (lvsFree != null);	
+						}
 					}
 				} else {
 					globalValues.add(value);
 				}
 
-				// update local ID mapping
-				localIdMapping[globalID] = new LocalIDMap(
-						coder.getNumberOfStringValues(context), context);
+				if(localValuePartitions) {
+					// update local ID mapping
+					localIdMapping[globalID] = new LocalIDMap(
+							coder.getNumberOfStringValues(context), context);
 
-				// local value
-				coder.addStringValue(context, value);
-
+					// local value
+					coder.addStringValue(context, value);					
+				}
 			}
 		}
 	}

@@ -48,7 +48,6 @@ import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammar.Grammar;
 import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammar.SchemaLessGrammar;
@@ -83,7 +82,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected FidelityOptions fidelityOptions;
 	protected EncodingOptions encodingOptions;
-	
+
 	protected SchemaIdResolver schemaIdResolver;
 
 	protected QName[] dtrMapTypes;
@@ -100,8 +99,11 @@ public class DefaultEXIFactory implements EXIFactory {
 	/* default: -1 == unbounded */
 	protected int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 
-	/* default: no profile */
-	protected String profile;
+	/* default: true */
+	protected boolean localValuePartitions = true;
+
+	// /* default: no profile */
+	// protected String profile;
 
 	/* default: use no specify bod coder */
 	protected EXIBodyEncoder bodyEncoder;
@@ -118,7 +120,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		// factory.setGrammar(GrammarFactory.newInstance()
 		// .createSchemaLessGrammar());
 		factory.setGrammar(new SchemaLessGrammar());
-		
+
 		factory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 	}
 
@@ -139,27 +141,27 @@ public class DefaultEXIFactory implements EXIFactory {
 		return fidelityOptions;
 	}
 
-	public void setProfile(String profileName) throws UnsupportedOption {
-		if (profileName == null) {
-			// un-set profile
-			this.profile = profileName;
-			// TODO profile(s)
-		} else if (UCD_PROFILE.equals(profileName)) {
-			this.profile = profileName;
-			// what does the profile define
-			// 1. valuePartitionCapacity == 0
-			this.setValuePartitionCapacity(0);
-			// 2. no built-in grammars --> no learning
-			// 3. no EXI Options in header
-		} else {
-			throw new UnsupportedOption("Profile '" + profileName
-					+ "' unknown.");
-		}
-	}
-
-	public boolean usesProfile(String profileName) {
-		return (profileName.equals(this.profile));
-	}
+	// public void setProfile(String profileName) throws UnsupportedOption {
+	// if (profileName == null) {
+	// // un-set profile
+	// this.profile = profileName;
+	// // TODO profile(s)
+	// } else if (UCD_PROFILE.equals(profileName)) {
+	// this.profile = profileName;
+	// // what does the profile define
+	// // 1. valuePartitionCapacity == 0
+	// this.setValuePartitionCapacity(0);
+	// // 2. no built-in grammars --> no learning
+	// // 3. no EXI Options in header
+	// } else {
+	// throw new UnsupportedOption("Profile '" + profileName
+	// + "' unknown.");
+	// }
+	// }
+	//
+	// public boolean usesProfile(String profileName) {
+	// return (profileName.equals(this.profile));
+	// }
 
 	public void setEncodingOptions(EncodingOptions encodingOptions) {
 		this.encodingOptions = encodingOptions;
@@ -168,7 +170,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	public EncodingOptions getEncodingOptions() {
 		return encodingOptions;
 	}
-	
+
 	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver) {
 		this.schemaIdResolver = schemaIdResolver;
 	}
@@ -176,7 +178,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	public SchemaIdResolver getSchemaIdResolver() {
 		return this.schemaIdResolver;
 	}
-	
+
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations) {
 		if (dtrMapTypes == null || dtrMapRepresentations == null
@@ -272,6 +274,14 @@ public class DefaultEXIFactory implements EXIFactory {
 		return valuePartitionCapacity;
 	}
 
+	public void setLocalValuePartitions(boolean useLocalValuePartitions) {
+		this.localValuePartitions = useLocalValuePartitions;
+	}
+
+	public boolean isLocalValuePartitions() {
+		return localValuePartitions;
+	}
+
 	// some consistency and sanity checks
 	protected void doSanityCheck() throws EXIException {
 
@@ -282,32 +292,32 @@ public class DefaultEXIFactory implements EXIFactory {
 					"(Pre-)Compression and selfContained elements cannot work together");
 		}
 
-//		// ultra-constrained device profile
-//		if (UCD_PROFILE.equals(profile)) {
-//			if (valuePartitionCapacity != 0) {
-//				throw new EXIException(
-//						"Ultra-constrained device profile does not permit any string table entries");
-//			}
-//
-//			if (getEncodingOptions().isOptionEnabled(
-//					EncodingOptions.INCLUDE_OPTIONS)) {
-//				throw new EXIException(
-//						"Ultra-constrained device profile does not permit including Options document in EXI header");
-//			}
-//
-//			if (getFidelityOptions().isFidelityEnabled(
-//					FidelityOptions.FEATURE_PREFIX)) {
-//				throw new EXIException(
-//						"Ultra-constrained device profile does not permit preserving preifxes");
-//			}
-//
-//			if (getCodingMode() == CodingMode.PRE_COMPRESSION
-//					&& getCodingMode() == CodingMode.COMPRESSION) {
-//				throw new EXIException(
-//						"Ultra-constrained device profile does not support (Pre-)Compression");
-//			}
-//
-//		}
+		// // ultra-constrained device profile
+		// if (UCD_PROFILE.equals(profile)) {
+		// if (valuePartitionCapacity != 0) {
+		// throw new EXIException(
+		// "Ultra-constrained device profile does not permit any string table entries");
+		// }
+		//
+		// if (getEncodingOptions().isOptionEnabled(
+		// EncodingOptions.INCLUDE_OPTIONS)) {
+		// throw new EXIException(
+		// "Ultra-constrained device profile does not permit including Options document in EXI header");
+		// }
+		//
+		// if (getFidelityOptions().isFidelityEnabled(
+		// FidelityOptions.FEATURE_PREFIX)) {
+		// throw new EXIException(
+		// "Ultra-constrained device profile does not permit preserving preifxes");
+		// }
+		//
+		// if (getCodingMode() == CodingMode.PRE_COMPRESSION
+		// && getCodingMode() == CodingMode.COMPRESSION) {
+		// throw new EXIException(
+		// "Ultra-constrained device profile does not support (Pre-)Compression");
+		// }
+		//
+		// }
 
 		// blockSize in NON compression mode? Just ignore it!
 	}
@@ -371,19 +381,19 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		doSanityCheck();
 
-//		if (ContextEXIBodyEncoder.USE_CONTEXT_CODER) {
-//			return new ContextEXIBodyEncoder(this);
-//		} else {
-			if (codingMode.usesRechanneling()) {
-				return new EXIBodyEncoderReordered(this);
+		// if (ContextEXIBodyEncoder.USE_CONTEXT_CODER) {
+		// return new ContextEXIBodyEncoder(this);
+		// } else {
+		if (codingMode.usesRechanneling()) {
+			return new EXIBodyEncoderReordered(this);
+		} else {
+			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
+				return new EXIBodyEncoderInOrderSC(this);
 			} else {
-				if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_SC)) {
-					return new EXIBodyEncoderInOrderSC(this);
-				} else {
-					return new EXIBodyEncoderInOrder(this);
-				}
-			}			
-//		}
+				return new EXIBodyEncoderInOrder(this);
+			}
+		}
+		// }
 
 	}
 
@@ -423,19 +433,34 @@ public class DefaultEXIFactory implements EXIFactory {
 		return new SAXDecoder(this);
 	}
 
-	
 	public StringEncoder createStringEncoder() {
 		// string encoder
 		StringEncoder stringEncoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
 				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
-			stringEncoder = new BoundedStringEncoderImpl(getValueMaxLength(),
+			stringEncoder = new BoundedStringEncoderImpl(
+					isLocalValuePartitions(), getValueMaxLength(),
 					getValuePartitionCapacity());
 		} else {
-			stringEncoder = new StringEncoderImpl();
+			stringEncoder = new StringEncoderImpl(isLocalValuePartitions());
 		}
-		
+
 		return stringEncoder;
+	}
+
+
+	public StringDecoder createStringDecoder() {
+		// string Decoder
+		StringDecoder stringDecoder;
+		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
+				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
+			stringDecoder = new BoundedStringDecoderImpl(isLocalValuePartitions(), getValueMaxLength(),
+					getValuePartitionCapacity());
+		} else {
+			stringDecoder = new StringDecoderImpl(isLocalValuePartitions());
+		}
+
+		return stringDecoder;
 	}
 	
 	public TypeEncoder createTypeEncoder() throws EXIException {
@@ -454,8 +479,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-						typeEncoder, dtrMapTypes,
-						dtrMapRepresentations, grammar);
+						typeEncoder, dtrMapTypes, dtrMapRepresentations,
+						grammar);
 			}
 
 		} else {
@@ -466,20 +491,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		return typeEncoder;
 	}
 
-	public StringDecoder createStringDecoder(){
-		// string Decoder
-		StringDecoder stringDecoder;
-		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
-				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
-			stringDecoder = new BoundedStringDecoderImpl(getValueMaxLength(),
-					getValuePartitionCapacity());
-		} else {
-			stringDecoder = new StringDecoderImpl();
-		}
-		
-		return stringDecoder;
-	}
-	
 	public TypeDecoder createTypeDecoder() throws EXIException {
 		TypeDecoder typeDecoder;
 
@@ -496,8 +507,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-						typeDecoder, dtrMapTypes,
-						dtrMapRepresentations, grammar);
+						typeDecoder, dtrMapTypes, dtrMapRepresentations,
+						grammar);
 			}
 		} else {
 			// strings only
@@ -514,7 +525,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			EXIFactory copy = (EXIFactory) super.clone();
 			// return...
 			return copy;
-			
+
 		} catch (CloneNotSupportedException e) {
 			throw new IllegalStateException(e);
 		}
@@ -562,10 +573,12 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return fidelityOptions.hashCode() ^ (isFragment ? 1 : 0) ^ codingMode.hashCode() ^ blockSize ^ valueMaxLength ^ valuePartitionCapacity;
+		return fidelityOptions.hashCode() ^ (isFragment ? 1 : 0)
+				^ codingMode.hashCode() ^ blockSize ^ valueMaxLength
+				^ valuePartitionCapacity;
 	}
 
 	@Override
