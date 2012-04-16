@@ -76,7 +76,7 @@ public interface Rule extends Serializable {
 	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	/*
-	 * TODO move to SchemaInformedRule
+	 * 
 	 */
 	public void addRule(Event event, Rule rule);
 

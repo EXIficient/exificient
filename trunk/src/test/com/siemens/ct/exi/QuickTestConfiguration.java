@@ -21,11 +21,13 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.data.W3CTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;
+	public static final boolean XSD_TYPES_ONLY = true; /* default: false */
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -119,8 +121,8 @@ public class QuickTestConfiguration {
 		// blockSize = 40;
 		// blockSize = 200;
 		// valueMaxLength = 0;
-		valuePartitionCapacity = 4;
-		localValuePartitions = false;
+		// valuePartitionCapacity = 4;
+		// localValuePartitions = false;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");
@@ -135,8 +137,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

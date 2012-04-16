@@ -98,7 +98,7 @@ public abstract class AbstractTestCoder {
 	protected static EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
 		String xsdLocation = QuickTestConfiguration.getXsdLocation();
-		if (xsdLocation == null || xsdLocation.length() == 0) {
+		if (QuickTestConfiguration.XSD_TYPES_ONLY || xsdLocation == null || xsdLocation.length() == 0) {
 			ef.setGrammar(getXSDTypesOnlyGrammar());
 		} else {
 			ef.setGrammar(getGrammar(xsdLocation));	

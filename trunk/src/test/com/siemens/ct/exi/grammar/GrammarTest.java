@@ -22,6 +22,8 @@ import java.io.ByteArrayInputStream;
 
 import javax.xml.namespace.QName;
 
+import org.custommonkey.xmlunit.XMLConstants;
+
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.GrammarFactory;
@@ -522,6 +524,14 @@ public class GrammarTest extends TestCase {
 		startTag.learnAttribute(a);
 		assertTrue(startTag.getNumberOfEvents() == 6);
 		// Note: element cannot learn AT
+		
+		
+		// learn multiple AT(xsi:type) --> at most one AT(xsi:type)
+		QNameContext qncAtxsiType = new QNameContext(2, 1, new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type"), 0);
+		startTag.learnAttribute(new Attribute(qncAtxsiType, null, null));
+		startTag.learnAttribute(new Attribute(qncAtxsiType, null, null));
+		assertTrue(startTag.getNumberOfEvents() == 7);
+
 
 	}
 
