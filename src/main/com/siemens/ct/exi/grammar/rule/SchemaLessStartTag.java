@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.EventType;
 import com.siemens.ct.exi.grammar.event.StartElement;
@@ -52,6 +53,7 @@ public class SchemaLessStartTag extends SchemaLessContent {
 	protected SchemaLessElement elementContent;
 
 	protected boolean learnedEE = false;
+	protected boolean learnedXsiType = false;
 	
 	public SchemaLessStartTag() {
 		super();
@@ -135,7 +137,16 @@ public class SchemaLessStartTag extends SchemaLessContent {
 
 	@Override
 	public void learnAttribute(Attribute at) {
-		addRule(at, this);
+		// Errata, xsi:type not learned			
+		QNameContext qnc = at.getQNameContext();
+		if(qnc.getNamespaceUriID() == 2 && qnc.getLocalNameID() == 1) {
+			if(!learnedXsiType) {
+				addRule(at, this);
+				learnedXsiType = true;
+			}
+		} else {
+			addRule(at, this);
+		}
 	}
 	
 }
