@@ -21,13 +21,12 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.data.W3CTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;
-	public static final boolean XSD_TYPES_ONLY = true; /* default: false */
+	public static boolean XSD_TYPES_ONLY = false; /* default: false */
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -53,6 +52,8 @@ public class QuickTestConfiguration {
 	public static int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	public static int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	public static boolean localValuePartitions = true;
+	public static int maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+	public static int maximumNumberOfBuiltInProductions = -1;
 
 	public static QName[] selfContainedElements;
 
@@ -123,6 +124,8 @@ public class QuickTestConfiguration {
 		// valueMaxLength = 0;
 		// valuePartitionCapacity = 4;
 		// localValuePartitions = false;
+		XSD_TYPES_ONLY = true;
+		maximumNumberOfBuiltInProductions = 0;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");
@@ -137,8 +140,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

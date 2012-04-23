@@ -195,6 +195,16 @@ public class SchemaTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setValuePartitionCapacity(4);
 		testCaseOptions.lastElement().setLocalValuePartitions(false);
 		
+		// #10 grammar restrictions, needs schema-informed mode!
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setMaximumNumberOfEvolvingBuiltInElementGrammars(0);
+		testCaseOptions.lastElement().setSchemaLocation(""); // xsd-types only
+		
 		
 //		// #9 UCD Profile
 //		testCaseOptions.add(new TestCaseOption());

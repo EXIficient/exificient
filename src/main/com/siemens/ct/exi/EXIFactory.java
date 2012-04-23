@@ -292,6 +292,63 @@ public interface EXIFactory extends Cloneable {
 	public boolean isLocalValuePartitions();
 
 	/**
+	 * The EXI profile defines a parameter that restricts the maximum number of
+	 * elements for which evolving built-in element grammars can be
+	 * instantiated.
+	 * 
+	 * <p>
+	 * The value "unbounded" (-1) indicates that no restrictions are used and
+	 * represents the behavior of the EXI 1.0 specification
+	 * </p>
+	 * 
+	 * @param maximumNumberOfEvolvingBuiltInElementGrammars
+	 */
+	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(
+			int maximumNumberOfEvolvingBuiltInElementGrammars);
+
+	/**
+	 * The EXI profile defines a parameter that restricts the maximum number of
+	 * elements for which evolving built-in element grammars can be
+	 * instantiated.
+	 * 
+	 * @return
+	 */
+	public int getMaximumNumberOfEvolvingBuiltInElementGrammars();
+
+	/**
+	 * The EXI profile defines a parameter that restricts the maximum number of
+	 * top-level productions that can be dynamically inserted in built-in
+	 * element grammars.
+	 * 
+	 * <p>
+	 * The value "unbounded" (-1) indicates that no restrictions are used and
+	 * represents the behavior of the EXI 1.0 specification
+	 * </p>
+	 * 
+	 * @param maximumNumberOfEvolvingBuiltInElementGrammars
+	 */
+	public void setMaximumNumberOfBuiltInProductions(
+			int maximumNumberOfBuiltInProductions);
+
+	/**
+	 * The EXI profile defines a parameter that restricts the maximum number of
+	 * top-level productions that can be dynamically inserted in built-in
+	 * element grammars.
+	 * 
+	 * @return
+	 */
+	public int getMaximumNumberOfBuiltInProductions();
+
+	/**
+	 * The EXI profile defines parameters that restrict grammar learning. This
+	 * is a convenience method to indicate whether grammar restriction is in
+	 * use.
+	 * 
+	 * @return
+	 */
+	public boolean isGrammarLearningDisabled();
+
+	/**
 	 * Allows to use another body encoder implementation. The provided class
 	 * needs to implement the EXIBodyEncoder interface.
 	 * 
