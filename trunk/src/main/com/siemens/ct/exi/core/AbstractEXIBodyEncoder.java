@@ -87,7 +87,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	/** Encoder Context */
 	EncoderContext encoderContext;
 
-	static final boolean LIMIT_GRAMMAR_LEARNING = false;
+	protected boolean grammarLearningDisabled;
 	
 	public AbstractEXIBodyEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
@@ -100,6 +100,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		typeEncoder = exiFactory.createTypeEncoder();
 		encodingOptions = exiFactory.getEncodingOptions();
+		/* Note: we currently do not allow fine-grained grammar learning */
+		grammarLearningDisabled = exiFactory.isGrammarLearningDisabled();
 
 		this.encoderContext = new EncoderContextImpl(exiFactory.getGrammar()
 				.getGrammarContext(), exiFactory.createStringEncoder());
@@ -323,7 +325,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	
 	// Note: returning TRUE means currentRule has been changed!
 	private boolean limitGrammarLearning() throws EXIException, IOException {
-		if(LIMIT_GRAMMAR_LEARNING && grammar.isSchemaInformed() && !getCurrentRule().isSchemaInformed()) {
+		if(grammarLearningDisabled && grammar.isSchemaInformed() && !getCurrentRule().isSchemaInformed()) {
 			
 			String pfx = null;
 			if (this.preservePrefix) {

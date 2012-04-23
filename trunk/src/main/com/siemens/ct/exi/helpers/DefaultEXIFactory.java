@@ -101,6 +101,13 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	/* default: true */
 	protected boolean localValuePartitions = true;
+	
+	/* default: unbounded (-1) */
+	protected int maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+	protected int maximumNumberOfBuiltInProductions = -1;
+	/* default: false */
+	protected boolean grammarLearningDisabled = false; 
+	
 
 	// /* default: no profile */
 	// protected String profile;
@@ -281,6 +288,45 @@ public class DefaultEXIFactory implements EXIFactory {
 	public boolean isLocalValuePartitions() {
 		return localValuePartitions;
 	}
+	
+	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(int maximumNumberOfEvolvingBuiltInElementGrammars) {
+		if(maximumNumberOfEvolvingBuiltInElementGrammars >=0) {
+			this.maximumNumberOfEvolvingBuiltInElementGrammars = maximumNumberOfEvolvingBuiltInElementGrammars;
+		} else {
+			this.maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+		}
+		checkGrammarLearningDisabled();
+	}
+	
+	public int getMaximumNumberOfEvolvingBuiltInElementGrammars() {
+		return this.maximumNumberOfEvolvingBuiltInElementGrammars;
+	}
+	
+	public void setMaximumNumberOfBuiltInProductions(int maximumNumberOfBuiltInProductions) {
+		if(maximumNumberOfBuiltInProductions >= 0) {
+			this.maximumNumberOfBuiltInProductions = maximumNumberOfBuiltInProductions;
+		} else {
+			this.maximumNumberOfBuiltInProductions = -1;
+		}
+		checkGrammarLearningDisabled();
+	}
+	
+	public int getMaximumNumberOfBuiltInProductions() {
+		return this.maximumNumberOfBuiltInProductions;
+	}
+	
+	private void checkGrammarLearningDisabled() {
+		if(maximumNumberOfEvolvingBuiltInElementGrammars >=0 || maximumNumberOfBuiltInProductions >= 0 ) {
+			grammarLearningDisabled = true;
+		} else {
+			grammarLearningDisabled = false;
+		}
+	}
+	
+	public boolean isGrammarLearningDisabled() {
+		return this.grammarLearningDisabled;
+	}
+	
 
 	// some consistency and sanity checks
 	protected void doSanityCheck() throws EXIException {

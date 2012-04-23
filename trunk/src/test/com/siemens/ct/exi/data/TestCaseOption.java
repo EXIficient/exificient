@@ -37,10 +37,12 @@ public class TestCaseOption {
 	private int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	private int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	private boolean localValuePartitions = true;
+	private int maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+	private int maximumNumberOfBuiltInProductions = -1;
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
 	private EncodingOptions encodingOptions;
-	private String profile;
+	// private String profile;
 
 	public TestCaseOption() {
 		encodingOptions = EncodingOptions.createDefault();
@@ -147,6 +149,25 @@ public class TestCaseOption {
 	public boolean isLocalValuePartitions() {
 		return localValuePartitions;
 	}
+	
+	public void setMaximumNumberOfBuiltInProductions(int maximumNumberOfBuiltInProductions) {
+		this.maximumNumberOfBuiltInProductions = maximumNumberOfBuiltInProductions;
+		
+	}
+	
+	public int getMaximumNumberOfBuiltInProductions() {
+		return this.maximumNumberOfBuiltInProductions;
+		
+	}
+
+	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(int maximumNumberOfEvolvingBuiltInElementGrammars ) {
+		this.maximumNumberOfEvolvingBuiltInElementGrammars = maximumNumberOfEvolvingBuiltInElementGrammars;
+	}
+	
+	public int getMaximumNumberOfEvolvingBuiltInElementGrammars() {
+		return this.maximumNumberOfEvolvingBuiltInElementGrammars;
+	}
+
 
 	public void setEncodingOptions(EncodingOptions encodingOptions) {
 		this.encodingOptions = encodingOptions;
@@ -157,13 +178,13 @@ public class TestCaseOption {
 	}
 	
 	
-	public String getProfile() {
-		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
+//	public String getProfile() {
+//		return profile;
+//	}
+//
+//	public void setProfile(String profile) {
+//		this.profile = profile;
+//	}
 
 	@Override
 	public String toString() {
@@ -198,10 +219,23 @@ public class TestCaseOption {
 		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY ) {
 			sb.append(",vpc=" + valuePartitionCapacity);
 		}
-		// profile
-		if (this.profile != null) {
-			sb.append(",profile=" + profile);
+		// localValuePartitions
+		if (this.localValuePartitions) {
+			sb.append(",localValuePartitions=TRUE");
 		}
+		// maximumNumberOfBuiltInProductions
+		if (this.maximumNumberOfBuiltInProductions >= 0) {
+			sb.append(",maximumNumberOfBuiltInProductions=" + maximumNumberOfBuiltInProductions);
+		}
+		// maximumNumberOfEvolvingBuiltInElementGrammars
+		if (this.maximumNumberOfEvolvingBuiltInElementGrammars >= 0) {
+			sb.append(",maximumNumberOfEvolvingBuiltInElementGrammars=" + maximumNumberOfEvolvingBuiltInElementGrammars);
+		}
+		
+//		// profile
+//		if (this.profile != null) {
+//			sb.append(",profile=" + profile);
+//		}
 
 		return sb.toString();
 	}

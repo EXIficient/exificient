@@ -35,7 +35,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		GeneralTestCase.setConfigurationPerson ( );
+		// GeneralTestCase.setConfigurationPerson ( );
 		// GeneralTestCase.setConfigurationPersonAdjusted ( );
 		// GeneralTestCase.setConfigurationPersonal ( );
 		// GeneralTestCase.setConfigurationUnbounded ( );
@@ -58,7 +58,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationAttributes ( );
 		// GeneralTestCase.setConfigurationPI1 ( );
 		// GeneralTestCase.setConfigurationDocType();
-		// GeneralTestCase.setConfigurationDocType0 ( );
+		GeneralTestCase.setConfigurationDocType0 ( );
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
 		// GeneralTestCase.setConfigurationDocType3 ( );
@@ -244,6 +244,17 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(4);
 		testCaseOptions.lastElement().setLocalValuePartitions(false);
+		
+		// #14 grammar restrictions, needs schema-informed mode!
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().setMaximumNumberOfBuiltInProductions(0);
+		testCaseOptions.lastElement().setSchemaLocation(""); // xsd-types only
+		
 		
 //		// #13 UCD Profile
 //		testCaseOptions.add(new TestCaseOption());

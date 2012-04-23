@@ -93,6 +93,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setEncodingOptions(tco.getEncodingOptions());
 		
 		ef.setLocalValuePartitions(tco.isLocalValuePartitions());
+		ef.setMaximumNumberOfBuiltInProductions(tco.getMaximumNumberOfBuiltInProductions());
+		ef.setMaximumNumberOfEvolvingBuiltInElementGrammars(tco.getMaximumNumberOfEvolvingBuiltInElementGrammars());
 		
 //		if (tco.getProfile() != null) {
 //			ef.setProfile(tco.getProfile());
@@ -306,6 +308,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		// schema-informed
 		_test(QuickTestConfiguration.getXsdLocation(), noValidOptions);
+		
+//		// schema-informed (XSD-types only)
+//		_test("", noValidOptions);
 	}
 	
 	protected void _test() throws Exception {

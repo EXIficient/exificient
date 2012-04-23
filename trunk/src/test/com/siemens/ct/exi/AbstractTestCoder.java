@@ -87,6 +87,8 @@ public abstract class AbstractTestCoder {
 			ef.setValuePartitionCapacity(QuickTestConfiguration.valuePartitionCapacity);
 		}
 		ef.setLocalValuePartitions(QuickTestConfiguration.localValuePartitions);
+		ef.setMaximumNumberOfBuiltInProductions(QuickTestConfiguration.maximumNumberOfBuiltInProductions);
+		ef.setMaximumNumberOfEvolvingBuiltInElementGrammars(QuickTestConfiguration.maximumNumberOfEvolvingBuiltInElementGrammars);
 		// ef.setProfile(QuickTestConfiguration.PROFILE);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
