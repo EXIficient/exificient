@@ -161,5 +161,48 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderLessCommon2.xml.exi");
 	}
+	
+	
+	
 
+	@Test
+	public void testEXIOptionsHeaderProfile1() throws Exception {
+		// set up configuration
+		setConfigurationEXIOptionsHeaderProfile1();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationEXIOptionsHeaderProfile1() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/EXIOptionsHeader/EXIOptionsHeader.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/EXIOptionsHeader/EXIOptionsHeaderProfile1.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderProfile1.xml.exi");
+	}
+	
+
+	
+	
+
+	@Test
+	public void testEXIOptionsHeaderProfile2() throws Exception {
+		// set up configuration
+		setConfigurationEXIOptionsHeaderProfile2();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationEXIOptionsHeaderProfile2() {
+		QuickTestConfiguration
+				.setXsdLocation("./data/EXIOptionsHeader/EXIOptionsHeader.xsd");
+		QuickTestConfiguration
+				.setXmlLocation("./data/EXIOptionsHeader/EXIOptionsHeaderProfile2.xml");
+		QuickTestConfiguration
+				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderProfile2.xml.exi");
+	}
+	
 }

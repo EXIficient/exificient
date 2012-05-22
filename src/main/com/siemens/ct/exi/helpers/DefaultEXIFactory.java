@@ -675,6 +675,18 @@ public class DefaultEXIFactory implements EXIFactory {
 		if (this.valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
 			sb.append("[valuePartitionCapacity=" + valuePartitionCapacity + "]");
 		}
+		// localValuePartitions
+		if(!isLocalValuePartitions()) {
+			sb.append("[localValuePartitions=" + isLocalValuePartitions() + "]");
+		}
+		// maximumNumberOfBuiltInProductions
+		if(this.getMaximumNumberOfBuiltInProductions() >= 0) {
+			sb.append("[maximumNumberOfBuiltInProductions=" + getMaximumNumberOfBuiltInProductions() + "]");
+		}
+		// maximumNumberOfEvolvingBuiltInElementGrammars
+		if( this.getMaximumNumberOfEvolvingBuiltInElementGrammars() >= 0) {
+			sb.append("[maximumNumberOfEvolvingBuiltInElementGrammars=" + this.getMaximumNumberOfEvolvingBuiltInElementGrammars() + "]");
+		}
 
 		return sb.toString();
 	}
