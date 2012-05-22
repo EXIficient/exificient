@@ -339,7 +339,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			QNameValue type = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI, "anyType", pfx);
 			
 			// needed to avoid grammar learning
-			this.encodeAttributeXsiType(type, pfx);
+			this.encodeAttributeXsiType(type, pfx, true);
 			
 			return true;
 		} else {
@@ -468,7 +468,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		}
 	}
 
+	
 	public void encodeAttributeXsiType(Value type, String pfx)
+	throws EXIException, IOException {
+		this.encodeAttributeXsiType(type, pfx, false);
+	}
+	
+	private void encodeAttributeXsiType(Value type, String pfx, final boolean force2ndLevelProduction)
 			throws EXIException, IOException {
 		/*
 		 * The value of each AT (xsi:type) event is represented as a QName.
@@ -539,15 +545,23 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// different channels in compression mode
 
 			// try first (learned) xsi:type attribute
-			EventInformation ei = currentRule.lookForAttribute(
-					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-					Constants.XSI_TYPE);
+			EventInformation ei;
+			if(force2ndLevelProduction) {
+				// only 2nd level of interest
+				ei = null;
+			} else {
+				ei = currentRule.lookForAttribute(
+						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+						Constants.XSI_TYPE);	
+			}
 
 			if (ei != null) {
 				encode1stLevelEventCode(ei.getEventCode());
 			} else {
 				// try generic attribute
-				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+				if(!force2ndLevelProduction) {
+					ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);					
+				}
 
 				if (ei != null) {
 					encode1stLevelEventCode(ei.getEventCode());
