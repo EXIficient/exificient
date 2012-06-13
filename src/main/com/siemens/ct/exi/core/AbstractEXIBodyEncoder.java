@@ -788,6 +788,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 			next = ei.next;
 		} else {
+			
+			if(this.limitGrammarLearning()) {
+				currentRule = this.getCurrentRule();
+			}
+			
 			ei = currentRule.lookForAttributeNS(uri);
 			if (ei == null) {
 				ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
@@ -864,25 +869,27 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 				if (ei == null) {
 					// Undeclared AT(*), 2nd level
-					if(this.limitGrammarLearning()) {
-						currentRule = this.getCurrentRule();
+					
+//					if(this.limitGrammarLearning()) {
+//						currentRule = this.getCurrentRule();
+//						
+//						ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+//						assert(ei != null);
+//						// event-code
+//						encode1stLevelEventCode(ei.getEventCode());
+//						// string value
+//						isTypeValid(BuiltIn.DEFAULT_DATATYPE, value);
+//
+//						// qualified name
+//						qnc = this.encoderContext.encodeQName(uri, localName,
+//								channel);
+//						
+//						next = ei.next;
+//					} else {
 						
-						ei = currentRule.lookForEvent(EventType.ATTRIBUTE_GENERIC);
-						assert(ei != null);
-						// event-code
-						encode1stLevelEventCode(ei.getEventCode());
-						// string value
-						isTypeValid(BuiltIn.DEFAULT_DATATYPE, value);
-
-						// qualified name
-						qnc = this.encoderContext.encodeQName(uri, localName,
-								channel);
-						
-						next = ei.next;
-					} else {
 						qnc = encodeUndeclaredAT(currentRule, uri, localName);
 						next = currentRule;	
-					}
+//					}
 				} else {
 					// Declared AT(uri:*) or AT(*) on 1st level
 					qnc = encodeDeclaredAT(ei, uri, localName);
