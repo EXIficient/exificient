@@ -20,7 +20,6 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -40,8 +39,6 @@ public class DocEnd extends AbstractSchemaInformedRule {
 
 	public DocEnd() {
 		super();
-		// add EE rule
-		addTerminalRule(new EndDocument());
 	}
 
 	public DocEnd(String label) {

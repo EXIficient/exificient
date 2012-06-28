@@ -29,7 +29,6 @@ import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
@@ -48,16 +47,12 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 
 	protected IntegerValue validValue;
 
-	protected final IntegerType integerType;
-
 	protected final IntegerValue lowerBound;
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitUnsignedIntegerDatatype(IntegerType integerType,
-			IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
+	public NBitUnsignedIntegerDatatype(IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
 		super(BuiltInType.NBIT_UNSIGNED_INTEGER, schemaType);
-		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
 
 		// assert (upperBound >= lowerBound);
@@ -68,10 +63,6 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 		// calculate number of bits to represent range
 		IntegerValue diff = upperBound.subtract(lowerBound);
 		numberOfBits4Range = MethodsBag.getCodingLength(diff.intValue() + 1);
-	}
-
-	public IntegerType getIntegerType() {
-		return integerType;
 	}
 
 	public IntegerValue getLowerBound() {

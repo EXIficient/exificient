@@ -29,7 +29,6 @@ import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -46,16 +45,10 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = 8260894749324499802L;
 
 	protected IntegerValue lastUnsignedInteger;
-	protected final IntegerType integerType;
 
-	public UnsignedIntegerDatatype(IntegerType integerType, QName schemaType) {
+	public UnsignedIntegerDatatype(QName schemaType) {
 		super(BuiltInType.UNSIGNED_INTEGER, schemaType);
-		this.integerType = integerType;
 		this.rcs = new XSDIntegerCharacterSet();
-	}
-
-	public IntegerType getIntegerType() {
-		return integerType;
 	}
 
 	protected boolean isValidString(String value) {

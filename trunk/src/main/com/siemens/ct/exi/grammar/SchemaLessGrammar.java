@@ -26,6 +26,8 @@ import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.GrammarUriContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.grammar.event.EndDocument;
+import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
 import com.siemens.ct.exi.grammar.rule.Document;
 import com.siemens.ct.exi.grammar.rule.Fragment;
@@ -96,12 +98,14 @@ public class SchemaLessGrammar extends AbstractGrammar {
 
 	private void init() {
 		// DocEnd rule
-		Rule builtInDocEndGrammar = new DocEnd("DocEnd");
+		DocEnd builtInDocEndGrammar = new DocEnd("DocEnd");
+		builtInDocEndGrammar.addTerminalRule(new EndDocument());
 		// DocContent rule
 		Rule builtInDocContentGrammar = new SchemaLessDocContent(
 				builtInDocEndGrammar, "DocContent");
 		// Document rule
-		documentGrammar = new Document(builtInDocContentGrammar, "Document");
+		documentGrammar = new Document("Document");
+		documentGrammar.addRule(new StartDocument(), builtInDocContentGrammar);
 	}
 
 	public final boolean isBuiltInXMLSchemaTypesOnly() {
@@ -132,10 +136,8 @@ public class SchemaLessGrammar extends AbstractGrammar {
 		/*
 		 * Fragment
 		 */
-		fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
-				"Fragment");
-		// fragmentGrammar.addRule(new StartDocument(),
-		// builtInFragmentContentGrammar);
+		fragmentGrammar = new Fragment("Fragment");
+		fragmentGrammar.addRule(new StartDocument(), builtInFragmentContentGrammar);
 
 		return fragmentGrammar;
 	}

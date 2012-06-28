@@ -33,11 +33,8 @@ import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.BooleanFacetDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatetimeDatatype;
-import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.datatype.ListDatatype;
-import com.siemens.ct.exi.datatype.NBitUnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
-import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
@@ -248,8 +245,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Integer", "");
 
 		assertTrue(BuiltInType.INTEGER == dt.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dt;
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
+		// IntegerDatatype idt = (IntegerDatatype) dt;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -266,8 +263,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Integer", "");
 
 		assertTrue(BuiltInType.INTEGER == dt.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dt;
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
+		// IntegerDatatype idt = (IntegerDatatype) dt;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -284,8 +281,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Integer", "");
 
 		assertTrue(BuiltInType.INTEGER == dt.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dt;
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
+		// IntegerDatatype idt = (IntegerDatatype) dt;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -302,8 +299,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"Integer", "");
 
 		assertTrue(BuiltInType.INTEGER == dt.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dt;
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_64);
+		// IntegerDatatype idt = (IntegerDatatype) dt;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_64);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -320,8 +317,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -338,8 +335,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_64);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_64);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -356,8 +353,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -374,8 +371,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_16);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_16);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -390,8 +387,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,"UnsignedInteger", "");
 		assertTrue(BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -409,8 +406,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -428,8 +425,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_64);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_64);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -447,8 +444,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"UnsignedInteger", "");
 
 		assertTrue(dt.toString(), BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -465,8 +462,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_8);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_8);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -483,8 +480,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_8);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_8);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -503,8 +500,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_BIG);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_BIG);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -523,8 +520,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_64);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_64);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -543,8 +540,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_32);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -563,8 +560,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"NBit", "");
 
 		assertTrue(BuiltInType.NBIT_UNSIGNED_INTEGER == dt.getBuiltInType());
-		NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
-		assertTrue(nbdt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
+		// NBitUnsignedIntegerDatatype nbdt = (NBitUnsignedIntegerDatatype) dt;
+		// assertTrue(nbdt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -623,8 +620,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue(BuiltInType.INTEGER == dtl.getListDatatype()
 				.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dtl.getListDatatype();
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
+		// IntegerDatatype idt = (IntegerDatatype) dtl.getListDatatype();
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		
 		assertTrue(dt.getRestrictedCharacterSet().equals(new XSDIntegerCharacterSet()));
 	}
@@ -811,8 +808,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				"myPositiveInteger", "");
 
 		assertTrue("" + dt.getBuiltInType(),BuiltInType.UNSIGNED_INTEGER == dt.getBuiltInType());
-		UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
-		assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
+		// UnsignedIntegerDatatype uidt = (UnsignedIntegerDatatype) dt;
+		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
 		
 
 		Grammar grammar = getGrammar(schemaAsString);
@@ -862,8 +859,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		assertTrue("" + dt.getBuiltInType(), BuiltInType.INTEGER == dt
 				.getBuiltInType());
-		IntegerDatatype idt = (IntegerDatatype) dt;
-		assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
+		// IntegerDatatype idt = (IntegerDatatype) dt;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 
 		Grammar grammar = getGrammar(schemaAsString);
 		GrammarContext gc = grammar.getGrammarContext();

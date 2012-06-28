@@ -78,7 +78,9 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammar.event.Attribute;
 import com.siemens.ct.exi.grammar.event.AttributeNS;
 import com.siemens.ct.exi.grammar.event.Characters;
+import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammar.event.StartDocument;
 import com.siemens.ct.exi.grammar.event.StartElement;
 import com.siemens.ct.exi.grammar.event.StartElementNS;
 import com.siemens.ct.exi.grammar.rule.DocEnd;
@@ -1040,18 +1042,20 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		 * localName, then by uri. http://www.w3.org/TR/exi/#informedDocGrammars
 		 */
 		// DocEnd rule
-		Rule builtInDocEndGrammar = new DocEnd("DocEnd");
+		DocEnd builtInDocEndGrammar = new DocEnd("DocEnd");
+		builtInDocEndGrammar.addTerminalRule(new EndDocument());
 		// DocContent rule
-		SchemaInformedRule builtInDocContentGrammar = new SchemaInformedDocContent(
-				builtInDocEndGrammar, "DocContent");
+		SchemaInformedRule builtInDocContentGrammar = new SchemaInformedDocContent("DocContent");
+		builtInDocContentGrammar.addRule(START_ELEMENT_GENERIC, builtInDocEndGrammar);
+		
 		// DocContent rule & add global elements (sorted)
 		for (StartElement globalElement : globalElements) {
 			builtInDocContentGrammar.addRule(globalElement,
 					builtInDocEndGrammar);
 		}
 		// Document rule
-		Document documentGrammar = new Document(builtInDocContentGrammar,
-				"Document");
+		Document documentGrammar = new Document("Document");
+		documentGrammar.addRule(new StartDocument(), builtInDocContentGrammar);
 
 		/*
 		 * FragmentContent grammar represents the number of unique element
@@ -1062,13 +1066,19 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 		// Fragment Content
 		SchemaInformedRule builtInFragmentContentGrammar = new SchemaInformedFragmentContent(
 				"FragmentContent");
+		// SE(*) --> FragmentContent
+		builtInFragmentContentGrammar.addRule(START_ELEMENT_GENERIC, builtInFragmentContentGrammar);
+		// ED
+		builtInFragmentContentGrammar.addTerminalRule(new EndDocument());
+		
+		
 		for (StartElement fragmentElement : fragmentElements) {
 			builtInFragmentContentGrammar.addRule(fragmentElement,
 					builtInFragmentContentGrammar);
 		}
 		// Fragment
-		Fragment fragmentGrammar = new Fragment(builtInFragmentContentGrammar,
-				"Fragment");
+		Fragment fragmentGrammar = new Fragment( "Fragment");
+		fragmentGrammar.addRule(new StartDocument(), builtInFragmentContentGrammar);
 
 		/*
 		 * create schema informed grammar
@@ -1980,7 +1990,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case INTEGER_32:
 			case INTEGER_16:
 			case INTEGER_8:
-				datatype = new NBitUnsignedIntegerDatatype(intType,
+				datatype = new NBitUnsignedIntegerDatatype(
 						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
 						schemaType);
 				break;
@@ -2026,8 +2036,7 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case UNSIGNED_INTEGER_32:
 			case UNSIGNED_INTEGER_16:
 			case UNSIGNED_INTEGER_8:
-				// int
-				datatype = new UnsignedIntegerDatatype(intType, schemaType);
+				datatype = new UnsignedIntegerDatatype(schemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Unsigned Integer Type: "
@@ -2042,9 +2051,8 @@ public class XSDGrammarBuilder extends EXIContentModelBuilder {
 			case INTEGER_64:
 			case INTEGER_32:
 			case INTEGER_16:
-			case INTEGER_8: // should be n-bit
-				// int
-				datatype = new IntegerDatatype(intType, schemaType);
+			case INTEGER_8:
+				datatype = new IntegerDatatype(schemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Integer Type: "
