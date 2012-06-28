@@ -41,16 +41,12 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedRule {
 
 	private static final long serialVersionUID = -2644676723844219418L;
 
-	protected Rule docEnd;
-
-	public SchemaInformedDocContent(Rule docEnd) {
-		this.docEnd = docEnd;
-		// SE(*) --> DocEnd
-		this.addRule(START_ELEMENT_GENERIC, docEnd);
+	public SchemaInformedDocContent() {
+		super();
 	}
 
-	public SchemaInformedDocContent(Rule docEnd, String label) {
-		this(docEnd);
+	public SchemaInformedDocContent(String label) {
+		this(); // docEnd);
 		this.setLabel(label);
 	}
 

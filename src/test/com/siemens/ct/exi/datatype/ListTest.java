@@ -37,7 +37,6 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
-import com.siemens.ct.exi.types.IntegerType;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
@@ -50,7 +49,7 @@ public class ListTest extends AbstractTestCase {
 
 	public void testListInteger1() throws IOException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(IntegerType.INTEGER_32, null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
@@ -71,7 +70,7 @@ public class ListTest extends AbstractTestCase {
 	
 	public void testListIntegerLexical1() throws IOException, EXIException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(IntegerType.INTEGER_32, null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
@@ -112,7 +111,7 @@ public class ListTest extends AbstractTestCase {
 	public void testListIntegerLexical2() throws IOException, EXIException {
 		char special = '\u03D7';
 		StringValue s = new StringValue("100" + special);
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(IntegerType.INTEGER_32, null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
@@ -154,7 +153,7 @@ public class ListTest extends AbstractTestCase {
 		String sRes = "1 0 127 -127";
 		IntegerValue min = IntegerValue.valueOf(-128);
 		IntegerValue max = IntegerValue.valueOf(127);
-		ListDatatype ldtInteger = new ListDatatype(new NBitUnsignedIntegerDatatype(IntegerType.INTEGER_32, min, max, null), null);
+		ListDatatype ldtInteger = new ListDatatype(new NBitUnsignedIntegerDatatype(min, max, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);

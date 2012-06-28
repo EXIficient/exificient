@@ -21,7 +21,6 @@ package com.siemens.ct.exi.grammar.rule;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartDocument;
 
 /**
  * 
@@ -37,16 +36,12 @@ public class Document extends AbstractSchemaInformedRule {
 
 	private static final long serialVersionUID = 2859986001661016733L;
 
-	Rule docContent;
-
-	public Document(Rule docContent) {
+	public Document() {
 		super();
-		this.docContent = docContent;
-		addRule(new StartDocument(), docContent);
 	}
 
-	public Document(Rule docContent, String label) {
-		this(docContent);
+	public Document(String label) {
+		this();
 		this.setLabel(label);
 	}
 

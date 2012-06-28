@@ -22,9 +22,9 @@ import java.io.ByteArrayInputStream;
 
 import javax.xml.namespace.QName;
 
-import org.custommonkey.xmlunit.XMLConstants;
-
 import junit.framework.TestCase;
+
+import org.custommonkey.xmlunit.XMLConstants;
 
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.context.GrammarContext;

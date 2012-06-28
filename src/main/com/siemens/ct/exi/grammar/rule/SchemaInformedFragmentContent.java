@@ -20,7 +20,6 @@ package com.siemens.ct.exi.grammar.rule;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.event.EndDocument;
 import com.siemens.ct.exi.grammar.event.EventType;
 
 /**
@@ -44,9 +43,7 @@ public class SchemaInformedFragmentContent extends AbstractSchemaInformedRule {
 	private static final long serialVersionUID = 2041418874823084368L;
 
 	public SchemaInformedFragmentContent() {
-		// SE(*) --> FragmentContent
-		this.addRule(START_ELEMENT_GENERIC, this);
-		addTerminalRule(new EndDocument());
+		super();
 	}
 
 	public SchemaInformedFragmentContent(String label) {

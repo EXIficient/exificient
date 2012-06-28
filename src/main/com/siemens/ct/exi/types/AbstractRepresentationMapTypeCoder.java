@@ -219,8 +219,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 				} else if ("double".equals(localPart)) {
 					datatype = new FloatDatatype(null);
 				} else if ("integer".equals(localPart)) {
-					datatype = new IntegerDatatype(IntegerType.INTEGER_BIG,
-							null);
+					datatype = new IntegerDatatype(null);
 				} else if ("string".equals(localPart)) {
 					datatype = new StringDatatype(null);
 				} else {
