@@ -40,7 +40,7 @@ import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.8
+ * @version 0.9
  */
 
 // Useful XML Schema RegExpr Links

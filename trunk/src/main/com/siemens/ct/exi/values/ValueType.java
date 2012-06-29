@@ -24,7 +24,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.8
+ * @version 0.9
  */
 
 public enum ValueType {

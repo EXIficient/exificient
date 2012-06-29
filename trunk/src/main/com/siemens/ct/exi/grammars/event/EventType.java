@@ -48,7 +48,7 @@ package com.siemens.ct.exi.grammars.event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.8
+ * @version 0.9
  */
 
 // DO NOT CHANGE ORDER!!

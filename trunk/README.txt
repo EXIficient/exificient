@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 EXIficient - open source implementation of the W3C Efficient XML Interchange (EXI) format specification
-Version 0.8, released October 6, 2011
+Version 0.9, released July ??, 2012
 http://exificient.sourceforge.net/
 
 The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
@@ -36,11 +36,17 @@ EXIficient supports the following specifications:
 EXIficient requires:
 
 * Java 1.5 or higher
-* Xerces2 Java Parser 2.9.11 or higher (schema-informed mode only)
-  (xercesImpl.jar & xml-apis.jar)
+* Xerces2 Java Parser (xercesImpl.jar) 2.9.11 or higher for schema-informed mode
 
 For usage information, please see the usage documentation available at
 http://exificient.sourceforge.net/.
+
+-------------------------------------------------------------------------
+CHANGES from version 0.8:
+-------------------------------------------------------------------------
+* Support for EXI profile parameters
+* Core parts (grammars & qname handling) revised to improve performance
+* Bug-fixes and code clean-up
 
 -------------------------------------------------------------------------
 CHANGES from version 0.7:
