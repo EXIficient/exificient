@@ -52,7 +52,7 @@ import com.siemens.ct.exi.TestSAXEncoder;
 import com.siemens.ct.exi.TestStAXDecoder;
 import com.siemens.ct.exi.TestStAXEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.util.FragmentUtilities;
 
@@ -105,13 +105,13 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// schema-less
 		} else if (tco.getSchemaLocation().length() == 0) {
 			// xsd-types informed
-			Grammar grammar = grammarFactory.createXSDTypesOnlyGrammar();
-			ef.setGrammar(grammar);
+			Grammars grammar = grammarFactory.createXSDTypesOnlyGrammars();
+			ef.setGrammars(grammar);
 		} else {
 			// schema-informed
-			Grammar grammar = grammarFactory.createGrammar(tco
+			Grammars grammar = grammarFactory.createGrammars(tco
 					.getSchemaLocation());
-			ef.setGrammar(grammar);
+			ef.setGrammars(grammar);
 		}
 
 		// EXI output stream
@@ -249,7 +249,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 				return;
 			} 
 			throw new Exception("Not able to create DOM. " + ef.getCodingMode()
-					+ ", schema=" + ef.getGrammar().isSchemaInformed() + " "
+					+ ", schema=" + ef.getGrammars().isSchemaInformed() + " "
 					+ ef.getFidelityOptions().toString(), e);
 		}
 		// assertXMLValid(new InputSource(test));
@@ -283,7 +283,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		try {
 			assertXMLEqual(ef.getCodingMode() + ", schema="
-					+ ef.getGrammar().isSchemaInformed() + " "
+					+ ef.getGrammars().isSchemaInformed() + " "
 					+ ef.getFidelityOptions().toString(), docControl, docTest);
 		} catch (AssertionFailedError e) {
 			// XMLUnit seems to have problems with XHTML and DTD throwing wrong

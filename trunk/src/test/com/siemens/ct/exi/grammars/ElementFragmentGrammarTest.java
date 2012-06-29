@@ -16,28 +16,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.grammar;
+package com.siemens.ct.exi.grammars;
 
 import java.io.ByteArrayInputStream;
 
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.Grammar;
+import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.types.BuiltInType;
 
 public class ElementFragmentGrammarTest extends TestCase {
 	String schema;
 
-	public static Grammar getGrammarFromSchemaAsString(String schemaAsString)
+	public static Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar grammar = grammarFactory.createGrammar(bais);
+		Grammars grammar = grammarFactory.createGrammars(bais);
 
 		return grammar;
 	}
@@ -59,23 +60,23 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ " <xs:attribute name='c' type='xs:int'/>"
 				+ "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule r = g.getFragmentGrammar();
+		Grammars g = getGrammarFromSchemaAsString(schema);
+		Grammar r = g.getFragmentGrammar();
 
-		EventInformation ei = r.lookForEvent(EventType.START_DOCUMENT);
-		EventInformation ei2 =  ei.next.lookForStartElement("", "root");
-		assertTrue(ei2.event.isEventType(EventType.START_ELEMENT));
-		StartElement seRoot = (StartElement) ei2.event;
-		Rule rRoot = seRoot.getRule();
+		Production ei = r.lookForEvent(EventType.START_DOCUMENT);
+		Production ei2 =  ei.getNextRule().lookForStartElement("", "root");
+		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
+		StartElement seRoot = (StartElement) ei2.getEvent();
+		Grammar rRoot = seRoot.getRule();
 		
-		EventInformation eiAtC = rRoot.lookForAttribute("", "c");
-		assertTrue(eiAtC.event.isEventType(EventType.ATTRIBUTE));
-		Attribute atC = (Attribute) eiAtC.event;
+		Production eiAtC = rRoot.lookForAttribute("", "c");
+		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atC = (Attribute) eiAtC.getEvent();
 		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 		
-		EventInformation eiAtD = rRoot.lookForAttribute("", "d");
-		assertTrue(eiAtD.event.isEventType(EventType.ATTRIBUTE));
-		Attribute atD = (Attribute) eiAtD.event;
+		Production eiAtD = rRoot.lookForAttribute("", "d");
+		assertTrue(eiAtD.getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atD = (Attribute) eiAtD.getEvent();
 		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 	
@@ -97,23 +98,23 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ " <xs:attribute name='c' type='xs:date'/>"
 				+ "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
-		Rule r = g.getFragmentGrammar();
+		Grammars g = getGrammarFromSchemaAsString(schema);
+		Grammar r = g.getFragmentGrammar();
 
-		EventInformation ei = r.lookForEvent(EventType.START_DOCUMENT);
-		EventInformation ei2 =  ei.next.lookForStartElement("", "root");
-		assertTrue(ei2.event.isEventType(EventType.START_ELEMENT));
-		StartElement seRoot = (StartElement) ei2.event;
-		Rule rRoot = seRoot.getRule();
+		Production ei = r.lookForEvent(EventType.START_DOCUMENT);
+		Production ei2 =  ei.getNextRule().lookForStartElement("", "root");
+		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
+		StartElement seRoot = (StartElement) ei2.getEvent();
+		Grammar rRoot = seRoot.getRule();
 		
-		EventInformation eiAtC = rRoot.lookForAttribute("", "c");
-		assertTrue(eiAtC.event.isEventType(EventType.ATTRIBUTE));
-		Attribute atC = (Attribute) eiAtC.event;
+		Production eiAtC = rRoot.lookForAttribute("", "c");
+		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atC = (Attribute) eiAtC.getEvent();
 		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.STRING);
 		
-		EventInformation eiAtD = rRoot.lookForAttribute("", "d");
-		assertTrue(eiAtD.event.isEventType(EventType.ATTRIBUTE));
-		Attribute atD = (Attribute) eiAtD.event;
+		Production eiAtD = rRoot.lookForAttribute("", "d");
+		assertTrue(eiAtD.getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atD = (Attribute) eiAtD.getEvent();
 		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 

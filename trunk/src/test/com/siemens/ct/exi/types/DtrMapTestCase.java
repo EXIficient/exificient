@@ -28,8 +28,8 @@ import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
@@ -51,7 +51,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <xs:simpleType name='stringDerived2'>"
 				+ "    <xs:restriction base='stringDerived'/>"
 				+ "  </xs:simpleType>" + "</xs:schema>";
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 	
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived", "");
@@ -90,7 +90,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <xs:simpleType name='stringDerived2'>"
 				+ "    <xs:restriction base='stringDerived'/>"
 				+ "  </xs:simpleType>" + "</xs:schema>";
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 	
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived2", "");
@@ -129,7 +129,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <xs:simpleType name='stringDerived2'>"
 				+ "    <xs:restriction base='stringDerived'/>"
 				+ "  </xs:simpleType>" + "</xs:schema>";
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived2", "");
@@ -164,7 +164,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
@@ -204,7 +204,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
@@ -269,12 +269,12 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <anonInt>ZZZZ 14 ZZZZ</anonInt>" + "</root>";
 
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar g = grammarFactory.createGrammar(new ByteArrayInputStream(
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
 				schemaAsString.getBytes()));
 
 		// factory with int 2 string mapping
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
 		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
@@ -337,12 +337,12 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "</root>";
 
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar g = grammarFactory.createGrammar(new ByteArrayInputStream(
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
 				schemaAsString.getBytes()));
 
 		// factory with mapping
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
 		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "short");
@@ -404,12 +404,12 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "</root>";
 
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar g = grammarFactory.createGrammar(new ByteArrayInputStream(
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
 				schemaAsString.getBytes()));
 
 		// factory with mapping
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
 		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "short");
@@ -490,7 +490,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dtDecimal = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "decimal", "");
 		assertTrue(dtDecimal.getBuiltInType() == BuiltInType.DECIMAL);
@@ -533,7 +533,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
@@ -567,7 +567,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammar g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");

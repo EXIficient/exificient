@@ -22,7 +22,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class DOMRoundtrip extends XMLTestCase {
@@ -69,9 +69,9 @@ public class DOMRoundtrip extends XMLTestCase {
 		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		// type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar(
+		Grammars g = GrammarFactory.newInstance().createGrammars(
 				"./data/schema/xsi-type.xsd");
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 
 		roundtrip("./data/schema/xsi-type.xml", exiFactory);
 	}
@@ -81,9 +81,9 @@ public class DOMRoundtrip extends XMLTestCase {
 		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		// type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar(
+		Grammars g = GrammarFactory.newInstance().createGrammars(
 				"./data/schema/xsi-type4.xsd");
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 
 		roundtrip("./data/schema/xsi-type4.xml", exiFactory);
 	}
@@ -93,9 +93,9 @@ public class DOMRoundtrip extends XMLTestCase {
 		// type-cast pfx for xml-comparison
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
 		// type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar(
+		Grammars g = GrammarFactory.newInstance().createGrammars(
 				"./data/schema/vehicle.xsd");
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 
 		roundtrip("./data/schema/vehicle.xml", exiFactory);
 	}
@@ -114,9 +114,9 @@ public class DOMRoundtrip extends XMLTestCase {
 
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		// type-cast --> schema-informed
-		Grammar g = GrammarFactory.newInstance().createGrammar(
+		Grammars g = GrammarFactory.newInstance().createGrammars(
 				"./data/fragment/fragment.xsd");
-		exiFactory.setGrammar(g);
+		exiFactory.setGrammars(g);
 
 		roundtrip("./data/fragment/fragment2.xml.frag", exiFactory);
 	}

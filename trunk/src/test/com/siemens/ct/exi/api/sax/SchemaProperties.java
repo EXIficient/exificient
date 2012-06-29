@@ -30,17 +30,17 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.GrammarFactory;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 
 public class SchemaProperties extends AbstractProperties {
 	String schema;
 
-	private Grammar getGrammarFromSchemaAsString(String schemaAsString)
+	private Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar grammar = grammarFactory.createGrammar(bais);
+		Grammars grammar = grammarFactory.createGrammars(bais);
 
 		return grammar;
 	}
@@ -68,7 +68,7 @@ public class SchemaProperties extends AbstractProperties {
 		}
 
 		// set grammar
-		factory.setGrammar(getGrammarFromSchemaAsString(schema));
+		factory.setGrammars(getGrammarFromSchemaAsString(schema));
 
 		// start encoding process
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();

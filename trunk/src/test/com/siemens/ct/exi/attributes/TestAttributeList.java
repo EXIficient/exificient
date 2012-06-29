@@ -51,7 +51,7 @@ public class TestAttributeList extends XMLTestCase {
 	public void testAttributes2() throws EXIException {
 		// schema-informed
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		ef.setGrammar(GrammarFactory.newInstance().createXSDTypesOnlyGrammar());
+		ef.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
 
 		AttributeList al = af.createAttributeListInstance(ef);
 
@@ -71,7 +71,7 @@ public class TestAttributeList extends XMLTestCase {
 	public void testAttributes3() throws EXIException {
 		// schema-informed + xsi:type
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		ef.setGrammar(GrammarFactory.newInstance().createXSDTypesOnlyGrammar());
+		ef.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
 
 		AttributeList al = af.createAttributeListInstance(ef);
 
@@ -116,7 +116,7 @@ public class TestAttributeList extends XMLTestCase {
 	public void testAttributes5() throws EXIException {
 		// schema-informed + diverse uris
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		ef.setGrammar(GrammarFactory.newInstance().createXSDTypesOnlyGrammar());
+		ef.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
 
 		AttributeList al = af.createAttributeListInstance(ef);
 

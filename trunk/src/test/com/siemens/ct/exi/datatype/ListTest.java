@@ -77,7 +77,7 @@ public class ListTest extends AbstractTestCase {
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();
 		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
@@ -118,7 +118,7 @@ public class ListTest extends AbstractTestCase {
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 
 		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();

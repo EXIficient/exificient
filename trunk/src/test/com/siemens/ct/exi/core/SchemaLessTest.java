@@ -36,7 +36,7 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;

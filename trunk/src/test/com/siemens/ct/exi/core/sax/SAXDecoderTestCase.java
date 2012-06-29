@@ -43,7 +43,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class SAXDecoderTestCase extends XMLTestCase {
@@ -439,8 +439,8 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			// schema?
 			if (xsdLoc != null) {
 				GrammarFactory gf = GrammarFactory.newInstance();
-				Grammar g = gf.createGrammar(xsdLoc);
-				factory.setGrammar(g);
+				Grammars g = gf.createGrammars(xsdLoc);
+				factory.setGrammars(g);
 			}
 			
 			

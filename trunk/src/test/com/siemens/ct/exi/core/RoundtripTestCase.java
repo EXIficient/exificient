@@ -24,9 +24,9 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarTest;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.GrammarTest;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.StringValue;
@@ -41,10 +41,10 @@ public class RoundtripTestCase extends TestCase {
 			+ " <xs:element name='root' type='xs:int' nillable='true' >"
 			+ " </xs:element>" + "</xs:schema>";
 
-		Grammar grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-		factory.setGrammar(grammar);
+		factory.setGrammars(grammar);
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		
 		QName qnameRoot = new QName("", "root");
@@ -107,10 +107,10 @@ public class RoundtripTestCase extends TestCase {
 			+ " <xs:element name='root' type='xs:int' nillable='true' >"
 			+ " </xs:element>" + "</xs:schema>";
 
-		Grammar grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-		factory.setGrammar(grammar);
+		factory.setGrammars(grammar);
 		FidelityOptions fo = factory.getFidelityOptions();
 		fo.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 		
@@ -175,11 +175,11 @@ public class RoundtripTestCase extends TestCase {
 		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
 		
 		GrammarFactory gf = GrammarFactory.newInstance();
-		Grammar grammar = gf.createGrammar(xsd);
+		Grammars grammar = gf.createGrammars(xsd);
 	
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setCodingMode(CodingMode.BYTE_PACKED);
-		factory.setGrammar(grammar);
+		factory.setGrammars(grammar);
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		
 		/*

@@ -38,8 +38,8 @@ import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarTest;
+import com.siemens.ct.exi.grammars.GrammarTest;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -64,7 +64,7 @@ public class StringTableTest extends AbstractTestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		/*
 		 * Encode
@@ -133,7 +133,7 @@ public class StringTableTest extends AbstractTestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		/*
 		 * Encode
@@ -212,7 +212,7 @@ public class StringTableTest extends AbstractTestCase {
 		String ch3 = "ch3";
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -309,7 +309,7 @@ public class StringTableTest extends AbstractTestCase {
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setValueMaxLength(valueMaxLength);
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 		/*
 		 * Encode
@@ -391,7 +391,7 @@ public class StringTableTest extends AbstractTestCase {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setValueMaxLength(valueMaxLength);
 		exiFactory.setValuePartitionCapacity(valuePartitionCapacity);
-		GrammarContext grammarContext = exiFactory.getGrammar().getGrammarContext();
+		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		Datatype dt = BuiltIn.DEFAULT_DATATYPE;
 		/*
@@ -475,7 +475,7 @@ public class StringTableTest extends AbstractTestCase {
 			+ " </xs:element>"
 			+ " <xs:attribute name='globalAT' type='xs:integer' />"
 			+ "</xs:schema>";
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 //		GrammarURIEntry[] gue = g.getGrammarEntries();
 		
@@ -502,7 +502,7 @@ public class StringTableTest extends AbstractTestCase {
 			+ "  </xs:complexType>"
 			+ " </xs:element>"
 			+ "</xs:schema>";
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 //		GrammarURIEntry[] gue = g.getGrammarEntries();
 		
@@ -539,7 +539,7 @@ public class StringTableTest extends AbstractTestCase {
 			+ "  </xs:complexType>"
 			+ " </xs:element>"
 			+ "</xs:schema>";
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		// GrammarURIEntry[] gue = g.getGrammarEntries();
 		GrammarContext gc = g.getGrammarContext();
 		

@@ -32,9 +32,9 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.GrammarTest;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.GrammarTest;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.QNameValue;
@@ -53,14 +53,14 @@ public class SchemaInformedTest extends TestCase {
 			+ " <xs:element name='root' type='xs:string' nillable='true' >"
 			+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammar ( g );
+		factory.setGrammars ( g );
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
@@ -108,14 +108,14 @@ public class SchemaInformedTest extends TestCase {
 			+ " <xs:element name='root' type='xs:string' nillable='true' >"
 			+ " </xs:element>" + "</xs:schema>";
 	
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 	
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammar ( g );
+		factory.setGrammars ( g );
 		EncodingOptions eo = factory.getEncodingOptions();
 		eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL);
 	
@@ -173,14 +173,14 @@ public class SchemaInformedTest extends TestCase {
 			+ " <xs:element name='root' type='xs:string'  >"
 			+ " </xs:element>" + "</xs:schema>";
 	
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 	
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammar ( g );
+		factory.setGrammars ( g );
 	
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
@@ -236,14 +236,14 @@ public class SchemaInformedTest extends TestCase {
 			+ " <xs:element name='root' type='xs:string'  >"
 			+ " </xs:element>" + "</xs:schema>";
 	
-		Grammar g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		
 		
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 	
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammar ( g );
+		factory.setGrammars ( g );
 		// EncodingOptions eo = factory.getEncodingOptions();
 		// eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_TYPE);
 	
