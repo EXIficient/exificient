@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.values.Value;
 
 /**

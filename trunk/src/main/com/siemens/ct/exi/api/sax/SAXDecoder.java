@@ -51,7 +51,7 @@ import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.util.NoEntityResolver;
 import com.siemens.ct.exi.values.Value;
 

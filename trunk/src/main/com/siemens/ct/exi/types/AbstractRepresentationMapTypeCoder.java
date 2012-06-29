@@ -38,7 +38,7 @@ import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.IntegerDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
@@ -51,7 +51,7 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 
-	protected final Grammar grammar;
+	protected final Grammars grammar;
 
 	protected Map<QName, Datatype> dtrMap;
 
@@ -60,7 +60,7 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 	protected final QNameContext qncXsdInteger;
 
 	public AbstractRepresentationMapTypeCoder(QName[] dtrMapTypes,
-			QName[] dtrMapRepresentations, Grammar grammar) throws EXIException {
+			QName[] dtrMapRepresentations, Grammars grammar) throws EXIException {
 		this.grammar = grammar;
 		dtrMap = new HashMap<QName, Datatype>();
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.siemens.ct.exi.core.container.PreReadValue;
 import com.siemens.ct.exi.core.container.ValueAndDatatype;
-import com.siemens.ct.exi.grammar.event.StartElement;
+import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.values.StringValue;
 
 public class RuntimeQNameContextEntries {

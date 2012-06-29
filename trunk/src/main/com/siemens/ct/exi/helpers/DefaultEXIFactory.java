@@ -48,9 +48,9 @@ import com.siemens.ct.exi.datatype.strings.StringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoderImpl;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
-import com.siemens.ct.exi.grammar.SchemaLessGrammar;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.SchemaInformedGrammars;
+import com.siemens.ct.exi.grammars.SchemaLessGrammars;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
 import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
 import com.siemens.ct.exi.types.LexicalTypeDecoder;
@@ -76,7 +76,7 @@ import com.siemens.ct.exi.types.TypedTypeEncoder;
 
 public class DefaultEXIFactory implements EXIFactory {
 
-	protected Grammar grammar;
+	protected Grammars grammar;
 	protected boolean isFragment;
 	protected CodingMode codingMode;
 
@@ -126,7 +126,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		factory.setFragment(false);
 		// factory.setGrammar(GrammarFactory.newInstance()
 		// .createSchemaLessGrammar());
-		factory.setGrammar(new SchemaLessGrammar());
+		factory.setGrammars(new SchemaLessGrammars());
 
 		factory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 	}
@@ -223,13 +223,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		return false;
 	}
 
-	public void setGrammar(Grammar grammar) {
+	public void setGrammars(Grammars grammar) {
 		assert (grammar != null);
 
 		this.grammar = grammar;
 	}
 
-	public Grammar getGrammar() {
+	public Grammars getGrammars() {
 		return this.grammar;
 	}
 
@@ -632,7 +632,7 @@ public class DefaultEXIFactory implements EXIFactory {
 		StringBuilder sb = new StringBuilder();
 		// grammar
 		if (grammar.isSchemaInformed()) {
-			SchemaInformedGrammar sig = (SchemaInformedGrammar) grammar;
+			SchemaInformedGrammars sig = (SchemaInformedGrammars) grammar;
 			sb.append("[Schema-Informed=" + sig.getSchemaId() + "]");
 		} else {
 			sb.append("[Schema-Less]");

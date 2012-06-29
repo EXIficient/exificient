@@ -25,7 +25,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 /**
@@ -75,10 +75,10 @@ public abstract class AbstractEXIHeader {
 		if (headerFactory == null) {
 			InputStream is = new ByteArrayInputStream(
 					EXI_OPTIONS_XSD.getBytes());
-			Grammar headerGrammar = getGrammarFactory().createGrammar(is);
+			Grammars headerGrammar = getGrammarFactory().createGrammars(is);
 
 			headerFactory = DefaultEXIFactory.newInstance();
-			headerFactory.setGrammar(headerGrammar);
+			headerFactory.setGrammars(headerGrammar);
 			headerFactory.setFidelityOptions(FidelityOptions.createStrict());
 		}
 

@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.siemens.ct.exi.core.container.ValueAndDatatype;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.BuiltInStartTag;
 import com.siemens.ct.exi.values.StringValue;
 
 public abstract class AbstractCoderContext implements CoderContext {
@@ -118,7 +118,7 @@ public abstract class AbstractCoderContext implements CoderContext {
 				se = grammarQNameContexts[qNameID].globalStartElement;
 				if (se == null) {
 					se = new StartElement(qnc);
-					se.setRule(new SchemaLessStartTag());
+					se.setRule(new BuiltInStartTag());
 					grammarQNameContexts[qNameID].globalStartElement = se;
 				}
 			}
@@ -129,7 +129,7 @@ public abstract class AbstractCoderContext implements CoderContext {
 			se = runtimeQNameContexts.get(runtimeQNameID).globalStartElement;
 			if (se == null) {
 				se = new StartElement(qnc);
-				se.setRule(new SchemaLessStartTag());
+				se.setRule(new BuiltInStartTag());
 				runtimeQNameContexts.get(runtimeQNameID).globalStartElement = se;
 			}
 		}

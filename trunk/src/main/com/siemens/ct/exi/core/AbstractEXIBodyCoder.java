@@ -35,9 +35,9 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.Grammar;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
@@ -55,7 +55,7 @@ public abstract class AbstractEXIBodyCoder {
 	// factory
 	protected final EXIFactory exiFactory;
 
-	protected Grammar grammar;
+	protected Grammars grammar;
 	protected FidelityOptions fidelityOptions;
 	protected boolean preservePrefix;
 	protected boolean preserveLexicalValues;
@@ -100,7 +100,7 @@ public abstract class AbstractEXIBodyCoder {
 	abstract protected CoderContext getCoderContext();
 
 	protected void initFactoryInformation() throws EXIException {
-		this.grammar = exiFactory.getGrammar();
+		this.grammar = exiFactory.getGrammars();
 		this.fidelityOptions = exiFactory.getFidelityOptions();
 		// this.qnameDatatype.setCoderContext(this.getCoderContext());
 
@@ -113,11 +113,11 @@ public abstract class AbstractEXIBodyCoder {
 				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
 	}
 
-	protected final Rule getCurrentRule() {
+	protected final Grammar getCurrentRule() {
 		return this.elementContext.rule;
 	}
 
-	protected final void updateCurrentRule(Rule newCurrentRule) {
+	protected final void updateCurrentRule(Grammar newCurrentRule) {
 		this.elementContext.rule = newCurrentRule;
 	}
 
@@ -139,7 +139,7 @@ public abstract class AbstractEXIBodyCoder {
 		runtimeElements.clear();
 
 		// possible document/fragment grammar
-		Rule startRule = exiFactory.isFragment() ? grammar.getFragmentGrammar()
+		Grammar startRule = exiFactory.isFragment() ? grammar.getFragmentGrammar()
 				: grammar.getDocumentGrammar();
 
 		// (core) context
@@ -195,7 +195,7 @@ public abstract class AbstractEXIBodyCoder {
 		return null;
 	}
 
-	protected void pushElement(Rule updContextRule, StartElement se) {
+	protected void pushElement(Grammar updContextRule, StartElement se) {
 		// update "rule" item of current peak (for popElement() later on)
 		elementContext.rule = updContextRule;
 
@@ -234,12 +234,12 @@ public abstract class AbstractEXIBodyCoder {
 	final class ElementContext {
 		String prefix;
 		String sqname;
-		Rule rule; // may be modified while coding
+		Grammar rule; // may be modified while coding
 		List<NamespaceDeclaration> nsDeclarations; // prefix declarations
 
 		final QNameContext qnameContext;
 
-		public ElementContext(QNameContext qnameContext, Rule rule) {
+		public ElementContext(QNameContext qnameContext, Grammar rule) {
 			this.qnameContext = qnameContext;
 			this.rule = rule;
 		}
