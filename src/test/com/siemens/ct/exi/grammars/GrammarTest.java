@@ -16,7 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package com.siemens.ct.exi.grammar;
+package com.siemens.ct.exi.grammars;
 
 import java.io.ByteArrayInputStream;
 
@@ -29,21 +29,22 @@ import org.custommonkey.xmlunit.XMLConstants;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaLessStartTag;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.BuiltInStartTag;
+import com.siemens.ct.exi.grammars.grammar.Grammar;
+import com.siemens.ct.exi.grammars.production.Production;
 
 public class GrammarTest extends TestCase {
 	String schema;
 
-	public static Grammar getGrammarFromSchemaAsString(String schemaAsString)
+	public static Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
 		ByteArrayInputStream bais = new ByteArrayInputStream(
 				schemaAsString.getBytes());
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
-		Grammar grammar = grammarFactory.createGrammar(bais);
+		Grammars grammar = grammarFactory.createGrammars(bais);
 
 		return grammar;
 	}
@@ -57,36 +58,36 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
 
 		// SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
-		EventInformation er0 = root.lookFor(0);
-		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+		Production er0 = root.lookFor(0);
+		assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 				.equals("a"));
 
-		Rule a = er0.next;
+		Grammar a = er0.getNextRule();
 		// SE(b)
 		assertTrue(a.getNumberOfEvents() == 1);
-		EventInformation er1 = a.lookFor(0);
-		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+		Production er1 = a.lookFor(0);
+		assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule b = er1.next;
+		Grammar b = er1.getNextRule();
 		// SE(b)
 		assertTrue(b.getNumberOfEvents() == 1);
-		EventInformation er2 = b.lookFor(0);
-		assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
+		Production er2 = b.lookFor(0);
+		assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 	}
 
 	public void testSequence1a() throws Exception {
@@ -99,44 +100,44 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
 
 		// SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
-		EventInformation er0 = root.lookFor(0);
-		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+		Production er0 = root.lookFor(0);
+		assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 				.equals("a"));
 
-		Rule a_1 = er0.next;
+		Grammar a_1 = er0.getNextRule();
 		// SE(a)
 		assertTrue(a_1.getNumberOfEvents() == 1);
-		EventInformation er1 = a_1.lookFor(0);
-		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+		Production er1 = a_1.lookFor(0);
+		assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 				.equals("a"));
 
-		Rule a_2 = er1.next;
+		Grammar a_2 = er1.getNextRule();
 		// SE(b)
 		assertTrue(a_2.getNumberOfEvents() == 1);
-		EventInformation er2 = a_2.lookFor(0);
-		assertTrue(er2.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er2.event).getQName().getLocalPart()
+		Production er2 = a_2.lookFor(0);
+		assertTrue(er2.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er2.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule b = er2.next;
+		Grammar b = er2.getNextRule();
 		// SE(b)
 		assertTrue(b.getNumberOfEvents() == 1);
-		EventInformation er3 = b.lookFor(0);
-		assertTrue(er3.event.isEventType(EventType.END_ELEMENT));
+		Production er3 = b.lookFor(0);
+		assertTrue(er3.getEvent().isEventType(EventType.END_ELEMENT));
 	}
 
 	public void testSequence2() throws Exception {
@@ -148,46 +149,46 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		//Rule root = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
 
 		// SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
-		EventInformation er0 = root.lookFor(0);
-		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+		Production er0 = root.lookFor(0);
+		assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 				.equals("a"));
-		EventInformation er1 = root.lookFor(1);
-		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+		Production er1 = root.lookFor(1);
+		assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule a = er0.next;
+		Grammar a = er0.getNextRule();
 		// SE(A)
 		assertTrue(a.getNumberOfEvents() == 1);
-		EventInformation era1 = a.lookFor(0);
-		assertTrue(era1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era1.event).getQName().getLocalPart()
+		Production era1 = a.lookFor(0);
+		assertTrue(era1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) era1.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule b1 = er1.next;
+		Grammar b1 = er1.getNextRule();
 		// SE(B)
 		assertTrue(b1.getNumberOfEvents() == 1);
-		EventInformation erb1 = b1.lookFor(0);
-		assertTrue(erb1.event.isEventType(EventType.END_ELEMENT));
+		Production erb1 = b1.lookFor(0);
+		assertTrue(erb1.getEvent().isEventType(EventType.END_ELEMENT));
 
-		Rule b2 = era1.next;
+		Grammar b2 = era1.getNextRule();
 		// SE(B)
 		assertTrue(b2.getNumberOfEvents() == 1);
-		EventInformation erbb1 = b2.lookFor(0);
-		assertTrue(erbb1.event.isEventType(EventType.END_ELEMENT));
+		Production erbb1 = b2.lookFor(0);
+		assertTrue(erbb1.getEvent().isEventType(EventType.END_ELEMENT));
 	}
 
 	public void testSequence3() throws Exception {
@@ -200,67 +201,67 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule root = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule root =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
 
 		// SE(a, b)
 		assertTrue(root.getNumberOfEvents() == 2);
-		EventInformation er0 = root.lookFor(0);
-		assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+		Production er0 = root.lookFor(0);
+		assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 				.equals("a"));
-		EventInformation er1 = root.lookFor(1);
-		assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+		Production er1 = root.lookFor(1);
+		assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule a = er0.next;
+		Grammar a = er0.getNextRule();
 		// SE(A)
 		assertTrue(a.getNumberOfEvents() == 2);
-		EventInformation era1 = a.lookFor(0);
-		assertTrue(era1.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era1.event).getQName().getLocalPart()
+		Production era1 = a.lookFor(0);
+		assertTrue(era1.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) era1.getEvent()).getQName().getLocalPart()
 				.equals("a"));
-		EventInformation era2 = a.lookFor(1);
-		assertTrue(era2.event.isEventType(EventType.START_ELEMENT));
-		assertTrue(((StartElement) era2.event).getQName().getLocalPart()
+		Production era2 = a.lookFor(1);
+		assertTrue(era2.getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(((StartElement) era2.getEvent()).getQName().getLocalPart()
 				.equals("b"));
 
-		Rule b1 = er1.next;
+		Grammar b1 = er1.getNextRule();
 		// SE(B)
 		assertTrue(b1.getNumberOfEvents() == 1);
-		EventInformation erb1 = b1.lookFor(0);
-		assertTrue(erb1.event.isEventType(EventType.END_ELEMENT));
+		Production erb1 = b1.lookFor(0);
+		assertTrue(erb1.getEvent().isEventType(EventType.END_ELEMENT));
 
 		// multiple "a"'s followed by b
-		Rule x = root.lookFor(0).next;
+		Grammar x = root.lookFor(0).getNextRule();
 		for (int i = 0; i < 10; i++) {
 			assertTrue(x.getNumberOfEvents() == 2);
-			EventInformation x0 = x.lookFor(0);
-			assertTrue(x0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) x0.event).getQName().getLocalPart()
+			Production x0 = x.lookFor(0);
+			assertTrue(x0.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) x0.getEvent()).getQName().getLocalPart()
 					.equals("a"));
 
-			EventInformation x1 = x.lookFor(1);
-			assertTrue(x1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) x1.event).getQName().getLocalPart()
+			Production x1 = x.lookFor(1);
+			assertTrue(x1.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) x1.getEvent()).getQName().getLocalPart()
 					.equals("b"));
 
-			x = er0.next;
+			x = er0.getNextRule();
 		}
 
-		Rule b2 = x.lookFor(1).next;
+		Grammar b2 = x.lookFor(1).getNextRule();
 		// SE(B)
 		assertTrue(b2.getNumberOfEvents() == 1);
-		EventInformation erbb1 = b2.lookFor(0);
-		assertTrue(erbb1.event.isEventType(EventType.END_ELEMENT));
+		Production erbb1 = b2.lookFor(0);
+		assertTrue(erbb1.getEvent().isEventType(EventType.END_ELEMENT));
 	}
 
 	public void testSequence4() throws Exception {
@@ -272,12 +273,12 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule c = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule c = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar c = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule c = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues,
 		// "", "root")).getRule();
 
@@ -285,14 +286,14 @@ public class GrammarTest extends TestCase {
 		// maxOccurs = "0" --> same rule over and over again
 		for (int i = 0; i < 10; i++) {
 			assertTrue(c.getNumberOfEvents() == 2);
-			EventInformation er0 = c.lookFor(0);
-			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+			Production er0 = c.lookFor(0);
+			assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 					.equals("c"));
-			EventInformation er1 = c.lookFor(1);
-			assertTrue(er1.event.isEventType(EventType.END_ELEMENT));
+			Production er1 = c.lookFor(1);
+			assertTrue(er1.getEvent().isEventType(EventType.END_ELEMENT));
 
-			c = er0.next;
+			c = er0.getNextRule();
 		}
 	}
 
@@ -306,12 +307,12 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -319,82 +320,82 @@ public class GrammarTest extends TestCase {
 		// SE(a), SE(c), EE
 		{
 			assertTrue(rule.getNumberOfEvents() == 3);
-			EventInformation er0 = rule.lookFor(0);
-			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+			Production er0 = rule.lookFor(0);
+			assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 					.equals("a"));
-			EventInformation er1 = rule.lookFor(1);
-			assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+			Production er1 = rule.lookFor(1);
+			assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 					.equals("c"));
-			EventInformation er2 = rule.lookFor(2);
-			assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
+			Production er2 = rule.lookFor(2);
+			assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 		}
 
 		// SE(a), SE(c), EE
 		// "a" over and over again
 		{
-			Rule a = rule.lookFor(0).next;
+			Grammar a = rule.lookFor(0).getNextRule();
 			for (int i = 0; i < 10; i++) {
 				assertTrue(a.getNumberOfEvents() == 3);
-				EventInformation er0 = a.lookFor(0);
-				assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+				Production er0 = a.lookFor(0);
+				assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+				assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 						.equals("a"));
-				EventInformation er1 = a.lookFor(1);
-				assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+				Production er1 = a.lookFor(1);
+				assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+				assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 						.equals("c"));
-				EventInformation er2 = a.lookFor(2);
-				assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
+				Production er2 = a.lookFor(2);
+				assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 
-				a = er0.next;
+				a = er0.getNextRule();
 			}
 		}
 
 		// SE(a), SE(c), EE
 		// "c" over and over again
 		{
-			Rule c = rule.lookFor(0).next;
+			Grammar c = rule.lookFor(0).getNextRule();
 			for (int i = 0; i < 10; i++) {
 				// System.out.println(i + ": " + c);
 				assertTrue(c.getNumberOfEvents() == 3);
-				EventInformation er0 = c.lookFor(0);
-				assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+				Production er0 = c.lookFor(0);
+				assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+				assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 						.equals("a"));
-				EventInformation er1 = c.lookFor(1);
-				assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-				assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+				Production er1 = c.lookFor(1);
+				assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+				assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 						.equals("c"));
-				EventInformation er2 = c.lookFor(2);
-				assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
+				Production er2 = c.lookFor(2);
+				assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 
-				c = er1.next;
+				c = er1.getNextRule();
 			}
 		}
 
 		// SE(a), SE(c), EE
 		// alternately "a" and "c" over and over again
 		{
-			Rule ac = rule.lookFor(0).next;
+			Grammar ac = rule.lookFor(0).getNextRule();
 			for (int i = 0; i < 10; i++) {
 				if (i % 2 == 0) {
 
 				} else {
 					assertTrue(ac.getNumberOfEvents() == 3);
-					EventInformation er0 = ac.lookFor(0);
-					assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-					assertTrue(((StartElement) er0.event).getQName()
+					Production er0 = ac.lookFor(0);
+					assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+					assertTrue(((StartElement) er0.getEvent()).getQName()
 							.getLocalPart().equals("a"));
-					EventInformation er1 = ac.lookFor(1);
-					assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-					assertTrue(((StartElement) er1.event).getQName()
+					Production er1 = ac.lookFor(1);
+					assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+					assertTrue(((StartElement) er1.getEvent()).getQName()
 							.getLocalPart().equals("c"));
-					EventInformation er2 = ac.lookFor(2);
-					assertTrue(er2.event.isEventType(EventType.END_ELEMENT));
+					Production er2 = ac.lookFor(2);
+					assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 
-					ac = er0.next;
+					ac = er0.getNextRule();
 				}
 			}
 		}
@@ -411,12 +412,12 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -424,23 +425,23 @@ public class GrammarTest extends TestCase {
 		{
 			assertTrue(rule.getNumberOfEvents() == 4);
 
-			EventInformation er0 = rule.lookFor(0);
-			assertTrue(er0.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er0.event).getQName().getLocalPart()
+			Production er0 = rule.lookFor(0);
+			assertTrue(er0.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er0.getEvent()).getQName().getLocalPart()
 					.equals("a"));
 
-			EventInformation er1 = rule.lookFor(1);
-			assertTrue(er1.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er1.event).getQName().getLocalPart()
+			Production er1 = rule.lookFor(1);
+			assertTrue(er1.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er1.getEvent()).getQName().getLocalPart()
 					.equals("b"));
 
-			EventInformation er2 = rule.lookFor(2);
-			assertTrue(er2.event.isEventType(EventType.START_ELEMENT));
-			assertTrue(((StartElement) er2.event).getQName().getLocalPart()
+			Production er2 = rule.lookFor(2);
+			assertTrue(er2.getEvent().isEventType(EventType.START_ELEMENT));
+			assertTrue(((StartElement) er2.getEvent()).getQName().getLocalPart()
 					.equals("c"));
 
-			EventInformation er3 = rule.lookFor(3);
-			assertTrue(er3.event.isEventType(EventType.END_ELEMENT));
+			Production er3 = rule.lookFor(3);
+			assertTrue(er3.getEvent().isEventType(EventType.END_ELEMENT));
 		}
 	}
 
@@ -455,12 +456,12 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g = getGrammarFromSchemaAsString(schema);
+		Grammars g = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gues = g.getGrammarEntries();
 
 		// Rule rule = g.getGlobalElement(new QName("", "root")).getRule();
-		Rule rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
+		Grammar rule = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getRule();
 		// Rule rule =
 		// g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "",
 		// "root")).getRule();
@@ -482,8 +483,8 @@ public class GrammarTest extends TestCase {
 
 	public void testLearning2() throws Exception {
 		// schema-less grammars
-		Rule startTag = new SchemaLessStartTag();
-		Rule content = startTag.getElementContentRule();
+		Grammar startTag = new BuiltInStartTag();
+		Grammar content = startTag.getElementContent();
 
 		assertTrue(startTag.getNumberOfEvents() == 0);
 		assertTrue(content.getNumberOfEvents() == 1); // EE
@@ -548,33 +549,33 @@ public class GrammarTest extends TestCase {
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammar g2 = getGrammarFromSchemaAsString(schema);
+		Grammars g2 = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc2 = g2.getGrammarContext();
 		
 		// Rule Document2 = g2.getGlobalElement(qnDocument).getRule();
-		Rule Document2 = gc2.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
+		Grammar Document2 = gc2.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
 		{
 			// 1
 			assertTrue(Document2.getNumberOfEvents() == 1);
-			EventInformation ei1 = Document2.lookFor(0);
-			assertTrue(ei1.event.isEventType(EventType.START_ELEMENT));
-			StartElement se1 = (StartElement) ei1.event;
+			Production ei1 = Document2.lookFor(0);
+			assertTrue(ei1.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se1 = (StartElement) ei1.getEvent();
 			assertTrue(se1.getQName().equals(qnSurname));
 			// 2
-			assertTrue(ei1.next.getNumberOfEvents() == 1);
-			EventInformation ei2 = ei1.next.lookFor(0);
-			assertTrue(ei2.event.isEventType(EventType.START_ELEMENT));
-			StartElement se2 = (StartElement) ei2.event;
+			assertTrue(ei1.getNextRule().getNumberOfEvents() == 1);
+			Production ei2 = ei1.getNextRule().lookFor(0);
+			assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se2 = (StartElement) ei2.getEvent();
 			assertTrue(se2.getQName().equals(qnSurname));
 			// 3
-			assertTrue(ei2.next.getNumberOfEvents() == 2);
-			assertTrue(ei2.next.lookFor(1).event.isEventType(EventType.END_ELEMENT));
-			EventInformation ei3 = ei2.next.lookFor(0);
-			assertTrue(ei3.event.isEventType(EventType.START_ELEMENT));
-			StartElement se3 = (StartElement) ei3.event;
+			assertTrue(ei2.getNextRule().getNumberOfEvents() == 2);
+			assertTrue(ei2.getNextRule().lookFor(1).getEvent().isEventType(EventType.END_ELEMENT));
+			Production ei3 = ei2.getNextRule().lookFor(0);
+			assertTrue(ei3.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se3 = (StartElement) ei3.getEvent();
 			assertTrue(se3.getQName().equals(qnSurname));
 			// loop
-			assertTrue(ei3.next == ei3.next.lookFor(0).next);
+			assertTrue(ei3.getNextRule() == ei3.getNextRule().lookFor(0).getNextRule());
 		}
 
 
@@ -585,39 +586,39 @@ public class GrammarTest extends TestCase {
 				+ "    <xs:element name='surname' type='xs:string' minOccurs='3' maxOccurs='unbounded'/> "
 				+ "   </xs:sequence>" + "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
-		Grammar g3 = getGrammarFromSchemaAsString(schema);
+		Grammars g3 = getGrammarFromSchemaAsString(schema);
 		GrammarContext gc3 = g3.getGrammarContext();
 		// Rule Document3 = g3.getGlobalElement(qnDocument).getRule();
-		Rule Document3 = gc3.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
+		Grammar Document3 = gc3.getGrammarUriContext(qnDocument.getNamespaceURI()).getQNameContext(qnDocument.getLocalPart()).getGlobalStartElement().getRule();
 		
 		{
 			// 1
 			assertTrue(Document3.getNumberOfEvents() == 1);
-			EventInformation ei1 = Document3.lookFor(0);
-			assertTrue(ei1.event.isEventType(EventType.START_ELEMENT));
-			StartElement se1 = (StartElement) ei1.event;
+			Production ei1 = Document3.lookFor(0);
+			assertTrue(ei1.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se1 = (StartElement) ei1.getEvent();
 			assertTrue(se1.getQName().equals(qnSurname));
 			// 2
-			assertTrue(ei1.next.getNumberOfEvents() == 1);
-			EventInformation ei2 = ei1.next.lookFor(0);
-			assertTrue(ei2.event.isEventType(EventType.START_ELEMENT));
-			StartElement se2 = (StartElement) ei2.event;
+			assertTrue(ei1.getNextRule().getNumberOfEvents() == 1);
+			Production ei2 = ei1.getNextRule().lookFor(0);
+			assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se2 = (StartElement) ei2.getEvent();
 			assertTrue(se2.getQName().equals(qnSurname));
 			// 3
-			assertTrue(ei2.next.getNumberOfEvents() == 1);
-			EventInformation ei3 = ei2.next.lookFor(0);
-			assertTrue(ei3.event.isEventType(EventType.START_ELEMENT));
-			StartElement se3 = (StartElement) ei3.event;
+			assertTrue(ei2.getNextRule().getNumberOfEvents() == 1);
+			Production ei3 = ei2.getNextRule().lookFor(0);
+			assertTrue(ei3.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se3 = (StartElement) ei3.getEvent();
 			assertTrue(se3.getQName().equals(qnSurname));
 			// 4
-			assertTrue(ei3.next.getNumberOfEvents() == 2);
-			assertTrue(ei3.next.lookFor(1).event.isEventType(EventType.END_ELEMENT));
-			EventInformation ei4 = ei3.next.lookFor(0);
-			assertTrue(ei4.event.isEventType(EventType.START_ELEMENT));
-			StartElement se4 = (StartElement) ei4.event;
+			assertTrue(ei3.getNextRule().getNumberOfEvents() == 2);
+			assertTrue(ei3.getNextRule().lookFor(1).getEvent().isEventType(EventType.END_ELEMENT));
+			Production ei4 = ei3.getNextRule().lookFor(0);
+			assertTrue(ei4.getEvent().isEventType(EventType.START_ELEMENT));
+			StartElement se4 = (StartElement) ei4.getEvent();
 			assertTrue(se4.getQName().equals(qnSurname));	
 			// loop
-			assertTrue(ei4.next == ei4.next.lookFor(0).next);
+			assertTrue(ei4.getNextRule() == ei4.getNextRule().lookFor(0).getNextRule());
 		}
 	}
 

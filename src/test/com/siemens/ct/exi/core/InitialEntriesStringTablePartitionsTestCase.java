@@ -14,8 +14,8 @@ import com.siemens.ct.exi.context.EncoderContextImpl;
 import com.siemens.ct.exi.context.EvolvingUriContext;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
 
 public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
@@ -28,8 +28,8 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		return false;
 	}
 	
-	protected static Grammar getGrammarFor(String schemaAsString) throws EXIException {
-		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+	protected static Grammars getGrammarFor(String schemaAsString) throws EXIException {
+		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
@@ -38,7 +38,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 	public void testSchemaLess() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
-		Grammar g = gf.createSchemaLessGrammar();
+		Grammars g = gf.createSchemaLessGrammars();
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gue = g.getGrammarEntries();
 
@@ -72,7 +72,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 	public void testXsdTypesOnly() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
-		Grammar g = gf.createXSDTypesOnlyGrammar();
+		Grammars g = gf.createXSDTypesOnlyGrammars();
 		GrammarContext gc = g.getGrammarContext();
 //		GrammarURIEntry[] gue = g.getGrammarEntries();
 		
@@ -127,7 +127,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "  </xs:simpleType>"
 			+ "</xs:schema>";
 		
-		Grammar g = getGrammarFor(schemaAsString);
+		Grammars g = getGrammarFor(schemaAsString);
 		GrammarContext gc = g.getGrammarContext();
 		
 		DecoderContext decoderContext = new DecoderContextImpl(gc, null);
@@ -199,7 +199,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "	    <xs:attribute name='date' type='xs:date'/>"
 			+ "	</xs:schema>";
 		
-		Grammar g = getGrammarFor(schemaAsString);
+		Grammars g = getGrammarFor(schemaAsString);
 		GrammarContext gc = g.getGrammarContext();
 		EncoderContext encoderContext = new EncoderContextImpl(gc, null);
 		//GrammarURIEntry[] gue = g.getGrammarEntries();
@@ -248,7 +248,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 			+ "		    </xs:complexType>"
 			+ "		</xs:schema>";
 		
-		Grammar g = getGrammarFor(schemaAsString);
+		Grammars g = getGrammarFor(schemaAsString);
 //		GrammarURIEntry[] gue = g.getGrammarEntries();
 		GrammarContext gc = g.getGrammarContext();
 		DecoderContext decoderContext = new DecoderContextImpl(gc, null);
@@ -282,7 +282,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 	// TODO XML schema, adding xsd local-names
 	public void testSchema4() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
-		Grammar g = gf.createGrammar("./data/W3C/xsd/XMLSchema.xsd");
+		Grammars g = gf.createGrammars("./data/W3C/xsd/XMLSchema.xsd");
 		GrammarContext gc = g.getGrammarContext();
 		EncoderContext encoderContext = new EncoderContextImpl(gc, null);
 //		GrammarURIEntry[] gue = g.getGrammarEntries();

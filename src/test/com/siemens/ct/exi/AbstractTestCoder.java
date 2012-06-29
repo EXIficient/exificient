@@ -26,7 +26,7 @@ import java.io.OutputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public abstract class AbstractTestCoder {
@@ -101,23 +101,23 @@ public abstract class AbstractTestCoder {
 		EXIFactory ef = getFactoryNoSchema();
 		String xsdLocation = QuickTestConfiguration.getXsdLocation();
 		if (QuickTestConfiguration.XSD_TYPES_ONLY || xsdLocation == null || xsdLocation.length() == 0) {
-			ef.setGrammar(getXSDTypesOnlyGrammar());
+			ef.setGrammars(getXSDTypesOnlyGrammar());
 		} else {
-			ef.setGrammar(getGrammar(xsdLocation));	
+			ef.setGrammars(getGrammar(xsdLocation));	
 		}
 
 		return ef;
 	}
 
-	public static Grammar getXSDTypesOnlyGrammar() throws EXIException {
-		return grammarFactory.createXSDTypesOnlyGrammar();
+	public static Grammars getXSDTypesOnlyGrammar() throws EXIException {
+		return grammarFactory.createXSDTypesOnlyGrammars();
 	}
 	
-	public static Grammar getGrammar(String xsdLocation) throws EXIException {
+	public static Grammars getGrammar(String xsdLocation) throws EXIException {
 		if (xsdLocation == null) {
-			return grammarFactory.createSchemaLessGrammar();
+			return grammarFactory.createSchemaLessGrammars();
 		} else {
-			return grammarFactory.createGrammar(xsdLocation);	
+			return grammarFactory.createGrammars(xsdLocation);	
 		}
 	}
 

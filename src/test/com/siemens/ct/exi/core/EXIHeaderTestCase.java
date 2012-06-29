@@ -17,7 +17,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -197,8 +197,8 @@ public class EXIHeaderTestCase extends TestCase {
 	
 	public void testEXIOptions7() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		Grammar g = GrammarFactory.newInstance().createXSDTypesOnlyGrammar();
-		ef.setGrammar(g);
+		Grammars g = GrammarFactory.newInstance().createXSDTypesOnlyGrammars();
+		ef.setGrammars(g);
 		EncodingOptions ho = ef.getEncodingOptions();
 		ho.setOption(EncodingOptions.INCLUDE_SCHEMA_ID); // built-in
 
@@ -208,8 +208,8 @@ public class EXIHeaderTestCase extends TestCase {
 	public void testEXIOptions8() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		String xsdLocation = "data/EXIOptionsHeader/EXIOptionsHeader.xsd";
-		Grammar g = GrammarFactory.newInstance().createGrammar(xsdLocation);
-		ef.setGrammar(g);
+		Grammars g = GrammarFactory.newInstance().createGrammars(xsdLocation);
+		ef.setGrammars(g);
 		EncodingOptions ho = ef.getEncodingOptions();
 		ho.setOption(EncodingOptions.INCLUDE_SCHEMA_ID); // schema-informed
 
@@ -247,10 +247,10 @@ public class EXIHeaderTestCase extends TestCase {
 		GrammarFactory gf = GrammarFactory.newInstance();		
 		
 		InputStream is = new ByteArrayInputStream(schemaBla.getBytes());
-		Grammar g = gf.createGrammar(is);
+		Grammars g = gf.createGrammars(is);
 		g.setSchemaId(schemaId);
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		ef.setGrammar(g);
+		ef.setGrammars(g);
 		
 		EncodingOptions eo = ef.getEncodingOptions();
 		eo.setOption(EncodingOptions.INCLUDE_OPTIONS);
@@ -281,10 +281,10 @@ public class EXIHeaderTestCase extends TestCase {
 	
 	class BlaSchemaIdResolver implements SchemaIdResolver {
 
-		public Grammar resolveSchemaId(String schemaId) throws EXIException {
+		public Grammars resolveSchemaId(String schemaId) throws EXIException {
 			if ("bla".equals(schemaId)) {
 				InputStream is = new ByteArrayInputStream(schemaBla.getBytes());
-				return GrammarFactory.newInstance().createGrammar(is);
+				return GrammarFactory.newInstance().createGrammars(is);
 			} else {
 				throw new RuntimeException("Unspoorted schemaId: " + schemaId);
 			}

@@ -44,10 +44,10 @@ import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
 import com.siemens.ct.exi.values.StringValue;
 
 public class DatatypeMappingTest extends AbstractTestCase {
@@ -55,18 +55,18 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		super(testName);
 	}
 
-	protected static Grammar getGrammarFor(String schemaAsString)
+	protected static Grammars getGrammarFor(String schemaAsString)
 			throws EXIException {
-		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
 		return xsdGB.toGrammar();
 	}
 
-	protected static Grammar getGrammar(String schemaAsString)
+	protected static Grammars getGrammar(String schemaAsString)
 			throws EXIException {
-		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
@@ -75,7 +75,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 	public static Datatype getSimpleDatatypeFor(String schemaAsString,
 			String typeName, String typeURI) throws EXIException {
-		XSDGrammarBuilder xsdGB = XSDGrammarBuilder.newInstance();
+		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
 		xsdGB.loadGrammar(bais);
@@ -812,12 +812,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		// assertTrue(uidt.getIntegerType() == IntegerType.UNSIGNED_INTEGER_BIG);
 		
 
-		Grammar grammar = getGrammar(schemaAsString);
+		Grammars grammar = getGrammar(schemaAsString);
 		GrammarContext gc = grammar.getGrammarContext();
 		QNameContext qncMyPositiveInteger = gc.getGrammarUriContext("").getQNameContext("myPositiveInteger");
 //		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
 //				.getTypeGrammar(new QName("", "myPositiveInteger"));
-		SchemaInformedFirstStartTagRule r = qncMyPositiveInteger.getTypeGrammar();
+		SchemaInformedFirstStartTagGrammar r = qncMyPositiveInteger.getTypeGrammar();
 		assertTrue(!r.isTypeCastable());
 		assertTrue(!r.isNillable());
 		
@@ -832,7 +832,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 				+ "    <xs:element name='myNonPositiveInteger' type='xs:nonPositiveInteger' />"
 				+ "</xs:schema>";
 	
-		Grammar grammar = getGrammar(schemaAsString);
+		Grammars grammar = getGrammar(schemaAsString);
 		//GrammarURIEntry[] gues = grammar.getGrammarEntries();
 		GrammarContext gc = grammar.getGrammarContext();
 		GrammarUriContext guc0 = gc.getGrammarUriContext(0);
@@ -842,7 +842,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 //		StartElement se = grammar.getGlobalElement(new QName("","myNonPositiveInteger"));
 		// StartElement se = grammar.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "myNonPositiveInteger"));
 	
-		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) se
+		SchemaInformedFirstStartTagGrammar r = (SchemaInformedFirstStartTagGrammar) se
 				.getRule();
 		assertTrue(r.isTypeCastable());
 		assertTrue(!r.isNillable());
@@ -862,12 +862,12 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		// IntegerDatatype idt = (IntegerDatatype) dt;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
 
-		Grammar grammar = getGrammar(schemaAsString);
+		Grammars grammar = getGrammar(schemaAsString);
 		GrammarContext gc = grammar.getGrammarContext();
 		QNameContext myNonPositiveInteger = gc.getGrammarUriContext("").getQNameContext("myNonPositiveInteger");
 //		SchemaInformedFirstStartTagRule r = (SchemaInformedFirstStartTagRule) grammar
 //				.getTypeGrammar(new QName("", "myNonPositiveInteger"));
-		SchemaInformedFirstStartTagRule r = myNonPositiveInteger.getTypeGrammar();
+		SchemaInformedFirstStartTagGrammar r = myNonPositiveInteger.getTypeGrammar();
 		assertTrue(!r.isTypeCastable());
 		assertTrue(!r.isNillable());
 		

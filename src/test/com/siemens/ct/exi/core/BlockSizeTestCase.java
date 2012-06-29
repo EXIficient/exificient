@@ -37,8 +37,8 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.values.Value;
 
@@ -154,8 +154,8 @@ public class BlockSizeTestCase extends XMLTestCase {
 		
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		GrammarFactory gf = GrammarFactory.newInstance();
-		Grammar g = gf.createGrammar(new ByteArrayInputStream(xsdEmpty.getBytes()));
-		factory.setGrammar(g);
+		Grammars g = gf.createGrammars(new ByteArrayInputStream(xsdEmpty.getBytes()));
+		factory.setGrammars(g);
 		
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		// write EXI stream (1st time)
