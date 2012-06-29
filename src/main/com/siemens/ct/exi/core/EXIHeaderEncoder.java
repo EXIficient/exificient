@@ -29,7 +29,7 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
@@ -332,7 +332,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, SCHEMA_ID,
 						null);
 
-				Grammar g = f.getGrammar();
+				Grammars g = f.getGrammars();
 
 				// When the value of the "schemaID" element is empty, no user
 				// defined schema information is used for processing the EXI

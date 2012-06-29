@@ -22,9 +22,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
 
 public class QNameContext {
 
@@ -41,7 +41,7 @@ public class QNameContext {
 	Attribute grammarGlobalAttribute;
 
 	// type grammar
-	SchemaInformedFirstStartTagRule typeGrammar;
+	SchemaInformedFirstStartTagGrammar typeGrammar;
 
 	// (direct) simple subtypes
 	List<QNameContext> simpleTypeSubtypes;
@@ -126,12 +126,12 @@ public class QNameContext {
 		return grammarGlobalAttribute;
 	}
 
-	public void setTypeGrammar(SchemaInformedFirstStartTagRule typeGrammar) {
+	public void setTypeGrammar(SchemaInformedFirstStartTagGrammar typeGrammar) {
 		this.typeGrammar = typeGrammar;
 	}
 
 	// null if none
-	public SchemaInformedFirstStartTagRule getTypeGrammar() {
+	public SchemaInformedFirstStartTagGrammar getTypeGrammar() {
 		return this.typeGrammar;
 	}
 

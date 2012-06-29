@@ -21,13 +21,13 @@ package com.siemens.ct.exi;
 import java.io.InputStream;
 
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
-import com.siemens.ct.exi.grammar.SchemaInformedGrammar;
-import com.siemens.ct.exi.grammar.SchemaLessGrammar;
-import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.SchemaInformedGrammars;
+import com.siemens.ct.exi.grammars.SchemaLessGrammars;
+import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
 
 /**
- * Class allows creating EXI <code>Grammar</code>s from different sources.
+ * Class allows creating EXI <code>Grammars</code>s from different sources.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -37,10 +37,10 @@ import com.siemens.ct.exi.grammar.XSDGrammarBuilder;
 
 public class GrammarFactory {
 
-	protected XSDGrammarBuilder grammarBuilder;
+	protected XSDGrammarsBuilder grammarBuilder;
 
 	protected GrammarFactory() {
-		grammarBuilder = XSDGrammarBuilder.newInstance();
+		grammarBuilder = XSDGrammarsBuilder.newInstance();
 	}
 
 	public static GrammarFactory newInstance() {
@@ -48,36 +48,36 @@ public class GrammarFactory {
 	}
 
 	/* schema file as location */
-	public Grammar createGrammar(String xsdLocation) throws EXIException {
+	public Grammars createGrammars(String xsdLocation) throws EXIException {
 		if (xsdLocation == null || xsdLocation.equals("")) {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
 			// System.out.println("Grammar for: " + xsdLocation);
 			grammarBuilder.loadGrammar(xsdLocation);
-			SchemaInformedGrammar g = grammarBuilder.toGrammar();
+			SchemaInformedGrammars g = grammarBuilder.toGrammar();
 			g.setSchemaId(xsdLocation);
 			return g;
 		}
 	}
 
 	/* schema file as input stream */
-	public Grammar createGrammar(InputStream is) throws EXIException {
+	public Grammars createGrammars(InputStream is) throws EXIException {
 		grammarBuilder.loadGrammar(is);
-		SchemaInformedGrammar g = grammarBuilder.toGrammar();
-		g.setSchemaId("Not-Set-InputStream");
+		SchemaInformedGrammars g = grammarBuilder.toGrammar();
+		g.setSchemaId("No-Schema-ID-Set");
 		return g;
 	}
 
 	/* built-in XSD types only are available */
-	public Grammar createXSDTypesOnlyGrammar() throws EXIException {
+	public Grammars createXSDTypesOnlyGrammars() throws EXIException {
 		grammarBuilder.loadXSDTypesOnlyGrammar();
-		SchemaInformedGrammar g = grammarBuilder.toGrammar();
+		SchemaInformedGrammars g = grammarBuilder.toGrammar();
 		g.setBuiltInXMLSchemaTypesOnly(true); // builtInXMLSchemaTypesOnly
 		return g;
 	}
 
 	/* no schema information at all */
-	public Grammar createSchemaLessGrammar() {
-		return new SchemaLessGrammar();
+	public Grammars createSchemaLessGrammars() {
+		return new SchemaLessGrammars();
 	}
 }

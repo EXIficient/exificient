@@ -31,7 +31,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.grammar.event.EventType;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
@@ -338,7 +338,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			String schemaId = value.toString();
 
 			SchemaIdResolver sir = f.getSchemaIdResolver();
-			f.setGrammar(sir.resolveSchemaId(schemaId));
+			f.setGrammars(sir.resolveSchemaId(schemaId));
 		}
 	}
 
@@ -350,7 +350,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				BooleanValue bv = (BooleanValue) value;
 				if (bv.toBoolean()) {
 					// schema-less, default
-					f.setGrammar(f.getSchemaIdResolver().resolveSchemaId(null));
+					f.setGrammars(f.getSchemaIdResolver().resolveSchemaId(null));
 				}
 			} else {
 				throw new EXIException("[EXI-Header] Failure while processing "

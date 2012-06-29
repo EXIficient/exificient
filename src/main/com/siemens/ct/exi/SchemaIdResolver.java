@@ -19,7 +19,7 @@
 package com.siemens.ct.exi;
 
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 
 /**
  * The schemaId option may be used to identify the schema information used for
@@ -56,6 +56,6 @@ public interface SchemaIdResolver {
 	 * @return
 	 * @throws EXIException
 	 */
-	public Grammar resolveSchemaId(String schemaId) throws EXIException;
+	public Grammars resolveSchemaId(String schemaId) throws EXIException;
 
 }

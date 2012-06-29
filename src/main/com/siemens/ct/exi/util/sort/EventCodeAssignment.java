@@ -21,9 +21,9 @@ package com.siemens.ct.exi.util.sort;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.AttributeNS;
-import com.siemens.ct.exi.grammar.event.Event;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.AttributeNS;
+import com.siemens.ct.exi.grammars.event.Event;
 
 /**
  * Helper Class for sorting EXI events

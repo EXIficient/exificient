@@ -28,7 +28,7 @@ import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.types.TypeEncoder;
 
@@ -129,17 +129,17 @@ public interface EXIFactory extends Cloneable {
 	public boolean isFragment();
 
 	/**
-	 * Sets the EXI <code>Grammar</code> used for coding.
+	 * Sets the EXI <code>Grammars</code> used for coding.
 	 */
-	public void setGrammar(Grammar grammar);
+	public void setGrammars(Grammars grammar);
 
 	/**
-	 * Returns the currently used EXI <code>Grammar</code>. By default a
-	 * <code>SchemaLessGrammar</code> is used.
+	 * Returns the currently used EXI <code>Grammars</code>. By default a
+	 * <code>SchemaLessGrammars</code> is used.
 	 * 
 	 * @return grammar used by the factory
 	 */
-	public Grammar getGrammar();
+	public Grammars getGrammars();
 
 	/**
 	 * Re-sets the coding mode used by the factory.

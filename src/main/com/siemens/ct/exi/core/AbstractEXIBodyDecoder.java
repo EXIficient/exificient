@@ -37,17 +37,17 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.EventInformation;
-import com.siemens.ct.exi.grammar.event.Attribute;
-import com.siemens.ct.exi.grammar.event.AttributeNS;
-import com.siemens.ct.exi.grammar.event.Characters;
-import com.siemens.ct.exi.grammar.event.Event;
-import com.siemens.ct.exi.grammar.event.EventType;
-import com.siemens.ct.exi.grammar.event.StartElement;
-import com.siemens.ct.exi.grammar.event.StartElementNS;
-import com.siemens.ct.exi.grammar.rule.Rule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedFirstStartTagRule;
-import com.siemens.ct.exi.grammar.rule.SchemaInformedRule;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.AttributeNS;
+import com.siemens.ct.exi.grammars.event.Characters;
+import com.siemens.ct.exi.grammars.event.Event;
+import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.grammars.event.StartElement;
+import com.siemens.ct.exi.grammars.event.StartElementNS;
+import com.siemens.ct.exi.grammars.grammar.Grammar;
+import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
+import com.siemens.ct.exi.grammars.grammar.SchemaInformedGrammar;
+import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.types.TypeDecoder;
@@ -72,7 +72,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	// next event
 	protected Event nextEvent;
-	protected Rule nextRule;
+	protected Grammar nextRule;
 	protected EventType nextEventType;
 
 	// decoder stream
@@ -103,7 +103,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		super.initFactoryInformation();
 
 		typeDecoder = exiFactory.createTypeDecoder();
-		decoderContext = new DecoderContextImpl(exiFactory.getGrammar()
+		decoderContext = new DecoderContextImpl(exiFactory.getGrammars()
 				.getGrammarContext(), exiFactory.createStringDecoder());
 	}
 
@@ -112,7 +112,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	@Override
-	protected void pushElement(Rule updContextRule, StartElement se) {
+	protected void pushElement(Grammar updContextRule, StartElement se) {
 		super.pushElement(updContextRule, se);
 		if (todoDefaultPrefixMapping && !preservePrefix) {
 			GrammarContext gc = this.grammar.getGrammarContext();
@@ -148,7 +148,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected final EventType decodeEventCode() throws EXIException,
 			IOException {
 		// 1st level
-		final Rule currentRule = getCurrentRule();
+		final Grammar currentRule = getCurrentRule();
 		int codeLength = currentRule
 				.get1stLevelEventCodeLength(fidelityOptions);
 		int ec = codeLength == 0 ? 0 : channel
@@ -158,9 +158,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		if (ec < currentRule.getNumberOfEvents()) {
 			// 1st level
-			EventInformation ei = currentRule.lookFor(ec);
-			nextEvent = ei.event;
-			nextRule = ei.next;
+			Production ei = currentRule.lookFor(ec);
+			nextEvent = ei.getEvent();
+			nextRule = ei.getNextRule();
 			nextEventType = nextEvent.getEventType();
 		} else {
 			// 2nd level ?
@@ -210,7 +210,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected void updateInvalidValueAttribute(int ec) throws EXIException {
-		SchemaInformedRule sir = (SchemaInformedRule) getCurrentRule();
+		SchemaInformedGrammar sir = (SchemaInformedGrammar) getCurrentRule();
 
 		int ec3AT;
 		try {
@@ -223,9 +223,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		if (ec3AT < (sir.getNumberOfDeclaredAttributes())) {
 			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode();
-			EventInformation ei = sir.lookFor(ec);
-			nextEvent = ei.event;
-			nextRule = ei.next;
+			Production ei = sir.lookFor(ec);
+			nextEvent = ei.getEvent();
+			nextRule = ei.getNextRule();
 		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
 			// ANY deviated attribute (no qname present)
 			nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
@@ -236,7 +236,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode2ndLevelEventCode() throws EXIException, IOException {
-		final Rule currentRule = getCurrentRule();
+		final Grammar currentRule = getCurrentRule();
 		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
 		int level2 = channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch2));
@@ -256,7 +256,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void decodeStartDocumentStructure() throws EXIException {
 		// update current rule
-		updateCurrentRule(getCurrentRule().lookFor(0).next);
+		updateCurrentRule(getCurrentRule().lookFor(0).getNextRule());
 	}
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
@@ -307,7 +307,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// learn start-element ?
 		getCurrentRule().learnStartElement(nextSE);
 		// push element
-		pushElement(nextRule.getElementContentRule(), nextSE);
+		pushElement(nextRule.getElementContent(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -325,11 +325,11 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
 
 		// learn start-element ?
-		final Rule currentRule = getCurrentRule();
+		final Grammar currentRule = getCurrentRule();
 		currentRule.learnStartElement(nextSE);
 
 		// push element
-		pushElement(currentRule.getElementContentRule(), nextSE);
+		pushElement(currentRule.getElementContent(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -383,10 +383,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			xsiNil = booleanDatatype.getBoolean();
 		}
 
-		final Rule currentRule = getCurrentRule();
+		final Grammar currentRule = getCurrentRule();
 		if (xsiNil && currentRule.isSchemaInformed()) {
 			// jump to typeEmpty
-			updateCurrentRule(((SchemaInformedFirstStartTagRule) currentRule)
+			updateCurrentRule(((SchemaInformedFirstStartTagGrammar) currentRule)
 					.getTypeEmpty());
 		}
 	}
@@ -555,10 +555,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
 		// learn character event ?
-		final Rule currentRule = getCurrentRule();
+		final Grammar currentRule = getCurrentRule();
 		currentRule.learnCharacters();
 		// update current rule
-		updateCurrentRule(currentRule.getElementContentRule());
+		updateCurrentRule(currentRule.getElementContent());
 	}
 
 	protected final NamespaceDeclaration decodeNamespaceDeclarationStructure()
@@ -583,7 +583,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// decode name AS string
 		char[] er = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContentRule());
+		updateCurrentRule(getCurrentRule().getElementContent());
 		return er;
 	}
 
@@ -591,7 +591,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		char[] comment = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContentRule());
+		updateCurrentRule(getCurrentRule().getElementContent());
 		return comment;
 	}
 
@@ -601,7 +601,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		String piTarget = new String(channel.decodeString());
 		String piData = new String(channel.decodeString());
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContentRule());
+		updateCurrentRule(getCurrentRule().getElementContent());
 		return new ProcessingInstruction(piTarget, piData);
 	}
 

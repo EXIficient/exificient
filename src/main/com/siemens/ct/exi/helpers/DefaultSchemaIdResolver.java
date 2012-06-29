@@ -22,7 +22,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 
 /**
  * 
@@ -53,14 +53,14 @@ public class DefaultSchemaIdResolver implements SchemaIdResolver {
 		return gf;
 	}
 	
-	public Grammar resolveSchemaId(String schemaId) throws EXIException {
+	public Grammars resolveSchemaId(String schemaId) throws EXIException {
 		if (schemaId == null) {
-			return getGrammarFactory().createSchemaLessGrammar();
+			return getGrammarFactory().createSchemaLessGrammars();
 		} else if ("".equals(schemaId)) {
-			return getGrammarFactory().createXSDTypesOnlyGrammar();
+			return getGrammarFactory().createXSDTypesOnlyGrammars();
 		} else {
 			// interpret schemaId as location
-			return getGrammarFactory().createGrammar(schemaId);
+			return getGrammarFactory().createGrammars(schemaId);
 		}
 	}
 	

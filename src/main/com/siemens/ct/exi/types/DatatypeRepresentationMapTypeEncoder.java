@@ -26,7 +26,7 @@ import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammar.Grammar;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -45,7 +45,7 @@ public class DatatypeRepresentationMapTypeEncoder extends
 	protected TypeEncoder defaultEncoder;
 
 	public DatatypeRepresentationMapTypeEncoder(TypeEncoder defaultEncoder,
-			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammar grammar)
+			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammars grammar)
 			throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations, grammar);
 
