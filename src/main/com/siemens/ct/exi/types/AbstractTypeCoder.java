@@ -23,7 +23,7 @@ package com.siemens.ct.exi.types;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.8
+ * @version 0.9
  */
 
 public abstract class AbstractTypeCoder implements TypeCoder {

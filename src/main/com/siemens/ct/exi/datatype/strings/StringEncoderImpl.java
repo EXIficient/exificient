@@ -33,7 +33,7 @@ import com.siemens.ct.exi.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.8
+ * @version 0.9
  */
 
 public class StringEncoderImpl implements StringEncoder {
