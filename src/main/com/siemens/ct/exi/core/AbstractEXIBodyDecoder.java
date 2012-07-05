@@ -68,7 +68,7 @@ import com.siemens.ct.exi.values.Value;
 public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		implements EXIBodyDecoder {
 
-	protected final EXIHeaderDecoder exiHeader;
+	// protected final EXIHeaderDecoder exiHeader;
 
 	// next event
 	protected Event nextEvent;
@@ -95,7 +95,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	public AbstractEXIBodyDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
-		exiHeader = new EXIHeaderDecoder();
+		// exiHeader = new EXIHeaderDecoder();
 	}
 
 	@Override
