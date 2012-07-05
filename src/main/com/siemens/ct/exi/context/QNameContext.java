@@ -92,7 +92,7 @@ public class QNameContext {
 	 * 4, "..." --> ns4
 	 * </p>
 	 * 
-	 * @return
+	 * @return qname as String
 	 */
 	public String getDefaultQNameAsString() {
 		return defaultQNameAsString;
@@ -138,7 +138,6 @@ public class QNameContext {
 	/**
 	 * Returns (direct) simple types in type hierarchy
 	 * 
-	 * @param type
 	 * @return list of named sub-types or null
 	 */
 	public List<QNameContext> getSimpleTypeSubtypes() {

@@ -48,7 +48,7 @@ public interface TypeEncoder extends TypeCoder {
 	/**
 	 * Writes previously checked valid value to channel.
 	 * 
-	 * @param context
+	 * @param encoderContext
 	 * @param valueChannel
 	 * @throws IOException
 	 */
