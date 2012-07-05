@@ -53,7 +53,7 @@ public interface SchemaIdResolver {
 	 * Resolves schemaId to an actual grammar representation.
 	 * 
 	 * @param schemaId
-	 * @return
+	 * @return Grammars
 	 * @throws EXIException
 	 */
 	public Grammars resolveSchemaId(String schemaId) throws EXIException;

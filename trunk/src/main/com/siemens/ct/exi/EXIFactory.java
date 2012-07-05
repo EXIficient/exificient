@@ -111,7 +111,7 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Returns schemaId resolver for this factory;
 	 * 
-	 * @return
+	 * @return Schema Id Resolver
 	 */
 	public SchemaIdResolver getSchemaIdResolver();
 
@@ -287,7 +287,7 @@ public interface EXIFactory extends Cloneable {
 	 * indicates that no local value partition is used while "1" represents the
 	 * behavior of the EXI 1.0 specification
 	 * 
-	 * @return
+	 * @return whether local value partitions are used
 	 */
 	public boolean isLocalValuePartitions();
 
@@ -311,7 +311,7 @@ public interface EXIFactory extends Cloneable {
 	 * elements for which evolving built-in element grammars can be
 	 * instantiated.
 	 * 
-	 * @return
+	 * @return maximum number of evolving built-in element grammars
 	 */
 	public int getMaximumNumberOfEvolvingBuiltInElementGrammars();
 
@@ -325,7 +325,7 @@ public interface EXIFactory extends Cloneable {
 	 * represents the behavior of the EXI 1.0 specification
 	 * </p>
 	 * 
-	 * @param maximumNumberOfEvolvingBuiltInElementGrammars
+	 * @param maximumNumberOfBuiltInProductions
 	 */
 	public void setMaximumNumberOfBuiltInProductions(
 			int maximumNumberOfBuiltInProductions);
@@ -335,7 +335,7 @@ public interface EXIFactory extends Cloneable {
 	 * top-level productions that can be dynamically inserted in built-in
 	 * element grammars.
 	 * 
-	 * @return
+	 * @return maximum number of built-in productions
 	 */
 	public int getMaximumNumberOfBuiltInProductions();
 
@@ -344,7 +344,7 @@ public interface EXIFactory extends Cloneable {
 	 * is a convenience method to indicate whether grammar restriction is in
 	 * use.
 	 * 
-	 * @return
+	 * @return whether schema learning is disabled
 	 */
 	public boolean isGrammarLearningDisabled();
 
@@ -433,7 +433,7 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Returns an EXI <code>StringEncoder</code> according coding options
 	 * 
-	 * @return
+	 * @return String Encoder
 	 * @throws EXIException
 	 */
 	public StringEncoder createStringEncoder();
@@ -452,7 +452,7 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Returns an EXI <code>StringDecoder</code> according coding options
 	 * 
-	 * @return
+	 * @return String Decoder
 	 * @throws EXIException
 	 */
 	public StringDecoder createStringDecoder();
