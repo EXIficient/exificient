@@ -459,6 +459,8 @@ public class IntegerValue extends AbstractValue implements
 			case INTEGER_LONG:
 			case INTEGER_BIG:
 				return -1;
+			default:
+				return -2;
 			}
 		case INTEGER_LONG:
 			switch (o.valueType) {
@@ -474,6 +476,8 @@ public class IntegerValue extends AbstractValue implements
 				}
 			case INTEGER_BIG:
 				return -1;
+			default:
+				return -2;
 			}
 		case INTEGER_BIG:
 			switch (o.valueType) {
@@ -482,6 +486,8 @@ public class IntegerValue extends AbstractValue implements
 				return 1;
 			case INTEGER_BIG:
 				return this.bval.compareTo(o.bval);
+			default:
+				return -2;
 			}
 		default:
 			return -2;
