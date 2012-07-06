@@ -219,6 +219,14 @@ public class SAXDecoder implements XMLReader {
 			// setup (bit) input stream
 			InputStream is = inputSource.getByteStream();
 			
+			// systemId ?
+			if (is == null && inputSource.getSystemId() != null) {
+				is = new FileInputStream(inputSource.getSystemId());
+			}
+			if(is == null) {
+				throw new EXIException("No valid input source " + is);
+			}
+			
 			// buffer stream if not already
 			// TODO is there a *nice* way to detect whether a stream is buffered
 			if (!(is instanceof BufferedInputStream)) {
@@ -277,6 +285,8 @@ public class SAXDecoder implements XMLReader {
 					// No Attribute or NS event --> start deferred element
 					handleDeferredStartElement(deferredStartElement);
 					deferredStartElement = null;
+				default:
+					// no action
 				}
 			}
 

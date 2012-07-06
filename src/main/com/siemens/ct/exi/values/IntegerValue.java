@@ -75,7 +75,7 @@ public class IntegerValue extends AbstractValue implements
 		case INTEGER_BIG:
 			return bval.intValue();
 		default:
-			throw new RuntimeException("Unsupported Integer Type");
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
 	}
 
@@ -88,7 +88,7 @@ public class IntegerValue extends AbstractValue implements
 		case INTEGER_BIG:
 			return bval.longValue();
 		default:
-			throw new RuntimeException("Unsupported Integer Type");
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
 	}
 
@@ -101,7 +101,7 @@ public class IntegerValue extends AbstractValue implements
 		case INTEGER_BIG:
 			return bval;
 		default:
-			throw new RuntimeException("Unsupported Integer Type");
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
 	}
 
@@ -113,49 +113,76 @@ public class IntegerValue extends AbstractValue implements
 			return (this.lval >= 0);
 		case INTEGER_BIG:
 			return (this.bval.signum() != -1);
+		default:
+			return false;
 		}
-		return false;
 	}
 
 	public IntegerValue add(IntegerValue val) {
 		if (val._equals(ZERO)) {
 			return this;
 		}
+		
+		IntegerValue iv;
 
 		switch (valueType) {
 		case INTEGER_INT:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.ival + val.ival);
+				iv = new IntegerValue(this.ival + val.ival);
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.ival + val.lval);
+				iv = IntegerValue.valueOf(this.ival + val.lval);
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(BigInteger.valueOf(this.ival).add(
+				iv = IntegerValue.valueOf(BigInteger.valueOf(this.ival).add(
 						val.bval));
+				break;
+			default:
+				iv = null;
+				break;
 			}
+			break;
 		case INTEGER_LONG:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.lval + val.ival);
+				iv = new IntegerValue(this.lval + val.ival);
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.lval + val.lval);
+				iv = IntegerValue.valueOf(this.lval + val.lval);
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(BigInteger.valueOf(this.lval).add(
+				iv = IntegerValue.valueOf(BigInteger.valueOf(this.lval).add(
 						val.bval));
+				break;
+			default:
+				iv = null;	
+				break;
 			}
+			break;
 		case INTEGER_BIG:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.bval.add(BigInteger
+				iv =new IntegerValue(this.bval.add(BigInteger
 						.valueOf(val.ival)));
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.bval.add(BigInteger
+				iv = IntegerValue.valueOf(this.bval.add(BigInteger
 						.valueOf(val.lval)));
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(this.bval.add(val.bval));
+				iv = IntegerValue.valueOf(this.bval.add(val.bval));
+				break;
+			default:
+				iv = null;
+				break;
 			}
+			break;
+		default:
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
-		return null;
+		
+		return iv;
 	}
 
 	public IntegerValue subtract(IntegerValue val) {
@@ -163,40 +190,65 @@ public class IntegerValue extends AbstractValue implements
 			return this;
 		}
 
+		IntegerValue iv;
+		
 		switch (valueType) {
 		case INTEGER_INT:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.ival - val.ival);
+				iv = new IntegerValue(this.ival - val.ival);
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.ival - val.lval);
+				iv =IntegerValue.valueOf(this.ival - val.lval);
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(BigInteger.valueOf(this.ival)
+				iv = IntegerValue.valueOf(BigInteger.valueOf(this.ival)
 						.subtract(val.bval));
+				break;
+			default:
+				iv = null;
+				break;
 			}
+			break;
 		case INTEGER_LONG:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.lval - val.ival);
+				iv = new IntegerValue(this.lval - val.ival);
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.lval - val.lval);
+				iv = IntegerValue.valueOf(this.lval - val.lval);
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(BigInteger.valueOf(this.lval)
+				iv =IntegerValue.valueOf(BigInteger.valueOf(this.lval)
 						.subtract(val.bval));
+				break;
+			default:
+				iv = null;
+				break;
 			}
+			break;
 		case INTEGER_BIG:
 			switch (val.valueType) {
 			case INTEGER_INT:
-				return new IntegerValue(this.bval.subtract(BigInteger
+				iv = new IntegerValue(this.bval.subtract(BigInteger
 						.valueOf(val.ival)));
+				break;
 			case INTEGER_LONG:
-				return IntegerValue.valueOf(this.bval.subtract(BigInteger
+				iv = IntegerValue.valueOf(this.bval.subtract(BigInteger
 						.valueOf(val.lval)));
+				break;
 			case INTEGER_BIG:
-				return IntegerValue.valueOf(this.bval.subtract(val.bval));
+				iv = IntegerValue.valueOf(this.bval.subtract(val.bval));
+				break;
+			default:
+				iv = null;
+				break;
 			}
+			break;
+		default:
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
-		return null;
+		return iv;
 	}
 
 	public static IntegerValue valueOf(int ival) {
@@ -382,6 +434,8 @@ public class IntegerValue extends AbstractValue implements
 		case INTEGER_BIG:
 			hc = bval.hashCode();
 			break;
+		default:
+			throw new RuntimeException("Unsupported Integer Type " + valueType);
 		}
 		return hc;
 	}

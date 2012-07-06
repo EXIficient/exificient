@@ -138,6 +138,8 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 					ec2++; // AT(xsi:nil)
 				}
 				break;
+			default:
+				// no action	
 			}
 		} else {
 			switch(eventType) {
@@ -199,6 +201,8 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 					ec2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1 : 0; // ER
 				} 
 				break;
+			default:
+				// no action	
 			}
 		}
 		

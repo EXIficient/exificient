@@ -125,6 +125,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		case INTEGER_BIG:
 			encodeBigInteger(iv.bigIntegerValue());
 			break;
+		default:
+			throw new IOException("Unexpcted EXI integer value type " + iv.getValueType());
 		}
 	}
 
@@ -213,6 +215,8 @@ public abstract class AbstractEncoderChannel implements EncoderChannel {
 		case INTEGER_BIG:
 			encodeUnsignedBigInteger(iv.bigIntegerValue());
 			break;
+		default:
+			throw new IOException("Unexpcted EXI integer value type " + iv.getValueType());
 		}
 	}
 

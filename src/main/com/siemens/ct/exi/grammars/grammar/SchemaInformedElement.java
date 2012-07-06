@@ -84,6 +84,8 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent impleme
 					ec2++; // ER
 				} 
 				break;
+			default:
+				// no action	
 			}
 		}
 		return ec2;
