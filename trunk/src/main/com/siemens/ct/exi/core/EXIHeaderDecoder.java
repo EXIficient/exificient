@@ -122,6 +122,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 						.decodeNBitUnsignedInteger(NUMBER_OF_FORMAT_VERSION_BITS);
 				version += value;
 			} while (value == FORMAT_VERSION_CONTINUE_VALUE);
+			assert(version == 0);
 
 			// [EXI Options] ?
 			EXIFactory exiFactory;

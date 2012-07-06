@@ -355,6 +355,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 					// prefix
 					elementEntries.add(getElementContext());
 					deferredStartElement = false;
+				default:
+					// no action	
 				}
 			}
 

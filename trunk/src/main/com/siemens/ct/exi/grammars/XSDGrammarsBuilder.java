@@ -2029,6 +2029,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			case INTEGER_8:
 				intType = IntegerType.UNSIGNED_INTEGER_8;
 				break;
+			default:
+				// no action	
 			}
 
 			switch (intType) {

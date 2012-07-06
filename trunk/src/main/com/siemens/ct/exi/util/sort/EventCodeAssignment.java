@@ -61,6 +61,9 @@ public class EventCodeAssignment implements Comparator<Event>, Serializable {
 			case START_ELEMENT_NS:
 				// sorted in schema order
 				return -1;
+			default:
+				// should never happen
+				return -1;
 			}
 		}
 

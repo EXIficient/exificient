@@ -116,6 +116,8 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 					ec2++; // ER
 				} 
 				break;
+			default:
+				// no action
 			}
 		}
 		return ec2;
