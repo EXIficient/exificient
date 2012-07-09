@@ -800,6 +800,7 @@ public class SchemaLessTest extends TestCase {
 		FileOutputStream fos = new FileOutputStream(f);
 		fos.write(128);
 		fos.write(bytes);
+		fos.close();
 		// System.out.println(f);
 
 		// for(int i=0; i<bytes.length; i++) {
@@ -874,6 +875,7 @@ public class SchemaLessTest extends TestCase {
 		FileOutputStream fos = new FileOutputStream(f);
 		fos.write(128);
 		fos.write(bytes);
+		fos.close();
 		// System.out.println(f);
 	
 		// for(int i=0; i<bytes.length; i++) {

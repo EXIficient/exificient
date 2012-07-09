@@ -69,8 +69,7 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 				baos.write(b);
 			}
 			baos.write("</root>".getBytes());
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			xmlInput = bais;
+			xmlInput = new ByteArrayInputStream(baos.toByteArray());
 			// System.err.println("StAX, Fragments not supported yet");
 		}
 		
