@@ -122,7 +122,7 @@ public class SelfContainedTestCase extends TestCase {
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			// assertTrue(decoder.decodeStartElementGeneric().equals(root));
-			assertTrue(decoder.decodeStartElement().equals(root));
+			assertTrue(decoder.decodeStartElement().getQName().equals(root));
 			
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			// assertTrue(s.equals(decoder.decodeCharactersGenericUndeclared().toString()));
@@ -302,7 +302,7 @@ public class SelfContainedTestCase extends TestCase {
 				// <sc> #1
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 				// assertTrue(decoder.decodeStartElementGeneric().equals(foo));
-				assertTrue(decoder.decodeStartElement().equals(foo));
+				assertTrue(decoder.decodeStartElement().getQName().equals(foo));
 
 				assertTrue(decoder.next() == EventType.SELF_CONTAINED);
 				decoder.decodeStartSelfContainedFragment();

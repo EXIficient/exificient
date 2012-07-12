@@ -1141,5 +1141,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			updateCurrentRule(currentRule.getElementContent());
 		}
 	}
+	
+	protected final String checkDefaultPrefixNamespaceDeclaration(QNameContext qnc) {
+		throw new RuntimeException("EXIEncoder is not alloed to call this method. Decoder only!");
+	}
 
 }

@@ -89,7 +89,7 @@ public class SchemaInformedTest extends TestCase {
 			decoder.decodeStartDocument();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(qnRoot));
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
@@ -146,10 +146,10 @@ public class SchemaInformedTest extends TestCase {
 			decoder.decodeStartDocument();
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(qnRoot));
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
 	
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(decoder.decodeAttributeXsiNil().getLocalPart().equals("nil"));
+			assertTrue(decoder.decodeAttributeXsiNil().getLocalName().equals("nil"));
 			
 			Value xsiNil = decoder.getAttributeValue();
 			assertTrue(xsiNil instanceof BooleanValue);
@@ -211,10 +211,10 @@ public class SchemaInformedTest extends TestCase {
 			decoder.decodeStartDocument();
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(qnRoot));
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
 			
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(decoder.decodeAttributeXsiType().getLocalPart().equals("type"));
+			assertTrue(decoder.decodeAttributeXsiType().getLocalName().equals("type"));
 			QNameValue qnv = (QNameValue) decoder.getAttributeValue();
 			assertTrue(qnv.getLocalName().equals("string"));
 			assertTrue(qnv.getNamespaceUri().equals("http://www.w3.org/2001/XMLSchema"));
@@ -276,10 +276,10 @@ public class SchemaInformedTest extends TestCase {
 			decoder.decodeStartDocument();
 	
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(qnRoot));
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
 			
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(decoder.decodeAttributeXsiType().getLocalPart().equals("type"));
+			assertTrue(decoder.decodeAttributeXsiType().getLocalName().equals("type"));
 			
 			Value xsiType = decoder.getAttributeValue();
 			assertTrue(xsiType instanceof QNameValue);

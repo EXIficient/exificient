@@ -111,15 +111,15 @@ public class FragmentsTestCase extends TestCase {
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			// assertTrue(decoder.decodeStartElementGeneric().equals(s1));
-			assertTrue(decoder.decodeStartElement().equals(s1));
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			// assertTrue(decoder.decodeStartElementGenericUndeclared().equals(s2));
-			assertTrue(decoder.decodeStartElement().equals(s2));
+			assertTrue(decoder.decodeStartElement().getQName().equals(s2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at1));
-			assertTrue(decoder.decodeAttribute().equals(at1));
+			assertTrue(decoder.decodeAttribute().getQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh1));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
@@ -130,18 +130,18 @@ public class FragmentsTestCase extends TestCase {
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(s1));
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
 			
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
-			assertTrue(decoder.decodeStartElement().equals(s2));
+			assertTrue(decoder.decodeStartElement().getQName().equals(s2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE);
-			assertTrue(decoder.decodeAttribute().equals(at1));
+			assertTrue(decoder.decodeAttribute().getQName().equals(at1));
 			assertTrue(decoder.getAttributeValue().equals(atCh2));
 
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			// assertTrue(decoder.decodeAttributeGenericUndeclared().equals(at2));
-			assertTrue(decoder.decodeAttribute().equals(at2));
+			assertTrue(decoder.decodeAttribute().getQName().equals(at2));
 			assertTrue(decoder.getAttributeValue().equals(atCh3));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);

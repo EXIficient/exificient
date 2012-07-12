@@ -23,6 +23,7 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.grammars.GrammarTest;
 import com.siemens.ct.exi.grammars.Grammars;
@@ -78,7 +79,7 @@ public class RoundtripTestCase extends TestCase {
 		dec.decodeStartDocument();
 		enc2.encodeStartDocument();
 		assertTrue(dec.next() == EventType.START_ELEMENT);
-		QName qnameSE = dec.decodeStartElement();
+		QName qnameSE = dec.decodeStartElement().getQName();
 		enc2.encodeStartElement(qnameSE);
 		assertTrue(qnameSE.equals(qnameRoot));
 		assertTrue(dec.next() == EventType.CHARACTERS);
@@ -86,7 +87,7 @@ public class RoundtripTestCase extends TestCase {
 		enc2.encodeCharacters(val);
 		assertTrue(val.getValueType() == ValueType.INTEGER_INT);
 		assertTrue(dec.next() == EventType.END_ELEMENT);
-		QName qnameEE = dec.decodeEndElement();
+		QName qnameEE = dec.decodeEndElement().getQName();
 		assertTrue(qnameEE.equals(qnameRoot));
 		enc2.encodeEndElement();
 		assertTrue(dec.next() == EventType.END_DOCUMENT);
@@ -145,7 +146,7 @@ public class RoundtripTestCase extends TestCase {
 		dec.decodeStartDocument();
 		enc2.encodeStartDocument();
 		assertTrue(dec.next() == EventType.START_ELEMENT);
-		QName qnameSE = dec.decodeStartElement();
+		QName qnameSE = dec.decodeStartElement().getQName();
 		enc2.encodeStartElement(qnameSE);
 		assertTrue(qnameSE.equals(qnameRoot));
 		assertTrue(dec.next() == EventType.CHARACTERS);
@@ -154,7 +155,7 @@ public class RoundtripTestCase extends TestCase {
 		// assertTrue(val.getValueType() == ValueType.INT_INTEGER);
 		assertTrue(val.getValueType() == ValueType.STRING);
 		assertTrue(dec.next() == EventType.END_ELEMENT);
-		QName qnameEE = dec.decodeEndElement();
+		QName qnameEE = dec.decodeEndElement().getQName();
 		assertTrue(qnameEE.equals(qnameRoot));
 		enc2.encodeEndElement();
 		assertTrue(dec.next() == EventType.END_DOCUMENT);
@@ -212,11 +213,11 @@ public class RoundtripTestCase extends TestCase {
 				enc2.encodeStartDocument();
 				break;
 			case START_ELEMENT:
-				QName se = dec.decodeStartElement();
-				enc2.encodeStartElement(se);
+				QNameContext se = dec.decodeStartElement();
+				enc2.encodeStartElement(se.getQName());
 				break;
 			case ATTRIBUTE:
-				QName at = dec.decodeAttribute();
+				QName at = dec.decodeAttribute().getQName();
 				Value atv = dec.getAttributeValue();
 				enc2.encodeAttribute(at, atv);
 				break;
@@ -286,7 +287,7 @@ public class RoundtripTestCase extends TestCase {
 				break;
 			case START_ELEMENT_GENERIC:
 				// QName se = dec.decodeStartElementGeneric();
-				QName se = dec.decodeStartElement();
+				QName se = dec.decodeStartElement().getQName();
 				assertTrue(se.getLocalPart().equals("a"));
 				enc2.encodeStartElement(se);
 				break;
@@ -362,7 +363,7 @@ public class RoundtripTestCase extends TestCase {
 				break;
 			case START_ELEMENT_GENERIC:
 				// QName se = dec.decodeStartElementGeneric();
-				QName se = dec.decodeStartElement();
+				QName se = dec.decodeStartElement().getQName();
 				assertTrue(se.getLocalPart().equals("a"));
 				enc2.encodeStartElement(se);
 				break;
@@ -414,7 +415,7 @@ public class RoundtripTestCase extends TestCase {
 		Assert.assertEquals(EventType.START_DOCUMENT, decoder.next());
 		decoder.decodeStartDocument();
 		Assert.assertEquals(EventType.START_ELEMENT_GENERIC, decoder.next());
-		QName actual = decoder.decodeStartElement();
+		QName actual = decoder.decodeStartElement().getQName();
 		// prefix not known yet
 		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
 		Assert.assertEquals(name, actual);
@@ -427,7 +428,7 @@ public class RoundtripTestCase extends TestCase {
 		Assert.assertEquals(EventType.END_ELEMENT, decoder.next());
 		// prefix is known as long as EndElement wasn't called
 		Assert.assertEquals(name.getPrefix(), decoder.getElementPrefix());
-		actual = decoder.decodeEndElement();
+		actual = decoder.decodeEndElement().getQName();
 		Assert.assertEquals(name, actual);
 		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
 		Assert.assertEquals(EventType.END_DOCUMENT, decoder.next());

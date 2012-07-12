@@ -20,7 +20,7 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
+import javax.xml.XMLConstants;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
@@ -79,7 +79,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected DecoderChannel channel;
 
 	// namespaces/prefixes
-	protected int createdPfxCnt;
 	protected boolean todoDefaultPrefixMapping;
 
 	// Type Decoder (including string decoder etc.)
@@ -118,17 +117,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			GrammarContext gc = this.grammar.getGrammarContext();
 			for (int i = 2; i < gc.getNumberOfGrammarUriContexts(); i++) {
 				GrammarUriContext guc = gc.getGrammarUriContext(i);
-				String pfx;
-				if (guc.getNumberOfPrefixes() > 0) {
-					pfx = guc.getPrefix(0);
-				} else {
-					pfx = "ns" + i;
-				}
+				String pfx = guc.getDefaultPrefix();
 				declarePrefix(pfx, guc.getNamespaceUri());
 			}
 
-			// createdPfxCnt += gues.length;
-			createdPfxCnt += gc.getNumberOfGrammarUriContexts();
 			todoDefaultPrefixMapping = false;
 		}
 	}
@@ -138,7 +130,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		super.initForEachRun();
 
 		// namespaces/prefixes
-		createdPfxCnt = 0;
 		todoDefaultPrefixMapping = true;
 
 		// clear string values etc.
@@ -263,19 +254,22 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 	}
 
-	protected final QName decodeStartElementStructure() throws IOException {
+	protected final QNameContext decodeStartElementStructure()
+			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT);
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
 		// push element
 		pushElement(nextRule, se);
 		// handle element prefix
-		handleElementPrefix(se.getQNameContext()); // .getUriContext());
+		QNameContext qnc = se.getQNameContext();
+		handleElementPrefix(qnc);
 
-		return se.getQName();
+		return qnc;
 	}
 
-	protected final QName decodeStartElementNSStructure() throws IOException {
+	protected final QNameContext decodeStartElementNSStructure()
+			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_NS);
 		// StartElementNS
 		StartElementNS seNS = ((StartElementNS) nextEvent);
@@ -292,10 +286,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(qnc);
 
-		return qnc.getQName();
+		return qnc;
 	}
 
-	protected final QName decodeStartElementGenericStructure()
+	protected final QNameContext decodeStartElementGenericStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC);
 		// decode uri & local-name
@@ -312,10 +306,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(qnc);
 
-		return qnc.getQName();
+		return qnc;
 	}
 
-	protected final QName decodeStartElementGenericUndeclaredStructure()
+	protected final QNameContext decodeStartElementGenericUndeclaredStructure()
 			throws IOException {
 		assert (nextEventType == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 		// decode uri & local-name
@@ -334,7 +328,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle element prefix
 		handleElementPrefix(qnc);
 
-		return qnc.getQName();
+		return qnc;
 	}
 
 	protected final ElementContext decodeEndElementStructure()
@@ -429,7 +423,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				qncTypePrefix = decoderContext.decodeQNamePrefix(decoderContext
 						.getUriContext(qncType.getNamespaceUriID()), channel);
 			} else {
-				qncTypePrefix = checkPrefixMapping(qncType.getNamespaceUri());
+				qncTypePrefix = checkDefaultPrefixNamespaceDeclaration(qncType);
 			}
 			attributeValue = new QNameValue(qncType.getNamespaceUri(),
 					qncType.getLocalName(), qncTypePrefix);
@@ -444,17 +438,18 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void handleElementPrefix(QNameContext qnc)
 			throws IOException {
+		String pfx;
 		if (preservePrefix) {
-			getElementContext().prefix = decoderContext.decodeQNamePrefix(
+			pfx = decoderContext.decodeQNamePrefix(
 					decoderContext.getUriContext(qnc.getNamespaceUriID()),
 					channel);
 			// Note: IF elementPrefix is still null it will be determined by a
 			// subsequently following NS event
 		} else {
-			// determine element prefix
-			getElementContext().prefix = checkPrefixMapping(qnc
-					.getNamespaceUri());
+			// element prefix
+			pfx = checkDefaultPrefixNamespaceDeclaration(qnc);
 		}
+		getElementContext().setPrefix(pfx);
 	}
 
 	protected final void handleAttributePrefix(QNameContext qnc)
@@ -464,17 +459,40 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 					decoderContext.getUriContext(qnc.getNamespaceUriID()),
 					channel);
 		} else {
-			attributePrefix = checkPrefixMapping(qnc.getNamespaceUri());
+			attributePrefix = checkDefaultPrefixNamespaceDeclaration(qnc);
 		}
 	}
 
-	private final String checkPrefixMapping(String uri) {
+	protected final String getPrefix(String uri) {
+		if (XMLConstants.NULL_NS_URI.equals(uri)) {
+			return XMLConstants.DEFAULT_NS_PREFIX;
+		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
+			return XMLConstants.XML_NS_PREFIX;
+		}
+		// check all stack items except first one
+		for (int i = 1; i <= elementContextStackIndex; i++) {
+			ElementContext ec = elementContextStack[i];
+			if (ec.nsDeclarations != null) {
+				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+					if (ns.namespaceURI.equals(uri)) {
+						return ns.prefix;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	protected final String checkDefaultPrefixNamespaceDeclaration(
+			QNameContext qnc) {
 		assert (!preservePrefix);
 
+		String uri = qnc.getNamespaceUri();
+		// TODO believe this can be done more efficiently
 		String pfx = getPrefix(uri);
 
 		if (pfx == null) {
-			pfx = "ns" + createdPfxCnt++;
+			pfx = qnc.getDefaultPrefix();
 			declarePrefix(pfx, uri);
 		}
 
@@ -569,7 +587,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		boolean local_element_ns = channel.decodeBoolean();
 		if (local_element_ns) {
-			getElementContext().prefix = nsPrefix;
+			getElementContext().setPrefix(nsPrefix);
 		}
 		// NS
 		NamespaceDeclaration nsDecl = new NamespaceDeclaration(

@@ -29,6 +29,7 @@ import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -54,7 +55,7 @@ import com.siemens.ct.exi.values.ValueType;
 
 public class EXIHeaderDecoder extends AbstractEXIHeader {
 
-	protected QName lastSE;
+	protected QNameContext lastSE;
 
 	protected boolean dtrSection;
 	protected List<QName> dtrMapTypes = new ArrayList<QName>();
@@ -233,19 +234,19 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		return exiOptionsFactory;
 	}
 
-	protected void handleStartElement(QName se, EXIFactory f)
+	protected void handleStartElement(QNameContext se, EXIFactory f)
 			throws UnsupportedOption {
 
 		if (dtrSection) {
 			if (dtrMapTypes.size() == dtrMapRepresentations.size()) {
 				// schema datatype
-				dtrMapTypes.add(se);
+				dtrMapTypes.add(se.getQName());
 			} else {
 				// datatype representation
-				dtrMapRepresentations.add(se);
+				dtrMapRepresentations.add(se.getQName());
 			}
-		} else if (Constants.W3C_EXI_NS_URI.equals(se.getNamespaceURI())) {
-			String localName = se.getLocalPart();
+		} else if (Constants.W3C_EXI_NS_URI.equals(se.getNamespaceUri())) {
+			String localName = se.getLocalName();
 
 			if (BYTE.equals(localName)) {
 				f.setCodingMode(CodingMode.BYTE_PACKED);
@@ -284,9 +285,9 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		lastSE = se;
 	}
 
-	protected void handleEndElement(QName ee, EXIFactory f) {
-		if (Constants.W3C_EXI_NS_URI.equals(ee.getNamespaceURI())) {
-			String localName = ee.getLocalPart();
+	protected void handleEndElement(QNameContext ee, EXIFactory f) {
+		if (Constants.W3C_EXI_NS_URI.equals(ee.getNamespaceUri())) {
+			String localName = ee.getLocalName();
 
 			if (DATATYPE_REPRESENTATION_MAP.equals(localName)) {
 				dtrSection = false;
@@ -296,7 +297,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 
 	protected void handleCharacters(Value value, EXIFactory f)
 			throws EXIException {
-		String localName = lastSE.getLocalPart();
+		String localName = lastSE.getLocalName();
 
 		if (VALUE_MAX_LENGTH.equals(localName)) {
 			if (value instanceof IntegerValue) {
@@ -344,7 +345,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	}
 
 	protected void handleXsiNil(Value value, EXIFactory f) throws EXIException {
-		String localName = lastSE.getLocalPart();
+		String localName = lastSE.getLocalName();
 
 		if (SCHEMA_ID.equals(localName)) {
 			if (value instanceof BooleanValue) {

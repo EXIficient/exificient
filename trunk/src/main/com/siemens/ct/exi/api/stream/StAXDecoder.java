@@ -35,6 +35,7 @@ import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -63,7 +64,7 @@ public class StAXDecoder implements XMLStreamReader
 
 	protected boolean exiBodyOnly = false;
 
-	protected QName element;
+	protected QNameContext element;
 	protected List<AttributeContainer> attributes;
 	protected Value characters;
 	protected DocType docType;
@@ -82,11 +83,11 @@ public class StAXDecoder implements XMLStreamReader
 	protected EXINamespaceContext nsContext;
 	
 	static class AttributeContainer {
-		final QName qname;
+		final QNameContext qname;
 		final Value value;
 		final String prefix;
 
-		public AttributeContainer(QName qname, Value value, String prefix) {
+		public AttributeContainer(QNameContext qname, Value value, String prefix) {
 			this.qname = qname;
 			this.value = value;
 			this.prefix = prefix;
@@ -331,15 +332,15 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getAttributeLocalName(int index) {
-		return attributes.get(index).qname.getLocalPart();
+		return attributes.get(index).qname.getLocalName();
 	}
 
 	public QName getAttributeName(int index) {
-		return attributes.get(index).qname;
+		return attributes.get(index).qname.getQName();
 	}
 
 	public String getAttributeNamespace(int index) {
-		return attributes.get(index).qname.getNamespaceURI();
+		return attributes.get(index).qname.getNamespaceUri();
 	}
 
 	public String getAttributePrefix(int index) {
@@ -382,7 +383,7 @@ public class StAXDecoder implements XMLStreamReader
 
 	public String getLocalName() {
 		// Returns the (local) name of the current event.
-		return element.getLocalPart();
+		return element.getLocalName();
 	}
 
 	public Location getLocation() {
@@ -398,7 +399,7 @@ public class StAXDecoder implements XMLStreamReader
 	 */
 	public QName getName() {
 		// Returns a QName for the current START_ELEMENT or END_ELEMENT event
-		QName qn = new QName( element.getNamespaceURI(), element.getLocalPart(), this.getPrefix());
+		QName qn = new QName( element.getNamespaceUri(), element.getLocalName(), this.getPrefix());
 		return qn;
 	}
 
@@ -482,7 +483,7 @@ public class StAXDecoder implements XMLStreamReader
 	public String getNamespaceURI() {
 		// If the current event is a START_ELEMENT or END_ELEMENT this method
 		// returns the URI of the prefix or the default namespace.
-		return element.getNamespaceURI();
+		return element.getNamespaceUri();
 	}
 
 	public String getPIData() {
@@ -800,12 +801,12 @@ public class StAXDecoder implements XMLStreamReader
 			switch (eventType) {
 			case XMLStreamConstants.START_ELEMENT:
 				if (namespaceURI != null) {
-					if (!this.element.getNamespaceURI().equals(namespaceURI)) {
+					if (!this.element.getNamespaceUri().equals(namespaceURI)) {
 						throw new XMLStreamException();
 					}
 				}
 				if (localName != null) {
-					if (!this.element.getLocalPart().equals(localName)) {
+					if (!this.element.getLocalName().equals(localName)) {
 						throw new XMLStreamException();
 					}
 				}

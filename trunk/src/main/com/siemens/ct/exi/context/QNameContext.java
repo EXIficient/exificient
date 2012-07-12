@@ -33,6 +33,7 @@ public class QNameContext {
 	final QName qName;
 	final int qNameID;
 	final String defaultQNameAsString;
+	final String defaultPrefix;
 
 	// global element
 	StartElement grammarGlobalElement;
@@ -54,17 +55,20 @@ public class QNameContext {
 		switch (namespaceUriID) {
 		case 0:
 			// "" [empty string]
+			this.defaultPrefix = "";
 			this.defaultQNameAsString = this.qName.getLocalPart();
 			break;
 		case 1:
-			this.defaultQNameAsString = "xml:" + this.qName.getLocalPart();
+			this.defaultPrefix = "xml";
+			this.defaultQNameAsString = defaultPrefix + ":" + this.qName.getLocalPart();
 			break;
 		case 2:
-			this.defaultQNameAsString = "xsi:" + this.qName.getLocalPart();
+			this.defaultPrefix = "xsi";
+			this.defaultQNameAsString = defaultPrefix + ":" + this.qName.getLocalPart();
 			break;
 		default:
-			this.defaultQNameAsString = "ns" + namespaceUriID + ":"
-					+ this.qName.getLocalPart();
+			this.defaultPrefix = "ns" + namespaceUriID;
+			this.defaultQNameAsString = defaultPrefix + ":" + this.qName.getLocalPart();
 		}
 		this.qNameID = qNameID;
 	}
@@ -96,6 +100,10 @@ public class QNameContext {
 	 */
 	public String getDefaultQNameAsString() {
 		return defaultQNameAsString;
+	}
+	
+	public String getDefaultPrefix() {
+		return defaultPrefix;
 	}
 
 	public int getQNameID() {
@@ -169,15 +177,17 @@ public class QNameContext {
 	public final boolean equals(Object o) {
 		if (o instanceof QNameContext) {
 			QNameContext other = (QNameContext) o;
-			return (other.localNameID == this.localNameID && other
-					.getNamespaceUriID() == this.getNamespaceUriID());
+			// return (other.localNameID == this.localNameID && other
+			//		.getNamespaceUriID() == this.getNamespaceUriID());
+			return (other.qNameID == this.qNameID);
 		}
 		return false;
 	}
 
 	@Override
 	public final int hashCode() {
-		return getNamespaceUriID() ^ localNameID;
+		// return getNamespaceUriID() ^ localNameID;
+		return qNameID;
 	}
 
 }

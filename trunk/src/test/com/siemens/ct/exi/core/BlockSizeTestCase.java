@@ -80,31 +80,31 @@ public class BlockSizeTestCase extends XMLTestCase {
 			
 			assertTrue(exiDecoder.next() == EventType.START_ELEMENT_GENERIC);
 			// assertTrue(exiDecoder.decodeStartElementGeneric().getLocalPart().equals("root"));
-			assertTrue(exiDecoder.decodeStartElement().getLocalPart().equals("root"));
+			assertTrue(exiDecoder.decodeStartElement().getLocalName().equals("root"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			//assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atA"));
-			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atA"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalName().equals("atA"));
 			assertTrue(exiDecoder.getAttributeValue().toString().equals("a"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atB"));
-			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atB"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalName().equals("atB"));
 			assertTrue(exiDecoder.getAttributeValue().toString().equals("b"));
 
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atC"));
-			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atC"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalName().equals("atC"));
 			assertTrue(exiDecoder.getAttributeValue().toString().equals("c"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atD"));
-			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atD"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalName().equals("atD"));
 			assertTrue(exiDecoder.getAttributeValue().toString().equals("d"));
 			
 			assertTrue(exiDecoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);	
 			// assertTrue(exiDecoder.decodeAttributeGenericUndeclared().getLocalPart().equals("atE"));
-			assertTrue(exiDecoder.decodeAttribute().getLocalPart().equals("atE"));
+			assertTrue(exiDecoder.decodeAttribute().getLocalName().equals("atE"));
 			assertTrue(exiDecoder.getAttributeValue().toString().equals("e"));
 			
 			assertTrue(exiDecoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);	
@@ -112,7 +112,7 @@ public class BlockSizeTestCase extends XMLTestCase {
 			assertTrue(exiDecoder.decodeCharacters().toString().equals("... TEXT ..."));
 
 			assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
-			assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("root"));
+			assertTrue(exiDecoder.decodeEndElement().getLocalName().equals("root"));
 			
 			assertTrue(exiDecoder.next() == EventType.END_DOCUMENT);
 			exiDecoder.decodeEndDocument();
@@ -181,20 +181,20 @@ public class BlockSizeTestCase extends XMLTestCase {
 		assertTrue(exiDecoder.next() == EventType.START_DOCUMENT);
 		exiDecoder.decodeStartDocument();
 		assertTrue(exiDecoder.next() == EventType.START_ELEMENT);
-		assertTrue(exiDecoder.decodeStartElement().getLocalPart().equals("root"));
+		assertTrue(exiDecoder.decodeStartElement().getLocalName().equals("root"));
 		assertTrue(exiDecoder.next() == EventType.START_ELEMENT);
-		assertTrue(exiDecoder.decodeStartElement().getLocalPart().equals("parent"));
+		assertTrue(exiDecoder.decodeStartElement().getLocalName().equals("parent"));
 		assertTrue(exiDecoder.next() == EventType.START_ELEMENT);
-		assertTrue(exiDecoder.decodeStartElement().getLocalPart().equals("child"));
+		assertTrue(exiDecoder.decodeStartElement().getLocalName().equals("child"));
 		assertTrue(exiDecoder.next() == EventType.CHARACTERS);	
 		Value val = exiDecoder.decodeCharacters();
 		assertTrue(val.toString().equals("42"));
 		assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
-		assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("child"));
+		assertTrue(exiDecoder.decodeEndElement().getLocalName().equals("child"));
 		assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
-		assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("parent"));
+		assertTrue(exiDecoder.decodeEndElement().getLocalName().equals("parent"));
 		assertTrue(exiDecoder.next() == EventType.END_ELEMENT);	
-		assertTrue(exiDecoder.decodeEndElement().getLocalPart().equals("root"));
+		assertTrue(exiDecoder.decodeEndElement().getLocalName().equals("root"));
 		assertTrue(exiDecoder.next() == EventType.END_DOCUMENT);
 		exiDecoder.decodeEndDocument();
 	}
