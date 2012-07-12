@@ -211,9 +211,6 @@ public abstract class AbstractEXIBodyCoder {
 		// System.err.println(message);
 	}
 	
-	
-	protected abstract String checkDefaultPrefixNamespaceDeclaration(QNameContext qnc);
-
 	// static
 	final class ElementContext {
 		private String prefix;
