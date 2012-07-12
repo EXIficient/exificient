@@ -87,10 +87,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
@@ -124,8 +124,8 @@ public class QuickTestConfiguration {
 		// valueMaxLength = 0;
 		// valuePartitionCapacity = 4;
 		// localValuePartitions = false;
-		XSD_TYPES_ONLY = true;
-		maximumNumberOfBuiltInProductions = 0;
+		// XSD_TYPES_ONLY = true;
+		// maximumNumberOfBuiltInProductions = 0;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");

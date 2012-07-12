@@ -70,7 +70,7 @@ public abstract class AbstractEXIBodyCoder {
 	private ElementContext elementContext; // cached context to avoid heavy
 											// array lookup
 	protected ElementContext[] elementContextStack;
-	private int elementContextStackIndex;
+	protected int elementContextStackIndex;
 	public static final int INITIAL_STACK_SIZE = 16;
 
 	// SE pool
@@ -175,26 +175,6 @@ public abstract class AbstractEXIBodyCoder {
 		return prefix.length() == 0 ? XMLConstants.NULL_NS_URI : null;
 	}
 
-	public final String getPrefix(String uri) {
-		if (XMLConstants.NULL_NS_URI.equals(uri)) {
-			return XMLConstants.DEFAULT_NS_PREFIX;
-		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
-			return XMLConstants.XML_NS_PREFIX;
-		}
-		// check all stack items except first one
-		for (int i = 1; i <= elementContextStackIndex; i++) {
-			ElementContext ec = elementContextStack[i];
-			if (ec.nsDeclarations != null) {
-				for (NamespaceDeclaration ns : ec.nsDeclarations) {
-					if (ns.namespaceURI.equals(uri)) {
-						return ns.prefix;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 	protected void pushElement(Grammar updContextRule, StartElement se) {
 		// update "rule" item of current peak (for popElement() later on)
 		elementContext.rule = updContextRule;
@@ -215,7 +195,8 @@ public abstract class AbstractEXIBodyCoder {
 	protected final ElementContext popElement() {
 		assert (this.elementContextStackIndex > 0);
 		// pop element from stack
-		ElementContext poppedEC = elementContextStack[elementContextStackIndex--];
+		ElementContext poppedEC = elementContextStack[elementContextStackIndex];
+		elementContextStack[elementContextStackIndex--] = null;
 		elementContext = elementContextStack[elementContextStackIndex];
 
 		return poppedEC;
@@ -229,11 +210,14 @@ public abstract class AbstractEXIBodyCoder {
 				+ exiFactory.getFidelityOptions()));
 		// System.err.println(message);
 	}
+	
+	
+	protected abstract String checkDefaultPrefixNamespaceDeclaration(QNameContext qnc);
 
 	// static
 	final class ElementContext {
-		String prefix;
-		String sqname;
+		private String prefix;
+		private String sqname;
 		Grammar rule; // may be modified while coding
 		List<NamespaceDeclaration> nsDeclarations; // prefix declarations
 
@@ -248,12 +232,23 @@ public abstract class AbstractEXIBodyCoder {
 			if (sqname == null) {
 				if (preservePrefix) {
 					sqname = QNameUtilities.getQualifiedName(
-							qnameContext.getLocalName(), prefix);
+							qnameContext.getLocalName(), getPrefix());
 				} else {
 					sqname = qnameContext.getDefaultQNameAsString();
 				}
 			}
 			return sqname;
+		}
+		
+		void setPrefix(String pfx) {
+			this.prefix = pfx;
+		}
+		
+		String getPrefix() {
+//			if(this.prefix == null) {
+//				this.prefix = checkPrefixMapping(qnameContext);
+//			}
+			return this.prefix;
 		}
 	}
 }

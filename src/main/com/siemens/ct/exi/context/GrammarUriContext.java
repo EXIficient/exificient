@@ -27,12 +27,34 @@ public class GrammarUriContext extends AbstractUriContext {
 
 	// grammar prefixes
 	final String[] grammarPrefixes;
+	
+	// default prefix
+	final String defaultPrefix;
 
 	public GrammarUriContext(int namespaceUriID, String namespaceUri,
 			QNameContext[] grammarQNames, String[] grammarPrefixes) {
 		super(namespaceUriID, namespaceUri);
 		this.grammarQNames = grammarQNames;
 		this.grammarPrefixes = grammarPrefixes;
+		
+		switch (namespaceUriID) {
+		case 0:
+			// "" [empty string]
+			this.defaultPrefix = "";
+			break;
+		case 1:
+			this.defaultPrefix = "xml";
+			break;
+		case 2:
+			this.defaultPrefix = "xsi";
+			break;
+		default:
+			this.defaultPrefix = "ns" + namespaceUriID;
+		}
+	}
+	
+	public String getDefaultPrefix() {
+		return defaultPrefix;
 	}
 
 	public GrammarUriContext(int namespaceUriID, String namespaceUri,

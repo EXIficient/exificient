@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
@@ -651,13 +649,13 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		return (currElementEntry = elementEntries.get(elementEntryIndex++));
 	}
 
-	public QName decodeStartElement() throws IOException, EXIException {
-		return setNextElemementEntry().qnameContext.getQName();
+	public QNameContext decodeStartElement() throws IOException, EXIException {
+		return setNextElemementEntry().qnameContext;
 	}
 
-	public QName decodeEndElement() throws EXIException {
+	public QNameContext decodeEndElement() throws EXIException {
 		// before
-		QName eeBefore = currElementEntry.qnameContext.getQName();
+		QNameContext eeBefore = currElementEntry.qnameContext;
 		// after
 		setNextElemementEntry();
 
@@ -669,7 +667,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	}
 
 	public String getElementPrefix() {
-		return currElementEntry.prefix;
+		return currElementEntry.getPrefix();
 	}
 
 	public String getElementQNameAsString() {
@@ -681,19 +679,19 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		return nsEntries.get(nsEntryIndex++);
 	}
 
-	public QName decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
 		this.attributeQNameContext = decoderContext.getXsiNilContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
-		return attributeQNameContext.getQName();
+		return attributeQNameContext;
 	}
 
-	public QName decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
 		this.attributeQNameContext = decoderContext.getXsiTypeContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 
-		return attributeQNameContext.getQName();
+		return attributeQNameContext;
 	}
 
 	protected final void addQNameEntry(QNameEntry qne) {
@@ -704,14 +702,14 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		return qnameEntries.get(qnameEntryIndex++);
 	}
 
-	public QName decodeAttribute() throws EXIException, IOException {
+	public QNameContext decodeAttribute() throws EXIException, IOException {
 		QNameEntry at = getNextQNameEntry();
 
 		this.attributeQNameContext = at.qnContext;
 		attributePrefix = at.prefix;
 		attributeValue = getNextContentValue(attributeQNameContext);
 
-		return attributeQNameContext.getQName();
+		return attributeQNameContext;
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {

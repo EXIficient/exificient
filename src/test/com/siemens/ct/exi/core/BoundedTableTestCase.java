@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import javax.xml.namespace.QName;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,6 +33,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -48,8 +47,8 @@ public class BoundedTableTestCase extends XMLTestCase {
 		assertTrue(val.toString().startsWith("VAL_"));
 	}
 	
-	public void testSE(QName qname) {
-		String localPart = qname.getLocalPart();
+	public void testSE(QNameContext qname) {
+		String localPart = qname.getLocalName();
 		assertTrue(localPart.equals("root") || localPart.equals("a") || localPart.equals("b"));
 	}
 	
@@ -87,7 +86,7 @@ public class BoundedTableTestCase extends XMLTestCase {
 					exiDecoder.decodeEndDocument();
 					break;
 				case START_ELEMENT:
-					QName se = exiDecoder.decodeStartElement();
+					QNameContext se = exiDecoder.decodeStartElement();
 					testSE(se); 
 					break;
 				case START_ELEMENT_GENERIC:

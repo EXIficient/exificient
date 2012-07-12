@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -78,12 +77,12 @@ public interface EXIBodyDecoder {
 	 * Start element appearing as expected event.
 	 * </p>
 	 * 
-	 * @return <code>QName</code> for qualified name
+	 * @return <code>QNameContext</code> for qualified name
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public QName decodeStartElement() throws EXIException, IOException;
+	public QNameContext decodeStartElement() throws EXIException, IOException;
 
 	/**
 	 * Returns element prefix for current element as String.
@@ -121,12 +120,12 @@ public interface EXIBodyDecoder {
 	/**
 	 * Reads EXI end element and returns qualified name.
 	 * 
-	 * @return <code>QName</code> for qualified name
+	 * @return <code>QNameContext</code> for qualified name
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public QName decodeEndElement() throws EXIException, IOException;
+	public QNameContext decodeEndElement() throws EXIException, IOException;
 
 	/**
 	 * Parses xsi:nil attribute
@@ -134,27 +133,27 @@ public interface EXIBodyDecoder {
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public QName decodeAttributeXsiNil() throws EXIException, IOException;
+	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException;
 
 	/**
 	 * Parses xsi:type attribute
 	 * 
-	 * @return <code>QName</code> for qualified name
+	 * @return <code>QNameContext</code> for qualified name
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public QName decodeAttributeXsiType() throws EXIException, IOException;
+	public QNameContext decodeAttributeXsiType() throws EXIException, IOException;
 
 	/**
 	 * Parses attribute and returns qualified name.
 	 * 
-	 * @return <code>QName</code> for qname
+	 * @return <code>QNameContext</code> for qname
 	 * 
 	 * @throws EXIException
 	 * @throws IOException
 	 */
-	public QName decodeAttribute() throws EXIException, IOException;
+	public QNameContext decodeAttribute() throws EXIException, IOException;
 
 	/**
 	 * Returns attribute prefix for (last) attribute as String

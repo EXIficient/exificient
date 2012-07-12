@@ -21,10 +21,9 @@ package com.siemens.ct.exi.core;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -100,7 +99,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeStartElement() throws EXIException, IOException {
+	public QNameContext decodeStartElement() throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeStartElement();
 		} else {
@@ -149,7 +148,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeEndElement() throws EXIException, IOException {
+	public QNameContext decodeEndElement() throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeEndElement();
 		} else {
@@ -170,7 +169,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeAttributeXsiNil();
 		} else {
@@ -179,7 +178,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeAttributeXsiType();
 		} else {
@@ -188,7 +187,7 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QName decodeAttribute() throws EXIException, IOException {
+	public QNameContext decodeAttribute() throws EXIException, IOException {
 		if (scDecoder == null) {
 			return super.decodeAttribute();
 		} else {

@@ -447,12 +447,12 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 			et = decoder.next();
 			assertTrue(et == EventType.START_ELEMENT);
-			QName se = decoder.decodeStartElement();
+			QName se = decoder.decodeStartElement().getQName();
 			assertTrue(se.equals(new QName("", "root")));
 
 			et = decoder.next();
 			assertTrue(et == EventType.START_ELEMENT);
-			se = decoder.decodeStartElement();
+			se = decoder.decodeStartElement().getQName();
 			assertTrue(se.equals(new QName("", "shortVal")));
 
 			et = decoder.next();
@@ -462,12 +462,12 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 			et = decoder.next();
 			assertTrue(et == EventType.END_ELEMENT);
-			QName ee = decoder.decodeEndElement();
+			QName ee = decoder.decodeEndElement().getQName();
 			assertTrue(ee.equals(new QName("", "shortVal")));
 
 			et = decoder.next();
 			assertTrue(et == EventType.END_ELEMENT);
-			ee = decoder.decodeEndElement();
+			ee = decoder.decodeEndElement().getQName();
 			assertTrue(ee.equals(new QName("", "root")));
 
 			et = decoder.next();

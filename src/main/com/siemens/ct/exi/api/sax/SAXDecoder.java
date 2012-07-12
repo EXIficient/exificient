@@ -26,8 +26,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -47,6 +45,7 @@ import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -262,7 +261,7 @@ public class SAXDecoder implements XMLReader {
 		String eeQNameAsString = Constants.EMPTY_STRING;
 		List<NamespaceDeclaration> eePrefixes = null;
 
-		QName deferredStartElement = null;
+		QNameContext deferredStartElement = null;
 
 		while ((eventType = decoder.next()) != null) {
 
@@ -341,10 +340,10 @@ public class SAXDecoder implements XMLReader {
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getElementQNameAsString();
 				}
-				QName eeQName = decoder.decodeEndElement();
+				QNameContext eeQName = decoder.decodeEndElement();
 				// start sax end element
-				contentHandler.endElement(eeQName.getNamespaceURI(),
-						eeQName.getLocalPart(), eeQNameAsString);
+				contentHandler.endElement(eeQName.getNamespaceUri(),
+						eeQName.getLocalName(), eeQNameAsString);
 
 				// endPrefixMapping
 				endPrefixMappings(eePrefixes);
@@ -409,7 +408,7 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * SAX Content Handler
 	 */
-	protected void handleDeferredStartElement(QName deferredStartElement)
+	protected void handleDeferredStartElement(QNameContext deferredStartElement)
 			throws SAXException, IOException, EXIException {
 
 		if (namespaces) {
@@ -427,8 +426,8 @@ public class SAXDecoder implements XMLReader {
 		}
 
 		// start so far deferred start element
-		contentHandler.startElement(deferredStartElement.getNamespaceURI(),
-				deferredStartElement.getLocalPart(), seQNameAsString,
+		contentHandler.startElement(deferredStartElement.getNamespaceUri(),
+				deferredStartElement.getLocalName(), seQNameAsString,
 				attributes);
 
 		// clear AT information
@@ -447,7 +446,7 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	protected void handleAttribute(QName atQName) throws SAXException,
+	protected void handleAttribute(QNameContext atQName) throws SAXException,
 			IOException, EXIException {
 		Value val = decoder.getAttributeValue();
 		String sVal;
@@ -468,8 +467,8 @@ public class SAXDecoder implements XMLReader {
 			atQNameAsString = decoder.getAttributeQNameAsString();
 		}
 
-		attributes.addAttribute(atQName.getNamespaceURI(),
-				atQName.getLocalPart(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
+		attributes.addAttribute(atQName.getNamespaceUri(),
+				atQName.getLocalName(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
 	}
 
 

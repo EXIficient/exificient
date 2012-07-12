@@ -22,10 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
@@ -102,7 +101,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		decodeEndDocumentStructure();
 	}
 
-	public QName decodeStartElement() throws EXIException, IOException {
+	public QNameContext decodeStartElement() throws EXIException, IOException {
 		switch (this.nextEventType) {
 		case START_ELEMENT:
 			return decodeStartElementStructure();
@@ -122,7 +121,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		}
 	}
 
-	public QName decodeEndElement() throws EXIException, IOException {
+	public QNameContext decodeEndElement() throws EXIException, IOException {
 		ElementContext ec;
 		switch (this.nextEventType) {
 		case END_ELEMENT:
@@ -135,7 +134,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 			throw new EXIException("Invalid decode state: "
 					+ this.nextEventType);
 		}
-		return ec.qnameContext.getQName();
+		return ec.qnameContext;
 	}
 
 	public List<NamespaceDeclaration> getDeclaredPrefixDeclarations() {
@@ -143,7 +142,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	}
 
 	public String getElementPrefix() {
-		return this.getElementContext().prefix;
+		return this.getElementContext().getPrefix();
 	}
 
 	public String getElementQNameAsString() {
@@ -155,20 +154,19 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return decodeNamespaceDeclarationStructure();
 	}
 
-	public QName decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
 		decodeAttributeXsiNilStructure();
 
 		// return attributeQName;
-		return this.attributeQNameContext.getQName();
-		// return attributeEnhancedQName.getQName();
+		return this.attributeQNameContext;
 	}
 
-	public QName decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		decodeAttributeXsiTypeStructure();
 
-		return this.attributeQNameContext.getQName();
+		return this.attributeQNameContext; 
 	}
 
 	protected void readAttributeContent(Datatype dt) throws IOException {
@@ -202,7 +200,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		}
 	}
 
-	public QName decodeAttribute() throws EXIException, IOException {
+	public QNameContext decodeAttribute() throws EXIException, IOException {
 		switch (this.nextEventType) {
 		case ATTRIBUTE:
 			Datatype dt = decodeAttributeStructure();
@@ -239,7 +237,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 					+ this.nextEventType);
 		}
 
-		return attributeQNameContext.getQName();
+		return attributeQNameContext;
 	}
 
 	public Value decodeCharacters() throws EXIException, IOException {
