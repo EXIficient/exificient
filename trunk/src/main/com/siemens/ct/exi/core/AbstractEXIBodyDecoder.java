@@ -94,7 +94,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	public AbstractEXIBodyDecoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
-		// exiHeader = new EXIHeaderDecoder();
 	}
 
 	@Override
@@ -470,6 +469,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			return XMLConstants.XML_NS_PREFIX;
 		}
 		// check all stack items except first one
+		// TODO believe this can be done more efficiently (use map?)
 		for (int i = 1; i <= elementContextStackIndex; i++) {
 			ElementContext ec = elementContextStack[i];
 			if (ec.nsDeclarations != null) {
@@ -488,8 +488,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		assert (!preservePrefix);
 
 		String uri = qnc.getNamespaceUri();
-		// TODO believe this can be done more efficiently
 		String pfx = getPrefix(uri);
+		assert(qnc.getDefaultPrefix().equals(pfx));
 
 		if (pfx == null) {
 			pfx = qnc.getDefaultPrefix();

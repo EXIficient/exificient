@@ -336,7 +336,9 @@ public class SAXDecoder implements XMLReader {
 			/* END ELEMENT */
 			case END_ELEMENT:
 			case END_ELEMENT_UNDECLARED:
-				eePrefixes = decoder.getDeclaredPrefixDeclarations();
+				if (namespaces) {
+					eePrefixes = decoder.getDeclaredPrefixDeclarations();	
+				}
 				if (namespacePrefixes) {
 					eeQNameAsString = decoder.getElementQNameAsString();
 				}
@@ -346,7 +348,9 @@ public class SAXDecoder implements XMLReader {
 						eeQName.getLocalName(), eeQNameAsString);
 
 				// endPrefixMapping
-				endPrefixMappings(eePrefixes);
+				if (namespaces) {
+					endPrefixMappings(eePrefixes);	
+				}
 				break;
 			/* CHARACTERS */
 			case CHARACTERS:
