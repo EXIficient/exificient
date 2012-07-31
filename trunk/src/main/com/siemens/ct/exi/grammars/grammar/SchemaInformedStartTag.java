@@ -161,7 +161,7 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		// remove self-references
 		for(int i=0; i<clone.containers.length; i++) {
 			Production ei = clone.containers[i];
-			if (ei.getNextRule() == this) {
+			if (ei.getNextGrammar() == this) {
 				clone.containers[i] = new SchemaInformedProduction(clone, ei.getEvent(), i);
 			}
 			

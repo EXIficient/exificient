@@ -111,7 +111,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		schemaParsingErrors.clear();
 	}
 
-	public void loadGrammar(XMLInputSource xsdSource) throws EXIException {
+	public void loadGrammars(XMLInputSource xsdSource) throws EXIException {
 		try {
 			initEachRun();
 
@@ -139,16 +139,16 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 	}
 
-	public void loadXSDTypesOnlyGrammar() throws EXIException {
+	public void loadXSDTypesOnlyGrammars() throws EXIException {
 		String emptySchema = "<schema xmlns='http://www.w3.org/2001/XMLSchema' /> ";
 		Reader r = new StringReader(emptySchema);
 		// String publicId, String systemId, String baseSystemId, Reader
 		// charStream, String encoding
 		XMLInputSource is = new XMLInputSource(null, null, null, r, null);
-		loadGrammar(is);
+		loadGrammars(is);
 	}
 
-	public void loadGrammar(String xsdLocation) throws EXIException {
+	public void loadGrammars(String xsdLocation) throws EXIException {
 		File f = new File(xsdLocation);
 		if (f.exists()) {
 			// XSD source
@@ -157,14 +157,14 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			String baseSystemId = null;
 			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 					baseSystemId);
-			loadGrammar(xsdSource);
+			loadGrammars(xsdSource);
 		} else {
 			throw new EXIException("XML Schema document (" + xsdLocation
 					+ ") not found.");
 		}
 	}
 
-	public void loadGrammar(InputStream xsdInputStream) throws EXIException {
+	public void loadGrammars(InputStream xsdInputStream) throws EXIException {
 		// XSD source
 		String publicId = null;
 		String systemId = null;
@@ -172,7 +172,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		String encoding = null;
 		XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 				baseSystemId, xsdInputStream, encoding);
-		loadGrammar(xsdSource);
+		loadGrammars(xsdSource);
 	}
 
 	public XSModel getXSModel() {

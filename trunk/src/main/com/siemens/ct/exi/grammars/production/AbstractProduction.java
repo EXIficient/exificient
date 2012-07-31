@@ -51,7 +51,7 @@ public abstract class AbstractProduction implements Production, Serializable {
 		return event;
 	}
 	
-	public Grammar getNextRule() {
+	public Grammar getNextGrammar() {
 		return next;
 	}
 	

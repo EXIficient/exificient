@@ -53,8 +53,8 @@ public class GrammarFactory {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
 			// System.out.println("Grammar for: " + xsdLocation);
-			grammarBuilder.loadGrammar(xsdLocation);
-			SchemaInformedGrammars g = grammarBuilder.toGrammar();
+			grammarBuilder.loadGrammars(xsdLocation);
+			SchemaInformedGrammars g = grammarBuilder.toGrammars();
 			g.setSchemaId(xsdLocation);
 			return g;
 		}
@@ -62,16 +62,16 @@ public class GrammarFactory {
 
 	/* schema file as input stream */
 	public Grammars createGrammars(InputStream is) throws EXIException {
-		grammarBuilder.loadGrammar(is);
-		SchemaInformedGrammars g = grammarBuilder.toGrammar();
+		grammarBuilder.loadGrammars(is);
+		SchemaInformedGrammars g = grammarBuilder.toGrammars();
 		g.setSchemaId("No-Schema-ID-Set");
 		return g;
 	}
 
 	/* built-in XSD types only are available */
 	public Grammars createXSDTypesOnlyGrammars() throws EXIException {
-		grammarBuilder.loadXSDTypesOnlyGrammar();
-		SchemaInformedGrammars g = grammarBuilder.toGrammar();
+		grammarBuilder.loadXSDTypesOnlyGrammars();
+		SchemaInformedGrammars g = grammarBuilder.toGrammars();
 		g.setBuiltInXMLSchemaTypesOnly(true); // builtInXMLSchemaTypesOnly
 		return g;
 	}

@@ -136,7 +136,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
-				int ec2 = getCurrentRule().get2ndLevelEventCode(
+				int ec2 = getCurrentGrammar().get2ndLevelEventCode(
 						EventType.SELF_CONTAINED, fidelityOptions);
 				encode2ndLevelEventCode(ec2);
 
@@ -191,7 +191,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			scEncoder.encodeEndElement();
 			// if (getElementContextQName().equals(qname)
 			if (getElementContext().qnameContext.getQName().equals(qname)
-					&& scEncoder.getCurrentRule().lookForEvent(
+					&& scEncoder.getCurrentGrammar().lookForEvent(
 							EventType.END_DOCUMENT) != null) {
 				this.encodeEndSC();
 			}

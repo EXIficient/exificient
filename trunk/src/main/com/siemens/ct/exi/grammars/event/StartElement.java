@@ -38,7 +38,7 @@ public class StartElement extends AbstractEvent {
 	protected final QName qname;
 	protected final QNameContext qnameContext;
 
-	private Grammar rule;
+	private Grammar grammar;
 
 	public StartElement(QNameContext qnc) {
 		super(EventType.START_ELEMENT);
@@ -53,12 +53,12 @@ public class StartElement extends AbstractEvent {
 	public QName getQName() {
 		return this.qname;
 	}
-	public void setRule(Grammar rule) {
-		this.rule = rule;
+	public void setGrammar(Grammar grammar) {
+		this.grammar = grammar;
 	}
 
-	public Grammar getRule() {
-		return rule;
+	public Grammar getGrammar() {
+		return grammar;
 	}
 
 	public String toString() {
@@ -77,7 +77,7 @@ public class StartElement extends AbstractEvent {
 		} else if (obj instanceof StartElement) {
 			StartElement otherSE = (StartElement) obj;
 			if (qname.equals(otherSE.qname)) {
-				return rule.equals(otherSE.rule);
+				return grammar.equals(otherSE.grammar);
 			} else {
 				return false;
 			}

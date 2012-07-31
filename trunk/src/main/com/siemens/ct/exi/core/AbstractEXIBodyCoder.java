@@ -113,12 +113,12 @@ public abstract class AbstractEXIBodyCoder {
 				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
 	}
 
-	protected final Grammar getCurrentRule() {
-		return this.elementContext.rule;
+	protected final Grammar getCurrentGrammar() {
+		return this.elementContext.gr;
 	}
 
-	protected final void updateCurrentRule(Grammar newCurrentRule) {
-		this.elementContext.rule = newCurrentRule;
+	protected final void updateCurrentRule(Grammar newCurrentGrammar) {
+		this.elementContext.gr = newCurrentGrammar;
 	}
 
 	protected final ElementContext getElementContext() {
@@ -175,9 +175,9 @@ public abstract class AbstractEXIBodyCoder {
 		return prefix.length() == 0 ? XMLConstants.NULL_NS_URI : null;
 	}
 
-	protected void pushElement(Grammar updContextRule, StartElement se) {
+	protected void pushElement(Grammar updContextGrammar, StartElement se) {
 		// update "rule" item of current peak (for popElement() later on)
-		elementContext.rule = updContextRule;
+		elementContext.gr = updContextGrammar;
 
 		// check element context array size
 		if (elementContextStack.length == ++elementContextStackIndex) {
@@ -189,7 +189,7 @@ public abstract class AbstractEXIBodyCoder {
 
 		// create new stack item & push it
 		elementContextStack[elementContextStackIndex] = elementContext = new ElementContext(
-				se.getQNameContext(), se.getRule());
+				se.getQNameContext(), se.getGrammar());
 	}
 
 	protected final ElementContext popElement() {
@@ -215,14 +215,14 @@ public abstract class AbstractEXIBodyCoder {
 	final class ElementContext {
 		private String prefix;
 		private String sqname;
-		Grammar rule; // may be modified while coding
+		Grammar gr; // may be modified while coding
 		List<NamespaceDeclaration> nsDeclarations; // prefix declarations
 
 		final QNameContext qnameContext;
 
-		public ElementContext(QNameContext qnameContext, Grammar rule) {
+		public ElementContext(QNameContext qnameContext, Grammar gr) {
 			this.qnameContext = qnameContext;
-			this.rule = rule;
+			this.gr = gr;
 		}
 
 		String getQNameAsString() {

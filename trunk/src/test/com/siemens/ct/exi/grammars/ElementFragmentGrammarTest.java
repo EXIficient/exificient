@@ -64,10 +64,10 @@ public class ElementFragmentGrammarTest extends TestCase {
 		Grammar r = g.getFragmentGrammar();
 
 		Production ei = r.lookForEvent(EventType.START_DOCUMENT);
-		Production ei2 =  ei.getNextRule().lookForStartElement("", "root");
+		Production ei2 =  ei.getNextGrammar().lookForStartElement("", "root");
 		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
 		StartElement seRoot = (StartElement) ei2.getEvent();
-		Grammar rRoot = seRoot.getRule();
+		Grammar rRoot = seRoot.getGrammar();
 		
 		Production eiAtC = rRoot.lookForAttribute("", "c");
 		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));
@@ -102,10 +102,10 @@ public class ElementFragmentGrammarTest extends TestCase {
 		Grammar r = g.getFragmentGrammar();
 
 		Production ei = r.lookForEvent(EventType.START_DOCUMENT);
-		Production ei2 =  ei.getNextRule().lookForStartElement("", "root");
+		Production ei2 =  ei.getNextGrammar().lookForStartElement("", "root");
 		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
 		StartElement seRoot = (StartElement) ei2.getEvent();
-		Grammar rRoot = seRoot.getRule();
+		Grammar rRoot = seRoot.getGrammar();
 		
 		Production eiAtC = rRoot.lookForAttribute("", "c");
 		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));

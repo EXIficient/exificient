@@ -107,7 +107,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		return containers.length;
 	}
 
-	public void addProduction(Event event, Grammar rule) {
+	public void addProduction(Event event, Grammar grammar) {
 		if (isTerminalRule()) {
 			// *end* in our context should really mean end ;-)
 			throw new IllegalArgumentException(
@@ -131,7 +131,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 			for (int i = 0; i < containers.length; i++) {
 				Production ei = containers[i];
 				if (ei.getEvent().equals(event)) {
-					if (ei.getNextRule() != rule) {
+					if (ei.getNextGrammar() != grammar) {
 						// if (rule.equals(ei.next)) {
 						throw new IllegalArgumentException("Same event "
 								+ event + " with indistinguishable 'next' grammar");
@@ -140,13 +140,13 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 			}
 
 			// construct new array and update event-codes etc.
-			updateSortedEvents(event, rule);
+			updateSortedEvents(event, grammar);
 		}
 	}
 
 	static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
 
-	protected void updateSortedEvents(Event newEvent, Grammar newRule) {
+	protected void updateSortedEvents(Event newEvent, Grammar newGrammar) {
 		// create sorted event list
 		List<Event> sortedEvents = new ArrayList<Event>();
 		// Set<Event> sortedEvents = new TreeSet<Event>();
@@ -168,14 +168,14 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		for (Event ev : sortedEvents) {
 			if (ev == newEvent) {
 				newContainers[eventCode] = new SchemaInformedProduction(
-						newRule, newEvent, eventCode);
+						newGrammar, newEvent, eventCode);
 				newOneAdded = true;
 			} else {
 				// update event-code only
 				Production oldEI = containers[newOneAdded ? eventCode - 1
 						: eventCode];
 				newContainers[eventCode] = new SchemaInformedProduction(
-						oldEI.getNextRule(), oldEI.getEvent(), eventCode);
+						oldEI.getNextGrammar(), oldEI.getEvent(), eventCode);
 			}
 			eventCode++;
 		}
@@ -206,11 +206,11 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		// numberOfDeclaredAttributes++;
 	}
 
-	public void joinRules(Grammar rule) {
+	public void joinGrammars(Grammar rule) {
 		// add *new* events-rules
 		for (int i = 0; i < rule.getNumberOfEvents(); i++) {
 			Production ei = rule.lookFor(i);
-			addProduction(ei.getEvent(), ei.getNextRule());
+			addProduction(ei.getEvent(), ei.getNextGrammar());
 		}
 
 	}

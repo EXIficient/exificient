@@ -118,7 +118,7 @@ public abstract class AbstractCoderContext implements CoderContext {
 				se = grammarQNameContexts[qNameID].globalStartElement;
 				if (se == null) {
 					se = new StartElement(qnc);
-					se.setRule(new BuiltInStartTag());
+					se.setGrammar(new BuiltInStartTag());
 					grammarQNameContexts[qNameID].globalStartElement = se;
 				}
 			}
@@ -129,7 +129,7 @@ public abstract class AbstractCoderContext implements CoderContext {
 			se = runtimeQNameContexts.get(runtimeQNameID).globalStartElement;
 			if (se == null) {
 				se = new StartElement(qnc);
-				se.setRule(new BuiltInStartTag());
+				se.setGrammar(new BuiltInStartTag());
 				runtimeQNameContexts.get(runtimeQNameID).globalStartElement = se;
 			}
 		}

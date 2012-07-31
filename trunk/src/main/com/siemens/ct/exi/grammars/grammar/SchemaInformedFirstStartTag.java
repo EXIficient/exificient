@@ -56,7 +56,7 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		for (int i = 0; i < startTag.getNumberOfEvents(); i++) {
 			Production ei = startTag.lookFor(i);
 			// remove self-reference
-			Grammar next = ei.getNextRule();
+			Grammar next = ei.getNextGrammar();
 			if (next == startTag) {
 				next = this;
 			}

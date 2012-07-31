@@ -34,7 +34,7 @@ public interface Production {
 
 	public Event getEvent();
 	
-	public Grammar getNextRule();
+	public Grammar getNextGrammar();
 	
 	public int getEventCode();
 	
