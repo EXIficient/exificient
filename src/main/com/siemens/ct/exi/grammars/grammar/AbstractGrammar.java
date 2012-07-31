@@ -185,13 +185,13 @@ public abstract class AbstractGrammar implements Grammar {
 		if (this == obj) {
 			return true;
 		} else if (obj instanceof Grammar) {
-			Grammar r = (Grammar) obj;
+			Grammar gr = (Grammar) obj;
 
-			int numberOfEvents = r.getNumberOfEvents();
+			int numberOfEvents = gr.getNumberOfEvents();
 
 			if (this.getNumberOfEvents() == numberOfEvents) {
 				for (int i = 0; i < numberOfEvents; i++) {
-					Production ei = r.lookFor(i);
+					Production ei = gr.lookFor(i);
 					// shallow check
 					if (!ei.getEvent().equals(lookFor(i).getEvent())) {
 						return false;

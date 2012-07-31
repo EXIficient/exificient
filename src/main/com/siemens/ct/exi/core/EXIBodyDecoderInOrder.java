@@ -182,7 +182,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 					.getLocalNameID()) {
 				decodeAttributeXsiTypeStructure();
 			} else if (localNameID == decoderContext.getXsiTypeContext()
-					.getLocalNameID() && getCurrentRule().isSchemaInformed()) {
+					.getLocalNameID() && getCurrentGrammar().isSchemaInformed()) {
 				decodeAttributeXsiNilStructure();
 			} else {
 				readAttributeContent(BuiltIn.DEFAULT_DATATYPE);
@@ -191,7 +191,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 			// Attribute globalAT;
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
 
-			if (getCurrentRule().isSchemaInformed()
+			if (getCurrentGrammar().isSchemaInformed()
 					&& attributeQNameContext.getGlobalAttribute() != null) {
 				dt = attributeQNameContext.getGlobalAttribute().getDatatype();
 			}

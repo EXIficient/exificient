@@ -32,8 +32,8 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
-		xsdGB.loadGrammar(bais);
-		return xsdGB.toGrammar();
+		xsdGB.loadGrammars(bais);
+		return xsdGB.toGrammars();
 	}
 
 	public void testSchemaLess() throws EXIException {

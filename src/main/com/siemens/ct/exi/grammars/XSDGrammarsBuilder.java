@@ -392,7 +392,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 					StartElement se = createStartElement(qname); // new
 																	// StartElement(qname);
 					Grammar elementFragmentGrammar = getSchemaInformedElementFragmentGrammar(uniqueNamedElements);
-					se.setRule(elementFragmentGrammar);
+					se.setGrammar(elementFragmentGrammar);
 					fragmentElements.add(se);
 					// System.out.println("ambiguous elements " + elements +
 					// ", " + qname);
@@ -454,7 +454,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
 				se = createStartElement(fm); // new StartElement(fm);
-				se.setRule(elementFragment0);
+				se.setGrammar(elementFragment0);
 			}
 			elementFragment1.addProduction(se, elementFragment1);
 		}
@@ -556,7 +556,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				// content is evaluated according to the relaxed Element
 				// Fragment grammar
 				se = createStartElement(fm); // new StartElement(fm);
-				se.setRule(elementFragment0);
+				se.setGrammar(elementFragment0);
 			}
 			elementFragment0.addProduction(se, elementFragment1);
 		}
@@ -888,7 +888,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		}
 	}
 
-	public SchemaInformedGrammars toGrammar() throws EXIException {
+	public SchemaInformedGrammars toGrammars() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
 			StringBuffer sb = new StringBuffer(
 					"Problem occured while building XML Schema Model (XSModel)!");
@@ -1276,7 +1276,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
 			Production ei = ruleContent.lookFor(i);
-			ruleStart.addProduction(ei.getEvent(), ei.getNextRule());
+			ruleStart.addProduction(ei.getEvent(), ei.getNextGrammar());
 		}
 
 		// If an {attribute wildcard} is specified, increment n and generate an
@@ -1323,7 +1323,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 								|| ei.getEvent().isEventType(EventType.ATTRIBUTE_NS)) {
 							// AT(*) & AT(uri:*) wilcards added before
 						} else {
-							newCurrent.addProduction(ei.getEvent(), ei.getNextRule());
+							newCurrent.addProduction(ei.getEvent(), ei.getNextGrammar());
 						}
 					}
 				}
@@ -1415,7 +1415,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			// can use anonymous grammar so set nillable and typable
 			type.setNillable(xsElementDeclaration.getNillable());
 			type.setTypeCastable(isTypeCastable(td));
-			se.setRule(type);
+			se.setGrammar(type);
 		} else {
 			// ONLY if element is neither nillable nor typable existing grammar
 			// can be used
@@ -1425,10 +1425,10 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 						.duplicate();
 				element.setNillable(xsElementDeclaration.getNillable());
 				element.setTypeCastable(isTypeCastable(td));
-				se.setRule(element);
+				se.setGrammar(element);
 			} else {
 				// same grammar
-				se.setRule(type);
+				se.setGrammar(type);
 			}
 		}
 

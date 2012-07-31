@@ -72,7 +72,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	// next event
 	protected Event nextEvent;
-	protected Grammar nextRule;
+	protected Grammar nextGrammar;
 	protected EventType nextEventType;
 
 	// decoder stream
@@ -110,8 +110,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	@Override
-	protected void pushElement(Grammar updContextRule, StartElement se) {
-		super.pushElement(updContextRule, se);
+	protected void pushElement(Grammar updContextGrammar, StartElement se) {
+		super.pushElement(updContextGrammar, se);
 		if (todoDefaultPrefixMapping && !preservePrefix) {
 			GrammarContext gc = this.grammar.getGrammarContext();
 			for (int i = 2; i < gc.getNumberOfGrammarUriContexts(); i++) {
@@ -138,19 +138,19 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected final EventType decodeEventCode() throws EXIException,
 			IOException {
 		// 1st level
-		final Grammar currentRule = getCurrentRule();
-		int codeLength = currentRule
+		final Grammar currentGrammar = getCurrentGrammar();
+		int codeLength = currentGrammar
 				.get1stLevelEventCodeLength(fidelityOptions);
 		int ec = codeLength == 0 ? 0 : channel
 				.decodeNBitUnsignedInteger(codeLength);
 
 		assert (ec >= 0);
 
-		if (ec < currentRule.getNumberOfEvents()) {
+		if (ec < currentGrammar.getNumberOfEvents()) {
 			// 1st level
-			Production ei = currentRule.lookFor(ec);
+			Production ei = currentGrammar.lookFor(ec);
 			nextEvent = ei.getEvent();
-			nextRule = ei.getNextRule();
+			nextGrammar = ei.getNextGrammar();
 			nextEventType = nextEvent.getEventType();
 		} else {
 			// 2nd level ?
@@ -159,14 +159,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			if (ec2 == Constants.NOT_FOUND) {
 				// 3rd level
 				int ec3 = decode3rdLevelEventCode();
-				nextEventType = currentRule.get3rdLevelEvent(ec3,
+				nextEventType = currentGrammar.get3rdLevelEvent(ec3,
 						fidelityOptions);
 
 				// un-set event
 				nextEvent = null;
-				nextRule = null;
+				nextGrammar = null;
 			} else {
-				nextEventType = currentRule.get2ndLevelEvent(ec2,
+				nextEventType = currentGrammar.get2ndLevelEvent(ec2,
 						fidelityOptions);
 
 				if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
@@ -174,7 +174,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				} else {
 					// un-set event
 					nextEvent = null;
-					nextRule = null;
+					nextGrammar = null;
 				}
 			}
 		}
@@ -200,7 +200,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected void updateInvalidValueAttribute(int ec) throws EXIException {
-		SchemaInformedGrammar sir = (SchemaInformedGrammar) getCurrentRule();
+		SchemaInformedGrammar sir = (SchemaInformedGrammar) getCurrentGrammar();
 
 		int ec3AT;
 		try {
@@ -215,7 +215,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			ec = ec3AT + sir.getLeastAttributeEventCode();
 			Production ei = sir.lookFor(ec);
 			nextEvent = ei.getEvent();
-			nextRule = ei.getNextRule();
+			nextGrammar = ei.getNextGrammar();
 		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
 			// ANY deviated attribute (no qname present)
 			nextEventType = EventType.ATTRIBUTE_ANY_INVALID_VALUE;
@@ -226,12 +226,12 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode2ndLevelEventCode() throws EXIException, IOException {
-		final Grammar currentRule = getCurrentRule();
-		int ch2 = currentRule.get2ndLevelCharacteristics(fidelityOptions);
+		final Grammar currentGrammar = getCurrentGrammar();
+		int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
 		int level2 = channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch2));
 
-		if (currentRule.get3rdLevelCharacteristics(fidelityOptions) > 0) {
+		if (currentGrammar.get3rdLevelCharacteristics(fidelityOptions) > 0) {
 			return (level2 < (ch2 - 1) ? level2 : Constants.NOT_FOUND);
 		} else {
 			return (level2 < ch2 ? level2 : Constants.NOT_FOUND);
@@ -239,14 +239,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode3rdLevelEventCode() throws EXIException, IOException {
-		int ch3 = getCurrentRule().get3rdLevelCharacteristics(fidelityOptions);
+		int ch3 = getCurrentGrammar().get3rdLevelCharacteristics(fidelityOptions);
 		return channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch3));
 	}
 
 	protected final void decodeStartDocumentStructure() throws EXIException {
 		// update current rule
-		updateCurrentRule(getCurrentRule().lookFor(0).getNextRule());
+		updateCurrentRule(getCurrentGrammar().lookFor(0).getNextGrammar());
 	}
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
@@ -259,7 +259,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// StartElement
 		StartElement se = ((StartElement) nextEvent);
 		// push element
-		pushElement(nextRule, se);
+		pushElement(nextGrammar, se);
 		// handle element prefix
 		QNameContext qnc = se.getQNameContext();
 		handleElementPrefix(qnc);
@@ -281,7 +281,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
 
 		// push element
-		pushElement(nextRule, nextSE);
+		pushElement(nextGrammar, nextSE);
 		// handle element prefix
 		handleElementPrefix(qnc);
 
@@ -298,9 +298,9 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
 
 		// learn start-element ?
-		getCurrentRule().learnStartElement(nextSE);
+		getCurrentGrammar().learnStartElement(nextSE);
 		// push element
-		pushElement(nextRule.getElementContent(), nextSE);
+		pushElement(nextGrammar.getElementContent(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -318,11 +318,11 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		StartElement nextSE = decoderContext.getGlobalStartElement(qnc);
 
 		// learn start-element ?
-		final Grammar currentRule = getCurrentRule();
-		currentRule.learnStartElement(nextSE);
+		final Grammar currentGrammar = getCurrentGrammar();
+		currentGrammar.learnStartElement(nextSE);
 
 		// push element
-		pushElement(currentRule.getElementContent(), nextSE);
+		pushElement(currentGrammar.getElementContent(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -338,7 +338,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected final ElementContext decodeEndElementUndeclaredStructure()
 			throws EXIException, IOException {
 		// learn end-element event ?
-		getCurrentRule().learnEndElement();
+		getCurrentGrammar().learnEndElement();
 		// pop element
 		return popElement();
 	}
@@ -376,10 +376,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			xsiNil = booleanDatatype.getBoolean();
 		}
 
-		final Grammar currentRule = getCurrentRule();
-		if (xsiNil && currentRule.isSchemaInformed()) {
+		final Grammar currentGrammar = getCurrentGrammar();
+		if (xsiNil && currentGrammar.isSchemaInformed()) {
 			// jump to typeEmpty
-			updateCurrentRule(((SchemaInformedFirstStartTagGrammar) currentRule)
+			updateCurrentRule(((SchemaInformedFirstStartTagGrammar) currentGrammar)
 					.getTypeEmpty());
 		}
 	}
@@ -489,13 +489,13 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		String uri = qnc.getNamespaceUri();
 		String pfx = getPrefix(uri);
-		assert(qnc.getDefaultPrefix().equals(pfx));
-
+		
 		if (pfx == null) {
 			pfx = qnc.getDefaultPrefix();
 			declarePrefix(pfx, uri);
 		}
-
+		
+		assert(qnc.getDefaultPrefix().equals(pfx));
 		return pfx;
 	}
 
@@ -508,7 +508,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		handleAttributePrefix(attributeQNameContext);
 
 		// update current rule
-		updateCurrentRule(nextRule);
+		updateCurrentRule(nextGrammar);
 
 		return at.getDatatype();
 	}
@@ -524,7 +524,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// handle attribute prefix
 		handleAttributePrefix(attributeQNameContext);
 		// update current rule
-		updateCurrentRule(nextRule);
+		updateCurrentRule(nextGrammar);
 	}
 
 	protected final void decodeAttributeAnyInvalidValueStructure()
@@ -538,13 +538,13 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		decodeAttributeGenericStructureOnly();
 
 		// update current rule
-		updateCurrentRule(nextRule);
+		updateCurrentRule(nextGrammar);
 	}
 
 	protected final void decodeAttributeGenericUndeclaredStructure()
 			throws EXIException, IOException {
 		decodeAttributeGenericStructureOnly();
-		getCurrentRule().learnAttribute(new Attribute(attributeQNameContext));
+		getCurrentGrammar().learnAttribute(new Attribute(attributeQNameContext));
 	}
 
 	private final void decodeAttributeGenericStructureOnly()
@@ -559,24 +559,24 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected final Datatype decodeCharactersStructure() throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS);
 		// update current rule
-		updateCurrentRule(nextRule);
+		updateCurrentRule(nextGrammar);
 		return ((Characters) nextEvent).getDatatype();
 	}
 
 	protected final void decodeCharactersGenericStructure() throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC);
 		// update current rule
-		updateCurrentRule(nextRule);
+		updateCurrentRule(nextGrammar);
 	}
 
 	protected final void decodeCharactersGenericUndeclaredStructure()
 			throws EXIException {
 		assert (nextEventType == EventType.CHARACTERS_GENERIC_UNDECLARED);
 		// learn character event ?
-		final Grammar currentRule = getCurrentRule();
-		currentRule.learnCharacters();
+		final Grammar currentGrammar = getCurrentGrammar();
+		currentGrammar.learnCharacters();
 		// update current rule
-		updateCurrentRule(currentRule.getElementContent());
+		updateCurrentRule(currentGrammar.getElementContent());
 	}
 
 	protected final NamespaceDeclaration decodeNamespaceDeclarationStructure()
@@ -601,7 +601,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// decode name AS string
 		char[] er = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContent());
 		return er;
 	}
 
@@ -609,7 +609,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		char[] comment = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContent());
 		return comment;
 	}
 
@@ -619,7 +619,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		String piTarget = new String(channel.decodeString());
 		String piData = new String(channel.decodeString());
 		// update current rule
-		updateCurrentRule(getCurrentRule().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContent());
 		return new ProcessingInstruction(piTarget, piData);
 	}
 

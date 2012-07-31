@@ -60,8 +60,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
-		xsdGB.loadGrammar(bais);
-		return xsdGB.toGrammar();
+		xsdGB.loadGrammars(bais);
+		return xsdGB.toGrammars();
 	}
 
 	protected static Grammars getGrammar(String schemaAsString)
@@ -69,8 +69,8 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
-		xsdGB.loadGrammar(bais);
-		return xsdGB.toGrammar();
+		xsdGB.loadGrammars(bais);
+		return xsdGB.toGrammars();
 	}
 
 	public static Datatype getSimpleDatatypeFor(String schemaAsString,
@@ -78,7 +78,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		XSDGrammarsBuilder xsdGB = XSDGrammarsBuilder.newInstance();
 		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
 				.getBytes());
-		xsdGB.loadGrammar(bais);
+		xsdGB.loadGrammars(bais);
 
 		XSModel xsModel = xsdGB.getXSModel();
 
@@ -843,7 +843,7 @@ public class DatatypeMappingTest extends AbstractTestCase {
 		// StartElement se = grammar.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "myNonPositiveInteger"));
 	
 		SchemaInformedFirstStartTagGrammar r = (SchemaInformedFirstStartTagGrammar) se
-				.getRule();
+				.getGrammar();
 		assertTrue(r.isTypeCastable());
 		assertTrue(!r.isNillable());
 	}

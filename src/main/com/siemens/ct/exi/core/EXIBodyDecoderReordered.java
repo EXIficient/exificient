@@ -293,7 +293,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			updateAttributeToXsiType();
 		} else if (decoderContext.getXsiNilContext().equals(
 				attributeQNameContext)
-				&& getCurrentRule().isSchemaInformed()) {
+				&& getCurrentGrammar().isSchemaInformed()) {
 			// xsi:nil
 			eventTypes.set(eventTypes.size() - 1, EventType.ATTRIBUTE_XSI_NIL);
 			// value content
@@ -305,7 +305,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			// global attribute or default datatype
 			Datatype dt = BuiltIn.DEFAULT_DATATYPE;
 
-			if (getCurrentRule().isSchemaInformed()
+			if (getCurrentGrammar().isSchemaInformed()
 					&& attributeQNameContext.getGlobalAttribute() != null) {
 				dt = attributeQNameContext.getGlobalAttribute().getDatatype();
 			}

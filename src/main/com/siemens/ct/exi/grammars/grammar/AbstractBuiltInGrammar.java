@@ -78,9 +78,9 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	/*
 	 * a leading rule for performance reason is added to the tail
 	 */
-	public final void addProduction(Event event, Grammar rule) {
+	public final void addProduction(Event event, Grammar grammar) {
 
-		containers.add(new SchemaLessProduction(this, rule, event,
+		containers.add(new SchemaLessProduction(this, grammar, event,
 				getNumberOfEvents()));
 		// TODO pre-calculate count for log2
 		eventCount = containers.size();

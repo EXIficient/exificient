@@ -78,7 +78,7 @@ public interface Grammar extends Serializable {
 	/*
 	 * 
 	 */
-	public void addProduction(Event event, Grammar rule);
+	public void addProduction(Event event, Grammar grammar);
 
 	/*
 	 * learning grammar
