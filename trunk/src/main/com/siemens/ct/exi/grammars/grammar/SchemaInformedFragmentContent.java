@@ -55,7 +55,7 @@ public class SchemaInformedFragmentContent extends AbstractSchemaInformedGrammar
 		return "FragmentContent" + super.toString();
 	}
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		return null;
 	}

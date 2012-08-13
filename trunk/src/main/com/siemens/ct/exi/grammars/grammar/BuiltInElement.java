@@ -57,7 +57,7 @@ public class BuiltInElement extends AbstractBuiltInContent {
 				get2ndLevelEventsChildContentItems(fidelityOptions));
 	}
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		return get2ndLevelEventsChildContentItems(fidelityOptions).get(
 				eventCode);

@@ -119,7 +119,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		if ((event.isEventType(EventType.END_ELEMENT)
 				|| event.isEventType(EventType.ATTRIBUTE_GENERIC) || event
 				.isEventType(EventType.START_ELEMENT_GENERIC))
-				&& lookForEvent(event.getEventType()) != null) {
+				&& getProduction(event.getEventType()) != null) {
 			// has already event --> nothing to do
 			// System.err.println("Event " + event + " already present!");
 		} else {
@@ -283,7 +283,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	public void joinGrammars(Grammar rule) {
 		// add *new* events-rules
 		for (int i = 0; i < rule.getNumberOfEvents(); i++) {
-			Production ei = rule.lookFor(i);
+			Production ei = rule.getProduction(i);
 			addProduction(ei.getEvent(), ei.getNextGrammar());
 		}
 
@@ -295,7 +295,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		sb.append('[');
 
 		for (int i = 0; i < getNumberOfEvents(); i++) {
-			sb.append(lookFor(i).getEvent().toString());
+			sb.append(getProduction(i).getEvent().toString());
 			if (i < (getNumberOfEvents() - 1)) {
 				sb.append(", ");
 			}
@@ -319,7 +319,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return clone();
 	}
 
-	public Production lookForEvent(EventType eventType) {
+	public Production getProduction(EventType eventType) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(eventType)) {
 				return ei;
@@ -328,7 +328,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return null; // not found
 	}
 
-	public Production lookForStartElement(String namespaceURI, String localName) {
+	public Production getStartElementProduction(String namespaceURI, String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
 					&& checkQualifiedName(
@@ -340,7 +340,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return null; // not found
 	}
 
-	public Production lookForStartElementNS(String namespaceURI) {
+	public Production getStartElementNSProduction(String namespaceURI) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT_NS)
 					&& ((StartElementNS) ei.getEvent()).getNamespaceURI()
@@ -351,7 +351,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return null; // not found
 	}
 
-	public Production lookForAttribute(String namespaceURI, String localName) {
+	public Production getAttributeProduction(String namespaceURI, String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
 					&& checkQualifiedName(
@@ -363,7 +363,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return null; // not found
 	}
 
-	public Production lookForAttributeNS(String namespaceURI) {
+	public Production getAttributeNSProduction(String namespaceURI) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE_NS)
 					&& ((AttributeNS) ei.getEvent()).getNamespaceURI().equals(
@@ -375,7 +375,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	// for decoder
-	public final Production lookFor(int eventCode) {
+	public final Production getProduction(int eventCode) {
 		assert (eventCode >= 0 && eventCode < containers.length);
 		return containers[eventCode];
 	}

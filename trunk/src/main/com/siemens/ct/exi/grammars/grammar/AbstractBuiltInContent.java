@@ -109,7 +109,7 @@ public abstract class AbstractBuiltInContent extends AbstractBuiltInGrammar {
 		 */
 		if (!learnedCH) {
 			addProduction(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
-					BuiltIn.DEFAULT_DATATYPE), getElementContent());
+					BuiltIn.DEFAULT_DATATYPE), getElementContentGrammar());
 			learnedCH = true;
 		}
 	}

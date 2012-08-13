@@ -191,7 +191,7 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 			scEncoder.encodeEndElement();
 			// if (getElementContextQName().equals(qname)
 			if (getElementContext().qnameContext.getQName().equals(qname)
-					&& scEncoder.getCurrentGrammar().lookForEvent(
+					&& scEncoder.getCurrentGrammar().getProduction(
 							EventType.END_DOCUMENT) != null) {
 				this.encodeEndSC();
 			}

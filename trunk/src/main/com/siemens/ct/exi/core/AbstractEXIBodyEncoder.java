@@ -190,7 +190,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		}
 		initForEachRun();
 
-		Production ei = getCurrentGrammar().lookForEvent(
+		Production ei = getCurrentGrammar().getProduction(
 				EventType.START_DOCUMENT);
 
 		// Note: no EventCode needs to be written since there is only
@@ -204,7 +204,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	}
 
 	public void encodeEndDocument() throws EXIException, IOException {
-		Production ei = getCurrentGrammar().lookForEvent(
+		Production ei = getCurrentGrammar().getProduction(
 				EventType.END_DOCUMENT);
 
 		if (ei != null) {
@@ -230,7 +230,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		StartElement nextSE;
 
 		Grammar currentGrammar = getCurrentGrammar();
-		if ((ei = currentGrammar.lookForStartElement(uri, localName)) != null) {
+		if ((ei = currentGrammar.getStartElementProduction(uri, localName)) != null) {
 			assert (ei.getEvent().isEventType(EventType.START_ELEMENT));
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
@@ -244,7 +244,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// next context rule
 			updContextRule = ei.getNextGrammar();
 
-		} else if ((ei = currentGrammar.lookForStartElementNS(uri)) != null) {
+		} else if ((ei = currentGrammar.getStartElementNSProduction(uri)) != null) {
 			assert (ei.getEvent().isEventType(EventType.START_ELEMENT_NS));
 			// encode 1st level EventCode
 			encode1stLevelEventCode(ei.getEventCode());
@@ -266,7 +266,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			nextSE = encoderContext.getGlobalStartElement(qnc);
 		} else {
 			// try SE(*), generic SE on first level
-			if ((ei = currentGrammar.lookForEvent(EventType.START_ELEMENT_GENERIC)) != null) {
+			if ((ei = currentGrammar.getProduction(EventType.START_ELEMENT_GENERIC)) != null) {
 				assert (ei.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 				// encode 1st level EventCode
 				encode1stLevelEventCode(ei.getEventCode());
@@ -289,7 +289,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				if(limitGrammarLearning()) {
 					// encode 1st level EventCode
 					currentGrammar = getCurrentGrammar();
-					ei = currentGrammar.lookForEvent(EventType.START_ELEMENT_GENERIC);
+					ei = currentGrammar.getProduction(EventType.START_ELEMENT_GENERIC);
 					assert(ei != null);
 					encode1stLevelEventCode(ei.getEventCode());
 
@@ -300,7 +300,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					encode2ndLevelEventCode(ecSEundeclared);
 					
 					// next context rule
-					updContextRule = currentGrammar.getElementContent();
+					updContextRule = currentGrammar.getElementContentGrammar();
 				}
 			}
 
@@ -359,7 +359,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec2 = currentGrammar.get2ndLevelEventCode(
 					EventType.NAMESPACE_DECLARATION, fidelityOptions);
-			assert (currentGrammar.get2ndLevelEvent(ec2, fidelityOptions) == EventType.NAMESPACE_DECLARATION);
+			assert (currentGrammar.get2ndLevelEventType(ec2, fidelityOptions) == EventType.NAMESPACE_DECLARATION);
 			encode2ndLevelEventCode(ec2);
 
 			// prefix mapping
@@ -373,7 +373,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	public void encodeEndElement() throws EXIException, IOException {
 		Grammar currentGrammar = getCurrentGrammar();
-		Production ei = currentGrammar.lookForEvent(EventType.END_ELEMENT);
+		Production ei = currentGrammar.getProduction(EventType.END_ELEMENT);
 
 		if (ei != null) {
 			// encode EventCode (common case)
@@ -382,7 +382,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// Check special case: SAX does not inform about empty ("") CH
 			// events
 			// --> if EE is not found check whether an empty CH event *helps*
-			if ((ei = currentGrammar.lookForEvent(EventType.CHARACTERS)) != null) {
+			if ((ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
 				BuiltInType bit = ((DatatypeEvent) ei.getEvent()).getDatatype()
 						.getBuiltInType();
 				switch (bit) {
@@ -392,7 +392,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				case STRING:
 				case LIST:
 				case RCS_STRING:
-					if ((ei = ei.getNextGrammar().lookForEvent(EventType.END_ELEMENT)) != null) {
+					if ((ei = ei.getNextGrammar().getProduction(EventType.END_ELEMENT)) != null) {
 						// encode empty characters first
 						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
 						// try EE again
@@ -422,7 +422,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if(limitGrammarLearning()) {
 						// encode 1st level EventCode
 						currentGrammar = getCurrentGrammar();
-						ei = currentGrammar.lookForEvent(EventType.END_ELEMENT);
+						ei = currentGrammar.getProduction(EventType.END_ELEMENT);
 						assert(ei != null);
 						encode1stLevelEventCode(ei.getEventCode());
 					} else {
@@ -530,7 +530,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		if (ec2 != Constants.NOT_FOUND) {
 
-			assert (currentGrammar.get2ndLevelEvent(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
+			assert (currentGrammar.get2ndLevelEventType(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
 
 			// encode event-code, AT(xsi:type)
 			encode2ndLevelEventCode(ec2);
@@ -550,7 +550,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				// only 2nd level of interest
 				ei = null;
 			} else {
-				ei = currentGrammar.lookForAttribute(
+				ei = currentGrammar.getAttributeProduction(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 						Constants.XSI_TYPE);	
 			}
@@ -560,7 +560,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			} else {
 				// try generic attribute
 				if(!force2ndLevelProduction) {
-					ei = currentGrammar.lookForEvent(EventType.ATTRIBUTE_GENERIC);					
+					ei = currentGrammar.getProduction(EventType.ATTRIBUTE_GENERIC);					
 				}
 
 				if (ei != null) {
@@ -680,7 +680,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					}
 				} else {
 					Production ei = currentGrammar
-							.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+							.getProduction(EventType.ATTRIBUTE_GENERIC);
 					if (ei != null) {
 						encode1stLevelEventCode(ei.getEventCode());
 						// qname & prefix
@@ -772,7 +772,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		Grammar next;
 
 		Grammar currentGrammar = getCurrentGrammar();
-		if ((ei = currentGrammar.lookForAttribute(uri, localName)) != null) {
+		if ((ei = currentGrammar.getAttributeProduction(uri, localName)) != null) {
 			// declared AT(uri:localName)
 			Attribute at = (Attribute) (ei.getEvent());
 			qnc = at.getQNameContext();
@@ -793,9 +793,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				currentGrammar = this.getCurrentGrammar();
 			}
 			
-			ei = currentGrammar.lookForAttributeNS(uri);
+			ei = currentGrammar.getAttributeNSProduction(uri);
 			if (ei == null) {
-				ei = currentGrammar.lookForEvent(EventType.ATTRIBUTE_GENERIC);
+				ei = currentGrammar.getProduction(EventType.ATTRIBUTE_GENERIC);
 				if (ei == null) {
 					// Undeclared AT(*) can be found on 2nd level
 				}
@@ -1000,7 +1000,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			IOException {
 
 		Grammar currentGrammar = getCurrentGrammar();
-		Production ei = currentGrammar.lookForEvent(EventType.CHARACTERS);
+		Production ei = currentGrammar.getProduction(EventType.CHARACTERS);
 
 		// valid value and valid event-code ?
 		if (ei != null
@@ -1015,7 +1015,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			updateCurrentRule(ei.getNextGrammar());
 		} else {
 			// generic CH (on first level)
-			ei = currentGrammar.lookForEvent(EventType.CHARACTERS_GENERIC);
+			ei = currentGrammar.getProduction(EventType.CHARACTERS_GENERIC);
 
 			if (ei != null) {
 				// encode EventCode
@@ -1050,7 +1050,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if(limitGrammarLearning()) {
 						// encode 1st level EventCode
 						currentGrammar = getCurrentGrammar();
-						ei = currentGrammar.lookForEvent(EventType.CHARACTERS_GENERIC);
+						ei = currentGrammar.getProduction(EventType.CHARACTERS_GENERIC);
 						assert(ei != null);
 						encode1stLevelEventCode(ei.getEventCode());
 						// next rule
@@ -1061,7 +1061,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						// learn characters event ?
 						currentGrammar.learnCharacters();
 						// next rule
-						updContextRule = currentGrammar.getElementContent();
+						updContextRule = currentGrammar.getElementContentGrammar();
 					}
 					
 					// content as string
@@ -1103,7 +1103,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			writeString(name);
 
 			// update current rule
-			updateCurrentRule(currentGrammar.getElementContent());
+			updateCurrentRule(currentGrammar.getElementContentGrammar());
 		}
 	}
 
@@ -1120,7 +1120,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			writeString(new String(ch, start, length));
 
 			// update current rule
-			updateCurrentRule(currentGrammar.getElementContent());
+			updateCurrentRule(currentGrammar.getElementContentGrammar());
 		}
 	}
 
@@ -1138,7 +1138,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			writeString(data);
 
 			// update current rule
-			updateCurrentRule(currentGrammar.getElementContent());
+			updateCurrentRule(currentGrammar.getElementContentGrammar());
 		}
 	}
 

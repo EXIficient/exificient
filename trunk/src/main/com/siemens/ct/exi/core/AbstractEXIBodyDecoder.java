@@ -148,7 +148,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		if (ec < currentGrammar.getNumberOfEvents()) {
 			// 1st level
-			Production ei = currentGrammar.lookFor(ec);
+			Production ei = currentGrammar.getProduction(ec);
 			nextEvent = ei.getEvent();
 			nextGrammar = ei.getNextGrammar();
 			nextEventType = nextEvent.getEventType();
@@ -159,14 +159,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			if (ec2 == Constants.NOT_FOUND) {
 				// 3rd level
 				int ec3 = decode3rdLevelEventCode();
-				nextEventType = currentGrammar.get3rdLevelEvent(ec3,
+				nextEventType = currentGrammar.get3rdLevelEventType(ec3,
 						fidelityOptions);
 
 				// un-set event
 				nextEvent = null;
 				nextGrammar = null;
 			} else {
-				nextEventType = currentGrammar.get2ndLevelEvent(ec2,
+				nextEventType = currentGrammar.get2ndLevelEventType(ec2,
 						fidelityOptions);
 
 				if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
@@ -213,7 +213,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		if (ec3AT < (sir.getNumberOfDeclaredAttributes())) {
 			// deviated attribute
 			ec = ec3AT + sir.getLeastAttributeEventCode();
-			Production ei = sir.lookFor(ec);
+			Production ei = sir.getProduction(ec);
 			nextEvent = ei.getEvent();
 			nextGrammar = ei.getNextGrammar();
 		} else if (ec3AT == (sir.getNumberOfDeclaredAttributes())) {
@@ -246,7 +246,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void decodeStartDocumentStructure() throws EXIException {
 		// update current rule
-		updateCurrentRule(getCurrentGrammar().lookFor(0).getNextGrammar());
+		updateCurrentRule(getCurrentGrammar().getProduction(0).getNextGrammar());
 	}
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
@@ -300,7 +300,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// learn start-element ?
 		getCurrentGrammar().learnStartElement(nextSE);
 		// push element
-		pushElement(nextGrammar.getElementContent(), nextSE);
+		pushElement(nextGrammar.getElementContentGrammar(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -322,7 +322,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		currentGrammar.learnStartElement(nextSE);
 
 		// push element
-		pushElement(currentGrammar.getElementContent(), nextSE);
+		pushElement(currentGrammar.getElementContentGrammar(), nextSE);
 
 		// handle element prefix
 		handleElementPrefix(qnc);
@@ -576,7 +576,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		final Grammar currentGrammar = getCurrentGrammar();
 		currentGrammar.learnCharacters();
 		// update current rule
-		updateCurrentRule(currentGrammar.getElementContent());
+		updateCurrentRule(currentGrammar.getElementContentGrammar());
 	}
 
 	protected final NamespaceDeclaration decodeNamespaceDeclarationStructure()
@@ -601,7 +601,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// decode name AS string
 		char[] er = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentGrammar().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContentGrammar());
 		return er;
 	}
 
@@ -609,7 +609,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		char[] comment = channel.decodeString();
 		// update current rule
-		updateCurrentRule(getCurrentGrammar().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContentGrammar());
 		return comment;
 	}
 
@@ -619,7 +619,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		String piTarget = new String(channel.decodeString());
 		String piData = new String(channel.decodeString());
 		// update current rule
-		updateCurrentRule(getCurrentGrammar().getElementContent());
+		updateCurrentRule(getCurrentGrammar().getElementContentGrammar());
 		return new ProcessingInstruction(piTarget, piData);
 	}
 

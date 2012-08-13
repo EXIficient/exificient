@@ -1256,7 +1256,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				ruleContent2);
 		// join top level events
 		for (int i = 0; i < ruleContent.getNumberOfEvents(); i++) {
-			Production ei = ruleContent.lookFor(i);
+			Production ei = ruleContent.getProduction(i);
 			ruleStart.addProduction(ei.getEvent(), ei.getNextGrammar());
 		}
 
@@ -1299,7 +1299,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				if (!attrUse.getRequired()) {
 					// optional --> join top level events
 					for (int k = 0; k < ruleStart.getNumberOfEvents(); k++) {
-						Production ei = ruleStart.lookFor(k);
+						Production ei = ruleStart.getProduction(k);
 						if (ei.getEvent().isEventType(EventType.ATTRIBUTE_GENERIC)
 								|| ei.getEvent().isEventType(EventType.ATTRIBUTE_NS)) {
 							// AT(*) & AT(uri:*) wilcards added before

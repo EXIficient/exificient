@@ -63,10 +63,10 @@ public interface Grammar extends Serializable {
 	 * events, rules
 	 */
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions);
 
-	public EventType get3rdLevelEvent(int eventCode,
+	public EventType get3rdLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions);
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
@@ -94,7 +94,7 @@ public interface Grammar extends Serializable {
 	/*
 	 * For moving to element content grammar
 	 */
-	public Grammar getElementContent();
+	public Grammar getElementContentGrammar();
 
 	/*
 	 * TODO move to SchemaInformedRule Schema-deviated attributes
@@ -113,19 +113,19 @@ public interface Grammar extends Serializable {
 	 */
 
 	// for encoder
-	public Production lookForEvent(EventType eventType);
+	public Production getProduction(EventType eventType);
 
-	public Production lookForStartElement(String namespaceURI,
+	public Production getStartElementProduction(String namespaceURI,
 			String localName);
 
-	public Production lookForStartElementNS(String namespaceURI);
+	public Production getStartElementNSProduction(String namespaceURI);
 
-	public Production lookForAttribute(String namespaceURI,
+	public Production getAttributeProduction(String namespaceURI,
 			String localName);
 
-	public Production lookForAttributeNS(String namespaceURI);
+	public Production getAttributeNSProduction(String namespaceURI);
 
 	// for decoder
-	public Production lookFor(int eventCode);
+	public Production getProduction(int eventCode);
 
 }

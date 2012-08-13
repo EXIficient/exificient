@@ -128,7 +128,7 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		EventType.START_ELEMENT_GENERIC_UNDECLARED, EventType.CHARACTERS_GENERIC_UNDECLARED,
 		EventType.ENTITY_REFERENCE};
 	
-	public EventType get2ndLevelEvent(int eventCode2,
+	public EventType get2ndLevelEventType(int eventCode2,
 			FidelityOptions fidelityOptions) {
 		if(fidelityOptions.isStrict()) {
 			// nothing..
@@ -149,7 +149,7 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 	}
 
 	@Override
-	public Grammar getElementContent() {
+	public Grammar getElementContentGrammar() {
 		return elementContent2;
 	}
 
