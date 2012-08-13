@@ -55,8 +55,8 @@ public class StAXCoderTestCase extends AbstractTestCase {
 	public void testXsiType() throws AssertionFailedError, Exception {
 		
 		String xmlInput = "./data/schema/xsi-type.xml";
-		String exiOutput = "./out/schema/xsi-type.xml.exi";
-		String xmlOutput = "./out/schema/xsi-type.xml.exi.xml";
+		String exiOutput = "./out/xsi-type.xml.exi";
+		String xmlOutput = "./out/xsi-type.xml.exi.xml";
 		
 		EXIFactory ef1 = DefaultEXIFactory.newInstance();
 		this._test(ef1, xmlInput, exiOutput, xmlOutput, false);
