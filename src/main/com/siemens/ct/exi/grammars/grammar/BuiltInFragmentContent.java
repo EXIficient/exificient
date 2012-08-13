@@ -68,7 +68,7 @@ public class BuiltInFragmentContent extends AbstractBuiltInGrammar {
 		return Constants.NOT_FOUND;
 	}
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		return null;
 	}

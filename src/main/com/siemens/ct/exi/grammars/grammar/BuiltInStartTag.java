@@ -79,7 +79,7 @@ public class BuiltInStartTag extends AbstractBuiltInContent {
 		return ec;
 	}
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		EventType eventType = null;
 
@@ -111,7 +111,7 @@ public class BuiltInStartTag extends AbstractBuiltInContent {
 	}
 
 	@Override
-	public Grammar getElementContent() {
+	public Grammar getElementContentGrammar() {
 		// this is a *StartTag* Rule --> return element content rule
 		return elementContent;
 	}
@@ -120,7 +120,7 @@ public class BuiltInStartTag extends AbstractBuiltInContent {
 	// public void learnStartElement(String uri, String localName) {
 	public void learnStartElement(StartElement se) {
 		// addRule(new StartElement(uri, localName), getElementContentRule());
-		addProduction(se, getElementContent());
+		addProduction(se, getElementContentGrammar());
 	}
 
 	@Override

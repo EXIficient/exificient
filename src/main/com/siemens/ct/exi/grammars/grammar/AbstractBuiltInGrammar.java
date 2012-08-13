@@ -118,14 +118,14 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 		sb.append("[");
 		for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
-			sb.append("," + lookFor(ec).getEvent());
+			sb.append("," + getProduction(ec).getEvent());
 		}
 		sb.append("]");
 
 		return sb.toString();
 	}
 
-	public Production lookForEvent(EventType eventType) {
+	public Production getProduction(EventType eventType) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(eventType)) {
 				return ei;
@@ -134,7 +134,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return null; // not found
 	}
 
-	public Production lookForStartElement(String namespaceURI,
+	public Production getStartElementProduction(String namespaceURI,
 			String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
@@ -146,11 +146,11 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return null; // not found
 	}
 
-	public Production lookForStartElementNS(String namespaceURI) {
+	public Production getStartElementNSProduction(String namespaceURI) {
 		return null; // not found
 	}
 
-	public Production lookForAttribute(String namespaceURI,
+	public Production getAttributeProduction(String namespaceURI,
 			String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
@@ -162,12 +162,12 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return null; // not found
 	}
 
-	public Production lookForAttributeNS(String namespaceURI) {
+	public Production getAttributeNSProduction(String namespaceURI) {
 		return null; // not found
 	}
 
 	// for decoder
-	public Production lookFor(int eventCode) {
+	public Production getProduction(int eventCode) {
 		assert (eventCode >= 0 && eventCode < containers.size());
 		return containers.get(getNumberOfEvents() - 1 - eventCode);
 	}

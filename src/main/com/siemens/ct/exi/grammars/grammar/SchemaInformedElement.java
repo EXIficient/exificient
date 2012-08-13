@@ -95,7 +95,7 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent impleme
 		EventType.START_ELEMENT_GENERIC_UNDECLARED, EventType.CHARACTERS_GENERIC_UNDECLARED,
 		EventType.ENTITY_REFERENCE};
 	
-	public final EventType get2ndLevelEvent(int eventCode2,
+	public final EventType get2ndLevelEventType(int eventCode2,
 			FidelityOptions fidelityOptions) {
 		if(fidelityOptions.isStrict()) {
 			// nothing..

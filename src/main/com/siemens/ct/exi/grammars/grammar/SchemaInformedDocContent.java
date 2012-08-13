@@ -65,7 +65,7 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedGrammar {
 		return Constants.NOT_FOUND;
 	}
 
-	public EventType get2ndLevelEvent(int eventCode,
+	public EventType get2ndLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		if (eventCode == 0
 				&& fidelityOptions

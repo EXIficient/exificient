@@ -87,7 +87,7 @@ public class EventCodeTest extends TestCase {
 		// Rule rRoot = g.getGlobalElement(new QName("", "root")).getRule();
 		Grammar rRoot = gc.getGrammarUriContext(0).getQNameContext("root").getGlobalStartElement().getGrammar();
 		// Rule rRoot = g.getGlobalElement(XSDGrammarBuilder.getEfficientQName(gues, "", "root")).getRule();
-		StartElement seOptional = (StartElement) rRoot.lookForStartElement("", "optional").getEvent();
+		StartElement seOptional = (StartElement) rRoot.getStartElementProduction("", "optional").getEvent();
 		Grammar rOptional = seOptional.getGrammar();
 
 		// Sequence: atA, atB, SE(f), SE(e), SE(d), SE(c), SE(b), EE
@@ -97,23 +97,23 @@ public class EventCodeTest extends TestCase {
 		int eventCode = 0;
 
 		// AT( atA )
-		assertTrue(rOptional.lookForAttribute("", "atA").getEventCode() == eventCode++);
+		assertTrue(rOptional.getAttributeProduction("", "atA").getEventCode() == eventCode++);
 		// AT( atB )
-		assertTrue(rOptional.lookForAttribute("", "atB").getEventCode() == eventCode++);
+		assertTrue(rOptional.getAttributeProduction("", "atB").getEventCode() == eventCode++);
 		// SE( f )
-		assertTrue(rOptional.lookForStartElement("", "f").getEventCode() == eventCode++);
+		assertTrue(rOptional.getStartElementProduction("", "f").getEventCode() == eventCode++);
 		// SE( e )
-		assertTrue(rOptional.lookForStartElement("", "e").getEventCode() == eventCode++);
+		assertTrue(rOptional.getStartElementProduction("", "e").getEventCode() == eventCode++);
 		// SE( d )
-		assertTrue(rOptional.lookForStartElement("", "d").getEventCode() == eventCode++);
+		assertTrue(rOptional.getStartElementProduction("", "d").getEventCode() == eventCode++);
 		// SE( c )
-		assertTrue(rOptional.lookForStartElement("", "c").getEventCode() == eventCode++);
+		assertTrue(rOptional.getStartElementProduction("", "c").getEventCode() == eventCode++);
 		// SE( b )
-		assertTrue(rOptional.lookForStartElement("", "b").getEventCode() == eventCode++);
+		assertTrue(rOptional.getStartElementProduction("", "b").getEventCode() == eventCode++);
 		// EE
-		assertTrue(rOptional.lookForEvent(EventType.END_ELEMENT).getEventCode() == eventCode++);
+		assertTrue(rOptional.getProduction(EventType.END_ELEMENT).getEventCode() == eventCode++);
 		// Unknown
-		assertTrue(rOptional.lookForStartElement("", "unknown") == null);
+		assertTrue(rOptional.getStartElementProduction("", "unknown") == null);
 	}
 
 	public void testEventCodeEXISpecExample() throws Exception {
@@ -155,9 +155,9 @@ public class EventCodeTest extends TestCase {
 		// 1st level
 		assertTrue(Use_color_0.getNumberOfEvents() == 2);
 		// AT( color )
-		assertTrue(Use_color_0.lookForAttribute("", "color").getEventCode() == 0);
+		assertTrue(Use_color_0.getAttributeProduction("", "color").getEventCode() == 0);
 		// AT( sku )
-		assertTrue(Use_color_0.lookForAttribute("", "sku").getEventCode() == 1);
+		assertTrue(Use_color_0.getAttributeProduction("", "sku").getEventCode() == 1);
 		// 2nd level
 		assertTrue(Use_color_0.get2ndLevelCharacteristics(fo) == 7);
 		// EE 2.0
@@ -187,20 +187,20 @@ public class EventCodeTest extends TestCase {
 				EventType.CHARACTERS_GENERIC_UNDECLARED, fo) == 6);
 
 		// ### Use_color_1 ###
-		Grammar Use_color_1 = Use_color_0.lookFor(0).getNextGrammar();
+		Grammar Use_color_1 = Use_color_0.getProduction(0).getNextGrammar();
 		// 1st level
 		assertTrue(Use_color_1.getNumberOfEvents() == 1);
 		// AT( sku )
-		assertTrue(Use_color_1.lookForAttribute("", "sku").getEventCode() == 0);
+		assertTrue(Use_color_1.getAttributeProduction("", "sku").getEventCode() == 0);
 
 		// ### Use_sku_1 ###
-		Grammar Use_sku_1 = Use_color_1.lookFor(0).getNextGrammar();
+		Grammar Use_sku_1 = Use_color_1.getProduction(0).getNextGrammar();
 		// 1st level
 		assertTrue(Use_sku_1.getNumberOfEvents() == 2);
 		// SE( description )
-		assertTrue(Use_sku_1.lookForStartElement("", "description").getEventCode() == 0);
+		assertTrue(Use_sku_1.getStartElementProduction("", "description").getEventCode() == 0);
 		// SE( quantity )
-		assertTrue(Use_sku_1.lookForStartElement("", "quantity").getEventCode() == 1);
+		assertTrue(Use_sku_1.getStartElementProduction("", "quantity").getEventCode() == 1);
 
 		// ### Term_description0_1 ###
 
@@ -313,12 +313,12 @@ public class EventCodeTest extends TestCase {
 		 *        AT(*) G_00
 		 */
 		assertTrue(G_00.getNumberOfEvents() == 2);
-		assertTrue(G_00.lookFor(0).getEvent().isEventType(EventType.ATTRIBUTE));
-		Attribute atA = (Attribute) G_00.lookFor(0).getEvent();
+		assertTrue(G_00.getProduction(0).getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atA = (Attribute) G_00.getProduction(0).getEvent();
 		assertTrue(atA.getQName().getLocalPart().equals("a"));
-		assertTrue(G_00.lookFor(1).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
-		assertTrue(G_00.lookFor(1).getNextGrammar() == G_00);
-		Grammar G_10 = G_00.lookFor(0).getNextGrammar();
+		assertTrue(G_00.getProduction(1).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_00.getProduction(1).getNextGrammar() == G_00);
+		Grammar G_10 = G_00.getProduction(0).getNextGrammar();
 		
 		/*
 		 * 	G_10:                       
@@ -326,12 +326,12 @@ public class EventCodeTest extends TestCase {
 		 *       AT(*) G_10
 		 */
 		assertTrue(G_10.getNumberOfEvents() == 2);
-		assertTrue(G_10.lookFor(0).getEvent().isEventType(EventType.ATTRIBUTE));
-		Attribute atB = (Attribute) G_10.lookFor(0).getEvent();
+		assertTrue(G_10.getProduction(0).getEvent().isEventType(EventType.ATTRIBUTE));
+		Attribute atB = (Attribute) G_10.getProduction(0).getEvent();
 		assertTrue(atB.getQName().getLocalPart().equals("b"));
-		assertTrue(G_10.lookFor(1).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
-		assertTrue(G_10.lookFor(1).getNextGrammar() == G_10);
-		Grammar G_20 = G_10.lookFor(0).getNextGrammar();
+		assertTrue(G_10.getProduction(1).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_10.getProduction(1).getNextGrammar() == G_10);
+		Grammar G_20 = G_10.getProduction(0).getNextGrammar();
 		
 		/*
 		 * G_20:
@@ -339,19 +339,19 @@ public class EventCodeTest extends TestCase {
 		 *       SE(X) G_31
 		 */
 		assertTrue(G_20.getNumberOfEvents() == 2);
-		assertTrue(G_20.lookFor(0).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
-		assertTrue(G_20.lookFor(0).getNextGrammar() == G_20);
-		assertTrue(G_20.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		StartElement seX = (StartElement) G_20.lookFor(1).getEvent();
+		assertTrue(G_20.getProduction(0).getEvent().isEventType(EventType.ATTRIBUTE_GENERIC));
+		assertTrue(G_20.getProduction(0).getNextGrammar() == G_20);
+		assertTrue(G_20.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		StartElement seX = (StartElement) G_20.getProduction(1).getEvent();
 		assertTrue(seX.getQName().getLocalPart().equals("X"));
-		Grammar G_31 = G_20.lookFor(1).getNextGrammar();
+		Grammar G_31 = G_20.getProduction(1).getNextGrammar();
 		
 		/*
 		 * G_31:
 		 *      EE
 		 */
 		assertTrue(G_31.getNumberOfEvents() == 1);
-		assertTrue(G_31.lookFor(0).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(G_31.getProduction(0).getEvent().isEventType(EventType.END_ELEMENT));
 	}
 	
 	
@@ -364,7 +364,7 @@ public class EventCodeTest extends TestCase {
 		 * SD DocContent	0
 		 */
 		assertTrue(document.getNumberOfEvents() == 1);
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar docContent = eiSD.getNextGrammar();
@@ -376,7 +376,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocContent	1.1.1
 		 */
 		assertTrue(docContent.getNumberOfEvents() == 1);
-		Production eiSE =  docContent.lookFor(0);
+		Production eiSE =  docContent.getProduction(0);
 		assertTrue(eiSE.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 
 		Grammar docEnd = eiSE.getNextGrammar();
@@ -387,7 +387,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocEnd	1.1
 		 */
 		assertTrue(docEnd.getNumberOfEvents() == 1);
-		Production ei =  docEnd.lookFor(0);
+		Production ei =  docEnd.getProduction(0);
 		assertTrue(ei.getEvent().isEventType(EventType.END_DOCUMENT));
 	}
 
@@ -400,7 +400,7 @@ public class EventCodeTest extends TestCase {
 		 * SD FragmentContent	0
 		 */
 		assertTrue(fragment.getNumberOfEvents() == 1);
-		Production eiSD =  fragment.lookFor(0);
+		Production eiSD =  fragment.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar fragmentContent = eiSD.getNextGrammar();
@@ -412,10 +412,10 @@ public class EventCodeTest extends TestCase {
 		 * PI FragmentContent	2.1
 		 */
 		assertTrue(fragmentContent.getNumberOfEvents() == 2);
-		Production eiSE =  fragmentContent.lookFor(0);
+		Production eiSE =  fragmentContent.getProduction(0);
 		assertTrue(eiSE.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE.getNextGrammar() == fragmentContent);
-		Production eiED =  fragmentContent.lookFor(1);
+		Production eiED =  fragmentContent.getProduction(1);
 		assertTrue(eiED.getEvent().isEventType(EventType.END_DOCUMENT));
 	}
 
@@ -437,7 +437,7 @@ public class EventCodeTest extends TestCase {
 		 * SD DocContent	0
 		 */
 		assertTrue(document.getNumberOfEvents() == 1);
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar docContent = eiSD.getNextGrammar();
@@ -453,10 +453,10 @@ public class EventCodeTest extends TestCase {
 		 * PI DocContent	 (n+1).1.1
 		 */
 		assertTrue(docContent.getNumberOfEvents() == 2);
-		Production eiSE_root =  docContent.lookFor(0);
+		Production eiSE_root =  docContent.getProduction(0);
 		assertTrue(eiSE_root.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(((StartElement)eiSE_root.getEvent()).getQName().getLocalPart().equals("root"));
-		Production eiSEG =  docContent.lookFor(1);
+		Production eiSEG =  docContent.getProduction(1);
 		assertTrue(eiSEG.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE_root.getNextGrammar() == eiSEG.getNextGrammar());
 		
@@ -468,7 +468,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocEnd	1.1
 		 */
 		assertTrue(docEnd.getNumberOfEvents() == 1);
-		Production ei =  docEnd.lookFor(0);
+		Production ei =  docEnd.getProduction(0);
 		assertTrue(ei.getEvent().isEventType(EventType.END_DOCUMENT));
 	}
 
@@ -490,7 +490,7 @@ public class EventCodeTest extends TestCase {
 		 * SD FragmentContent	0
 		 */
 		assertTrue(fragment.getNumberOfEvents() == 1);
-		Production eiSD =  fragment.lookFor(0);
+		Production eiSD =  fragment.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar fragmentContent = eiSD.getNextGrammar();
@@ -507,21 +507,21 @@ public class EventCodeTest extends TestCase {
 		 */
 		assertTrue(fragmentContent.getNumberOfEvents() == 4);
 		
-		Production eiSE_optional =  fragmentContent.lookFor(0);
+		Production eiSE_optional =  fragmentContent.getProduction(0);
 		assertTrue(eiSE_optional.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(eiSE_optional.getNextGrammar() == fragmentContent);
 		assertTrue(((StartElement)eiSE_optional.getEvent()).getQName().getLocalPart().equals("optional"));
 		
-		Production eiSE_root =  fragmentContent.lookFor(1);
+		Production eiSE_root =  fragmentContent.getProduction(1);
 		assertTrue(eiSE_root.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(eiSE_root.getNextGrammar() == fragmentContent);
 		assertTrue(((StartElement)eiSE_root.getEvent()).getQName().getLocalPart().equals("root"));
 		
-		Production eiSE =  fragmentContent.lookFor(2);
+		Production eiSE =  fragmentContent.getProduction(2);
 		assertTrue(eiSE.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE.getNextGrammar() == fragmentContent);
 		
-		Production eiED =  fragmentContent.lookFor(3);
+		Production eiED =  fragmentContent.getProduction(3);
 		assertTrue(eiED.getEvent().isEventType(EventType.END_DOCUMENT));
 	}
 
@@ -553,7 +553,7 @@ public class EventCodeTest extends TestCase {
 		 * SD DocContent	0
 		 */
 		assertTrue(document.getNumberOfEvents() == 1);
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar docContent = eiSD.getNextGrammar();
@@ -569,10 +569,10 @@ public class EventCodeTest extends TestCase {
 		 * PI DocContent	 (n+1).1.1
 		 */
 		assertTrue(docContent.getNumberOfEvents() == 2);
-		Production eiSE_root =  docContent.lookFor(0);
+		Production eiSE_root =  docContent.getProduction(0);
 		assertTrue(eiSE_root.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(((StartElement)eiSE_root.getEvent()).getQName().getLocalPart().equals("root"));
-		Production eiSEG =  docContent.lookFor(1);
+		Production eiSEG =  docContent.getProduction(1);
 		assertTrue(eiSEG.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE_root.getNextGrammar() == eiSEG.getNextGrammar());
 		
@@ -584,7 +584,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocEnd	1.1
 		 */
 		assertTrue(docEnd.getNumberOfEvents() == 1);
-		Production ei =  docEnd.lookFor(0);
+		Production ei =  docEnd.getProduction(0);
 		assertTrue(ei.getEvent().isEventType(EventType.END_DOCUMENT));
 		
 		/*
@@ -592,36 +592,36 @@ public class EventCodeTest extends TestCase {
 		 */
 		Grammar root1 = ((StartElement)eiSE_root.getEvent()).getGrammar();
 		assertTrue(root1.getNumberOfEvents() == 1);
-		assertTrue(root1.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
 		// System.out.println(root1.getNumberOfEvents());
 		
 		/*
 		 * 2. SE(AC), SE(AD), EE
 		 */
-		Grammar root2 = root1.lookFor(0).getNextGrammar();
+		Grammar root2 = root1.getProduction(0).getNextGrammar();
 		assertTrue(root2.getNumberOfEvents() == 3);
-		assertTrue(root2.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root2.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root2.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root2.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 		// after SE(AD) is end
-		assertTrue(root2.lookFor(1).getNextGrammar().getNumberOfEvents() == 1);
-		assertTrue(root2.lookFor(1).getNextGrammar().lookFor(0).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root2.getProduction(1).getNextGrammar().getNumberOfEvents() == 1);
+		assertTrue(root2.getProduction(1).getNextGrammar().getProduction(0).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		/*
 		 * following 1st time SE(AC)
 		 * SE(AC), SE(AD), EE
 		 */
-		Grammar root3 = root2.lookFor(0).getNextGrammar();
+		Grammar root3 = root2.getProduction(0).getNextGrammar();
 		assertTrue(root3.getNumberOfEvents() == 3);
-		assertTrue(root3.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root3.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root3.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root3.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		/*
 		 * following 2nd time SE(AC)
 		 * SE(AD), EE
 		 */
-		Grammar root4 = root3.lookFor(0).getNextGrammar();
+		Grammar root4 = root3.getProduction(0).getNextGrammar();
 		assertTrue(root4.getNumberOfEvents() == 2);
 		
 	}
@@ -654,7 +654,7 @@ public class EventCodeTest extends TestCase {
 		 * SD DocContent	0
 		 */
 		assertTrue(document.getNumberOfEvents() == 1);
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar docContent = eiSD.getNextGrammar();
@@ -670,10 +670,10 @@ public class EventCodeTest extends TestCase {
 		 * PI DocContent	 (n+1).1.1
 		 */
 		assertTrue(docContent.getNumberOfEvents() == 2);
-		Production eiSE_root =  docContent.lookFor(0);
+		Production eiSE_root =  docContent.getProduction(0);
 		assertTrue(eiSE_root.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(((StartElement)eiSE_root.getEvent()).getQName().getLocalPart().equals("root"));
-		Production eiSEG =  docContent.lookFor(1);
+		Production eiSEG =  docContent.getProduction(1);
 		assertTrue(eiSEG.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE_root.getNextGrammar() == eiSEG.getNextGrammar());
 		
@@ -685,7 +685,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocEnd	1.1
 		 */
 		assertTrue(docEnd.getNumberOfEvents() == 1);
-		Production ei =  docEnd.lookFor(0);
+		Production ei =  docEnd.getProduction(0);
 		assertTrue(ei.getEvent().isEventType(EventType.END_DOCUMENT));
 		
 		/*
@@ -693,38 +693,38 @@ public class EventCodeTest extends TestCase {
 		 */
 		Grammar root1 = ((StartElement)eiSE_root.getEvent()).getGrammar();
 		assertTrue(root1.getNumberOfEvents() == 1);
-		assertTrue(root1.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
 		// System.out.println(root1.getNumberOfEvents());
 		
 		/*
 		 * 2. SE(AC)
 		 */
-		Grammar root2 = root1.lookFor(0).getNextGrammar();
+		Grammar root2 = root1.getProduction(0).getNextGrammar();
 		assertTrue(root2.getNumberOfEvents() == 1);
-		assertTrue(root2.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
 		
 		/*
 		 * 2. SE(AC)
 		 */
-		Grammar root3 = root2.lookFor(0).getNextGrammar();
+		Grammar root3 = root2.getProduction(0).getNextGrammar();
 		assertTrue(root3.getNumberOfEvents() == 1);
-		assertTrue(root3.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
 
 		/*
 		 * 3. SE(AC), SE(AD), EE
 		 */
-		Grammar root4 = root3.lookFor(0).getNextGrammar();
+		Grammar root4 = root3.getProduction(0).getNextGrammar();
 		assertTrue(root4.getNumberOfEvents() == 3);
-		assertTrue(root4.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root4.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root4.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root4.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		// SE(AC) should point to same node
-		assertTrue(root4.lookFor(0).getNextGrammar() == root4);
+		assertTrue(root4.getProduction(0).getNextGrammar() == root4);
 		
 		// after SE(AD) is end
-		assertTrue(root4.lookFor(1).getNextGrammar().getNumberOfEvents() == 1);
-		assertTrue(root4.lookFor(1).getNextGrammar().lookFor(0).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root4.getProduction(1).getNextGrammar().getNumberOfEvents() == 1);
+		assertTrue(root4.getProduction(1).getNextGrammar().getProduction(0).getEvent().isEventType(EventType.END_ELEMENT));
 		
 	}
 	
@@ -758,7 +758,7 @@ public class EventCodeTest extends TestCase {
 		 * SD DocContent	0
 		 */
 		assertTrue(document.getNumberOfEvents() == 1);
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		assertTrue(eiSD.getEvent().isEventType(EventType.START_DOCUMENT));
 		
 		Grammar docContent = eiSD.getNextGrammar();
@@ -774,10 +774,10 @@ public class EventCodeTest extends TestCase {
 		 * PI DocContent	 (n+1).1.1
 		 */
 		assertTrue(docContent.getNumberOfEvents() == 2);
-		Production eiSE_root =  docContent.lookFor(0);
+		Production eiSE_root =  docContent.getProduction(0);
 		assertTrue(eiSE_root.getEvent().isEventType(EventType.START_ELEMENT));
 		assertTrue(((StartElement)eiSE_root.getEvent()).getQName().getLocalPart().equals("root"));
-		Production eiSEG =  docContent.lookFor(1);
+		Production eiSEG =  docContent.getProduction(1);
 		assertTrue(eiSEG.getEvent().isEventType(EventType.START_ELEMENT_GENERIC));
 		assertTrue(eiSE_root.getNextGrammar() == eiSEG.getNextGrammar());
 		
@@ -789,7 +789,7 @@ public class EventCodeTest extends TestCase {
 		 * PI DocEnd	1.1
 		 */
 		assertTrue(docEnd.getNumberOfEvents() == 1);
-		Production ei =  docEnd.lookFor(0);
+		Production ei =  docEnd.getProduction(0);
 		assertTrue(ei.getEvent().isEventType(EventType.END_DOCUMENT));
 		
 		/*
@@ -797,41 +797,41 @@ public class EventCodeTest extends TestCase {
 		 */
 		Grammar root1 = ((StartElement)eiSE_root.getEvent()).getGrammar();
 		assertTrue(root1.getNumberOfEvents() == 2);
-		assertTrue(root1.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root1.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
 		
 		/*
 		 * 2. SE(AC)
 		 */
-		Grammar root2 = root1.lookFor(0).getNextGrammar();
+		Grammar root2 = root1.getProduction(0).getNextGrammar();
 		assertTrue(root2.getNumberOfEvents() == 1);
-		assertTrue(root2.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
 		
 		/*
 		 * 3. SE(AC), SE(AD), EE
 		 */
-		Grammar root3 = root2.lookFor(0).getNextGrammar();
+		Grammar root3 = root2.getProduction(0).getNextGrammar();
 		assertTrue(root3.getNumberOfEvents() == 3);
-		assertTrue(root3.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root3.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root3.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root3.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root3.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 	
 		/*
 		 * 4. SE(AC), SE(AD), EE
 		 */
-		Grammar root4 = root3.lookFor(0).getNextGrammar();
+		Grammar root4 = root3.getProduction(0).getNextGrammar();
 		assertTrue(root4.getNumberOfEvents() == 3);
-		assertTrue(root4.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root4.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root4.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root4.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root4.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		/*
 		 * 5. SE(AD), EE
 		 */
-		Grammar root5 = root4.lookFor(0).getNextGrammar();
+		Grammar root5 = root4.getProduction(0).getNextGrammar();
 		assertTrue(root5.getNumberOfEvents() == 2);
-		assertTrue(root5.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root5.lookFor(1).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root5.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root5.getProduction(1).getEvent().isEventType(EventType.END_ELEMENT));
 		
 	}
 	
@@ -849,10 +849,10 @@ public class EventCodeTest extends TestCase {
 	
 		Grammars g = getGrammarFromSchemaAsString(schema);
 		Grammar document = g.getDocumentGrammar();
-		Production eiSD =  document.lookFor(0);
+		Production eiSD =  document.getProduction(0);
 		Grammar docContent = eiSD.getNextGrammar();
 		assertTrue(docContent.getNumberOfEvents() == 2);
-		Production eiSE_root =  docContent.lookFor(0);
+		Production eiSE_root =  docContent.getProduction(0);
 		
 		
 		/*
@@ -861,9 +861,9 @@ public class EventCodeTest extends TestCase {
 		Grammar root1 = ((StartElement)eiSE_root.getEvent()).getGrammar(); // FirstStartTag
 		assertTrue(root1 instanceof SchemaInformedFirstStartTag);
 		assertTrue(root1.getNumberOfEvents() == 3);
-		assertTrue(root1.lookFor(0).getEvent().isEventType(EventType.ATTRIBUTE));
-		assertTrue(root1.lookFor(1).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root1.lookFor(2).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root1.getProduction(0).getEvent().isEventType(EventType.ATTRIBUTE));
+		assertTrue(root1.getProduction(1).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root1.getProduction(2).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		FidelityOptions foStrict = FidelityOptions.createStrict();
 		FidelityOptions foDef = FidelityOptions.createDefault();
@@ -875,12 +875,12 @@ public class EventCodeTest extends TestCase {
 			
 			// default
 			assertTrue(root1.get2ndLevelCharacteristics(foDef) == 6);
-			assertTrue(root1.get2ndLevelEvent(0, foDef) == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(root1.get2ndLevelEvent(1, foDef) == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(root1.get2ndLevelEvent(2, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEvent(3, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root1.get2ndLevelEvent(4, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEvent(5, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(0, foDef) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(root1.get2ndLevelEventType(1, foDef) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(root1.get2ndLevelEventType(2, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(3, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root1.get2ndLevelEventType(4, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(5, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE, foDef) == 0);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL, foDef) == 1);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 2);
@@ -890,14 +890,14 @@ public class EventCodeTest extends TestCase {
 			
 			// all
 			assertTrue(root1.get2ndLevelCharacteristics(foAll) == (8 + 1));
-			assertTrue(root1.get2ndLevelEvent(0, foAll) == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(root1.get2ndLevelEvent(1, foAll) == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(root1.get2ndLevelEvent(2, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEvent(3, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root1.get2ndLevelEvent(4, foAll) == EventType.NAMESPACE_DECLARATION);
-			assertTrue(root1.get2ndLevelEvent(5, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEvent(6, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEvent(7, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root1.get2ndLevelEventType(0, foAll) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(root1.get2ndLevelEventType(1, foAll) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(root1.get2ndLevelEventType(2, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(3, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root1.get2ndLevelEventType(4, foAll) == EventType.NAMESPACE_DECLARATION);
+			assertTrue(root1.get2ndLevelEventType(5, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(6, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root1.get2ndLevelEventType(7, foAll) == EventType.ENTITY_REFERENCE);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE, foAll) == 0);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL, foAll) == 1);
 			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 2);
@@ -912,11 +912,11 @@ public class EventCodeTest extends TestCase {
 		/*
 		 * 2.SE(A), EE
 		 */
-		Grammar root2 = root1.lookFor(0).getNextGrammar();
+		Grammar root2 = root1.getProduction(0).getNextGrammar();
 		assertTrue(root2 instanceof SchemaInformedStartTag);
 		assertTrue(root2.getNumberOfEvents() == 2);
-		assertTrue(root2.lookFor(0).getEvent().isEventType(EventType.START_ELEMENT));
-		assertTrue(root2.lookFor(1).getEvent().isEventType(EventType.END_ELEMENT));
+		assertTrue(root2.getProduction(0).getEvent().isEventType(EventType.START_ELEMENT));
+		assertTrue(root2.getProduction(1).getEvent().isEventType(EventType.END_ELEMENT));
 		
 		{
 			// strict
@@ -924,10 +924,10 @@ public class EventCodeTest extends TestCase {
 			
 			// default
 			assertTrue(root2.get2ndLevelCharacteristics(foDef) == 4);
-			assertTrue(root2.get2ndLevelEvent(0, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEvent(1, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root2.get2ndLevelEvent(2, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEvent(3, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(0, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(1, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root2.get2ndLevelEventType(2, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(3, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 0);
 			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foDef) == 1);
 			assertTrue(root2.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 2);
@@ -935,11 +935,11 @@ public class EventCodeTest extends TestCase {
 			
 			// all
 			assertTrue(root2.get2ndLevelCharacteristics(foAll) == (5 + 1));
-			assertTrue(root2.get2ndLevelEvent(0, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEvent(1, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root2.get2ndLevelEvent(2, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEvent(3, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEvent(4, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root2.get2ndLevelEventType(0, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(1, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(root2.get2ndLevelEventType(2, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(3, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root2.get2ndLevelEventType(4, foAll) == EventType.ENTITY_REFERENCE);
 			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 0);
 			assertTrue(root2.get2ndLevelEventCode(EventType.ATTRIBUTE_INVALID_VALUE, foAll) == 1);
 			assertTrue(root2.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 2);
@@ -950,7 +950,7 @@ public class EventCodeTest extends TestCase {
 		/*
 		 * 3. 
 		 */
-		Grammar root3 = root1.lookFor(1).getNextGrammar();
+		Grammar root3 = root1.getProduction(1).getNextGrammar();
 		assertTrue(root3 instanceof SchemaInformedElement);
 		
 		{
@@ -959,16 +959,16 @@ public class EventCodeTest extends TestCase {
 			
 			// default
 			assertTrue(root3.get2ndLevelCharacteristics(foDef) == 2);
-			assertTrue(root3.get2ndLevelEvent(0, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEvent(1, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEventType(0, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEventType(1, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			assertTrue(root3.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 0);
 			assertTrue(root3.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 1);
 			
 			// all
 			assertTrue(root3.get2ndLevelCharacteristics(foAll) == (3 + 1));
-			assertTrue(root3.get2ndLevelEvent(0, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEvent(1, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEvent(2, foAll) == EventType.ENTITY_REFERENCE);
+			assertTrue(root3.get2ndLevelEventType(0, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEventType(1, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(root3.get2ndLevelEventType(2, foAll) == EventType.ENTITY_REFERENCE);
 			assertTrue(root3.get2ndLevelEventCode(EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 0);
 			assertTrue(root3.get2ndLevelEventCode(EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 1);
 			assertTrue(root3.get2ndLevelEventCode(EventType.ENTITY_REFERENCE, foAll) == 2);

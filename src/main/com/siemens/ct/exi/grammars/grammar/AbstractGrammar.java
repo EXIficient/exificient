@@ -147,7 +147,7 @@ public abstract class AbstractGrammar implements Grammar {
 		return ec3;
 	}
 
-	public EventType get3rdLevelEvent(int eventCode,
+	public EventType get3rdLevelEventType(int eventCode,
 			FidelityOptions fidelityOptions) {
 		if (eventCode == 0) {
 			if (fidelityOptions
@@ -172,7 +172,7 @@ public abstract class AbstractGrammar implements Grammar {
 		return Constants.NOT_FOUND;
 	}
 
-	public Grammar getElementContent() {
+	public Grammar getElementContentGrammar() {
 		return this;
 	}
 
@@ -191,9 +191,9 @@ public abstract class AbstractGrammar implements Grammar {
 
 			if (this.getNumberOfEvents() == numberOfEvents) {
 				for (int i = 0; i < numberOfEvents; i++) {
-					Production ei = gr.lookFor(i);
+					Production ei = gr.getProduction(i);
 					// shallow check
-					if (!ei.getEvent().equals(lookFor(i).getEvent())) {
+					if (!ei.getEvent().equals(getProduction(i).getEvent())) {
 						return false;
 					}
 				}

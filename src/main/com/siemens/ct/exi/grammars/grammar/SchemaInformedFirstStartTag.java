@@ -50,11 +50,11 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	}
 
 	public SchemaInformedFirstStartTag(SchemaInformedStartTagGrammar startTag) {
-		this((SchemaInformedGrammar) startTag.getElementContent());
+		this((SchemaInformedGrammar) startTag.getElementContentGrammar());
 
 		// clone top level
 		for (int i = 0; i < startTag.getNumberOfEvents(); i++) {
-			Production ei = startTag.lookFor(i);
+			Production ei = startTag.getProduction(i);
 			// remove self-reference
 			Grammar next = ei.getNextGrammar();
 			if (next == startTag) {
@@ -216,7 +216,7 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		EventType.ENTITY_REFERENCE};
 	
 	@Override
-	public final EventType get2ndLevelEvent(int eventCode2,
+	public final EventType get2ndLevelEventType(int eventCode2,
 			FidelityOptions fidelityOptions) {
 		if(fidelityOptions.isStrict()) {
 			switch(eventCode2) {
