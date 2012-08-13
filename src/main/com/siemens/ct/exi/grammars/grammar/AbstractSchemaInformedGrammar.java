@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.grammars.grammar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.siemens.ct.exi.Constants;
@@ -33,7 +32,7 @@ import com.siemens.ct.exi.grammars.event.StartElementNS;
 import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.grammars.production.SchemaInformedProduction;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.sort.EventCodeAssignment;
+import com.siemens.ct.exi.util.sort.LexicographicSort;
 
 /**
  * 
@@ -43,8 +42,8 @@ import com.siemens.ct.exi.util.sort.EventCodeAssignment;
  * @version 0.9
  */
 
-public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar implements
-		SchemaInformedGrammar {
+public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
+		implements SchemaInformedGrammar {
 
 	private static final long serialVersionUID = -5145919918050815021L;
 
@@ -88,7 +87,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		return true;
 	}
 
-	public abstract boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions);
+	public abstract boolean hasSecondOrThirdLevel(
+			FidelityOptions fidelityOptions);
 
 	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
 		return (hasSecondOrThirdLevel(fidelityOptions) ? codeLengthB
@@ -134,7 +134,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 					if (ei.getNextGrammar() != grammar) {
 						// if (rule.equals(ei.next)) {
 						throw new IllegalArgumentException("Same event "
-								+ event + " with indistinguishable 'next' grammar");
+								+ event
+								+ " with indistinguishable 'next' grammar");
 					}
 				}
 			}
@@ -144,24 +145,97 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		}
 	}
 
-	static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
+	// static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
+	static final LexicographicSort lexSort = new LexicographicSort();
 
 	protected void updateSortedEvents(Event newEvent, Grammar newGrammar) {
 		// create sorted event list
 		List<Event> sortedEvents = new ArrayList<Event>();
-		// Set<Event> sortedEvents = new TreeSet<Event>();
-		// add old events
+
+		// see http://www.w3.org/TR/exi/#eventCodeAssignment
+		Event o2 = newEvent;
+
+		boolean added = false;
+
+		// add existing events
 		for (Production ei : containers) {
-			sortedEvents.add(ei.getEvent());
+			Event o1 = ei.getEvent();
+
+			if (!added) {
+				int diff = o1.getEventType().ordinal()
+						- o2.getEventType().ordinal();
+				if (diff == 0) {
+					// same event type
+					switch (o1.getEventType()) {
+					case ATTRIBUTE:
+						// sorted lexicographically by qname local-name, then by
+						// qname
+						// uri
+						int cmpA = lexSort.compare((Attribute) o1,
+								(Attribute) o2);
+						if (cmpA < 0) {
+							// comes after
+						} else if (cmpA > 0) {
+							// comes now
+							sortedEvents.add(o2);
+							added = true;
+						} else {
+							assert (cmpA == 0);
+							// should never happen
+							throw new RuntimeException(
+									"Twice the same attribute name when sorting");
+						}
+						break;
+					case ATTRIBUTE_NS:
+						// sorted lexicographically by uri
+						AttributeNS atNS1 = (AttributeNS) o1;
+						AttributeNS atNS2 = (AttributeNS) o2;
+						int cmpNS = atNS1.getNamespaceURI().compareTo(
+								atNS2.getNamespaceURI());
+						if (cmpNS < 0) {
+							// comes after
+						} else if (cmpNS > 0) {
+							// comes now
+							sortedEvents.add(o2);
+							added = true;
+						} else {
+							assert (cmpNS == 0);
+							// should never happen
+							throw new RuntimeException(
+									"Twice the same attribute uri in AT(uri*) when sorting");
+						}
+						break;
+					case START_ELEMENT:
+					case START_ELEMENT_NS:
+						// sorted in schema order --> new event comes after
+						break;
+					default:
+						// should never happen
+						throw new RuntimeException(
+								"No valid event type for sorting");
+					}
+				} else if (diff < 0) {
+					// new event type comes after
+				} else {
+					assert (diff > 0);
+					// new event type comes first
+					sortedEvents.add(o2);
+					added = true;
+				}
+			}
+
+			// add old event
+			sortedEvents.add(o1);
 		}
-		// add new event
-		sortedEvents.add(newEvent);
-		// sort events
-		Collections.sort(sortedEvents, eventCodeAss);
+
+		if (!added) {
+			sortedEvents.add(o2);
+		}
+
+		assert (sortedEvents.size() == (containers.length + 1));
 
 		// create new (sorted) container array
-		Production[] newContainers = new Production[sortedEvents
-				.size()];
+		Production[] newContainers = new Production[sortedEvents.size()];
 		int eventCode = 0;
 		boolean newOneAdded = false;
 
@@ -254,11 +328,11 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 		return null; // not found
 	}
 
-	public Production lookForStartElement(String namespaceURI,
-			String localName) {
+	public Production lookForStartElement(String namespaceURI, String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
-					&& checkQualifiedName(((StartElement) ei.getEvent()).getQName(),
+					&& checkQualifiedName(
+							((StartElement) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {
 				return ei;
 			}
@@ -269,19 +343,19 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar impl
 	public Production lookForStartElementNS(String namespaceURI) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT_NS)
-					&& ((StartElementNS) ei.getEvent()).getNamespaceURI().equals(
-							namespaceURI)) {
+					&& ((StartElementNS) ei.getEvent()).getNamespaceURI()
+							.equals(namespaceURI)) {
 				return ei;
 			}
 		}
 		return null; // not found
 	}
 
-	public Production lookForAttribute(String namespaceURI,
-			String localName) {
+	public Production lookForAttribute(String namespaceURI, String localName) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
-					&& checkQualifiedName(((Attribute) ei.getEvent()).getQName(),
+					&& checkQualifiedName(
+							((Attribute) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {
 				return ei;
 			}
