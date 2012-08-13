@@ -573,6 +573,87 @@ public class GrammarTest extends TestCase {
 		}
 	}
 
+//	public void testSequenceSourceForgeForum1_() throws Exception {
+//		String schema =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+//			+ "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns=\"http://zigbee.org/sep\" targetNamespace=\"http://zigbee.org/sep\" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\" version=\"2.0.47\">\n"
+//			+ "  <xs:complexType name=\"AbstractDevice\">\n"
+//			+ "    <xs:annotation>\n"
+//			+ "      <xs:documentation>The EndDevice providing the resources available within the DeviceCapabilities.</xs:documentation>\n"
+//			+ "    </xs:annotation>\n"
+//			+ "    <xs:complexContent>\n"
+//			+ "      <xs:extension base=\"SubscribableResource\">\n"
+//			+ "        <xs:sequence>\n"
+//			+ "          <xs:element name=\"ConfigurationLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"DERLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"DeviceInformationLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"DeviceStatusLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"FileStatusLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"IPInterfaceListLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"LoadShedAvailabilityLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"loadShedDeviceCategory\" minOccurs=\"0\" maxOccurs=\"1\" >\n"
+//			+ "            <xs:annotation>\n"
+//			+ "              <xs:documentation>This field is for use in devices that can shed load.  If you are a device that does not respond to EndDeviceControls (for instance, an ESI), this field should not have any bits set.</xs:documentation>\n"
+//			+ "            </xs:annotation>\n"
+//			+ "          </xs:element>\n"
+//			+ "          <xs:element name=\"LogEventListLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"PowerStatusLink\" minOccurs=\"0\" maxOccurs=\"1\" />\n"
+//			+ "          <xs:element name=\"sFDI\" minOccurs=\"1\" maxOccurs=\"1\" >\n"
+//			+ "            <xs:annotation>\n"
+//			+ "              <xs:documentation>Short form of device identifier. See the Security section for additional details.</xs:documentation>\n"
+//			+ "            </xs:annotation>\n"
+//			+ "          </xs:element>\n"
+//			+ "        </xs:sequence>\n"
+//			+ "      </xs:extension>\n"
+//			+ "    </xs:complexContent>\n"
+//			+ "  </xs:complexType>\n"
+//			+ "  <xs:complexType name=\"SubscribableResource\">\n"
+//			+ "    <xs:annotation>\n"
+//			+ "      <xs:documentation>A Resource to which a Subscription can be requested.</xs:documentation>\n"
+//			+ "    </xs:annotation>\n"
+//			+ "    <xs:complexContent>\n"
+//			+ "      <xs:extension base=\"Resource\">\n"
+//			+ "        <xs:attribute name=\"subscribable\" use=\"optional\" />\n"
+//			+ "      </xs:extension>\n"
+//			+ "    </xs:complexContent>\n"
+//			+ "  </xs:complexType>\n"
+//			+ "  <xs:complexType name=\"Resource\">\n"
+//			+ "    <xs:annotation>\n"
+//			+ "      <xs:documentation>A resource is an addressable unit of information, either a collection (List) or instance of an object (identifiedObject, or simply, Resource)</xs:documentation>\n"
+//			+ "    </xs:annotation>\n"
+//			+ "    <xs:attribute name=\"href\" use=\"optional\" type=\"xs:anyURI\" />\n"
+//			+ "  </xs:complexType>\n"
+//			+ "  <xs:element name=\"AbstractDevice\" type=\"AbstractDevice\" />\n"
+//			+ "</xs:schema>\n";
+//		
+//		
+//		//Create new grammar from file
+//		GrammarFactory gf = GrammarFactory.newInstance();
+//		ByteArrayInputStream bais = new ByteArrayInputStream(schema
+//				.getBytes());
+//		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+//		Grammars g = grammarFactory.createGrammars(bais);
+//		
+//		//Start at document grammar
+//		Grammar document = g.getDocumentGrammar();
+//		//Get DocContent
+//		Grammar doccontent = document.lookForEvent(EventType.START_DOCUMENT).getNextGrammar();
+//		//Get AbstractDevice
+//		Grammar abstractdevice = ((StartElement)doccontent.lookFor(0).getEvent()).getGrammar();
+//
+//		
+//    	//Initialize variables
+//		Grammar currentGrammar = abstractdevice;
+//		
+//		//Add all next rules to queue
+//		Production p;			
+//		int numEvents = currentGrammar.getNumberOfEvents();
+//		for (int i = 0; i < numEvents; i++)
+//		{
+//			p = currentGrammar.lookFor(i);
+//			System.out.println(p);
+//		}
+//	}
+	
 	public void testLearning1() throws Exception {
 		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='root'>"

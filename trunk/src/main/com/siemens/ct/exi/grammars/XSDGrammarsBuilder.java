@@ -634,41 +634,22 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			// URI 2 "http://www.w3.org/2001/XMLSchema-instance"
 			// URI 3 "http://www.w3.org/2001/XMLSchema"
 			// URI ? <sorted URI list>
-
 			if (XMLConstants.NULL_NS_URI.equals(this.namespaceUri)) {
-				return o.namespaceUri.equals(XMLConstants.NULL_NS_URI) ? 0 : -1;
+				return -1;
+			} else if (XMLConstants.NULL_NS_URI.equals(o.namespaceUri)) {
+				return +1;
 			} else if (XMLConstants.XML_NS_URI.equals(this.namespaceUri)) {
-				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)) {
-					return 1;
-				} else if (o.namespaceUri.equals(XMLConstants.XML_NS_URI)) {
-					return 0;
-				} else {
-					return -1;
-				}
-			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
-					.equals(this.namespaceUri)) {
-				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)
-						|| o.namespaceUri.equals(XMLConstants.XML_NS_URI)) {
-					return 1;
-				} else if (o.namespaceUri
-						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
-					return 0;
-				} else {
-					return -1;
-				}
-			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI
-					.equals(this.namespaceUri)) {
-				if (o.namespaceUri.equals(XMLConstants.NULL_NS_URI)
-						|| o.namespaceUri.equals(XMLConstants.XML_NS_URI)
-						|| o.namespaceUri
-								.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
-					return 1;
-				} else if (o.namespaceUri
-						.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
-					return 0;
-				} else {
-					return -1;
-				}
+				return -1;
+			} else if (XMLConstants.XML_NS_URI.equals(o.namespaceUri)) {
+				return +1;
+			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(this.namespaceUri)) {
+				return -1;
+			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(o.namespaceUri)) {
+				return +1;
+			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(this.namespaceUri)) {
+				return -1;
+			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(o.namespaceUri)) {
+				return +1;
 			} else {
 				return this.namespaceUri.compareTo(o.namespaceUri);
 			}
