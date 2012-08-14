@@ -29,7 +29,6 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeList;
-import com.siemens.ct.exi.context.CoderContext;
 import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.EncoderContextImpl;
 import com.siemens.ct.exi.context.EvolvingUriContext;
@@ -79,25 +78,21 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	protected EncoderChannel channel;
 
 	/** Type Encoder (including string encoder etc.) */
-	protected TypeEncoder typeEncoder;
+	protected final TypeEncoder typeEncoder;
 
 	/** Encoding options */
-	protected EncodingOptions encodingOptions;
+	protected final EncodingOptions encodingOptions;
 
 	/** Encoder Context */
-	EncoderContext encoderContext;
+	protected final EncoderContext encoderContext;
 
-	protected boolean grammarLearningDisabled;
+	protected final boolean grammarLearningDisabled;
 	
 	public AbstractEXIBodyEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 		this.exiHeader = new EXIHeaderEncoder();
-	}
-
-	@Override
-	protected void initFactoryInformation() throws EXIException {
-		super.initFactoryInformation();
-
+		
+		// encoder stuff
 		typeEncoder = exiFactory.createTypeEncoder();
 		encodingOptions = exiFactory.getEncodingOptions();
 		/* Note: we currently do not allow fine-grained grammar learning */
@@ -112,10 +107,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		super.initForEachRun();
 
 		encoderContext.clear();
-	}
-
-	protected CoderContext getCoderContext() {
-		return this.encoderContext;
 	}
 
 	/*

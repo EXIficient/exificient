@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.context.CoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.BooleanDatatype;
@@ -55,16 +54,16 @@ public abstract class AbstractEXIBodyCoder {
 	// factory
 	protected final EXIFactory exiFactory;
 
-	protected Grammars grammar;
-	protected FidelityOptions fidelityOptions;
-	protected boolean preservePrefix;
-	protected boolean preserveLexicalValues;
+	protected final Grammars grammar;
+	protected final FidelityOptions fidelityOptions;
+	protected final boolean preservePrefix;
+	protected final boolean preserveLexicalValues;
 
 	// error handler
 	protected ErrorHandler errorHandler;
 
 	// Boolean datatype (coder)
-	protected BooleanDatatype booleanDatatype;
+	protected final BooleanDatatype booleanDatatype;
 
 	// element-context and rule (stack) while traversing the EXI document
 	private ElementContext elementContext; // cached context to avoid heavy
@@ -78,14 +77,17 @@ public abstract class AbstractEXIBodyCoder {
 
 	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
-		// if (exiFactory.usesProfile(EXIFactory.UCD_PROFILE)) {
-		// // qnameDatatype = new QNameDatatypeUCDProfile(); // coderContext);
-		// } else {
-		// // qnameDatatype = new QNameDatatype(); // coderContext);
-		// }
 
-		initFactoryInformation();
-
+		this.grammar = exiFactory.getGrammars();
+		this.fidelityOptions = exiFactory.getFidelityOptions();
+		
+		// preserve prefixes
+		preservePrefix = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
+		// preserve lecicalValues
+		preserveLexicalValues = fidelityOptions
+				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
+		
 		// use default error handler per default
 		this.errorHandler = new DefaultErrorHandler();
 
@@ -95,22 +97,6 @@ public abstract class AbstractEXIBodyCoder {
 
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
-	}
-
-	abstract protected CoderContext getCoderContext();
-
-	protected void initFactoryInformation() throws EXIException {
-		this.grammar = exiFactory.getGrammars();
-		this.fidelityOptions = exiFactory.getFidelityOptions();
-		// this.qnameDatatype.setCoderContext(this.getCoderContext());
-
-		// preserve prefixes
-		preservePrefix = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX);
-
-		// preserve lecicalValues
-		preserveLexicalValues = fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE);
 	}
 
 	protected final Grammar getCurrentGrammar() {
@@ -148,7 +134,7 @@ public abstract class AbstractEXIBodyCoder {
 				null, startRule);
 	}
 
-	public final void declarePrefix(String pfx, String uri) {
+	public void declarePrefix(String pfx, String uri) {
 		declarePrefix(new NamespaceDeclaration(uri, pfx));
 	}
 
@@ -192,7 +178,7 @@ public abstract class AbstractEXIBodyCoder {
 				se.getQNameContext(), se.getGrammar());
 	}
 
-	protected final ElementContext popElement() {
+	protected ElementContext popElement() {
 		assert (this.elementContextStackIndex > 0);
 		// pop element from stack
 		ElementContext poppedEC = elementContextStack[elementContextStackIndex];
