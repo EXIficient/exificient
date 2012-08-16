@@ -134,7 +134,7 @@ public abstract class AbstractEXIBodyCoder {
 				null, startRule);
 	}
 
-	public void declarePrefix(String pfx, String uri) {
+	public final void declarePrefix(String pfx, String uri) {
 		declarePrefix(new NamespaceDeclaration(uri, pfx));
 	}
 
@@ -178,7 +178,7 @@ public abstract class AbstractEXIBodyCoder {
 				se.getQNameContext(), se.getGrammar());
 	}
 
-	protected ElementContext popElement() {
+	protected final ElementContext popElement() {
 		assert (this.elementContextStackIndex > 0);
 		// pop element from stack
 		ElementContext poppedEC = elementContextStack[elementContextStackIndex];

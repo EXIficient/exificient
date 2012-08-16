@@ -19,10 +19,6 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.XMLConstants;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
@@ -79,8 +75,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	// namespaces/prefixes
 	protected boolean todoDefaultPrefixMapping;
-	// Default pfx mapping
-	protected final Map<String, String> uri2PrefixMapping;
+	protected final int numberOfUriContexts;
 
 	// Type Decoder (including string decoder etc.)
 	protected final TypeDecoder typeDecoder;
@@ -101,7 +96,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		decoderContext = new DecoderContextImpl(exiFactory.getGrammars()
 				.getGrammarContext(), exiFactory.createStringDecoder());
 		
-		uri2PrefixMapping = new HashMap<String, String>();
+		numberOfUriContexts = this.grammar.getGrammarContext().getNumberOfGrammarUriContexts();
 	}
 	
 
@@ -115,39 +110,10 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				String pfx = guc.getDefaultPrefix();
 				declarePrefix(pfx, guc.getNamespaceUri());
 			}
-
-			uri2PrefixMapping.put(XMLConstants.NULL_NS_URI, "");
-			uri2PrefixMapping.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
 			
 			todoDefaultPrefixMapping = false;
 		}
 	}
-	
-	@Override
-	protected ElementContext popElement() {
-		ElementContext poppedEC = super.popElement();
-		
-		if (!preservePrefix && elementContextStackIndex > 0) {
-			// undeclare default pfx mappings if any
-			if(poppedEC.nsDeclarations != null) {
-				for(NamespaceDeclaration nsDecl : poppedEC.nsDeclarations) {
-					uri2PrefixMapping.remove(nsDecl.namespaceURI);
-					// System.out.println("Undeclare " + nsDecl.namespaceURI + " from " + nsDecl.prefix);
-				}
-			}			
-		}
-		
-		return poppedEC;
-	}
-	
-	@Override
-	public final void declarePrefix(String pfx, String uri) {
-		super.declarePrefix(pfx, uri);
-		
-		uri2PrefixMapping.put(uri, pfx);
-	}
-	
-	
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
@@ -155,7 +121,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 		// namespaces/prefixes
 		todoDefaultPrefixMapping = true;
-		uri2PrefixMapping.clear();
 
 		// clear string values etc.
 		decoderContext.clear();
@@ -448,7 +413,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 				qncTypePrefix = decoderContext.decodeQNamePrefix(decoderContext
 						.getUriContext(qncType.getNamespaceUriID()), channel);
 			} else {
-				qncTypePrefix = checkDefaultPrefixNamespaceDeclaration(qncType);
+				checkDefaultPrefixNamespaceDeclaration(qncType);
+				qncTypePrefix = qncType.getDefaultPrefix();
 			}
 			attributeValue = new QNameValue(qncType.getNamespaceUri(),
 					qncType.getLocalName(), qncTypePrefix);
@@ -472,7 +438,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			// subsequently following NS event
 		} else {
 			// element prefix
-			pfx = checkDefaultPrefixNamespaceDeclaration(qnc);
+			checkDefaultPrefixNamespaceDeclaration(qnc);
+			pfx = qnc.getDefaultPrefix();
 		}
 		getElementContext().setPrefix(pfx);
 	}
@@ -484,55 +451,65 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 					decoderContext.getUriContext(qnc.getNamespaceUriID()),
 					channel);
 		} else {
-			attributePrefix = checkDefaultPrefixNamespaceDeclaration(qnc);
+			checkDefaultPrefixNamespaceDeclaration(qnc);
+			attributePrefix = qnc.getDefaultPrefix();
 		}
 	}
 	
-	static final boolean USE_MAP_FOR_DEFAULT_PFX_MAPPINGS = true;
 
-	private final String getPrefix(String uri) {
-		assert(!this.preservePrefix);
+//	private final String getPrefix(String uri) {
+//		assert(!this.preservePrefix);
+//	
+//		if (XMLConstants.NULL_NS_URI.equals(uri)) {
+//			return XMLConstants.DEFAULT_NS_PREFIX;
+//		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
+//			return XMLConstants.XML_NS_PREFIX;
+//		}
+//		// check all stack items except first one
+//		// TODO believe this can be done more efficiently (use map?)
+//		for (int i = 1; i <= elementContextStackIndex; i++) {
+//			ElementContext ec = elementContextStack[i];
+//			if (ec.nsDeclarations != null) {
+//				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+//					if (ns.namespaceURI.equals(uri)) {
+//						return ns.prefix;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 	
-		if(USE_MAP_FOR_DEFAULT_PFX_MAPPINGS) {
-			return this.uri2PrefixMapping.get(uri);
+
+	protected final void checkDefaultPrefixNamespaceDeclaration(
+			QNameContext qnc) {
+		assert (!preservePrefix);
+		
+		if(qnc.getNamespaceUriID() < numberOfUriContexts) {
+			// schema-known grammar uris/prefixes have been declared in root element
 		} else {
-			if (XMLConstants.NULL_NS_URI.equals(uri)) {
-				return XMLConstants.DEFAULT_NS_PREFIX;
-			} else if (XMLConstants.XML_NS_URI.equals(uri)) {
-				return XMLConstants.XML_NS_PREFIX;
-			}
+			String uri = qnc.getNamespaceUri();
+			String pfx = null;
+			
 			// check all stack items except first one
-			// TODO believe this can be done more efficiently (use map?)
-			for (int i = 1; i <= elementContextStackIndex; i++) {
+			for (int i = 1; pfx == null && i <= elementContextStackIndex; i++) {
 				ElementContext ec = elementContextStack[i];
 				if (ec.nsDeclarations != null) {
 					for (NamespaceDeclaration ns : ec.nsDeclarations) {
 						if (ns.namespaceURI.equals(uri)) {
-							return ns.prefix;
+							pfx = ns.prefix;
 						}
 					}
 				}
 			}
-			return null;
+			
+			if (pfx == null) {
+				pfx = qnc.getDefaultPrefix();
+				declarePrefix(pfx, uri);
+			}
+			
+			assert(qnc.getDefaultPrefix().equals(pfx));	
 		}
-	}
-	
-	
-
-	protected final String checkDefaultPrefixNamespaceDeclaration(
-			QNameContext qnc) {
-		assert (!preservePrefix);
-
-		String uri = qnc.getNamespaceUri();
-		String pfx = getPrefix(uri);
-		
-		if (pfx == null) {
-			pfx = qnc.getDefaultPrefix();
-			declarePrefix(pfx, uri);
-		}
-		
-		assert(qnc.getDefaultPrefix().equals(pfx));
-		return pfx;
 	}
 
 	protected final Datatype decodeAttributeStructure() throws EXIException,
