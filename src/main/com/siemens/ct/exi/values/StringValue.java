@@ -54,16 +54,17 @@ public class StringValue extends AbstractValue {
 		checkCharacters();
 		return characters.length;
 	}
-
-	public char[] toCharacters() {
+	
+	public char[] getCharacters() {
 		checkCharacters();
-		return this.characters;
+		return characters;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		checkCharacters();
-		// return internal char buffer to indicate that this should be used
-		return this.characters;
+		
+		// not optimal, need to copy char data
+		System.arraycopy(characters, 0, cbuffer, offset, characters.length);
 	}
 
 	@Override

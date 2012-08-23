@@ -90,6 +90,7 @@ public interface Constants {
 
 	public static final String XSD_LIST_DELIM = " ";
 	public static final char XSD_LIST_DELIM_CHAR = ' ';
+	public static final char[] XSD_LIST_DELIM_CHAR_ARRAY = {' '};
 
 	// public static final String CDATA_START = "<![CDATA[";
 	// public static final char[] CDATA_START_ARRAY = CDATA_START.toCharArray();

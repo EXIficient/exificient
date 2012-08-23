@@ -34,11 +34,14 @@ public class DecimalValue extends AbstractValue {
 
 	private static final long serialVersionUID = 5268045994978250547L;
 
-	public final boolean negative;
-	public final IntegerValue integral;
-	public final IntegerValue revFractional;
-
+	protected final boolean negative;
+	protected final IntegerValue integral;
+	protected final IntegerValue revFractional;
+	
 	protected BigDecimal bd;
+	
+	/* Helper for building strings */
+	protected StringBuilder sbHelper;
 
 	public DecimalValue(boolean negative, IntegerValue integral,
 			IntegerValue revFractional) {
@@ -47,6 +50,19 @@ public class DecimalValue extends AbstractValue {
 		this.integral = integral;
 		this.revFractional = revFractional;
 	}
+	
+	public boolean isNegative() {
+		return negative;
+	}
+
+	public IntegerValue getIntegral() {
+		return integral;
+	}
+
+	public IntegerValue getRevFractional() {
+		return revFractional;
+	}
+	
 
 	public static DecimalValue parse(String decimal) {
 		try {
@@ -99,7 +115,7 @@ public class DecimalValue extends AbstractValue {
 	public BigDecimal toBigDecimal() {
 		if (bd == null) {
 			char[] characters = new char[getCharactersLength()];
-			toCharacters(characters, 0);
+			getCharacters(characters, 0);
 			bd = new BigDecimal(characters);
 		}
 		return bd;
@@ -114,13 +130,13 @@ public class DecimalValue extends AbstractValue {
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		// negative
 		if (negative) {
 			cbuffer[offset++] = '-';
 		}
 		// integral
-		integral.toCharacters(cbuffer, offset);
+		integral.getCharacters(cbuffer, offset);
 		offset += integral.getCharactersLength();
 		// dot
 		cbuffer[offset++] = '.';
@@ -134,18 +150,25 @@ public class DecimalValue extends AbstractValue {
 			break;
 		case INTEGER_BIG:
 			// TODO look for a more suitable way, big integer
-			StringBuilder sb = new StringBuilder(revFractional.bval.toString());
-			char[] bi = sb.reverse().toString().toCharArray();
-			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
+			if(sbHelper == null) {
+				sbHelper = new StringBuilder(revFractional.bval.toString());
+			} else {
+				sbHelper.setLength(0);
+				sbHelper.append(revFractional.bval.toString());
+			}
+			sbHelper = sbHelper.reverse();
+			
+			int len = sbHelper.length();
+			sbHelper.getChars(0, len, cbuffer, offset);
+			
 			break;
 		default:
 			/* ERROR */
 			throw new RuntimeException("Unknown Int Type: "
 					+ revFractional.valueType);
 		}
-		// revFractional.toCharactersReverse(cbuffer, offset);
 
-		return cbuffer;
+		// return cbuffer;
 	}
 	
 	private final boolean _equals(DecimalValue o) {

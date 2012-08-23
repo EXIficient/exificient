@@ -43,19 +43,23 @@ public interface Value extends Serializable {
 	 */
 	public ValueType getValueType();
 
+	
 	/**
 	 * Returns character array containing the values represented as String
-	 * representation for XML
-	 * <p>
-	 * Note: can be a different array than the one passed (e.g., String values).
-	 * In those cases the array has exactly getCharactersLength() size
-	 * </p>
+	 * representation for XML.
+	 * <p>Please consider using toCharacters(char[] cbuffer, int offset).</p>
+	 * 
+	 * @return string representation of value
+	 */
+	public char[] getCharacters();
+	
+	/**
+	 * Fills character array with the value represented as String
 	 * 
 	 * @param cbuffer
 	 * @param offset
-	 * @return string representation of value
 	 */
-	public char[] toCharacters(char[] cbuffer, int offset);
+	public void getCharacters(char[] cbuffer, int offset);
 	
 	/**
 	 * Length of string representation

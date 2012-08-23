@@ -47,23 +47,32 @@ public class IntegerValue extends AbstractValue implements
 	public static final BigInteger LONG_MAX_VALUE = BigInteger
 			.valueOf(Long.MAX_VALUE);
 
-	protected int ival;
-	protected long lval;
-	protected BigInteger bval;
+	protected final int ival;
+	protected final long lval;
+	protected final BigInteger bval;
 
 	private IntegerValue(int ival) {
 		super(ValueType.INTEGER_INT);
 		this.ival = ival;
+		
+		this.lval = 0L;
+		this.bval = null;
 	}
 
 	private IntegerValue(long lval) {
 		super(ValueType.INTEGER_LONG);
+		this.ival = 0;
+		
 		this.lval = lval;
+		this.bval = null;
 	}
 
 	private IntegerValue(BigInteger bval) {
 		super(ValueType.INTEGER_BIG);
 		this.bval = bval;
+		
+		this.ival = 0;
+		this.lval = 0L;
 	}
 
 	public int intValue() {
@@ -358,37 +367,32 @@ public class IntegerValue extends AbstractValue implements
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		switch (this.valueType) {
 		case INTEGER_INT:
 			if (ival == Integer.MIN_VALUE) {
-				// Values are used in may places --> copy
+				// --> copy
 				System.arraycopy(MethodsBag.INTEGER_MIN_VALUE_CHARARRAY, 0, cbuffer, offset, MethodsBag.INTEGER_MIN_VALUE_CHARARRAY.length);
-				// return MethodsBag.INTEGER_MIN_VALUE_CHARARRAY;
-				return cbuffer;
 			} else {
 				assert (cbuffer.length >= getCharactersLength());
 				MethodsBag.itos(ival, offset + getCharactersLength(), cbuffer);
-				return cbuffer;
 			}
+			break;
 		case INTEGER_LONG:
 			if (lval == Long.MIN_VALUE) {
-				// Values are used in may places --> copy
+				// --> copy
 				System.arraycopy(MethodsBag.LONG_MIN_VALUE_CHARARRAY, 0, cbuffer, offset, MethodsBag.LONG_MIN_VALUE_CHARARRAY.length);
-				// return MethodsBag.LONG_MIN_VALUE_CHARARRAY;
-				return cbuffer;
 			} else {
 				assert (cbuffer.length >= getCharactersLength());
 				MethodsBag.itos(lval, offset + getCharactersLength(), cbuffer);
-				return cbuffer;
 			}
+			break;
 		case INTEGER_BIG:
-			// TODO look for a more suitable way, big integer
-			char[] bi = bval.toString().toCharArray();
-			System.arraycopy(bi, 0, cbuffer, offset, bi.length);
-			return cbuffer;	
+			String src = bval.toString();
+			src.getChars(0, src.length(), cbuffer, 0);
+			break;
 		default:
-			return null;
+			// return null;
 		}
 	}
 	
@@ -493,5 +497,6 @@ public class IntegerValue extends AbstractValue implements
 			return -2;
 		}
 	}
+
 
 }

@@ -337,25 +337,27 @@ public class FloatValue extends AbstractValue {
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		if (exponent.equals(FLOAT_SPECIAL_VALUES)) {
+			char[] a2copy; 
 			if (mantissa.equals(FLOAT_NEGATIVE_INFINITY)) {
-				return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
+				// return Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
+				a2copy = Constants.FLOAT_MINUS_INFINITY_CHARARRAY;
 			} else if (mantissa.equals(FLOAT_POSITIVE_INFINITY)) {
-				return Constants.FLOAT_INFINITY_CHARARRAY;
+				// return Constants.FLOAT_INFINITY_CHARARRAY;
+				a2copy = Constants.FLOAT_INFINITY_CHARARRAY;
 			} else {
 				assert(mantissa.equals(FLOAT_NaN));
-				return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
+				// return Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
+				a2copy = Constants.FLOAT_NOT_A_NUMBER_CHARARRAY;
 			}
+			System.arraycopy(a2copy, 0, cbuffer, offset, a2copy.length);
 		} else {
-			// MethodsBag.itos(exponent, offset + getCharactersLength(), cbuffer);
-			cbuffer = mantissa.toCharacters(cbuffer, offset); //  + getCharactersLength());
+			mantissa.getCharacters(cbuffer, offset); 
 			offset += + slenMantissa;
 			cbuffer[offset++] = 'E';
-			// MethodsBag.itos(mantissa, offset + slenMantissa, cbuffer);
-			cbuffer = exponent.toCharacters(cbuffer, offset); // + slenMantissa);
-			
-			return cbuffer;
+			exponent.getCharacters(cbuffer, offset); 
+			// return cbuffer;
 		}
 	}
 	
@@ -372,7 +374,8 @@ public class FloatValue extends AbstractValue {
 			}
 		} else {
 			char[] cbuffer = new char[getCharactersLength()];
-			return new String(toCharacters(cbuffer, 0));
+			getCharacters(cbuffer, 0);
+			return new String(cbuffer);
 		}
 	}
 

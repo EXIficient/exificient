@@ -41,15 +41,21 @@ public abstract class AbstractValue implements Value {
 	public final ValueType getValueType() {
 		return valueType;
 	}
+	
+	public char[] getCharacters() {
+		char[] dst = new char[getCharactersLength()];
+		getCharacters(dst, 0);
+		return dst;
+	}
 
 	@Override
 	public String toString() {
-		char[] cbuffer = new char[getCharactersLength()];
-		return new String(toCharacters(cbuffer, 0));
+		return new String(getCharacters());
 	}
 
 	public String toString(char[] cbuffer, int offset) {
-		return new String(toCharacters(cbuffer, offset), offset,
+		getCharacters(cbuffer, offset);
+		return new String(cbuffer, offset,
 				getCharactersLength());
 	}
 

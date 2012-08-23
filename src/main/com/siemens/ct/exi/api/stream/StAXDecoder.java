@@ -617,11 +617,13 @@ public class StAXDecoder implements XMLStreamReader
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
 		case XMLStreamConstants.SPACE:
-			//System.arraycopy(this.characters, sourceStart, target, targetStart, length);
-			char[] ch = this.characters.toCharacters(target, targetStart);
-			if (ch != target) {
-				System.arraycopy(ch, sourceStart, target, targetStart, length);
-			}
+			this.characters.getCharacters(target, targetStart);
+			
+//			//System.arraycopy(this.characters, sourceStart, target, targetStart, length);
+//			char[] ch = this.characters.getCharacters(target, targetStart);
+//			if (ch != target) {
+//				System.arraycopy(ch, sourceStart, target, targetStart, length);
+//			}
 			return length;
 		case XMLStreamConstants.COMMENT:
 			System.arraycopy(this.comment, sourceStart, target, targetStart, length);

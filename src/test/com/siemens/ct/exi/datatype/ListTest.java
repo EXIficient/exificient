@@ -38,15 +38,17 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
 import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.ListValue;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
+import com.siemens.ct.exi.values.ValueType;
 
 public class ListTest extends AbstractTestCase {
 
 	public ListTest(String testName) {
 		super(testName);
 	}
-
+	
 	public void testListInteger1() throws IOException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
@@ -59,13 +61,17 @@ public class ListTest extends AbstractTestCase {
 		ldtInteger.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value v1 = ldtInteger.readValue(null, null, getBitDecoder());
-		assertTrue(s.equals(v1.toString()));
+		assertTrue(v1.getValueType() == ValueType.LIST);
+		ListValue lv1 = (ListValue) v1;
+		assertTrue(s.equals(lv1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
 		ldtInteger.writeValue(null, null, byteEC);
 		Value v2 = ldtInteger.readValue(null, null, getByteDecoder());
-		assertTrue(s.equals(v2.toString()));
+		assertTrue(v2.getValueType() == ValueType.LIST);
+		ListValue lv2 = (ListValue) v2;
+		assertTrue(s.equals(lv2.toString()));
 	}
 	
 	public void testListIntegerLexical1() throws IOException, EXIException {
@@ -163,13 +169,17 @@ public class ListTest extends AbstractTestCase {
 		ldtInteger.writeValue(null, null, bitEC);
 		bitEC.flush();
 		Value v1 = ldtInteger.readValue(null, null, getBitDecoder());
-		assertTrue(sRes.equals(v1.toString()));
+		assertTrue(v1.getValueType() == ValueType.LIST);
+		ListValue lv1 = (ListValue) v1;
+		assertTrue(sRes.equals(lv1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
 		ldtInteger.writeValue(null, null, byteEC);
 		Value v2 = ldtInteger.readValue(null, null, getByteDecoder());
-		assertTrue(sRes.equals(v2.toString()));
+		assertTrue(v2.getValueType() == ValueType.LIST);
+		ListValue lv2 = (ListValue) v2;
+		assertTrue(sRes.equals(lv2.toString()));
 	}
 
 	public void testListGMonthDayUnion1() throws IOException, EXIException {
