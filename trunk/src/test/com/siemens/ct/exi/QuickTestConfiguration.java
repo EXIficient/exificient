@@ -96,8 +96,8 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		// fidelityOptions = FidelityOptions.createDefault();
-		fidelityOptions = FidelityOptions.createStrict();
+		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 		
 		// try {

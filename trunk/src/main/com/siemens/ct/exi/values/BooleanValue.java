@@ -39,8 +39,8 @@ public class BooleanValue extends AbstractValue {
 
 	protected final boolean bool;
 
-	protected char[] characters;
-	protected String sValue;
+	protected final char[] characters;
+	protected final String sValue;
 
 	public BooleanValue(boolean bool) {
 		super(ValueType.BOOLEAN);
@@ -103,10 +103,14 @@ public class BooleanValue extends AbstractValue {
 	public int getCharactersLength() {
 		return characters.length;
 	}
-
-	public char[] toCharacters(char[] cbuffer, int offset) {
-		// return internal char buffer to indicate that this should be used
+	
+	public char[] getCharacters() {
 		return characters;
+	}
+
+	public void getCharacters(char[] cbuffer, int offset) {
+		// not optimal, need to copy char data
+		System.arraycopy(characters, 0, cbuffer, offset, characters.length);
 	}
 	
 	@Override

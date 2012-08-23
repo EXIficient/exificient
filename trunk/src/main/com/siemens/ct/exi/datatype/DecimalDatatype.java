@@ -68,8 +68,8 @@ public class DecimalDatatype extends AbstractDatatype {
 	public void writeValue(EncoderContext encoderContext,
 			QNameContext qnContext, EncoderChannel valueChannel)
 			throws IOException {
-		valueChannel.encodeDecimal(lastValidDecimal.negative,
-				lastValidDecimal.integral, lastValidDecimal.revFractional);
+		valueChannel.encodeDecimal(lastValidDecimal.isNegative(),
+				lastValidDecimal.getIntegral(), lastValidDecimal.getRevFractional());
 	}
 
 	public Value readValue(DecoderContext decoderContext,

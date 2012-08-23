@@ -64,7 +64,7 @@ public class BinaryBase64Value extends AbstractBinaryValue {
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		getCharactersLength();
 
 		byte k = 0, l = 0, b1 = 0, b2 = 0, b3 = 0;
@@ -125,7 +125,7 @@ public class BinaryBase64Value extends AbstractBinaryValue {
 			cbuffer[offset + encodedIndex++] = PAD;
 		}
 
-		return cbuffer;
+		// return cbuffer;
 	}
 
 	@Override

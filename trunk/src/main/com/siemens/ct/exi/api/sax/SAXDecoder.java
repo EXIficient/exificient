@@ -52,7 +52,9 @@ import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.util.NoEntityResolver;
+import com.siemens.ct.exi.values.ListValue;
 import com.siemens.ct.exi.values.Value;
+import com.siemens.ct.exi.values.ValueType;
 
 /**
  * Parses EXI stream to SAX events.
@@ -70,10 +72,8 @@ public class SAXDecoder implements XMLReader {
 
 	protected EXIBodyDecoder decoder;
 
-	protected final static boolean USE_VALUE_CONTENT_HANDLER = false;
 
 	protected ContentHandler contentHandler;
-	protected ValueContentHandler valueContentHandler;
 	protected DTDHandler dtdHandler;
 	protected LexicalHandler lexicalHandler;
 	protected DeclHandler declHandler;
@@ -89,11 +89,13 @@ public class SAXDecoder implements XMLReader {
 	protected boolean namespaces = true;
 	protected boolean namespacePrefixes = false;
 	protected boolean exiBodyOnly = false;
+	
+	/* Helper for building strings */
+	protected StringBuilder sbHelper;
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
 		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
-		this.valueContentHandler = new ValueContentHandler();
 		attributes = new AttributesImpl();
 		// switch namespace prefixes to TRUE if the stream preserves prefixes
 		if (noOptionsFactory.getFidelityOptions().isFidelityEnabled(
@@ -111,9 +113,6 @@ public class SAXDecoder implements XMLReader {
 	 */
 	public void setContentHandler(ContentHandler handler) {
 		this.contentHandler = handler;
-		if (USE_VALUE_CONTENT_HANDLER) {
-			this.valueContentHandler.setContentHandler(handler);
-		}
 	}
 
 	public ContentHandler getContentHandler() {
@@ -357,16 +356,57 @@ public class SAXDecoder implements XMLReader {
 			case CHARACTERS_GENERIC:
 			case CHARACTERS_GENERIC_UNDECLARED:
 				Value val = decoder.decodeCharacters();
-				if (USE_VALUE_CONTENT_HANDLER) {
-					valueContentHandler.reportCharacters(val);
-				} else {
+				char[] chars;
+				
+				switch(val.getValueType()) {
+				case BOOLEAN:
+				case STRING:
+					chars = val.getCharacters();
+					contentHandler.characters(chars, 0, chars.length);
+					break;
+				case LIST:
+					ListValue lv = (ListValue) val;
+					Value[] values = lv.toValues();
+					int len;
+					
+					if(values.length > 0) {
+						ValueType vt = values[0].getValueType();
+						switch(vt) {
+						case BOOLEAN:
+						case STRING:
+							for(Value val2: values) {
+								chars = val2.getCharacters();
+								contentHandler.characters(chars, 0, chars.length);
+								contentHandler.characters(Constants.XSD_LIST_DELIM_CHAR_ARRAY, 0, Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
+							}
+							break;
+						default:
+							int offset = 0;
+							for(Value val2: values) {
+								len = val2.getCharactersLength();
+								
+								if(cbuffer.length < (offset + len + 1)) {
+									contentHandler.characters(cbuffer, 0, offset);
+									offset = 0;
+								}
+								val2.getCharacters(cbuffer, offset);
+								offset += len;
+								cbuffer[offset++] = ' ';
+							}
+							// pending chars
+							contentHandler.characters(cbuffer, 0, offset);
+							break;
+						}
+					} 
+					break;
+				default:
 					int slen = val.getCharactersLength();
 					ensureBufferCapacity(slen);
 					
-					// returns char array that contains value
-					// Note: can be a different array than the one passed
-					char[] sres = val.toCharacters(cbuffer, 0);
-					contentHandler.characters(sres, 0, slen);
+					// fills char array with value
+					val.getCharacters(cbuffer, 0);
+					contentHandler.characters(cbuffer, 0, slen);
+					break;
 				}
 				break;
 			/* MISC */
@@ -449,7 +489,7 @@ public class SAXDecoder implements XMLReader {
 			cbuffer = new char[newSize];
 		}
 	}
-
+	
 	protected void handleAttribute(QNameContext atQName) throws SAXException,
 			IOException, EXIException {
 		Value val = decoder.getAttributeValue();
@@ -457,14 +497,54 @@ public class SAXDecoder implements XMLReader {
 
 		// System.out.println("> AT: " + atQName + ": " + val);
 		
-		if (USE_VALUE_CONTENT_HANDLER) {
-			sVal = valueContentHandler.reportAttributeString(val);
-		} else {			
+		switch(val.getValueType()) {
+		case BOOLEAN:
+		case STRING:
+			sVal = val.toString();
+			break;
+		case LIST:
+			ListValue lv = (ListValue) val;
+			Value[] values = lv.toValues();
+			
+			if(values.length > 0) {
+				if(sbHelper == null) {
+					sbHelper = new StringBuilder();
+				} else {
+					sbHelper.setLength(0);
+				}
+				
+				ValueType vt = values[0].getValueType();
+				switch(vt) {
+				case BOOLEAN:
+				case STRING:
+					for(Value val2: values) {
+						sbHelper.append(val2.getCharacters());
+						sbHelper.append(' ');
+					}
+					break;
+				default:
+					for(Value val2: values) {
+						int slen = val2.getCharactersLength();
+						ensureBufferCapacity(slen);
+						val2.getCharacters(cbuffer, 0);
+						sbHelper.append(cbuffer, 0, slen);
+						sbHelper.append(' ');
+					}
+					break;
+				}
+				
+				sVal = sbHelper.toString();	
+			} else {
+				sVal = Constants.EMPTY_STRING;
+			}
+			break;
+		default:
 			int slen = val.getCharactersLength();
 			ensureBufferCapacity(slen);
 			sVal = val.toString(cbuffer, 0);
+			break;
 		}
-
+		
 		// empty string if no qualified name is necessary
 		String atQNameAsString = Constants.EMPTY_STRING;
 		if (namespacePrefixes) {
@@ -579,6 +659,7 @@ public class SAXDecoder implements XMLReader {
 
 		public void parse(char[] docTypeText) throws IOException, SAXException {
 			StringBuilder dt = new StringBuilder();
+			
 			dt.append("<!DOCTYPE foo_name [ ");
 			dt.append(docTypeText);
 			dt.append("]>");

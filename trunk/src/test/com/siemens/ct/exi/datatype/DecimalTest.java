@@ -38,12 +38,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		BigDecimal a= getBitDecoder().decodeDecimalValue().toBigDecimal();
 		assertTrue(a.equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
 	}
 
@@ -54,13 +54,13 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		BigDecimal bdBit = getBitDecoder().decodeDecimalValue().toBigDecimal();
 		assertTrue(bdBit + "!=" + new BigDecimal(s), bdBit
 				.equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
 	}
 
@@ -71,11 +71,11 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		assertTrue(getBitDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
 	}
 
@@ -86,13 +86,13 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		BigDecimal bdBit = getBitDecoder().decodeDecimalValue().toBigDecimal();
 		assertTrue(bdBit + "!=" + new BigDecimal(s + ".0"), bdBit
 				.equals(new BigDecimal(s + ".0")));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(
 				new BigDecimal(s + ".0")));
 	}
@@ -104,11 +104,11 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		assertTrue((s + ".0").equals(getBitDecoder().decodeDecimalValue().toString()));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue((s + ".0").equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -119,11 +119,11 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		assertTrue(s.equals(getBitDecoder().decodeDecimalValue().toString()));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -134,12 +134,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + "110.7408", "110.7408".equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue("110.7408".equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -150,13 +150,13 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		DecoderChannel bitDC = getBitDecoder();
 		assertTrue(s.equals(bitDC.decodeDecimalValue().toString()));
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		byteEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		byteEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		DecoderChannel byteDC = getByteDecoder();
 		assertTrue(s.equals(byteDC.decodeDecimalValue().toString()));
 	}
@@ -168,12 +168,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 	
@@ -186,12 +186,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 	
@@ -204,12 +204,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -220,12 +220,12 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 	
@@ -237,13 +237,13 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.negative, d.integral, d.revFractional);
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		bitEC.flush();
 		DecimalValue dv1 = getBitDecoder().decodeDecimalValue();
 		String sBit = dv1.toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.negative, d.integral, d.revFractional);
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 	

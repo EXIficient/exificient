@@ -19,8 +19,6 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -91,8 +89,8 @@ public class ListDatatype extends AbstractDatatype {
 			throws IOException {
 
 		// length prefixed sequence of values
-		List<Value> values = listValues.toValues();
-		valueChannel.encodeUnsignedInteger(values.size());
+		Value[] values = listValues.toValues();
+		valueChannel.encodeUnsignedInteger(values.length);
 
 		// iterate over all tokens
 		for (Value v : values) {
@@ -103,17 +101,17 @@ public class ListDatatype extends AbstractDatatype {
 			listDatatype.writeValue(encoderContext, qnContext, valueChannel);
 		}
 	}
-
+	
 	public Value readValue(DecoderContext decoderContext,
 			QNameContext qnContext, DecoderChannel valueChannel)
 			throws IOException {
 
 		int len = valueChannel.decodeUnsignedInteger();
-		List<Value> values = new ArrayList<Value>(len);
+		Value[] values = new Value[len];
 
 		for (int i = 0; i < len; i++) {
-			values.add(listDatatype.readValue(decoderContext, qnContext,
-					valueChannel));
+			values[i] = listDatatype.readValue(decoderContext, qnContext,
+					valueChannel);
 		}
 
 		return new ListValue(values, listDatatype);

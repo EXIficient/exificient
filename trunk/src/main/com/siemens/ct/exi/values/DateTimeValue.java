@@ -464,23 +464,23 @@ public class DateTimeValue extends AbstractValue {
 		return minutes * (1000 * 60); // minutes to millisec
 	}
 
-	protected static int getFractionalSecondsReverse(int millisec) {
-		int revFracSecs = 0;
-		if (millisec == 0) {
-			// ok -> 0
-			// } else if (millisec < 10) {
-			// revFracSecs = Integer.parseInt(new StringBuilder("00" + millisec)
-			// .reverse().toString());
-			// } else if (millisec < 100) {
-			// revFracSecs = Integer.parseInt(new StringBuilder("0" + millisec)
-			// .reverse().toString());
-		} else {
-			revFracSecs = Integer.parseInt(new StringBuilder(millisec + "")
-					.reverse().toString());
-		}
-
-		return revFracSecs;
-	}
+//	protected static int getFractionalSecondsReverse(int millisec) {
+//		int revFracSecs = 0;
+//		if (millisec == 0) {
+//			// ok -> 0
+//			// } else if (millisec < 10) {
+//			// revFracSecs = Integer.parseInt(new StringBuilder("00" + millisec)
+//			// .reverse().toString());
+//			// } else if (millisec < 100) {
+//			// revFracSecs = Integer.parseInt(new StringBuilder("0" + millisec)
+//			// .reverse().toString());
+//		} else {
+//			revFracSecs = Integer.parseInt(new StringBuilder(millisec + "")
+//					.reverse().toString());
+//		}
+//
+//		return revFracSecs;
+//	}
 
 	public int getCharactersLength() {
 		if (slen == -1) {
@@ -531,7 +531,7 @@ public class DateTimeValue extends AbstractValue {
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		switch (type) {
 		case gYear: // Year, [Time-Zone]
 			offset = appendYear(cbuffer, offset, year);
@@ -586,7 +586,7 @@ public class DateTimeValue extends AbstractValue {
 			appendTimezone(cbuffer, offset, timezone);
 		}
 
-		return cbuffer;
+		// return cbuffer;
 	}
 
 	private static void setTimezone(Calendar cal, int tz) {

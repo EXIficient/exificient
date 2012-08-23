@@ -74,7 +74,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	protected DecoderChannel channel;
 
 	// namespaces/prefixes
-	protected boolean todoDefaultPrefixMapping;
 	protected final int numberOfUriContexts;
 
 	// Type Decoder (including string decoder etc.)
@@ -101,26 +100,22 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	
 
 	@Override
-	protected void pushElement(Grammar updContextGrammar, StartElement se) {
+	protected final void pushElement(Grammar updContextGrammar, StartElement se) {
 		super.pushElement(updContextGrammar, se);
-		if (!preservePrefix && todoDefaultPrefixMapping) {
+		if(!preservePrefix && this.elementContextStackIndex == 1) {
+			// Note: can be done several times due to multiple root elements in fragments
 			GrammarContext gc = this.grammar.getGrammarContext();
 			for (int i = 2; i < gc.getNumberOfGrammarUriContexts(); i++) {
 				GrammarUriContext guc = gc.getGrammarUriContext(i);
 				String pfx = guc.getDefaultPrefix();
 				declarePrefix(pfx, guc.getNamespaceUri());
 			}
-			
-			todoDefaultPrefixMapping = false;
 		}
 	}
 
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
-
-		// namespaces/prefixes
-		todoDefaultPrefixMapping = true;
 
 		// clear string values etc.
 		decoderContext.clear();
@@ -457,29 +452,20 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 	
 
-//	private final String getPrefix(String uri) {
-//		assert(!this.preservePrefix);
-//	
-//		if (XMLConstants.NULL_NS_URI.equals(uri)) {
-//			return XMLConstants.DEFAULT_NS_PREFIX;
-//		} else if (XMLConstants.XML_NS_URI.equals(uri)) {
-//			return XMLConstants.XML_NS_PREFIX;
-//		}
-//		// check all stack items except first one
-//		// TODO believe this can be done more efficiently (use map?)
-//		for (int i = 1; i <= elementContextStackIndex; i++) {
-//			ElementContext ec = elementContextStack[i];
-//			if (ec.nsDeclarations != null) {
-//				for (NamespaceDeclaration ns : ec.nsDeclarations) {
-//					if (ns.namespaceURI.equals(uri)) {
-//						return ns.prefix;
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
-	
+	private final String getPrefix(String uri) {
+		// check all stack items except first one
+		for (int i = 1; i <= elementContextStackIndex; i++) {
+			ElementContext ec = elementContextStack[i];
+			if (ec.nsDeclarations != null) {
+				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+					if (ns.namespaceURI.equals(uri)) {
+						return ns.prefix;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	protected final void checkDefaultPrefixNamespaceDeclaration(
 			QNameContext qnc) {
@@ -489,19 +475,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			// schema-known grammar uris/prefixes have been declared in root element
 		} else {
 			String uri = qnc.getNamespaceUri();
-			String pfx = null;
-			
-			// check all stack items except first one
-			for (int i = 1; pfx == null && i <= elementContextStackIndex; i++) {
-				ElementContext ec = elementContextStack[i];
-				if (ec.nsDeclarations != null) {
-					for (NamespaceDeclaration ns : ec.nsDeclarations) {
-						if (ns.namespaceURI.equals(uri)) {
-							pfx = ns.prefix;
-						}
-					}
-				}
-			}
+			String pfx = getPrefix(uri);
 			
 			if (pfx == null) {
 				pfx = qnc.getDefaultPrefix();

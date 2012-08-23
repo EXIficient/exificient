@@ -36,7 +36,7 @@ public class QNameValue extends AbstractValue {
 	protected final String prefix;
 
 	protected char[] characters;
-	protected String sValue;
+	protected final String sValue;
 	
 	public QNameValue(String namespaceUri, String localName, String prefix) {
 		super(ValueType.QNAME);
@@ -67,11 +67,20 @@ public class QNameValue extends AbstractValue {
 		return sValue.length();
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+
+	public char[] getCharacters() {
+		if(characters == null) {
+			int len = sValue.length();
+			characters = new char[len];
+			sValue.getChars(0, sValue.length(), characters, 0);
+		}
+		return characters;
+	}
+	
+	public void getCharacters(char[] cbuffer, int offset) {
 		for (int i = 0; i < sValue.length(); i++) {
 			cbuffer[i + offset] = sValue.charAt(i);
 		}
-		return cbuffer;
 	}
 
 	@Override

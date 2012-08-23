@@ -54,7 +54,7 @@ public class BinaryHexValue extends AbstractBinaryValue {
 		return slen;
 	}
 
-	public char[] toCharacters(char[] cbuffer, int offset) {
+	public void getCharacters(char[] cbuffer, int offset) {
 		getCharactersLength();
 
 		int temp;
@@ -66,7 +66,7 @@ public class BinaryHexValue extends AbstractBinaryValue {
 			cbuffer[offset + i * 2 + 1] = lookUpHexAlphabet[temp & 0xf];
 		}
 
-		return cbuffer;
+		// return cbuffer;
 	}
 
 	@Override

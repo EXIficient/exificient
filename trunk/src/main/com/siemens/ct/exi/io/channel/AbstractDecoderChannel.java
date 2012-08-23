@@ -42,7 +42,11 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	private final int[] maskedOctets = new int[MAX_OCTETS_FOR_LONG];
 	/* long == 64 bits, 9 * 7bits = 63 bits */
 	private final static int MAX_OCTETS_FOR_LONG = 9;
+	
+	/* Helper for building strings */
+	protected StringBuilder sbHelper;
 
+	
 	public AbstractDecoderChannel() {
 	}
 
@@ -97,15 +101,25 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	
 	private char[] decodeStringOnlySupplementaryCodePoints(char[] ca, int length, int i, int codePoint) throws IOException {
 		assert(Character.isSupplementaryCodePoint(codePoint));
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(ca, 0, i); // append chars so far
-		sb.appendCodePoint(codePoint); // append current code-point
-		for (int k = i + 1; k < length; k++) {
-			sb.appendCodePoint(decodeUnsignedInteger());
+		if(sbHelper == null) {
+			sbHelper = new StringBuilder();
+		} else {
+			sbHelper.setLength(0);
 		}
 		
-		return  sb.toString().toCharArray(); // return char array
+		sbHelper.append(ca, 0, i); // append chars so far
+		sbHelper.appendCodePoint(codePoint); // append current code-point
+		for (int k = i + 1; k < length; k++) {
+			sbHelper.appendCodePoint(decodeUnsignedInteger());
+		}
+		
+		int len = sbHelper.length();
+		char dst[] = new char[len];
+		sbHelper.getChars(0, len, dst, 0);
+		
+		return dst;
+		
+		// return  sb.toString().toCharArray(); // return char array
 	}
 	
 
@@ -201,9 +215,10 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 
 	protected final IntegerValue decodeUnsignedIntegerValue(boolean negative)
 			throws IOException {
+		int b;
 		for (int i = 0; i < MAX_OCTETS_FOR_LONG; i++) {
 			// Read the next octet
-			int b = decode();
+			b = decode();
 			// If the most significant bit of the octet was 1,
 			// another octet is going to come
 			if (b < 128) {
@@ -259,7 +274,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			multiplier = multiplier.shiftLeft(7);
 		}
 		// read new bytes
-		int b;
 		do {
 			// 1. Read the next octet
 			b = decode();
@@ -303,7 +317,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 		IntegerValue integral = decodeUnsignedIntegerValue(false);
 		IntegerValue revFractional = decodeUnsignedIntegerValue(false);
 
-		return new DecimalValue(negative, integral, revFractional);
+		return new DecimalValue(negative, integral, revFractional);	
 	}
 
 	/**
