@@ -19,6 +19,9 @@
 package com.siemens.ct.exi.context;
 
 public class GrammarEvolvingUriContext extends RuntimeEvolvingUriContext {
+	
+	private static final long serialVersionUID = 6355146331541732284L;
+	
 	// static uri context
 	final GrammarUriContext grammarUriContext;
 

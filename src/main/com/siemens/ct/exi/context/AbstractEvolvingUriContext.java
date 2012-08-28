@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 public abstract class AbstractEvolvingUriContext extends AbstractUriContext
 		implements EvolvingUriContext {
 
+	private static final long serialVersionUID = 7632261645372478280L;
+
 	// runtime local-names
 	List<QNameContext> runtimeQNames;
 

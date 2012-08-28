@@ -1,7 +1,14 @@
 package com.siemens.ct.exi.context;
 
-public class GrammarContext {
+import java.io.Serializable;
 
+public class GrammarContext implements Serializable {
+
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -3384221885278934477L;
+	
 	protected final GrammarUriContext[] grammarUriContexts;
 	protected final int numberofQNamesContexts;
 
