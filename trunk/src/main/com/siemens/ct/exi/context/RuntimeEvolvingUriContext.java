@@ -20,6 +20,8 @@ package com.siemens.ct.exi.context;
 
 public class RuntimeEvolvingUriContext extends AbstractEvolvingUriContext {
 
+	private static final long serialVersionUID = 6324253980560785631L;
+
 	// empty grammar entries
 	public RuntimeEvolvingUriContext(int namespaceUriID, String namespaceUri) {
 		super(namespaceUriID, namespaceUri);

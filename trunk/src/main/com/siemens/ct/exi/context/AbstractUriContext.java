@@ -18,8 +18,15 @@
 
 package com.siemens.ct.exi.context;
 
-public abstract class AbstractUriContext implements UriContext {
+import java.io.Serializable;
 
+public abstract class AbstractUriContext implements UriContext, Serializable {
+
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -228310211827981382L;
+	
 	// namespace
 	final int namespaceUriID;
 	final String namespaceUri;

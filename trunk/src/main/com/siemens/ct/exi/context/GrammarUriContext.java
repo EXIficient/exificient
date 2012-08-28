@@ -18,7 +18,13 @@
 
 package com.siemens.ct.exi.context;
 
+
 public class GrammarUriContext extends AbstractUriContext {
+
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -6565683847377873121L;
 
 	public static String[] EMPTY_PREFIXES = new String[0];
 
