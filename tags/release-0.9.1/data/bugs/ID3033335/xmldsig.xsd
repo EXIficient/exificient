@@ -1,0 +1,345 @@
+<xsd:schema targetNamespace="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" attributeFormDefault="unqualified" jxb:version="1.0" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb">
+     <xsd:annotation>
+          <xsd:appinfo>
+               <jxb:schemaBindings>
+                    <jxb:package name="com.jpmorgan.dsig" />
+                    <jxb:nameXmlTransform>
+                         <jxb:typeName suffix="Type" />
+                         <jxb:elementName suffix="Element" />
+                    </jxb:nameXmlTransform>
+               </jxb:schemaBindings>
+          </xsd:appinfo>
+     </xsd:annotation>
+<xsd:complexType name="SignatureType">
+<xsd:sequence>
+<xsd:element ref="dsig:SignedInfo" />
+<xsd:element ref="dsig:SignatureValue" />
+<xsd:element minOccurs="0" maxOccurs="1" ref="dsig:KeyInfo" />
+<xsd:element minOccurs="0" maxOccurs="unbounded" ref="dsig:Object" />
+          </xsd:sequence>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="TransformsType">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" ref="dsig:Transform" />
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="TransformType">
+<xsd:choice minOccurs="0" maxOccurs="unbounded">
+<xsd:any processContents="lax" namespace="##other" />
+<xsd:element name="XPath" type="xsd:string" />
+          </xsd:choice>
+<xsd:attribute name="Algorithm" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="AlgorithmAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="X509IssuerSerialType">
+<xsd:sequence>
+<xsd:element name="X509IssuerName" type="xsd:string" />
+<xsd:element name="X509SerialNumber" type="xsd:integer" />
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="RetrievalMethodType">
+<xsd:sequence>
+<xsd:element minOccurs="0" maxOccurs="1" ref="dsig:Transforms" />
+          </xsd:sequence>
+<xsd:attribute name="URI" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="URIAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="Type" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="TypeAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="KeyInfoType">
+<xsd:choice maxOccurs="unbounded">
+<xsd:element ref="dsig:KeyName" />
+<xsd:element ref="dsig:KeyValue" />
+<xsd:element ref="dsig:RetrievalMethod" />
+<xsd:element ref="dsig:X509Data" />
+<xsd:element ref="dsig:PGPData" />
+<xsd:element ref="dsig:SPKIData" />
+<xsd:element ref="dsig:MgmtData" />
+<xsd:any processContents="lax" namespace="##other" />
+          </xsd:choice>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="KeyValueType">
+<xsd:choice>
+<xsd:element ref="dsig:DSAKeyValue" />
+<xsd:element ref="dsig:RSAKeyValue" />
+<xsd:any processContents="lax" namespace="##other" />
+          </xsd:choice>
+     </xsd:complexType>
+<xsd:complexType name="X509DataType">
+<xsd:sequence maxOccurs="unbounded">
+<xsd:choice>
+<xsd:element name="X509IssuerSerial" type="dsig:X509IssuerSerialType" />
+<xsd:element name="X509SKI" type="xsd:base64Binary" />
+<xsd:element name="X509SubjectName" type="xsd:string" />
+<xsd:element name="X509Certificate" type="xsd:base64Binary" />
+<xsd:element name="X509CRL" type="xsd:base64Binary" />
+<xsd:any processContents="lax" namespace="##other" />
+               </xsd:choice>
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="PGPDataType">
+<xsd:choice>
+<xsd:sequence>
+<xsd:element name="PGPKeyID" type="xsd:base64Binary" />
+<xsd:element minOccurs="0" maxOccurs="1" name="PGPKeyPacket" type="xsd:base64Binary" />
+<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="##other" />
+               </xsd:sequence>
+<xsd:sequence>
+<xsd:element name="PGPKeyPacket" type="xsd:base64Binary" />
+<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="##other" />
+               </xsd:sequence>
+          </xsd:choice>
+     </xsd:complexType>
+<xsd:complexType name="SPKIDataType">
+<xsd:sequence maxOccurs="unbounded">
+<xsd:element name="SPKISexp" type="xsd:base64Binary" />
+<xsd:any minOccurs="0" maxOccurs="1" processContents="lax" namespace="##other" />
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="SignatureMethodType">
+<xsd:sequence>
+<xsd:element minOccurs="0" maxOccurs="1" name="HMACOutputLength" type="dsig:HMACOutputLengthType" />
+<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="##other" />
+          </xsd:sequence>
+<xsd:attribute name="Algorithm" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="AlgorithmAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="SignaturePropertiesType">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" ref="dsig:SignatureProperty" />
+          </xsd:sequence>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="SignaturePropertyType">
+<xsd:choice maxOccurs="unbounded">
+<xsd:any processContents="lax" namespace="##other" />
+          </xsd:choice>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="Target" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="TargetAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="DSAKeyValueType">
+<xsd:sequence>
+<xsd:sequence minOccurs="0" maxOccurs="1">
+<xsd:element name="P" type="dsig:CryptoBinary" />
+<xsd:element name="Q" type="dsig:CryptoBinary" />
+               </xsd:sequence>
+<xsd:element minOccurs="0" maxOccurs="1" name="G" type="dsig:CryptoBinary" />
+<xsd:element name="Y" type="dsig:CryptoBinary" />
+<xsd:element minOccurs="0" maxOccurs="1" name="J" type="dsig:CryptoBinary" />
+<xsd:sequence minOccurs="0" maxOccurs="1">
+<xsd:element name="Seed" type="dsig:CryptoBinary" />
+<xsd:element name="PgenCounter" type="dsig:CryptoBinary" />
+               </xsd:sequence>
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="RSAKeyValueType">
+<xsd:sequence>
+<xsd:element name="Modulus" type="dsig:CryptoBinary" />
+<xsd:element name="Exponent" type="dsig:CryptoBinary" />
+          </xsd:sequence>
+     </xsd:complexType>
+<xsd:complexType name="ManifestType">
+<xsd:sequence>
+<xsd:element maxOccurs="unbounded" ref="dsig:Reference" />
+          </xsd:sequence>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="ReferenceType">
+<xsd:sequence>
+<xsd:element minOccurs="0" maxOccurs="1" ref="dsig:Transforms" />
+<xsd:element ref="dsig:DigestMethod" />
+<xsd:element ref="dsig:DigestValue" />
+          </xsd:sequence>
+<xsd:attribute name="Type" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="TypeAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="URI" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="URIAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="DigestMethodType">
+<xsd:sequence>
+<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="##other" />
+          </xsd:sequence>
+<xsd:attribute name="Algorithm" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="AlgorithmAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="SignedInfoType">
+<xsd:sequence>
+<xsd:element ref="dsig:CanonicalizationMethod" />
+<xsd:element ref="dsig:SignatureMethod" />
+<xsd:element maxOccurs="unbounded" ref="dsig:Reference" />
+          </xsd:sequence>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="SignatureValueType">
+<xsd:simpleContent>
+<xsd:extension base="xsd:base64Binary">
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                              </xsd:appinfo>
+                         </xsd:annotation>
+                    </xsd:attribute>
+               </xsd:extension>
+          </xsd:simpleContent>
+     </xsd:complexType>
+<xsd:complexType name="ObjectType">
+<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+<xsd:any processContents="lax" namespace="##other" />
+          </xsd:sequence>
+<xsd:attribute name="Id" type="xsd:ID">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="IdAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="MimeType" type="xsd:string">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="MimeTypeAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+<xsd:attribute name="Encoding" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="EncodingAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:complexType name="CanonicalizationMethodType">
+<xsd:sequence>
+<xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="##other" />
+          </xsd:sequence>
+<xsd:attribute name="Algorithm" type="xsd:anyURI">
+<xsd:annotation>
+<xsd:appinfo>
+<jxb:property name="AlgorithmAttribute" />
+                    </xsd:appinfo>
+               </xsd:annotation>
+          </xsd:attribute>
+     </xsd:complexType>
+<xsd:simpleType name="HMACOutputLengthType">
+<xsd:restriction base="xsd:integer">
+<xsd:pattern value="[\-+]?[0-9]+" />
+          </xsd:restriction>
+     </xsd:simpleType>
+<xsd:simpleType name="DigestValueType">
+<xsd:restriction base="xsd:base64Binary" />
+     </xsd:simpleType>
+<xsd:simpleType name="CryptoBinary">
+<xsd:restriction base="xsd:base64Binary" />
+     </xsd:simpleType>
+<xsd:element name="Signature" type="dsig:SignatureType" />
+<xsd:element name="Transform" type="dsig:TransformType" />
+<xsd:element name="Transforms" type="dsig:TransformsType" />
+<xsd:element name="KeyName" type="xsd:string" />
+<xsd:element name="KeyValue" type="dsig:KeyValueType" />
+<xsd:element name="RetrievalMethod" type="dsig:RetrievalMethodType" />
+<xsd:element name="X509Data" type="dsig:X509DataType" />
+<xsd:element name="PGPData" type="dsig:PGPDataType" />
+<xsd:element name="SPKIData" type="dsig:SPKIDataType" />
+<xsd:element name="MgmtData" type="xsd:string" />
+<xsd:element name="SignatureProperty" type="dsig:SignaturePropertyType" />
+<xsd:element name="DSAKeyValue" type="dsig:DSAKeyValueType" />
+<xsd:element name="RSAKeyValue" type="dsig:RSAKeyValueType" />
+<xsd:element name="Reference" type="dsig:ReferenceType" />
+<xsd:element name="DigestMethod" type="dsig:DigestMethodType" />
+<xsd:element name="DigestValue" type="dsig:DigestValueType" />
+<xsd:element name="SignedInfo" type="dsig:SignedInfoType" />
+<xsd:element name="SignatureValue" type="dsig:SignatureValueType" />
+<xsd:element name="KeyInfo" type="dsig:KeyInfoType" />
+<xsd:element name="Object" type="dsig:ObjectType" />
+<xsd:element name="CanonicalizationMethod" type="dsig:CanonicalizationMethodType" />
+<xsd:element name="SignatureMethod" type="dsig:SignatureMethodType" />
+<xsd:element name="SignatureProperties" type="dsig:SignaturePropertiesType" />
+<xsd:element name="Manifest" type="dsig:ManifestType" />
+</xsd:schema>

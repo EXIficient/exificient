@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Hello [
+<!-- comment text -->
+<?name pidata?>
+<!ELEMENT Hello (#PCDATA)>
+]>
+<!-- comment as well -->
+<Hello>Hello Jupiter!</Hello>
