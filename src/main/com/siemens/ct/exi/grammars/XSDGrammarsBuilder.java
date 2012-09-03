@@ -115,7 +115,7 @@ import com.siemens.ct.exi.values.Value;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9
+ * @version 0.9.1
  */
 
 public class XSDGrammarsBuilder extends EXIContentModelBuilder {

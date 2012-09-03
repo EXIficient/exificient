@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------
 EXIficient - open source implementation of the W3C Efficient XML Interchange (EXI) format specification
-Version 0.9, released July 5, 2012
+Version 0.9.1, released September 3, 2012
 http://exificient.sourceforge.net/
 
 The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
@@ -40,6 +40,12 @@ EXIficient requires:
 
 For usage information, please see the usage documentation available at
 http://exificient.sourceforge.net/.
+
+-------------------------------------------------------------------------
+CHANGES from version 0.9:
+-------------------------------------------------------------------------
+* Fixes issues with Java7
+* Minor bug-fixes and code clean-up
 
 -------------------------------------------------------------------------
 CHANGES from version 0.8:

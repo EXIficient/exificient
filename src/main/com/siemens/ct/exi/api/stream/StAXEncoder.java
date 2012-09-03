@@ -57,7 +57,7 @@ import com.siemens.ct.exi.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9
+ * @version 0.9.1
  */
 
 public class StAXEncoder

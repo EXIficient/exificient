@@ -32,7 +32,7 @@ import com.siemens.ct.exi.values.IntegerValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9
+ * @version 0.9.1
  */
 
 public interface DecoderChannel {
