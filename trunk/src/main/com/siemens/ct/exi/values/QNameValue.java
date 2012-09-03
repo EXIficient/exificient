@@ -24,7 +24,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9
+ * @version 0.9.1
  */
 
 public class QNameValue extends AbstractValue {

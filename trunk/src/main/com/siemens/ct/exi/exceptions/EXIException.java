@@ -24,7 +24,7 @@ package com.siemens.ct.exi.exceptions;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9
+ * @version 0.9.1
  */
 
 public class EXIException extends Exception {
