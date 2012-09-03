@@ -46,15 +46,28 @@ public class EnumerationTest extends AbstractTestCase {
 				"Enumeration", "");
 		
 		
-		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+		// EXI errata item
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype listDt = (ListDatatype) dt;
+		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.STRING);
 		
 		assertTrue(dt.isValid(new StringValue("Hooo")));
 		assertTrue(dt.isValid(new StringValue("bla:Foo")));
-	
-		assertFalse(dt.isValid(new StringValue("dd.doo")));
 		
-		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
+		assertTrue(dt.isValid(new StringValue("Baxslax")));
+		assertTrue(dt.isValid(new StringValue("-123")));
+	
+		
+		
+//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+//		
+//		assertTrue(dt.isValid(new StringValue("Hooo")));
+//		assertTrue(dt.isValid(new StringValue("bla:Foo")));
+//	
+//		assertFalse(dt.isValid(new StringValue("dd.doo")));
+//		
+//		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+//		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
 	}
 
 	public void testEnumerationListOfInts1() throws IOException, EXIException {
@@ -75,17 +88,30 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 		
-		
-		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+		// EXI errata item
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype listDt = (ListDatatype) dt;
+		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
 		
 		assertTrue(dt.isValid(new StringValue("1 2 3")));
 		assertTrue(dt.isValid(new StringValue("3 4 5")));
 		assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
-	
-		assertFalse(dt.isValid(new StringValue("5 6")));
 		
-		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
+		assertTrue(dt.isValid(new StringValue(" 123 456 789  "))); // any other int value
+		
+		assertFalse(dt.isValid(new StringValue("xx xx")));
+		
+		
+//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+//		
+//		assertTrue(dt.isValid(new StringValue("1 2 3")));
+//		assertTrue(dt.isValid(new StringValue("3 4 5")));
+//		assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
+//	
+//		assertFalse(dt.isValid(new StringValue("5 6")));
+//		
+//		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+//		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
 	}
 
 	public void testEnumerationStringRec() throws IOException, EXIException {

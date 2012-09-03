@@ -213,6 +213,72 @@ public class ListTest extends AbstractTestCase {
 		assertFalse(dt.isValid(new StringValue("00")));
 	}
 	
+	public void testListEnum1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:simpleType name='listOfIDsEnum'>"
+				+ "  <xs:restriction>"
+				+ "    <xs:simpleType>"
+				+ "      <xs:list>"
+				+ "        <xs:simpleType>"
+				+ "          <xs:restriction base='xs:ID'/>"
+				+ "        </xs:simpleType>"
+				+ "      </xs:list>"
+				+ "    </xs:simpleType>"
+				+ "    <xs:enumeration value='AB BC CD'/>"
+				+ "    <xs:enumeration value='EF FG GH'/>"
+				+ "    <xs:enumeration value='IJ JK KL'/>"
+				+ "  </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"listOfIDsEnum", "");
+
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype listDt = (ListDatatype) dt;
+		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.STRING);
+
+		assertTrue(dt.isValid(new StringValue("  AB  BC  CD   ")));
+		assertTrue(dt.isValid(new StringValue("  AB  BC     ")));
+		assertTrue(dt.isValid(new StringValue("  KL   ")));
+
+		// assertFalse(dt.isValid(new StringValue("00")));
+		assertTrue(dt.isValid(new StringValue("00")));
+	}
+	
+	public void testListEnum2() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:simpleType name='listOfIntsEnum'>"
+				+ "  <xs:restriction>"
+				+ "    <xs:simpleType>"
+				+ "      <xs:list>"
+				+ "        <xs:simpleType>"
+				+ "          <xs:restriction base='xs:int'/>"
+				+ "        </xs:simpleType>"
+				+ "      </xs:list>"
+				+ "    </xs:simpleType>"
+				+ "    <xs:enumeration value='1 2 3'/>"
+				+ "    <xs:enumeration value='4 5 6'/>"
+				+ "    <xs:enumeration value='7 8 9'/>"
+				+ "  </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"listOfIntsEnum", "");
+
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype listDt = (ListDatatype) dt;
+		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		
+		assertTrue(dt.isValid(new StringValue("  1  2  3   ")));
+		assertTrue(dt.isValid(new StringValue("  4  5   6  ")));
+		assertTrue(dt.isValid(new StringValue("  9   ")));
+		assertTrue(dt.isValid(new StringValue(" 123")));
+		
+		assertFalse(dt.isValid(new StringValue("XXX")));
+	}
+	
 	public void testListFloat1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='List'>"
