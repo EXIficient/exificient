@@ -73,20 +73,20 @@ public class EncoderContextImpl extends AbstractCoderContext implements
 
 	public EvolvingUriContext encodeUri(final String namespaceUri,
 			EncoderChannel channel) throws IOException {
-		int nUri = MethodsBag.getCodingLength(getNumberOfUris() + 1); // numberEntries+1
+		int numberBitsUri = MethodsBag.getCodingLength(getNumberOfUris() + 1); // numberEntries+1
 		EvolvingUriContext uc = this.getUriContext(namespaceUri);
 		if (uc == null) {
 			// uri string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
 			// followed by uri encoded as string
-			channel.encodeNBitUnsignedInteger(0, nUri);
+			channel.encodeNBitUnsignedInteger(0, numberBitsUri);
 			channel.encodeString(namespaceUri);
 			// after encoding string value is added to table
 			uc = this.addUriContext(namespaceUri);
 		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			channel.encodeNBitUnsignedInteger(uc.getNamespaceUriID() + 1, nUri);
+			channel.encodeNBitUnsignedInteger(uc.getNamespaceUriID() + 1, numberBitsUri);
 		}
 		return uc;
 	}

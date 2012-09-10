@@ -33,9 +33,8 @@ public class MethodsBag {
 	// C O D I N G _ L E N G T H Operations
 	//
 	// ///////////////////////////////////////////////////////
+	private static final double log2div = Math.log( 2.0 );
 
-	static final int[] smallLengths = new int[] { 0, 0, 1, 2, 2, 3, 3, 3, 3, 4,
-			4, 4, 4, 4, 4, 4, 4 };
 
 	/**
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
@@ -111,20 +110,116 @@ public class MethodsBag {
 	}
 
 	static final public int getCodingLength(final int characteristics) {
-		if (characteristics < 17) {
-			return smallLengths[characteristics];
-		} else if (characteristics < 33) {
+		assert (characteristics >= 0);
+		
+		switch(characteristics) {
+		case 0:
+		case 1:
+			return 0;
+		case 2:
+			return 1;
+		case 3:
+		case 4:
+			return 2;
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+			return 3;
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+			return 4;
+		case 17:
+		case 18:
+		case 19:
+		case 20:
+		case 21:
+		case 22:
+		case 23:
+		case 24:
+		case 25:
+		case 26:
+		case 27:
+		case 28:
+		case 29:
+		case 30:
+		case 31:
+		case 32:
 			// 17 .. 32
 			return 5;
-		} else if (characteristics < 65) {
+		case 33:
+		case 34:
+		case 35:
+		case 36:
+		case 37:
+		case 38:
+		case 39:
+		case 40:
+		case 41:
+		case 42:
+		case 43:
+		case 44:
+		case 45:
+		case 46:
+		case 47:
+		case 48:
+		case 49:
+		case 50:
+		case 51:
+		case 52:
+		case 53:
+		case 54:
+		case 55:
+		case 56:
+		case 57:
+		case 58:
+		case 59:
+		case 60:
+		case 61:
+		case 62:
+		case 63:
+		case 64:
 			// 33 .. 64
 			return 6;
-		} else if (characteristics < 129) {
-			// 65 .. 128
-			return 7;
-		} else {
-			return (int) Math.ceil(Math.log((double) (characteristics))
-					/ Math.log(2.0));
+		default:
+			assert(characteristics > 64);
+			if (characteristics < 129) {
+				// 65 .. 128
+				return 7;
+			} else if (characteristics < 257) {
+				// 129 .. 256
+				return 8;
+			} else if (characteristics < 513) {
+				// 257 .. 512
+				return 9;
+			} else if (characteristics < 1025) {
+				// 513 .. 1024
+				return 10;
+			} else if (characteristics < 2049) {
+				// 1025 .. 2048
+				return 11;
+			} else if (characteristics < 4097) {
+				// 2049 .. 4096
+				return 12;
+			} else if (characteristics < 8193) {
+				// 4097 .. 8192
+				return 13;
+			} else if (characteristics < 16385) {
+				// 8193 .. 16384
+				return 14;
+			} else if (characteristics < 32769) {
+				// 16385 .. 32768
+				return 15;
+			} else {
+				return (int) Math.ceil(Math.log((double) (characteristics))
+						/ log2div);
+			}
 		}
 	}
 

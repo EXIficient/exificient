@@ -65,7 +65,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return this;
 	}
 
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+	public final int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
 		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
 				.getCodingLength(eventCount + 1) : MethodsBag
 				.getCodingLength(eventCount));
