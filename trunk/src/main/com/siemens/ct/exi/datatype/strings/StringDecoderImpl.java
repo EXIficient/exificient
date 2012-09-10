@@ -107,10 +107,10 @@ public class StringDecoderImpl implements StringDecoder {
 		return coder.getStringValue(context, localID);
 	}
 
-	public StringValue readValueGlobalHit(DecoderChannel valueChannel)
+	public final StringValue readValueGlobalHit(DecoderChannel valueChannel)
 			throws IOException {
-		int n = MethodsBag.getCodingLength(globalValues.size());
-		int globalID = valueChannel.decodeNBitUnsignedInteger(n);
+		int numberBitsGlobal = MethodsBag.getCodingLength(globalValues.size());
+		int globalID = valueChannel.decodeNBitUnsignedInteger(numberBitsGlobal);
 		return globalValues.get(globalID);
 	}
 
@@ -119,6 +119,7 @@ public class StringDecoderImpl implements StringDecoder {
 		// global
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
+		
 		// local
 		if (localValuePartitions) {
 			coder.addStringValue(context, value);

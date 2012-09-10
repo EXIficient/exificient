@@ -111,6 +111,7 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 						}
 					}
 				} else {
+					assert (!globalValues.contains(value));
 					globalValues.add(value);
 				}
 

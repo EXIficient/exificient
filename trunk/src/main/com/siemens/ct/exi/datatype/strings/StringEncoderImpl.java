@@ -56,16 +56,16 @@ public class StringEncoderImpl implements StringEncoder {
 
 		if (vc != null) {
 			// hit
-			if (localValuePartitions &&  vc.context.equals(context)) {
+			if (localValuePartitions && vc.context.equals(context)) {
 				/*
 				 * local value hit ==> is represented as zero (0) encoded as an
 				 * Unsigned Integer followed by the compact identifier of the
 				 * string value in the "local" value partition
 				 */
 				valueChannel.encodeUnsignedInteger(0);
-				int n = MethodsBag.getCodingLength(coder
+				int numberBitsLocal = MethodsBag.getCodingLength(coder
 						.getNumberOfStringValues(context));
-				valueChannel.encodeNBitUnsignedInteger(vc.localValueID, n);
+				valueChannel.encodeNBitUnsignedInteger(vc.localValueID, numberBitsLocal);
 			} else {
 				/*
 				 * global value hit ==> value is represented as one (1) encoded
@@ -74,8 +74,9 @@ public class StringEncoderImpl implements StringEncoder {
 				 */
 				valueChannel.encodeUnsignedInteger(1);
 				// global value size
-				int n = MethodsBag.getCodingLength(stringValues.size());
-				valueChannel.encodeNBitUnsignedInteger(vc.globalValueID, n);
+				
+				int numberBitsGlobal = MethodsBag.getCodingLength(stringValues.size());
+				valueChannel.encodeNBitUnsignedInteger(vc.globalValueID, numberBitsGlobal);
 			}
 		} else {
 			/*

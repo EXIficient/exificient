@@ -41,6 +41,8 @@ public abstract class AbstractCoderContext implements CoderContext {
 
 	RuntimeQNameContextEntries[] grammarQNameContexts;
 	List<RuntimeQNameContextEntries> runtimeQNameContexts;
+	
+	// protected int numberBitsUri;
 
 	public AbstractCoderContext(GrammarContext grammarContext) {
 		this.numberOfGrammarUriContexts = grammarContext
@@ -56,7 +58,9 @@ public abstract class AbstractCoderContext implements CoderContext {
 		//
 		for (int i = 0; i < numberOfGrammarUriContexts; i++) {
 			GrammarUriContext guc = grammarContext.getGrammarUriContext(i);
-			runtimeUriContexts.add(new GrammarEvolvingUriContext(guc));
+			addUriContext(new GrammarEvolvingUriContext(guc));
+			// runtimeUriContexts.add(new GrammarEvolvingUriContext(guc));
+			
 			if (i == 2) {
 				// URI 2 "http://www.w3.org/2001/XMLSchema-instance"
 				// "nil", "type"
@@ -164,13 +168,19 @@ public abstract class AbstractCoderContext implements CoderContext {
 		return null;
 	}
 
-	public EvolvingUriContext addUriContext(String namespaceUri) {
+	public final EvolvingUriContext addUriContext(String namespaceUri) {
 		assert (getUriContext(namespaceUri) == null);
 		EvolvingUriContext ruc = new RuntimeEvolvingUriContext(
 				getNumberOfUris(), namespaceUri);
-		runtimeUriContexts.add(ruc);
-		return ruc;
+		return addUriContext(ruc);
 	}
+	
+	protected final EvolvingUriContext addUriContext(EvolvingUriContext euc) {
+		runtimeUriContexts.add(euc);
+		// numberBitsUri = MethodsBag.getCodingLength(getNumberOfUris() + 1); // numberEntries+1
+		return euc;
+	}
+	
 
 	public void clear() {
 		// remove any newly added uris (if any)
@@ -178,6 +188,8 @@ public abstract class AbstractCoderContext implements CoderContext {
 			// remove last entry
 			runtimeUriContexts.remove(runtimeUriContexts.size() - 1);
 		}
+		// numberBitsUri = MethodsBag.getCodingLength(getNumberOfUris() + 1); // numberEntries+1
+		
 		// clear remaining entries from runtime uris
 		for (EvolvingUriContext ruc : runtimeUriContexts) {
 			ruc.clear();
