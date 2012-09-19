@@ -74,26 +74,35 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 */
 	public char[] decodeStringOnly(int length) throws IOException {
 
-		char[] ca = new char[length];
+		final char[] ca = new char[length];
 
 		for (int i = 0; i < length; i++) {
-			int b = decode();
-
-			if (b < 128) {
-				// ASCII character
-				ca[i] = (char) b;
+			final int codePoint = decodeUnsignedInteger();
+			if (Character.isSupplementaryCodePoint(codePoint)) {
+				// supplementary code-point
+				// Assumption: it doesn't happen very often
+				return decodeStringOnlySupplementaryCodePoints(ca, length, i, codePoint);
 			} else {
-				// non-ASCII character
-				int codePoint = decodeUnsignedIntegerBytePreread(b);
-				
-				if (Character.isSupplementaryCodePoint(codePoint)) {
-					// supplementary code-point
-					// Assumption: it doesn't happen very often
-					return decodeStringOnlySupplementaryCodePoints(ca, length, i, codePoint);
-				} else {
-					ca[i] = (char) codePoint;
-				}
+				ca[i] = (char) codePoint;
 			}
+			
+//			int b = decode();
+//
+//			if (b < 128) {
+//				// ASCII character
+//				ca[i] = (char) b;
+//			} else {
+//				// non-ASCII character
+//				int codePoint = decodeUnsignedIntegerBytePreread(b);
+//				
+//				if (Character.isSupplementaryCodePoint(codePoint)) {
+//					// supplementary code-point
+//					// Assumption: it doesn't happen very often
+//					return decodeStringOnlySupplementaryCodePoints(ca, length, i, codePoint);
+//				} else {
+//					ca[i] = (char) codePoint;
+//				}
+//			}
 		}
 
 		return ca;
@@ -131,35 +140,33 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * indicate sequence termination. Only seven bits per octet are used to
 	 * store the integer's value.
 	 */
-	public int decodeUnsignedInteger() throws IOException {
+	public final int decodeUnsignedInteger() throws IOException {
 		// 0XXXXXXX ... 1XXXXXXX 1XXXXXXX
-		int b = decode();
+		int result = decode();
 
 		// < 128: just one byte, optimal case
 		// ELSE: multiple bytes...
-		return b < 128 ? b : decodeUnsignedIntegerBytePreread(b);
-	}
+		
+		if(result >= 128) {
+			result = (result & 127);
+			int mShift = 7;
+			int b;
 
-	private int decodeUnsignedIntegerBytePreread(int b) throws IOException {
-		assert (b > 127);
-
-		int result = (b & 127);
-		int mShift = 7;
-
-		do {
-			// 1. Read the next octet
-			b = decode();
-			// 2. Multiply the value of the unsigned number represented by
-			// the 7 least significant
-			// bits of the octet by the current multiplier and add the
-			// result to the current value.
-			result += (b & 127) << mShift;
-			// 3. Multiply the multiplier by 128
-			mShift += 7;
-			// 4. If the most significant bit of the octet was 1, go back to
-			// step 1
-		} while (b > 127);
-
+			do {
+				// 1. Read the next octet
+				b = decode();
+				// 2. Multiply the value of the unsigned number represented by
+				// the 7 least significant
+				// bits of the octet by the current multiplier and add the
+				// result to the current value.
+				result += (b & 127) << mShift;
+				// 3. Multiply the multiplier by 128
+				mShift += 7;
+				// 4. If the most significant bit of the octet was 1, go back to
+				// step 1
+			} while (b >= 128);
+		}
+		
 		return result;
 	}
 
@@ -239,10 +246,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 					}
 					// For negative values, the Unsigned Integer holds the
 					// magnitude of the value minus 1
-					if (negative) {
-						iResult = -(iResult + 1);
-					}
-					return IntegerValue.valueOf(iResult);
+					return IntegerValue.valueOf(negative ? -(iResult+1) : iResult);
 				default:
 					/* long value */
 					maskedOctets[i] = b;
@@ -253,10 +257,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 					}
 					// For negative values, the Unsigned Integer holds the
 					// magnitude of the value minus 1
-					if (negative) {
-						lResult = -(lResult + 1L);
-					}
-					return IntegerValue.valueOf(lResult);
+					return IntegerValue.valueOf(negative ? -(lResult+1L) : lResult);
 				}
 			} else {
 				// the 7 least significant bits hold the actual value

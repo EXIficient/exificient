@@ -127,8 +127,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		final Grammar currentGrammar = getCurrentGrammar();
 		int codeLength = currentGrammar
 				.get1stLevelEventCodeLength(fidelityOptions);
-		int ec = codeLength == 0 ? 0 : channel
-				.decodeNBitUnsignedInteger(codeLength);
+		int ec = channel.decodeNBitUnsignedInteger(codeLength);
 
 		assert (ec >= 0);
 
