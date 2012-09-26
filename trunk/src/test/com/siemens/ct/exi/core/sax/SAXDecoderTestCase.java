@@ -118,38 +118,41 @@ public class SAXDecoderTestCase extends XMLTestCase {
 				// element
 				assertTrue("urn:foo".equals(uri));
 				assertTrue("root".equals(localName));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					assertTrue(!qName.equals(Constants.EMPTY_STRING));
 					if(preservePrefixes) {
 						assertTrue(qName.equals("foo:root"));
 					}
-				} else {
-					assertTrue(qName.equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(qName.equals(Constants.EMPTY_STRING));
+//				}
 				// attributes, at1='x'
 				assertTrue(atts.getLength() == 1);
 				assertTrue("".equals(atts.getURI(0)));
 				assertTrue("at1".equals(atts.getLocalName(0)));
 				assertTrue("x".equals(atts.getValue(0)));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					if(preservePrefixes) {
 						assertTrue(atts.getQName(0).equals("at1"));
 					}
-				} else {
-					assertTrue(atts.getQName(0).equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(atts.getQName(0).equals(Constants.EMPTY_STRING));
+//				}
 			} else if(openElements == 2) {
 				// element
 				assertTrue("urn:bla".equals(uri));
 				assertTrue("el".equals(localName));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					assertTrue(!qName.equals(Constants.EMPTY_STRING));
 					if(preservePrefixes) {
 						assertTrue(qName.equals("bla:el"));
 					}
-				} else {
-					assertTrue(qName.equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(qName.equals(Constants.EMPTY_STRING));
+//				}
 				// attributes,  buu:at2='y' fooX:at3='z'
 				assertTrue(atts.getLength() == 2);
 				assertTrue("urn:buu".equals(atts.getURI(0)));
@@ -158,16 +161,17 @@ public class SAXDecoderTestCase extends XMLTestCase {
 				assertTrue("urn:fooX".equals(atts.getURI(1)));
 				assertTrue("at3".equals(atts.getLocalName(1)));
 				assertTrue("z".equals(atts.getValue(1)));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					assertTrue(!atts.getQName(0).equals(Constants.EMPTY_STRING));
 					assertTrue(!atts.getQName(1).equals(Constants.EMPTY_STRING));
 					if(preservePrefixes) {
 						assertTrue(atts.getQName(0).equals("buu:at2"));
 						assertTrue(atts.getQName(1).equals("fooX:at3"));
 					}
-				} else {
-					assertTrue(atts.getQName(0).equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(atts.getQName(0).equals(Constants.EMPTY_STRING));
+//				}
 			}
 		}
 		public void endElement(String uri, String localName, String qName)
@@ -176,25 +180,27 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			if (openElements == 1)  {
 				assertTrue("urn:foo".equals(uri));
 				assertTrue("root".equals(localName));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					assertTrue(!qName.equals(Constants.EMPTY_STRING));
 					if(preservePrefixes) {
 						assertTrue(qName.equals("foo:root"));
 					}
-				} else {
-					assertTrue(qName.equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(qName.equals(Constants.EMPTY_STRING));
+//				}
 			} else if(openElements == 2) {
 				assertTrue("urn:bla".equals(uri));
 				assertTrue("el".equals(localName));
-				if (namespacePrefixes) {
+				// https://sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+//				if (namespacePrefixes) {
 					assertTrue(!qName.equals(Constants.EMPTY_STRING));
 					if(preservePrefixes) {
 						assertTrue(qName.equals("bla:el"));
 					}
-				} else {
-					assertTrue(qName.equals(Constants.EMPTY_STRING));
-				}
+//				} else {
+//					assertTrue(qName.equals(Constants.EMPTY_STRING));
+//				}
 			}
 			
 			super.endElement(uri, localName, qName);

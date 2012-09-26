@@ -36,20 +36,22 @@ import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 public class EncodingOptions {
 
-	/* EXI Cookie */
+	/** EXI Cookie */
 	public static final String INCLUDE_COOKIE = "INCLUDE_COOKIE";
-	/* EXI Options */
+	
+	/** EXI Options */
 	public static final String INCLUDE_OPTIONS = "INCLUDE_OPTIONS";
-	/* schemaID as part of EXI Options */
+	
+	/** schemaID as part of EXI Options */
 	public static final String INCLUDE_SCHEMA_ID = "INCLUDE_SCHEMA_ID";
 
-	/* encode entity references as ER event instead of trying to resolve them */
+	/** encode entity references as ER event instead of trying to resolve them */
 	public static final String RETAIN_ENTITY_REFERENCE = "KEEP_ENTITY_REFERENCES_UNRESOLVED";
 
-	/* attribute "schemaLocation" and "noNamespaceSchemaLocation" */
+	/** attribute "schemaLocation" and "noNamespaceSchemaLocation" */
 	public static final String INCLUDE_XSI_SCHEMALOCATION = "INCLUDE_XSI_SCHEMALOCATION";
 
-	/* Insignificant xsi:nil values e.g., xsi:nil="false" */
+	/** Insignificant xsi:nil values e.g., xsi:nil="false" */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
 
 	// /*
@@ -58,6 +60,9 @@ public class EncodingOptions {
 	// */
 	// public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE =
 	// "INCLUDE_INSIGNIFICANT_XSI_TYPE";
+	
+	/** To indicate that the EXI profile is in use without advertising each parameter value, the exi:p element is encoded without any content */
+	public static final String INCLUDE_PROFILE_VALUES = "INCLUDE_PROFILE_VALUES";
 
 	/* contains options and according values */
 	protected Set<String> options;
@@ -106,6 +111,8 @@ public class EncodingOptions {
 			options.add(key);
 			// } else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
 			// options.add(key);
+		} else if (key.equals(INCLUDE_PROFILE_VALUES)) {
+			options.add(key);
 		} else {
 			throw new UnsupportedOption("EncodingOption '" + key
 					+ "' is unknown!");
