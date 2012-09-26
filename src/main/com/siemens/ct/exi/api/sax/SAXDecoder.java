@@ -72,7 +72,6 @@ public class SAXDecoder implements XMLReader {
 
 	protected EXIBodyDecoder decoder;
 
-
 	protected ContentHandler contentHandler;
 	protected DTDHandler dtdHandler;
 	protected LexicalHandler lexicalHandler;
@@ -89,7 +88,7 @@ public class SAXDecoder implements XMLReader {
 	protected boolean namespaces = true;
 	protected boolean namespacePrefixes = false;
 	protected boolean exiBodyOnly = false;
-	
+
 	/* Helper for building strings */
 	protected StringBuilder sbHelper;
 
@@ -97,6 +96,13 @@ public class SAXDecoder implements XMLReader {
 		this.noOptionsFactory = noOptionsFactory;
 		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
 		attributes = new AttributesImpl();
+		/*
+		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
+		 * textual qname even when
+		 * http://xml.org/sax/features/namespace-prefixes is set to false
+		 * http://
+		 * sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+		 */
 		// switch namespace prefixes to TRUE if the stream preserves prefixes
 		if (noOptionsFactory.getFidelityOptions().isFidelityEnabled(
 				FidelityOptions.FEATURE_PREFIX)) {
@@ -216,15 +222,15 @@ public class SAXDecoder implements XMLReader {
 		try {
 			// setup (bit) input stream
 			InputStream is = inputSource.getByteStream();
-			
+
 			// systemId ?
 			if (is == null && inputSource.getSystemId() != null) {
 				is = new FileInputStream(inputSource.getSystemId());
 			}
-			if(is == null) {
+			if (is == null) {
 				throw new EXIException("No valid input source " + is);
 			}
-			
+
 			// buffer stream if not already
 			// TODO is there a *nice* way to detect whether a stream is buffered
 			if (!(is instanceof BufferedInputStream)) {
@@ -257,7 +263,7 @@ public class SAXDecoder implements XMLReader {
 
 		EventType eventType;
 
-		String eeQNameAsString = Constants.EMPTY_STRING;
+		// String eeQNameAsString = Constants.EMPTY_STRING;
 		List<NamespaceDeclaration> eePrefixes = null;
 
 		QNameContext deferredStartElement = null;
@@ -336,11 +342,20 @@ public class SAXDecoder implements XMLReader {
 			case END_ELEMENT:
 			case END_ELEMENT_UNDECLARED:
 				if (namespaces) {
-					eePrefixes = decoder.getDeclaredPrefixDeclarations();	
+					eePrefixes = decoder.getDeclaredPrefixDeclarations();
 				}
-				if (namespacePrefixes) {
-					eeQNameAsString = decoder.getElementQNameAsString();
-				}
+//				if (namespacePrefixes) {
+//					eeQNameAsString = decoder.getElementQNameAsString();
+//				}
+				/*
+				 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
+				 * textual qname even when
+				 * http://xml.org/sax/features/namespace-prefixes is set to false
+				 * http://
+				 * sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+				 */
+				String eeQNameAsString = decoder.getElementQNameAsString();
+				
 				QNameContext eeQName = decoder.decodeEndElement();
 				// start sax end element
 				contentHandler.endElement(eeQName.getNamespaceUri(),
@@ -348,7 +363,7 @@ public class SAXDecoder implements XMLReader {
 
 				// endPrefixMapping
 				if (namespaces) {
-					endPrefixMappings(eePrefixes);	
+					endPrefixMappings(eePrefixes);
 				}
 				break;
 			/* CHARACTERS */
@@ -357,8 +372,8 @@ public class SAXDecoder implements XMLReader {
 			case CHARACTERS_GENERIC_UNDECLARED:
 				Value val = decoder.decodeCharacters();
 				char[] chars;
-				
-				switch(val.getValueType()) {
+
+				switch (val.getValueType()) {
 				case BOOLEAN:
 				case STRING:
 					chars = val.getCharacters();
@@ -368,25 +383,31 @@ public class SAXDecoder implements XMLReader {
 					ListValue lv = (ListValue) val;
 					Value[] values = lv.toValues();
 					int len;
-					
-					if(values.length > 0) {
+
+					if (values.length > 0) {
 						ValueType vt = values[0].getValueType();
-						switch(vt) {
+						switch (vt) {
 						case BOOLEAN:
 						case STRING:
-							for(Value val2: values) {
+							for (Value val2 : values) {
 								chars = val2.getCharacters();
-								contentHandler.characters(chars, 0, chars.length);
-								contentHandler.characters(Constants.XSD_LIST_DELIM_CHAR_ARRAY, 0, Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
+								contentHandler.characters(chars, 0,
+										chars.length);
+								contentHandler
+										.characters(
+												Constants.XSD_LIST_DELIM_CHAR_ARRAY,
+												0,
+												Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
 							}
 							break;
 						default:
 							int offset = 0;
-							for(Value val2: values) {
+							for (Value val2 : values) {
 								len = val2.getCharactersLength();
-								
-								if(cbuffer.length < (offset + len + 1)) {
-									contentHandler.characters(cbuffer, 0, offset);
+
+								if (cbuffer.length < (offset + len + 1)) {
+									contentHandler.characters(cbuffer, 0,
+											offset);
 									offset = 0;
 								}
 								val2.getCharacters(cbuffer, offset);
@@ -397,12 +418,12 @@ public class SAXDecoder implements XMLReader {
 							contentHandler.characters(cbuffer, 0, offset);
 							break;
 						}
-					} 
+					}
 					break;
 				default:
 					int slen = val.getCharactersLength();
 					ensureBufferCapacity(slen);
-					
+
 					// fills char array with value
 					val.getCharacters(cbuffer, 0);
 					contentHandler.characters(cbuffer, 0, slen);
@@ -464,10 +485,18 @@ public class SAXDecoder implements XMLReader {
 		 * is true, and is optional when the namespace-prefixes property is
 		 * false (the default).
 		 */
-		String seQNameAsString = Constants.EMPTY_STRING;
-		if (namespacePrefixes) {
-			seQNameAsString = decoder.getElementQNameAsString();
-		}
+//		String seQNameAsString = Constants.EMPTY_STRING;
+//		if (namespacePrefixes) {
+//			seQNameAsString = decoder.getElementQNameAsString();
+//		}
+		/*
+		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
+		 * textual qname even when
+		 * http://xml.org/sax/features/namespace-prefixes is set to false
+		 * http://
+		 * sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+		 */
+		String seQNameAsString = decoder.getElementQNameAsString();
 
 		// start so far deferred start element
 		contentHandler.startElement(deferredStartElement.getNamespaceUri(),
@@ -478,26 +507,26 @@ public class SAXDecoder implements XMLReader {
 		attributes.clear();
 	}
 
-	protected final void ensureBufferCapacity(int reqSize) {
+	private final void ensureBufferCapacity(int reqSize) {
 		if (reqSize > cbuffer.length) {
 			int newSize = cbuffer.length;
 
 			do {
 				newSize = newSize << 2;
 			} while (newSize < reqSize);
-			
+
 			cbuffer = new char[newSize];
 		}
 	}
-	
+
 	protected void handleAttribute(QNameContext atQName) throws SAXException,
 			IOException, EXIException {
 		Value val = decoder.getAttributeValue();
 		String sVal;
 
 		// System.out.println("> AT: " + atQName + ": " + val);
-		
-		switch(val.getValueType()) {
+
+		switch (val.getValueType()) {
 		case BOOLEAN:
 		case STRING:
 			sVal = val.toString();
@@ -505,25 +534,25 @@ public class SAXDecoder implements XMLReader {
 		case LIST:
 			ListValue lv = (ListValue) val;
 			Value[] values = lv.toValues();
-			
-			if(values.length > 0) {
-				if(sbHelper == null) {
+
+			if (values.length > 0) {
+				if (sbHelper == null) {
 					sbHelper = new StringBuilder();
 				} else {
 					sbHelper.setLength(0);
 				}
-				
+
 				ValueType vt = values[0].getValueType();
-				switch(vt) {
+				switch (vt) {
 				case BOOLEAN:
 				case STRING:
-					for(Value val2: values) {
+					for (Value val2 : values) {
 						sbHelper.append(val2.getCharacters());
 						sbHelper.append(' ');
 					}
 					break;
 				default:
-					for(Value val2: values) {
+					for (Value val2 : values) {
 						int slen = val2.getCharactersLength();
 						ensureBufferCapacity(slen);
 						val2.getCharacters(cbuffer, 0);
@@ -532,8 +561,8 @@ public class SAXDecoder implements XMLReader {
 					}
 					break;
 				}
-				
-				sVal = sbHelper.toString();	
+
+				sVal = sbHelper.toString();
 			} else {
 				sVal = Constants.EMPTY_STRING;
 			}
@@ -544,17 +573,24 @@ public class SAXDecoder implements XMLReader {
 			sVal = val.toString(cbuffer, 0);
 			break;
 		}
-		
-		// empty string if no qualified name is necessary
-		String atQNameAsString = Constants.EMPTY_STRING;
-		if (namespacePrefixes) {
-			atQNameAsString = decoder.getAttributeQNameAsString();
-		}
+
+//		// empty string if no qualified name is necessary
+//		String atQNameAsString = Constants.EMPTY_STRING;
+//		if (namespacePrefixes) {
+//			atQNameAsString = decoder.getAttributeQNameAsString();
+//		}
+		/*
+		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
+		 * textual qname even when
+		 * http://xml.org/sax/features/namespace-prefixes is set to false
+		 * http://
+		 * sourceforge.net/projects/exificient/forums/forum/856596/topic/5839494
+		 */
+		String atQNameAsString = decoder.getAttributeQNameAsString();
 
 		attributes.addAttribute(atQName.getNamespaceUri(),
 				atQName.getLocalName(), atQNameAsString, ATTRIBUTE_TYPE, sVal);
 	}
-
 
 	protected void handleDocType(DocType docType) throws SAXException,
 			IOException {
@@ -599,14 +635,13 @@ public class SAXDecoder implements XMLReader {
 		String entityReferenceName = new String(erName);
 		contentHandler.skippedEntity(entityReferenceName);
 
-
-//		 // JAXP ?
-//		 char[] entity = ("&" + entityReferenceName + ";").toCharArray();
-//		 contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
-//		 "");
-//		 contentHandler.characters(entity, 0, entity.length);
-//		 contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
-//		 "");
+		// // JAXP ?
+		// char[] entity = ("&" + entityReferenceName + ";").toCharArray();
+		// contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,
+		// "");
+		// contentHandler.characters(entity, 0, entity.length);
+		// contentHandler.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING,
+		// "");
 	}
 
 	protected void handleComment(char[] comment) throws SAXException {
@@ -615,8 +650,7 @@ public class SAXDecoder implements XMLReader {
 			lexicalHandler.comment(comment, 0, comment.length);
 		}
 	}
-	
-	
+
 	static class DocTypeTextLexicalHandler {
 
 		// e.g. (a) Internal DTD
@@ -639,19 +673,18 @@ public class SAXDecoder implements XMLReader {
 
 		public DocTypeTextLexicalHandler(DeclHandler dh) throws SAXException {
 			// this.dh = dh;
-			
+
 			xmlReader = XMLReaderFactory.createXMLReader();
 
 			// xmlReader.setProperty(
 			// "http://xml.org/sax/properties/lexical-handler",
 			// lh);
-			
+
 			// DTD
-			xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
-					false);
+			xmlReader.setFeature(
+					"http://xml.org/sax/features/resolve-dtd-uris", false);
 			// *skip* resolving entities like DTDs
 			xmlReader.setEntityResolver(new NoEntityResolver());
-			
 
 			xmlReader.setProperty(
 					"http://xml.org/sax/properties/declaration-handler", dh);
@@ -659,7 +692,7 @@ public class SAXDecoder implements XMLReader {
 
 		public void parse(char[] docTypeText) throws IOException, SAXException {
 			StringBuilder dt = new StringBuilder();
-			
+
 			dt.append("<!DOCTYPE foo_name [ ");
 			dt.append(docTypeText);
 			dt.append("]>");
@@ -669,27 +702,28 @@ public class SAXDecoder implements XMLReader {
 			xmlReader.parse(new InputSource(r));
 		}
 
-//		/*
-//		 * DeclHandler
-//		 */
-//
-//		public void attributeDecl(String eName, String aName, String type,
-//				String mode, String value) throws SAXException {
-//			dh.attributeDecl(eName, aName, type, mode, value);
-//		}
-//
-//		public void elementDecl(String name, String model) throws SAXException {
-//			dh.elementDecl(name, model);
-//		}
-//
-//		public void externalEntityDecl(String name, String publicId,
-//				String systemId) throws SAXException {
-//			dh.externalEntityDecl(name, publicId, systemId);
-//		}
-//
-//		public void internalEntityDecl(String name, String value)
-//				throws SAXException {
-//			dh.internalEntityDecl(name, value);
-//		}
+		// /*
+		// * DeclHandler
+		// */
+		//
+		// public void attributeDecl(String eName, String aName, String type,
+		// String mode, String value) throws SAXException {
+		// dh.attributeDecl(eName, aName, type, mode, value);
+		// }
+		//
+		// public void elementDecl(String name, String model) throws
+		// SAXException {
+		// dh.elementDecl(name, model);
+		// }
+		//
+		// public void externalEntityDecl(String name, String publicId,
+		// String systemId) throws SAXException {
+		// dh.externalEntityDecl(name, publicId, systemId);
+		// }
+		//
+		// public void internalEntityDecl(String name, String value)
+		// throws SAXException {
+		// dh.internalEntityDecl(name, value);
+		// }
 	}
 }
