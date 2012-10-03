@@ -42,7 +42,7 @@ public class StringEncoderImpl implements StringEncoder {
 	protected Map<String, ValueContainer> stringValues;
 
 	// indicate whether local value partitions are used
-	protected boolean localValuePartitions;
+	protected final boolean localValuePartitions;
 	
 	public StringEncoderImpl(boolean localValuePartitions) {
 		this.localValuePartitions = localValuePartitions;
