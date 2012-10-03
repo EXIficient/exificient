@@ -36,6 +36,7 @@ import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.Value;
 import com.siemens.ct.exi.values.ValueType;
@@ -343,6 +344,15 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 
 			SchemaIdResolver sir = f.getSchemaIdResolver();
 			f.setGrammars(sir.resolveSchemaId(schemaId));
+		} else if (PROFILE.equals(localName)) {
+			if(value.getValueType() == ValueType.DECIMAL) {
+				DecimalValue dv = (DecimalValue) value;
+				f.setLocalValuePartitions(dv.isNegative());
+				assert(dv.getIntegral().getValueType() == ValueType.INTEGER_INT);
+				f.setMaximumNumberOfEvolvingBuiltInElementGrammars(dv.getIntegral().intValue() - 1);
+				assert(dv.getRevFractional().getValueType() == ValueType.INTEGER_INT);
+				f.setMaximumNumberOfBuiltInProductions(dv.getRevFractional().intValue() - 1);
+			}
 		}
 	}
 

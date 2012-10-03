@@ -42,7 +42,7 @@ public class StringDecoderImpl implements StringDecoder {
 	protected List<StringValue> globalValues;
 
 	// indicate whether local value partitions are used
-	protected boolean localValuePartitions;
+	protected final boolean localValuePartitions;
 
 	public StringDecoderImpl(boolean localValuePartitions) {
 		this.localValuePartitions = localValuePartitions;
