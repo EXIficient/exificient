@@ -20,6 +20,7 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
@@ -33,7 +34,9 @@ import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
+import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.QNameValue;
 import com.siemens.ct.exi.values.StringValue;
 
 /**
@@ -135,9 +138,33 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				 * isUserDefinedMetaData
 				 */
 				if (isUserDefinedMetaData(f)) {
-					// TODO what could that be?
-					throw new RuntimeException(
-							"[EXI-Header] no support for user defined meta-data");
+					// EXI profile options
+					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
+							PROFILE, null);
+					if ( f.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_PROFILE_VALUES) ) {
+						QNameValue qnv = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal", null);
+						encoder.encodeAttributeXsiType(qnv, null);
+						
+						/*
+						 * 1. The localValuePartitions parameter is encoded as the sign of the decimal value: the parameter is equal to 0 if the decimal value is positive and 1 if the decimal value is negative. 
+						 */
+						boolean negative = f.isLocalValuePartitions();
+						/*
+						 * 2. The maximumNumberOfBuiltInElementGrammars parameter is represented by the first unsigned integer corresponding to integral portion of the decimal value: the maximumNumberOfBuiltInElementGrammars parameter is unbounded if the unsigned integer value is 0; otherwise it is equal to the unsigned integer value - 1.
+						 */
+						IntegerValue integral = IntegerValue.valueOf(1 + f.getMaximumNumberOfEvolvingBuiltInElementGrammars());
+						/*
+						 * 3. The maximumNumberOfBuiltInProductions parameter is represented by the second unsigned integer corresponding to the fractional portion in reverse order of the decimal value: the maximumNumberOfBuiltInProductions parameter is unbounded if the unsigned integer value is 0; otherwise it is equal to the unsigned integer value - 1.
+						 */
+						IntegerValue revFractional = IntegerValue.valueOf(1 + f.getMaximumNumberOfBuiltInProductions());
+						
+						DecimalValue dv = new DecimalValue(negative, integral,
+								revFractional);
+						encoder.encodeCharactersForce(dv);
+						
+					}
+					
+					encoder.encodeEndElement(); // p
 				}
 				/*
 				 * alignment
@@ -400,8 +427,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	}
 
 	protected boolean isUserDefinedMetaData(EXIFactory f) {
-		// TODO
-		return false;
+		// EXI profile options
+		return (f.isGrammarLearningDisabled() || !f.isLocalValuePartitions());
 	}
 
 	protected boolean isAlignment(EXIFactory f) {

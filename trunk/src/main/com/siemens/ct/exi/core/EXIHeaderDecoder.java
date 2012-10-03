@@ -279,6 +279,8 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			} else if (STRICT.equals(localName)) {
 				f.getFidelityOptions().setFidelity(
 						FidelityOptions.FEATURE_STRICT, true);
+			} else if (PROFILE.equals(localName)) {
+				// profile parameters, not used yet
 			}
 		}
 

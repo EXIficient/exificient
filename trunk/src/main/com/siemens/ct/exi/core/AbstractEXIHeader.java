@@ -61,6 +61,7 @@ public abstract class AbstractEXIHeader {
 	public static final String FRAGMENT = "fragment";
 	public static final String SCHEMA_ID = "schemaId";
 	public static final String STRICT = "strict";
+	public static final String PROFILE = "p";
 
 	public static final int NUMBER_OF_DISTINGUISHING_BITS = 2;
 	public static final int DISTINGUISHING_BITS_VALUE = 2;

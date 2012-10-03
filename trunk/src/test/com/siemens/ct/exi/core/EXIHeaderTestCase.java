@@ -236,6 +236,29 @@ public class EXIHeaderTestCase extends TestCase {
 		_testOptions(ef, null);
 	}
 	
+	public void testEXIOptions11() throws EXIException, IOException {
+		// Profile
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.setLocalValuePartitions(false);
+		
+		EncodingOptions ho = ef.getEncodingOptions();
+		ho.setOption(EncodingOptions.INCLUDE_PROFILE_VALUES);
+
+		_testOptions(ef);
+	}
+	
+	public void testEXIOptions12() throws EXIException, IOException {
+		// Profile
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		// ef.setLocalValuePartitions(false);
+		ef.setMaximumNumberOfBuiltInProductions(0);
+		
+		// EncodingOptions ho = ef.getEncodingOptions();
+		// ho.setOption(EncodingOptions.INCLUDE_PROFILE_VALUES);
+
+		_testOptions(ef);
+	}
+	
 	
 	String schemaBla = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 		+ " <xs:element name='root' type='xs:string' nillable='true' >"
