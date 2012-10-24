@@ -39,14 +39,14 @@ public class Attribute extends AbstractDatatypeEvent {
 	protected final QName qname;
 	protected final QNameContext qnameContext;
 
-	public Attribute(QNameContext qnc, QName valueType, Datatype datatype) {
-		super(EventType.ATTRIBUTE, valueType, datatype);
+	public Attribute(QNameContext qnc, Datatype datatype) {
+		super(EventType.ATTRIBUTE, datatype);
 		this.qnameContext = qnc;
 		this.qname = qnameContext.getQName();
 	}
 	
 	public Attribute(QNameContext qnc) {
-		this(qnc, BuiltIn.DEFAULT_VALUE_NAME, BuiltIn.DEFAULT_DATATYPE);
+		this(qnc, BuiltIn.DEFAULT_DATATYPE);
 	}
 	
 	public QNameContext getQNameContext() {

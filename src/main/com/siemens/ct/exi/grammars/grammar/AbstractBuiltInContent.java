@@ -108,8 +108,7 @@ public abstract class AbstractBuiltInContent extends AbstractBuiltInGrammar {
 		 * the current element grammar create one add the production created
 		 */
 		if (!learnedCH) {
-			addProduction(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
-					BuiltIn.DEFAULT_DATATYPE), getElementContentGrammar());
+			addProduction(new Characters(BuiltIn.DEFAULT_DATATYPE), getElementContentGrammar()); // BuiltIn.DEFAULT_VALUE_NAME,
 			learnedCH = true;
 		}
 	}

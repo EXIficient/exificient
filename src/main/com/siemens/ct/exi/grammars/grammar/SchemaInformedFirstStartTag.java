@@ -45,6 +45,10 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 
 	protected QName typeName = null;
 
+	public SchemaInformedFirstStartTag() {
+		super();
+	}
+	
 	public SchemaInformedFirstStartTag(SchemaInformedGrammar elementContent2) {
 		super(elementContent2);
 	}
@@ -278,6 +282,9 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 
 	@Override
 	public boolean equals(Object obj) {
+		if(this == obj) {
+			return true;
+		}
 		if (obj instanceof SchemaInformedFirstStartTag) {
 			SchemaInformedFirstStartTag other = (SchemaInformedFirstStartTag) obj;
 			if (this.isTypeCastable == other.isTypeCastable

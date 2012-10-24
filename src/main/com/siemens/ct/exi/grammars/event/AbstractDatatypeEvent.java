@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.grammars.event;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.datatype.Datatype;
 
 /**
@@ -35,19 +33,11 @@ public abstract class AbstractDatatypeEvent extends AbstractEvent implements
 
 	private static final long serialVersionUID = -975693882715012642L;
 
-	protected final QName valueType;
-
 	protected final Datatype datatype;
 
-	public AbstractDatatypeEvent(EventType eventType, QName valueType,
-			Datatype datatype) {
+	public AbstractDatatypeEvent(EventType eventType, Datatype datatype) {
 		super(eventType);
-		this.valueType = valueType;
 		this.datatype = datatype;
-	}
-
-	public QName getValueType() {
-		return valueType;
 	}
 
 	public Datatype getDatatype() {

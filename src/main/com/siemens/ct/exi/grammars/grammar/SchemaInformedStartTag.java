@@ -58,10 +58,14 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 
 	private static final long serialVersionUID = -674782327638586700L;
 
-	protected SchemaInformedGrammar elementContent2;
+	protected Grammar elementContent2;
 
-	public SchemaInformedStartTag(SchemaInformedGrammar elementContent2) {
+	public SchemaInformedStartTag() {
 		super();
+	}
+	
+	public SchemaInformedStartTag(SchemaInformedGrammar elementContent2) {
+		this();
 		this.elementContent2 = elementContent2;
 	}
 	
@@ -146,6 +150,11 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
 		return (!fidelityOptions.isStrict());
+	}
+	
+	
+	public void setElementContentGrammar(Grammar elementContent2) {
+		this.elementContent2 = elementContent2;
 	}
 
 	@Override

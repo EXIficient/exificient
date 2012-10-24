@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
@@ -47,6 +48,9 @@ public class QNameContext implements Serializable {
 	// global grammar attribute (if any)
 	Attribute grammarGlobalAttribute;
 
+	// simple datatype
+	Datatype simpleDatatype;
+	
 	// type grammar
 	SchemaInformedFirstStartTagGrammar typeGrammar;
 
@@ -123,11 +127,11 @@ public class QNameContext implements Serializable {
 	public String getLocalName() {
 		return qName.getLocalPart();
 	}
-
+	
 	public void setGlobalStartElement(StartElement grammarGlobalElement) {
 		this.grammarGlobalElement = grammarGlobalElement;
 	}
-
+	
 	public StartElement getGlobalStartElement() {
 		return grammarGlobalElement;
 	}
@@ -140,6 +144,14 @@ public class QNameContext implements Serializable {
 		return grammarGlobalAttribute;
 	}
 
+	public void setSimpleDatatype(Datatype simpleDatatype) {
+		this.simpleDatatype = simpleDatatype;
+	}
+	
+	public Datatype getSimpleDatatype() {
+		return this.simpleDatatype;
+	}
+	
 	public void setTypeGrammar(SchemaInformedFirstStartTagGrammar typeGrammar) {
 		this.typeGrammar = typeGrammar;
 	}
