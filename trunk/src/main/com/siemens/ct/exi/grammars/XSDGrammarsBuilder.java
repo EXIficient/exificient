@@ -287,11 +287,12 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		throw new RuntimeException("No known uri context for: " + namespaceUri);
 	}
 
-	protected Attribute createAttribute(QName qname, QName valueType,
+	// QName valueType
+	protected Attribute createAttribute(QName qname, 
 			Datatype datatype) {
 		QNameContext qnameContext = getQNameContext(qname.getNamespaceURI(),
 				qname.getLocalPart(), grammarUriContexts);
-		Attribute at = new Attribute(qnameContext, valueType, datatype);
+		Attribute at = new Attribute(qnameContext, datatype); // valueType, 
 
 		return at;
 	}
@@ -535,8 +536,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			} else {
 				// represented as a String
 				// at = new Attribute(an);
-				at = createAttribute(an, BuiltIn.DEFAULT_VALUE_NAME,
-						BuiltIn.DEFAULT_DATATYPE);
+				at = createAttribute(an, BuiltIn.DEFAULT_DATATYPE); // BuiltIn.DEFAULT_VALUE_NAME,
 			}
 			elementFragment0.addProduction(at, elementFragment0);
 		}
@@ -587,8 +587,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			} else {
 				// represented as a String
 				// at = new Attribute(an);
-				at = createAttribute(an, BuiltIn.DEFAULT_VALUE_NAME,
-						BuiltIn.DEFAULT_DATATYPE);
+				at = createAttribute(an, BuiltIn.DEFAULT_DATATYPE); //  BuiltIn.DEFAULT_VALUE_NAME,
 			}
 			elementFragmentEmpty0.addProduction(at, elementFragmentEmpty0);
 		}
@@ -952,7 +951,19 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 					SchemaInformedFirstStartTagGrammar fstr = this
 							.translateTypeDefinitionToFSA(typeDef);
 					qnc.setTypeGrammar(fstr);
+					
+
+					// simple datatype
+					if (typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+						XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) typeDef;
+						//type_i = translateSimpleTypeDefinitionToFSA(std);
+						Datatype dt = getDatatype(std);
+						
+						qnc.setSimpleDatatype(dt);
+						//System.out.println(qnc.getQName() + " --> " +  dt);
+					}
 				}
+				
 
 				// (direct) simple sub-types
 				if (typeDef != null
@@ -1199,10 +1210,10 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		} else {
 			// AT datatype
 			XSSimpleTypeDefinition std = attrDecl.getTypeDefinition();
-			QName valueType = getValueType(std);
+			// QName valueType = getValueType(std);
 			// create new Attribute event
 			QName qname = new QName(attrDecl.getNamespace(), attrDecl.getName());
-			at = createAttribute(qname, valueType, getDatatype(std)); // new
+			at = createAttribute(qname, getDatatype(std)); // new
 																		// Attribute(qname,
 																		// valueType,
 																		// getDatatype(std));
@@ -1654,8 +1665,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		/*
 		 * Simple content
 		 */
-		QName valueType = this.getValueType(std);
-		Characters chSchemaValid = new Characters(valueType, getDatatype(std));
+		// QName valueType = this.getValueType(std);
+		Characters chSchemaValid = new Characters(getDatatype(std)); // valueType, 
 
 		SchemaInformedGrammar simpleContentEnd = SIMPLE_END_ELEMENT_RULE;
 

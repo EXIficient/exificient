@@ -26,24 +26,24 @@ package com.siemens.ct.exi.grammars.event;
  * @version 0.9.1
  */
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.datatype.Datatype;
 
 public class Characters extends AbstractDatatypeEvent {
 
 	private static final long serialVersionUID = -3710413955014691193L;
 
-	public Characters(QName valueType, Datatype datatype) {
-		super(EventType.CHARACTERS, valueType, datatype);
+	public Characters(Datatype datatype) {
+		super(EventType.CHARACTERS, datatype);
 	}
 
 	public boolean equals(Object o) {
 		if (super.equals(o)) {
 			// event-type is ok already
 			Characters ch = (Characters) o;
-			return (this.valueType.equals(ch.valueType) && this.datatype
-					.getBuiltInType().equals(ch.getDatatype().getBuiltInType()));
+//			return (this.valueType.equals(ch.valueType) && this.datatype
+//					.getBuiltInType().equals(ch.getDatatype().getBuiltInType()));
+			return this.datatype
+					.getBuiltInType().equals(ch.getDatatype().getBuiltInType());
 		} else {
 			return false;
 		}

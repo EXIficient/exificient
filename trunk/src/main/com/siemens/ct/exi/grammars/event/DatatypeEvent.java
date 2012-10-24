@@ -18,8 +18,6 @@
 
 package com.siemens.ct.exi.grammars.event;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.datatype.Datatype;
 
 /**
@@ -31,8 +29,6 @@ import com.siemens.ct.exi.datatype.Datatype;
  */
 
 public interface DatatypeEvent extends Event {
-
-	public QName getValueType();
 
 	public Datatype getDatatype();
 

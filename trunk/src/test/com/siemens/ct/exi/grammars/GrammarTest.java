@@ -681,7 +681,7 @@ public class GrammarTest extends TestCase {
 		// EvolvingUriContext ruc = new RuntimeEvolvingUriContext(0, "");
 		int namespaceUriID = 0;
 		QNameContext qncAt = new QNameContext(namespaceUriID, 0, new QName("a"), 0);
-		rule.learnAttribute(new Attribute(qncAt, null, null));
+		rule.learnAttribute(new Attribute(qncAt, null));
 		QNameContext qncSE = new QNameContext(namespaceUriID, 1, new QName("s"), 1);
 		rule.learnStartElement(new StartElement(qncSE));
 		rule.learnEndElement();
@@ -729,7 +729,7 @@ public class GrammarTest extends TestCase {
 
 		// learn AT, can have multiple events even if similar
 		QNameContext qncAt = new QNameContext(namespaceUriID, 0, new QName("a"), 0);
-		Attribute a = new Attribute(qncAt, null, null);
+		Attribute a = new Attribute(qncAt, null);
 		startTag.learnAttribute(a);
 		startTag.learnAttribute(a);
 		assertTrue(startTag.getNumberOfEvents() == 6);
@@ -738,8 +738,8 @@ public class GrammarTest extends TestCase {
 		
 		// learn multiple AT(xsi:type) --> at most one AT(xsi:type)
 		QNameContext qncAtxsiType = new QNameContext(2, 1, new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type"), 0);
-		startTag.learnAttribute(new Attribute(qncAtxsiType, null, null));
-		startTag.learnAttribute(new Attribute(qncAtxsiType, null, null));
+		startTag.learnAttribute(new Attribute(qncAtxsiType, null));
+		startTag.learnAttribute(new Attribute(qncAtxsiType, null));
 		assertTrue(startTag.getNumberOfEvents() == 7);
 
 
