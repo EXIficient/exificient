@@ -89,7 +89,7 @@ public interface Grammars extends Serializable {
 
 	public Grammar getFragmentGrammar();
 
-	public Grammar getUrTypeGrammar();
+//	public Grammar getUrTypeGrammar();
 
 	public GrammarContext getGrammarContext();
 }

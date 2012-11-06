@@ -20,7 +20,7 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.W3CTestCase;
+import com.siemens.ct.exi.data.GeneralTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -87,10 +87,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		CODING_MODE = CodingMode.BIT_PACKED;
+		// CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		// CODING_MODE = CodingMode.COMPRESSION;
+		CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
@@ -140,8 +140,8 @@ public class QuickTestConfiguration {
 	static {
 		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
-		W3CTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
+		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );

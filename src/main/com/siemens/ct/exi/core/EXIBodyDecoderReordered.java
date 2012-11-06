@@ -18,15 +18,15 @@
 
 package com.siemens.ct.exi.core;
 
-import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
@@ -104,10 +104,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	protected int xsiPrefixIndex;
 
 	// deflate stuff
-	protected InputStream resettableInputStream;
-	protected InflaterInputStream recentInflaterInputStream;
-	protected long bytesRead;
 	protected Inflater inflater;
+	protected InputStream recentInflaterInputStream;
 
 	protected boolean firstChannel;
 
@@ -218,52 +216,22 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		if (codingMode == CodingMode.COMPRESSION) {
 			if (firstChannel) {
-				bytesRead = 0;
-				resettableInputStream = new BufferedInputStream(is);
-				resettableInputStream.mark(Integer.MAX_VALUE);
-				// initialize inflater
-				inflater = new Inflater(true);
+				// create once inflater to re-use
+				if (inflater == null) {
+					inflater = new Inflater(true);
+				}
+				// create once a decoder channel
+				recentInflaterInputStream = new EXIInflaterInputStream(is,
+						inflater);
 				firstChannel = false;
 			} else {
-				if (!inflater.finished()) {
-					// TODO [Warning] Inflater not finished, what is the reason
-					// for that ?
-					// Something todo with
-					// http://forums.sun.com/thread.jspa?threadID=713598 ???
-
-					while (!inflater.finished()) {
-						recentInflaterInputStream.read();
-					}
+				assert (inflater != null);
+				// any pending data ?
+				while (!inflater.finished()) {
+					recentInflaterInputStream.read();
 				}
-
-				// update new byte position
-				bytesRead += inflater.getBytesRead();
-
-				// reset byte position
-				resettableInputStream.reset();
-				long skipped = resettableInputStream.skip(bytesRead);
-				// handle the case where fewer bytes were skipped than
-				// requested 
-				if (skipped != bytesRead) {
-					do {
-						long skippedLoop = resettableInputStream.skip(bytesRead
-								- skipped);
-						if (skippedLoop <= 0) {
-							// NOTE: If n is negative, no bytes are skipped
-							throw new IOException(
-									"[EXI] Byte skipping impossible on given input stream");
-						}
-						skipped += skippedLoop;
-						assert (skipped <= bytesRead);
-					} while (skipped < bytesRead);
-				}
-
-				// reset inflater
-				inflater.reset();
 			}
-
-			recentInflaterInputStream = new InflaterInputStream(
-					resettableInputStream, inflater);
+			inflater.reset();
 			return new ByteDecoderChannel(recentInflaterInputStream);
 		} else {
 			assert (codingMode == CodingMode.PRE_COMPRESSION);
@@ -354,7 +322,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 					elementEntries.add(getElementContext());
 					deferredStartElement = false;
 				default:
-					// no action	
+					// no action
 				}
 			}
 
@@ -679,14 +647,16 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		return nsEntries.get(nsEntryIndex++);
 	}
 
-	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException,
+			IOException {
 		this.attributeQNameContext = decoderContext.getXsiNilContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 		return attributeQNameContext;
 	}
 
-	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException,
+			IOException {
 		this.attributeQNameContext = decoderContext.getXsiTypeContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
@@ -764,6 +734,171 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		public QNameEntry(QNameContext qnContext, String prefix) {
 			this.qnContext = qnContext;
 			this.prefix = prefix;
+		}
+	}
+
+	// public static void main(String[] args) throws IOException,
+	// DataFormatException {
+	//
+	// // ////////
+	//
+	// System.out.println("Deflate Stream test");
+	// String s1 = "abcd";
+	// String s2 = "efghijklmnop";
+	// byte[] b = {1, 2, 3, 4};
+	// String s3 = "XYZ";
+	//
+	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	//
+	// Deflater deflater = new Deflater(Deflater.DEFAULT_COMPRESSION, true);
+	//
+	// DeflaterOutputStream deflaterOS1 = new DeflaterOutputStream(baos,
+	// deflater);
+	// deflaterOS1.write(s1.getBytes());
+	// deflaterOS1.finish();
+	//
+	// deflater.reset();
+	// DeflaterOutputStream deflaterOS2 = new DeflaterOutputStream(baos,
+	// deflater);
+	// deflaterOS2.write(s2.getBytes());
+	// deflaterOS2.finish();
+	//
+	// deflater.reset();
+	// DeflaterOutputStream deflaterOSX = new DeflaterOutputStream(baos,
+	// deflater);
+	// deflaterOSX.write(b);
+	// deflaterOSX.finish();
+	//
+	// deflater.reset();
+	// DeflaterOutputStream deflaterOS3 = new DeflaterOutputStream(baos,
+	// deflater);
+	// deflaterOS3.write(s3.getBytes());
+	// deflaterOS3.finish();
+	//
+	// System.out.println("ByteArraySize: " + baos.size());
+	//
+	// // //////////////////////////
+	// Inflater inflater = new Inflater(true);
+	//
+	// ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	//
+	// InputStream mfis = new EXIInflaterInputStream(bais, inflater);
+	//
+	//
+	// byte[] b1 = new byte[s1.length()];
+	// for (int i = 0; i < b1.length; i++) {
+	// b1[i] = (byte) mfis.read();
+	// inflater.getRemaining();
+	// }
+	// System.out.println("Byte1: " + new String(b1));
+	// System.out.println("inflater.finished: " + inflater.finished());
+	//
+	// // inflater.reset();
+	// // InflaterInputStream inflaterIS2 = new InflaterInputStream(bais,
+	// // inflater);
+	// while(!inflater.finished()) {
+	// mfis.read();
+	// }
+	// inflater.reset();
+	//
+	// System.out.println("inflater.remaining: " + inflater.getRemaining());
+	//
+	// byte[] b2 = new byte[s2.length()];
+	// for (int i = 0; i < b2.length; i++) {
+	// b2[i] = (byte) mfis.read();
+	// }
+	// System.out.println("Byte2: " + new String(b2));
+	// System.out.println("inflater.finished: " + inflater.finished());
+	//
+	// while(!inflater.finished()) {
+	// mfis.read();
+	// }
+	// inflater.reset();
+	//
+	// byte[] bX = new byte[b.length];
+	// mfis.read(bX, 0, b.length);
+	//
+	//
+	// while(!inflater.finished()) {
+	// mfis.read();
+	// }
+	// inflater.reset();
+	//
+	//
+	// byte[] b3 = new byte[s3.length()];
+	// for (int i = 0; i < b3.length; i++) {
+	// b3[i] = (byte) mfis.read();
+	// }
+	// System.out.println("Byte3: " + new String(b3));
+	// System.out.println("inflater.finished: " + inflater.finished());
+	//
+	// }
+
+	class EXIInflaterInputStream extends FilterInputStream {
+
+		private final Inflater inflater;
+
+		private final byte[] outputBuffer;
+		private int outputOffset;
+		private int outputLimit;
+
+		private final byte[] inputBuffer;
+		private int inputLength;
+
+		private final static int BUF_SIZE = 1024;
+
+		public EXIInflaterInputStream(InputStream inputStream, Inflater inflater) {
+			super(inputStream);
+			this.inflater = inflater;
+			inputBuffer = new byte[BUF_SIZE];
+			inputLength = 0;
+			outputBuffer = new byte[BUF_SIZE];
+			outputOffset = outputLimit = 0;
+		}
+
+		@Override
+		public int read(byte b[], int off, int len) throws IOException {
+			for (int i = 0; i < len; i++) {
+				b[i + off] = (byte) read();
+			}
+			return len;
+		}
+
+		@Override
+		public int read() throws IOException {
+			while (outputOffset == outputLimit && !inflater.finished()) {
+				outputOffset = 0;
+				final int remain;
+				inflater.setInput(inputBuffer, 0, inputLength);
+				try {
+					outputLimit = inflater.inflate(outputBuffer);
+				} catch (DataFormatException e) {
+					throw new IOException(e.getMessage());
+				}
+				if ((remain = inflater.getRemaining()) != 0
+						&& remain != inputLength) {
+					final int inputOffset;
+					inputOffset = inputLength - remain;
+					inputLength = remain;
+					// copy existing data
+					System.arraycopy(inputBuffer, inputOffset, inputBuffer, 0,
+							inputLength);
+				} else {
+					if (outputLimit == 0 && remain == 0) {
+						assert !inflater.finished();
+						if ((inputLength = super.read(inputBuffer, 0,
+								inputBuffer.length)) < 0) {
+							inputLength = 0;
+							return -1;
+						}
+					} else {
+						inputLength = remain;
+					}
+				}
+			}
+
+			return outputOffset != outputLimit ? outputBuffer[outputOffset++] & 0x00ff
+					: -1;
 		}
 	}
 

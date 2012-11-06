@@ -85,24 +85,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			} else {
 				ca[i] = (char) codePoint;
 			}
-			
-//			int b = decode();
-//
-//			if (b < 128) {
-//				// ASCII character
-//				ca[i] = (char) b;
-//			} else {
-//				// non-ASCII character
-//				int codePoint = decodeUnsignedIntegerBytePreread(b);
-//				
-//				if (Character.isSupplementaryCodePoint(codePoint)) {
-//					// supplementary code-point
-//					// Assumption: it doesn't happen very often
-//					return decodeStringOnlySupplementaryCodePoints(ca, length, i, codePoint);
-//				} else {
-//					ca[i] = (char) codePoint;
-//				}
-//			}
 		}
 
 		return ca;
