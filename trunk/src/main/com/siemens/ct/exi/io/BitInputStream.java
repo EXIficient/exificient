@@ -73,8 +73,7 @@ final public class BitInputStream {
 	 */
 	private final void readBuffer() throws IOException {
 		if ((buffer = istream.read()) == -1) {
-			throw new EOFException(
-					"Premature EOS found while reading data.");
+			throw new EOFException("Premature EOS found while reading data.");
 		}
 		capacity = BUFFER_CAPACITY;
 	}
@@ -95,7 +94,7 @@ final public class BitInputStream {
 	 */
 	public int lookAhead() throws IOException {
 		if (capacity == 0) {
-			readBuffer();	
+			readBuffer();
 		}
 		return buffer;
 	}
@@ -125,7 +124,7 @@ final public class BitInputStream {
 	 */
 	public int readBit() throws IOException {
 		if (capacity == 0) {
-			readBuffer();	
+			readBuffer();
 		}
 		return (buffer >> --capacity) & 0x1;
 	}
@@ -138,20 +137,25 @@ final public class BitInputStream {
 	 */
 	public int readBits(int n) throws IOException {
 		assert (n > 0);
+		int result;
 
 		if (n <= capacity) {
 			// buffer already holds all necessary bits
-			return (buffer >> (capacity -= n)) & (0xff >> (BUFFER_CAPACITY - n));
+			result = (buffer >> (capacity -= n))
+					& (0xff >> (BUFFER_CAPACITY - n));
+		} else if (capacity == 0 && n == BUFFER_CAPACITY) {
+			// possible to read direct byte, nothing else to do
+			result = istream.read();
 		} else {
 			// get as many bits from buffer as possible
-			int result = buffer & (0xff >> (BUFFER_CAPACITY - capacity));
+			result = buffer & (0xff >> (BUFFER_CAPACITY - capacity));
 			n -= capacity;
 			capacity = 0;
 
 			// possibly read whole bytes
 			while (n > 7) {
 				if (capacity == 0) {
-					readBuffer();	
+					readBuffer();
 				}
 				result = (result << BUFFER_CAPACITY) | buffer;
 				n -= BUFFER_CAPACITY;
@@ -161,19 +165,33 @@ final public class BitInputStream {
 			// read the rest of the bits
 			if (n > 0) {
 				if (capacity == 0) {
-					readBuffer();	
+					readBuffer();
 				}
 				result = (result << n) | (buffer >>> (BUFFER_CAPACITY - n));
 				capacity = BUFFER_CAPACITY - n;
 			}
-
-			return result;
 		}
+
+		return result;
+	}
+
+	/**
+	 * Reads one byte (8 bits) of data from the input stream
+	 * 
+	 * @return next byte as int
+	 * @throws IOException
+	 */
+	public final int read() throws IOException {
+		// possible to read direct byte?
+		return (capacity == 0) ? istream.read() : this
+				.readBits(BUFFER_CAPACITY);
 	}
 
 	public void read(byte b[], int off, int len) throws IOException {
-		if (len == 0) {
+		assert (len >= 0);
 
+		if (len == 0) {
+			/* nothing to do */
 		} else if (capacity == 0) {
 			// byte-aligned --> read all bytes at byte-border (at once?)
 			int readBytes = 0;
@@ -182,46 +200,43 @@ final public class BitInputStream {
 			} while (readBytes < len);
 		} else {
 			int readBytes = 0;
-			int shift1 = BUFFER_CAPACITY - capacity;
-			int shift2 = capacity;
-				
+			final int shift1 = BUFFER_CAPACITY - capacity;
+			final int shift2 = capacity;
+
 			// get all bits from current buffer
-			int currentResult = buffer & (0xff >> shift1);
-			
+			int firstByte = buffer; // & (0xff >> shift1);
+
 			// read (len-1) full bytes at once
-			int lenMinusOne = len-1;
-			byte fullBytes [] = new byte[lenMinusOne];
-			
+			final int lenMinusOne = len - 1;
+
 			do {
-				readBytes += istream.read(fullBytes, readBytes, lenMinusOne-readBytes);
-			} while(readBytes < lenMinusOne);
-			
-			//	shift full bytes to result array taking into account interleaving
-			for(int i=0; i<lenMinusOne; i++) {
-				// Note: byte may be negative --> 0xff & byte
-				b[i] = (byte) ((currentResult << shift1) | ((0xff & fullBytes[i]) >>> shift2));
-				currentResult = fullBytes[i] & (0xff >> shift1);
-			}
-			
-			//	get ready for remaining trailing bits
+				// readBytes += istream.read(fullBytes, readBytes,
+				// lenMinusOne-readBytes);
+				readBytes += istream
+						.read(b, readBytes, lenMinusOne - readBytes);
+			} while (readBytes < lenMinusOne);
+
+			// get ready for remaining trailing bits
 			readBuffer();
+			b[lenMinusOne] = (byte) ((b[lenMinusOne - 1] << shift1) | ((0xff & buffer) >>> shift2));
 
-			currentResult = (currentResult << shift1) | (buffer >>> shift2);
-			b[off+len-1] = (byte) currentResult;
-			
-			capacity = shift2;	// new (old) capacity
+			// shift bytes
+			for (int i = lenMinusOne - 1; i > 0; i--) {
+				b[i] = (byte) ((b[i - 1] << shift1) | ((0xff & b[i]) >>> shift2));
+			}
 
-			// for(int i=0; i<len; i++) {
-			// b[off+i] = (byte) readBits(8);
-			// }
+			// fix first byte in byte array
+			b[0] = (byte) ((firstByte << shift1) | ((0xff & b[0]) >>> shift2));
+
+			capacity = shift2; // new (old) capacity
 		}
 	}
 
-	/**
-	 * Read and return the next byte without discarding current buffer.
-	 */
-	public final int readDirectByte() throws IOException {
-		return istream.read();
-	}
+	// /**
+	// * Read and return the next byte without discarding current buffer.
+	// */
+	// public final int readDirectByte() throws IOException {
+	// return istream.read();
+	// }
 
 }

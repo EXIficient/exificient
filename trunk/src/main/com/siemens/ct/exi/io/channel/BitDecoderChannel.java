@@ -48,8 +48,8 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 		this.istream = new BitInputStream(is);
 	}
 
-	public int decode() throws IOException {
-		return istream.readBits(8);
+	public final int decode() throws IOException {
+		return istream.read();
 	}
 
 	public void align() throws IOException {

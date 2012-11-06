@@ -20,6 +20,7 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.BinaryBase64Value;
 import com.siemens.ct.exi.values.BinaryHexValue;
@@ -199,6 +200,50 @@ public class BinaryTest extends AbstractTestCase {
 		binary.writeValue(null, null, getByteEncoder());
 		Value val2 = new BinaryBase64Value(getByteDecoder().decodeBinary());
 		assertTrue(src_2.equals(val2.toString()));
+	}
+	
+	public void testBinary_1() throws IOException {
+		String s = "blabla";
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeBinary(s.getBytes());
+		bitEC.flush();
+		String sDec = new String(getBitDecoder().decodeBinary());
+		assertTrue(s.equals(sDec));
+		
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		byteEC.encodeBinary(s.getBytes());
+		sDec = new String(getByteDecoder().decodeBinary());
+		assertTrue(s.equals(sDec));
+	}
+	
+	public void testBinary_2() throws IOException {
+		String s = "blabla";
+		
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeNBitUnsignedInteger(2, 3);
+		bitEC.encodeBinary(s.getBytes());
+		bitEC.encodeNBitUnsignedInteger(5, 7);
+		bitEC.flush();
+		DecoderChannel bitDC = getBitDecoder();
+		assertTrue(bitDC.decodeNBitUnsignedIntegerValue(3).intValue() == 2);
+		String sDec = new String(bitDC.decodeBinary());
+		assertTrue(s.equals(sDec));
+		assertTrue(bitDC.decodeNBitUnsignedIntegerValue(7).intValue() == 5);
+		
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		byteEC.encodeNBitUnsignedInteger(2, 3);
+		byteEC.encodeBinary(s.getBytes());
+		byteEC.encodeNBitUnsignedInteger(5, 7);
+		DecoderChannel byteDC = getByteDecoder();
+		assertTrue(byteDC.decodeNBitUnsignedIntegerValue(3).intValue() == 2);
+		sDec = new String(byteDC.decodeBinary());
+		assertTrue(s.equals(sDec));
+		assertTrue(byteDC.decodeNBitUnsignedIntegerValue(7).intValue() == 5);
 	}
 	
 	public void testHexBinaryFailure1() throws IOException {

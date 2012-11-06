@@ -29,7 +29,8 @@ import com.siemens.ct.exi.values.Value;
 public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected OutputStream os;
-	protected DeflaterOutputStream deflater;
+	protected Deflater deflater;
+	protected DeflaterOutputStream deflaterOS;
 	protected CodingMode codingMode;
 
 	protected int blockValues;
@@ -98,9 +99,14 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected OutputStream getStream() {
 		if (codingMode == CodingMode.COMPRESSION) {
-			deflater = new DeflaterOutputStream(os, new Deflater(
-					codingMode.getDeflateLevel(), true));
-			return deflater;
+			// reuse deflater
+			if (deflater == null) {
+				deflater = new Deflater(codingMode.getDeflateLevel(), true);
+			} else {
+				deflater.reset();
+			}
+			deflaterOS = new DeflaterOutputStream(os, deflater);
+			return deflaterOS;
 		} else {
 			assert (codingMode == CodingMode.PRE_COMPRESSION);
 			return os;
@@ -202,7 +208,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected void finalizeStream() throws IOException {
 		if (codingMode == CodingMode.COMPRESSION) {
-			deflater.finish();
+			deflaterOS.finish();
 		}
 		// else nothing to do
 	}

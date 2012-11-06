@@ -1426,58 +1426,58 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		return se;
 	}
 
-	// http://www.w3.org/TR/exi/#anyTypeGrammar
-	public static SchemaInformedFirstStartTagGrammar getUrTypeRule() {
-
-		SchemaInformedGrammar urType1 = new SchemaInformedElement();
-		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(
-				urType1);
-		urType0.setLabel("ur-type");
-
-		// Type ur-type, 0 :
-		// AT (*) Type ur-type, 0
-		// SE(*) Type ur-type, 1
-		// EE
-		// CH Type ur-type, 1
-		urType0.addProduction(ATTRIBUTE_GENERIC, urType0);
-		urType0.addProduction(START_ELEMENT_GENERIC, urType1);
-		urType0.addTerminalProduction(END_ELEMENT);
-		urType0.addProduction(CHARACTERS_GENERIC, urType1);
-		// // anyType is castable
-		// urType0.setTypeCastable(true);
-		// // types are NOT nillable
-		// urType0.setNillable(false);
-
-		// Type ur-type, 1 :
-		// SE(*) Type ur-type, 1
-		// EE
-		// CH Type ur-type, 1
-		urType1.addProduction(START_ELEMENT_GENERIC, urType1);
-		urType1.addTerminalProduction(END_ELEMENT);
-		urType1.addProduction(CHARACTERS_GENERIC, urType1);
-
-		// empty types
-		SchemaInformedGrammar emptyUrType1 = new SchemaInformedElement();
-		SchemaInformedFirstStartTagGrammar emptyUrType0 = new SchemaInformedFirstStartTag(
-				emptyUrType1);
-		// set type empty
-		urType0.setTypeEmpty(emptyUrType0);
-
-		// TypeEmpty ur-type, 0 :
-		// AT (*) TypeEmpty ur-type, 0
-		// EE
-		emptyUrType0.addProduction(ATTRIBUTE_GENERIC, emptyUrType0);
-		emptyUrType0.addTerminalProduction(END_ELEMENT);
-
-		// // anyType is castable
-		// emptyUrType0.setTypeCastable(true);
-
-		// TypeEmpty ur-type, 1 :
-		// EE
-		emptyUrType1.addTerminalProduction(END_ELEMENT);
-
-		return urType0;
-	}
+//	// http://www.w3.org/TR/exi/#anyTypeGrammar
+//	public static SchemaInformedFirstStartTagGrammar getUrTypeRule() {
+//
+//		SchemaInformedGrammar urType1 = new SchemaInformedElement();
+//		SchemaInformedFirstStartTag urType0 = new SchemaInformedFirstStartTag(
+//				urType1);
+//		urType0.setLabel("ur-type");
+//
+//		// Type ur-type, 0 :
+//		// AT (*) Type ur-type, 0
+//		// SE(*) Type ur-type, 1
+//		// EE
+//		// CH Type ur-type, 1
+//		urType0.addProduction(ATTRIBUTE_GENERIC, urType0);
+//		urType0.addProduction(START_ELEMENT_GENERIC, urType1);
+//		urType0.addTerminalProduction(END_ELEMENT);
+//		urType0.addProduction(CHARACTERS_GENERIC, urType1);
+//		// // anyType is castable
+//		// urType0.setTypeCastable(true);
+//		// // types are NOT nillable
+//		// urType0.setNillable(false);
+//
+//		// Type ur-type, 1 :
+//		// SE(*) Type ur-type, 1
+//		// EE
+//		// CH Type ur-type, 1
+//		urType1.addProduction(START_ELEMENT_GENERIC, urType1);
+//		urType1.addTerminalProduction(END_ELEMENT);
+//		urType1.addProduction(CHARACTERS_GENERIC, urType1);
+//
+//		// empty types
+//		SchemaInformedGrammar emptyUrType1 = new SchemaInformedElement();
+//		SchemaInformedFirstStartTagGrammar emptyUrType0 = new SchemaInformedFirstStartTag(
+//				emptyUrType1);
+//		// set type empty
+//		urType0.setTypeEmpty(emptyUrType0);
+//
+//		// TypeEmpty ur-type, 0 :
+//		// AT (*) TypeEmpty ur-type, 0
+//		// EE
+//		emptyUrType0.addProduction(ATTRIBUTE_GENERIC, emptyUrType0);
+//		emptyUrType0.addTerminalProduction(END_ELEMENT);
+//
+//		// // anyType is castable
+//		// emptyUrType0.setTypeCastable(true);
+//
+//		// TypeEmpty ur-type, 1 :
+//		// EE
+//		emptyUrType1.addTerminalProduction(END_ELEMENT);
+//
+//		return urType0;
+//	}
 
 	protected boolean isTypeCastable(XSTypeDefinition td) {
 
@@ -1563,16 +1563,16 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	protected SchemaInformedFirstStartTagGrammar translateComplexTypeDefinitionToFSA(
 			XSComplexTypeDefinition ctd) throws EXIException {
 
-		/*
-		 * anyType is special
-		 */
-		if (Constants.XSD_ANY_TYPE.equals(ctd.getName())
-				&& XMLConstants.W3C_XML_SCHEMA_NS_URI
-						.equals(ctd.getNamespace())) {
-			// ur-type
-			SchemaInformedFirstStartTagGrammar urType = getUrTypeRule();
-			return urType;
-		}
+//		/*
+//		 * anyType is special
+//		 */
+//		if (Constants.XSD_ANY_TYPE.equals(ctd.getName())
+//				&& XMLConstants.W3C_XML_SCHEMA_NS_URI
+//						.equals(ctd.getNamespace())) {
+//			// ur-type
+//			SchemaInformedFirstStartTagGrammar urType = getUrTypeRule();
+//			return urType;
+//		}
 
 		/*
 		 * Rule Content

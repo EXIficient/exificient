@@ -33,7 +33,7 @@ public abstract class AbstractGrammars implements Grammars {
 
 	private static final long serialVersionUID = 1328500655881102889L;
 
-	protected Grammar urTypeGrammar;
+//	protected Grammar urTypeGrammar;
 
 	/*
 	 * Document and Fragment Grammars
@@ -59,13 +59,13 @@ public abstract class AbstractGrammars implements Grammars {
 		return isSchemaInformed;
 	}
 
-	public Grammar getUrTypeGrammar() {
-		if (urTypeGrammar == null) {
-			urTypeGrammar = XSDGrammarsBuilder.getUrTypeRule();
-		}
-
-		return urTypeGrammar;
-	}
+//	public Grammar getUrTypeGrammar() {
+//		if (urTypeGrammar == null) {
+//			urTypeGrammar = XSDGrammarsBuilder.getUrTypeRule();
+//		}
+//
+//		return urTypeGrammar;
+//	}
 
 	public Grammar getDocumentGrammar() {
 		return documentGrammar;
