@@ -321,10 +321,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			String pfx = null;
 			if (this.preservePrefix) {
 				// XMLConstants.W3C_XML_SCHEMA_NS_URI == "http://www.w3.org/2001/XMLSchema"
-				EvolvingUriContext euc = encoderContext.getUriContext(3);
-				int numberOfPrefixes = euc.getNumberOfPrefixes();
-				if(numberOfPrefixes > 0) {
-					pfx = euc.getPrefix(0);
+				pfx = this.getPrefix(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				if(pfx == null) {
+					// no prefixes for XSD haven been declared so far
+					pfx = "xsdP";
+					this.encodeNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI, pfx);
 				}
 			}
 			QNameValue type = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI, "anyType", pfx);

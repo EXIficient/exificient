@@ -21,6 +21,7 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.exceptions.UnsupportedOption;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -87,18 +88,18 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// CODING MODE
 	static {
-		// CODING_MODE = CodingMode.BIT_PACKED;
+		CODING_MODE = CodingMode.BIT_PACKED;
 		// CODING_MODE = CodingMode.BYTE_PACKED;
 		// CODING_MODE = CodingMode.PRE_COMPRESSION;
-		CODING_MODE = CodingMode.COMPRESSION;
+		// CODING_MODE = CodingMode.COMPRESSION;
 	}
 
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createAll();
 		
 		// try {
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
@@ -125,7 +126,8 @@ public class QuickTestConfiguration {
 		// valuePartitionCapacity = 4;
 		// localValuePartitions = false;
 		// XSD_TYPES_ONLY = true;
-		// maximumNumberOfBuiltInProductions = 0;
+		maximumNumberOfBuiltInProductions = 0;
+		maximumNumberOfEvolvingBuiltInElementGrammars = 0;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");
