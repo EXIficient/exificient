@@ -22,7 +22,7 @@ import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.values.Value;
 
 public class ValueAndDatatype {
-	public Value value;
+	public final Value value;
 	public final Datatype datatype;
 	
 	public ValueAndDatatype(Value value, Datatype datatype) {

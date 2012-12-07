@@ -146,7 +146,7 @@ public abstract class AbstractEXIBodyCoder {
 		elementContext.nsDeclarations.add(nsDecl);
 	}
 
-	public final String getURI(String prefix) {
+	protected final String getURI(String prefix) {
 		// check all stack items except last one (in reverse order)
 		for (int i = elementContextStackIndex; i > 0; i--) {
 			ElementContext ec = elementContextStack[i];
@@ -159,6 +159,21 @@ public abstract class AbstractEXIBodyCoder {
 			}
 		}
 		return prefix.length() == 0 ? XMLConstants.NULL_NS_URI : null;
+	}
+	
+	protected final String getPrefix(String uri) {
+		// check all stack items except first one
+		for (int i = 1; i <= elementContextStackIndex; i++) {
+			ElementContext ec = elementContextStack[i];
+			if (ec.nsDeclarations != null) {
+				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+					if (ns.namespaceURI.equals(uri)) {
+						return ns.prefix;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	protected void pushElement(Grammar updContextGrammar, StartElement se) {

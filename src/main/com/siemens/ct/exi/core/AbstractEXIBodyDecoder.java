@@ -449,22 +449,6 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			attributePrefix = qnc.getDefaultPrefix();
 		}
 	}
-	
-
-	private final String getPrefix(String uri) {
-		// check all stack items except first one
-		for (int i = 1; i <= elementContextStackIndex; i++) {
-			ElementContext ec = elementContextStack[i];
-			if (ec.nsDeclarations != null) {
-				for (NamespaceDeclaration ns : ec.nsDeclarations) {
-					if (ns.namespaceURI.equals(uri)) {
-						return ns.prefix;
-					}
-				}
-			}
-		}
-		return null;
-	}
 
 	protected final void checkDefaultPrefixNamespaceDeclaration(
 			QNameContext qnc) {

@@ -154,7 +154,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// XSD source
 			String systemId = xsdLocation;
 			String publicId = null;
-			String baseSystemId = null;
+			String baseSystemId = null; // f.getParent();
 			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 					baseSystemId);
 			loadGrammars(xsdSource);
@@ -536,7 +536,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			throws XNIException {
 		schemaParsingErrors.add("[xs-warning] " + exception.getMessage());
 	}
-
+	
 	/*
 	 * Internal Helper Class: CMState
 	 */
