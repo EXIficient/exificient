@@ -246,6 +246,33 @@ public class BinaryTest extends AbstractTestCase {
 		assertTrue(byteDC.decodeNBitUnsignedIntegerValue(7).intValue() == 5);
 	}
 	
+	public void testBinary_3() throws IOException {
+		String s = "X";
+		
+		// Bit, not byte aligned, 1 byte only
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeNBitUnsignedInteger(2, 3);
+		bitEC.encodeBinary(s.getBytes());
+		bitEC.encodeNBitUnsignedInteger(5, 7);
+		bitEC.flush();
+		DecoderChannel bitDC = getBitDecoder();
+		assertTrue(bitDC.decodeNBitUnsignedIntegerValue(3).intValue() == 2);
+		String sDec = new String(bitDC.decodeBinary());
+		assertTrue(s.equals(sDec));
+		assertTrue(bitDC.decodeNBitUnsignedIntegerValue(7).intValue() == 5);
+		
+		// Byte
+		EncoderChannel byteEC = getByteEncoder();
+		byteEC.encodeNBitUnsignedInteger(2, 3);
+		byteEC.encodeBinary(s.getBytes());
+		byteEC.encodeNBitUnsignedInteger(5, 7);
+		DecoderChannel byteDC = getByteDecoder();
+		assertTrue(byteDC.decodeNBitUnsignedIntegerValue(3).intValue() == 2);
+		sDec = new String(byteDC.decodeBinary());
+		assertTrue(s.equals(sDec));
+		assertTrue(byteDC.decodeNBitUnsignedIntegerValue(7).intValue() == 5);
+	}
+	
 	public void testHexBinaryFailure1() throws IOException {
 		StringValue src = new StringValue("ZHM=");
 

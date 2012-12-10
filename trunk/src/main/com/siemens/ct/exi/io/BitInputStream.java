@@ -167,8 +167,7 @@ final public class BitInputStream {
 				if (capacity == 0) {
 					readBuffer();
 				}
-				result = (result << n) | (buffer >>> (BUFFER_CAPACITY - n));
-				capacity = BUFFER_CAPACITY - n;
+				result = (result << n) | (buffer >> (capacity = (BUFFER_CAPACITY - n)));
 			}
 		}
 
@@ -187,7 +186,7 @@ final public class BitInputStream {
 				.readBits(BUFFER_CAPACITY);
 	}
 
-	public void read(byte b[], int off, int len) throws IOException {
+	public void read(byte b[], int off, final int len) throws IOException {
 		assert (len >= 0);
 
 		if (len == 0) {
@@ -199,44 +198,12 @@ final public class BitInputStream {
 				readBytes += istream.read(b, readBytes, len - readBytes);
 			} while (readBytes < len);
 		} else {
-			int readBytes = 0;
-			final int shift1 = BUFFER_CAPACITY - capacity;
-			final int shift2 = capacity;
-
-			// get all bits from current buffer
-			int firstByte = buffer; // & (0xff >> shift1);
-
-			// read (len-1) full bytes at once
-			final int lenMinusOne = len - 1;
-
-			do {
-				// readBytes += istream.read(fullBytes, readBytes,
-				// lenMinusOne-readBytes);
-				readBytes += istream
-						.read(b, readBytes, lenMinusOne - readBytes);
-			} while (readBytes < lenMinusOne);
-
-			// get ready for remaining trailing bits
-			readBuffer();
-			b[lenMinusOne] = (byte) ((b[lenMinusOne - 1] << shift1) | ((0xff & buffer) >>> shift2));
-
-			// shift bytes
-			for (int i = lenMinusOne - 1; i > 0; i--) {
-				b[i] = (byte) ((b[i - 1] << shift1) | ((0xff & b[i]) >>> shift2));
+			final int shift = BUFFER_CAPACITY - capacity;
+			
+			for(int i=0; i<len; i++) {
+				b[i] = (byte) ((buffer << shift) | ((buffer = istream.read()) >> capacity));
 			}
 
-			// fix first byte in byte array
-			b[0] = (byte) ((firstByte << shift1) | ((0xff & b[0]) >>> shift2));
-
-			capacity = shift2; // new (old) capacity
 		}
 	}
-
-	// /**
-	// * Read and return the next byte without discarding current buffer.
-	// */
-	// public final int readDirectByte() throws IOException {
-	// return istream.read();
-	// }
-
 }
