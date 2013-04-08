@@ -762,17 +762,22 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			handleType(ed.getTypeDefinition());
 
 			// substitution group
-			XSObjectList subs = xsModel.getSubstitutionGroup(ed);
-			if (subs != null) {
-				for (int s = 0; s < subs.getLength(); s++) {
-					XSElementDeclaration sub = (XSElementDeclaration) subs
-							.get(s);
-					// name
-					checkEntry(sub.getNamespace(), sub.getName());
-					// type
-					handleType(sub.getTypeDefinition());
-				}
+			XSNamedMap globalElements = xsModel.getComponents(XSConstants.ELEMENT_DECLARATION);
+			// Note: no global elements in XSD cause error
+			if(globalElements!= null && globalElements.size() > 0) {
+				XSObjectList subs = xsModel.getSubstitutionGroup(ed);
+				if (subs != null) {
+					for (int s = 0; s < subs.getLength(); s++) {
+						XSElementDeclaration sub = (XSElementDeclaration) subs
+								.get(s);
+						// name
+						checkEntry(sub.getNamespace(), sub.getName());
+						// type
+						handleType(sub.getTypeDefinition());
+					}
+				}				
 			}
+
 		}
 
 		private void handleType(XSTypeDefinition td) {

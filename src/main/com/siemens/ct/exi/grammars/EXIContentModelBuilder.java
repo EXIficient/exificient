@@ -47,6 +47,7 @@ import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
 import org.apache.xerces.xs.XSModel;
 import org.apache.xerces.xs.XSModelGroup;
+import org.apache.xerces.xs.XSNamedMap;
 import org.apache.xerces.xs.XSObject;
 import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSParticle;
@@ -497,11 +498,15 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		listElements.add(el);
 
 		// add possible substitution group elements
-		XSObjectList listSG = xsModel.getSubstitutionGroup(el);
-		if (listSG != null && listSG.getLength() > 0) {
-			for (int i = 0; i < listSG.getLength(); i++) {
-				XSElementDeclaration ed = (XSElementDeclaration) listSG.item(i);
-				listElements.add(ed);
+		XSNamedMap globalElements = xsModel.getComponents(XSConstants.ELEMENT_DECLARATION);
+		// Note: no global elements in XSD cause error
+		if(globalElements!= null && globalElements.size() > 0) {
+			XSObjectList listSG = xsModel.getSubstitutionGroup(el);
+			if (listSG != null && listSG.getLength() > 0) {
+				for (int i = 0; i < listSG.getLength(); i++) {
+					XSElementDeclaration ed = (XSElementDeclaration) listSG.item(i);
+					listElements.add(ed);
+				}
 			}
 		}
 
