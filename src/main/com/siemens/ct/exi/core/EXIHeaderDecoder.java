@@ -124,7 +124,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 						.decodeNBitUnsignedInteger(NUMBER_OF_FORMAT_VERSION_BITS);
 				version += value;
 			} while (value == FORMAT_VERSION_CONTINUE_VALUE);
-			assert(version == 0);
+			assert (version == 0);
 
 			// [EXI Options] ?
 			EXIFactory exiFactory;
@@ -345,13 +345,15 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			SchemaIdResolver sir = f.getSchemaIdResolver();
 			f.setGrammars(sir.resolveSchemaId(schemaId));
 		} else if (PROFILE.equals(localName)) {
-			if(value.getValueType() == ValueType.DECIMAL) {
+			if (value.getValueType() == ValueType.DECIMAL) {
 				DecimalValue dv = (DecimalValue) value;
 				f.setLocalValuePartitions(dv.isNegative());
-				assert(dv.getIntegral().getValueType() == ValueType.INTEGER_INT);
-				f.setMaximumNumberOfEvolvingBuiltInElementGrammars(dv.getIntegral().intValue() - 1);
-				assert(dv.getRevFractional().getValueType() == ValueType.INTEGER_INT);
-				f.setMaximumNumberOfBuiltInProductions(dv.getRevFractional().intValue() - 1);
+				assert (dv.getIntegral().getValueType() == ValueType.INTEGER_INT);
+				f.setMaximumNumberOfEvolvingBuiltInElementGrammars(dv
+						.getIntegral().intValue() - 1);
+				assert (dv.getRevFractional().getValueType() == ValueType.INTEGER_INT);
+				f.setMaximumNumberOfBuiltInProductions(dv.getRevFractional()
+						.intValue() - 1);
 			}
 		}
 	}

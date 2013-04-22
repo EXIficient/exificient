@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.DecoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.values.BinaryBase64Value;
@@ -57,9 +57,8 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 		}
 	}
 
-	public Value readValue(DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
-			throws IOException {
+	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
 		return new BinaryBase64Value(valueChannel.decodeBinary());
 	}
 

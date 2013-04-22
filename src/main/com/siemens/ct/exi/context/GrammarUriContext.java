@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.context;
 
+import com.siemens.ct.exi.Constants;
+
 
 public class GrammarUriContext extends AbstractUriContext {
 
@@ -133,7 +135,7 @@ public class GrammarUriContext extends AbstractUriContext {
 				return i;
 			}
 		}
-		return -1;
+		return Constants.NOT_FOUND;
 	}
 
 }

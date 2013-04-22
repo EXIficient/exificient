@@ -28,17 +28,14 @@ package com.siemens.ct.exi.datatype.strings;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public interface StringEncoder extends StringCoder {
 
-	public void addValue(EncoderContext encoderContext, QNameContext qnContext,
-			String value);
+	public void addValue(QNameContext qnContext, String value);
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel, String value)
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel, String value)
 			throws IOException;
 
 	public boolean isStringHit(String value) throws IOException;

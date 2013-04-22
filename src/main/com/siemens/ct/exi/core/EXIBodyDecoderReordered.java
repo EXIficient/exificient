@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.DataFormatException;
@@ -32,12 +34,10 @@ import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.context.RuntimeQNameContextEntries;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.PreReadValue;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
-import com.siemens.ct.exi.core.container.ValueAndDatatype;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -98,6 +98,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	// content values
 	protected Map<QNameContext, PreReadValue> contentValues;
 
+
 	protected List<Value> xsiValues;
 	protected int xsiValueIndex;
 	protected List<String> xsiPrefixes;
@@ -106,7 +107,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	// deflate stuff
 	protected Inflater inflater;
 	protected InputStream recentInflaterInputStream;
-
+	
+	// Note: Map needs to be sorted to retrieve correct channel order (e.g., LinkedHashMap)
+	protected Map<QNameContext, List<Datatype>> channelDatatypes;
+	
+	protected Map<QNameContext, PreReadValue> preReadValues;
+	
 	protected boolean firstChannel;
 
 	protected InputStream is;
@@ -127,6 +133,11 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		nsEntries = new ArrayList<NamespaceDeclaration>();
 		processingEntries = new ArrayList<ProcessingInstruction>();
 
+		preReadValues = new HashMap<QNameContext, PreReadValue>();
+		
+		// Note: needs to be sorted map for channel order 
+		channelDatatypes = new LinkedHashMap<QNameContext, List<Datatype>>();
+		
 		// content values
 		contentValues = new HashMap<QNameContext, PreReadValue>();
 
@@ -167,6 +178,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		stillNoEndOfDocument = true;
 		lastBlockElementContext = null;
 
+		channelDatatypes.clear();
+		
 		// initialize block
 		initBlock();
 
@@ -186,7 +199,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		// contains value events (qnames) in right order
 		// plus necessary information to reconstruct value channels
-		decoderContext.initCompressionBlock();
+		initCompressionBlock();
 
 		// content values
 		contentValues.clear();
@@ -194,6 +207,24 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		xsiValueIndex = 0;
 		xsiPrefixes.clear();
 		xsiPrefixIndex = 0;
+	}
+	
+	protected void initCompressionBlock() {
+		// re-set all channels
+		this.channelDatatypes.clear();
+		
+		this.preReadValues.clear();
+	}
+	
+	protected void addDatatype(QNameContext qnc, Datatype d) {
+		List<Datatype> ds = this.channelDatatypes.get(qnc);
+		if(ds == null) {
+			// create new list
+			ds = new ArrayList<Datatype>();
+			// add to map (sorted due to linked hashmap)
+			channelDatatypes.put(qnc, ds);
+		} 
+		ds.add(d);
 	}
 
 	// @Override
@@ -256,10 +287,10 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	protected void handleSpecialAttributeCases() throws EXIException,
 			IOException {
-		if (decoderContext.getXsiTypeContext().equals(attributeQNameContext)) {
+		if (getXsiTypeContext().equals(attributeQNameContext)) {
 			// xsi:type
 			updateAttributeToXsiType();
-		} else if (decoderContext.getXsiNilContext().equals(
+		} else if (getXsiNilContext().equals(
 				attributeQNameContext)
 				&& getCurrentGrammar().isSchemaInformed()) {
 			// xsi:nil
@@ -364,7 +395,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				break;
 			case ATTRIBUTE:
 				Datatype dtAT = decodeAttributeStructure();
-				if (this.decoderContext.getXsiTypeContext().equals(
+				if (getXsiTypeContext().equals(
 						this.attributeQNameContext)) {
 					updateAttributeToXsiType();
 				} else {
@@ -465,84 +496,70 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		// qnameEntries.get(qnameEntries.size()-1) );
 		updateElementContext(lastBlockElementContext);
 	}
+	
 
 	protected void preReadBlockContent() throws EXIException {
 		try {
+			Iterator<QNameContext> iterCh = this.channelDatatypes.keySet().iterator();
+			
 			if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 				// single compressed stream (included structure)
-				List<QNameContext> order = decoderContext.getChannelOrders();
-				for (QNameContext o : order) {
-					RuntimeQNameContextEntries rqnce = decoderContext
-							.getRuntimeQNameContextEntries(o);
-					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
-
-					Value[] contentValues = new Value[lvd.size()];
-					for (int i = 0; i < lvd.size(); i++) {
-						ValueAndDatatype vd = lvd.get(i);
-						contentValues[i] = typeDecoder.readValue(vd.datatype,
-								decoderContext, o, channel);
+				
+				while(iterCh.hasNext()) {
+					QNameContext o = iterCh.next();
+					List<Datatype> ld = this.channelDatatypes.get(o);
+					Value[] contentValues = new Value[ld.size()];
+					for (int i = 0; i < ld.size(); i++) {
+						contentValues[i] = typeDecoder.readValue(ld.get(i),
+								o, channel, stringDecoder);
 					}
-
 					PreReadValue prv = new PreReadValue(contentValues);
-					rqnce.setPreReadValue(prv);
+					this.preReadValues.put(o, prv);
 				}
 			} else {
 				// first stream structure (already read)
-
 				// second stream (if any), values <= 100
 
 				DecoderChannel bdcLessEqual100 = null;
 
-				List<QNameContext> orderLeq100 = decoderContext
-						.getChannelOrders();
-				for (QNameContext o : orderLeq100) {
-					RuntimeQNameContextEntries rqnce = decoderContext
-							.getRuntimeQNameContextEntries(o);
-					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
-
-					if (lvd.size() <= Constants.MAX_NUMBER_OF_VALUES) {
-						Value[] contentValues = new Value[lvd.size()];
+				while(iterCh.hasNext()) {
+					QNameContext o = iterCh.next();
+					List<Datatype> ld = this.channelDatatypes.get(o);
+					if (ld.size() <= Constants.MAX_NUMBER_OF_VALUES) {
+						Value[] contentValues = new Value[ld.size()];
 						if (bdcLessEqual100 == null) {
 							bdcLessEqual100 = getNextChannel();
 						}
-						for (int i = 0; i < lvd.size(); i++) {
-							ValueAndDatatype vd = lvd.get(i);
+						for (int i = 0; i < ld.size(); i++) {
 							contentValues[i] = typeDecoder.readValue(
-									vd.datatype, decoderContext, o,
-									bdcLessEqual100);
+									ld.get(i), o, bdcLessEqual100,
+									stringDecoder);
 						}
 						PreReadValue prv = new PreReadValue(contentValues);
-						rqnce.setPreReadValue(prv);
+						this.preReadValues.put(o, prv);
 					}
-
 				}
 
 				// proper stream for greater100
-				List<QNameContext> orderGr100 = decoderContext
-						.getChannelOrders();
-				for (QNameContext o : orderGr100) {
-					RuntimeQNameContextEntries rqnce = decoderContext
-							.getRuntimeQNameContextEntries(o);
-					List<ValueAndDatatype> lvd = rqnce.getValuesAndDataypes();
-
-					if (lvd.size() > Constants.MAX_NUMBER_OF_VALUES) {
+				iterCh = this.channelDatatypes.keySet().iterator();
+				while(iterCh.hasNext()) {
+					QNameContext o = iterCh.next();
+					List<Datatype> ld = this.channelDatatypes.get(o);
+					if (ld.size() > Constants.MAX_NUMBER_OF_VALUES) {
 						DecoderChannel bdcGreater100 = getNextChannel();
-						Value[] contentValues = new Value[lvd.size()];
-						for (int i = 0; i < lvd.size(); i++) {
-							ValueAndDatatype vd = lvd.get(i);
+						Value[] contentValues = new Value[ld.size()];
+						for (int i = 0; i < ld.size(); i++) {
 							contentValues[i] = typeDecoder.readValue(
-									vd.datatype, decoderContext, o,
-									bdcGreater100);
+									ld.get(i), o, bdcGreater100,
+									stringDecoder);
 						}
 
 						PreReadValue prv = new PreReadValue(contentValues);
-						rqnce.setPreReadValue(prv);
+						this.preReadValues.put(o, prv);
 					}
 				}
 
 			}
-
-			// System.out.println("Block read finished");
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
@@ -557,8 +574,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 		for (int k = 0; k < occs; k++) {
 			Datatype dt = datatypes.get(k);
-			decodedValues[k] = typeDecoder.readValue(dt, decoderContext,
-					channelContext, bdc);
+			decodedValues[k] = typeDecoder.readValue(dt, channelContext, bdc,
+					stringDecoder);
 		}
 
 		// set content value
@@ -581,10 +598,8 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			throws EXIException, IOException {
 
 		blockValues--;
-
-		RuntimeQNameContextEntries rqnce = decoderContext
-				.getRuntimeQNameContextEntries(qname);
-		Value v = rqnce.getPreReadValue().getNextContantValue();
+		
+		Value v = this.preReadValues.get(qname).getNextContantValue();
 
 		return v;
 	}
@@ -606,8 +621,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	protected void incrementValues(QNameContext valueContext, Datatype datatype) {
 		blockValues++;
 
-		this.decoderContext.addValueAndDatatype(valueContext,
-				new ValueAndDatatype(null, datatype));
+		this.addDatatype(valueContext, datatype);
 	}
 
 	public void decodeStartDocument() {
@@ -649,7 +663,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	public QNameContext decodeAttributeXsiNil() throws EXIException,
 			IOException {
-		this.attributeQNameContext = decoderContext.getXsiNilContext();
+		this.attributeQNameContext = getXsiNilContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 		return attributeQNameContext;
@@ -657,7 +671,7 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	public QNameContext decodeAttributeXsiType() throws EXIException,
 			IOException {
-		this.attributeQNameContext = decoderContext.getXsiTypeContext();
+		this.attributeQNameContext = getXsiTypeContext();
 		attributePrefix = xsiPrefixes.get(xsiPrefixIndex++);
 		attributeValue = xsiValues.get(xsiValueIndex++);
 

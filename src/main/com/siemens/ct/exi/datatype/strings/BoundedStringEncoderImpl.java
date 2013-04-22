@@ -18,7 +18,8 @@
 
 package com.siemens.ct.exi.datatype.strings;
 
-import com.siemens.ct.exi.context.EncoderContext;
+import java.util.List;
+
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.values.StringValue;
 
@@ -58,14 +59,13 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 	}
 
 	@Override
-	public void addValue(EncoderContext coder, QNameContext context,
-			String value) {
+	public void addValue(QNameContext context, String value) {
 		// first: check "valueMaxLength"
 		if (valueMaxLength < 0 || value.length() <= valueMaxLength) {
 			// next: check "valuePartitionCapacity"
 			if (valuePartitionCapacity < 0) {
 				// no "valuePartitionCapacity" restriction
-				super.addValue(coder, context, value);
+				super.addValue(context, value);
 			} else
 			// If valuePartitionCapacity is not zero the string S is added
 			if (valuePartitionCapacity == 0) {
@@ -92,30 +92,37 @@ public class BoundedStringEncoderImpl extends StringEncoderImpl {
 				}
 
 				ValueContainer vc = new ValueContainer(value, context,
-						coder.getNumberOfStringValues(context), globalID);
+						getNumberOfStringValues(context), globalID);
 
 				if (stringValues.size() == valuePartitionCapacity) {
 					// full --> remove old value
 					ValueContainer vcFree = globalIdMapping[globalID];
 
 					// free local
-					if(this.localValuePartitions) {
-						coder.freeStringValue(vcFree.context,
-								vcFree.localValueID);	
-					}
+					this.freeStringValue(vcFree.context, vcFree.localValueID);
+					
 					// remove global
 					stringValues.remove(vcFree.value);
 				}
 
 				// add global
 				stringValues.put(value, vc);
+				
 				// add local
-				if(this.localValuePartitions) {
-					coder.addStringValue(context, new StringValue(value));
-				}
+				this.addLocalValue(context, new StringValue(value));
 
 				globalIdMapping[globalID] = vc;
 			}
+		}
+	}
+	
+	protected void freeStringValue(QNameContext qnc, int localValueID) {
+		if(this.localValuePartitions) {
+			 assert(localValues.get(qnc) != null);
+			List<StringValue> lvs = this.localValues.get(qnc);
+			assert(localValueID < lvs.size());
+			assert(lvs.get(localValueID) != null);
+			lvs.set(localValueID, null);
 		}
 	}
 

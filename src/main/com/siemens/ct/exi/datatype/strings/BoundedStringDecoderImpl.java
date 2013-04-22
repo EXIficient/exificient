@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.datatype.strings;
 
-import com.siemens.ct.exi.context.DecoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
@@ -68,14 +67,14 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 	}
 
 	@Override
-	public void addValue(DecoderContext coder, QNameContext context,
+	public void addValue(QNameContext context,
 			StringValue value) {
 		// first: check "valueMaxLength"
 		if (valueMaxLength < 0 || value.getCharactersLength() <= valueMaxLength) {
 			// next: check "valuePartitionCapacity"
 			if (valuePartitionCapacity < 0) {
 				// no "valuePartitionCapacity" restriction
-				super.addValue(coder, context, value);
+				super.addValue(context, value);
 			} else
 			// If valuePartitionCapacity is not zero the string S is added
 			if (valuePartitionCapacity == 0) {
@@ -117,11 +116,10 @@ public class BoundedStringDecoderImpl extends StringDecoderImpl {
 
 				if(localValuePartitions) {
 					// update local ID mapping
-					localIdMapping[globalID] = new LocalIDMap(
-							coder.getNumberOfStringValues(context), context);
+					localIdMapping[globalID] = new LocalIDMap(getNumberOfStringValues(context), context);
 
 					// local value
-					coder.addStringValue(context, value);					
+					addLocalValue(context, value);					
 				}
 			}
 		}

@@ -32,8 +32,6 @@ public interface UriContext {
 
 	public int getPrefixID(String prefix);
 
-	// public String getDefaultPrefix();
-
 	public QNameContext getQNameContext(int localNameID);
 
 	public QNameContext getQNameContext(String localName);

@@ -141,29 +141,52 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 					// EXI profile options
 					encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 							PROFILE, null);
-					if ( f.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_PROFILE_VALUES) ) {
-						QNameValue qnv = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal", null);
+					if (f.getEncodingOptions().isOptionEnabled(
+							EncodingOptions.INCLUDE_PROFILE_VALUES)) {
+						QNameValue qnv = new QNameValue(
+								XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal",
+								null);
 						encoder.encodeAttributeXsiType(qnv, null);
-						
+
 						/*
-						 * 1. The localValuePartitions parameter is encoded as the sign of the decimal value: the parameter is equal to 0 if the decimal value is positive and 1 if the decimal value is negative. 
+						 * 1. The localValuePartitions parameter is encoded as
+						 * the sign of the decimal value: the parameter is equal
+						 * to 0 if the decimal value is positive and 1 if the
+						 * decimal value is negative.
 						 */
 						boolean negative = f.isLocalValuePartitions();
 						/*
-						 * 2. The maximumNumberOfBuiltInElementGrammars parameter is represented by the first unsigned integer corresponding to integral portion of the decimal value: the maximumNumberOfBuiltInElementGrammars parameter is unbounded if the unsigned integer value is 0; otherwise it is equal to the unsigned integer value - 1.
+						 * 2. The maximumNumberOfBuiltInElementGrammars
+						 * parameter is represented by the first unsigned
+						 * integer corresponding to integral portion of the
+						 * decimal value: the
+						 * maximumNumberOfBuiltInElementGrammars parameter is
+						 * unbounded if the unsigned integer value is 0;
+						 * otherwise it is equal to the unsigned integer value -
+						 * 1.
 						 */
-						IntegerValue integral = IntegerValue.valueOf(1 + f.getMaximumNumberOfEvolvingBuiltInElementGrammars());
+						IntegerValue integral = IntegerValue
+								.valueOf(1 + f
+										.getMaximumNumberOfEvolvingBuiltInElementGrammars());
 						/*
-						 * 3. The maximumNumberOfBuiltInProductions parameter is represented by the second unsigned integer corresponding to the fractional portion in reverse order of the decimal value: the maximumNumberOfBuiltInProductions parameter is unbounded if the unsigned integer value is 0; otherwise it is equal to the unsigned integer value - 1.
+						 * 3. The maximumNumberOfBuiltInProductions parameter is
+						 * represented by the second unsigned integer
+						 * corresponding to the fractional portion in reverse
+						 * order of the decimal value: the
+						 * maximumNumberOfBuiltInProductions parameter is
+						 * unbounded if the unsigned integer value is 0;
+						 * otherwise it is equal to the unsigned integer value -
+						 * 1.
 						 */
-						IntegerValue revFractional = IntegerValue.valueOf(1 + f.getMaximumNumberOfBuiltInProductions());
-						
+						IntegerValue revFractional = IntegerValue.valueOf(1 + f
+								.getMaximumNumberOfBuiltInProductions());
+
 						DecimalValue dv = new DecimalValue(negative, integral,
 								revFractional);
 						encoder.encodeCharactersForce(dv);
-						
+
 					}
-					
+
 					encoder.encodeEndElement(); // p
 				}
 				/*

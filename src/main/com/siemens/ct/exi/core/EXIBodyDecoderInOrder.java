@@ -154,7 +154,8 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return decodeNamespaceDeclarationStructure();
 	}
 
-	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException,
+			IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_NIL);
 		decodeAttributeXsiNilStructure();
 
@@ -162,26 +163,26 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return this.attributeQNameContext;
 	}
 
-	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException,
+			IOException {
 		assert (nextEventType == EventType.ATTRIBUTE_XSI_TYPE);
 		decodeAttributeXsiTypeStructure();
 
-		return this.attributeQNameContext; 
+		return this.attributeQNameContext;
 	}
 
 	protected void readAttributeContent(Datatype dt) throws IOException {
-		attributeValue = typeDecoder.readValue(dt, decoderContext,
-				attributeQNameContext, channel);
+		attributeValue = typeDecoder.readValue(dt, attributeQNameContext,
+				channel, stringDecoder);
 	}
 
 	protected void readAttributeContent() throws IOException, EXIException {
-		if (attributeQNameContext.getNamespaceUriID() == decoderContext
-				.getXsiTypeContext().getNamespaceUriID()) {
+		if (attributeQNameContext.getNamespaceUriID() == getXsiTypeContext().getNamespaceUriID()) {
 			int localNameID = attributeQNameContext.getLocalNameID();
-			if (localNameID == decoderContext.getXsiTypeContext()
+			if (localNameID == getXsiTypeContext()
 					.getLocalNameID()) {
 				decodeAttributeXsiTypeStructure();
-			} else if (localNameID == decoderContext.getXsiTypeContext()
+			} else if (localNameID == getXsiTypeContext()
 					.getLocalNameID() && getCurrentGrammar().isSchemaInformed()) {
 				decodeAttributeXsiNilStructure();
 			} else {
@@ -204,8 +205,7 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		switch (this.nextEventType) {
 		case ATTRIBUTE:
 			Datatype dt = decodeAttributeStructure();
-			if (this.attributeQNameContext.equals(decoderContext
-					.getXsiTypeContext())) {
+			if (this.attributeQNameContext.equals(getXsiTypeContext())) {
 				decodeAttributeXsiTypeStructure();
 			} else {
 				readAttributeContent(dt);
@@ -260,8 +260,8 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		}
 
 		// structure & content
-		return typeDecoder.readValue(dt, decoderContext,
-				getElementContext().qnameContext, channel);
+		return typeDecoder.readValue(dt, getElementContext().qnameContext,
+				channel, stringDecoder);
 	}
 
 	public char[] decodeEntityReference() throws EXIException, IOException {

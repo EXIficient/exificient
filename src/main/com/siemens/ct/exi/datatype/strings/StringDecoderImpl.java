@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.siemens.ct.exi.context.DecoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
@@ -36,20 +35,21 @@ import com.siemens.ct.exi.values.StringValue;
  * @version 0.9.1
  */
 
-public class StringDecoderImpl implements StringDecoder {
+public class StringDecoderImpl  extends AbstractStringCoder implements StringDecoder {
 
 	// global values (all)
 	protected List<StringValue> globalValues;
 
-	// indicate whether local value partitions are used
-	protected final boolean localValuePartitions;
-
 	public StringDecoderImpl(boolean localValuePartitions) {
-		this.localValuePartitions = localValuePartitions;
+		this(localValuePartitions, DEFAULT_INITIAL_QNAME_LISTS);
+	}
+	
+	public StringDecoderImpl(boolean localValuePartitions, int initialQNameLists) {
+		super(localValuePartitions, initialQNameLists);
 		globalValues = new ArrayList<StringValue>();
 	}
 
-	public StringValue readValue(DecoderContext coder, QNameContext context,
+	public StringValue readValue(QNameContext context,
 			DecoderChannel valueChannel) throws IOException {
 		StringValue value;
 
@@ -59,7 +59,7 @@ public class StringDecoderImpl implements StringDecoder {
 		case 0:
 			// local value partition
 			if (localValuePartitions) {
-				value = this.readValueLocalHit(coder, context, valueChannel);
+				value = this.readValueLocalHit(context, valueChannel);
 			} else {
 				throw new IOException(
 						"EXI stream contains local-value hit even though profile options indicate otherwise.");
@@ -84,7 +84,7 @@ public class StringDecoderImpl implements StringDecoder {
 				// global
 				// value string table partition.
 				// addValue(context, value);
-				this.addValue(coder, context, value);
+				this.addValue(context, value);
 			} else {
 				value = StringCoder.EMPTY_STRING_VALUE;
 			}
@@ -97,14 +97,16 @@ public class StringDecoderImpl implements StringDecoder {
 		return value;
 	}
 
-	public StringValue readValueLocalHit(DecoderContext coder,
-			QNameContext context, DecoderChannel valueChannel)
+	public StringValue readValueLocalHit(
+			QNameContext qnc, DecoderChannel valueChannel)
 			throws IOException {
 		assert (localValuePartitions);
-		int n = MethodsBag.getCodingLength(coder
-				.getNumberOfStringValues(context));
+		int n = MethodsBag.getCodingLength(getNumberOfStringValues(qnc));
 		int localID = valueChannel.decodeNBitUnsignedInteger(n);
-		return coder.getStringValue(context, localID);
+		List<StringValue> lvs = localValues.get(qnc);
+		assert(lvs != null);
+		assert(localID < lvs.size());
+		return lvs.get(localID);
 	}
 
 	public final StringValue readValueGlobalHit(DecoderChannel valueChannel)
@@ -114,20 +116,20 @@ public class StringDecoderImpl implements StringDecoder {
 		return globalValues.get(globalID);
 	}
 
-	public void addValue(DecoderContext coder, QNameContext context,
+	public void addValue(QNameContext qnc,
 			StringValue value) {
 		// global
 		assert (!globalValues.contains(value));
 		globalValues.add(value);
 		
 		// local
-		if (localValuePartitions) {
-			coder.addStringValue(context, value);
-		}
+		this.addLocalValue(qnc, value);
 	}
 
 	public void clear() {
+		super.clear();
 		globalValues.clear();
 	}
+
 
 }

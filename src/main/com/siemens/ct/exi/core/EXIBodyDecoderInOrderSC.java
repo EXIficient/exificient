@@ -169,7 +169,8 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QNameContext decodeAttributeXsiNil() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiNil() throws EXIException,
+			IOException {
 		if (scDecoder == null) {
 			return super.decodeAttributeXsiNil();
 		} else {
@@ -178,7 +179,8 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 	}
 
 	@Override
-	public QNameContext decodeAttributeXsiType() throws EXIException, IOException {
+	public QNameContext decodeAttributeXsiType() throws EXIException,
+			IOException {
 		if (scDecoder == null) {
 			return super.decodeAttributeXsiType();
 		} else {

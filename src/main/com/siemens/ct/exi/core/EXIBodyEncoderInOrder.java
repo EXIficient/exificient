@@ -66,7 +66,8 @@ public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 
 	@Override
 	protected void writeValue(QNameContext valueContext) throws IOException {
-		typeEncoder.writeValue(encoderContext, valueContext, channel);
+		typeEncoder.writeValue(valueContext, channel,
+				stringEncoder);
 	}
 
 }

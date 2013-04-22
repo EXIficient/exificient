@@ -28,10 +28,6 @@ import org.junit.Test;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.context.DecoderContext;
-import com.siemens.ct.exi.context.DecoderContextImpl;
-import com.siemens.ct.exi.context.EncoderContext;
-import com.siemens.ct.exi.context.EncoderContextImpl;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.GrammarUriContext;
 import com.siemens.ct.exi.context.QNameContext;
@@ -64,28 +60,28 @@ public class StringTableTest extends AbstractTestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
+//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		/*
 		 * Encode
 		 */
 		StringEncoder stringEncoder = exiFactory.createStringEncoder();
-		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
 		TypeEncoder tes = exiFactory.createTypeEncoder(); //  new StringTypeEncoder();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val2));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncContext, bec);
+		tes.writeValue(qncContext, bec, stringEncoder);
 
 		bec.flush();
 		baos.flush();
@@ -95,22 +91,22 @@ public class StringTableTest extends AbstractTestCase {
 		 */
 		TypeDecoder ddl = exiFactory.createTypeDecoder(); //  new StringTypeDecoder(new StringDecoderImpl());
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
-		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+		// DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
 		
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncContext, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncContext, bdc, stringDecoder)
 				.toString().equals(val3));
 	}
 
@@ -133,30 +129,30 @@ public class StringTableTest extends AbstractTestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
+//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		/*
 		 * Encode
 		 */
 		StringEncoder stringEncoder = exiFactory.createStringEncoder();
-		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
 		TypeEncoder tes = exiFactory.createTypeEncoder(); //  new StringTypeEncoder();		
 		// StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
-		tes.writeValue(encoderContext, qncC1, bec);
+		tes.writeValue(qncC1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val2));
-		tes.writeValue(encoderContext, qncC3, bec);
+		tes.writeValue(qncC3, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val1));
-		tes.writeValue(encoderContext, qncC2, bec);
+		tes.writeValue(qncC2, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncC3, bec);
+		tes.writeValue(qncC3, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncC1, bec);
+		tes.writeValue(qncC1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(val3));
-		tes.writeValue(encoderContext, qncC3, bec);
+		tes.writeValue(qncC3, bec, stringEncoder);
 
 		bec.flush();
 		baos.flush();
@@ -166,23 +162,23 @@ public class StringTableTest extends AbstractTestCase {
 		 */
 		TypeDecoder ddl = exiFactory.createTypeDecoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
-		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+		// DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
 		// StringTypeDecoder ddl = new StringTypeDecoder(new StringDecoderImpl());
 		
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC1, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC1, bdc, stringDecoder).toString()
 				.equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC3, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC3, bdc, stringDecoder).toString()
 				.equals(val2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC2, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC2, bdc, stringDecoder).toString()
 				.equals(val1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC3, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC3, bdc, stringDecoder).toString()
 				.equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC1, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC1, bdc, stringDecoder).toString()
 				.equals(val3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncC3, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncC3, bdc, stringDecoder).toString()
 				.equals(val3));
 	}
 
@@ -212,7 +208,7 @@ public class StringTableTest extends AbstractTestCase {
 		String ch3 = "ch3";
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
+//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -220,32 +216,32 @@ public class StringTableTest extends AbstractTestCase {
 		 * Encode
 		 */
 		StringEncoder stringEncoder = exiFactory.createStringEncoder();
-		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
 		TypeEncoder tes = exiFactory.createTypeEncoder(); //  new StringTypeEncoder();	
 		// StringTypeEncoder tes = new StringTypeEncoder(new StringEncoderImpl());
 		
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(atCh1));
-		tes.writeValue(encoderContext, qncCa1, bec);
+		tes.writeValue(qncCa1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch1));
-		tes.writeValue(encoderContext, qncCexx1, bec);
+		tes.writeValue(qncCexx1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
-		tes.writeValue(encoderContext, qncCexx2, bec);
+		tes.writeValue(qncCexx2, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
-		tes.writeValue(encoderContext, qncCex2, bec);
+		tes.writeValue(qncCex2, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch3));
-		tes.writeValue(encoderContext, qncCex3, bec);
+		tes.writeValue(qncCex3, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(atCh2));
-		tes.writeValue(encoderContext, qncCa1, bec);
+		tes.writeValue(qncCa1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch1));
-		tes.writeValue(encoderContext, qncCexx1, bec);
+		tes.writeValue(qncCexx1, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
-		tes.writeValue(encoderContext, qncCexx2, bec);
+		tes.writeValue(qncCexx2, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch2));
-		tes.writeValue(encoderContext, qncCex2, bec);
+		tes.writeValue(qncCex2, bec, stringEncoder);
 		tes.isValid(BuiltIn.DEFAULT_DATATYPE, new StringValue(ch3));
-		tes.writeValue(encoderContext, qncCex2, bec);
+		tes.writeValue(qncCex2, bec, stringEncoder);
 
 		bec.flush();
 		baos.flush();
@@ -255,31 +251,31 @@ public class StringTableTest extends AbstractTestCase {
 		 */
 		TypeDecoder ddl = exiFactory.createTypeDecoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
-		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+		// DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
 		// StringTypeDecoder ddl = new StringTypeDecoder(new StringDecoderImpl());
 		
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCa1, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCa1, bdc, stringDecoder).toString()
 				.equals(atCh1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCexx1, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCexx1, bdc, stringDecoder)
 				.toString().equals(ch1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCexx2, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCexx2, bdc, stringDecoder)
 				.toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCex2, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCex2, bdc, stringDecoder)
 				.toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCex3, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCex3, bdc, stringDecoder)
 				.toString().equals(ch3));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCa1, bdc).toString()
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCa1, bdc, stringDecoder).toString()
 				.equals(atCh2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCexx1, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCexx1, bdc, stringDecoder)
 				.toString().equals(ch1));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCexx2, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCexx2, bdc, stringDecoder)
 				.toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCex2, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCex2, bdc, stringDecoder)
 				.toString().equals(ch2));
-		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, decoderContext, qncCex2, bdc)
+		assertTrue(ddl.readValue(BuiltIn.DEFAULT_DATATYPE, qncCex2, bdc, stringDecoder)
 				.toString().equals(ch3));
 	}
 
@@ -309,13 +305,13 @@ public class StringTableTest extends AbstractTestCase {
 		
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setValueMaxLength(valueMaxLength);
-		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
+//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 		
 		/*
 		 * Encode
 		 */
 		StringEncoder stringEncoder = exiFactory.createStringEncoder();
-		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
 		TypeEncoder tes = exiFactory.createTypeEncoder();
 //		StringEncoder se = new BoundedStringEncoderImpl(valueMaxLength,
 //				valuePartitionCapacity);
@@ -325,21 +321,21 @@ public class StringTableTest extends AbstractTestCase {
 
 		// a: 123
 		tes.isValid(dt, new StringValue(s3));
-		tes.writeValue(encoderContext, qncA, bec);
+		tes.writeValue(qncA, bec, stringEncoder);
 		// b: 1234
 		tes.isValid(dt, new StringValue(s4));
-		tes.writeValue(encoderContext, qncB, bec);
+		tes.writeValue(qncB, bec, stringEncoder);
 		// a: 12345
 		tes.isValid(dt, new StringValue(s5));
-		tes.writeValue(encoderContext, qncA, bec);
+		tes.writeValue(qncA, bec, stringEncoder);
 		// b: 123456 /* to large */
 		assertFalse(stringEncoder.isStringHit(s6));
 		tes.isValid(dt, new StringValue(s6));
-		tes.writeValue(encoderContext, qncB, bec);
+		tes.writeValue(qncB, bec, stringEncoder);
 		// a: 1234567 /* to large */
 		assertFalse(stringEncoder.isStringHit(s7));
 		tes.isValid(dt, new StringValue(s7));
-		tes.writeValue(encoderContext, qncA, bec);
+		tes.writeValue(qncA, bec, stringEncoder);
 
 		bec.flush();
 		baos.flush();
@@ -350,7 +346,7 @@ public class StringTableTest extends AbstractTestCase {
 		 */
 		TypeDecoder ddl = exiFactory.createTypeDecoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
-		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+//		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
 //		StringDecoder sd = new BoundedStringDecoderImpl(valueMaxLength,
 //				valuePartitionCapacity);
 //		StringTypeDecoder ddl = new StringTypeDecoder(sd);
@@ -358,11 +354,11 @@ public class StringTableTest extends AbstractTestCase {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(dt, decoderContext, qncA, bdc).toString().equals(s3));
-		assertTrue(ddl.readValue(dt, decoderContext, qncB, bdc).toString().equals(s4));
-		assertTrue(ddl.readValue(dt, decoderContext, qncA, bdc).toString().equals(s5));
-		assertTrue(ddl.readValue(dt, decoderContext, qncB, bdc).toString().equals(s6));
-		assertTrue(ddl.readValue(dt, decoderContext, qncA, bdc).toString().equals(s7));
+		assertTrue(ddl.readValue(dt, qncA, bdc, stringDecoder).toString().equals(s3));
+		assertTrue(ddl.readValue(dt, qncB, bdc, stringDecoder).toString().equals(s4));
+		assertTrue(ddl.readValue(dt, qncA, bdc, stringDecoder).toString().equals(s5));
+		assertTrue(ddl.readValue(dt, qncB, bdc, stringDecoder).toString().equals(s6));
+		assertTrue(ddl.readValue(dt, qncA, bdc, stringDecoder).toString().equals(s7));
 	}
 	
 	@Test
@@ -391,14 +387,14 @@ public class StringTableTest extends AbstractTestCase {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setValueMaxLength(valueMaxLength);
 		exiFactory.setValuePartitionCapacity(valuePartitionCapacity);
-		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
+//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
 
 		Datatype dt = BuiltIn.DEFAULT_DATATYPE;
 		/*
 		 * Encode
 		 */
 		StringEncoder stringEncoder = exiFactory.createStringEncoder();
-		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
+//		EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
 		TypeEncoder tes = exiFactory.createTypeEncoder();
 //		StringEncoder se = new BoundedStringEncoderImpl(valueMaxLength,
 //				valuePartitionCapacity);
@@ -410,30 +406,30 @@ public class StringTableTest extends AbstractTestCase {
 
 		// a: 1
 		tes.isValid(dt, new StringValue(s1));
-		tes.writeValue(encoderContext, qncQa, bec); // ["1"{a}]
+		tes.writeValue(qncQa, bec, stringEncoder); // ["1"{a}]
 		// b: 12
 		tes.isValid(dt, new StringValue(s2));
-		tes.writeValue(encoderContext, qncQb, bec);  // ["1"{a},"12"{b}]
+		tes.writeValue(qncQb, bec, stringEncoder);  // ["1"{a},"12"{b}]
 		// a: 123
 		tes.isValid(dt, new StringValue(s3));
-		tes.writeValue(encoderContext, qncQa, bec); // ["1"{a},"12"{b},"123"{a}]
+		tes.writeValue(qncQa, bec, stringEncoder); // ["1"{a},"12"{b},"123"{a}]
 		// c: 123 /* global hit */
 		tes.isValid(dt, new StringValue(s3));
-		tes.writeValue(encoderContext, qncQc, bec); // ["1","12","123"]
+		tes.writeValue(qncQc, bec, stringEncoder); // ["1","12","123"]
 		// c: 1234
 		tes.isValid(dt, new StringValue(s4));
-		tes.writeValue(encoderContext, qncQc, bec); // ["1234","12","123"]
+		tes.writeValue(qncQc, bec, stringEncoder); // ["1234","12","123"]
 		// a: 1 /* no local hit due to valuePartitionCapacity*/
 		assertFalse(stringEncoder.isStringHit(s1));
 		tes.isValid(dt, new StringValue(s1));
-		tes.writeValue(encoderContext, qncQa, bec);	 // ["1234","1","123"]
+		tes.writeValue(qncQa, bec, stringEncoder);	 // ["1234","1","123"]
 		// c: 1 /* no local hit due to valuePartitionCapacity*/
 		assertTrue(stringEncoder.isStringHit(s4));
 		assertTrue(stringEncoder.isStringHit(s1));
 		assertTrue(stringEncoder.isStringHit(s3));
 		assertFalse(stringEncoder.isStringHit(s2));
 		tes.isValid(dt, new StringValue(s2));
-		tes.writeValue(encoderContext, qncQc, bec); 	 // ["1234","1","12"]
+		tes.writeValue(qncQc, bec, stringEncoder); 	 // ["1234","1","12"]
 		assertTrue(stringEncoder.isStringHit(s4));
 		assertTrue(stringEncoder.isStringHit(s1));
 		assertTrue(stringEncoder.isStringHit(s2));
@@ -446,7 +442,7 @@ public class StringTableTest extends AbstractTestCase {
 		 */
 		TypeDecoder ddl = exiFactory.createTypeDecoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
-		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
+//		DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
 //		StringTypeDecoder ddl = new StringTypeDecoder(
 //				new BoundedStringDecoderImpl(valueMaxLength,
 //						valuePartitionCapacity));
@@ -454,13 +450,13 @@ public class StringTableTest extends AbstractTestCase {
 		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
 				baos.toByteArray()));
 
-		assertTrue(ddl.readValue(dt, decoderContext, qncQa, bdc).toString().equals(s1));
-		assertTrue(ddl.readValue(dt, decoderContext, qncQb, bdc).toString().equals(s2));
-		assertTrue(ddl.readValue(dt, decoderContext, qncQa, bdc).toString().equals(s3));
-		assertTrue(ddl.readValue(dt, decoderContext, qncQc, bdc).toString().equals(s3)); /* global hit */
-		assertTrue(ddl.readValue(dt, decoderContext, qncQc, bdc).toString().equals(s4)); /* replaces values */
-		assertTrue(ddl.readValue(dt, decoderContext, qncQa, bdc).toString().equals(s1)); /* no local hit*/
-		assertTrue(ddl.readValue(dt, decoderContext, qncQc, bdc).toString().equals(s2)); /* no local hit*/
+		assertTrue(ddl.readValue(dt, qncQa, bdc, stringDecoder).toString().equals(s1));
+		assertTrue(ddl.readValue(dt, qncQb, bdc, stringDecoder).toString().equals(s2));
+		assertTrue(ddl.readValue(dt, qncQa, bdc, stringDecoder).toString().equals(s3));
+		assertTrue(ddl.readValue(dt, qncQc, bdc, stringDecoder).toString().equals(s3)); /* global hit */
+		assertTrue(ddl.readValue(dt, qncQc, bdc, stringDecoder).toString().equals(s4)); /* replaces values */
+		assertTrue(ddl.readValue(dt, qncQa, bdc, stringDecoder).toString().equals(s1)); /* no local hit*/
+		assertTrue(ddl.readValue(dt, qncQc, bdc, stringDecoder).toString().equals(s2)); /* no local hit*/
 	}
 
 	@Test

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.util.MethodsBag;
@@ -36,20 +35,21 @@ import com.siemens.ct.exi.values.StringValue;
  * @version 0.9.1
  */
 
-public class StringEncoderImpl implements StringEncoder {
-
+public class StringEncoderImpl extends AbstractStringCoder implements StringEncoder {
+	
 	// strings (all)
 	protected Map<String, ValueContainer> stringValues;
-
-	// indicate whether local value partitions are used
-	protected final boolean localValuePartitions;
 	
 	public StringEncoderImpl(boolean localValuePartitions) {
-		this.localValuePartitions = localValuePartitions;
+		this(localValuePartitions, DEFAULT_INITIAL_QNAME_LISTS);
+	}
+	
+	public StringEncoderImpl(boolean localValuePartitions, int initialQNameLists) {
+		super(localValuePartitions, initialQNameLists);
 		stringValues = new HashMap<String, ValueContainer>();
 	}
-
-	public void writeValue(EncoderContext coder, QNameContext context,
+	
+	public void writeValue(QNameContext context,
 			EncoderChannel valueChannel, String value) throws IOException {
 
 		ValueContainer vc = stringValues.get(value);
@@ -63,8 +63,7 @@ public class StringEncoderImpl implements StringEncoder {
 				 * string value in the "local" value partition
 				 */
 				valueChannel.encodeUnsignedInteger(0);
-				int numberBitsLocal = MethodsBag.getCodingLength(coder
-						.getNumberOfStringValues(context));
+				int numberBitsLocal = MethodsBag.getCodingLength(getNumberOfStringValues(context));
 				valueChannel.encodeNBitUnsignedInteger(vc.localValueID, numberBitsLocal);
 			} else {
 				/*
@@ -94,7 +93,7 @@ public class StringEncoderImpl implements StringEncoder {
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the
 				// global value string table partition.
-				addValue(coder, context, value);
+				addValue(context, value);
 			}
 		}
 
@@ -104,24 +103,24 @@ public class StringEncoderImpl implements StringEncoder {
 	public boolean isStringHit(String value) throws IOException {
 		return (stringValues.get(value) != null);
 	}
+	
 
-	public void addValue(EncoderContext coder, QNameContext context,
-			String value) {
+	public void addValue(QNameContext qnc, String value) {
 		assert (!stringValues.containsKey(value));
 
-		ValueContainer vc = new ValueContainer(value, context,
-				coder.getNumberOfStringValues(context), stringValues.size());
+		ValueContainer vc = new ValueContainer(value, qnc,
+				getNumberOfStringValues(qnc), stringValues.size());
 
 		// global context
 		stringValues.put(value, vc);
 
 		// local context
-		if(localValuePartitions) {
-			coder.addStringValue(context, new StringValue(value));
-		}
+		this.addLocalValue(qnc, new StringValue(value));
+
 	}
 
 	public void clear() {
+		super.clear();
 		stringValues.clear();
 	}
 
@@ -146,5 +145,6 @@ public class StringEncoderImpl implements StringEncoder {
 					+ "]";
 		}
 	}
+
 
 }

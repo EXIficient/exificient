@@ -20,9 +20,9 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -52,8 +52,7 @@ public interface TypeEncoder extends TypeCoder {
 	 * @param valueChannel
 	 * @throws IOException
 	 */
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException;
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException;
 
 }

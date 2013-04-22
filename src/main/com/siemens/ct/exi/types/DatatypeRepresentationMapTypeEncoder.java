@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
@@ -61,10 +61,9 @@ public class DatatypeRepresentationMapTypeEncoder extends
 				: recentDtrDataype, value);
 	}
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException {
-		defaultEncoder.writeValue(encoderContext, qnContext, valueChannel);
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		defaultEncoder.writeValue(qnContext, valueChannel, stringEncoder);
 	}
 
 }
