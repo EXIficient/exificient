@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.datatype.strings;
 
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.values.StringValue;
 
 /**
@@ -33,6 +34,10 @@ public interface StringCoder {
 
 	public static final StringValue EMPTY_STRING_VALUE = new StringValue(
 			Constants.EMPTY_STRING);
+	
+	public static final int DEFAULT_INITIAL_QNAME_LISTS = 60;
 
+	public int getNumberOfStringValues(QNameContext qnc);
+	
 	public void clear();
 }

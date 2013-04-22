@@ -234,18 +234,18 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		assertTrue(datatype.isValid(sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		datatype.writeValue(null, null, bitEC);
+		datatype.writeValue(null, bitEC, null);
 		bitEC.flush();
 		// byte
-		datatype.writeValue(null, null, getByteEncoder());
+		datatype.writeValue(null, getByteEncoder(), null);
 
 		// read
 		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(null, null, getBitDecoder());
+		sDecoded = datatype.readValue(null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(null, null, getByteDecoder());
+		sDecoded = datatype.readValue(null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
@@ -269,18 +269,18 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		assertTrue(datatype.isValid(sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		datatype.writeValue(null, null, bitEC);
+		datatype.writeValue(null, bitEC, null);
 		bitEC.flush();
 		// byte
-		datatype.writeValue(null, null, getByteEncoder());
+		datatype.writeValue(null, getByteEncoder(), null);
 
 		// read
 		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(null, null, getBitDecoder());
+		sDecoded = datatype.readValue(null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(null, null, getByteDecoder());
+		sDecoded = datatype.readValue(null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 

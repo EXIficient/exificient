@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.DecoderContext;
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -84,9 +84,8 @@ public class ListDatatype extends AbstractDatatype {
 		}
 	}
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException {
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
 
 		// length prefixed sequence of values
 		Value[] values = listValues.toValues();
@@ -98,20 +97,19 @@ public class ListDatatype extends AbstractDatatype {
 			if (!valid) {
 				throw new RuntimeException("ListValue is not valid, " + v);
 			}
-			listDatatype.writeValue(encoderContext, qnContext, valueChannel);
+			listDatatype.writeValue(qnContext, valueChannel, stringEncoder);
 		}
 	}
-	
-	public Value readValue(DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
-			throws IOException {
+
+	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
 
 		int len = valueChannel.decodeUnsignedInteger();
 		Value[] values = new Value[len];
 
 		for (int i = 0; i < len; i++) {
-			values[i] = listDatatype.readValue(decoderContext, qnContext,
-					valueChannel);
+			values[i] = listDatatype.readValue(qnContext, valueChannel,
+					stringDecoder);
 		}
 
 		return new ListValue(values, listDatatype);

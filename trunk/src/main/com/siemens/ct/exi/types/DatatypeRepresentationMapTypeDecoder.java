@@ -22,9 +22,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.DecoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -53,13 +53,13 @@ public class DatatypeRepresentationMapTypeDecoder extends
 		this.defaultDecoder = defaultDecoder;
 	}
 
-	public Value readValue(Datatype datatype, DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
+	public Value readValue(Datatype datatype, QNameContext qnContext,
+			DecoderChannel valueChannel, StringDecoder stringDecoder)
 			throws IOException {
 		QName schemaType = datatype.getSchemaType();
 		Datatype recentDtrDataype = dtrMap.get(schemaType);
 		return defaultDecoder.readValue(recentDtrDataype == null ? datatype
-				: recentDtrDataype, decoderContext, qnContext, valueChannel);
+				: recentDtrDataype, qnContext, valueChannel, stringDecoder);
 	}
 
 }

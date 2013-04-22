@@ -22,10 +22,10 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.DecoderContext;
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -51,7 +51,8 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 	protected final IntegerValue upperBound;
 	protected final int numberOfBits4Range;
 
-	public NBitUnsignedIntegerDatatype(IntegerValue lowerBound, IntegerValue upperBound, QName schemaType) {
+	public NBitUnsignedIntegerDatatype(IntegerValue lowerBound,
+			IntegerValue upperBound, QName schemaType) {
 		super(BuiltInType.NBIT_UNSIGNED_INTEGER, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 
@@ -102,17 +103,15 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 				.compareTo(upperBound) <= 0);
 	}
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException {
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
 		IntegerValue iv = validValue.subtract(lowerBound);
 		valueChannel.encodeNBitUnsignedInteger(iv.intValue(),
 				numberOfBits4Range);
 	}
 
-	public Value readValue(DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
-			throws IOException {
+	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
 		IntegerValue iv = valueChannel
 				.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
 		return iv.add(lowerBound);

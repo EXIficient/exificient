@@ -22,10 +22,10 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.DecoderContext;
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
@@ -55,33 +55,28 @@ public class StringDatatype extends AbstractDatatype {
 		return true;
 	}
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException {
-		encoderContext.getStringEncoder().writeValue(encoderContext, qnContext,
-				valueChannel, lastValue);
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		stringEncoder.writeValue(qnContext, valueChannel, lastValue);
 	}
 
 	@Override
 	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			EncoderContext encoderContext, QNameContext qnContext,
-			EncoderChannel valueChannel) throws IOException {
-		encoderContext.getStringEncoder().writeValue(encoderContext, qnContext,
-				valueChannel, this.lastRCSValue.toString());
+			QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		stringEncoder.writeValue(qnContext, valueChannel,
+				this.lastRCSValue.toString());
 	}
 
-	public Value readValue(DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
-			throws IOException {
-		return decoderContext.getStringDecoder().readValue(decoderContext,
-				qnContext, valueChannel);
+	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
+		return stringDecoder.readValue(qnContext, valueChannel);
 	}
 
 	@Override
 	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			DecoderContext decoderContext, QNameContext qnContext,
-			DecoderChannel valueChannel) throws IOException {
-		return decoderContext.getStringDecoder().readValue(decoderContext,
-				qnContext, valueChannel);
+			QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
+		return stringDecoder.readValue(qnContext, valueChannel);
 	}
 }

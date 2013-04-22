@@ -60,7 +60,8 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 	protected final QNameContext qncXsdInteger;
 
 	public AbstractRepresentationMapTypeCoder(QName[] dtrMapTypes,
-			QName[] dtrMapRepresentations, Grammars grammar) throws EXIException {
+			QName[] dtrMapRepresentations, Grammars grammar)
+			throws EXIException {
 		this.grammar = grammar;
 		dtrMap = new HashMap<QName, Datatype>();
 

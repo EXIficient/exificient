@@ -23,8 +23,6 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.context.DecoderContext;
-import com.siemens.ct.exi.context.EncoderContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
@@ -75,13 +73,10 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		return true;
 	}
 
-	public void writeValue(EncoderContext encoderContext,
-			QNameContext qnContext, EncoderChannel valueChannel)
-			throws IOException {
-		StringEncoder stringEncoder = encoderContext.getStringEncoder();
+	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
 		if (stringEncoder.isStringHit(lastValidValue)) {
-			stringEncoder.writeValue(encoderContext, qnContext, valueChannel,
-					lastValidValue);
+			stringEncoder.writeValue(qnContext, valueChannel, lastValidValue);
 		} else {
 			// NO local or global value hit
 			// string-table miss ==> restricted character
@@ -116,25 +111,21 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				// After encoding the string value, it is added to both the
 				// associated "local" value string table partition and the
 				// global value string table partition.
-				stringEncoder.addValue(encoderContext, qnContext,
-						lastValidValue);
+				stringEncoder.addValue(qnContext, lastValidValue);
 			}
 		}
 	}
 
-	public Value readValue(DecoderContext decoderContext,
-			QNameContext qnContext, DecoderChannel valueChannel)
-			throws IOException {
+	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
+			StringDecoder stringDecoder) throws IOException {
 
-		StringDecoder stringDecoder = decoderContext.getStringDecoder();
 		StringValue value;
 
 		int i = valueChannel.decodeUnsignedInteger();
 
 		if (i == 0) {
 			// local value partition
-			value = stringDecoder.readValueLocalHit(decoderContext, qnContext,
-					valueChannel);
+			value = stringDecoder.readValueLocalHit(qnContext, valueChannel);
 		} else if (i == 1) {
 			// found in global value partition
 			value = stringDecoder.readValueGlobalHit(valueChannel);
@@ -173,7 +164,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 				// associated "local" value string table partition and the
 				// global
 				// value string table partition.
-				stringDecoder.addValue(decoderContext, qnContext, value);
+				stringDecoder.addValue(qnContext, value);
 			} else {
 				value = StringCoder.EMPTY_STRING_VALUE;
 			}

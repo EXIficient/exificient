@@ -2,7 +2,11 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -37,11 +41,17 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	protected Value lastValue;
 	protected Datatype lastDatatype;
+	
+	// Note: Map needs to be sorted to retrieve correct channel order (e.g., LinkedHashMap)
+	protected Map<QNameContext, List<ValueAndDatatype>> channelValuesAndDatatypes;
 
 	public EXIBodyEncoderReordered(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
 
 		this.codingMode = exiFactory.getCodingMode();
+		
+		// Note: needs to be sorted map for channel order 
+		channelValuesAndDatatypes = new LinkedHashMap<QNameContext, List<ValueAndDatatype>>();
 	}
 
 	@Override
@@ -49,12 +59,26 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		super.initForEachRun();
 
 		blockValues = 0;
+		
+		channelValuesAndDatatypes.clear();
 	}
 
 	protected void initBlock() {
 		blockValues = 0;
-
-		encoderContext.initCompressionBlock();
+		
+		// re-set all channels
+		this.channelValuesAndDatatypes.clear();
+	}
+	
+	protected void addValueAndDatatype(QNameContext qnc, ValueAndDatatype vd) {
+		List<ValueAndDatatype> vds = this.channelValuesAndDatatypes.get(qnc);
+		if(vds == null) {
+			// create new list
+			vds = new ArrayList<ValueAndDatatype>();
+			// add to map (sorted due to linked hashmap)
+			channelValuesAndDatatypes.put(qnc, vds);
+		} 
+		vds.add(vd);
 	}
 
 	public void setOutputStream(OutputStream os) throws EXIException,
@@ -80,7 +104,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 
 	@Override
 	protected void writeValue(QNameContext valueContext) throws IOException {
-		encoderContext.addValueAndDatatype(valueContext, new ValueAndDatatype(
+		addValueAndDatatype(valueContext, new ValueAndDatatype(
 				lastValue, lastDatatype));
 
 		// new block goes directly after value
@@ -122,7 +146,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		 * of the stream.
 		 */
 		if (channel.getLength() == 0) {
-			// empty block -> no deflate stream so..
+			// empty block -> no deflate stream ...
 		}
 		/*
 		 * If the block contains at most 100 values, the block will contain only
@@ -134,13 +158,14 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 		else if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
 			// 1. structure stream already written
 			// 2. value channels in order
-			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
-				List<ValueAndDatatype> lvd = encoderContext
-						.getValueAndDatatypes(contextOrder);
+			Iterator<QNameContext> iterCh = this.channelValuesAndDatatypes.keySet().iterator();
+			while(iterCh.hasNext()) {
+				QNameContext contextOrder = iterCh.next();
+				List<ValueAndDatatype> lvd = channelValuesAndDatatypes.get(contextOrder);
 				for (ValueAndDatatype vd : lvd) {
 					typeEncoder.isValid(vd.datatype, vd.value);
-					typeEncoder.writeValue(encoderContext, contextOrder,
-							channel);
+					typeEncoder.writeValue(contextOrder, channel,
+							stringEncoder);
 				}
 			}
 
@@ -169,14 +194,15 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			EncoderChannel leq100 = new ByteEncoderChannel(getStream());
 			boolean wasThereLeq100 = false;
 
-			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
-				List<ValueAndDatatype> lvd = encoderContext
-						.getValueAndDatatypes(contextOrder);
+			Iterator<QNameContext> iterCh = this.channelValuesAndDatatypes.keySet().iterator();
+			while(iterCh.hasNext()) {
+				QNameContext contextOrder = iterCh.next();
+				List<ValueAndDatatype> lvd = channelValuesAndDatatypes.get(contextOrder);
 				if (lvd.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 					for (ValueAndDatatype vd : lvd) {
 						typeEncoder.isValid(vd.datatype, vd.value);
-						typeEncoder.writeValue(encoderContext, contextOrder,
-								leq100);
+						typeEncoder.writeValue(contextOrder, leq100,
+								stringEncoder);
 					}
 					wasThereLeq100 = true;
 				}
@@ -187,16 +213,17 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			}
 
 			// all value channels having more than 100 values
-			for (QNameContext contextOrder : encoderContext.getChannelOrders()) {
-				List<ValueAndDatatype> lvd = encoderContext
-						.getValueAndDatatypes(contextOrder);
+			iterCh = this.channelValuesAndDatatypes.keySet().iterator();
+			while(iterCh.hasNext()) {
+				QNameContext contextOrder = iterCh.next();
+				List<ValueAndDatatype> lvd = channelValuesAndDatatypes.get(contextOrder);
 				if (lvd.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					// create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
 					for (ValueAndDatatype vd : lvd) {
 						typeEncoder.isValid(vd.datatype, vd.value);
-						typeEncoder.writeValue(encoderContext, contextOrder,
-								gre100);
+						typeEncoder.writeValue(contextOrder, gre100,
+								stringEncoder);
 					}
 					// finish stream
 					finalizeStream();
@@ -216,9 +243,7 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 	@Override
 	public void flush() throws IOException {
 		// close remaining block (if any)
-		if (encoderContext != null) {
-			closeBlock();
-		}
+		closeBlock();
 
 		// finalize document
 		os.flush();
