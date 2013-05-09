@@ -350,6 +350,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
 			IOException {
+		// TODO Debug check for EXI profile consistency ?
+		
 	}
 
 	protected final QNameContext decodeStartElementStructure()

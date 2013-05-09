@@ -50,6 +50,10 @@ public class SchemaInformedFragmentContent extends AbstractSchemaInformedGrammar
 		this();
 		setLabel(label);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.SCHEMA_INFORMED_FRAGMENT_CONTENT;
+	}
 
 	public String toString() {
 		return "FragmentContent" + super.toString();

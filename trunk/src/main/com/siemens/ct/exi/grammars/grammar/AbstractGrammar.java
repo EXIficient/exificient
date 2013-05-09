@@ -91,6 +91,9 @@ public abstract class AbstractGrammar implements Grammar {
 
 	public void learnCharacters() {
 	}
+	
+	public void stopLearning() {
+	}
 
 	public void setLabel(String label) {
 		this.label = label;

@@ -45,6 +45,10 @@ public class Fragment extends AbstractSchemaInformedGrammar {
 		this();
 		this.setLabel(label);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.FRAGMENT;
+	}
 
 	public String toString() {
 		return "Fragment" + super.toString();

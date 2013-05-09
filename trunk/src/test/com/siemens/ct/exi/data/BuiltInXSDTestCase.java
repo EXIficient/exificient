@@ -30,8 +30,8 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 	}
 
 	public static void setupQuickTest() {
-		setConfigurationBuiltInXSDIntVal ( );
-		// setConfigurationBuiltInXSDIntVal2 ( );
+		// setConfigurationBuiltInXSDIntVal ( );
+		setConfigurationBuiltInXSDIntVal2 ( );
 		// setConfigurationBuiltInXSDFloatVal ( );
 	}
 

@@ -61,6 +61,10 @@ public class BuiltInStartTag extends AbstractBuiltInContent {
 		// initialize elementContent
 		elementContent = new BuiltInElement();
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.BUILT_IN_START_TAG_CONTENT;
+	}
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {

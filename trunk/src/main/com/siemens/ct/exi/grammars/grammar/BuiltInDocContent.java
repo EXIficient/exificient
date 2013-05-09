@@ -54,6 +54,10 @@ public class BuiltInDocContent extends AbstractBuiltInGrammar {
 		this(docEnd);
 		this.setLabel(label);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.BUILT_IN_DOC_CONTENT;
+	}
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {

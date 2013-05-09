@@ -94,7 +94,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		
 		ef.setLocalValuePartitions(tco.isLocalValuePartitions());
 		ef.setMaximumNumberOfBuiltInProductions(tco.getMaximumNumberOfBuiltInProductions());
-		ef.setMaximumNumberOfEvolvingBuiltInElementGrammars(tco.getMaximumNumberOfEvolvingBuiltInElementGrammars());
+		ef.setMaximumNumberOfBuiltInElementGrammars(tco.getMaximumNumberOfEvolvingBuiltInElementGrammars());
 		
 //		if (tco.getProfile() != null) {
 //			ef.setProfile(tco.getProfile());

@@ -41,6 +41,11 @@ public interface Grammar extends Serializable {
 	 * rule created according to schema information
 	 */
 	public boolean isSchemaInformed();
+	
+	/*
+	 * Retrieve grammar type
+	 */
+	public GrammarType getGrammarType();
 
 	/*
 	 * number of events
@@ -90,6 +95,14 @@ public interface Grammar extends Serializable {
 	public void learnAttribute(Attribute at);
 
 	public void learnCharacters();
+	
+	/**
+	 * Learning is stopped for the EXI Profile.
+	 * 
+	 * <p>Grammar learning is stopped in the sense that counters are incremented but the actual events cannot be retrieved anymore.
+	 * However, it is taken care that neither EE, CH, nor AT(xsi:type) is learned more than twice.</p> 
+	 */
+	public void stopLearning();
 
 	/*
 	 * For moving to element content grammar

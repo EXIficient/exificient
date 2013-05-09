@@ -69,6 +69,9 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		this.elementContent2 = elementContent2;
 	}
 	
+	public GrammarType getGrammarType() {
+		return GrammarType.SCHEMA_INFORMED_START_TAG_CONTENT;
+	}
 	
 	protected int getNumberOf2ndLevelEvents(FidelityOptions fidelityOptions) {
 		// EE?, AT(*), AT(schema-invalid), SE(*), CH(*), ER?

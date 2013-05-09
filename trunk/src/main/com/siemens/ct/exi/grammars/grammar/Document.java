@@ -45,6 +45,10 @@ public class Document extends AbstractSchemaInformedGrammar {
 		this.setLabel(label);
 	}
 
+	public GrammarType getGrammarType() {
+		return GrammarType.DOCUMENT;
+	}
+	
 	public String toString() {
 		return "Document" + super.toString();
 	}

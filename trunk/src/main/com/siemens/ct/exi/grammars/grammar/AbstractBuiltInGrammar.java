@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.Event;
@@ -45,12 +46,22 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	private static final long serialVersionUID = -4412097592336436189L;
 
 	protected List<Production> containers;
-	protected int eventCount;
+	protected int ec1Length;
+	
+	// EXI Profile
+	protected int stopLearningContainerSize = Constants.NOT_FOUND;
 
 	public AbstractBuiltInGrammar() {
 		super();
 		containers = new ArrayList<Production>();
-		eventCount = 0;
+		ec1Length = 0;
+	}
+	
+	
+	public void stopLearning() {
+		if(stopLearningContainerSize == Constants.NOT_FOUND) {
+			stopLearningContainerSize = containers.size();
+		}
 	}
 
 	public final boolean isSchemaInformed() {
@@ -66,9 +77,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	}
 
 	public final int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
-		return (hasSecondOrThirdLevel(fidelityOptions) ? MethodsBag
-				.getCodingLength(eventCount + 1) : MethodsBag
-				.getCodingLength(eventCount));
+		return this.ec1Length;
 	}
 
 	public int getNumberOfEvents() {
@@ -82,8 +91,8 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 		containers.add(new SchemaLessProduction(this, grammar, event,
 				getNumberOfEvents()));
-		// TODO pre-calculate count for log2
-		eventCount = containers.size();
+		// pre-calculate count for log2 (Note: always 2nd level productions available)
+		this.ec1Length = MethodsBag.getCodingLength(containers.size() + 1);
 	}
 
 	protected boolean contains(Event event) {
@@ -128,10 +137,22 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	public Production getProduction(EventType eventType) {
 		for (Production ei : containers) {
 			if (ei.getEvent().isEventType(eventType)) {
-				return ei;
+				if(!isExiProfilGhostNode(ei)) {
+					return ei;
+				}
 			}
 		}
+		
 		return null; // not found
+	}
+	
+	private final boolean isExiProfilGhostNode(Production ei) {
+		if(stopLearningContainerSize == Constants.NOT_FOUND) {
+			// no learning-stop at all
+			return false;
+		} else {
+			return ( ei.getEventCode() < (getNumberOfEvents() - this.stopLearningContainerSize) );		
+		}
 	}
 
 	public Production getStartElementProduction(String namespaceURI,
@@ -140,7 +161,9 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
 					&& checkQualifiedName(((StartElement) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {
-				return ei;
+				if(!isExiProfilGhostNode(ei)) {
+					return ei;
+				}
 			}
 		}
 		return null; // not found
@@ -156,7 +179,9 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
 					&& checkQualifiedName(((Attribute) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {
-				return ei;
+				if(!isExiProfilGhostNode(ei)) {
+					return ei;
+				}
 			}
 		}
 		return null; // not found

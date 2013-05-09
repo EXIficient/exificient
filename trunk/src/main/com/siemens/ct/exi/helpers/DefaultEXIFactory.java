@@ -103,7 +103,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected boolean localValuePartitions = true;
 	
 	/* default: unbounded (-1) */
-	protected int maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+	protected int maximumNumberOfBuiltInElementGrammars = -1;
 	protected int maximumNumberOfBuiltInProductions = -1;
 	/* default: false */
 	protected boolean grammarLearningDisabled = false; 
@@ -289,17 +289,17 @@ public class DefaultEXIFactory implements EXIFactory {
 		return localValuePartitions;
 	}
 	
-	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(int maximumNumberOfEvolvingBuiltInElementGrammars) {
-		if(maximumNumberOfEvolvingBuiltInElementGrammars >=0) {
-			this.maximumNumberOfEvolvingBuiltInElementGrammars = maximumNumberOfEvolvingBuiltInElementGrammars;
+	public void setMaximumNumberOfBuiltInElementGrammars(int maximumNumberOfBuiltInElementGrammars) {
+		if(maximumNumberOfBuiltInElementGrammars >=0) {
+			this.maximumNumberOfBuiltInElementGrammars = maximumNumberOfBuiltInElementGrammars;
 		} else {
-			this.maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+			this.maximumNumberOfBuiltInElementGrammars = -1;
 		}
 		checkGrammarLearningDisabled();
 	}
 	
-	public int getMaximumNumberOfEvolvingBuiltInElementGrammars() {
-		return this.maximumNumberOfEvolvingBuiltInElementGrammars;
+	public int getMaximumNumberOfBuiltInElementGrammars() {
+		return this.maximumNumberOfBuiltInElementGrammars;
 	}
 	
 	public void setMaximumNumberOfBuiltInProductions(int maximumNumberOfBuiltInProductions) {
@@ -316,7 +316,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 	
 	private void checkGrammarLearningDisabled() {
-		if(maximumNumberOfEvolvingBuiltInElementGrammars >=0 || maximumNumberOfBuiltInProductions >= 0 ) {
+		if(maximumNumberOfBuiltInElementGrammars >=0 || maximumNumberOfBuiltInProductions >= 0 ) {
 			grammarLearningDisabled = true;
 		} else {
 			grammarLearningDisabled = false;
@@ -337,33 +337,13 @@ public class DefaultEXIFactory implements EXIFactory {
 			throw new EXIException(
 					"(Pre-)Compression and selfContained elements cannot work together");
 		}
-
-		// // ultra-constrained device profile
-		// if (UCD_PROFILE.equals(profile)) {
-		// if (valuePartitionCapacity != 0) {
-		// throw new EXIException(
-		// "Ultra-constrained device profile does not permit any string table entries");
-		// }
-		//
-		// if (getEncodingOptions().isOptionEnabled(
-		// EncodingOptions.INCLUDE_OPTIONS)) {
-		// throw new EXIException(
-		// "Ultra-constrained device profile does not permit including Options document in EXI header");
-		// }
-		//
-		// if (getFidelityOptions().isFidelityEnabled(
-		// FidelityOptions.FEATURE_PREFIX)) {
-		// throw new EXIException(
-		// "Ultra-constrained device profile does not permit preserving preifxes");
-		// }
-		//
-		// if (getCodingMode() == CodingMode.PRE_COMPRESSION
-		// && getCodingMode() == CodingMode.COMPRESSION) {
-		// throw new EXIException(
-		// "Ultra-constrained device profile does not support (Pre-)Compression");
-		// }
-		//
-		// }
+		
+		if(!this.grammar.isSchemaInformed()) {
+			this.maximumNumberOfBuiltInElementGrammars = -1;
+			this.maximumNumberOfBuiltInProductions = -1;
+			this.grammarLearningDisabled = false;
+			// TODO warn user?
+		}
 
 		// blockSize in NON compression mode? Just ignore it!
 	}
@@ -684,8 +664,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			sb.append("[maximumNumberOfBuiltInProductions=" + getMaximumNumberOfBuiltInProductions() + "]");
 		}
 		// maximumNumberOfEvolvingBuiltInElementGrammars
-		if( this.getMaximumNumberOfEvolvingBuiltInElementGrammars() >= 0) {
-			sb.append("[maximumNumberOfEvolvingBuiltInElementGrammars=" + this.getMaximumNumberOfEvolvingBuiltInElementGrammars() + "]");
+		if( this.getMaximumNumberOfBuiltInElementGrammars() >= 0) {
+			sb.append("[maximumNumberOfEvolvingBuiltInElementGrammars=" + this.getMaximumNumberOfBuiltInElementGrammars() + "]");
 		}
 
 		return sb.toString();
