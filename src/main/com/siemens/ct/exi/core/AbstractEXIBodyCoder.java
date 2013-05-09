@@ -90,8 +90,14 @@ public abstract class AbstractEXIBodyCoder {
 	protected final int gUris; // number of grammar uris
 	protected int nextQNameID;
 	protected int nextUriID;
+	
+	/** EXI Profile parameters */
+	protected final boolean limitGrammarLearning;
+	protected final int maxBuiltInElementGrammars;
+	protected final int maxBuiltInProductions;
+	protected int learnedProductions;
 
-
+	
 	public AbstractEXIBodyCoder(EXIFactory exiFactory) throws EXIException {
 		this.exiFactory = exiFactory;
 
@@ -120,6 +126,17 @@ public abstract class AbstractEXIBodyCoder {
 
 		// Boolean datatype
 		booleanDatatype = new BooleanDatatype(null);
+		
+		// EXI Profile: fine-grained grammar learning
+		if(this.grammar.isSchemaInformed()) {
+			maxBuiltInElementGrammars = this.exiFactory.getMaximumNumberOfBuiltInElementGrammars();
+			maxBuiltInProductions = this.exiFactory.getMaximumNumberOfBuiltInProductions();	
+			limitGrammarLearning = (maxBuiltInElementGrammars >= 0 || maxBuiltInProductions >= 0);
+		} else {
+			maxBuiltInElementGrammars = -1;
+			maxBuiltInProductions = -1;
+			limitGrammarLearning = false;
+		}
 	}
 
 	protected QNameContext getXsiTypeContext() {

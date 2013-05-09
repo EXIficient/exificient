@@ -301,10 +301,10 @@ public interface EXIFactory extends Cloneable {
 	 * represents the behavior of the EXI 1.0 specification
 	 * </p>
 	 * 
-	 * @param maximumNumberOfEvolvingBuiltInElementGrammars
+	 * @param maximumNumberOfBuiltInElementGrammars
 	 */
-	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(
-			int maximumNumberOfEvolvingBuiltInElementGrammars);
+	public void setMaximumNumberOfBuiltInElementGrammars(
+			int maximumNumberOfBuiltInElementGrammars);
 
 	/**
 	 * The EXI profile defines a parameter that restricts the maximum number of
@@ -313,7 +313,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 * @return maximum number of evolving built-in element grammars
 	 */
-	public int getMaximumNumberOfEvolvingBuiltInElementGrammars();
+	public int getMaximumNumberOfBuiltInElementGrammars();
 
 	/**
 	 * The EXI profile defines a parameter that restricts the maximum number of

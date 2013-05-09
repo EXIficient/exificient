@@ -55,6 +55,10 @@ public class BuiltInFragmentContent extends AbstractBuiltInGrammar {
 		// SE(*) --> FragmentContent
 		addProduction(START_ELEMENT_GENERIC, this);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.BUILT_IN_FRAGMENT_CONTENT;
+	}
 
 	@Override
 	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {

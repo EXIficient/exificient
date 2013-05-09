@@ -20,8 +20,7 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.GeneralTestCase;
-import com.siemens.ct.exi.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.data.SchemaTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -53,7 +52,7 @@ public class QuickTestConfiguration {
 	public static int valueMaxLength = Constants.DEFAULT_VALUE_MAX_LENGTH;
 	public static int valuePartitionCapacity = Constants.DEFAULT_VALUE_PARTITON_CAPACITY;
 	public static boolean localValuePartitions = true;
-	public static int maximumNumberOfEvolvingBuiltInElementGrammars = -1;
+	public static int maximumNumberOfBuiltInElementGrammars = -1;
 	public static int maximumNumberOfBuiltInProductions = -1;
 
 	public static QName[] selfContainedElements;
@@ -101,15 +100,15 @@ public class QuickTestConfiguration {
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
 		
-		try {
+		// try {
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-		fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		} catch (UnsupportedOption e) {
-		}
+		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		// } catch (UnsupportedOption e) {
+		// }
 	}
 
 	// ///////////////////////////////////////////////////
@@ -124,10 +123,10 @@ public class QuickTestConfiguration {
 		// blockSize = 200;
 		// valueMaxLength = 0;
 		// valuePartitionCapacity = 4;
-		// localValuePartitions = false;
+		localValuePartitions = true;
 		// XSD_TYPES_ONLY = true;
-		maximumNumberOfBuiltInProductions = 0;
-		maximumNumberOfEvolvingBuiltInElementGrammars = 0;
+		// maximumNumberOfBuiltInProductions = 0;
+		maximumNumberOfBuiltInElementGrammars = 0;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");
@@ -140,9 +139,9 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		// SchemaTestCase.setupQuickTest();
+		SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		GeneralTestCase.setupQuickTest();
+		// GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

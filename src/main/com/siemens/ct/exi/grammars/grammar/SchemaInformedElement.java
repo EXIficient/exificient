@@ -45,6 +45,9 @@ public class SchemaInformedElement extends AbstractSchemaInformedContent impleme
 
 	private static final long serialVersionUID = 7009002330388834813L;
 
+	public GrammarType getGrammarType() {
+		return GrammarType.SCHEMA_INFORMED_ELEMENT_CONTENT;
+	}
 
 	@Override
 	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {

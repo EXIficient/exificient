@@ -167,7 +167,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						 */
 						IntegerValue integral = IntegerValue
 								.valueOf(1 + f
-										.getMaximumNumberOfEvolvingBuiltInElementGrammars());
+										.getMaximumNumberOfBuiltInElementGrammars());
 						/*
 						 * 3. The maximumNumberOfBuiltInProductions parameter is
 						 * represented by the second unsigned integer

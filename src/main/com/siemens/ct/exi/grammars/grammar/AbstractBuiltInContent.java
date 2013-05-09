@@ -48,7 +48,6 @@ public abstract class AbstractBuiltInContent extends AbstractBuiltInGrammar {
 		optionsChildContent = new HashMap<FidelityOptions, List<EventType>>();
 	}
 	
-
 	protected boolean learnedCH = false;
 
 	protected static List<EventType> get2ndLevelEventsStartTagItems(

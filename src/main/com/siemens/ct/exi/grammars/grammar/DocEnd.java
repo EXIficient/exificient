@@ -45,6 +45,10 @@ public class DocEnd extends AbstractSchemaInformedGrammar {
 		this();
 		setLabel(label);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.DOC_END;
+	}
 
 	public String toString() {
 		return "DocEnd" + super.toString();

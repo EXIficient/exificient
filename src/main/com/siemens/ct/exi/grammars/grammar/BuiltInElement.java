@@ -50,6 +50,10 @@ public class BuiltInElement extends AbstractBuiltInContent {
 		// EE on first level
 		addProduction(END_ELEMENT, END_RULE);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.BUILT_IN_ELEMENT_CONTENT;
+	}
 
 	public int get2ndLevelEventCode(EventType eventType,
 			FidelityOptions fidelityOptions) {

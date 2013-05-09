@@ -49,6 +49,10 @@ public class SchemaInformedDocContent extends AbstractSchemaInformedGrammar {
 		this(); // docEnd);
 		this.setLabel(label);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.SCHEMA_INFORMED_DOC_CONTENT;
+	}
 
 	public String toString() {
 		return "DocContent" + super.toString();

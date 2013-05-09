@@ -52,6 +52,10 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	public SchemaInformedFirstStartTag(SchemaInformedGrammar elementContent2) {
 		super(elementContent2);
 	}
+	
+	public GrammarType getGrammarType() {
+		return GrammarType.SCHEMA_INFORMED_FIRST_START_TAG_CONTENT;
+	}
 
 	public SchemaInformedFirstStartTag(SchemaInformedStartTagGrammar startTag) {
 		this((SchemaInformedGrammar) startTag.getElementContentGrammar());

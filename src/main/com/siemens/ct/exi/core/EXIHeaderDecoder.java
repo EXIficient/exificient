@@ -349,7 +349,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 				DecimalValue dv = (DecimalValue) value;
 				f.setLocalValuePartitions(dv.isNegative());
 				assert (dv.getIntegral().getValueType() == ValueType.INTEGER_INT);
-				f.setMaximumNumberOfEvolvingBuiltInElementGrammars(dv
+				f.setMaximumNumberOfBuiltInElementGrammars(dv
 						.getIntegral().intValue() - 1);
 				assert (dv.getRevFractional().getValueType() == ValueType.INTEGER_INT);
 				f.setMaximumNumberOfBuiltInProductions(dv.getRevFractional()
