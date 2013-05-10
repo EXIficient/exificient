@@ -149,7 +149,7 @@ public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, Decl
 
 	public void internalEntityDecl(String name, String value)
 			throws SAXException {
-		// e.g. <!ENTITY eacute "é&#xE9;">
+		// e.g. <!ENTITY eacute "&#xE9;">
 		text += "<!ENTITY " + name + " \"" + value + "\"> ";
 	}
 
