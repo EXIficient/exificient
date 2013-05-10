@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.xml.XMLConstants;
 
@@ -42,6 +43,7 @@ import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.event.StartElementNS;
 import com.siemens.ct.exi.grammars.grammar.Grammar;
+import com.siemens.ct.exi.grammars.grammar.GrammarType;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammars.production.Production;
@@ -350,7 +352,80 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected final void decodeEndDocumentStructure() throws EXIException,
 			IOException {
-		// TODO Debug check for EXI profile consistency ?
+		// Debug check for EXI profile stream consistency ?
+		if(this.limitGrammarLearning) {
+			if(this.maxBuiltInElementGrammars != -1) {
+				// count grammars that evolved with other than AT(xsi:type)
+				int evolvedGrs = 0;
+				
+				Iterator<StartElement> iterSEs = runtimeGlobalElements.values().iterator();
+				while(iterSEs.hasNext()) {
+					StartElement se = iterSEs.next();
+					Grammar stg = se.getGrammar();
+					assert(stg.getGrammarType() == GrammarType.BUILT_IN_START_TAG_CONTENT);
+					Grammar ecg = stg.getElementContentGrammar();
+					assert(ecg.getGrammarType() == GrammarType.BUILT_IN_ELEMENT_CONTENT);
+					
+					if(ecg.getNumberOfEvents() != 1) {
+						// BuiltIn Element Content grammar has EE per default
+						evolvedGrs++;
+					} else {
+						if(stg.getNumberOfEvents() > 1) {
+							evolvedGrs++;
+						} else if (stg.getNumberOfEvents() == 1) {
+							// check for AT(xsi:type)
+							if(!isBuiltInStartTagGrammarWithAtXsiTypeOnly(stg) ) {
+								evolvedGrs++;
+							}
+						}
+					}
+				}
+				
+				if(evolvedGrs > maxBuiltInElementGrammars) {
+					throw new RuntimeException("EXI profile stream does not respect parameter maxBuiltInElementGrammars. Expected " + maxBuiltInElementGrammars + " but was " + evolvedGrs);
+				}	
+			}
+			
+			// TODO how to detect ghost nodes that are never used
+//			if(false && this.maxBuiltInProductions != -1) {
+//				System.err.println("prods " + this.maxBuiltInProductions);
+//				// count learned productions
+//				int learnedProds = 0;
+//				
+//				Iterator<StartElement> iterSEs = runtimeGlobalElements.values().iterator();
+//				while(iterSEs.hasNext()) {
+//					StartElement se = iterSEs.next();
+//					Grammar stg = se.getGrammar();
+//					assert(stg.getGrammarType() == GrammarType.BUILT_IN_START_TAG_CONTENT);
+//					Grammar ecg = stg.getElementContentGrammar();
+//					assert(ecg.getGrammarType() == GrammarType.BUILT_IN_ELEMENT_CONTENT);
+//					
+//					int ls;
+//					
+//					if((ls = stg.learningStopped()) != Constants.NOT_FOUND) {
+//						// learning stopped
+//						learnedProds += stg.getNumberOfEvents() - ls;
+//					} else {
+//						if(isBuiltInStartTagGrammarWithAtXsiTypeOnly(stg) ) {
+//							// AT(xsi:type) does not count
+//						} else {
+//							learnedProds += stg.getNumberOfEvents();
+//						}
+//					}
+//					
+//					if((ls = ecg.learningStopped()) != Constants.NOT_FOUND) {
+//						// learning stopped
+//						learnedProds += ecg.getNumberOfEvents() - ls;
+//					} else {
+//						learnedProds += ecg.getNumberOfEvents() - 1; // EE
+//					}
+//				}
+//
+//				if(learnedProds > maxBuiltInProductions) {
+//					throw new RuntimeException("EXI profile stream does not respect parameter maxBuiltInProductions. Expected " + maxBuiltInProductions + " but was " + learnedProds);
+//				}	
+//			}
+		}
 		
 	}
 
@@ -398,7 +473,7 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 		// next SE ...
 		StartElement nextSE = getGlobalStartElement(qnc);
 
-		// learn start-element ?
+		// learn start-element, necessary for FragmentContent grammar
 		getCurrentGrammar().learnStartElement(nextSE);
 		// push element
 		pushElement(nextGrammar.getElementContentGrammar(), nextSE);

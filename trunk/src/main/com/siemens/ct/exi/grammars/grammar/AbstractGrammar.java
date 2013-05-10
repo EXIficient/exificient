@@ -53,6 +53,9 @@ public abstract class AbstractGrammar implements Grammar {
 	protected static final Event END_ELEMENT = new EndElement();
 
 	protected String label = null;
+	
+	// EXI Profile
+	protected int stopLearningContainerSize = Constants.NOT_FOUND;
 
 	public AbstractGrammar() {
 	}
@@ -93,6 +96,10 @@ public abstract class AbstractGrammar implements Grammar {
 	}
 	
 	public void stopLearning() {
+	}
+	
+	public int learningStopped() {
+		return stopLearningContainerSize;
 	}
 
 	public void setLabel(String label) {

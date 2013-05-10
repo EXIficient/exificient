@@ -104,6 +104,14 @@ public interface Grammar extends Serializable {
 	 */
 	public void stopLearning();
 
+	
+	/**
+	 * Reports internal state
+	 * 
+	 * @return -1 for learning not stopped. Otherwise ID
+	 */
+	public int learningStopped();
+	
 	/*
 	 * For moving to element content grammar
 	 */

@@ -47,9 +47,6 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 	protected List<Production> containers;
 	protected int ec1Length;
-	
-	// EXI Profile
-	protected int stopLearningContainerSize = Constants.NOT_FOUND;
 
 	public AbstractBuiltInGrammar() {
 		super();
@@ -58,6 +55,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	}
 	
 	
+	@Override
 	public void stopLearning() {
 		if(stopLearningContainerSize == Constants.NOT_FOUND) {
 			stopLearningContainerSize = containers.size();

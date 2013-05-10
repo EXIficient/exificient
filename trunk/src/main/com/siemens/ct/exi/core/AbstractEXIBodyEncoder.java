@@ -38,7 +38,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.AttributeNS;
 import com.siemens.ct.exi.grammars.event.DatatypeEvent;
-import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.event.StartElementNS;
@@ -438,7 +437,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// learning for built-in grammar (here and not as part of
 			// SE_Undecl(*) because of FragmentContent!)
 			currentGrammar.learnStartElement(nextSE);
-			this.productiionLearningCounting(currentGrammar);
+			this.productionLearningCounting(currentGrammar);
 		}
 
 		// push element
@@ -456,7 +455,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		GHOST_PRODUCTION
 	}
 	
-	private final void productiionLearningCounting(Grammar g) {
+	private final void productionLearningCounting(Grammar g) {
 		if(limitGrammarLearning) {
 			// Note: no counting for schema-informed grammars and BuiltInFragmentGrammar
 			if ( maxBuiltInProductions >= 0 && !g.isSchemaInformed() && g.getGrammarType()!=GrammarType.BUILT_IN_FRAGMENT_CONTENT  ) {
@@ -464,6 +463,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		}
 	}
+	
+
 	
 	// Note: returns ACTION
 	private final ProfileDisablingMechanism limitGrammars() throws EXIException, IOException {
@@ -477,24 +478,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			if(maxBuiltInElementGrammars != -1) {
 				int csize = runtimeGlobalElements.size();
 				if (csize > maxBuiltInElementGrammars) {
-					
 					if ( currGrammar.getNumberOfEvents() == 0) {
 						// new grammar that hits bound
 						this.insertXsiTypeAnyType();
 						retVal = ProfileDisablingMechanism.XSI_TYPE;
-					} else if ( currGrammar.getNumberOfEvents() == 1) {
-						// previous type cast for this grammar ?
-						Production p0 = currGrammar.getProduction(0);
-						Event ev0 = p0.getEvent();
-						if(ev0.isEventType(EventType.ATTRIBUTE)) {
-							Attribute at = (Attribute) ev0;
-							QNameContext qn0 = at.getQNameContext();
-							if(qn0.getNamespaceUriID() == 2 && qn0.getLocalNameID() == 1) {
-								// previous type cast
-								this.insertXsiTypeAnyType();
-								retVal = ProfileDisablingMechanism.XSI_TYPE;
-							}
-						}
+					} else if (isBuiltInStartTagGrammarWithAtXsiTypeOnly(currGrammar)) {
+						// previous type cast
+						this.insertXsiTypeAnyType();
+						retVal = ProfileDisablingMechanism.XSI_TYPE;
 					}
 				}
 			}
@@ -628,7 +619,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						encode2ndLevelEventCode(ecEEundeclared);
 						// learn end-element event ?
 						currentGrammar.learnEndElement();
-						this.productiionLearningCounting(currentGrammar);
+						this.productionLearningCounting(currentGrammar);
 						break;
 					}
 									
@@ -778,7 +769,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						encode2ndLevelEventCode(ec2);
 						QNameContext qncType = getXsiTypeContext();
 						currentGrammar.learnAttribute(new Attribute(qncType));
-						this.productiionLearningCounting(currentGrammar);
+						this.productionLearningCounting(currentGrammar);
 					} else {
 						throw new EXIException("TypeCast " + type
 								+ " not encodable!");
@@ -1162,7 +1153,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		// learn attribute event
 		currentGrammar.learnAttribute(new Attribute(qnc));
-		this.productiionLearningCounting(currentGrammar);
+		this.productionLearningCounting(currentGrammar);
 
 		return qnc;
 	}
@@ -1267,7 +1258,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						encode2ndLevelEventCode(ecCHundeclared);
 						// learn characters event ?
 						currentGrammar.learnCharacters();
-						this.productiionLearningCounting(currentGrammar);
+						this.productionLearningCounting(currentGrammar);
 						// next rule
 						updContextRule = currentGrammar
 								.getElementContentGrammar();
