@@ -26,7 +26,7 @@ import com.siemens.ct.exi.data.SchemaTestCase;
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
 	public static final boolean USE_SCHEMA = true;
-	public static boolean XSD_TYPES_ONLY = false; /* default: false */
+	public static boolean XSD_TYPES_ONLY = true; /* default: false */
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
@@ -125,8 +125,8 @@ public class QuickTestConfiguration {
 		// valuePartitionCapacity = 4;
 		localValuePartitions = true;
 		// XSD_TYPES_ONLY = true;
-		// maximumNumberOfBuiltInProductions = 0;
-		maximumNumberOfBuiltInElementGrammars = 0;
+		maximumNumberOfBuiltInProductions = 2;
+		// maximumNumberOfBuiltInElementGrammars = 0;
 		// dtrMapTypes = new QName[1];
 		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 		// "decimal");

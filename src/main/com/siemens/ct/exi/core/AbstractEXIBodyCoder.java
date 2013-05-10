@@ -38,9 +38,13 @@ import com.siemens.ct.exi.datatype.BooleanDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.ErrorHandler;
 import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.Event;
+import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.grammar.BuiltInStartTag;
 import com.siemens.ct.exi.grammars.grammar.Grammar;
+import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.helpers.DefaultErrorHandler;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
@@ -152,6 +156,24 @@ public abstract class AbstractEXIBodyCoder {
 			xsiNilContext = grammarContext.getGrammarUriContext(2).getQNameContext(0);	
 		}
 		return xsiNilContext;
+	}
+	
+	protected final boolean isBuiltInStartTagGrammarWithAtXsiTypeOnly(Grammar g) {
+		boolean ret = false;
+		if ( g.getNumberOfEvents() == 1) {
+			Production p0 = g.getProduction(0);
+			Event ev0 = p0.getEvent();
+			if(ev0.isEventType(EventType.ATTRIBUTE)) {
+				Attribute at = (Attribute) ev0;
+				QNameContext qn0 = at.getQNameContext();
+				if(qn0.getNamespaceUriID() == 2 && qn0.getLocalNameID() == 1) {
+					// AT type cast only
+					ret = true;
+				}
+			}
+		}
+		
+		return ret;
 	}
 	
 	
