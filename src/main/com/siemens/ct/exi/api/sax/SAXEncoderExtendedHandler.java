@@ -279,7 +279,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 	public void internalEntityDecl(String name, String value)
 			throws SAXException {
 		if (preserveDTD) {
-			// e.g. <!ENTITY eacute "é&#xE9;">
+			// e.g. <!ENTITY eacute "&#xE9;">
 			docTypeText += "<!ENTITY " + name + " \"" + value + "\"> ";
 		}
 	}
