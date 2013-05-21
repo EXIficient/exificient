@@ -26,10 +26,12 @@ import junit.framework.TestCase;
 
 import org.custommonkey.xmlunit.XMLConstants;
 
+import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.grammar.BuiltInStartTag;
@@ -829,6 +831,28 @@ public class GrammarTest extends TestCase {
 			// loop
 			assertTrue(ei4.getNextGrammar() == ei4.getNextGrammar().getProduction(0).getNextGrammar());
 		}
+	}
+	
+	public void testBugEc1PreCalculation() throws Exception {
+		GrammarFactory gf = GrammarFactory.newInstance();
+		Grammars grs = gf.createSchemaLessGrammars();
+		FidelityOptions fidelityOptions = FidelityOptions.createDefault();
+		
+		// docContent: SE(*)
+		Grammar doc = grs.getDocumentGrammar().getProduction(EventType.START_DOCUMENT).getNextGrammar();
+		assertTrue(doc.get1stLevelEventCodeLength(fidelityOptions) == 0);
+		
+		// fragmentContent SE(*), ED
+		Grammar frag = grs.getFragmentGrammar().getProduction(EventType.START_DOCUMENT).getNextGrammar();
+		assertTrue(frag.get1stLevelEventCodeLength(fidelityOptions) == 1);
+		// fragmentContent SE(dd), SE(*), ED
+		QName qn = new QName("dd");
+		frag.learnStartElement(new StartElement(new QNameContext(0,0,qn, 0)));
+		assertTrue(frag.get1stLevelEventCodeLength(fidelityOptions) == 2);
+		Event l = frag.getProduction(0).getEvent();
+		assertTrue(l.getEventType() == EventType.START_ELEMENT);
+		StartElement se = (StartElement) l;
+		assertTrue(se.getQName().equals(qn));
 	}
 
 }

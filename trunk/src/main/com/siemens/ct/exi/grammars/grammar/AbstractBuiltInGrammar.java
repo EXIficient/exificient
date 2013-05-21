@@ -46,6 +46,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	private static final long serialVersionUID = -4412097592336436189L;
 
 	protected List<Production> containers;
+	// Note: BuiltInDocContent and BuiltInFragmentContent do not use this variable
 	protected int ec1Length;
 
 	public AbstractBuiltInGrammar() {
@@ -74,7 +75,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return this;
 	}
 
-	public final int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
 		return this.ec1Length;
 	}
 
@@ -90,6 +91,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		containers.add(new SchemaLessProduction(this, grammar, event,
 				getNumberOfEvents()));
 		// pre-calculate count for log2 (Note: always 2nd level productions available)
+		// Note: BuiltInDocContent and BuiltInFragmentContent do not use this variable
 		this.ec1Length = MethodsBag.getCodingLength(containers.size() + 1);
 	}
 

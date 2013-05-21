@@ -21,6 +21,7 @@ package com.siemens.ct.exi.grammars.grammar;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * 
@@ -57,6 +58,12 @@ public class BuiltInDocContent extends AbstractBuiltInGrammar {
 	
 	public GrammarType getGrammarType() {
 		return GrammarType.BUILT_IN_DOC_CONTENT;
+	}
+	
+	@Override
+	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+		// Note: cannot use variable this.ec1Length because does not have always 2nd level production
+		return MethodsBag.getCodingLength(containers.size() + (this.hasSecondOrThirdLevel(fidelityOptions) ? 1 : 0));
 	}
 
 	@Override
