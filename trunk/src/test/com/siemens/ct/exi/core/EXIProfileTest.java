@@ -829,4 +829,118 @@ public class EXIProfileTest extends TestCase {
 		}
 	}
 
+	public void testG0_P0() throws Exception {
+		GrammarFactory gf = GrammarFactory.newInstance();
+		Grammars g = gf.createXSDTypesOnlyGrammars();
+	
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+	
+		factory.setFidelityOptions(FidelityOptions.createStrict());
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.setGrammars(g);
+	
+		factory.setMaximumNumberOfBuiltInElementGrammars(0);
+		factory.setMaximumNumberOfBuiltInProductions(0);
+	
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName qnRoot = new QName("", "root");
+		QName qnA = new QName("", "a");
+	
+		QName qnXsiType = new QName(
+				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+	
+		QNameValue typeInt = new QNameValue(
+				XMLConstants.W3C_XML_SCHEMA_NS_URI, "int", null);
+		QNameValue typeDecimal = new QNameValue(
+				XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal", null);
+		
+		String sValue1 = "12345";
+		String sValue2 = "12345.67";
+	
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			String pfx = null; // unset according fidelity-options
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
+					qnRoot.getLocalPart(), pfx);
+			{
+				encoder.encodeStartElement(qnA.getNamespaceURI(),
+						qnA.getLocalPart(), pfx);
+				encoder.encodeAttributeXsiType(typeInt, pfx);
+				encoder.encodeCharacters(new StringValue(sValue1));
+				encoder.encodeEndElement();
+			}
+			{
+				encoder.encodeStartElement(qnA.getNamespaceURI(),
+						qnA.getLocalPart(), pfx);
+				encoder.encodeAttributeXsiType(typeDecimal, pfx);
+				encoder.encodeCharacters(new StringValue(sValue2));
+				encoder.encodeEndElement();
+			}
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+	
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+	
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+	
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
+			
+			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
+			assertTrue(decoder.getAttributeValue().toString().endsWith(":anyType"));
+	
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				assertTrue(decoder.decodeStartElement().getQName()
+						.equals(qnA));
+	
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString().endsWith(":int"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				assertTrue(decoder.decodeCharacters().toString().equals(sValue1));
+	
+				// Profile ghost node on 2nd level
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+				assertTrue(decoder.decodeStartElement().getQName()
+						.equals(qnA));
+	
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString().endsWith(":decimal"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				assertTrue(decoder.decodeCharacters().toString().equals(sValue2));
+	
+				// Profile ghost node on 2nd level
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+	
+			// assertTrue(decoder.next() == EventType.CHARACTERS);
+			// assertTrue(decoder.decodeCharacters().equals(""));
+	
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+	
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
 }
