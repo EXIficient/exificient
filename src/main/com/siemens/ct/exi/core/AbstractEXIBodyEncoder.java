@@ -405,8 +405,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				// limit grammar learning ?
 				switch(this.limitGrammars()) {
 				case XSI_TYPE:
-					// encode 1st level EventCode
+					this.insertXsiTypeAnyType();
 					currentGrammar = getCurrentGrammar();
+					// encode 1st level EventCode
 					ei = currentGrammar
 							.getProduction(EventType.START_ELEMENT_GENERIC);
 					assert (ei != null);
@@ -480,11 +481,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				if (csize > maxBuiltInElementGrammars) {
 					if ( currGrammar.getNumberOfEvents() == 0) {
 						// new grammar that hits bound
-						this.insertXsiTypeAnyType();
 						retVal = ProfileDisablingMechanism.XSI_TYPE;
 					} else if (isBuiltInStartTagGrammarWithAtXsiTypeOnly(currGrammar)) {
 						// previous type cast
-						this.insertXsiTypeAnyType();
 						retVal = ProfileDisablingMechanism.XSI_TYPE;
 					}
 				}
@@ -495,7 +494,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				// bound reached 
 				if(this.lastEvent == EventType.START_ELEMENT || this.lastEvent == EventType.NAMESPACE_DECLARATION) {
 					// First mean possible: Insert xsi:type
-					insertXsiTypeAnyType();
 					retVal = ProfileDisablingMechanism.XSI_TYPE;
 				} else {
 					// Only 2nd mean possible: use ghost productions
@@ -606,8 +604,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					// limit grammar learning ?
 					switch(this.limitGrammars()) {
 					case XSI_TYPE:
-						// encode 1st level EventCode
+						this.insertXsiTypeAnyType();
 						currentGrammar = getCurrentGrammar();
+						// encode 1st level EventCode
 						ei = currentGrammar
 								.getProduction(EventType.END_ELEMENT);
 						assert (ei != null);
@@ -679,7 +678,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	public void encodeAttributeXsiType(Value type, String pfx)
 			throws EXIException, IOException {
-		this.encodeAttributeXsiType(type, pfx, false);
+		boolean force2ndLevelProduction = false;
+		if (this.limitGrammars() == ProfileDisablingMechanism.XSI_TYPE) {
+			force2ndLevelProduction = true;	
+		}
+		this.encodeAttributeXsiType(type, pfx, force2ndLevelProduction);
 	}
 
 	private void encodeAttributeXsiType(Value type, String pfx,
@@ -992,6 +995,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			switch(this.limitGrammars()) {
 			case XSI_TYPE:
+				this.insertXsiTypeAnyType();
 				currentGrammar = this.getCurrentGrammar();
 				break;
 			case GHOST_PRODUCTION:
@@ -1243,8 +1247,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					// limit grammar learning ?
 					switch(this.limitGrammars()) {
 					case XSI_TYPE:
-						// encode 1st level EventCode
+						this.insertXsiTypeAnyType();
 						currentGrammar = getCurrentGrammar();
+						// encode 1st level EventCode
 						ei = currentGrammar
 								.getProduction(EventType.CHARACTERS_GENERIC);
 						assert (ei != null);
