@@ -75,8 +75,8 @@ public abstract class AbstractTestCase extends TestCase {
 	}
 
 	protected DecoderChannel getByteDecoder() throws IOException {
-		return new ByteDecoderChannel(new ByteArrayInputStream(baos
-				.toByteArray()));
+		return new ByteDecoderChannel(new ByteArrayInputStream(
+				baos.toByteArray()));
 	}
 
 }

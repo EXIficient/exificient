@@ -34,7 +34,7 @@ public abstract class AbstractProperties extends XMLTestCase {
 			SAXException, TransformerException, EXIException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
-		
+
 		SAXSource exiSource = new SAXSource(new InputSource(isEXI));
 		exiSource.setXMLReader(factory.createEXIReader());
 

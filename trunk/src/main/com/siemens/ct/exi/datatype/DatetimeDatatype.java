@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -49,7 +47,7 @@ public class DatetimeDatatype extends AbstractDatatype {
 
 	private DateTimeValue lastValidDatetime;
 
-	public DatetimeDatatype(DateTimeType dateType, QName schemaType) {
+	public DatetimeDatatype(DateTimeType dateType, QNameContext schemaType) {
 		super(BuiltInType.DATETIME, schemaType);
 		this.rcs = new XSDDateTimeCharacterSet();
 		this.datetimeType = dateType;

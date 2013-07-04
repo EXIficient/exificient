@@ -761,10 +761,7 @@ public class SchemaLessTest extends TestCase {
 	}
 
 	/*
-	 * Duplicate entries
-	 * <foo foo="foo at value">
-	 * </foo>
-	 * 
+	 * Duplicate entries <foo foo="foo at value"> </foo>
 	 */
 	public void testSchemaLess6DuplicateEntries1() throws IOException,
 			SAXException, EXIException {
@@ -774,7 +771,7 @@ public class SchemaLessTest extends TestCase {
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setCodingMode(CodingMode.BYTE_PACKED);
 		// factory.setProfile(EXIFactory.UCD_PROFILE);
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName bla = new QName("", "foo");
 		String sValue = "foo at value";
@@ -795,7 +792,7 @@ public class SchemaLessTest extends TestCase {
 
 		baos.flush();
 		byte[] bytes = baos.toByteArray();
-		
+
 		File f = File.createTempFile("exi-profile", "_1");
 		FileOutputStream fos = new FileOutputStream(f);
 		fos.write(128);
@@ -825,7 +822,6 @@ public class SchemaLessTest extends TestCase {
 			assertTrue(decoder.decodeAttribute().getQName().equals(bla));
 			decoder.getAttributeValue().toString().equals(sValue);
 
-
 			// end root bla
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			decoder.decodeEndElement();
@@ -836,75 +832,72 @@ public class SchemaLessTest extends TestCase {
 	}
 
 	/*
-	 * Duplicate entries
-	 * <bla:foo xmlns:bla="uri:bla" bla:foo="bla:foo at value">
-	 * </bla:foo>
-	 * 
+	 * Duplicate entries <bla:foo xmlns:bla="uri:bla"
+	 * bla:foo="bla:foo at value"> </bla:foo>
 	 */
 	public void testSchemaLess6DuplicateEntries2() throws IOException,
 			SAXException, EXIException {
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setCodingMode(CodingMode.BYTE_PACKED);
 		// factory.setProfile(EXIFactory.UCD_PROFILE);
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName bla = new QName("uri:bla", "foo");
 		String sValue = "bla:foo at value";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
 			encoder.setOutputStream(baos);
-	
+
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(bla);
 			encoder.encodeAttribute(bla, new StringValue(sValue));
 			encoder.encodeEndElement();
-	
+
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		baos.flush();
 		byte[] bytes = baos.toByteArray();
-		
+
 		File f = File.createTempFile("exi-profile", "_2");
 		FileOutputStream fos = new FileOutputStream(f);
 		fos.write(128);
 		fos.write(bytes);
 		fos.close();
 		// System.out.println(f);
-	
+
 		// for(int i=0; i<bytes.length; i++) {
 		// byte bb = bytes[i];
 		// // System.out.print(Integer.toHexString(bb) + " ");
 		// System.out.print(bb + " ");
 		// }
 		// System.out.println();
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(bytes));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(bla));
-	
+
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeAttribute().getQName().equals(bla));
 			decoder.getAttributeValue().toString().equals(sValue);
-	
-	
+
 			// end root bla
 			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}

@@ -31,7 +31,7 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 
 	public static void setupQuickTest() {
 		// setConfigurationBuiltInXSDIntVal ( );
-		setConfigurationBuiltInXSDIntVal2 ( );
+		setConfigurationBuiltInXSDIntVal2();
 		// setConfigurationBuiltInXSDFloatVal ( );
 	}
 
@@ -51,7 +51,7 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 				FidelityOptions.createDefault());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
-		
+
 		// #3
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.PRE_COMPRESSION);
@@ -59,7 +59,7 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 				FidelityOptions.createDefault());
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
-		
+
 		// #4
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
@@ -113,11 +113,12 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationBuiltInXSDIntVal() {
-		QuickTestConfiguration.setXsdLocation("");	//	built-in XSD
+		QuickTestConfiguration.setXsdLocation(""); // built-in XSD
 		QuickTestConfiguration.setXmlLocation("./data/builtInXSD/intVal.xml");
-		QuickTestConfiguration.setExiLocation("./out/builtInXSD/intVal.xml.exi");
+		QuickTestConfiguration
+				.setExiLocation("./out/builtInXSD/intVal.xml.exi");
 	}
-	
+
 	@Test
 	public void testBuiltInXSDIntVal2() throws Exception {
 		// set up configuration
@@ -128,12 +129,12 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 	}
 
 	public static void setConfigurationBuiltInXSDIntVal2() {
-		QuickTestConfiguration.setXsdLocation("");	//	built-in XSD
+		QuickTestConfiguration.setXsdLocation(""); // built-in XSD
 		// QuickTestConfiguration.setXsdLocation("./data/builtInXSD/intVal2.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/builtInXSD/intVal2.xml");
-		QuickTestConfiguration.setExiLocation("./out/builtInXSD/intVal2.xml.exi");
+		QuickTestConfiguration
+				.setExiLocation("./out/builtInXSD/intVal2.xml.exi");
 	}
-	
 
 	@Test
 	public void testBuiltInXSDFloatVal() throws Exception {
@@ -143,12 +144,12 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
-	
+
 	public static void setConfigurationBuiltInXSDFloatVal() {
-		QuickTestConfiguration.setXsdLocation(""); //	built-in XSD
+		QuickTestConfiguration.setXsdLocation(""); // built-in XSD
 		QuickTestConfiguration.setXmlLocation("./data/builtInXSD/floatVal.xml");
-		QuickTestConfiguration.setExiLocation("./out/builtInXSD/floatVal.xml.exi");
+		QuickTestConfiguration
+				.setExiLocation("./out/builtInXSD/floatVal.xml.exi");
 	}
 
-	
-	}
+}

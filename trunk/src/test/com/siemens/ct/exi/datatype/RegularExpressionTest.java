@@ -64,7 +64,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		String regex = "\\P{M}";
 
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-		
+
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
@@ -355,7 +355,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// Number decimal digit
 		String regex = "\\d";
 		EXIRegularExpression re = new EXIRegularExpression(regex);
-		
+
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
@@ -487,16 +487,17 @@ public class RegularExpressionTest extends AbstractTestCase {
 	}
 
 	public void testPattern28() throws EXIException {
-		EXIRegularExpression re = new EXIRegularExpression("\\p{IsCJKRadicalsSupplement}*");
+		EXIRegularExpression re = new EXIRegularExpression(
+				"\\p{IsCJKRadicalsSupplement}*");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
-	
+
 	public void testPattern29() throws EXIException {
 		// "\d{3}-[A-Z]{2}"
 		EXIRegularExpression re = new EXIRegularExpression("\\d{3}-[A-Z]{2}");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
-	
+
 	public void testPattern30() throws EXIException {
 		// <xs:pattern value="\\c"/> --> means '\' followed by 'c'
 		// Note: Nothing to do with Multiple Character Escape Sequences \c
@@ -504,9 +505,10 @@ public class RegularExpressionTest extends AbstractTestCase {
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		assertTrue(re.getCodePoints().size() == 2);
 	}
-	
+
 	public void testPattern31() throws EXIException {
-		// <xs:pattern value="\\c\c"/> --> means '\' followed by 'c' and Multiple Character Escape Sequences \c
+		// <xs:pattern value="\\c\c"/> --> means '\' followed by 'c' and
+		// Multiple Character Escape Sequences \c
 		EXIRegularExpression re = new EXIRegularExpression("\\\\c\\c");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
@@ -520,30 +522,34 @@ public class RegularExpressionTest extends AbstractTestCase {
 
 	public void testPattern33() throws EXIException {
 		// <xs:pattern value="T529H72b7opQKe3MedjI8"/>
-		EXIRegularExpression re = new EXIRegularExpression("T529H72b7opQKe3MedjI8");
+		EXIRegularExpression re = new EXIRegularExpression(
+				"T529H72b7opQKe3MedjI8");
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		assertTrue(re.getCodePoints().size() == 18);
 	}
 
 	public void testPattern34() throws EXIException {
 		// <xs:pattern value="\p{IsLatin-1Supplement}"/>
-		EXIRegularExpression re = new EXIRegularExpression("\\p{IsLatin-1Supplement}");
+		EXIRegularExpression re = new EXIRegularExpression(
+				"\\p{IsLatin-1Supplement}");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern35() throws EXIException {
 		// <xs:pattern value="\p{IsLatinExtended-A}"/>
-		EXIRegularExpression re = new EXIRegularExpression("\\p{IsLatinExtended-A}");
+		EXIRegularExpression re = new EXIRegularExpression(
+				"\\p{IsLatinExtended-A}");
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
 
 	public void testPattern36() throws EXIException {
-		//  <xs:pattern value="[0-9]{3}-[0-9]{2}-[0-9]{4}"/>
-		EXIRegularExpression re = new EXIRegularExpression("[0-9]{3}-[0-9]{2}-[0-9]{4}");
+		// <xs:pattern value="[0-9]{3}-[0-9]{2}-[0-9]{4}"/>
+		EXIRegularExpression re = new EXIRegularExpression(
+				"[0-9]{3}-[0-9]{2}-[0-9]{4}");
 		assertFalse(re.isEntireSetOfXMLCharacters());
 		assertTrue(re.getCodePoints().size() == 11);
 	}
-	
+
 	public void testMaleFemale() throws Exception {
 		EXIRegularExpression re = new EXIRegularExpression("male|female");
 		// aeflm
@@ -591,7 +597,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 	public void testBasicLatin() throws Exception {
 		// \p{IsBasicLatin}
 		EXIRegularExpression re = new EXIRegularExpression("\\p{IsBasicLatin}");
-		
+
 		// block ...
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
@@ -675,7 +681,7 @@ public class RegularExpressionTest extends AbstractTestCase {
 		// Unicode letters, except any ASCII letters
 		EXIRegularExpression re = new EXIRegularExpression(
 				"[\\p{Ll}\\p{Lu}-[\\p{IsBasicLatin}]]");
-		
+
 		// catEsc, block & ...
 		assertTrue(re.isEntireSetOfXMLCharacters());
 	}
@@ -725,11 +731,11 @@ public class RegularExpressionTest extends AbstractTestCase {
 			// non-sense
 			String regex = "[bla{4}";
 			// @SuppressWarnings("unused")
-			// EXIRegularExpression re = 
+			// EXIRegularExpression re =
 			new EXIRegularExpression(regex);
-//			@SuppressWarnings("unused")
-//			RestrictedCharacterSet rcs = new CodePointCharacterSet(
-//					re.getCodePoints());
+			// @SuppressWarnings("unused")
+			// RestrictedCharacterSet rcs = new CodePointCharacterSet(
+			// re.getCodePoints());
 			fail();
 		} catch (RuntimeException e) {
 			// an exception for invalid regex is expected

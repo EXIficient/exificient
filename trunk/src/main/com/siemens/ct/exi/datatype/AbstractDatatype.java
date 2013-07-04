@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -47,7 +45,7 @@ public abstract class AbstractDatatype implements Datatype {
 	protected final BuiltInType builtInType;
 
 	// for codec map
-	protected final QName schemaType;
+	protected final QNameContext schemaType;
 
 	// restricted char set
 	protected RestrictedCharacterSet rcs;
@@ -57,7 +55,7 @@ public abstract class AbstractDatatype implements Datatype {
 		this(null, null);
 	}
 
-	public AbstractDatatype(BuiltInType builtInType, QName schemaType) {
+	public AbstractDatatype(BuiltInType builtInType, QNameContext schemaType) {
 		this.builtInType = builtInType;
 		this.schemaType = schemaType;
 	}
@@ -66,7 +64,7 @@ public abstract class AbstractDatatype implements Datatype {
 		return builtInType;
 	}
 
-	public QName getSchemaType() {
+	public QNameContext getSchemaType() {
 		return schemaType;
 	}
 

@@ -41,25 +41,19 @@ import com.siemens.ct.exi.values.Value;
 public class DatatypeRepresentationMapTypeDecoder extends
 		AbstractRepresentationMapTypeCoder implements TypeDecoder {
 
-	// fallback type decoder
-	protected TypeDecoder defaultDecoder;
-
-	public DatatypeRepresentationMapTypeDecoder(TypeDecoder defaultDecoder,
+	public DatatypeRepresentationMapTypeDecoder(
 			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammars grammar)
 			throws EXIException {
-		super(dtrMapTypes, dtrMapRepresentations, grammar);
-
-		// hand over "default" type decoder
-		this.defaultDecoder = defaultDecoder;
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
-
+	
+	
 	public Value readValue(Datatype datatype, QNameContext qnContext,
 			DecoderChannel valueChannel, StringDecoder stringDecoder)
 			throws IOException {
-		QName schemaType = datatype.getSchemaType();
-		Datatype recentDtrDataype = dtrMap.get(schemaType);
-		return defaultDecoder.readValue(recentDtrDataype == null ? datatype
-				: recentDtrDataype, qnContext, valueChannel, stringDecoder);
+		this.updateRecentDtr(datatype);
+		assert(recentDtrDataype != null);
+		return recentDtrDataype.readValue(qnContext, valueChannel, stringDecoder);	
 	}
 
 }

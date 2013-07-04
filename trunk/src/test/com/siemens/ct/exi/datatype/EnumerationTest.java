@@ -39,35 +39,31 @@ public class EnumerationTest extends AbstractTestCase {
 				+ "  <xs:simpleType name='qnameList'>"
 				+ "     <xs:list itemType='xs:QName'/>"
 				+ "  </xs:simpleType>"
-				+ ""
-				+ "</xs:schema>";
-	
+				+ "" + "</xs:schema>";
+
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
-		
-		
+
 		// EXI errata item
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.STRING);
-		
+
 		assertTrue(dt.isValid(new StringValue("Hooo")));
 		assertTrue(dt.isValid(new StringValue("bla:Foo")));
-		
+
 		assertTrue(dt.isValid(new StringValue("Baxslax")));
 		assertTrue(dt.isValid(new StringValue("-123")));
-	
-		
-		
-//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-//		
-//		assertTrue(dt.isValid(new StringValue("Hooo")));
-//		assertTrue(dt.isValid(new StringValue("bla:Foo")));
-//	
-//		assertFalse(dt.isValid(new StringValue("dd.doo")));
-//		
-//		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-//		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
+
+		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+		//
+		// assertTrue(dt.isValid(new StringValue("Hooo")));
+		// assertTrue(dt.isValid(new StringValue("bla:Foo")));
+		//
+		// assertFalse(dt.isValid(new StringValue("dd.doo")));
+		//
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+		// assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
 	}
 
 	public void testEnumerationListOfInts1() throws IOException, EXIException {
@@ -81,37 +77,35 @@ public class EnumerationTest extends AbstractTestCase {
 				+ ""
 				+ "  <xs:simpleType name='intList'>"
 				+ "     <xs:list itemType='xs:integer'/>"
-				+ "  </xs:simpleType>"
-				+ ""
-				+ "</xs:schema>";
-	
+				+ "  </xs:simpleType>" + "" + "</xs:schema>";
+
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
-		
+
 		// EXI errata item
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
-		
+
 		assertTrue(dt.isValid(new StringValue("1 2 3")));
 		assertTrue(dt.isValid(new StringValue("3 4 5")));
 		assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
-		
-		assertTrue(dt.isValid(new StringValue(" 123 456 789  "))); // any other int value
-		
+
+		assertTrue(dt.isValid(new StringValue(" 123 456 789  "))); // any other
+																	// int value
+
 		assertFalse(dt.isValid(new StringValue("xx xx")));
-		
-		
-//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-//		
-//		assertTrue(dt.isValid(new StringValue("1 2 3")));
-//		assertTrue(dt.isValid(new StringValue("3 4 5")));
-//		assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
-//	
-//		assertFalse(dt.isValid(new StringValue("5 6")));
-//		
-//		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-//		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
+
+		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+		//
+		// assertTrue(dt.isValid(new StringValue("1 2 3")));
+		// assertTrue(dt.isValid(new StringValue("3 4 5")));
+		// assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
+		//
+		// assertFalse(dt.isValid(new StringValue("5 6")));
+		//
+		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+		// assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
 	}
 
 	public void testEnumerationStringRec() throws IOException, EXIException {
@@ -128,24 +122,23 @@ public class EnumerationTest extends AbstractTestCase {
 				+ "    </xs:simpleType>"
 				+ "    <xs:simpleType name='tBasicTypeEnum'>"
 				+ "        <xs:restriction base='tPredefinedBasicTypeEnum'/>"
-				+ "    </xs:simpleType>"
-				+ "</xs:schema>";
-	
+				+ "    </xs:simpleType>" + "</xs:schema>";
+
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"tBasicTypeEnum", "");
-	
+
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-	
+
 		assertTrue(dt.isValid(new StringValue("BOOLEAN")));
 		assertTrue(dt.isValid(new StringValue("INT8")));
 		assertTrue(dt.isValid(new StringValue("INT16")));
 		assertTrue(dt.isValid(new StringValue("INT24")));
 		assertTrue(dt.isValid(new StringValue("INT32")));
 		assertTrue(dt.isValid(new StringValue("INT64")));
-	
+
 		assertFalse(dt.isValid(new StringValue("00")));
 		assertFalse(dt.isValid(new StringValue("bla")));
-		
+
 		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.STRING);
 	}
@@ -153,7 +146,7 @@ public class EnumerationTest extends AbstractTestCase {
 	public EnumerationTest(String testName) {
 		super(testName);
 	}
-	
+
 	public void testEnumerationUnion1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='union'>"
@@ -172,18 +165,20 @@ public class EnumerationTest extends AbstractTestCase {
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
 
-		// Note: Enumeration schema types derived from others by union, QName or Notation are processed by their respective built-in EXI datatype representations
+		// Note: Enumeration schema types derived from others by union, QName or
+		// Notation are processed by their respective built-in EXI datatype
+		// representations
 		assertTrue(dt.getBuiltInType() == BuiltInType.STRING);
-		
-//		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-//		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-//
-//		assertTrue(dt.isValid("+10"));
-//		assertTrue(dt.isValid("12:32:00"));
-//		assertTrue(dt.isValid("+588"));
-//
-//		assertFalse(dt.isValid("00"));
-//		assertFalse(dt.isValid("12:32:12"));
+
+		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+		// // EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+		//
+		// assertTrue(dt.isValid("+10"));
+		// assertTrue(dt.isValid("12:32:00"));
+		// assertTrue(dt.isValid("+588"));
+		//
+		// assertFalse(dt.isValid("00"));
+		// assertFalse(dt.isValid("12:32:12"));
 	}
 
 	public void testEnumerationQName1() throws IOException, EXIException {
@@ -195,17 +190,18 @@ public class EnumerationTest extends AbstractTestCase {
 				+ "   </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-	
+
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
-	
-		// Note: Enumeration schema types derived from others by union, QName or Notation are processed by their respective built-in EXI datatype representations
+
+		// Note: Enumeration schema types derived from others by union, QName or
+		// Notation are processed by their respective built-in EXI datatype
+		// representations
 		assertTrue(dt.getBuiltInType() == BuiltInType.STRING);
 
-		
 		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 	}
-	
+
 	public void testEnumerationInteger1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='Enumeration'>"
@@ -308,7 +304,5 @@ public class EnumerationTest extends AbstractTestCase {
 		assertFalse(dt.isValid(new StringValue("00")));
 		assertFalse(dt.isValid(new StringValue("bla")));
 	}
-	
-
 
 }

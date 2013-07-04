@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -46,7 +44,7 @@ public class IntegerDatatype extends AbstractDatatype {
 
 	private IntegerValue lastInteger;
 
-	public IntegerDatatype(QName schemaType) {
+	public IntegerDatatype(QNameContext schemaType) {
 		super(BuiltInType.INTEGER, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 	}

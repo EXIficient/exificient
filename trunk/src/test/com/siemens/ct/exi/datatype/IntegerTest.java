@@ -125,10 +125,10 @@ public class IntegerTest extends AbstractTestCase {
 	// {
 	// String s = "35   ";
 	// String sDec = "35";
-	//    	
+	//
 	// XMLInteger xmlInteger = XMLInteger.newInstance();
 	// xmlInteger.parse ( s );
-	//    	
+	//
 	// // Bit
 	// EncoderChannel bitEC = getBitEncoder();
 	// bitEC.encodeInteger( xmlInteger );
@@ -141,10 +141,10 @@ public class IntegerTest extends AbstractTestCase {
 
 	public void testIntegerLong1() throws IOException {
 		String s = "12131321321";
-		
+
 		// long xmlInteger = Long.parseLong(s);
 		IntegerValue iv = IntegerValue.parse(s);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeIntegerValue(iv);
@@ -154,7 +154,6 @@ public class IntegerTest extends AbstractTestCase {
 		getByteEncoder().encodeIntegerValue(iv);
 		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
-
 
 	public void testIntegerBig2() throws IOException {
 		String s = "2137000000000000000000000000001";
@@ -171,7 +170,7 @@ public class IntegerTest extends AbstractTestCase {
 		getByteEncoder().encodeIntegerValue(xmlInteger);
 		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
-	
+
 	public void testIntegerBig1() throws IOException {
 		String s = "12678967543233";
 
@@ -188,13 +187,12 @@ public class IntegerTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeIntegerValue().toString()));
 	}
 
-
 	public void testIntegerBig3() throws IOException {
 		String s = "-5153135115135135135135153153135135153";
 
 		// BigInteger xmlInteger = new BigInteger(s);
 		IntegerValue xmlInteger = IntegerValue.parse(s);
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		bitEC.encodeIntegerValue(xmlInteger);

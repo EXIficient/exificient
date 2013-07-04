@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -46,7 +44,7 @@ public class DecimalDatatype extends AbstractDatatype {
 
 	protected DecimalValue lastValidDecimal;
 
-	public DecimalDatatype(QName schemaType) {
+	public DecimalDatatype(QNameContext schemaType) {
 		super(BuiltInType.DECIMAL, schemaType);
 		this.rcs = new XSDDecimalCharacterSet();
 	}

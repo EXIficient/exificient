@@ -41,29 +41,21 @@ import com.siemens.ct.exi.values.Value;
 public class DatatypeRepresentationMapTypeEncoder extends
 		AbstractRepresentationMapTypeCoder implements TypeEncoder {
 
-	// fallback type encoder
-	protected TypeEncoder defaultEncoder;
-
-	public DatatypeRepresentationMapTypeEncoder(TypeEncoder defaultEncoder,
-			QName[] dtrMapTypes, QName[] dtrMapRepresentations, Grammars grammar)
+	public DatatypeRepresentationMapTypeEncoder(QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations, Grammars grammar)
 			throws EXIException {
-		super(dtrMapTypes, dtrMapRepresentations, grammar);
-
-		// hand over "default" encoder
-		this.defaultEncoder = defaultEncoder;
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 	public boolean isValid(Datatype datatype, Value value) {
-		QName schemaType = datatype.getSchemaType();
-		recentDtrDataype = dtrMap.get(schemaType);
-
-		return defaultEncoder.isValid(recentDtrDataype == null ? datatype
-				: recentDtrDataype, value);
+		this.updateRecentDtr(datatype);
+		assert (recentDtrDataype != null);
+		return recentDtrDataype.isValid(value);
 	}
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException {
-		defaultEncoder.writeValue(qnContext, valueChannel, stringEncoder);
+		recentDtrDataype.writeValue(qnContext, valueChannel, stringEncoder);
 	}
 
 }

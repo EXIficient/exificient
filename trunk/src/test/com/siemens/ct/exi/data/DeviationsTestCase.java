@@ -81,7 +81,7 @@ public class DeviationsTestCase extends AbstractTestCase {
 	public void testDeviationInvalidQName() throws Exception {
 		// set up configuration
 		setConfigurationDeviationInvalidQName();
-	
+
 		// execute test
 		_test();
 	}
@@ -219,8 +219,7 @@ public class DeviationsTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/deviations/globalAttributeDev1.xml.exi");
 	}
-	
-	
+
 	public static void setConfigurationDeviationInvalidQName() {
 		QuickTestConfiguration
 				.setXsdLocation("./data/deviations/invalidQName.xsd");

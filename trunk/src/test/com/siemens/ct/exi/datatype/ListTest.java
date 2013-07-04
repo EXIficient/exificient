@@ -43,10 +43,11 @@ public class ListTest extends AbstractTestCase {
 	public ListTest(String testName) {
 		super(testName);
 	}
-	
+
 	public void testListInteger1() throws IOException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
+				null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
@@ -68,93 +69,112 @@ public class ListTest extends AbstractTestCase {
 		ListValue lv2 = (ListValue) v2;
 		assertTrue(s.equals(lv2.toString()));
 	}
-	
+
 	public void testListIntegerLexical1() throws IOException, EXIException {
 		StringValue s = new StringValue("100 34 56 -23 1567");
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
+				null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
-		
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();
-		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
-		
-		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new StringDecoderImpl();
-		// DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
-		
-//		StringEncoder stringEncoder = new StringEncoderImpl();
-//		StringDecoder stringDecoder = new StringDecoderImpl();
-		QName context = new QName("", "intList"); 
+		// GrammarContext grammarContext =
+		// exiFactory.getGrammars().getGrammarContext();
+
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); // new
+																		// StringEncoderImpl();
+		// EncoderContext encoderContext = new
+		// EncoderContextImpl(grammarContext, stringEncoder);
+
+		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new
+																		// StringDecoderImpl();
+		// DecoderContext decoderContext = new
+		// DecoderContextImpl(grammarContext, stringDecoder);
+
+		// StringEncoder stringEncoder = new StringEncoderImpl();
+		// StringDecoder stringDecoder = new StringDecoderImpl();
+		QName context = new QName("", "intList");
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		QNameContext qncContext = new QNameContext(0, 0, context, 0);
-		
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
-		
+
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
+				null);
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		ldtInteger.writeValueRCS(rcsDatatype, qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext, getBitDecoder(), stringDecoder);
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
+				getBitDecoder(), stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext,  getByteDecoder(), stringDecoder);
+		ldtInteger
+				.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
+				getByteDecoder(), stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
-	
+
 	// encodes special chars as well
 	public void testListIntegerLexical2() throws IOException, EXIException {
 		char special = '\u03D7';
 		StringValue s = new StringValue("100" + special);
-		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null), null);
+		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
+				null);
 
 		boolean valid = ldtInteger.isValidRCS(s);
 		assertTrue(valid);
-		
+
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-//		GrammarContext grammarContext = exiFactory.getGrammars().getGrammarContext();
-		
+		// GrammarContext grammarContext =
+		// exiFactory.getGrammars().getGrammarContext();
 
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); //  new StringEncoderImpl();
-		// EncoderContext encoderContext = new EncoderContextImpl(grammarContext, stringEncoder);
-		
-		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new StringDecoderImpl();
-		// DecoderContext decoderContext = new DecoderContextImpl(grammarContext, stringDecoder);
-		
-		QName context = new QName("", "intList"); 
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); // new
+																		// StringEncoderImpl();
+		// EncoderContext encoderContext = new
+		// EncoderContextImpl(grammarContext, stringEncoder);
+
+		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new
+																		// StringDecoderImpl();
+		// DecoderContext decoderContext = new
+		// DecoderContextImpl(grammarContext, stringDecoder);
+
+		QName context = new QName("", "intList");
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		QNameContext qncContext = new QNameContext(0, 0, context, 0);
-		
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(null);
-		
+
+		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
+				null);
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		ldtInteger.writeValueRCS(rcsDatatype, qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext, getBitDecoder(), stringDecoder);
+		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
+				getBitDecoder(), stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext, getByteDecoder(), stringDecoder);
+		ldtInteger
+				.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
+		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
+				getByteDecoder(), stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
-	
 
 	public void testListNBit1() throws IOException {
 		StringValue s = new StringValue("+1 0 127 -127");
 		String sRes = "1 0 127 -127";
 		IntegerValue min = IntegerValue.valueOf(-128);
 		IntegerValue max = IntegerValue.valueOf(127);
-		ListDatatype ldtInteger = new ListDatatype(new NBitUnsignedIntegerDatatype(min, max, null), null);
+		ListDatatype ldtInteger = new ListDatatype(
+				new NBitUnsignedIntegerDatatype(min, max, null), null);
 
 		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
@@ -203,11 +223,12 @@ public class ListTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("  --12-25  --08-15  --01-01  --07-14   ")));
+		assertTrue(dt.isValid(new StringValue(
+				"  --12-25  --08-15  --01-01  --07-14   ")));
 
 		assertFalse(dt.isValid(new StringValue("00")));
 	}
-	
+
 	public void testListEnum1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:simpleType name='listOfIDsEnum'>"
@@ -222,9 +243,7 @@ public class ListTest extends AbstractTestCase {
 				+ "    <xs:enumeration value='AB BC CD'/>"
 				+ "    <xs:enumeration value='EF FG GH'/>"
 				+ "    <xs:enumeration value='IJ JK KL'/>"
-				+ "  </xs:restriction>"
-				+ "  </xs:simpleType>"
-				+ "</xs:schema>";
+				+ "  </xs:restriction>" + "  </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"listOfIDsEnum", "");
@@ -240,7 +259,7 @@ public class ListTest extends AbstractTestCase {
 		// assertFalse(dt.isValid(new StringValue("00")));
 		assertTrue(dt.isValid(new StringValue("00")));
 	}
-	
+
 	public void testListEnum2() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:simpleType name='listOfIntsEnum'>"
@@ -256,8 +275,7 @@ public class ListTest extends AbstractTestCase {
 				+ "    <xs:enumeration value='4 5 6'/>"
 				+ "    <xs:enumeration value='7 8 9'/>"
 				+ "  </xs:restriction>"
-				+ "  </xs:simpleType>"
-				+ "</xs:schema>";
+				+ "  </xs:simpleType>" + "</xs:schema>";
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"listOfIntsEnum", "");
@@ -265,15 +283,15 @@ public class ListTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
-		
+
 		assertTrue(dt.isValid(new StringValue("  1  2  3   ")));
 		assertTrue(dt.isValid(new StringValue("  4  5   6  ")));
 		assertTrue(dt.isValid(new StringValue("  9   ")));
 		assertTrue(dt.isValid(new StringValue(" 123")));
-		
+
 		assertFalse(dt.isValid(new StringValue("XXX")));
 	}
-	
+
 	public void testListFloat1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='List'>"
@@ -291,7 +309,7 @@ public class ListTest extends AbstractTestCase {
 
 		assertFalse(dt.isValid(new StringValue("bla")));
 	}
-	
+
 	public void testListFloat2() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='List'>"
@@ -305,7 +323,8 @@ public class ListTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("  1e4 -10000 5.234e-2 \n 11.22 \t\t 4 \r\n999  ")));
+		assertTrue(dt.isValid(new StringValue(
+				"  1e4 -10000 5.234e-2 \n 11.22 \t\t 4 \r\n999  ")));
 
 		assertFalse(dt.isValid(new StringValue("bla")));
 	}

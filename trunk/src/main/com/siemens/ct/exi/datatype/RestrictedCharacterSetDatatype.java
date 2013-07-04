@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
@@ -49,12 +47,12 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	protected String lastValidValue;
 
 	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
-			QName schemaType) {
+			QNameContext schemaType) {
 		this(schemaType);
 		this.rcs = rcs;
 	}
 
-	public RestrictedCharacterSetDatatype(QName schemaType) {
+	public RestrictedCharacterSetDatatype(QNameContext schemaType) {
 		super(BuiltInType.RCS_STRING, schemaType);
 	}
 

@@ -21,8 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -46,7 +44,7 @@ public interface Datatype extends Serializable {
 	public BuiltInType getBuiltInType();
 
 	// used for dtr map
-	public QName getSchemaType();
+	public QNameContext getSchemaType();
 
 	// restricted character set
 	public RestrictedCharacterSet getRestrictedCharacterSet();

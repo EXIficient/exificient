@@ -34,7 +34,7 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderStrict();
 		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderCommon ( );
 		// EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon();
-		EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon2 ();
+		EXIOptionsHeaderTestCase.setConfigurationEXIOptionsHeaderLessCommon2();
 	}
 
 	protected void setUp() {
@@ -142,7 +142,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderLessCommon.exi");
 	}
-	
 
 	@Test
 	public void testEXIOptionsHeaderLessCommon2() throws Exception {
@@ -161,9 +160,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderLessCommon2.xml.exi");
 	}
-	
-	
-	
 
 	@Test
 	public void testEXIOptionsHeaderProfile1() throws Exception {
@@ -182,10 +178,6 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderProfile1.xml.exi");
 	}
-	
-
-	
-	
 
 	@Test
 	public void testEXIOptionsHeaderProfile2() throws Exception {
@@ -204,5 +196,5 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/EXIOptionsHeader/EXIOptionsHeaderProfile2.xml.exi");
 	}
-	
+
 }

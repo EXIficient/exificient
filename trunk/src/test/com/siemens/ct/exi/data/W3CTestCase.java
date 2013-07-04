@@ -36,7 +36,7 @@ public class W3CTestCase extends AbstractTestCase {
 		// W3CTestCase.setConfigurationW3CXMLSample ( );
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx();
 		// W3CTestCase.setConfigurationW3CXMLSample_Pfx2();
-		W3CTestCase.setConfigurationW3CEXIbyExample ( );
+		W3CTestCase.setConfigurationW3CEXIbyExample();
 		// W3CTestCase.setConfigurationW3CPrimerNotebook();
 		// W3CTestCase.setConfigurationW3CXHTMLStrict1();
 		// W3CTestCase.setConfigurationW3CXHTMLTransitional1();
@@ -93,21 +93,21 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
-		
+
 		// #7 (SelfContained)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
 		FidelityOptions scFo = FidelityOptions.createAll();
 		scFo.setFidelity(FidelityOptions.FEATURE_SC, true);
 		QName[] scElements = new QName[3];
-		scElements[0] = new QName("", "note");	//	notebook
-		scElements[1] = new QName("", "body");  //	notebook, nested
+		scElements[0] = new QName("", "note"); // notebook
+		scElements[1] = new QName("", "body"); // notebook, nested
 		scElements[2] = new QName("http://www.foo.com", "person"); // XMLSample
 		testCaseOptions.lastElement().setSelfContainedElements(scElements);
 		testCaseOptions.lastElement().setFidelityOptions(scFo);
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
-		
+
 		// #8 valuePartitionCapacity
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -116,14 +116,14 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(true);
 		testCaseOptions.lastElement().setValuePartitionCapacity(9);
-		
+
 	}
 
 	@Test
 	public void testW3CEXIbyExample() throws Exception {
 		// set up configuration
 		setConfigurationW3CEXIbyExample();
-	
+
 		// execute test
 		_test();
 	}
@@ -163,7 +163,7 @@ public class W3CTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/XMLSample/XMLSample_pfx.exi");
 	}
-	
+
 	@Test
 	public void testW3CXMLSample_Pfx2() throws Exception {
 		// set up configuration
@@ -208,11 +208,11 @@ public class W3CTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/PrimerNotebook/notebook.exi");
 	}
-	
+
 	/*
 	 * XHTML examples
 	 */
-	
+
 	@Test
 	public void xtestW3CXHTMLStrict1() throws Exception {
 		// set up configuration
@@ -231,7 +231,6 @@ public class W3CTestCase extends AbstractTestCase {
 				.setExiLocation("./out/W3C/xhtml/www.w3.org.htm.exi");
 	}
 
-	
 	@Test
 	public void xtestW3CXHTMLTransitional1() throws Exception {
 		// set up configuration
@@ -240,7 +239,6 @@ public class W3CTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
-	
 
 	public static void setConfigurationW3CXHTMLTransitional1() {
 		QuickTestConfiguration
@@ -250,8 +248,7 @@ public class W3CTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/W3C/xhtml/en.wikipedia.org-wiki-EXI.htm.exi");
 	}
-	
-	
+
 	@Test
 	public void xtestW3CXsdWsdl1() throws Exception {
 		// set up configuration
@@ -260,15 +257,11 @@ public class W3CTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
-	
 
 	public static void setConfigurationW3CXsdWsdl1() {
-		QuickTestConfiguration
-				.setXsdLocation("./data/W3C/xsd/XMLSchema.xsd");
-		QuickTestConfiguration
-				.setXmlLocation("./data/W3C/xsd/wsdl.xsd");
-		QuickTestConfiguration
-				.setExiLocation("./out/W3C/xsd/wsdl.xsd.exi");
+		QuickTestConfiguration.setXsdLocation("./data/W3C/xsd/XMLSchema.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/W3C/xsd/wsdl.xsd");
+		QuickTestConfiguration.setExiLocation("./out/W3C/xsd/wsdl.xsd.exi");
 	}
 
 }

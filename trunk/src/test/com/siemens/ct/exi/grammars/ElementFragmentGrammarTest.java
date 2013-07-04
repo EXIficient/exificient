@@ -35,8 +35,8 @@ public class ElementFragmentGrammarTest extends TestCase {
 
 	public static Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
-		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
-				.getBytes());
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				schemaAsString.getBytes());
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
 		Grammars grammar = grammarFactory.createGrammars(bais);
 
@@ -55,32 +55,30 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ "   </xs:sequence>"
 				+ "   <xs:attribute name='c' type='xs:int'/>"
 				+ "   <xs:attribute name='d' type='xs:int'/>"
-				+ "  </xs:complexType>"
-				+ " </xs:element>"
-				+ " <xs:attribute name='c' type='xs:int'/>"
-				+ "</xs:schema>";
+				+ "  </xs:complexType>" + " </xs:element>"
+				+ " <xs:attribute name='c' type='xs:int'/>" + "</xs:schema>";
 
 		Grammars g = getGrammarFromSchemaAsString(schema);
 		Grammar r = g.getFragmentGrammar();
 
 		Production ei = r.getProduction(EventType.START_DOCUMENT);
-		Production ei2 =  ei.getNextGrammar().getStartElementProduction("", "root");
+		Production ei2 = ei.getNextGrammar().getStartElementProduction("",
+				"root");
 		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
 		StartElement seRoot = (StartElement) ei2.getEvent();
 		Grammar rRoot = seRoot.getGrammar();
-		
+
 		Production eiAtC = rRoot.getAttributeProduction("", "c");
 		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));
 		Attribute atC = (Attribute) eiAtC.getEvent();
 		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
-		
+
 		Production eiAtD = rRoot.getAttributeProduction("", "d");
 		assertTrue(eiAtD.getEvent().isEventType(EventType.ATTRIBUTE));
 		Attribute atD = (Attribute) eiAtD.getEvent();
 		assertTrue(atD.getDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
-	
-	
+
 	// attribute c has to different definitions-> typed a string
 	public void testAttributes2() throws Exception {
 		schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
@@ -93,25 +91,24 @@ public class ElementFragmentGrammarTest extends TestCase {
 				+ "   </xs:sequence>"
 				+ "   <xs:attribute name='c' type='xs:int'/>"
 				+ "   <xs:attribute name='d' type='xs:int'/>"
-				+ "  </xs:complexType>"
-				+ " </xs:element>"
-				+ " <xs:attribute name='c' type='xs:date'/>"
-				+ "</xs:schema>";
+				+ "  </xs:complexType>" + " </xs:element>"
+				+ " <xs:attribute name='c' type='xs:date'/>" + "</xs:schema>";
 
 		Grammars g = getGrammarFromSchemaAsString(schema);
 		Grammar r = g.getFragmentGrammar();
 
 		Production ei = r.getProduction(EventType.START_DOCUMENT);
-		Production ei2 =  ei.getNextGrammar().getStartElementProduction("", "root");
+		Production ei2 = ei.getNextGrammar().getStartElementProduction("",
+				"root");
 		assertTrue(ei2.getEvent().isEventType(EventType.START_ELEMENT));
 		StartElement seRoot = (StartElement) ei2.getEvent();
 		Grammar rRoot = seRoot.getGrammar();
-		
+
 		Production eiAtC = rRoot.getAttributeProduction("", "c");
 		assertTrue(eiAtC.getEvent().isEventType(EventType.ATTRIBUTE));
 		Attribute atC = (Attribute) eiAtC.getEvent();
 		assertTrue(atC.getDatatype().getBuiltInType() == BuiltInType.STRING);
-		
+
 		Production eiAtD = rRoot.getAttributeProduction("", "d");
 		assertTrue(eiAtD.getEvent().isEventType(EventType.ATTRIBUTE));
 		Attribute atD = (Attribute) eiAtD.getEvent();

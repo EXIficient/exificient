@@ -49,15 +49,13 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		isFragment = ef.isFragment();
 	}
 
+	// @Override
+	// public void setupEXIWriter(EXIFactory ef) throws EXIException {
+	// // dom encoder
+	// enc = new DOMWriter(ef);
+	// isFragment = ef.isFragment();
+	// }
 
-//	@Override
-//	public void setupEXIWriter(EXIFactory ef) throws EXIException {
-//		// dom encoder
-//		enc = new DOMWriter(ef);
-//		isFragment = ef.isFragment();
-//	}
-
-	
 	public static Document getDocument(InputStream is)
 			throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
@@ -90,7 +88,7 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 	}
 
 	public void encodeTo(InputStream xmlInput, OutputStream exiOutput)
-	throws Exception {
+			throws Exception {
 		// document
 		Node doc;
 		if (isFragment) {
@@ -105,7 +103,6 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		// TestDOMDecoder.nodeToWriter(doc, sw);
 		// System.out.println(sw.toString());
 
-
 		enc.setOutput(exiOutput);
 
 		enc.encode(doc);
@@ -114,28 +111,27 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 
 	public static void main(String[] args) throws Exception {
 
-
 		// create DOM encoder
-		TestDOMEncoder testEncoder = new TestDOMEncoder(TestDOMEncoder.getQuickTestEXIactory());
+		TestDOMEncoder testEncoder = new TestDOMEncoder(
+				TestDOMEncoder.getQuickTestEXIactory());
 
-//		// get factory
-//		EXIFactory exiFactory = testEncoder.getQuickTestEXIactory();
-//		testEncoder.setupEXIWriter(exiFactory);
+		// // get factory
+		// EXIFactory exiFactory = testEncoder.getQuickTestEXIactory();
+		// testEncoder.setupEXIWriter(exiFactory);
 
 		// EXI input stream
 		InputStream xmlInput = new FileInputStream(
 				QuickTestConfiguration.XML_FILE_LOCATION);
-		
 
 		// EXI output stream
 		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
 				.getExiLocation());
-		
-//		// setup encoding options
-//		setupEncodingOptions(exiFactory);
+
+		// // setup encoding options
+		// setupEncodingOptions(exiFactory);
 
 		// generate EXI
-//		testEncoder.setupEXIWriter(exiFactory);
+		// testEncoder.setupEXIWriter(exiFactory);
 		testEncoder.encodeTo(xmlInput, encodedOutput);
 		encodedOutput.close();
 

@@ -46,13 +46,14 @@ public abstract class AbstractTestCoder {
 		} else {
 			ef = getFactoryNoSchema();
 		}
-		
+
 		setupEncodingOptions(ef);
-		
+
 		return ef;
 	}
-	
-	protected static void setupEncodingOptions(EXIFactory ef) throws UnsupportedOption {
+
+	protected static void setupEncodingOptions(EXIFactory ef)
+			throws UnsupportedOption {
 		if (QuickTestConfiguration.INCLUDE_COOKIE) {
 			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
 		}
@@ -60,16 +61,18 @@ public abstract class AbstractTestCoder {
 			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 		}
 		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
+			ef.getEncodingOptions()
+					.setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
 		}
 		if (QuickTestConfiguration.RETAIN_ENTITY_REFERENCE) {
-			ef.getEncodingOptions().setOption(EncodingOptions.RETAIN_ENTITY_REFERENCE);
+			ef.getEncodingOptions().setOption(
+					EncodingOptions.RETAIN_ENTITY_REFERENCE);
 		}
 		if (QuickTestConfiguration.INCLUDE_XSI_SCHEMALOCATION) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+			ef.getEncodingOptions().setOption(
+					EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		}
 	}
-	
 
 	protected static EXIFactory getFactory() {
 		return DefaultEXIFactory.newInstance();
@@ -92,7 +95,8 @@ public abstract class AbstractTestCoder {
 		// ef.setProfile(QuickTestConfiguration.PROFILE);
 		ef.setFragment(QuickTestConfiguration.FRAGMENTS);
 		ef.setSelfContainedElements(QuickTestConfiguration.selfContainedElements);
-		ef.setDatatypeRepresentationMap(QuickTestConfiguration.dtrMapTypes, QuickTestConfiguration.dtrMapRepresentations);
+		ef.setDatatypeRepresentationMap(QuickTestConfiguration.dtrMapTypes,
+				QuickTestConfiguration.dtrMapRepresentations);
 
 		return ef;
 	}
@@ -100,10 +104,11 @@ public abstract class AbstractTestCoder {
 	protected static EXIFactory getFactorySchema() throws EXIException {
 		EXIFactory ef = getFactoryNoSchema();
 		String xsdLocation = QuickTestConfiguration.getXsdLocation();
-		if (QuickTestConfiguration.XSD_TYPES_ONLY || xsdLocation == null || xsdLocation.length() == 0) {
+		if (QuickTestConfiguration.XSD_TYPES_ONLY || xsdLocation == null
+				|| xsdLocation.length() == 0) {
 			ef.setGrammars(getXSDTypesOnlyGrammar());
 		} else {
-			ef.setGrammars(getGrammar(xsdLocation));	
+			ef.setGrammars(getGrammar(xsdLocation));
 		}
 
 		return ef;
@@ -112,12 +117,12 @@ public abstract class AbstractTestCoder {
 	public static Grammars getXSDTypesOnlyGrammar() throws EXIException {
 		return grammarFactory.createXSDTypesOnlyGrammars();
 	}
-	
+
 	public static Grammars getGrammar(String xsdLocation) throws EXIException {
 		if (xsdLocation == null) {
 			return grammarFactory.createSchemaLessGrammars();
 		} else {
-			return grammarFactory.createGrammars(xsdLocation);	
+			return grammarFactory.createGrammars(xsdLocation);
 		}
 	}
 
@@ -128,7 +133,7 @@ public abstract class AbstractTestCoder {
 		File path = fileEXI.getParentFile();
 		if (!path.exists()) {
 			boolean bool = path.mkdirs();
-			assert(bool);
+			assert (bool);
 		}
 
 		return new BufferedOutputStream(new FileOutputStream(fileEXI));

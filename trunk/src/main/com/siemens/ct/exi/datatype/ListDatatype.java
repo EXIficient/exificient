@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -47,7 +45,7 @@ public class ListDatatype extends AbstractDatatype {
 
 	ListValue listValues;
 
-	public ListDatatype(Datatype listDatatype, QName schemaType) {
+	public ListDatatype(Datatype listDatatype, QNameContext schemaType) {
 		super(BuiltInType.LIST, schemaType);
 
 		this.rcs = listDatatype.getRestrictedCharacterSet();
