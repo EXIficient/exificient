@@ -46,78 +46,78 @@ public class BoundedTableTestCase extends XMLTestCase {
 	public void testValue(Value val) {
 		assertTrue(val.toString().startsWith("VAL_"));
 	}
-	
+
 	public void testSE(QNameContext qname) {
 		String localPart = qname.getLocalName();
-		assertTrue(localPart.equals("root") || localPart.equals("a") || localPart.equals("b"));
-	}
-	
-	public void testBoundedTable80() throws SAXException, IOException, EXIException {
-			EXIFactory factory = DefaultEXIFactory.newInstance();
-			factory.setValuePartitionCapacity(80);
-			
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-			// write EXI stream
-			{
-				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-
-				EXIResult exiResult = new EXIResult(factory);
-				exiResult.setOutputStream(os);
-				xmlReader.setContentHandler(exiResult.getHandler());
-
-				xmlReader.parse(new InputSource(new StringReader(xml)));
-			}
-
-			// read EXI stream
-			os.flush();
-			byte[] bytes = os.toByteArray();
-			InputStream is = new ByteArrayInputStream(bytes, 1, bytes.length-1); // header
-			EXIBodyDecoder exiDecoder = factory.createEXIBodyDecoder();
-			exiDecoder.setInputStream(is);
-
-			EventType eventType;
-			while( (eventType = exiDecoder.next()) != null) {
-				switch(eventType) {
-				case START_DOCUMENT:
-					exiDecoder.decodeStartDocument();
-					break;
-				case END_DOCUMENT:
-					exiDecoder.decodeEndDocument();
-					break;
-				case START_ELEMENT:
-					QNameContext se = exiDecoder.decodeStartElement();
-					testSE(se); 
-					break;
-				case START_ELEMENT_GENERIC:
-					// se = exiDecoder.decodeStartElementGeneric();
-					se = exiDecoder.decodeStartElement();
-					testSE(se); 
-					break;
-				case START_ELEMENT_GENERIC_UNDECLARED:
-					// se = exiDecoder.decodeStartElementGenericUndeclared();
-					se = exiDecoder.decodeStartElement();
-					testSE(se); 
-					break;
-				case CHARACTERS:
-					Value val = exiDecoder.decodeCharacters();
-					testValue(val);
-					break;
-				case CHARACTERS_GENERIC_UNDECLARED:
-					// val= exiDecoder.decodeCharactersGenericUndeclared();
-					val= exiDecoder.decodeCharacters();
-					testValue(val);
-					break;
-				case END_ELEMENT:
-					exiDecoder.decodeEndElement();
-					break;
-				default:
-					throw new RuntimeException("Unexpected event: " + eventType);
-				}
-			}
-			
-
+		assertTrue(localPart.equals("root") || localPart.equals("a")
+				|| localPart.equals("b"));
 	}
 
+	public void testBoundedTable80() throws SAXException, IOException,
+			EXIException {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setValuePartitionCapacity(80);
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		// write EXI stream
+		{
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+
+			EXIResult exiResult = new EXIResult(factory);
+			exiResult.setOutputStream(os);
+			xmlReader.setContentHandler(exiResult.getHandler());
+
+			xmlReader.parse(new InputSource(new StringReader(xml)));
+		}
+
+		// read EXI stream
+		os.flush();
+		byte[] bytes = os.toByteArray();
+		InputStream is = new ByteArrayInputStream(bytes, 1, bytes.length - 1); // header
+		EXIBodyDecoder exiDecoder = factory.createEXIBodyDecoder();
+		exiDecoder.setInputStream(is);
+
+		EventType eventType;
+		while ((eventType = exiDecoder.next()) != null) {
+			switch (eventType) {
+			case START_DOCUMENT:
+				exiDecoder.decodeStartDocument();
+				break;
+			case END_DOCUMENT:
+				exiDecoder.decodeEndDocument();
+				break;
+			case START_ELEMENT:
+				QNameContext se = exiDecoder.decodeStartElement();
+				testSE(se);
+				break;
+			case START_ELEMENT_GENERIC:
+				// se = exiDecoder.decodeStartElementGeneric();
+				se = exiDecoder.decodeStartElement();
+				testSE(se);
+				break;
+			case START_ELEMENT_GENERIC_UNDECLARED:
+				// se = exiDecoder.decodeStartElementGenericUndeclared();
+				se = exiDecoder.decodeStartElement();
+				testSE(se);
+				break;
+			case CHARACTERS:
+				Value val = exiDecoder.decodeCharacters();
+				testValue(val);
+				break;
+			case CHARACTERS_GENERIC_UNDECLARED:
+				// val= exiDecoder.decodeCharactersGenericUndeclared();
+				val = exiDecoder.decodeCharacters();
+				testValue(val);
+				break;
+			case END_ELEMENT:
+				exiDecoder.decodeEndElement();
+				break;
+			default:
+				throw new RuntimeException("Unexpected event: " + eventType);
+			}
+		}
+
+	}
 
 }

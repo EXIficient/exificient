@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -46,7 +44,7 @@ public class FloatDatatype extends AbstractDatatype {
 
 	protected FloatValue lastValidFloat;
 
-	public FloatDatatype(QName schemaType) {
+	public FloatDatatype(QNameContext schemaType) {
 		super(BuiltInType.FLOAT, schemaType);
 		this.rcs = new XSDDoubleCharacterSet();
 	}

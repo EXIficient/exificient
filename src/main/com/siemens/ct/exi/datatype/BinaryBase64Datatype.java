@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -42,7 +40,7 @@ public class BinaryBase64Datatype extends AbstractBinaryDatatype {
 
 	private static final long serialVersionUID = 7266684611493396188L;
 
-	public BinaryBase64Datatype(QName schemaType) {
+	public BinaryBase64Datatype(QNameContext schemaType) {
 		super(BuiltInType.BINARY_BASE64, schemaType);
 		this.rcs = new XSDBase64CharacterSet();
 	}

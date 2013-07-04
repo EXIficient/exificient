@@ -78,8 +78,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		ef.setCodingMode(tco.getCodingMode());
 		ef.setFidelityOptions(tco.getFidelityOptions());
 		ef.setFragment(tco.isFragments());
-		ef.setDatatypeRepresentationMap(tco.getDtrMapTypes(), tco
-				.getDtrMapRepresentations());
+		ef.setDatatypeRepresentationMap(tco.getDtrMapTypes(),
+				tco.getDtrMapRepresentations());
 		ef.setSelfContainedElements(tco.getSelfContainedElements());
 		if (tco.getBlockSize() >= 0) {
 			ef.setBlockSize(tco.getBlockSize());
@@ -91,14 +91,16 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setValuePartitionCapacity(tco.getValuePartitionCapacity());
 		}
 		ef.setEncodingOptions(tco.getEncodingOptions());
-		
+
 		ef.setLocalValuePartitions(tco.isLocalValuePartitions());
-		ef.setMaximumNumberOfBuiltInProductions(tco.getMaximumNumberOfBuiltInProductions());
-		ef.setMaximumNumberOfBuiltInElementGrammars(tco.getMaximumNumberOfEvolvingBuiltInElementGrammars());
-		
-//		if (tco.getProfile() != null) {
-//			ef.setProfile(tco.getProfile());
-//		}
+		ef.setMaximumNumberOfBuiltInProductions(tco
+				.getMaximumNumberOfBuiltInProductions());
+		ef.setMaximumNumberOfBuiltInElementGrammars(tco
+				.getMaximumNumberOfEvolvingBuiltInElementGrammars());
+
+		// if (tco.getProfile() != null) {
+		// ef.setProfile(tco.getProfile());
+		// }
 
 		// schema-informed grammar ?
 		if (tco.getSchemaLocation() == null) {
@@ -128,8 +130,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		exiEncodedOutput.flush();
 
 		// EXI input stream
-		InputStream exiDocument = new ByteArrayInputStream(exiEncodedOutput
-				.toByteArray());
+		InputStream exiDocument = new ByteArrayInputStream(
+				exiEncodedOutput.toByteArray());
 
 		EncodingOptions encodingOptions = tco.getEncodingOptions();
 		// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
@@ -157,14 +159,14 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			throw new Exception("{" + api + "->DOM} " + e.getLocalizedMessage()
 					+ " [" + tco.toString() + "]", e);
 		}
-		
+
 		// <-- 3. decode as StAX
 		try {
 			exiDocument.reset();
 			decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
 		} catch (Throwable e) {
-			throw new Exception("{" + api + "->StAX} " + e.getLocalizedMessage()
-					+ " [" + tco.toString() + "]", e);
+			throw new Exception("{" + api + "->StAX} "
+					+ e.getLocalizedMessage() + " [" + tco.toString() + "]", e);
 		}
 	}
 
@@ -180,8 +182,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		xmlOutput.flush();
 
 		// check XML validity OR equal
-		InputStream testDecXML = new ByteArrayInputStream(xmlOutput
-				.toByteArray());
+		InputStream testDecXML = new ByteArrayInputStream(
+				xmlOutput.toByteArray());
 
 		List<String> domDiffIssues = new ArrayList<String>();
 		// entity references
@@ -196,7 +198,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		String xmlLocation = QuickTestConfiguration.getXmlLocation();
 
-		if (( api == API.DOM || api == API.StAX  ) && domDiffIssues.contains(xmlLocation)) {
+		if ((api == API.DOM || api == API.StAX)
+				&& domDiffIssues.contains(xmlLocation)) {
 			// TODO find a solution for known DOM diff tool issues
 			// System.out.println("No DOM diff for: " + xmlLocation);
 		} else if (checkXMLEqual) {
@@ -207,8 +210,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		}
 	}
 
-	protected AbstractTestEncoder getTestEncoder(API api,
-			EXIFactory ef) throws EXIException {
+	protected AbstractTestEncoder getTestEncoder(API api, EXIFactory ef)
+			throws EXIException {
 		if (api == API.SAX) {
 			return new TestSAXEncoder(ef);
 		} else if (api == API.DOM) {
@@ -219,7 +222,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		}
 	}
 
-	protected AbstractTestDecoder getTestDecoder(API api, EXIFactory ef) throws TransformerConfigurationException, EXIException, ParserConfigurationException {
+	protected AbstractTestDecoder getTestDecoder(API api, EXIFactory ef)
+			throws TransformerConfigurationException, EXIException,
+			ParserConfigurationException {
 		if (api == API.SAX) {
 			return new TestSAXDecoder(ef);
 		} else if (api == API.DOM) {
@@ -247,7 +252,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			if (msg.contains("The entity \"ent\" was referenced, but not declared")) {
 				// known issue? --> entityReference2 for StAX
 				return;
-			} 
+			}
 			throw new Exception("Not able to create DOM. " + ef.getCodingMode()
 					+ ", schema=" + ef.getGrammars().isSchemaInformed() + " "
 					+ ef.getFidelityOptions().toString(), e);
@@ -292,7 +297,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// System.out.println(msg);
 			if (msg.contains("Expected doctype name 'html'")) {
 				// do nothing, false failure
-			} else if (msg.contains("Expected number of child nodes '3' but was '2' - comparing <greeting...> at /greeting[1] to <greeting...> at /greeting[1]")) {
+			} else if (msg
+					.contains("Expected number of child nodes '3' but was '2' - comparing <greeting...> at /greeting[1] to <greeting...> at /greeting[1]")) {
 				// ER issue, see testEntityReference1
 			} else {
 				throw new AssertionFailedError(msg);
@@ -308,35 +314,35 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		// schema-informed
 		_test(QuickTestConfiguration.getXsdLocation(), noValidOptions);
-		
-//		// schema-informed (XSD-types only)
-//		_test("", noValidOptions);
+
+		// // schema-informed (XSD-types only)
+		// _test("", noValidOptions);
 	}
-	
+
 	protected void _test() throws Exception {
 		_test(null);
 	}
 
-	private void _test(String schemaLocation, FidelityOptions noValidOptions) throws Exception {
+	private void _test(String schemaLocation, FidelityOptions noValidOptions)
+			throws Exception {
 		// test options
 		for (int i = 0; i < testCaseOptions.size(); i++) {
 			TestCaseOption tco = testCaseOptions.get(i);
-			
+
 			if (tco.getFidelityOptions().equals(noValidOptions)) {
 				continue;
 			}
-			
-			
+
 			// update schema
 			tco.setSchemaLocation(schemaLocation);
 			// test all encode APIs
-			
+
 			// 1. encode SAX
 			_testOption(tco, API.SAX);
 
 			// 2. encode DOM
 			_testOption(tco, API.DOM);
-			
+
 			// 3. encode StAX
 			_testOption(tco, API.StAX);
 		}

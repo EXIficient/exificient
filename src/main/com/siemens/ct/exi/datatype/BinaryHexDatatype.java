@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -42,7 +40,7 @@ public class BinaryHexDatatype extends AbstractBinaryDatatype {
 
 	private static final long serialVersionUID = -1129597802269768531L;
 
-	public BinaryHexDatatype(QName schemaType) {
+	public BinaryHexDatatype(QNameContext schemaType) {
 		super(BuiltInType.BINARY_HEX, schemaType);
 		this.rcs = new XSDHexBinaryCharacterSet();
 	}

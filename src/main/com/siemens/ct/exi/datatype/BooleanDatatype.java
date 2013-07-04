@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -46,7 +44,7 @@ public class BooleanDatatype extends AbstractDatatype {
 
 	protected BooleanValue bool;
 
-	public BooleanDatatype(QName schemaType) {
+	public BooleanDatatype(QNameContext schemaType) {
 		super(BuiltInType.BOOLEAN, schemaType);
 		this.rcs = new XSDBooleanCharacterSet();
 	}

@@ -50,17 +50,16 @@ public class SchemaInformedTest extends TestCase {
 	// skip xsi:nil
 	public void testIncludeInsignificantXsiNilA() throws Exception {
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-			+ " <xs:element name='root' type='xs:string' nillable='true' >"
-			+ " </xs:element>" + "</xs:schema>";
+				+ " <xs:element name='root' type='xs:string' nillable='true' >"
+				+ " </xs:element>" + "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
-		
-		
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammars ( g );
+		factory.setGrammars(g);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
@@ -71,8 +70,8 @@ public class SchemaInformedTest extends TestCase {
 			encoder.setOutputStream(baos);
 			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
-			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
-					pfx);
+			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
+					qnRoot.getLocalPart(), pfx);
 			encoder.encodeAttributeXsiNil(new StringValue("false"), pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
@@ -82,8 +81,7 @@ public class SchemaInformedTest extends TestCase {
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -93,7 +91,7 @@ public class SchemaInformedTest extends TestCase {
 
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
-			
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
 
@@ -101,67 +99,66 @@ public class SchemaInformedTest extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// retain xsi:nil
 	public void testIncludeInsignificantXsiNilB() throws Exception {
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-			+ " <xs:element name='root' type='xs:string' nillable='true' >"
-			+ " </xs:element>" + "</xs:schema>";
-	
+				+ " <xs:element name='root' type='xs:string' nillable='true' >"
+				+ " </xs:element>" + "</xs:schema>";
+
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
-		
-		
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammars ( g );
+		factory.setGrammars(g);
 		EncodingOptions eo = factory.getEncodingOptions();
 		eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
 			encoder.setOutputStream(baos);
 			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
-			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
-					pfx);
+			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
+					qnRoot.getLocalPart(), pfx);
 			encoder.encodeAttributeXsiNil(new BooleanValue(false), pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
-	
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-	
+
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(decoder.decodeAttributeXsiNil().getLocalName().equals("nil"));
-			
+			assertTrue(decoder.decodeAttributeXsiNil().getLocalName()
+					.equals("nil"));
+
 			Value xsiNil = decoder.getAttributeValue();
 			assertTrue(xsiNil instanceof BooleanValue);
 			BooleanValue bv = (BooleanValue) xsiNil;
 			assertFalse(bv.toBoolean());
-			
+
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
-			
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -170,61 +167,62 @@ public class SchemaInformedTest extends TestCase {
 	// skip xsi:type
 	public void testIncludeInsignificantXsiTypeA() throws Exception {
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-			+ " <xs:element name='root' type='xs:string'  >"
-			+ " </xs:element>" + "</xs:schema>";
-	
+				+ " <xs:element name='root' type='xs:string'  >"
+				+ " </xs:element>" + "</xs:schema>";
+
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
-		
-		
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammars ( g );
-	
+		factory.setGrammars(g);
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
 			encoder.setOutputStream(baos);
 			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
-			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
-					pfx);
-			encoder.encodeNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
+			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
+					qnRoot.getLocalPart(), pfx);
+			encoder.encodeNamespaceDeclaration(
+					XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
-			
+
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
-	
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-			
+
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(decoder.decodeAttributeXsiType().getLocalName().equals("type"));
+			assertTrue(decoder.decodeAttributeXsiType().getLocalName()
+					.equals("type"));
 			QNameValue qnv = (QNameValue) decoder.getAttributeValue();
 			assertTrue(qnv.getLocalName().equals("string"));
-			assertTrue(qnv.getNamespaceUri().equals("http://www.w3.org/2001/XMLSchema"));
-			
+			assertTrue(qnv.getNamespaceUri().equals(
+					"http://www.w3.org/2001/XMLSchema"));
+
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
-			
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -233,66 +231,66 @@ public class SchemaInformedTest extends TestCase {
 	// retain insignificant xsi:type
 	public void testIncludeInsignificantXsiTypeB() throws Exception {
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-			+ " <xs:element name='root' type='xs:string'  >"
-			+ " </xs:element>" + "</xs:schema>";
-	
+				+ " <xs:element name='root' type='xs:string'  >"
+				+ " </xs:element>" + "</xs:schema>";
+
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
-		
-		
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
-		factory.setGrammars ( g );
+		factory.setGrammars(g);
 		// EncodingOptions eo = factory.getEncodingOptions();
 		// eo.setOption(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_TYPE);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
 			encoder.setOutputStream(baos);
 			String pfx = null; // unset according fidelity-options
 			encoder.encodeStartDocument();
-			encoder.encodeStartElement(qnRoot.getNamespaceURI(), qnRoot.getLocalPart(),
-					pfx);
-			encoder.encodeNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
+			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
+					qnRoot.getLocalPart(), pfx);
+			encoder.encodeNamespaceDeclaration(
+					XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
-			
+
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
-	
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-			
+
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(decoder.decodeAttributeXsiType().getLocalName().equals("type"));
-			
+			assertTrue(decoder.decodeAttributeXsiType().getLocalName()
+					.equals("type"));
+
 			Value xsiType = decoder.getAttributeValue();
 			assertTrue(xsiType instanceof QNameValue);
 			QNameValue qv = (QNameValue) xsiType;
 			// assertTrue(qv.toQName().getLocalPart().equals("string"));
 			assertTrue(qv.getLocalName().equals("string"));
-			
+
 			assertTrue(decoder.next() == EventType.CHARACTERS);
 			assertTrue(decoder.decodeCharacters().equals(""));
-			
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}

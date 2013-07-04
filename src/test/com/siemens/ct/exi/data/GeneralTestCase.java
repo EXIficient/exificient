@@ -41,7 +41,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationUnbounded ( );
 		// GeneralTestCase.setConfigurationDatatypeInteger();
 		// GeneralTestCase.setConfigurationDatatypeFloat();
-		GeneralTestCase.setConfigurationDatatypes();
+		// GeneralTestCase.setConfigurationDatatypes();
 		// GeneralTestCase.setConfigurationDatatypes2 ( );
 		// GeneralTestCase.setConfigurationOrder ( );
 		// GeneralTestCase.setConfigurationRandj();
@@ -49,7 +49,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationTest1 ( );
 		// GeneralTestCase.setConfigurationTest1Pfx ( );
 		// GeneralTestCase.setConfigurationTest2 ( );
-		// GeneralTestCase.setConfigurationTest3 ( );
+		GeneralTestCase.setConfigurationTest3();
 		// GeneralTestCase.setConfigurationTest4 ( );
 		// GeneralTestCase.setConfigurationTest5 ( );
 		// GeneralTestCase.setConfigurationComplexStructure ( );
@@ -225,7 +225,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setDatatypeRepresentationMap(dtrTypes,
 				dtrRepresentations);
 
-		
 		// #13a localValuePartitions
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -244,7 +243,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setValuePartitionCapacity(4);
 		testCaseOptions.lastElement().setLocalValuePartitions(false);
-		
+
 		// #14 grammar restrictions, needs schema-informed mode!
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
@@ -254,39 +253,36 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setMaximumNumberOfBuiltInProductions(0);
 		testCaseOptions.lastElement().setSchemaLocation(""); // xsd-types only
-		
-		
-//		// #13 UCD Profile
-//		testCaseOptions.add(new TestCaseOption());
-//		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-//		testCaseOptions.lastElement().setFidelityOptions(
-//				FidelityOptions.createDefault());
-//		testCaseOptions.lastElement().setFragments(false);
-//		testCaseOptions.lastElement().setXmlEqual(false);
-//		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
-//
-//		// #13 UCD Profile Byte-Aligned
-//		testCaseOptions.add(new TestCaseOption());
-//		testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
-//		testCaseOptions.lastElement().setFidelityOptions(
-//				FidelityOptions.createDefault());
-//		testCaseOptions.lastElement().setFragments(false);
-//		testCaseOptions.lastElement().setXmlEqual(false);
-//		testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
+
+		// // #13 UCD Profile
+		// testCaseOptions.add(new TestCaseOption());
+		// testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		// testCaseOptions.lastElement().setFidelityOptions(
+		// FidelityOptions.createDefault());
+		// testCaseOptions.lastElement().setFragments(false);
+		// testCaseOptions.lastElement().setXmlEqual(false);
+		// testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
+		//
+		// // #13 UCD Profile Byte-Aligned
+		// testCaseOptions.add(new TestCaseOption());
+		// testCaseOptions.lastElement().setCodingMode(CodingMode.BYTE_PACKED);
+		// testCaseOptions.lastElement().setFidelityOptions(
+		// FidelityOptions.createDefault());
+		// testCaseOptions.lastElement().setFragments(false);
+		// testCaseOptions.lastElement().setXmlEqual(false);
+		// testCaseOptions.lastElement().setProfile(EXIFactory.UCD_PROFILE);
 
 	}
-
-
 
 	@Test
 	public void testEntityReference1() throws Exception {
 		// set up configuration
 		setConfigurationEntityReference1();
-	
+
 		// Strict & LexicalValues is not working (Prefixes required)
 		FidelityOptions noValidOptions = FidelityOptions.createStrict();
 		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-		
+
 		// execute test
 		_test(noValidOptions);
 	}
@@ -639,7 +635,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/pi1.xml.exi");
 	}
 
-
 	@Test
 	public void testDocType() throws Exception {
 		// set up configuration
@@ -649,15 +644,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		_test();
 	}
 
-	
 	public static void setConfigurationDocType() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/general/docType.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType.xml.exi");
 	}
-	
-
-	
 
 	@Test
 	public void testDocType0() throws Exception {
@@ -668,14 +659,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		_test();
 	}
 
-
 	public static void setConfigurationDocType0() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/general/docType0.xml");
 		QuickTestConfiguration.setExiLocation("./out/general/docType0.xml.exi");
 	}
-
-	
 
 	@Test
 	public void testDocType1() throws Exception {
@@ -685,9 +673,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		// execute test
 		_test();
 	}
-
-
-
 
 	public static void setConfigurationDocType1() {
 		QuickTestConfiguration.setXsdLocation("./data/general/docType.xsd");
@@ -725,7 +710,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/general/docType3.xml.exi");
 	}
 
-
 	public static void setConfigurationEntityReference1() {
 		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
 		QuickTestConfiguration
@@ -733,8 +717,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/general/entityReference1.xml.exi");
 	}
-
-
 
 	public static void setConfigurationEntityReference2() {
 		QuickTestConfiguration.setXsdLocation("./data/general/empty.xsd");
@@ -744,7 +726,6 @@ public class GeneralTestCase extends AbstractTestCase {
 				.setExiLocation("./out/general/entityReference2.xml.exi");
 	}
 
-	
 	@Test
 	public void testEntityReference2() throws Exception {
 		// set up configuration
@@ -753,11 +734,11 @@ public class GeneralTestCase extends AbstractTestCase {
 		// Strict & LexicalValues is not working (Prefixes required)
 		FidelityOptions noValidOptions = FidelityOptions.createStrict();
 		noValidOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
-		
+
 		// execute test
 		_test(noValidOptions);
 	}
-	
+
 	// @Test
 	// public void testEntityReferenceUnresolved1() throws Exception {
 	// // set up configuration

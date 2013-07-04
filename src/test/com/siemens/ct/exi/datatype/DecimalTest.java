@@ -38,13 +38,16 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
-		BigDecimal a= getBitDecoder().decodeDecimalValue().toBigDecimal();
+		BigDecimal a = getBitDecoder().decodeDecimalValue().toBigDecimal();
 		assertTrue(a.equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal()
+				.equals(new BigDecimal(s)));
 	}
 
 	public void testDecimal1() throws IOException {
@@ -54,14 +57,17 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		BigDecimal bdBit = getBitDecoder().decodeDecimalValue().toBigDecimal();
-		assertTrue(bdBit + "!=" + new BigDecimal(s), bdBit
-				.equals(new BigDecimal(s)));
+		assertTrue(bdBit + "!=" + new BigDecimal(s),
+				bdBit.equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal()
+				.equals(new BigDecimal(s)));
 	}
 
 	public void testDecimal2() throws IOException {
@@ -71,12 +77,16 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
-		assertTrue(getBitDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
+		assertTrue(getBitDecoder().decodeDecimalValue().toBigDecimal()
+				.equals(new BigDecimal(s)));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(new BigDecimal(s)));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal()
+				.equals(new BigDecimal(s)));
 	}
 
 	public void testDecimal3() throws IOException {
@@ -86,15 +96,17 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		BigDecimal bdBit = getBitDecoder().decodeDecimalValue().toBigDecimal();
-		assertTrue(bdBit + "!=" + new BigDecimal(s + ".0"), bdBit
-				.equals(new BigDecimal(s + ".0")));
+		assertTrue(bdBit + "!=" + new BigDecimal(s + ".0"),
+				bdBit.equals(new BigDecimal(s + ".0")));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal().equals(
-				new BigDecimal(s + ".0")));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue(getByteDecoder().decodeDecimalValue().toBigDecimal()
+				.equals(new BigDecimal(s + ".0")));
 	}
 
 	public void testDecimal4() throws IOException {
@@ -104,12 +116,16 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
-		assertTrue((s + ".0").equals(getBitDecoder().decodeDecimalValue().toString()));
+		assertTrue((s + ".0").equals(getBitDecoder().decodeDecimalValue()
+				.toString()));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue((s + ".0").equals(getByteDecoder().decodeDecimalValue().toString()));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue((s + ".0").equals(getByteDecoder().decodeDecimalValue()
+				.toString()));
 	}
 
 	public void testDecimal5() throws IOException {
@@ -119,11 +135,13 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		assertTrue(s.equals(getBitDecoder().decodeDecimalValue().toString()));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -134,13 +152,16 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + "110.7408", "110.7408".equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
-		assertTrue("110.7408".equals(getByteDecoder().decodeDecimalValue().toString()));
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
+		assertTrue("110.7408".equals(getByteDecoder().decodeDecimalValue()
+				.toString()));
 	}
 
 	public void testDecimal7() throws IOException {
@@ -150,13 +171,15 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		DecoderChannel bitDC = getBitDecoder();
 		assertTrue(s.equals(bitDC.decodeDecimalValue().toString()));
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		byteEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		byteEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		DecoderChannel byteDC = getByteDecoder();
 		assertTrue(s.equals(byteDC.decodeDecimalValue().toString()));
 	}
@@ -168,48 +191,54 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
-	
+
 	public void testDecimal9() throws Exception {
 		String s = "-.1";
 		String s2 = "-0.1";
-		
+
 		DecimalValue d = DecimalValue.parse(s);
 		assertTrue(d != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
-	
+
 	public void testDecimal10() throws Exception {
 		String s = "-.234";
 		String s2 = "-0.234";
-		
+
 		DecimalValue d = DecimalValue.parse(s);
 		assertTrue(d != null);
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s2, s2.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s2.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
 
@@ -220,15 +249,17 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		String sBit = getBitDecoder().decodeDecimalValue().toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
-	
+
 	// deviation 8
 	public void testDecimalBig2() throws IOException {
 		String s = "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890.1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678912345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
@@ -237,22 +268,23 @@ public class DecimalTest extends AbstractTestCase {
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		bitEC.encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		bitEC.flush();
 		DecimalValue dv1 = getBitDecoder().decodeDecimalValue();
 		String sBit = dv1.toString();
 		assertTrue(sBit + "!=" + s, s.equals(sBit));
 		// Byte
-		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(), d.getRevFractional());
+		getByteEncoder().encodeDecimal(d.isNegative(), d.getIntegral(),
+				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
-	
+
 	public void testDecimalFail1() throws IOException {
 		String s = "9.213.456";
 		DecimalValue d = DecimalValue.parse(s);
 		assertFalse(d != null);
 
 	}
-	
 
 }

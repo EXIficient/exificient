@@ -18,9 +18,10 @@
 
 package com.siemens.ct.exi;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.data.SchemaTestCase;
+import com.siemens.ct.exi.data.GeneralTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -54,7 +55,7 @@ public class QuickTestConfiguration {
 	public static boolean localValuePartitions = true;
 	public static int maximumNumberOfBuiltInElementGrammars = -1;
 	public static int maximumNumberOfBuiltInProductions = -1;
-
+	
 	public static QName[] selfContainedElements;
 
 	public static QName[] dtrMapTypes;
@@ -99,10 +100,11 @@ public class QuickTestConfiguration {
 		fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
 		// fidelityOptions = FidelityOptions.createAll();
-		
+
 		// try {
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
-		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE,
+		// true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_SC, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_PI, true);
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);
@@ -123,25 +125,24 @@ public class QuickTestConfiguration {
 		// blockSize = 200;
 		// valueMaxLength = 0;
 		// valuePartitionCapacity = 4;
-		localValuePartitions = true;
+		// localValuePartitions = true;
 		// XSD_TYPES_ONLY = true;
-		maximumNumberOfBuiltInProductions = 2;
+		// maximumNumberOfBuiltInProductions = 2;
 		// maximumNumberOfBuiltInElementGrammars = 0;
-		// dtrMapTypes = new QName[1];
-		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-		// "decimal");
-		// dtrMapRepresentations = new QName[1];
-		// dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI,
-		// "string");
-		// assert(dtrMapTypes.length == dtrMapRepresentations.length);
+		dtrMapTypes = new QName[1];
+		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"decimal");
+		dtrMapRepresentations = new QName[1];
+		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
+		assert (dtrMapTypes.length == dtrMapRepresentations.length);
 	}
 
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest();
+		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
-		// GeneralTestCase.setupQuickTest();
+		GeneralTestCase.setupQuickTest();
 		// W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();

@@ -621,22 +621,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						this.productionLearningCounting(currentGrammar);
 						break;
 					}
-									
-//					// limit grammar learning ?
-//					if (limitGrammarLearning()) {
-//						// encode 1st level EventCode
-//						currentGrammar = getCurrentGrammar();
-//						ei = currentGrammar
-//								.getProduction(EventType.END_ELEMENT);
-//						assert (ei != null);
-//						encode1stLevelEventCode(ei.getEventCode());
-//					} else {
-//						// encode [undeclared] event-code
-//						encode2ndLevelEventCode(ecEEundeclared);
-//						// learn end-element event ?
-//						currentGrammar.learnEndElement();
-//						this.grammarLearningCounting(currentGrammar);
-//					}
 				}
 			}
 		}
@@ -1316,12 +1300,26 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			writeString(text);
 		}
 	}
+	
+	private final void doLimitGrammarLearningForErCmPi() throws EXIException, IOException {
+		switch(this.limitGrammars()) {
+		case XSI_TYPE:
+			this.insertXsiTypeAnyType();
+			break;
+		default:
+			/* no special action */	
+			break;
+		}
+	}
 
 	public void encodeEntityReference(String name) throws EXIException,
 			IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			// grammar learning restricting (if necessary)
+			doLimitGrammarLearningForErCmPi();
+			
 			// EntityReference can be found on 2nd level
-			final Grammar currentGrammar = getCurrentGrammar();
+			Grammar currentGrammar = getCurrentGrammar();
 			int ec2 = currentGrammar.get2ndLevelEventCode(
 					EventType.ENTITY_REFERENCE, fidelityOptions);
 			encode2ndLevelEventCode(ec2);
@@ -1337,6 +1335,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	public void encodeComment(char[] ch, int start, int length)
 			throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
+			// grammar learning restricting (if necessary)
+			doLimitGrammarLearningForErCmPi();
+			
 			// comments can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec3 = currentGrammar.get3rdLevelEventCode(EventType.COMMENT,
@@ -1354,6 +1355,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	public void encodeProcessingInstruction(String target, String data)
 			throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
+			// grammar learning restricting (if necessary)
+			doLimitGrammarLearningForErCmPi();
+			
 			// processing instructions can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec3 = currentGrammar.get3rdLevelEventCode(

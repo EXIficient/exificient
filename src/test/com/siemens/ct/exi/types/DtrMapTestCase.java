@@ -27,6 +27,7 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -36,125 +37,333 @@ import com.siemens.ct.exi.values.Value;
 
 public class DtrMapTestCase extends AbstractTestCase {
 
-	// Note: according to EXI errata ONLY directly referenced enumeration types
-	// are not handled by DTR maps
-	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
-	public void testEnumerationToInteger1() throws IOException, EXIException {
+	public void testIntegerFail() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-				+ "  <xs:simpleType name='stringDerived'>"
-				+ "    <xs:restriction base='xs:string'>"
-				+ "      <xs:enumeration value='Tokyo'/>"
-				+ "      <xs:enumeration value='Osaka'/>"
-				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "  <xs:simpleType name='myByte'>"
+				+ "    <xs:restriction base='xs:byte'>"
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
-				+ "  <xs:simpleType name='stringDerived2'>"
-				+ "    <xs:restriction base='stringDerived'/>"
-				+ "  </xs:simpleType>" + "</xs:schema>";
+				+ "</xs:schema>";
 		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
-	
-		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
-				schemaAsString, "stringDerived", "");
-		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
-		QName schemaTypeStringDerived = new QName("", "stringDerived");
-		assertTrue(dtEnum.getSchemaType().equals(schemaTypeStringDerived));
-	
+
+		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "myByte", "");
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
+		QName schemaTypeInteger = new QName("", "myByte");
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
 		/* DTR Map */
-		QName type = new QName("", "stringDerived");
-		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
-	
-		// can encode integers
-		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
-		// indicates that dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
-		// IntegerDatatype idt = (IntegerDatatype) dtrTe.getRecentDtrMapDatatype();
-		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		// integers
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
+		// default mapping
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
 	}
 
-	// The codec used for an enumerated type is not affected by DTRM entry attached to its ancestral type.
-	// value="{http://www.w3.org/2001/XMLSchema}string {http://www.w3.org/2009/exi}integer"
-	public void testEnumerationToInteger3() throws IOException, EXIException {
+	public void testByte2String() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-				+ "  <xs:simpleType name='stringDerived'>"
-				+ "    <xs:restriction base='xs:string'>"
-				+ "      <xs:enumeration value='Tokyo'/>"
-				+ "      <xs:enumeration value='Osaka'/>"
-				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "  <xs:simpleType name='myByte'>"
+				+ "    <xs:restriction base='xs:byte'>"
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
-				+ "  <xs:simpleType name='stringDerived2'>"
-				+ "    <xs:restriction base='stringDerived'/>"
-				+ "  </xs:simpleType>" + "</xs:schema>";
+				+ "</xs:schema>";
 		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
-	
-		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
-				schemaAsString, "stringDerived2", "");
-		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
-		QName schemaTypeStringDerived2 = new QName("", "stringDerived2");
-		assertTrue(dtEnum.getSchemaType().equals(schemaTypeStringDerived2));
-	
+
+		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "myByte", "");
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
+		QName schemaTypeInteger = new QName("", "myByte");
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
-		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "byte");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
-	
-		// can encode only enum values
-		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
-		assertTrue(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
-	
-		// indicates that NO dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		// integers
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("XXX any")));
+		// default mapping
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
 
-	// Note: according to EXI errata ONLY  referenced enumeration types
-	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
-	public void testEnumerationToInteger2() throws IOException, EXIException {
+	public void testInt2String() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-				+ "  <xs:simpleType name='stringDerived'>"
-				+ "    <xs:restriction base='xs:string'>"
-				+ "      <xs:enumeration value='Tokyo'/>"
-				+ "      <xs:enumeration value='Osaka'/>"
-				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "  <xs:simpleType name='myByte'>"
+				+ "    <xs:restriction base='xs:byte'>"
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
-				+ "  <xs:simpleType name='stringDerived2'>"
-				+ "    <xs:restriction base='stringDerived'/>"
-				+ "  </xs:simpleType>" + "</xs:schema>";
+				+ "</xs:schema>";
 		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
-		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
-				schemaAsString, "stringDerived2", "");
-		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
-		QName schemaTypeStringDerived2 = new QName("", "stringDerived2");
-		assertTrue(dtEnum.getSchemaType().equals(schemaTypeStringDerived2));
+		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "myByte", "");
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
+		QName schemaTypeInteger = new QName("", "myByte");
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName("", "stringDerived");
-		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
-		// can encode only int values
-		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
-		assertFalse(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
-
-		// indicates that an dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() != null);
+		// integers
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("XXX any")));
+		// default mapping
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
-	
-	
+
+	// dtr-04
+	public void testMulti4() throws IOException, EXIException, SAXException,
+			TransformerException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:element name='root'>"
+				+ "   <xs:complexType>"
+				+ "         <!--  Built-in Type: N-Bit Integer  -->"
+				+ "         <xs:sequence>"
+				+ "            <xs:element name='byte'  type='xs:byte' minOccurs='0' maxOccurs='unbounded' />"
+				+ "         </xs:sequence>"
+				+ "         <xs:attribute name='float' type='xs:float' use='optional'/>"
+				+ "         <xs:attribute name='double' type='xs:double' use='optional'/>"
+				+ "    </xs:complexType>"
+				+ "  </xs:element>"
+				+ "</xs:schema>"
+				+ "";
+
+		// nbitInteger-valid-00.xml
+		// <root>
+		// <byte>33</byte>
+		// </root>
+
+		String xmlAsString = "<root><byte>33</byte></root>";
+
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
+				schemaAsString.getBytes()));
+
+		// factory with mapping
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setGrammars(g);
+		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
+		/* DTR Map */
+		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "double");
+		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		QName[] dtrMapTypes = { type1, type2 };
+		QName[] dtrMapRepresentations = { representation1, representation2 };
+		exiFactory.setDatatypeRepresentationMap(dtrMapTypes,
+				dtrMapRepresentations);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// encode
+		{
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			xmlReader.setContentHandler(exiResult.getHandler());
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(
+					xmlAsString.getBytes())));
+		}
+
+		ByteArrayOutputStream baosDecXML = new ByteArrayOutputStream();
+
+		// decode
+		{
+			InputSource is = new InputSource(new ByteArrayInputStream(
+					baos.toByteArray()));
+			XMLReader exiReader = exiFactory.createEXIReader();
+
+			Result result = new StreamResult(baosDecXML);
+			SAXSource exiSource = new SAXSource(is);
+			exiSource.setXMLReader(exiReader);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.transform(exiSource, result);
+		}
+
+		// System.out.println(baosDecXML.toString());
+
+	}
+
+	// dtr-08
+	public void testMulti8() throws IOException, EXIException, SAXException,
+			TransformerException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='stringDerived'>"
+				+ "   <xs:restriction base='xs:string'>"
+				+ "         <xs:enumeration value='Tokyo'/>"
+				+ "         <xs:enumeration value='Osaka'/>"
+				+ "         <xs:enumeration value='Nagoya'/>"
+				+ "   </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>" + "";
+
+		// enumerationToInteger_03.xml
+		// <foo:A xmlns:foo="urn:foo"
+		// xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		// xsi:type="foo:stringDerived">Nagoya</foo:A>
+
+		String xmlAsString = "<foo:A xmlns:foo='urn:foo' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' "
+				+ "xsi:type='foo:stringDerived'>NagoyaX</foo:A>";
+
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
+				schemaAsString.getBytes()));
+
+		// factory with mapping
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setGrammars(g);
+		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
+		/* DTR Map */
+		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type1 };
+		QName[] dtrMapRepresentations = { representation1 };
+		exiFactory.setDatatypeRepresentationMap(dtrMapTypes,
+				dtrMapRepresentations);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// encode
+		{
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			xmlReader.setContentHandler(exiResult.getHandler());
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(
+					xmlAsString.getBytes())));
+		}
+
+		ByteArrayOutputStream baosDecXML = new ByteArrayOutputStream();
+
+		// decode
+		{
+			InputSource is = new InputSource(new ByteArrayInputStream(
+					baos.toByteArray()));
+			XMLReader exiReader = exiFactory.createEXIReader();
+
+			Result result = new StreamResult(baosDecXML);
+			SAXSource exiSource = new SAXSource(is);
+			exiSource.setXMLReader(exiReader);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.transform(exiSource, result);
+		}
+
+		// System.out.println(baosDecXML.toString());
+
+	}
+
+	// dtr-02
+	// <param name="org.w3c.exi.ttf.datatypeRepresentationMap" value=
+	// "{http://www.w3.org/2001/XMLSchema}decimal
+	// {http://www.w3.org/2009/exi}string
+	// {http://www.w3.org/2001/XMLSchema}double
+	// {http://www.w3.org/2009/exi}decimal" />
+	// float-valid-08.xml
+	public void testMulti2() throws IOException, EXIException, SAXException,
+			TransformerException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:element name='root'>"
+				+ "   <xs:complexType>"
+				+ "         <!-- Built-in Type: float -->"
+				+ "         <xs:sequence>"
+				+ "            <xs:element name='float'  type='xs:float' minOccurs='0' maxOccurs='unbounded' />"
+				+ "            <xs:element name='double'  type='xs:double' minOccurs='0' maxOccurs='unbounded' />"
+				+ "         </xs:sequence>"
+				+ "         <xs:attribute name='float' type='xs:float' use='optional'/>"
+				+ "         <xs:attribute name='double' type='xs:double' use='optional'/>"
+				+ "    </xs:complexType>"
+				+ "  </xs:element>"
+				+ "</xs:schema>"
+				+ "";
+
+		// float-valid-08.xml
+		// <root double="10">
+		// <float>-9223372036854775807</float>
+		// <float>9223372036854775807</float>
+		// <float>9223372036854775808</float>
+		// <float>-9223372036854775808</float>
+		// <double>4000e-3</double>
+		// </root>
+
+		String xmlAsString = "<root double='10'><float>-9223372036854775807</float><float>9223372036854775807</float>"
+				+ "  <float>9223372036854775808</float><float>-9223372036854775808</float>"
+				+ "<double>4000e-3</double></root>";
+
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammars g = grammarFactory.createGrammars(new ByteArrayInputStream(
+				schemaAsString.getBytes()));
+
+		// factory with int 2 string mapping
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setGrammars(g);
+		/* DTR Map */
+		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "double");
+		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		QName[] dtrMapTypes = { type1, type2 };
+		QName[] dtrMapRepresentations = { representation1, representation2 };
+		exiFactory.setDatatypeRepresentationMap(dtrMapTypes,
+				dtrMapRepresentations);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// encode
+		{
+			EXIResult exiResult = new EXIResult(exiFactory);
+			exiResult.setOutputStream(baos);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			xmlReader.setContentHandler(exiResult.getHandler());
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(
+					xmlAsString.getBytes())));
+		}
+
+		ByteArrayOutputStream baosDecXML = new ByteArrayOutputStream();
+
+		// decode
+		{
+			InputSource is = new InputSource(new ByteArrayInputStream(
+					baos.toByteArray()));
+			XMLReader exiReader = exiFactory.createEXIReader();
+
+			Result result = new StreamResult(baosDecXML);
+			SAXSource exiSource = new SAXSource(is);
+			exiSource.setXMLReader(exiReader);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			transformer.transform(exiSource, result);
+		}
+
+		// System.out.println(baosDecXML.toString());
+
+	}
+
 	// register type directly
 	public void testIntegerToString1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
@@ -173,7 +382,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
 		// IntegerDatatype idt = (IntegerDatatype) dt;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
-		assertTrue(dt.getSchemaType().equals(schemaType));
+		assertTrue(dt.getSchemaType().getQName().equals(schemaType));
 
 		assertTrue(dt.isValid(new StringValue("+10")));
 		assertFalse(dt.isValid(new StringValue("12:32:00")));
@@ -183,9 +392,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
@@ -213,7 +423,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.INTEGER);
 		// IntegerDatatype idt = (IntegerDatatype) dt;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
-		assertTrue(dt.getSchemaType().equals(schemaType));
+		assertTrue(dt.getSchemaType().getQName().equals(schemaType));
 
 		assertTrue(dt.isValid(new StringValue("+10")));
 		assertFalse(dt.isValid(new StringValue("12:32:00")));
@@ -223,9 +433,10 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
@@ -316,6 +527,135 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 	}
 
+	// dtr-06
+	// Note: according to EXI errata ONLY directly referenced enumeration types
+	// are handled by DTR maps
+	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
+	public void testEnumerationToInteger1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='stringDerived'>"
+				+ "    <xs:restriction base='xs:string'>"
+				+ "      <xs:enumeration value='Tokyo'/>"
+				+ "      <xs:enumeration value='Osaka'/>"
+				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "  <xs:simpleType name='stringDerived2'>"
+				+ "    <xs:restriction base='stringDerived'/>"
+				+ "  </xs:simpleType>" + "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "stringDerived", "");
+		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
+		QName schemaTypeStringDerived = new QName("", "stringDerived");
+		assertTrue(dtEnum.getSchemaType().getQName()
+				.equals(schemaTypeStringDerived));
+
+		/* DTR Map */
+		QName type = new QName("", "stringDerived");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		// can encode integers
+		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
+		// indicates that dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		// IntegerDatatype idt = (IntegerDatatype)
+		// dtrTe.getRecentDtrMapDatatype();
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
+	}
+
+	// dtr-07
+	// Note: according to EXI errata ONLY referenced enumeration types
+	// value="{}stringDerived --> {http://www.w3.org/2009/exi}integer"
+	public void testEnumerationToInteger2() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='stringDerived'>"
+				+ "    <xs:restriction base='xs:string'>"
+				+ "      <xs:enumeration value='Tokyo'/>"
+				+ "      <xs:enumeration value='Osaka'/>"
+				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "  <xs:simpleType name='stringDerived2'>"
+				+ "    <xs:restriction base='stringDerived'/>"
+				+ "  </xs:simpleType>" + "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "stringDerived2", "");
+		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
+		QName schemaTypeStringDerived2 = new QName("", "stringDerived2");
+		assertTrue(dtEnum.getSchemaType().getQName()
+				.equals(schemaTypeStringDerived2));
+
+		/* DTR Map */
+		QName type = new QName("", "stringDerived");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		// can encode only int values
+		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+123")));
+		assertFalse(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
+
+		// indicates that an dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+	}
+
+	// dtr-08
+	// The codec used for an enumerated type is not affected by DTRM entry
+	// attached to its ancestral type.
+	// value="{http://www.w3.org/2001/XMLSchema}string {http://www.w3.org/2009/exi}integer"
+	public void testEnumerationToInteger3() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='stringDerived'>"
+				+ "    <xs:restriction base='xs:string'>"
+				+ "      <xs:enumeration value='Tokyo'/>"
+				+ "      <xs:enumeration value='Osaka'/>"
+				+ "      <xs:enumeration value='Nagoya'/>"
+				+ "    </xs:restriction>" + "  </xs:simpleType>"
+				// + "  <xs:simpleType name='stringDerived2'>"
+				// + "    <xs:restriction base='stringDerived'/>"
+				// + "  </xs:simpleType>"
+				+ "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "stringDerived", "");
+		assertTrue(dtEnum.getBuiltInType() == BuiltInType.ENUMERATION);
+		QName schemaTypeStringDerived = new QName("", "stringDerived");
+		assertTrue(dtEnum.getSchemaType().getQName()
+				.equals(schemaTypeStringDerived));
+
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		// can encode only enum values
+		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
+		assertTrue(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
+
+		// indicates that NO dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.ENUMERATION);
+	}
+
 	// 1. register subtype of integer (short) as integer
 	// 2. register integer as String
 	// --> short should still be encoded as EXI Integer and "XXX 12 XX" should
@@ -354,13 +694,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setDatatypeRepresentationMap(dtrMapTypes,
 				dtrMapRepresentations);
 
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 		Datatype dtShort = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "short", XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		dtrTe.isValid(dtShort, new StringValue("XXX 12 XX"));
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		assertFalse("Should not be encodable",
+				dtrTe.isValid(dtShort, new StringValue("XXX 12 XX")));
+		// assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -495,7 +837,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 				schemaAsString, "decimal", "");
 		assertTrue(dtDecimal.getBuiltInType() == BuiltInType.DECIMAL);
 		QName schemaTypeDecimal = new QName("", "decimal");
-		assertTrue(dtDecimal.getSchemaType().equals(schemaTypeDecimal));
+		assertTrue(dtDecimal.getSchemaType().getQName()
+				.equals(schemaTypeDecimal));
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
@@ -503,16 +846,18 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// IntegerDatatype idt = (IntegerDatatype) dtInteger;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
-		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
 
 		/* DTR Map */
 		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
 		// decimals
 		assertTrue(dtrTe.isValid(dtDecimal, new StringValue("+10")));
@@ -520,8 +865,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
-		// null indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		// indicates no dtr map is in use (default)
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 	// register xsd:integer to exi:integer, integer types should not be affected
@@ -541,21 +886,23 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// IntegerDatatype idt = (IntegerDatatype) dtInteger;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
-		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
 
 		/* DTR Map */
 		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
-		// null indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		// default datatype
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 	// register xsd:int to exi:integer, integer types should not be affected
@@ -575,21 +922,296 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// IntegerDatatype idt = (IntegerDatatype) dtInteger;
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		QName schemaTypeInteger = new QName("", "integer");
-		assertTrue(dtInteger.getSchemaType().equals(schemaTypeInteger));
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
 
 		/* DTR Map */
 		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
-		TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-				defaultEncoder, dtrMapTypes, dtrMapRepresentations, g);
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
+		// default mapping
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+	}
+
+	// unions
+	// dtr-11
+	public void testUnion1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='unionType'>"
+				+ "    <xs:union memberTypes='xs:int'/>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "unionType", "");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.STRING);
+
+		QName schemaTypeInteger = new QName("", "unionType");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"anySimpleType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
+		// indicates that no dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+	}
+
+	// dtr-09
+	public void testUnion2() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='unionType'>"
+				+ "    <xs:union memberTypes='xs:int'/>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "unionType", "");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.STRING);
+
+		QName schemaTypeInteger = new QName("", "unionType");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName("", "unionType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
+		// dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.DECIMAL);
+	}
+
+	// dtr-10
+	// <!-- "123.45" should be encoded using exi:decimal as designated by an -->
+	// <!-- DTRM entry pegged at the base datatype that is an union datatpe. -->
+	public void testUnion3() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo'>"
+				+ "  <xs:simpleType name='unionTypeDerived'>"
+				+ "    <xs:restriction base='foo:unionType'>"
+				+ "      <xs:enumeration value='12345'/>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+
+				+ "  <xs:simpleType name='unionType'>"
+				+ "    <xs:union memberTypes='xs:int'/>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "unionTypeDerived", "urn:foo");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.STRING);
+
+		QName schemaTypeInteger = new QName("urn:foo", "unionTypeDerived");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName("urn:foo", "unionType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
+		// dtr map in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.DECIMAL);
+	}
+
+	// lists
+	// dtr-15
+	// A DTRM entry is pegged at xsd:anySimpleType, which should not affect list
+	// datatype encodings.
+	public void testList1() throws IOException, EXIException {
+		String schemaAsString = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo' >"
+				+ "  <xsd:simpleType name='listType'>"
+				+ "    <xsd:list itemType='xsd:int'/>"
+				+ "  </xsd:simpleType>"
+				+ "</xsd:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "listType", "urn:foo");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.LIST);
+
+		QName schemaTypeInteger = new QName("urn:foo", "listType");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"anySimpleType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
+		// QName representation = new QName(Constants.W3C_EXI_NS_URI,
+		// "decimal");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
+		// indicates that no dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.LIST);
+		ListDatatype ld = (ListDatatype) dtrTe.getRecentDtrMapDatatype();
+		assertTrue(ld.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
+	}
+
+	// dtr-15 MODIFIED!
+	public void testList2() throws IOException, EXIException {
+		String schemaAsString = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo' >"
+				+ "  <xsd:simpleType name='listType'>"
+				+ "    <xsd:list itemType='xsd:int'/>"
+				+ "  </xsd:simpleType>"
+				+ "</xsd:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "listType", "urn:foo");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.LIST);
+
+		QName schemaTypeInteger = new QName("urn:foo", "listType");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName("urn:foo", "listType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
 		// null indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+	}
+
+	// dtr-14
+	// A DTRM entry is pegged at a base datatype that is a list datatype.
+	public void testList3() throws IOException, EXIException {
+		String schemaAsString = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo' >"
+				+ "  <xsd:simpleType name='listTypeDerived'>"
+				+ "    <xsd:restriction base='foo:listType'>"
+				+ "      <xsd:length value='4'/>"
+				+ "    </xsd:restriction>"
+				+ "  </xsd:simpleType>"
+				+ "  <xsd:simpleType name='listType'>"
+				+ "    <xsd:list itemType='xsd:int'/>"
+				+ "  </xsd:simpleType>"
+				+ "</xsd:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "listTypeDerived", "urn:foo");
+		assertTrue(dtString.getBuiltInType() == BuiltInType.LIST);
+
+		QName schemaTypeInteger = new QName("urn:foo", "listTypeDerived");
+		assertTrue(dtString.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName("urn:foo", "listType");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
+
+		// null indicates that no dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+	}
+
+	// dtr-16
+	// A DTRM entry is pegged at the item type of a list datatype.
+	// should be encoded as a list of strings instead of a list of ints.
+	public void testList4() throws IOException, EXIException {
+		String schemaAsString = "<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo' >"
+				+ "  <xsd:simpleType name='listTypeDerived'>"
+				+ "    <xsd:restriction base='foo:listType'>"
+				+ "      <xsd:length value='4'/>"
+				+ "    </xsd:restriction>"
+				+ "  </xsd:simpleType>"
+				+ "  <xsd:simpleType name='listType'>"
+				+ "    <xsd:list itemType='xsd:int'/>"
+				+ "  </xsd:simpleType>"
+				+ "</xsd:schema>";
+		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"listType", "urn:foo");
+		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype ldt = (ListDatatype) dt;
+		assertTrue(ldt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
+
+		QName schemaTypeInteger = new QName("urn:foo", "listType");
+		assertTrue(dt.getSchemaType().getQName().equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
+		// defaultEncoder,
+				dtrMapTypes, dtrMapRepresentations, g);
+
+		//
+		assertTrue(dtrTe.isValid(dt, new StringValue("any string")));
+		assertTrue(dtrTe.isValid(dt, new StringValue("12345")));
+
+		// indicates that no dtr map is in use
+		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.LIST);
+		ListDatatype ld = (ListDatatype) dtrTe.getRecentDtrMapDatatype();
+		assertTrue(ld.getListDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
 
 }

@@ -101,13 +101,12 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	/* default: true */
 	protected boolean localValuePartitions = true;
-	
+
 	/* default: unbounded (-1) */
 	protected int maximumNumberOfBuiltInElementGrammars = -1;
 	protected int maximumNumberOfBuiltInProductions = -1;
 	/* default: false */
-	protected boolean grammarLearningDisabled = false; 
-	
+	protected boolean grammarLearningDisabled = false;
 
 	// /* default: no profile */
 	// protected String profile;
@@ -288,45 +287,47 @@ public class DefaultEXIFactory implements EXIFactory {
 	public boolean isLocalValuePartitions() {
 		return localValuePartitions;
 	}
-	
-	public void setMaximumNumberOfBuiltInElementGrammars(int maximumNumberOfBuiltInElementGrammars) {
-		if(maximumNumberOfBuiltInElementGrammars >=0) {
+
+	public void setMaximumNumberOfBuiltInElementGrammars(
+			int maximumNumberOfBuiltInElementGrammars) {
+		if (maximumNumberOfBuiltInElementGrammars >= 0) {
 			this.maximumNumberOfBuiltInElementGrammars = maximumNumberOfBuiltInElementGrammars;
 		} else {
 			this.maximumNumberOfBuiltInElementGrammars = -1;
 		}
 		checkGrammarLearningDisabled();
 	}
-	
+
 	public int getMaximumNumberOfBuiltInElementGrammars() {
 		return this.maximumNumberOfBuiltInElementGrammars;
 	}
-	
-	public void setMaximumNumberOfBuiltInProductions(int maximumNumberOfBuiltInProductions) {
-		if(maximumNumberOfBuiltInProductions >= 0) {
+
+	public void setMaximumNumberOfBuiltInProductions(
+			int maximumNumberOfBuiltInProductions) {
+		if (maximumNumberOfBuiltInProductions >= 0) {
 			this.maximumNumberOfBuiltInProductions = maximumNumberOfBuiltInProductions;
 		} else {
 			this.maximumNumberOfBuiltInProductions = -1;
 		}
 		checkGrammarLearningDisabled();
 	}
-	
+
 	public int getMaximumNumberOfBuiltInProductions() {
 		return this.maximumNumberOfBuiltInProductions;
 	}
-	
+
 	private void checkGrammarLearningDisabled() {
-		if(maximumNumberOfBuiltInElementGrammars >=0 || maximumNumberOfBuiltInProductions >= 0 ) {
+		if (maximumNumberOfBuiltInElementGrammars >= 0
+				|| maximumNumberOfBuiltInProductions >= 0) {
 			grammarLearningDisabled = true;
 		} else {
 			grammarLearningDisabled = false;
 		}
 	}
-	
+
 	public boolean isGrammarLearningDisabled() {
 		return this.grammarLearningDisabled;
 	}
-	
 
 	// some consistency and sanity checks
 	protected void doSanityCheck() throws EXIException {
@@ -337,8 +338,8 @@ public class DefaultEXIFactory implements EXIFactory {
 			throw new EXIException(
 					"(Pre-)Compression and selfContained elements cannot work together");
 		}
-		
-		if(!this.grammar.isSchemaInformed()) {
+
+		if (!this.grammar.isSchemaInformed()) {
 			this.maximumNumberOfBuiltInElementGrammars = -1;
 			this.maximumNumberOfBuiltInProductions = -1;
 			this.grammarLearningDisabled = false;
@@ -474,13 +475,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		return stringEncoder;
 	}
 
-
 	public StringDecoder createStringDecoder() {
 		// string Decoder
 		StringDecoder stringDecoder;
 		if (getValueMaxLength() != Constants.DEFAULT_VALUE_MAX_LENGTH
 				|| getValuePartitionCapacity() != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
-			stringDecoder = new BoundedStringDecoderImpl(isLocalValuePartitions(), getValueMaxLength(),
+			stringDecoder = new BoundedStringDecoderImpl(
+					isLocalValuePartitions(), getValueMaxLength(),
 					getValuePartitionCapacity());
 		} else {
 			stringDecoder = new StringDecoderImpl(isLocalValuePartitions());
@@ -488,7 +489,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		return stringDecoder;
 	}
-	
+
 	public TypeEncoder createTypeEncoder() throws EXIException {
 		TypeEncoder typeEncoder;
 
@@ -505,8 +506,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-						typeEncoder, dtrMapTypes, dtrMapRepresentations,
-						grammar);
+						dtrMapTypes, dtrMapRepresentations, grammar);
 			}
 
 		} else {
@@ -533,8 +533,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			if (dtrMapTypes != null) {
 				assert (dtrMapTypes.length == dtrMapRepresentations.length);
 				typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-						typeDecoder, dtrMapTypes, dtrMapRepresentations,
-						grammar);
+						dtrMapTypes, dtrMapRepresentations, grammar);
 			}
 		} else {
 			// strings only
@@ -656,16 +655,18 @@ public class DefaultEXIFactory implements EXIFactory {
 			sb.append("[valuePartitionCapacity=" + valuePartitionCapacity + "]");
 		}
 		// localValuePartitions
-		if(!isLocalValuePartitions()) {
+		if (!isLocalValuePartitions()) {
 			sb.append("[localValuePartitions=" + isLocalValuePartitions() + "]");
 		}
 		// maximumNumberOfBuiltInProductions
-		if(this.getMaximumNumberOfBuiltInProductions() >= 0) {
-			sb.append("[maximumNumberOfBuiltInProductions=" + getMaximumNumberOfBuiltInProductions() + "]");
+		if (this.getMaximumNumberOfBuiltInProductions() >= 0) {
+			sb.append("[maximumNumberOfBuiltInProductions="
+					+ getMaximumNumberOfBuiltInProductions() + "]");
 		}
 		// maximumNumberOfEvolvingBuiltInElementGrammars
-		if( this.getMaximumNumberOfBuiltInElementGrammars() >= 0) {
-			sb.append("[maximumNumberOfEvolvingBuiltInElementGrammars=" + this.getMaximumNumberOfBuiltInElementGrammars() + "]");
+		if (this.getMaximumNumberOfBuiltInElementGrammars() >= 0) {
+			sb.append("[maximumNumberOfEvolvingBuiltInElementGrammars="
+					+ this.getMaximumNumberOfBuiltInElementGrammars() + "]");
 		}
 
 		return sb.toString();

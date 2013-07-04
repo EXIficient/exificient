@@ -42,12 +42,13 @@ public class TestCaseOption {
 	private QName[] dtrMapTypes;
 	private QName[] dtrMapRepresentations;
 	private EncodingOptions encodingOptions;
+
 	// private String profile;
 
 	public TestCaseOption() {
 		encodingOptions = EncodingOptions.createDefault();
 	}
-	
+
 	public CodingMode getCodingMode() {
 		return codingMode;
 	}
@@ -103,17 +104,17 @@ public class TestCaseOption {
 	public QName[] getDtrMapRepresentations() {
 		return dtrMapRepresentations;
 	}
-	
+
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations) {
 		this.dtrMapTypes = dtrMapTypes;
 		this.dtrMapRepresentations = dtrMapRepresentations;
 	}
-	
+
 	public void setSelfContainedElements(QName[] scElements) {
 		this.scElements = scElements;
 	}
-	
+
 	public QName[] getSelfContainedElements() {
 		return scElements;
 	}
@@ -121,70 +122,70 @@ public class TestCaseOption {
 	public void setBlockSize(int blockSize) {
 		this.blockSize = blockSize;
 	}
-	
+
 	public int getBlockSize() {
 		return blockSize;
 	}
-	
+
 	public void setValueMaxLength(int valueMaxLength) {
 		this.valueMaxLength = valueMaxLength;
 	}
-	
+
 	public int getValueMaxLength() {
 		return valueMaxLength;
 	}
-	
+
 	public void setValuePartitionCapacity(int valuePartitionCapacity) {
 		this.valuePartitionCapacity = valuePartitionCapacity;
 	}
-	
+
 	public int getValuePartitionCapacity() {
 		return valuePartitionCapacity;
 	}
-	
+
 	public void setLocalValuePartitions(boolean localValuePartitions) {
 		this.localValuePartitions = localValuePartitions;
 	}
-	
+
 	public boolean isLocalValuePartitions() {
 		return localValuePartitions;
 	}
-	
-	public void setMaximumNumberOfBuiltInProductions(int maximumNumberOfBuiltInProductions) {
+
+	public void setMaximumNumberOfBuiltInProductions(
+			int maximumNumberOfBuiltInProductions) {
 		this.maximumNumberOfBuiltInProductions = maximumNumberOfBuiltInProductions;
-		
-	}
-	
-	public int getMaximumNumberOfBuiltInProductions() {
-		return this.maximumNumberOfBuiltInProductions;
-		
+
 	}
 
-	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(int maximumNumberOfEvolvingBuiltInElementGrammars ) {
+	public int getMaximumNumberOfBuiltInProductions() {
+		return this.maximumNumberOfBuiltInProductions;
+
+	}
+
+	public void setMaximumNumberOfEvolvingBuiltInElementGrammars(
+			int maximumNumberOfEvolvingBuiltInElementGrammars) {
 		this.maximumNumberOfEvolvingBuiltInElementGrammars = maximumNumberOfEvolvingBuiltInElementGrammars;
 	}
-	
+
 	public int getMaximumNumberOfEvolvingBuiltInElementGrammars() {
 		return this.maximumNumberOfEvolvingBuiltInElementGrammars;
 	}
 
-
 	public void setEncodingOptions(EncodingOptions encodingOptions) {
 		this.encodingOptions = encodingOptions;
 	}
-	
+
 	public EncodingOptions getEncodingOptions() {
 		return encodingOptions;
 	}
-	
-	
-//	public String getProfile() {
-//		return profile;
-//	}
-//
-//	public void setProfile(String profile) {
-//		this.profile = profile;
-//	}
+
+	// public String getProfile() {
+	// return profile;
+	// }
+	//
+	// public void setProfile(String profile) {
+	// this.profile = profile;
+	// }
 
 	@Override
 	public String toString() {
@@ -200,10 +201,10 @@ public class TestCaseOption {
 		// fidelityOptions
 		sb.append("fidelityOptions=" + getFidelityOptions().toString());
 		// selfContained elements
-		if (this.scElements != null && this.scElements.length > 0 ) {
+		if (this.scElements != null && this.scElements.length > 0) {
 			sb.append(", scElements=[");
-			for(QName sc : scElements) {
-				sb.append(sc+",");
+			for (QName sc : scElements) {
+				sb.append(sc + ",");
 			}
 			sb.append("]");
 		}
@@ -211,12 +212,12 @@ public class TestCaseOption {
 		if (blockSize != Constants.DEFAULT_BLOCK_SIZE) {
 			sb.append(",bs=" + blockSize);
 		}
-		//  valueMaxLength
+		// valueMaxLength
 		if (valueMaxLength != Constants.DEFAULT_VALUE_MAX_LENGTH) {
 			sb.append(",vml=" + valueMaxLength);
 		}
 		// valuePartitionCapacity
-		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY ) {
+		if (valuePartitionCapacity != Constants.DEFAULT_VALUE_PARTITON_CAPACITY) {
 			sb.append(",vpc=" + valuePartitionCapacity);
 		}
 		// localValuePartitions
@@ -225,17 +226,19 @@ public class TestCaseOption {
 		}
 		// maximumNumberOfBuiltInProductions
 		if (this.maximumNumberOfBuiltInProductions >= 0) {
-			sb.append(",maximumNumberOfBuiltInProductions=" + maximumNumberOfBuiltInProductions);
+			sb.append(",maximumNumberOfBuiltInProductions="
+					+ maximumNumberOfBuiltInProductions);
 		}
 		// maximumNumberOfEvolvingBuiltInElementGrammars
 		if (this.maximumNumberOfEvolvingBuiltInElementGrammars >= 0) {
-			sb.append(",maximumNumberOfEvolvingBuiltInElementGrammars=" + maximumNumberOfEvolvingBuiltInElementGrammars);
+			sb.append(",maximumNumberOfEvolvingBuiltInElementGrammars="
+					+ maximumNumberOfEvolvingBuiltInElementGrammars);
 		}
-		
-//		// profile
-//		if (this.profile != null) {
-//			sb.append(",profile=" + profile);
-//		}
+
+		// // profile
+		// if (this.profile != null) {
+		// sb.append(",profile=" + profile);
+		// }
 
 		return sb.toString();
 	}

@@ -114,7 +114,7 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 	public void testUnsignedIntegerS0() throws IOException {
 		String s = "0";
-		//    	
+		//
 		// int i1 = MethodsBag.numberOfBitsToRepresent( Long.valueOf ( "0" ) );
 		// int i2 = MethodsBag.numberOfBitsToRepresent( Long.valueOf ( "2" ) );
 		// int i21230354 = MethodsBag.numberOfBitsToRepresent( Long.valueOf (
@@ -123,8 +123,8 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 		// Integer.MAX_VALUE ) );
 		// int ih = MethodsBag.numberOfBitsToRepresent( Long.valueOf (
 		// "12678967543233" ) );
-		//    	
-		//    	
+		//
+		//
 		int xmlInteger = Integer.parseInt(s);
 
 		// Bit
@@ -201,7 +201,7 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 	public void testUnsignedIntegerSBig1() throws IOException {
 		String s = "12678967543233";
 
-		//BigInteger xmlInteger = new BigInteger(s);
+		// BigInteger xmlInteger = new BigInteger(s);
 		IntegerValue xmlInteger = IntegerValue.parse(s);
 
 		// Bit
@@ -239,7 +239,7 @@ public class UnsignedIntegerTest extends AbstractTestCase {
 
 		// BigInteger xmlInteger = new BigInteger(s);
 		IntegerValue xmlInteger = IntegerValue.parse(s);
-		
+
 		// Bit
 		getBitEncoder().encodeUnsignedIntegerValue(xmlInteger);
 		String s1 = getBitDecoder().decodeUnsignedIntegerValue().toString();

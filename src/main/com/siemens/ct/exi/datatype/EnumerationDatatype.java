@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
@@ -57,7 +55,7 @@ public class EnumerationDatatype extends AbstractDatatype {
 	protected int lastValidIndex;
 
 	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues,
-			QName schemaType) {
+			QNameContext schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
 		this.enumValues = enumValues;

@@ -47,26 +47,26 @@ public class EXIProfileTest extends TestCase {
 	public void testP1_a() throws Exception {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammars g = gf.createXSDTypesOnlyGrammars();
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammars(g);
-	
+
 		// factory.setMaximumNumberOfBuiltInElementGrammars(1);
 		factory.setMaximumNumberOfBuiltInProductions(1);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
 		QName qnEl1 = new QName("", "el1");
 		QName qnAt1 = new QName("", "at1");
-	
+
 		QName qnXsiType = new QName(
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-	
+
 		String sAtValue = "atValue";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
@@ -85,42 +85,42 @@ public class EXIProfileTest extends TestCase {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			// assertTrue(decoder.next() == EventType.CHARACTERS);
 			// assertTrue(decoder.decodeCharacters().equals(""));
-	
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -404,27 +404,27 @@ public class EXIProfileTest extends TestCase {
 	public void testG1_a() throws Exception {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammars g = gf.createXSDTypesOnlyGrammars();
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammars(g);
-	
+
 		factory.setMaximumNumberOfBuiltInElementGrammars(1);
 		// factory.setMaximumNumberOfBuiltInProductions(2);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
 		QName qnEl1 = new QName("", "el1");
 		QName qnAt1 = new QName("", "at1");
 		QName qnAt2 = new QName("", "at2");
-	
+
 		QName qnXsiType = new QName(
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-	
+
 		String sAtValue = "atValue";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
@@ -452,73 +452,73 @@ public class EXIProfileTest extends TestCase {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// no more grammar, hence type-cast
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt2));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// no more grammar, type-cast for previous element
 				// no more grammar, hence type-cast
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt2));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			// assertTrue(decoder.next() == EventType.CHARACTERS);
 			// assertTrue(decoder.decodeCharacters().equals(""));
-	
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -527,28 +527,28 @@ public class EXIProfileTest extends TestCase {
 	public void testG1_b() throws Exception {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammars g = gf.createXSDTypesOnlyGrammars();
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammars(g);
-	
+
 		factory.setMaximumNumberOfBuiltInElementGrammars(1);
 		// factory.setMaximumNumberOfBuiltInProductions(2);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
 		QName qnEl1 = new QName("", "el1");
 		QName qnEl2 = new QName("", "el2");
-	
+
 		QName qnXsiType = new QName(
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-	
+
 		// String sAtValue = "atValue";
 		String sChValue = "chValue";
 		String sChValueTyped = "123";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
@@ -566,7 +566,9 @@ public class EXIProfileTest extends TestCase {
 			{
 				encoder.encodeStartElement(qnEl2.getNamespaceURI(),
 						qnEl2.getLocalPart(), pfx);
-				QNameValue qnv = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int", qnXsiType.getPrefix());
+				QNameValue qnv = new QNameValue(
+						XMLConstants.W3C_XML_SCHEMA_NS_URI, "int",
+						qnXsiType.getPrefix());
 				encoder.encodeAttributeXsiType(qnv, null);
 				encoder.encodeCharacters(new StringValue(sChValueTyped));
 				encoder.encodeEndElement();
@@ -575,64 +577,66 @@ public class EXIProfileTest extends TestCase {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// no more grammar, hence type-cast
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC);
 				assertTrue(decoder.decodeCharacters().toString()
 						.equals(sChValue));
-				
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl2));
-	
-				// no more grammar, type-cast present in stream --> no need for extra type-cast
+
+				// no more grammar, type-cast present in stream --> no need for
+				// extra type-cast
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
 				assertTrue(decoder.getAttributeValue() instanceof QNameValue);
-				QNameValue tcVal = (QNameValue)decoder.getAttributeValue();
-				assertTrue(tcVal.getNamespaceUri().equals(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+				QNameValue tcVal = (QNameValue) decoder.getAttributeValue();
+				assertTrue(tcVal.getNamespaceUri().equals(
+						XMLConstants.W3C_XML_SCHEMA_NS_URI));
 				assertTrue(tcVal.getLocalName().equals("int"));
-				
+
 				assertTrue(decoder.next() == EventType.CHARACTERS);
 				assertTrue(decoder.decodeCharacters().toString()
 						.equals(sChValueTyped));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			// assertTrue(decoder.next() == EventType.CHARACTERS);
 			// assertTrue(decoder.decodeCharacters().equals(""));
-	
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -641,16 +645,16 @@ public class EXIProfileTest extends TestCase {
 	public void testG2_P2_a() throws Exception {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammars g = gf.createXSDTypesOnlyGrammars();
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammars(g);
-	
+
 		factory.setMaximumNumberOfBuiltInElementGrammars(2);
 		factory.setMaximumNumberOfBuiltInProductions(2);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
 		QName qnEl1 = new QName("", "el1");
@@ -658,13 +662,13 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt1 = new QName("", "at1");
 		QName qnAt2 = new QName("", "at2");
 		QName qnAt3 = new QName("", "at3");
-	
+
 		QName qnXsiType = new QName(
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-	
+
 		String sAtValue1 = "atValue1";
 		String sAtValue2 = "atValue2";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
@@ -705,125 +709,125 @@ public class EXIProfileTest extends TestCase {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// // no more grammar, hence type-cast
 				// assertTrue(decoder.next() ==
 				// EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				// assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				// Profile ghost node on 2nd level
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt2));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				// Profile ghost node on 2nd level
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 				decoder.decodeEndElement();
 			}
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// // no more grammar, type-cast for previous element
 				// // no more grammar, hence type-cast
 				// assertTrue(decoder.next() ==
 				// EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				// assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				// assertTrue(decoder.next() == EventType.ATTRIBUTE);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt2));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				// assertTrue(decoder.next() == EventType.ATTRIBUTE);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt3));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 				decoder.decodeEndElement();
 			}
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl1));
-	
+
 				// // no more grammar, hence type-cast
 				// assertTrue(decoder.next() ==
 				// EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				// assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt2));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue1));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 				decoder.decodeEndElement();
 			}
-	
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.equals(qnEl2));
-	
+
 				// no more grammar, hence type-cast
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeAttribute().getQName()
 						.equals(qnXsiType));
-	
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC);
 				assertTrue(decoder.decodeAttribute().getQName().equals(qnAt1));
 				assertTrue(decoder.getAttributeValue().toString()
 						.equals(sAtValue2));
-	
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			// assertTrue(decoder.next() == EventType.CHARACTERS);
 			// assertTrue(decoder.decodeCharacters().equals(""));
-	
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
@@ -832,31 +836,31 @@ public class EXIProfileTest extends TestCase {
 	public void testG0_P0() throws Exception {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		Grammars g = gf.createXSDTypesOnlyGrammars();
-	
+
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-	
+
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setGrammars(g);
-	
+
 		factory.setMaximumNumberOfBuiltInElementGrammars(0);
 		factory.setMaximumNumberOfBuiltInProductions(0);
-	
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		QName qnRoot = new QName("", "root");
 		QName qnA = new QName("", "a");
-	
+
 		QName qnXsiType = new QName(
 				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-	
-		QNameValue typeInt = new QNameValue(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, "int", null);
+
+		QNameValue typeInt = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"int", null);
 		QNameValue typeDecimal = new QNameValue(
 				XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal", null);
-		
+
 		String sValue1 = "12345";
 		String sValue2 = "12345.67";
-	
+
 		// encoder
 		{
 			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
@@ -883,61 +887,66 @@ public class EXIProfileTest extends TestCase {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		}
-	
+
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
 			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
-	
+
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
-	
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
 			assertTrue(decoder.decodeStartElement().getQName().equals(qnRoot));
-			
+
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-			assertTrue(decoder.getAttributeValue().toString().endsWith(":anyType"));
-	
+			assertTrue(decoder.getAttributeValue().toString()
+					.endsWith(":anyType"));
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				assertTrue(decoder.decodeStartElement().getQName()
-						.equals(qnA));
-	
+				assertTrue(decoder.decodeStartElement().getQName().equals(qnA));
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-				assertTrue(decoder.getAttributeValue().toString().endsWith(":int"));
-				
+				assertTrue(decoder.decodeAttribute().getQName()
+						.equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString()
+						.endsWith(":int"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS);
-				assertTrue(decoder.decodeCharacters().toString().equals(sValue1));
-	
+				assertTrue(decoder.decodeCharacters().toString()
+						.equals(sValue1));
+
 				// Profile ghost node on 2nd level
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
-				assertTrue(decoder.decodeStartElement().getQName()
-						.equals(qnA));
-	
+				assertTrue(decoder.decodeStartElement().getQName().equals(qnA));
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeAttribute().getQName().equals(qnXsiType));
-				assertTrue(decoder.getAttributeValue().toString().endsWith(":decimal"));
-				
+				assertTrue(decoder.decodeAttribute().getQName()
+						.equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString()
+						.endsWith(":decimal"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS);
-				assertTrue(decoder.decodeCharacters().toString().equals(sValue2));
-	
+				assertTrue(decoder.decodeCharacters().toString()
+						.equals(sValue2));
+
 				// Profile ghost node on 2nd level
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-	
+
 			// assertTrue(decoder.next() == EventType.CHARACTERS);
 			// assertTrue(decoder.decodeCharacters().equals(""));
-	
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-	
+
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}

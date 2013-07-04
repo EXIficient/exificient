@@ -28,34 +28,37 @@ public class EXIHeaderTestCase extends TestCase {
 
 	public void testDistinguishingBits1() throws EXIException {
 		EXIHeaderEncoder headerEncoder = new EXIHeaderEncoder();
-		
+
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		// CodingMode codingMode = CodingMode.BIT_PACKED;
 		// HeaderOptions headerOptions = HeaderOptions.createDefault();
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
-		
+
 		headerEncoder.write(bec, ef);
-		
+
 		byte[] header = baos.toByteArray();
 		assertTrue(header.length == (1));
-		
-		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(header));
-		
+
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				header));
+
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 		headerDecoder.parse(bdc, DefaultEXIFactory.newInstance());
 	}
 
-	public void testDistinguishingBitsFailure1() throws EXIException, IOException {
+	public void testDistinguishingBitsFailure1() throws EXIException,
+			IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 		bec.encodeNBitUnsignedInteger(1, 1);
 		bec.encodeNBitUnsignedInteger(1, 1); // should be 0
 		bec.encode(21);
 		byte[] header = baos.toByteArray();
-		
-		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(header));
+
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				header));
 		try {
 			EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 			headerDecoder.parse(bdc, DefaultEXIFactory.newInstance());
@@ -64,35 +67,35 @@ public class EXIHeaderTestCase extends TestCase {
 			// no Valid DistinguishingBits
 		}
 	}
-	
 
 	public void testCookie1() throws EXIException {
 		EXIHeaderEncoder headerEncoder = new EXIHeaderEncoder();
-		
+
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setCodingMode(CodingMode.BYTE_PACKED);
 		ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_COOKIE);
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 		headerEncoder.write(bec, ef);
-		
+
 		byte[] header = baos.toByteArray();
-		assertTrue(header.length == (4+1));
+		assertTrue(header.length == (4 + 1));
 		assertTrue(header[0] == '$');
 		assertTrue(header[1] == 'E');
 		assertTrue(header[2] == 'X');
 		assertTrue(header[3] == 'I');
-		
-		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(header));
-		
+
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				header));
+
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 		headerDecoder.parse(bdc, DefaultEXIFactory.newInstance());
 	}
-	
+
 	public void testCookieFailure1() throws EXIException, IOException {
 		// EXIHeaderEncoder headerEncoder = new EXIHeaderEncoder();
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
 		bec.encode('$');
@@ -100,8 +103,9 @@ public class EXIHeaderTestCase extends TestCase {
 		bec.encode('L');
 		bec.encode('A');
 		byte[] header = baos.toByteArray();
-		
-		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(header));
+
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				header));
 		try {
 			EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 			headerDecoder.parse(bdc, DefaultEXIFactory.newInstance());
@@ -110,53 +114,57 @@ public class EXIHeaderTestCase extends TestCase {
 			// no valid cookie
 		}
 	}
-	
-	protected void _testOptions(EXIFactory test) throws EXIException, IOException {
+
+	protected void _testOptions(EXIFactory test) throws EXIException,
+			IOException {
 		_testOptions(test, null);
 	}
 
-	protected void _testOptions(EXIFactory test, EXIFactory noOptionsFactory) throws EXIException, IOException {
+	protected void _testOptions(EXIFactory test, EXIFactory noOptionsFactory)
+			throws EXIException, IOException {
 		EXIHeaderEncoder headerEncoder = new EXIHeaderEncoder();
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		EncoderChannel encoderChannel = new BitEncoderChannel(baos);
-		
+
 		headerEncoder.writeEXIOptions(test, encoderChannel);
 		encoderChannel.flush();
-		
-		DecoderChannel decoderChannel = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
-		
+
+		DecoderChannel decoderChannel = new BitDecoderChannel(
+				new ByteArrayInputStream(baos.toByteArray()));
+
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 		if (noOptionsFactory == null) {
 			noOptionsFactory = DefaultEXIFactory.newInstance();
 		}
-		
-		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, noOptionsFactory);
-		
+
+		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel,
+				noOptionsFactory);
+
 		assertTrue(test.equals(decodedTest));
 	}
-	
+
 	public void testEXIOptions1() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		
+
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions2() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setCodingMode(CodingMode.BYTE_PACKED);
-		
+
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions3() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setFidelityOptions(FidelityOptions.createAll());
 		ef.setFragment(true);
-		
+
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions4() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setFidelityOptions(FidelityOptions.createAll());
@@ -165,12 +173,13 @@ public class EXIHeaderTestCase extends TestCase {
 		dtrMapTypes[1] = new QName("ccc", "xhc");
 		QName[] dtrMapRepresentations = new QName[2];
 		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
-		dtrMapRepresentations[1] = new QName(Constants.W3C_EXI_NS_URI, "decimal");
+		dtrMapRepresentations[1] = new QName(Constants.W3C_EXI_NS_URI,
+				"decimal");
 		ef.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		
+
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions5() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setFidelityOptions(FidelityOptions.createAll());
@@ -183,10 +192,10 @@ public class EXIHeaderTestCase extends TestCase {
 		QName[] dtrMapRepresentations = new QName[1];
 		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
 		ef.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		
+
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions6() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		EncodingOptions ho = ef.getEncodingOptions();
@@ -194,7 +203,7 @@ public class EXIHeaderTestCase extends TestCase {
 
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions7() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		Grammars g = GrammarFactory.newInstance().createXSDTypesOnlyGrammars();
@@ -215,72 +224,71 @@ public class EXIHeaderTestCase extends TestCase {
 
 		_testOptions(ef);
 	}
-	
-	public void testEXIOptions9() throws EXIException, IOException {		
+
+	public void testEXIOptions9() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		
+
 		// STRICT as noOptionsFactory
 		EXIFactory efStrict = DefaultEXIFactory.newInstance();
 		efStrict.setFidelityOptions(FidelityOptions.createStrict());
 
 		_testOptions(ef, efStrict);
 	}
-	
-	public void testEXIOptions10() throws EXIException, IOException {		
+
+	public void testEXIOptions10() throws EXIException, IOException {
 		// PI and Comments
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		FidelityOptions fo = ef.getFidelityOptions();
 		fo.setFidelity(FidelityOptions.FEATURE_COMMENT, true);
 		fo.setFidelity(FidelityOptions.FEATURE_PI, true);
-		
+
 		_testOptions(ef, null);
 	}
-	
+
 	public void testEXIOptions11() throws EXIException, IOException {
 		// Profile
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setLocalValuePartitions(false);
-		
+
 		EncodingOptions ho = ef.getEncodingOptions();
 		ho.setOption(EncodingOptions.INCLUDE_PROFILE_VALUES);
 
 		_testOptions(ef);
 	}
-	
+
 	public void testEXIOptions12() throws EXIException, IOException {
 		// Profile
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		// ef.setLocalValuePartitions(false);
 		ef.setMaximumNumberOfBuiltInProductions(0);
-		
+
 		// EncodingOptions ho = ef.getEncodingOptions();
 		// ho.setOption(EncodingOptions.INCLUDE_PROFILE_VALUES);
 
 		_testOptions(ef);
 	}
-	
-	
+
 	String schemaBla = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-		+ " <xs:element name='root' type='xs:string' nillable='true' >"
-		+ " </xs:element>" + "</xs:schema>";
-	
+			+ " <xs:element name='root' type='xs:string' nillable='true' >"
+			+ " </xs:element>" + "</xs:schema>";
+
 	public void testEXIOptionsBugID3425036() throws EXIException, IOException {
 		String schemaId = "bla";
-		
-		GrammarFactory gf = GrammarFactory.newInstance();		
-		
+
+		GrammarFactory gf = GrammarFactory.newInstance();
+
 		InputStream is = new ByteArrayInputStream(schemaBla.getBytes());
 		Grammars g = gf.createGrammars(is);
 		g.setSchemaId(schemaId);
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setGrammars(g);
-		
+
 		EncodingOptions eo = ef.getEncodingOptions();
 		eo.setOption(EncodingOptions.INCLUDE_OPTIONS);
 		eo.setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
-		
+
 		ef.setEncodingOptions(eo);
-		
+
 		// write header
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		BitEncoderChannel bec = new BitEncoderChannel(baos);
@@ -289,19 +297,20 @@ public class EXIHeaderTestCase extends TestCase {
 		bec.flush();
 
 		// Note: No exception should be thrown due to schemaId
-		
+
 		// decoder header
-		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
+		BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(
+				baos.toByteArray()));
 		EXIHeaderDecoder hd = new EXIHeaderDecoder();
 		EXIFactory fDec = DefaultEXIFactory.newInstance();
 		fDec.setSchemaIdResolver(new BlaSchemaIdResolver());
 		hd.parse(bdc, fDec);
-		
-//		assertTrue(hd.isSchemaIdSet());
-//		assertTrue(schemaId.equals(hd.getSchemaId()));
-		
+
+		// assertTrue(hd.isSchemaIdSet());
+		// assertTrue(schemaId.equals(hd.getSchemaId()));
+
 	}
-	
+
 	class BlaSchemaIdResolver implements SchemaIdResolver {
 
 		public Grammars resolveSchemaId(String schemaId) throws EXIException {
@@ -312,8 +321,7 @@ public class EXIHeaderTestCase extends TestCase {
 				throw new RuntimeException("Unspoorted schemaId: " + schemaId);
 			}
 		}
-		
+
 	}
-	
-	
+
 }

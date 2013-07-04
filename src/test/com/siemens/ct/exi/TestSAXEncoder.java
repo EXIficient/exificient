@@ -39,17 +39,17 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 	protected EXIResult exiResult;
 	protected boolean isFragment;
-	
+
 	public TestSAXEncoder(EXIFactory ef) throws EXIException {
 		super();
 		exiResult = new EXIResult(ef);
 		isFragment = ef.isFragment();
 	}
-	
-//	public void setupEXIWriter(EXIFactory ef) throws EXIException {
-//		exiResult = new EXIResult(ef);
-//		isFragment = ef.isFragment();
-//	}
+
+	// public void setupEXIWriter(EXIFactory ef) throws EXIException {
+	// exiResult = new EXIResult(ef);
+	// isFragment = ef.isFragment();
+	// }
 
 	protected XMLReader getXMLReader() throws Exception {
 		// create xml reader
@@ -57,9 +57,9 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 
 		xmlReader = XMLReaderFactory
 				.createXMLReader("org.apache.xerces.parsers.SAXParser");
-//		 xmlReader = XMLReaderFactory.createXMLReader();
+		// xmlReader = XMLReaderFactory.createXMLReader();
 
-		//	set XMLReader features
+		// set XMLReader features
 		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
 		// do not report namespace declarations as attributes
 		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
@@ -71,7 +71,7 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 				false);
 		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver(new NoEntityResolver());
-		
+
 		return xmlReader;
 	}
 
@@ -90,25 +90,26 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 	}
 
 	@Override
-	public void encodeTo(InputStream xmlInput, OutputStream exiOutput) throws Exception {		
+	public void encodeTo(InputStream xmlInput, OutputStream exiOutput)
+			throws Exception {
 		// XML reader
 		XMLReader xmlReader = getXMLReader();
-		
+
 		exiResult.setOutputStream(exiOutput);
 
 		// set EXI as content & lexical handler
 		// EXIResult saxResult = new EXIResult(exiOutput, ef);
 		xmlReader.setContentHandler(exiResult.getHandler());
-		
+
 		// set LexicalHandler
 		xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler",
 				exiResult.getLexicalHandler());
 		// set DeclHandler
 		xmlReader.setProperty(
-				"http://xml.org/sax/properties/declaration-handler", exiResult
-						.getLexicalHandler());
-		// 	set DTD handler
-		xmlReader.setDTDHandler((DTDHandler)exiResult.getHandler());
+				"http://xml.org/sax/properties/declaration-handler",
+				exiResult.getLexicalHandler());
+		// set DTD handler
+		xmlReader.setDTDHandler((DTDHandler) exiResult.getHandler());
 
 		if (isFragment) {
 			xmlInput = updateInputStreamToFragment(xmlInput);
@@ -119,13 +120,12 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		int cp = 0x2000B;
-//		StringBuffer sb = new StringBuffer();
-//		sb.appendCodePoint(cp);
-//		String s = sb.toString();
-//		System.out.println(s + ": " + s.length());
-//		char[] c = s.toCharArray();
-		
+		// int cp = 0x2000B;
+		// StringBuffer sb = new StringBuffer();
+		// sb.appendCodePoint(cp);
+		// String s = sb.toString();
+		// System.out.println(s + ": " + s.length());
+		// char[] c = s.toCharArray();
 
 		// EXI output stream
 		OutputStream encodedOutput = getOutputStream(QuickTestConfiguration
@@ -136,11 +136,12 @@ public class TestSAXEncoder extends AbstractTestEncoder {
 				QuickTestConfiguration.getXmlLocation()));
 
 		// create test-encoder & encode to EXI
-		TestSAXEncoder testEncoder = new TestSAXEncoder(TestSAXEncoder.getQuickTestEXIactory());
-		// EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory	
-		
-//		// setup encoding options
-//		setupEncodingOptions(ef);
+		TestSAXEncoder testEncoder = new TestSAXEncoder(
+				TestSAXEncoder.getQuickTestEXIactory());
+		// EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
+
+		// // setup encoding options
+		// setupEncodingOptions(ef);
 
 		// testEncoder.setupEXIWriter(ef);
 		testEncoder.encodeTo(xmlInput, encodedOutput);

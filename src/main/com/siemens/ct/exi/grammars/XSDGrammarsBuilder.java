@@ -277,6 +277,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			GrammarUriContext[] grammarUriContexts) {
 		namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
 				: namespaceUri;
+		assert(grammarUriContexts != null);
 
 		for (GrammarUriContext guc : grammarUriContexts) {
 			if (guc.getNamespaceUri().equals(namespaceUri)) {
@@ -970,7 +971,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				}
 				
 
-				// (direct) simple sub-types
+				// (direct) simple sub-types vs. baseType
 				if (typeDef != null
 						&& typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
 						&& !typeDef.getAnonymous()) {
@@ -1000,23 +1001,30 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 								&& baseType.getName() == null) {
 							// e.g., xsd:ENTITIES
 						} else {
-							// List<QName> sub = subtypes.get(baseTypeQName);
-							// System.out.println(baseType);
+							// Set simple baseType
 							QNameContext base = getQNameContext(
 									baseType.getNamespace(),
 									baseType.getName(), grammarUriContexts);
-							List<QNameContext> subTypes = base
-									.getSimpleTypeSubtypes();
-							// List<QNameContext> subTypes =
-							// qnc.getSimpleTypeSubtypes();
-							if (subTypes == null) {
-								subTypes = new ArrayList<QNameContext>();
-								// qnc.setSimpleTypeSubtypes(subTypes);
-								base.setSimpleTypeSubtypes(subTypes);
-							}
-							// QName baseTypeQName = getValueType(baseType);
-							// subTypes.add(base);
-							subTypes.add(qnc);
+							assert(base != null);
+							qnc.setSimpleBaseType(base);
+							
+							
+							
+//							// TODO subtypes needed anymore?!
+//							// List<QName> sub = subtypes.get(baseTypeQName);
+//							// System.out.println(baseType);
+//							List<QNameContext> subTypes = base
+//									.getSimpleTypeSubtypes();
+//							// List<QNameContext> subTypes =
+//							// qnc.getSimpleTypeSubtypes();
+//							if (subTypes == null) {
+//								subTypes = new ArrayList<QNameContext>();
+//								// qnc.setSimpleTypeSubtypes(subTypes);
+//								base.setSimpleTypeSubtypes(subTypes);
+//							}
+//							// QName baseTypeQName = getValueType(baseType);
+//							// subTypes.add(base);
+//							subTypes.add(qnc);
 						}
 					}
 				}
@@ -1692,6 +1700,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 		// used for dtr map
 		QName schemaType = getSchemaType(std);
+		QNameContext qncSchemaType = getQNameContext(schemaType.getNamespaceURI(), schemaType.getLocalPart(), this.grammarUriContexts);
 		
 		// is enumeration ?
 		if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_ENUMERATION)) {
@@ -1715,12 +1724,12 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 						 * represented as enumerations.
 						 */
 						if (stdEnum.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
-							datatype = new StringDatatype(schemaType);
+							datatype = new StringDatatype(qncSchemaType, true);
 						} else if (BuiltIn.XSD_QNAME
 								.equals(getSchemaType(stdEnum))
 								|| BuiltIn.XSD_NOTATION
 										.equals(getSchemaType(stdEnum))) {
-							datatype = new StringDatatype(schemaType);
+							datatype = new StringDatatype(qncSchemaType);
 						} else {
 							Datatype dtEnumValues = getDatatype(stdEnum);
 							Value[] values = new Value[enumList.getLength()];
@@ -1731,7 +1740,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 							if(enumBIT == BuiltInType.LIST) {
 								ListDatatype listDT = (ListDatatype) dtEnumValues;
 								Datatype dtL = listDT.getListDatatype();
-								datatype = new ListDatatype(dtL, schemaType);
+								datatype = new ListDatatype(dtL, qncSchemaType);
 							} else {
 								for (int k = 0; k < enumList.getLength(); k++) {
 									String tok = enumList.item(k);
@@ -1800,7 +1809,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 								}
 
 								datatype = new EnumerationDatatype(values, enumBIT,
-										schemaType);
+										qncSchemaType);
 							}
 							
 
@@ -1816,7 +1825,10 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 			Datatype dtList = getDatatype(listSTD);
 
-			datatype = new ListDatatype(dtList, schemaType);
+			datatype = new ListDatatype(dtList, qncSchemaType);
+		// is union ?
+		} else if (std.getVariety() == XSSimpleTypeDefinition.VARIETY_UNION) {
+			datatype = new StringDatatype(qncSchemaType, true);
 		} else {
 			datatype = getDatatypeOfType(std, schemaType);
 		}
@@ -1876,6 +1888,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	private Datatype getIntegerDatatype(XSSimpleTypeDefinition std,
 			QName schemaType) {
+		QNameContext qncSchemaType = getQNameContext(schemaType.getNamespaceURI(), schemaType.getLocalPart(), this.grammarUriContexts);
 		/*
 		 * detect base integer type (e.g. int, long, BigInteger)
 		 */
@@ -2002,7 +2015,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			case INTEGER_8:
 				datatype = new NBitUnsignedIntegerDatatype(
 						IntegerValue.valueOf(min), IntegerValue.valueOf(max),
-						schemaType);
+						qncSchemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected n-Bit Integer Type: "
@@ -2048,7 +2061,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			case UNSIGNED_INTEGER_32:
 			case UNSIGNED_INTEGER_16:
 			case UNSIGNED_INTEGER_8:
-				datatype = new UnsignedIntegerDatatype(schemaType);
+				datatype = new UnsignedIntegerDatatype(qncSchemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Unsigned Integer Type: "
@@ -2064,7 +2077,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			case INTEGER_32:
 			case INTEGER_16:
 			case INTEGER_8:
-				datatype = new IntegerDatatype(schemaType);
+				datatype = new IntegerDatatype(qncSchemaType);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Integer Type: "
@@ -2080,52 +2093,54 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	}
 
 	private Datatype getDatatypeOfType(XSSimpleTypeDefinition std,
-			QName schemaType) {
-		Datatype datatype;
-
+			final QName schemaType) {
+		final QNameContext qncSchemaType = getQNameContext(schemaType.getNamespaceURI(), schemaType.getLocalPart(), this.grammarUriContexts);
+		
 		//
+		Datatype datatype;
 		QName schemaDatatype = getXMLSchemaDatatype(std);
+		
 
 		if (BuiltIn.XSD_BASE64BINARY.equals(schemaDatatype)) {
-			datatype = new BinaryBase64Datatype(schemaType);
+			datatype = new BinaryBase64Datatype(qncSchemaType);
 		} else if (BuiltIn.XSD_HEXBINARY.equals(schemaDatatype)) {
-			datatype = new BinaryHexDatatype(schemaType);
+			datatype = new BinaryHexDatatype(qncSchemaType);
 		} else if (BuiltIn.XSD_BOOLEAN.equals(schemaDatatype)) {
 			if (std.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
-				datatype = new BooleanFacetDatatype(schemaType);
+				datatype = new BooleanFacetDatatype(qncSchemaType);
 			} else {
-				datatype = new BooleanDatatype(schemaType);
+				datatype = new BooleanDatatype(qncSchemaType);
 			}
 		} else if (BuiltIn.XSD_DATETIME.equals(schemaDatatype)) {
 			QName primitive = getPrimitive(std);
 
 			if (BuiltIn.XSD_DATETIME.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.dateTime,
-						schemaType);
+						qncSchemaType);
 			} else if (BuiltIn.XSD_TIME.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.time, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.time, qncSchemaType);
 			} else if (BuiltIn.XSD_DATE.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.date, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.date, qncSchemaType);
 			} else if (BuiltIn.XSD_GYEARMONTH.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.gYearMonth,
-						schemaType);
+						qncSchemaType);
 			} else if (BuiltIn.XSD_GYEAR.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gYear, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.gYear, qncSchemaType);
 			} else if (BuiltIn.XSD_GMONTHDAY.equals(primitive)) {
 				datatype = new DatetimeDatatype(DateTimeType.gMonthDay,
-						schemaType);
+						qncSchemaType);
 			} else if (BuiltIn.XSD_GDAY.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gDay, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.gDay, qncSchemaType);
 			} else if (BuiltIn.XSD_GMONTH.equals(primitive)) {
-				datatype = new DatetimeDatatype(DateTimeType.gMonth, schemaType);
+				datatype = new DatetimeDatatype(DateTimeType.gMonth, qncSchemaType);
 			} else {
 				throw new RuntimeException();
 			}
 		} else if (BuiltIn.XSD_DECIMAL.equals(schemaDatatype)) {
-			datatype = new DecimalDatatype(schemaType);
+			datatype = new DecimalDatatype(qncSchemaType);
 		} else if (BuiltIn.XSD_FLOAT.equals(schemaDatatype)
 				|| BuiltIn.XSD_DOUBLE.equals(schemaDatatype)) {
-			datatype = new FloatDatatype(schemaType);
+			datatype = new FloatDatatype(qncSchemaType);
 		} else if (BuiltIn.XSD_INTEGER.equals(schemaDatatype)) {
 			// returns integer type (nbit, unsigned, int) according to facets
 			datatype = getIntegerDatatype(std, schemaType);
@@ -2136,7 +2151,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 				if (isBuiltInTypeFacet(std, sl.getLength())) {
 					// *normal* string
-					datatype = new StringDatatype(schemaType);
+					datatype = new StringDatatype(qncSchemaType);
 				} else {
 					// analyze most-derived datatype facet only
 					String regexPattern = sl.item(0);
@@ -2145,17 +2160,17 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 					if (re.isEntireSetOfXMLCharacters()) {
 						// *normal* string
-						datatype = new StringDatatype(schemaType);
+						datatype = new StringDatatype(qncSchemaType);
 					} else {
 						// restricted char set
 						RestrictedCharacterSet rcs = new CodePointCharacterSet(
 								re.getCodePoints());
 						datatype = new RestrictedCharacterSetDatatype(rcs,
-								schemaType);
+								qncSchemaType);
 					}
 				}
 			} else {
-				datatype = new StringDatatype(schemaType);
+				datatype = new StringDatatype(qncSchemaType);
 			}
 		}
 

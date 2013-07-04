@@ -103,8 +103,7 @@ public class FragmentsTestCase extends TestCase {
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			decoder.setInputStream(
-					new ByteArrayInputStream(baos.toByteArray()));
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -131,7 +130,7 @@ public class FragmentsTestCase extends TestCase {
 
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
-			
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().equals(s2));
 

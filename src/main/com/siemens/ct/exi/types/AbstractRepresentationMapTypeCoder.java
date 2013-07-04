@@ -19,14 +19,11 @@
 package com.siemens.ct.exi.types;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.context.GrammarContext;
-import com.siemens.ct.exi.context.GrammarUriContext;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.BinaryBase64Datatype;
 import com.siemens.ct.exi.datatype.BinaryHexDatatype;
@@ -36,9 +33,9 @@ import com.siemens.ct.exi.datatype.DatetimeDatatype;
 import com.siemens.ct.exi.datatype.DecimalDatatype;
 import com.siemens.ct.exi.datatype.FloatDatatype;
 import com.siemens.ct.exi.datatype.IntegerDatatype;
+import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 /**
@@ -51,186 +48,232 @@ import com.siemens.ct.exi.util.xml.QNameUtilities;
 
 public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 
-	protected final Grammars grammar;
+	protected final QName[] dtrMapTypes;
+	protected final QName[] dtrMapRepresentations;
 
 	protected Map<QName, Datatype> dtrMap;
 
 	protected Datatype recentDtrDataype;
 
-	protected final QNameContext qncXsdInteger;
-
 	public AbstractRepresentationMapTypeCoder(QName[] dtrMapTypes,
-			QName[] dtrMapRepresentations, Grammars grammar)
-			throws EXIException {
-		this.grammar = grammar;
+			QName[] dtrMapRepresentations) throws EXIException {
+		this.dtrMapTypes = dtrMapTypes;
+		this.dtrMapRepresentations = dtrMapRepresentations;
 		dtrMap = new HashMap<QName, Datatype>();
 
-		GrammarContext gc = grammar.getGrammarContext();
-		qncXsdInteger = gc.getGrammarUriContext(
-				BuiltIn.XSD_INTEGER.getNamespaceURI()).getQNameContext(
-				BuiltIn.XSD_INTEGER.getLocalPart());
-
 		assert (dtrMapTypes.length == dtrMapRepresentations.length);
-		/*
-		 * When there are built-in or user-defined datatype representations
-		 * associated with more than one XML Schema datatype in the type
-		 * hierarchy of a particular datatype, the closest ancestor with an
-		 * associated datatype representation is used to determine the EXI
-		 * datatype representation.
-		 */
+
+		// binary
+		dtrMap.put(
+				BuiltIn.XSD_BASE64BINARY,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI,
+						"base64Binary"));
+		dtrMap.put(
+				BuiltIn.XSD_HEXBINARY,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "hexBinary"));
+		// boolean
+		dtrMap.put(BuiltIn.XSD_BOOLEAN,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "boolean"));
+		// date-times
+		dtrMap.put(BuiltIn.XSD_DATETIME,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "dateTime"));
+		dtrMap.put(BuiltIn.XSD_TIME,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "time"));
+		dtrMap.put(BuiltIn.XSD_DATE,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "date"));
+		dtrMap.put(
+				BuiltIn.XSD_GYEARMONTH,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI,
+						"gYearMonth"));
+		dtrMap.put(BuiltIn.XSD_GYEAR,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gYear"));
+		dtrMap.put(
+				BuiltIn.XSD_GMONTHDAY,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gMonthDay"));
+		dtrMap.put(BuiltIn.XSD_GDAY,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gDay"));
+		dtrMap.put(BuiltIn.XSD_GMONTH,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gMonth"));
+		// decimal
+		dtrMap.put(BuiltIn.XSD_DECIMAL,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "decimal"));
+		// float
+		dtrMap.put(BuiltIn.XSD_FLOAT,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "double"));
+		dtrMap.put(BuiltIn.XSD_DOUBLE,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "double"));
+		// integer
+		dtrMap.put(BuiltIn.XSD_INTEGER,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "integer"));
+		// string
+		dtrMap.put(BuiltIn.XSD_STRING,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "string"));
+		dtrMap.put(BuiltIn.XSD_ANY_SIMPLE_TYPE,
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "string"));
+		// all types derived by union are done differently
+
 		for (int i = 0; i < dtrMapTypes.length; i++) {
-			Datatype representation = getDatatypeRepresentation(dtrMapRepresentations[i]);
+			QName dtrMapRepr = dtrMapRepresentations[i];
+			Datatype representation = getDatatypeRepresentation(
+					dtrMapRepr.getNamespaceURI(), dtrMapRepr.getLocalPart());
 			QName type = dtrMapTypes[i];
-			GrammarUriContext guc = gc.getGrammarUriContext(type
-					.getNamespaceURI());
-			if (guc != null) {
-				QNameContext qncType = guc.getQNameContext(type.getLocalPart());
-				if (qncType != null) {
-					registerDatatype(representation, qncType, dtrMapTypes);
+			dtrMap.put(type, representation);
+		}
+	}
+
+	protected void updateRecentDtr(Datatype datatype) {
+		if (datatype == BuiltIn.DEFAULT_DATATYPE) {
+			// e.g., untyped values are encoded always as String
+			recentDtrDataype = datatype;
+		} else {
+			// check mappings
+			QNameContext qncSchemaType = datatype.getSchemaType();
+			QName schemaType = qncSchemaType.getQName();
+
+			recentDtrDataype = dtrMap.get(schemaType);
+			
+			// unions
+			if (recentDtrDataype == null
+					&& datatype.getBuiltInType() == BuiltInType.STRING
+					&& ((StringDatatype) datatype).isDerivedByUnion()) {
+				recentDtrDataype = datatype;
+				// union ancestors of interest
+				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+				if (baseType != null) {
+					Datatype dtBase = baseType.getSimpleDatatype();
+					if (dtBase != null
+							&& dtBase.getBuiltInType() == BuiltInType.STRING
+							&& ((StringDatatype) dtBase).isDerivedByUnion()) {
+						// check again
+						recentDtrDataype = null;
+					}
+				}
+			}
+			// lists
+			if (recentDtrDataype == null
+					&& datatype.getBuiltInType() == BuiltInType.LIST) {
+				recentDtrDataype = datatype;
+				// list ancestors of interest
+				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+				if (baseType != null) {
+					Datatype dtBase = baseType.getSimpleDatatype();
+					if (dtBase != null
+							&& dtBase.getBuiltInType() == BuiltInType.LIST) {
+						// check again
+						recentDtrDataype = null;
+					}
+				}
+
+			}
+			// enums
+			if (recentDtrDataype == null
+					&& datatype.getBuiltInType() == BuiltInType.ENUMERATION) {
+				recentDtrDataype = datatype;
+				// only ancestor types that have enums are of interest
+				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+				if (baseType != null) {
+					Datatype dtBase = baseType.getSimpleDatatype();
+					if (dtBase != null
+							&& dtBase.getBuiltInType() == BuiltInType.ENUMERATION) {
+						// check again
+						recentDtrDataype = null;
+					}
+				}
+			}
+			if (recentDtrDataype == null) {
+				// no mapping yet
+				recentDtrDataype = updateDatatype(qncSchemaType);
+				// special integer handling
+				if (recentDtrDataype.getBuiltInType() == BuiltInType.INTEGER
+						&& (datatype.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER || datatype
+								.getBuiltInType() == BuiltInType.UNSIGNED_INTEGER)) {
+					recentDtrDataype = datatype;
 				}
 			}
 		}
+		
+		// list item types
+		assert(recentDtrDataype != null);
+		if(recentDtrDataype.getBuiltInType() == BuiltInType.LIST) {
+			Datatype prev = recentDtrDataype;
+			ListDatatype ldt = (ListDatatype) recentDtrDataype;
+			Datatype dtList = ldt.getListDatatype();
+			this.updateRecentDtr(dtList);
+			if(recentDtrDataype != dtList) {
+				// update item codec
+				recentDtrDataype = new ListDatatype(recentDtrDataype, ldt.getSchemaType());
+			} else {
+				recentDtrDataype = prev;
+			}
+			
+		}
+	}
+
+	protected Datatype updateDatatype(QNameContext qncSchemaType) {
+		QNameContext simpleBaseType = qncSchemaType.getSimpleBaseType();
+		Datatype dt = dtrMap.get(simpleBaseType.getQName());
+		if (dt == null) {
+			dt = updateDatatype(simpleBaseType);
+		} else {
+			dtrMap.put(simpleBaseType.getQName(), dt);
+		}
+
+		return dt;
 	}
 
 	protected Datatype getRecentDtrMapDatatype() {
 		return recentDtrDataype;
 	}
 
-	private boolean isDerivedFrom(QNameContext type, QNameContext ancestor) {
-		// type itself
-		if (type.equals(ancestor)) {
-			return true;
-		}
-
-		List<QNameContext> subtypes = ancestor.getSimpleTypeSubtypes();
-		if (subtypes != null) {
-			for (QNameContext subtype : subtypes) {
-				if (isDerivedFrom(type, subtype)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	protected void registerDatatype(Datatype representation, QNameContext type,
-			QName[] dtrMapTypes) {
-		// Integer types are special (exi:integer)
-		if (representation.getBuiltInType() == BuiltInType.INTEGER) {
-			// Note: exi:integer == BuiltInType.INTEGER_BIG
-
-			// Detect whether type is derived from xsd:integer
-			boolean isDerivedFromXsdInteger = isDerivedFrom(type, qncXsdInteger);
-
-			if (isDerivedFromXsdInteger) {
-				// built-in types set already (n-bit and unsigned integers)
-				return;
-			}
-
-			// other types use default full exi:integer coding
-		}
-
-		dtrMap.put(type.getQName(), representation);
-
-		List<QNameContext> subtypes = type.getSimpleTypeSubtypes();
-
-		if (subtypes != null) {
-			// for (QName subtype : subtypes) {
-			for (QNameContext qncSubtype : subtypes) {
-				QName subtype = qncSubtype.getQName();
-				// register subtypes unless a default mapping is
-				// is present OR there is another DTR map for this type
-				// see
-				// http://www.w3.org/XML/Group/EXI/docs/format/exi.html#builtInEXITypes
-				if (BuiltIn.XSD_BASE64BINARY.equals(subtype)
-						|| BuiltIn.XSD_HEXBINARY.equals(subtype)) {
-					// Binary built-In
-				} else if (BuiltIn.XSD_BOOLEAN.equals(subtype)) {
-					// Boolean built-In
-				} else if (BuiltIn.XSD_DATETIME.equals(subtype)
-						|| BuiltIn.XSD_TIME.equals(subtype)
-						|| BuiltIn.XSD_DATE.equals(subtype)
-						|| BuiltIn.XSD_GYEARMONTH.equals(subtype)
-						|| BuiltIn.XSD_GYEAR.equals(subtype)
-						|| BuiltIn.XSD_GMONTHDAY.equals(subtype)
-						|| BuiltIn.XSD_GDAY.equals(subtype)
-						|| BuiltIn.XSD_GMONTH.equals(subtype)) {
-					// Date-Time built-In
-				} else if (BuiltIn.XSD_DECIMAL.equals(subtype)) {
-					// Decimal built-In
-				} else if (BuiltIn.XSD_FLOAT.equals(subtype)
-						|| BuiltIn.XSD_DOUBLE.equals(subtype)) {
-					// Float built-In
-				} else if (BuiltIn.XSD_INTEGER.equals(subtype)) {
-					// Integer built-In
-				} else if (BuiltIn.XSD_STRING.equals(subtype)
-						|| BuiltIn.XSD_ANY_SIMPLE_TYPE.equals(subtype)) {
-					// String built-In
-				} else if (contains(qncSubtype, dtrMapTypes)) {
-					// another mapping exists
-				} else {
-					registerDatatype(representation, qncSubtype, dtrMapTypes);
-				}
-			}
-		}
-	}
-
-	protected boolean contains(QNameContext q, QName[] qnames) {
-		for (QName qn : qnames) {
-			if (qn.equals(q.getQName())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	protected Datatype getDatatypeRepresentation(QName representation)
-			throws EXIException {
+	protected Datatype getDatatypeRepresentation(String reprUri,
+			String reprLocalPart) throws EXIException {
 		try {
 			// find datatype for given representation
 			Datatype datatype = null;
-			if (Constants.W3C_EXI_NS_URI.equals(representation
-					.getNamespaceURI())) {
+			if (Constants.W3C_EXI_NS_URI.equals(reprUri)) {
 				// EXI built-in datatypes
 				// see http://www.w3.org/TR/exi/#builtInEXITypes
-				String localPart = representation.getLocalPart();
-				if ("base64Binary".equals(localPart)) {
+				if ("base64Binary".equals(reprLocalPart)) {
 					datatype = new BinaryBase64Datatype(null);
-				} else if ("hexBinary".equals(localPart)) {
+				} else if ("hexBinary".equals(reprLocalPart)) {
 					datatype = new BinaryHexDatatype(null);
-				} else if ("boolean".equals(localPart)) {
+				} else if ("boolean".equals(reprLocalPart)) {
 					datatype = new BooleanDatatype(null);
-				} else if ("dateTime".equals(localPart)) {
+				} else if ("dateTime".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.dateTime, null);
-				} else if ("time".equals(localPart)) {
+				} else if ("time".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.time, null);
-				} else if ("date".equals(localPart)) {
+				} else if ("date".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.date, null);
-				} else if ("gYearMonth".equals(localPart)) {
+				} else if ("gYearMonth".equals(reprLocalPart)) {
+					datatype = new DatetimeDatatype(DateTimeType.gYearMonth,
+							null);
+				} else if ("gYear".equals(reprLocalPart)) {
+					datatype = new DatetimeDatatype(DateTimeType.gYear, null);
+				} else if ("gMonthDay".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.gMonthDay,
 							null);
-				} else if ("gDay".equals(localPart)) {
+				} else if ("gDay".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.gDay, null);
-				} else if ("gMonth".equals(localPart)) {
+				} else if ("gMonth".equals(reprLocalPart)) {
 					datatype = new DatetimeDatatype(DateTimeType.gMonth, null);
-				} else if ("decimal".equals(localPart)) {
+				} else if ("decimal".equals(reprLocalPart)) {
 					datatype = new DecimalDatatype(null);
-				} else if ("double".equals(localPart)) {
+				} else if ("double".equals(reprLocalPart)) {
 					datatype = new FloatDatatype(null);
-				} else if ("integer".equals(localPart)) {
+				} else if ("integer".equals(reprLocalPart)) {
 					datatype = new IntegerDatatype(null);
-				} else if ("string".equals(localPart)) {
+				} else if ("string".equals(reprLocalPart)) {
 					datatype = new StringDatatype(null);
 				} else {
 					throw new EXIException(
-							"[EXI] Unsupported datatype representation: "
-									+ representation);
+							"[EXI] Unsupported datatype representation: {"
+									+ reprUri + "}" + reprLocalPart);
 				}
 			} else {
 				// try to load datatype
-				String className = QNameUtilities.getClassName(representation);
+				String className = QNameUtilities.getClassName(new QName(
+						reprUri, reprLocalPart));
 				@SuppressWarnings("rawtypes")
 				Class c = Class.forName(className);
 				Object o = c.newInstance();

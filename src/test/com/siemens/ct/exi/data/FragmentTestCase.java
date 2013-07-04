@@ -34,7 +34,7 @@ public class FragmentTestCase extends AbstractTestCase {
 
 		// FragmentTestCase.setConfigurationFragment1 ( );
 		// FragmentTestCase.setConfigurationFragment2();
-		FragmentTestCase.setConfigurationFragment3a ( );
+		FragmentTestCase.setConfigurationFragment3a();
 		// FragmentTestCase.setConfigurationFragment3b ( );
 	}
 
@@ -110,7 +110,7 @@ public class FragmentTestCase extends AbstractTestCase {
 	public void testFragment2() throws Exception {
 		// set up configuration
 		setConfigurationFragment2();
-	
+
 		// execute test
 		_test();
 	}
@@ -122,7 +122,7 @@ public class FragmentTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/fragment/fragment2.xml.frag.exi");
 	}
-	
+
 	public void testFragment3a() throws Exception {
 		// set up configuration
 		setConfigurationFragment3a();
@@ -138,7 +138,7 @@ public class FragmentTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/fragment/fragment3a.xml.frag.exi");
 	}
-	
+
 	public void testFragment3b() throws Exception {
 		// set up configuration
 		setConfigurationFragment3b();

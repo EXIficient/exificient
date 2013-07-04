@@ -19,7 +19,6 @@
 package com.siemens.ct.exi.context;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -54,8 +53,8 @@ public class QNameContext implements Serializable {
 	// type grammar
 	SchemaInformedFirstStartTagGrammar typeGrammar;
 
-	// (direct) simple subtypes
-	List<QNameContext> simpleTypeSubtypes;
+	// simple basetype
+	QNameContext simpleBaseType;
 
 	public QNameContext(int namespaceUriID, int localNameID, QName qName,
 			int qNameID) {
@@ -162,16 +161,20 @@ public class QNameContext implements Serializable {
 	}
 
 	/**
-	 * Returns (direct) simple types in type hierarchy
+	 * Returns simple base-type
 	 * 
-	 * @return list of named sub-types or null
+	 * @return base-type
 	 */
-	public List<QNameContext> getSimpleTypeSubtypes() {
-		return simpleTypeSubtypes;
+	public QNameContext getSimpleBaseType() {
+		return this.simpleBaseType;
 	}
 
-	public void setSimpleTypeSubtypes(List<QNameContext> simpleTypeSubtypes) {
-		this.simpleTypeSubtypes = simpleTypeSubtypes;
+	/**
+	 * Set simple base-type
+	 * 
+	 */
+	public void setSimpleBaseType(QNameContext simpleBaseType) {
+		this.simpleBaseType = simpleBaseType;
 	}
 
 	public int getNamespaceUriID() {

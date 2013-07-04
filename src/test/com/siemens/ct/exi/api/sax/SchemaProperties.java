@@ -37,8 +37,8 @@ public class SchemaProperties extends AbstractProperties {
 
 	private Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
-		ByteArrayInputStream bais = new ByteArrayInputStream(schemaAsString
-				.getBytes());
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				schemaAsString.getBytes());
 		GrammarFactory grammarFactory = GrammarFactory.newInstance();
 		Grammars grammar = grammarFactory.createGrammars(bais);
 
@@ -87,8 +87,8 @@ public class SchemaProperties extends AbstractProperties {
 		encodeSchemaInformedToEXI(osEXI, isXmlSchemaValid);
 
 		// reverse streams
-		ByteArrayInputStream isEXI = new ByteArrayInputStream(osEXI
-				.toByteArray());
+		ByteArrayInputStream isEXI = new ByteArrayInputStream(
+				osEXI.toByteArray());
 
 		// decode
 		String sXMLDecoded = decodeEXIToXML(isEXI);

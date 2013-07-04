@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -43,11 +41,22 @@ public class StringDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 4636133910606239257L;
 
+	protected final boolean isDerivedByUnion;
+
 	protected String lastValue;
 
-	public StringDatatype(QName schemaType) {
+	public StringDatatype(QNameContext schemaType) {
+		this(schemaType, false);
+	}
+	
+	public StringDatatype(QNameContext schemaType, boolean isDerivedByUnion) {
 		super(BuiltInType.STRING, schemaType);
+		this.isDerivedByUnion = isDerivedByUnion;
 		this.rcs = new XSDStringCharacterSet();
+	}
+	
+	public boolean isDerivedByUnion() {
+		return isDerivedByUnion;
 	}
 
 	public boolean isValid(Value value) {

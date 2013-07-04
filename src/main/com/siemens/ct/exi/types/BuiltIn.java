@@ -21,7 +21,7 @@ package com.siemens.ct.exi.types;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.datatype.BooleanDatatype;
+import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 
@@ -107,10 +107,8 @@ public class BuiltIn {
 	 * default QName / BuiltInType / Datatype
 	 */
 	public static final QName DEFAULT_VALUE_NAME = XSD_STRING;
-	public static final BuiltInType DEFAULT_BUILTIN = BuiltInType.STRING;
-	public static final Datatype DEFAULT_DATATYPE = new StringDatatype(
-			DEFAULT_VALUE_NAME);
-	public static final Datatype BOOLEAN_DATATYPE = new BooleanDatatype(
-			XSD_BOOLEAN);
+	// public static final BuiltInType DEFAULT_BUILTIN = BuiltInType.STRING;
+	public static final Datatype DEFAULT_DATATYPE = new StringDatatype(new QNameContext(-1, -1, new QName(""), -1)); // DEFAULT_VALUE_NAME
+	// public static final Datatype BOOLEAN_DATATYPE = new BooleanDatatype(null); // XSD_BOOLEAN
 
 }

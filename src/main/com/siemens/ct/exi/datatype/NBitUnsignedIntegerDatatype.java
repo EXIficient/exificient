@@ -20,8 +20,6 @@ package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -52,7 +50,7 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 	protected final int numberOfBits4Range;
 
 	public NBitUnsignedIntegerDatatype(IntegerValue lowerBound,
-			IntegerValue upperBound, QName schemaType) {
+			IntegerValue upperBound, QNameContext schemaType) {
 		super(BuiltInType.NBIT_UNSIGNED_INTEGER, schemaType);
 		this.rcs = new XSDIntegerCharacterSet();
 

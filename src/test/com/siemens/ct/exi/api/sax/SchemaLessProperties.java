@@ -46,21 +46,20 @@ public class SchemaLessProperties extends AbstractProperties {
 		encodeSchemaLessToEXI(osEXI);
 
 		// reverse streams
-		ByteArrayInputStream isEXI = new ByteArrayInputStream(osEXI
-				.toByteArray());
+		ByteArrayInputStream isEXI = new ByteArrayInputStream(
+				osEXI.toByteArray());
 
 		// decode
 		String sXMLDecoded = decodeEXIToXML(isEXI);
 		// System.out.println(sXMLDecoded);
 
 		// equal ?
-		isXMLEqual(sXMLDecoded);		
+		isXMLEqual(sXMLDecoded);
 	}
 
-	
 	public void testXsiType() throws Exception {
 		xml = XSI_TYPE_XML;
-	
+
 		startTest();
 	}
 

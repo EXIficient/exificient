@@ -56,26 +56,28 @@ public class GrammarSerializeTest extends TestCase {
 
 		Grammars g = getGrammarFromSchemaAsString(schema);
 		assertTrue(g.isSchemaInformed());
-		
+
 		SchemaInformedGrammars sig1 = (SchemaInformedGrammars) g;
-		
-		// Serialize 
+
+		// Serialize
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(baos);
 		oos.writeObject(sig1);
 		oos.flush();
 		oos.close();
-		
+
 		// Deserialize
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(
+				baos.toByteArray()));
 		Object o = ois.readObject();
 		ois.close();
 		assertTrue(o instanceof SchemaInformedGrammars);
-		SchemaInformedGrammars sig2 = (SchemaInformedGrammars)o;
-				
+		SchemaInformedGrammars sig2 = (SchemaInformedGrammars) o;
+
 		GrammarContext gc = sig2.getGrammarContext();
 
-		Grammar root = gc.getGrammarUriContext("").getQNameContext("root").getGlobalStartElement().getGrammar();
+		Grammar root = gc.getGrammarUriContext("").getQNameContext("root")
+				.getGlobalStartElement().getGrammar();
 
 		// SE(a)
 		assertTrue(root.getNumberOfEvents() == 1);
@@ -99,6 +101,4 @@ public class GrammarSerializeTest extends TestCase {
 		assertTrue(er2.getEvent().isEventType(EventType.END_ELEMENT));
 	}
 
-	
-	
 }

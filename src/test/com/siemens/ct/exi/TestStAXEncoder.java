@@ -33,7 +33,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.SkipRootElementXMLEventReader;
 
 public class TestStAXEncoder extends AbstractTestEncoder {
-	
+
 	protected boolean isFragment;
 	protected StAXEncoder exiWriter;
 
@@ -43,43 +43,44 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		isFragment = ef.isFragment();
 	}
 
-
-//	@Override
-//	public void setupEXIWriter(EXIFactory ef) throws EXIException {
-//		exiWriter = new StAXEncoder(ef);
-//		isFragment = ef.isFragment();
-//	}
-	
+	// @Override
+	// public void setupEXIWriter(EXIFactory ef) throws EXIException {
+	// exiWriter = new StAXEncoder(ef);
+	// isFragment = ef.isFragment();
+	// }
 
 	@Override
 	public void encodeTo(InputStream xmlInput, OutputStream exiOutput)
 			throws Exception {
-		XMLInputFactory xmlFactory = XMLInputFactory.newInstance(); 
-		
+		XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
+
 		// do not resolve DTDs
 		xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-		// requires the parser to replace internal entity references with their replacement text and report them as characters
-		xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.FALSE);
+		// requires the parser to replace internal entity references with their
+		// replacement text and report them as characters
+		xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
+				Boolean.FALSE);
 
 		if (isFragment) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			int b;
 			baos.write("<root>".getBytes());
-			while( ( b = xmlInput.read()) != -1) {
+			while ((b = xmlInput.read()) != -1) {
 				baos.write(b);
 			}
 			baos.write("</root>".getBytes());
 			xmlInput = new ByteArrayInputStream(baos.toByteArray());
 			// System.err.println("StAX, Fragments not supported yet");
 		}
-		
-		// XMLStreamReader xmlReader = xmlFactory.createXMLStreamReader(xmlInput); 
-		XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput); 
-		
+
+		// XMLStreamReader xmlReader =
+		// xmlFactory.createXMLStreamReader(xmlInput);
+		XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput);
+
 		if (isFragment) {
 			xmlReader = new SkipRootElementXMLEventReader(xmlReader);
 		}
-		
+
 		exiWriter.setOutputStream(exiOutput);
 		exiWriter.encode(xmlReader);
 	}
@@ -95,12 +96,13 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 				QuickTestConfiguration.getXmlLocation()));
 
 		// create test-encoder & encode to EXI
-		TestStAXEncoder testEncoder = new TestStAXEncoder(TestStAXEncoder.getQuickTestEXIactory());
-//		EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory		
-//		// setup encoding options
-//		setupEncodingOptions(ef);
+		TestStAXEncoder testEncoder = new TestStAXEncoder(
+				TestStAXEncoder.getQuickTestEXIactory());
+		// EXIFactory ef = testEncoder.getQuickTestEXIactory(); // get factory
+		// // setup encoding options
+		// setupEncodingOptions(ef);
 
-//		testEncoder.setupEXIWriter(ef);
+		// testEncoder.setupEXIWriter(ef);
 		testEncoder.encodeTo(xmlInput, encodedOutput);
 
 		encodedOutput.flush();
@@ -109,6 +111,5 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 				+ QuickTestConfiguration.getXmlLocation() + " --> "
 				+ QuickTestConfiguration.getExiLocation());
 	}
-
 
 }
