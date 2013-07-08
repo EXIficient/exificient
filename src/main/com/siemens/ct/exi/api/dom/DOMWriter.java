@@ -152,11 +152,7 @@ public class DOMWriter {
 						: at.getLocalName();
 				exiAttributes.addNamespaceDeclaration(at.getNodeValue(), pfx);
 			} else {
-				String uri = at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-						: at.getNamespaceURI();
-				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-						: at.getPrefix();				
-				exiAttributes.addAttribute(uri, at.getLocalName(), pfx, at.getNodeValue());
+				exiAttributes.addAttribute(at.getNamespaceURI(), at.getLocalName(), at.getPrefix(), at.getNodeValue());
 			}
 			
 		}

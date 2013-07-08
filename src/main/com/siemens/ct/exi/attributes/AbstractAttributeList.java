@@ -211,6 +211,9 @@ public abstract class AbstractAttributeList implements AttributeList {
 	}
 	
 	public void addAttribute(String uri, String localName, String pfx, String value) {
+		uri = uri == null ? XMLConstants.NULL_NS_URI : uri;
+		pfx = pfx == null ? XMLConstants.DEFAULT_NS_PREFIX : pfx;		
+		
 		// xsi:*
 		if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
 			// xsi:type
