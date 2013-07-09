@@ -20,14 +20,18 @@ package com.siemens.ct.exi.api.stream;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.Comment;
@@ -47,6 +51,7 @@ import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
+import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.util.SimpleDocTypeParser;
 import com.siemens.ct.exi.values.StringValue;
@@ -60,35 +65,36 @@ import com.siemens.ct.exi.values.StringValue;
  * @version 0.9.1
  */
 
-public class StAXEncoder
-//implements XMLStreamWriter
-{
+public class StAXEncoder implements XMLStreamWriter {
 
 	protected EXIBodyEncoder encoder;
 	protected EXIStreamEncoder exiStream;
 
 	protected StringBuilder sbChars;
-	
+
 	protected SimpleDocTypeParser dtdParser;
-	
+
 	// preserve options
 	protected final boolean preserveDTD;
 	protected final boolean preserveComment;
 	protected final boolean preservePI;
-	
+
 	// AT or NS Events pending
 	protected boolean pendingATs;
 
 	// attributes
 	protected AttributeList exiAttributes;
 
-	public StAXEncoder(EXIFactory factory)
-			throws EXIException {
+	// namespaces
+	protected EncoderNamespaceContext nsContext;
+
+	public StAXEncoder(EXIFactory factory) throws EXIException {
 		// initialize char buffer
 		sbChars = new StringBuilder();
-		// attribute list
+		// attribute list & NS
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
+		nsContext = new EncoderNamespaceContext();
 		// exi stream
 		exiStream = new EXIStreamEncoder(factory);
 		// preserve options
@@ -97,24 +103,25 @@ public class StAXEncoder
 		preserveComment = fo.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT);
 		preservePI = fo.isFidelityEnabled(FidelityOptions.FEATURE_PI);
 	}
-	
-	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException {
 		// write header & get body encoder
 		this.encoder = exiStream.encodeHeader(os);
 	}
-	
-	
-	protected void init(){
+
+	protected void init() {
 		pendingATs = false;
 		sbChars.setLength(0);
 		exiAttributes.clear();
+		nsContext.reset();
 	}
-	
+
 	protected SimpleDocTypeParser getDtdParser() throws SAXException {
-		if ( dtdParser == null ) {
+		if (dtdParser == null) {
 			dtdParser = new SimpleDocTypeParser();
 		}
-		return dtdParser; 
+		return dtdParser;
 	}
 
 	public void encode(XMLEventReader xmlEvent) throws XMLStreamException,
@@ -148,7 +155,9 @@ public class StAXEncoder
 				while (attributes.hasNext()) {
 					Attribute at = attributes.next();
 					QName qnAt = at.getName();
-					this.writeAttribute(qnAt.getPrefix(), qnAt.getNamespaceURI(), qnAt.getLocalPart(), at.getValue());
+					this.writeAttribute(qnAt.getPrefix(),
+							qnAt.getNamespaceURI(), qnAt.getLocalPart(),
+							at.getValue());
 				}
 				break;
 			case XMLStreamConstants.END_ELEMENT:
@@ -189,7 +198,7 @@ public class StAXEncoder
 			}
 		}
 
-//		this.flush();
+		// this.flush();
 	}
 
 	public void encode(XMLStreamReader xmlStream) throws XMLStreamException,
@@ -226,7 +235,9 @@ public class StAXEncoder
 				int atCnt = xmlStream.getAttributeCount();
 				for (int i = 0; i < atCnt; i++) {
 					QName atQname = xmlStream.getAttributeName(i);
-					this.writeAttribute(atQname.getPrefix(), atQname.getNamespaceURI(), atQname.getLocalPart(), xmlStream.getAttributeValue(i));
+					this.writeAttribute(atQname.getPrefix(),
+							atQname.getNamespaceURI(), atQname.getLocalPart(),
+							xmlStream.getAttributeValue(i));
 				}
 
 				break;
@@ -236,7 +247,8 @@ public class StAXEncoder
 			case XMLStreamConstants.NAMESPACE:
 				break;
 			case XMLStreamConstants.CHARACTERS:
-				this.writeCharacters(xmlStream.getTextCharacters(), xmlStream.getTextStart(), xmlStream.getTextLength());
+				this.writeCharacters(xmlStream.getTextCharacters(),
+						xmlStream.getTextStart(), xmlStream.getTextLength());
 				break;
 			case XMLStreamConstants.SPACE:
 				// @SuppressWarnings("unused")
@@ -244,14 +256,16 @@ public class StAXEncoder
 				writeCharacters(ignorableSpace);
 				break;
 			case XMLStreamConstants.ATTRIBUTE:
-//				@SuppressWarnings("unused")
-//				int attsX = xmlStream.getAttributeCount();
+				// @SuppressWarnings("unused")
+				// int attsX = xmlStream.getAttributeCount();
 				break;
 			case XMLStreamConstants.PROCESSING_INSTRUCTION:
-				this.writeProcessingInstruction(xmlStream.getPITarget(), xmlStream.getPIData());
+				this.writeProcessingInstruction(xmlStream.getPITarget(),
+						xmlStream.getPIData());
 				break;
 			case XMLStreamConstants.COMMENT:
-				this.writeCharacters(xmlStream.getTextCharacters(), xmlStream.getTextStart(), xmlStream.getTextLength());
+				this.writeCharacters(xmlStream.getTextCharacters(),
+						xmlStream.getTextStart(), xmlStream.getTextLength());
 				break;
 			case XMLStreamConstants.DTD:
 				// TODO DTD
@@ -264,28 +278,28 @@ public class StAXEncoder
 			}
 		}
 
-//		this.flush();
+		// this.flush();
 	}
 
 	protected void appendChars(String text) {
 		sbChars.append(text);
 	}
-	
+
 	protected void appendChars(char[] text, int start, int len) {
 		sbChars.append(text, start, len);
 	}
-	
+
 	protected void checkPendingEvents() throws EXIException, IOException {
 		// AT & NS first
 		if (pendingATs) {
-			
+
 			// encode NS decls and attributes
 			encoder.encodeAttributeList(exiAttributes);
 			exiAttributes.clear();
-			
+
 			pendingATs = false;
 		}
-		
+
 		// CH
 		if (sbChars.length() > 0) {
 			// encoder.encodeCharacters(sbChars.toString());
@@ -368,7 +382,7 @@ public class StAXEncoder
 				encoder.encodeComment(chars, 0, chars.length);
 			} catch (Exception e) {
 				throw new XMLStreamException(e);
-			}	
+			}
 		}
 	}
 
@@ -385,15 +399,14 @@ public class StAXEncoder
 				this.checkPendingEvents();
 				SimpleDocTypeParser dtdParser = getDtdParser();
 				dtdParser.parse(dtd);
-				
+
 				encoder.encodeDocType(dtdParser.name, dtdParser.publicID,
 						dtdParser.systemID, dtdParser.text);
 			} catch (Exception e) {
 				throw new XMLStreamException(e);
-			}	
+			}
 		}
 	}
-
 
 	/*
 	 * Closes any start tags and writes corresponding end tags.
@@ -443,7 +456,7 @@ public class StAXEncoder
 				encoder.encodeEntityReference(name);
 			} catch (Exception e) {
 				throw new XMLStreamException(e);
-			}	
+			}
 		}
 	}
 
@@ -468,10 +481,13 @@ public class StAXEncoder
 	}
 
 	/*
-	 *  Writes a processing instruction
-	 *  
+	 * Writes a processing instruction
+	 * 
 	 * (non-Javadoc)
-	 * @see javax.xml.stream.XMLStreamWriter#writeProcessingInstruction(java.lang.String)
+	 * 
+	 * @see
+	 * javax.xml.stream.XMLStreamWriter#writeProcessingInstruction(java.lang
+	 * .String)
 	 */
 	public void writeProcessingInstruction(String target)
 			throws XMLStreamException {
@@ -479,20 +495,23 @@ public class StAXEncoder
 	}
 
 	/*
-	 *  Writes a processing instruction
-	 *  
+	 * Writes a processing instruction
+	 * 
 	 * (non-Javadoc)
-	 * @see javax.xml.stream.XMLStreamWriter#writeProcessingInstruction(java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * javax.xml.stream.XMLStreamWriter#writeProcessingInstruction(java.lang
+	 * .String, java.lang.String)
 	 */
 	public void writeProcessingInstruction(String target, String data)
 			throws XMLStreamException {
-		if(preservePI) {
+		if (preservePI) {
 			try {
 				this.checkPendingEvents();
 				encoder.encodeProcessingInstruction(target, data);
 			} catch (Exception e) {
 				throw new XMLStreamException(e);
-			}	
+			}
 		}
 	}
 
@@ -500,9 +519,11 @@ public class StAXEncoder
 	 * Write the XML Declaration.
 	 * 
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.xml.stream.XMLStreamWriter#writeStartDocument()
 	 */
 	public void writeStartDocument() throws XMLStreamException {
+		this.init();
 		try {
 			encoder.encodeStartDocument();
 		} catch (Exception e) {
@@ -510,12 +531,13 @@ public class StAXEncoder
 		}
 	}
 
-
 	/*
 	 * Writes a start tag to the output.
 	 * 
 	 * (non-Javadoc)
-	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String, java.lang.String, java.lang.String)
+	 * 
+	 * @see javax.xml.stream.XMLStreamWriter#writeStartElement(java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	public void writeStartElement(String prefix, String localName,
 			String namespaceURI) throws XMLStreamException {
@@ -529,6 +551,195 @@ public class StAXEncoder
 		} catch (Exception e) {
 			throw new XMLStreamException(e);
 		}
+	}
+
+	public void close() throws XMLStreamException {
+		this.close();
+	}
+
+	public void flush() throws XMLStreamException {
+		try {
+			encoder.flush();
+		} catch (IOException e) {
+			throw new XMLStreamException(e);
+		}
+	}
+
+	public NamespaceContext getNamespaceContext() {
+//		if (this.nsContext == null) {
+//			this.nsContext = DefaultNamespaceContext.getInstance();
+//		}
+		return this.nsContext;
+	}
+
+	public String getPrefix(String uri) throws XMLStreamException {
+		return getNamespaceContext().getPrefix(uri);
+	}
+
+	public Object getProperty(String name) throws IllegalArgumentException {
+		// TODO
+		return null;
+	}
+
+	public void setDefaultNamespace(String uri) throws XMLStreamException {
+		this.setPrefix(XMLConstants.DEFAULT_NS_PREFIX, uri);
+	}
+
+	public void setNamespaceContext(NamespaceContext context)
+			throws XMLStreamException {
+		// TODO how to properly allow that
+		throw new IllegalArgumentException("NamespaceContext cannot be replaced");
+//		this.nsContext = context;
+	}
+
+	public void setPrefix(String prefix, String uri) throws XMLStreamException {
+		this.writeNamespace(prefix, uri);
+	}
+
+	public void writeAttribute(String localName, String value)
+			throws XMLStreamException {
+		this.writeAttribute(XMLConstants.NULL_NS_URI, localName, value);
+	}
+
+	public void writeAttribute(String namespaceURI, String localName,
+			String value) throws XMLStreamException {
+		this.writeAttribute(getNamespaceContext().getPrefix(namespaceURI), namespaceURI,
+				localName, value);
+	}
+
+	public void writeDefaultNamespace(String namespaceURI)
+			throws XMLStreamException {
+		this.setPrefix(XMLConstants.DEFAULT_NS_PREFIX, namespaceURI);
+	}
+
+	public void writeEmptyElement(String localName) throws XMLStreamException {
+		this.writeEmptyElement(XMLConstants.NULL_NS_URI, localName);
+	}
+
+	public void writeEmptyElement(String namespaceURI, String localName)
+			throws XMLStreamException {
+		this.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, localName,
+				namespaceURI);
+	}
+
+	public void writeEmptyElement(String prefix, String localName,
+			String namespaceURI) throws XMLStreamException {
+		this.writeStartElement(prefix, localName, namespaceURI);
+		this.writeEndElement();
+	}
+
+	public void writeStartDocument(String version) throws XMLStreamException {
+		this.writeStartDocument();
+	}
+
+	public void writeStartDocument(String encoding, String version)
+			throws XMLStreamException {
+		this.writeStartDocument();
+	}
+
+	public void writeStartElement(String localName) throws XMLStreamException {
+		this.writeStartElement(XMLConstants.NULL_NS_URI, localName);
+	}
+
+	public void writeStartElement(String namespaceURI, String localName)
+			throws XMLStreamException {
+		this.writeStartElement(getNamespaceContext().getPrefix(namespaceURI), localName,
+				namespaceURI);
+	}
+	
+	static class EncoderNamespaceContext implements NamespaceContext {
+
+		List<List<NamespaceDeclaration>> nsContexts;
+		
+		public EncoderNamespaceContext() {
+			nsContexts = new ArrayList<List<NamespaceDeclaration>>();
+		}
+		
+		public void reset(){
+			nsContexts.clear();
+			pushContext(); // root context for default and xml
+			bindPrefix(XMLConstants.XML_NS_URI, XMLConstants.DEFAULT_NS_PREFIX);
+			bindPrefix(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+		}
+		
+		public void pushContext() {
+			nsContexts.add(null);
+		}
+		
+		public void bindPrefix(String namespaceURI, String prefix) {
+			final int level = nsContexts.size()-1;
+			List<NamespaceDeclaration> l = nsContexts.get(level);
+			if(l == null) {
+				l = new ArrayList<NamespaceDeclaration>();
+				nsContexts.set(level, l);
+			}
+			
+			l.add(new NamespaceDeclaration(namespaceURI, prefix));
+			
+		}
+		
+		// return previously bound prefixes
+		public List<NamespaceDeclaration> popContext() {
+			assert(nsContexts.size() > 1); // outer root always there
+			return nsContexts.remove(nsContexts.size()-1);
+		}
+		
+		public String getNamespaceURI(String prefix) {
+			// from bottom to top
+			int level = nsContexts.size() - 1;
+			while(level >= 0) {
+				List<NamespaceDeclaration> l = nsContexts.get(level);
+				if(l != null) {
+					for(NamespaceDeclaration nsDecl : l) {
+						if(nsDecl.prefix.equals(prefix)) {
+							return nsDecl.namespaceURI;
+						}
+					}
+				}
+				level--;
+			}
+			
+			return null;
+		}
+
+		public String getPrefix(String namespaceURI) {
+			// from bottom to top
+			int level = nsContexts.size() - 1;
+			while(level >= 0) {
+				List<NamespaceDeclaration> l = nsContexts.get(level);
+				if(l != null) {
+					for(NamespaceDeclaration nsDecl : l) {
+						if(nsDecl.namespaceURI.equals(namespaceURI)) {
+							return nsDecl.prefix;
+						}
+					}
+				}
+				level--;
+			}
+			
+			return null;
+		}
+
+		@SuppressWarnings("rawtypes")
+		public Iterator getPrefixes(String namespaceURI) {
+			List<String> prefixes = new ArrayList<String>();
+			
+			int level = nsContexts.size() - 1;
+			while(level >= 0) {
+				List<NamespaceDeclaration> l = nsContexts.get(level);
+				if(l != null) {
+					for(NamespaceDeclaration nsDecl : l) {
+						if(nsDecl.namespaceURI.equals(namespaceURI)) {
+							prefixes.add(nsDecl.prefix);
+						}
+					}
+				}
+				level--;
+			}
+			
+			return prefixes.iterator();
+		}
+		
 	}
 
 }

@@ -350,16 +350,25 @@ public class StAXDecoder implements XMLStreamReader
 	public String getAttributeType(int index) {
 		// System.err.println("getAttributeType()");
 		// Returns the XML type of the attribute at the provided index
-		return null;
+		return "CDATA";
 	}
 
 	public String getAttributeValue(int index) {
 		return attributes.get(index).value.toString();
 	}
 
-	public String getAttributeValue(String arg0, String arg1) {
-		// TODO Auto-generated method stub
-		// System.err.println("getAttributeValue()");
+	public String getAttributeValue(String namespaceURI, String localName) {
+		// Returns the normalized attribute value of the attribute with the namespace and localName
+		// If the namespaceURI is null the namespace is not checked for equality
+		for(AttributeContainer ac : attributes) {
+			if(ac.qname.getLocalName().equals(localName)) {
+				if(namespaceURI == null) {
+					return ac.value.toString();
+				} else if (ac.qname.getNamespaceUri().equals(namespaceURI)) {
+					return ac.value.toString();
+				}
+			}
+		}
 		return null;
 	}
 
@@ -369,10 +378,17 @@ public class StAXDecoder implements XMLStreamReader
 		return null;
 	}
 
+	
 	public String getElementText() throws XMLStreamException {
-		// TODO Auto-generated method stub
-		// System.err.println("getElementText()");
-		return null;
+		//  Reads the content of a text-only element,
+		// an exception is thrown if this is not a text-only element.
+		switch (getEventType()) {
+		case XMLStreamConstants.CHARACTERS:
+		case XMLStreamConstants.SPACE:
+			return characters.toString();
+		default:
+			throw new RuntimeException("Unexpected event, id=" + getEventType());
+		}
 	}
 
 	public String getEncoding() {
@@ -826,13 +842,13 @@ public class StAXDecoder implements XMLStreamReader
 	public boolean standaloneSet() {
 		return false;
 	}
-
-	static class EXINamespaceContext implements NamespaceContext {
+	
+	
+	class EXINamespaceContext implements NamespaceContext {
 
 		List<NamespaceDeclaration> _nsDecls;
 
-		protected void setNamespaceDeclarations(
-				List<NamespaceDeclaration> nsDecls) {
+		protected void setNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
 			_nsDecls = nsDecls;
 		}
 
