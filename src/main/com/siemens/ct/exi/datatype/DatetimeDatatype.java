@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -49,15 +48,46 @@ public class DatetimeDatatype extends AbstractDatatype {
 
 	public DatetimeDatatype(DateTimeType dateType, QNameContext schemaType) {
 		super(BuiltInType.DATETIME, schemaType);
-		this.rcs = new XSDDateTimeCharacterSet();
 		this.datetimeType = dateType;
+	}
+	
+	public DatatypeID getDatatypeID() {
+		DatatypeID dtID;
+		switch(datetimeType) {
+		case dateTime:
+			dtID = DatatypeID.exi_dateTime;
+			break;
+		case time:
+			dtID = DatatypeID.exi_time;
+			break;
+		case date:
+			dtID = DatatypeID.exi_date;
+			break;
+		case gYearMonth:
+			dtID = DatatypeID.exi_gYearMonth;
+			break;
+		case gYear:
+			dtID = DatatypeID.exi_gYear;
+			break;
+		case gMonthDay:
+			dtID = DatatypeID.exi_gMonthDay;
+			break;
+		case gDay:
+			dtID = DatatypeID.exi_gDay;
+			break;
+		case gMonth:
+			dtID = DatatypeID.exi_gMonth;
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
+		return dtID;
 	}
 
 	public DateTimeType getDatetimeType() {
 		return datetimeType;
 	}
 
-	// public boolean isValid(String value) {
 	protected boolean isValidString(String value) {
 		lastValidDatetime = DateTimeValue.parse(value, datetimeType);
 		return (lastValidDatetime != null);

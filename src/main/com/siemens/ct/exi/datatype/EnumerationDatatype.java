@@ -21,14 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
-import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -49,54 +41,27 @@ public class EnumerationDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = -5065239322174326749L;
 
+	protected Datatype dtEnumValues;
+	
 	protected int codingLength;
 	protected Value[] enumValues;
-	protected BuiltInType bitEnumValues;
 	protected int lastValidIndex;
 
-	public EnumerationDatatype(Value[] enumValues, BuiltInType bitEnumValues,
+	public EnumerationDatatype(Value[] enumValues, Datatype dtEnumValues,
 			QNameContext schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
+		this.dtEnumValues = dtEnumValues;
 		this.enumValues = enumValues;
-		this.bitEnumValues = bitEnumValues;
 		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
-
-		// restricted character set
-		switch (bitEnumValues) {
-		/* Binary */
-		case BINARY_BASE64:
-			this.rcs = new XSDBase64CharacterSet();
-			break;
-		case BINARY_HEX:
-			this.rcs = new XSDHexBinaryCharacterSet();
-			break;
-		/* Boolean */
-		case BOOLEAN:
-			// case BOOLEAN_PATTERN:
-			this.rcs = new XSDBooleanCharacterSet();
-			break;
-		/* Decimal */
-		case DECIMAL:
-			this.rcs = new XSDDecimalCharacterSet();
-			break;
-		/* Float */
-		case FLOAT:
-			this.rcs = new XSDDoubleCharacterSet();
-			break;
-		/* N-Bit Integer *//* Unsigned Integer *//* (Signed) Integer */
-		case INTEGER:
-			this.rcs = new XSDIntegerCharacterSet();
-			break;
-		/* Datetime */
-		case DATETIME:
-			this.rcs = new XSDDateTimeCharacterSet();
-			break;
-		/* Others */
-		default:
-			this.rcs = new XSDStringCharacterSet(); // String
-		}
-
+	}
+	
+	public Datatype getEnumValueDatatype() {
+		return dtEnumValues;
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return dtEnumValues.getDatatypeID();
 	}
 
 	public int getEnumerationSize() {
@@ -123,10 +88,6 @@ public class EnumerationDatatype extends AbstractDatatype {
 	public Value getEnumValue(int i) {
 		assert (i >= 0 && i < enumValues.length);
 		return enumValues[i];
-	}
-
-	public BuiltInType getEnumValueBuiltInType() {
-		return bitEnumValues;
 	}
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,

@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -46,7 +45,10 @@ public class FloatDatatype extends AbstractDatatype {
 
 	public FloatDatatype(QNameContext schemaType) {
 		super(BuiltInType.FLOAT, schemaType);
-		this.rcs = new XSDDoubleCharacterSet();
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_double;
 	}
 
 	protected boolean isValidString(String value) {

@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -46,7 +45,10 @@ public class DecimalDatatype extends AbstractDatatype {
 
 	public DecimalDatatype(QNameContext schemaType) {
 		super(BuiltInType.DECIMAL, schemaType);
-		this.rcs = new XSDDecimalCharacterSet();
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_decimal;
 	}
 
 	protected boolean isValidString(String value) {

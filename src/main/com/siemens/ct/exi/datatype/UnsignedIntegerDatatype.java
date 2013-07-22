@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -46,7 +45,10 @@ public class UnsignedIntegerDatatype extends AbstractDatatype {
 
 	public UnsignedIntegerDatatype(QNameContext schemaType) {
 		super(BuiltInType.UNSIGNED_INTEGER, schemaType);
-		this.rcs = new XSDIntegerCharacterSet();
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_integer;
 	}
 
 	protected boolean isValidString(String value) {

@@ -45,23 +45,20 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 	private static final long serialVersionUID = -6098764255799006920L;
 
 	protected String lastValidValue;
+	protected RestrictedCharacterSet rcs;
 
 	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
 			QNameContext schemaType) {
-		this(schemaType);
-		this.rcs = rcs;
-	}
-
-	public RestrictedCharacterSetDatatype(QNameContext schemaType) {
 		super(BuiltInType.RCS_STRING, schemaType);
-	}
-
-	public void setRestrictedCharacterSet(RestrictedCharacterSet rcs) {
 		this.rcs = rcs;
 	}
-
+	
 	public RestrictedCharacterSet getRestrictedCharacterSet() {
-		return rcs;
+		return this.rcs;
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_string;
 	}
 
 	public boolean isValid(Value value) {
@@ -70,7 +67,7 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 		lastValidValue = value.toString();
 		return true;
 	}
-
+	
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException {
 		if (stringEncoder.isStringHit(lastValidValue)) {

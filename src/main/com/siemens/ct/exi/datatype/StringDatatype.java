@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -49,10 +48,13 @@ public class StringDatatype extends AbstractDatatype {
 		this(schemaType, false);
 	}
 	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_string;
+	}
+	
 	public StringDatatype(QNameContext schemaType, boolean isDerivedByUnion) {
 		super(BuiltInType.STRING, schemaType);
 		this.isDerivedByUnion = isDerivedByUnion;
-		this.rcs = new XSDStringCharacterSet();
 	}
 	
 	public boolean isDerivedByUnion() {
@@ -69,22 +71,7 @@ public class StringDatatype extends AbstractDatatype {
 		stringEncoder.writeValue(qnContext, valueChannel, lastValue);
 	}
 
-	@Override
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			QNameContext qnContext, EncoderChannel valueChannel,
-			StringEncoder stringEncoder) throws IOException {
-		stringEncoder.writeValue(qnContext, valueChannel,
-				this.lastRCSValue.toString());
-	}
-
 	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
-			StringDecoder stringDecoder) throws IOException {
-		return stringDecoder.readValue(qnContext, valueChannel);
-	}
-
-	@Override
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			QNameContext qnContext, DecoderChannel valueChannel,
 			StringDecoder stringDecoder) throws IOException {
 		return stringDecoder.readValue(qnContext, valueChannel);
 	}

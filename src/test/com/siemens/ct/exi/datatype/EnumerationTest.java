@@ -27,6 +27,42 @@ import com.siemens.ct.exi.values.StringValue;
 
 public class EnumerationTest extends AbstractTestCase {
 
+	public void testEnumerationStringRec() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "    <xs:simpleType name='tPredefinedBasicTypeEnum'>"
+				+ "        <xs:restriction base='xs:Name'>"
+				+ "            <xs:enumeration value='BOOLEAN'/>"
+				+ "            <xs:enumeration value='INT8'/>"
+				+ "            <xs:enumeration value='INT16'/>"
+				+ "            <xs:enumeration value='INT24'/>"
+				+ "            <xs:enumeration value='INT32'/>"
+				+ "            <xs:enumeration value='INT64'/>"
+				+ "        </xs:restriction>"
+				+ "    </xs:simpleType>"
+				+ "    <xs:simpleType name='tBasicTypeEnum'>"
+				+ "        <xs:restriction base='tPredefinedBasicTypeEnum'/>"
+				+ "    </xs:simpleType>" + "</xs:schema>";
+	
+		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
+				"tBasicTypeEnum", "");
+	
+		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
+	
+		assertTrue(dt.isValid(new StringValue("BOOLEAN")));
+		assertTrue(dt.isValid(new StringValue("INT8")));
+		assertTrue(dt.isValid(new StringValue("INT16")));
+		assertTrue(dt.isValid(new StringValue("INT24")));
+		assertTrue(dt.isValid(new StringValue("INT32")));
+		assertTrue(dt.isValid(new StringValue("INT64")));
+	
+		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(dt.isValid(new StringValue("bla")));
+	
+		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
+		assertTrue(enumDt.getDatatypeID() == DatatypeID.exi_string);
+		// assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.STRING);
+	}
+
 	public void testEnumerationListOfQNames1() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:bla='urn:bla'>"
 				+ "  <xs:simpleType name='Enumeration'>"
@@ -106,41 +142,6 @@ public class EnumerationTest extends AbstractTestCase {
 		//
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 		// assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.LIST);
-	}
-
-	public void testEnumerationStringRec() throws IOException, EXIException {
-		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
-				+ "    <xs:simpleType name='tPredefinedBasicTypeEnum'>"
-				+ "        <xs:restriction base='xs:Name'>"
-				+ "            <xs:enumeration value='BOOLEAN'/>"
-				+ "            <xs:enumeration value='INT8'/>"
-				+ "            <xs:enumeration value='INT16'/>"
-				+ "            <xs:enumeration value='INT24'/>"
-				+ "            <xs:enumeration value='INT32'/>"
-				+ "            <xs:enumeration value='INT64'/>"
-				+ "        </xs:restriction>"
-				+ "    </xs:simpleType>"
-				+ "    <xs:simpleType name='tBasicTypeEnum'>"
-				+ "        <xs:restriction base='tPredefinedBasicTypeEnum'/>"
-				+ "    </xs:simpleType>" + "</xs:schema>";
-
-		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
-				"tBasicTypeEnum", "");
-
-		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-
-		assertTrue(dt.isValid(new StringValue("BOOLEAN")));
-		assertTrue(dt.isValid(new StringValue("INT8")));
-		assertTrue(dt.isValid(new StringValue("INT16")));
-		assertTrue(dt.isValid(new StringValue("INT24")));
-		assertTrue(dt.isValid(new StringValue("INT32")));
-		assertTrue(dt.isValid(new StringValue("INT64")));
-
-		assertFalse(dt.isValid(new StringValue("00")));
-		assertFalse(dt.isValid(new StringValue("bla")));
-
-		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
-		assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.STRING);
 	}
 
 	public EnumerationTest(String testName) {
