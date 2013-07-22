@@ -59,6 +59,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	protected QNameContext lastSE;
 
 	protected boolean dtrSection;
+	protected boolean emptyExiP;
 	protected List<QName> dtrMapTypes = new ArrayList<QName>();
 	protected List<QName> dtrMapRepresentations = new ArrayList<QName>();
 
@@ -68,6 +69,8 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 	protected void clear() {
 		lastSE = null;
 
+		emptyExiP = true;
+		
 		dtrSection = false;
 		dtrMapTypes.clear();
 		dtrMapRepresentations.clear();
@@ -294,6 +297,10 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 
 			if (DATATYPE_REPRESENTATION_MAP.equals(localName)) {
 				dtrSection = false;
+			} else if (PROFILE.equals(localName) && this.emptyExiP) {
+				f.setLocalValuePartitions(false);
+				f.setMaximumNumberOfBuiltInElementGrammars(0);
+				f.setMaximumNumberOfBuiltInProductions(0);
 			}
 		}
 	}
@@ -345,6 +352,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			SchemaIdResolver sir = f.getSchemaIdResolver();
 			f.setGrammars(sir.resolveSchemaId(schemaId));
 		} else if (PROFILE.equals(localName)) {
+			emptyExiP = false;
 			if (value.getValueType() == ValueType.DECIMAL) {
 				DecimalValue dv = (DecimalValue) value;
 				f.setLocalValuePartitions(dv.isNegative());
