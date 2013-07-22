@@ -48,13 +48,15 @@ public class ListDatatype extends AbstractDatatype {
 	public ListDatatype(Datatype listDatatype, QNameContext schemaType) {
 		super(BuiltInType.LIST, schemaType);
 
-		this.rcs = listDatatype.getRestrictedCharacterSet();
-
 		if (listDatatype.getBuiltInType() == BuiltInType.LIST) {
 			throw new IllegalArgumentException();
 		}
 
 		this.listDatatype = listDatatype;
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return listDatatype.getDatatypeID();
 	}
 
 	public Datatype getListDatatype() {

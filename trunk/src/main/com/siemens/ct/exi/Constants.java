@@ -42,6 +42,112 @@ public interface Constants {
 	public static final String W3C_EXI_NS_URI = "http://www.w3.org/2009/exi";
 
 	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:base64Binary
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_BASE64BINARY = "base64Binary";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:hexBinary
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_HEXBINARY = "hexBinary";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:boolean
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_BOOLEAN = "boolean";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:dateTime
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_DATETIME = "dateTime";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:time
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_TIME = "time";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:date
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_DATE = "date";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:gYearMonth
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_GYEARMONTH = "gYearMonth";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:gYear
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_GYEAR = "gYear";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:gMonthDay
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_GMONTHDAY = "gMonthDay";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:gDay
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_GDAY = "gDay";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:gMonth
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_GMONTH = "gMonth";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:decimal
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_DECIMAL = "decimal";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:float and xsd:double
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_DOUBLE = "double";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:integer
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_INTEGER = "integer";
+	
+	/**
+	 * <p>
+	 * W3C EXI local-name for datatype xsd:string, xsd:anySimpleType and all types derived by union
+	 * </p>
+	 */
+	public static final String W3C_EXI_LN_STRING = "string";
+	
+	
+	/**
 	 * XML Reader feature
 	 */
 	public static final String W3C_EXI_FEATURE_BODY_ONLY = "http://www.w3.org/exi/features/exi-body-only";

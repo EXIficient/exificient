@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -32,6 +33,8 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
+import com.siemens.ct.exi.types.TypeDecoder;
+import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.values.IntegerValue;
 import com.siemens.ct.exi.values.ListValue;
 import com.siemens.ct.exi.values.StringValue;
@@ -71,100 +74,76 @@ public class ListTest extends AbstractTestCase {
 	}
 
 	public void testListIntegerLexical1() throws IOException, EXIException {
-		StringValue s = new StringValue("100 34 56 -23 1567");
+		StringValue s = new StringValue("0100 034 56 -23 1567");
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
 				null);
 
-		boolean valid = ldtInteger.isValidRCS(s);
+		boolean valid = ldtInteger.isValid(s);
 		assertTrue(valid);
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		// GrammarContext grammarContext =
-		// exiFactory.getGrammars().getGrammarContext();
-
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); // new
-																		// StringEncoderImpl();
-		// EncoderContext encoderContext = new
-		// EncoderContextImpl(grammarContext, stringEncoder);
-
-		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new
-																		// StringDecoderImpl();
-		// DecoderContext decoderContext = new
-		// DecoderContextImpl(grammarContext, stringDecoder);
-
-		// StringEncoder stringEncoder = new StringEncoderImpl();
-		// StringDecoder stringDecoder = new StringDecoderImpl();
+		exiFactory.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
+		
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
+		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
-		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		QNameContext qncContext = new QNameContext(0, 0, context, 0);
-
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
-				null);
-
+		
+		TypeEncoder te = exiFactory.createTypeEncoder();
+		TypeDecoder td = exiFactory.createTypeDecoder();
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, qncContext, bitEC, stringEncoder);
+		te.isValid(ldtInteger, s);
+		te.writeValue(qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
-				getBitDecoder(), stringDecoder);
+		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(), stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger
-				.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
-				getByteDecoder(), stringDecoder);
+		te.isValid(ldtInteger, s);
+		te.writeValue(qncContext, byteEC, stringEncoder);
+		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(), stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
 
 	// encodes special chars as well
 	public void testListIntegerLexical2() throws IOException, EXIException {
 		char special = '\u03D7';
-		StringValue s = new StringValue("100" + special);
+		StringValue s = new StringValue("0100" + special);
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
 				null);
 
-		boolean valid = ldtInteger.isValidRCS(s);
-		assertTrue(valid);
+//		boolean valid = ldtInteger.isValid(s);
+//		assertTrue(valid);
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		// GrammarContext grammarContext =
-		// exiFactory.getGrammars().getGrammarContext();
-
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); // new
-																		// StringEncoderImpl();
-		// EncoderContext encoderContext = new
-		// EncoderContextImpl(grammarContext, stringEncoder);
-
-		StringDecoder stringDecoder = exiFactory.createStringDecoder(); // new
-																		// StringDecoderImpl();
-		// DecoderContext decoderContext = new
-		// DecoderContextImpl(grammarContext, stringDecoder);
-
+		exiFactory.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
+		
+		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
+		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
-		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		QNameContext qncContext = new QNameContext(0, 0, context, 0);
-
-		RestrictedCharacterSetDatatype rcsDatatype = new RestrictedCharacterSetDatatype(
-				null);
-
+		
+		TypeEncoder te = exiFactory.createTypeEncoder();
+		TypeDecoder td = exiFactory.createTypeDecoder();
+		
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValueRCS(rcsDatatype, qncContext, bitEC, stringEncoder);
+		te.isValid(ldtInteger, s);
+		te.writeValue(qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
-				getBitDecoder(), stringDecoder);
+		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(), stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger
-				.writeValueRCS(rcsDatatype, qncContext, byteEC, stringEncoder);
-		Value v2 = ldtInteger.readValueRCS(rcsDatatype, qncContext,
-				getByteDecoder(), stringDecoder);
+		te.isValid(ldtInteger, s);
+		te.writeValue(qncContext, byteEC, stringEncoder);
+		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(), stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
 

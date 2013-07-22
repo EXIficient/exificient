@@ -1808,7 +1808,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 									values[k] = enumValue;
 								}
 
-								datatype = new EnumerationDatatype(values, enumBIT,
+								datatype = new EnumerationDatatype(values, dtEnumValues,
 										qncSchemaType);
 							}
 							

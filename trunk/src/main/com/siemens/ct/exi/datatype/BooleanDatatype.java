@@ -21,7 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -46,7 +45,10 @@ public class BooleanDatatype extends AbstractDatatype {
 
 	public BooleanDatatype(QNameContext schemaType) {
 		super(BuiltInType.BOOLEAN, schemaType);
-		this.rcs = new XSDBooleanCharacterSet();
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_boolean;
 	}
 
 	public boolean isValidString(String value) {
@@ -61,14 +63,6 @@ public class BooleanDatatype extends AbstractDatatype {
 		} else {
 			return isValidString(value.toString());
 		}
-	}
-
-	@Override
-	public boolean isValidRCS(Value value) {
-		// Note: boolean really needs to do a check since it can be used for
-		// xsi:nil
-		super.isValidRCS(value);
-		return isValid(value);
 	}
 
 	public boolean getBoolean() {

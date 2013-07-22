@@ -23,6 +23,14 @@ import java.io.IOException;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
+import com.siemens.ct.exi.datatype.charset.XSDBase64CharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDateTimeCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDecimalCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDDoubleCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
+import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
@@ -37,23 +45,81 @@ import com.siemens.ct.exi.values.Value;
 
 public class LexicalTypeEncoder extends AbstractTypeEncoder {
 
-	protected RestrictedCharacterSetDatatype rcsDatatype;
+	protected RestrictedCharacterSetDatatype rcsBase64Binary = new RestrictedCharacterSetDatatype(
+			new XSDBase64CharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsHexBinary = new RestrictedCharacterSetDatatype(
+			new XSDHexBinaryCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsBoolean = new RestrictedCharacterSetDatatype(
+			new XSDBooleanCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsDateTime = new RestrictedCharacterSetDatatype(
+			new XSDDateTimeCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsDecimal = new RestrictedCharacterSetDatatype(
+			new XSDDecimalCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsDouble = new RestrictedCharacterSetDatatype(
+			new XSDDoubleCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsInteger = new RestrictedCharacterSetDatatype(
+			new XSDIntegerCharacterSet(), null);
+	protected RestrictedCharacterSetDatatype rcsString = new RestrictedCharacterSetDatatype(
+			new XSDStringCharacterSet(), null);
+	
+	protected Value lastValue;
 	protected Datatype lastDatatype;
 
 	public LexicalTypeEncoder() {
 		super();
-		rcsDatatype = new RestrictedCharacterSetDatatype(null);
 	}
 
 	public boolean isValid(Datatype datatype, Value value) {
 		lastDatatype = datatype;
-		return datatype.isValidRCS(value);
+		lastValue = value;
+		return true;
 	}
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException {
-		lastDatatype.writeValueRCS(rcsDatatype, qnContext, valueChannel,
-				stringEncoder);
+		switch (lastDatatype.getDatatypeID()) {
+		case exi_base64Binary:
+			rcsBase64Binary.isValid(lastValue);
+			rcsBase64Binary.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_hexBinary:
+			rcsHexBinary.isValid(lastValue);
+			rcsHexBinary.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_boolean:
+			rcsBoolean.isValid(lastValue);
+			rcsBoolean.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_dateTime:
+		case exi_time:
+		case exi_date:
+		case exi_gYearMonth:
+		case exi_gYear:
+		case exi_gMonthDay:
+		case exi_gDay:
+		case exi_gMonth:
+			rcsDateTime.isValid(lastValue);
+			rcsDateTime.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_decimal:
+			rcsDecimal.isValid(lastValue);
+			rcsDecimal.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_double:
+			rcsDouble.isValid(lastValue);
+			rcsDouble.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_integer:
+			rcsInteger.isValid(lastValue);
+			rcsInteger.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		case exi_string:
+			rcsString.isValid(lastValue);
+			rcsString.writeValue(qnContext, valueChannel, stringEncoder);
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
 	}
 
 }

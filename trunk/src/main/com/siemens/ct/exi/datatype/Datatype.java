@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -39,15 +38,15 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public interface Datatype extends Serializable {
-
+	
 	// if no codec map is used
 	public BuiltInType getBuiltInType();
 
 	// used for dtr map
 	public QNameContext getSchemaType();
-
-	// restricted character set
-	public RestrictedCharacterSet getRestrictedCharacterSet();
+	
+	// used for preserve lexicalValues
+	public DatatypeID getDatatypeID();
 
 	/*
 	 * Encoder
@@ -57,19 +56,10 @@ public interface Datatype extends Serializable {
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException;
 
-	public boolean isValidRCS(Value value);
-
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			QNameContext qnContext, EncoderChannel valueChannel,
-			StringEncoder stringEncoder) throws IOException;
-
 	/*
 	 * Decoder
 	 */
 	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
 			StringDecoder stringDecoder) throws IOException;
-
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			QNameContext qnContext, DecoderChannel valueChannel,
-			StringDecoder stringDecoder) throws IOException;
+	
 }

@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.XSDBooleanCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -48,7 +47,10 @@ public class BooleanFacetDatatype extends AbstractDatatype {
 
 	public BooleanFacetDatatype(QNameContext schemaType) {
 		super(BuiltInType.BOOLEAN_FACET, schemaType);
-		this.rcs = new XSDBooleanCharacterSet();
+	}
+	
+	public DatatypeID getDatatypeID() {
+		return DatatypeID.exi_boolean;
 	}
 
 	protected boolean isValidString(String value) {

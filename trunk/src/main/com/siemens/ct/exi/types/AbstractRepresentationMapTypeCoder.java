@@ -67,49 +67,49 @@ public abstract class AbstractRepresentationMapTypeCoder implements TypeCoder {
 		dtrMap.put(
 				BuiltIn.XSD_BASE64BINARY,
 				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI,
-						"base64Binary"));
+						Constants.W3C_EXI_LN_BASE64BINARY));
 		dtrMap.put(
 				BuiltIn.XSD_HEXBINARY,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "hexBinary"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_HEXBINARY));
 		// boolean
 		dtrMap.put(BuiltIn.XSD_BOOLEAN,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "boolean"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_BOOLEAN));
 		// date-times
 		dtrMap.put(BuiltIn.XSD_DATETIME,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "dateTime"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_DATETIME));
 		dtrMap.put(BuiltIn.XSD_TIME,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "time"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_TIME));
 		dtrMap.put(BuiltIn.XSD_DATE,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "date"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_DATE));
 		dtrMap.put(
 				BuiltIn.XSD_GYEARMONTH,
 				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI,
-						"gYearMonth"));
+						Constants.W3C_EXI_LN_GYEARMONTH));
 		dtrMap.put(BuiltIn.XSD_GYEAR,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gYear"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_GYEAR));
 		dtrMap.put(
 				BuiltIn.XSD_GMONTHDAY,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gMonthDay"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_GMONTHDAY));
 		dtrMap.put(BuiltIn.XSD_GDAY,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gDay"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_GDAY));
 		dtrMap.put(BuiltIn.XSD_GMONTH,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "gMonth"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_GMONTH));
 		// decimal
 		dtrMap.put(BuiltIn.XSD_DECIMAL,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "decimal"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_DECIMAL));
 		// float
 		dtrMap.put(BuiltIn.XSD_FLOAT,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "double"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_DOUBLE));
 		dtrMap.put(BuiltIn.XSD_DOUBLE,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "double"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_DOUBLE));
 		// integer
 		dtrMap.put(BuiltIn.XSD_INTEGER,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "integer"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_INTEGER));
 		// string
 		dtrMap.put(BuiltIn.XSD_STRING,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "string"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_STRING));
 		dtrMap.put(BuiltIn.XSD_ANY_SIMPLE_TYPE,
-				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, "string"));
+				getDatatypeRepresentation(Constants.W3C_EXI_NS_URI, Constants.W3C_EXI_LN_STRING));
 		// all types derived by union are done differently
 
 		for (int i = 0; i < dtrMapTypes.length; i++) {

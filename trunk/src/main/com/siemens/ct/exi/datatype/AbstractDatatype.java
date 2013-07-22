@@ -18,16 +18,8 @@
 
 package com.siemens.ct.exi.datatype;
 
-import java.io.IOException;
-
 import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
-import com.siemens.ct.exi.datatype.strings.StringDecoder;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
-import com.siemens.ct.exi.io.channel.DecoderChannel;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
-import com.siemens.ct.exi.values.Value;
 
 /**
  * 
@@ -47,10 +39,6 @@ public abstract class AbstractDatatype implements Datatype {
 	// for codec map
 	protected final QNameContext schemaType;
 
-	// restricted char set
-	protected RestrictedCharacterSet rcs;
-	protected Value lastRCSValue;
-
 	public AbstractDatatype() {
 		this(null, null);
 	}
@@ -68,10 +56,6 @@ public abstract class AbstractDatatype implements Datatype {
 		return schemaType;
 	}
 
-	public RestrictedCharacterSet getRestrictedCharacterSet() {
-		return rcs;
-	}
-
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
 			return (builtInType == ((Datatype) o).getBuiltInType());
@@ -82,26 +66,6 @@ public abstract class AbstractDatatype implements Datatype {
 
 	public int hashCode() {
 		return builtInType.ordinal();
-	}
-
-	public boolean isValidRCS(Value value) {
-		lastRCSValue = value;
-		return true;
-	}
-
-	public void writeValueRCS(RestrictedCharacterSetDatatype rcsEncoder,
-			QNameContext qnContext, EncoderChannel valueChannel,
-			StringEncoder stringEncoder) throws IOException {
-		rcsEncoder.setRestrictedCharacterSet(rcs);
-		rcsEncoder.isValid(lastRCSValue);
-		rcsEncoder.writeValue(qnContext, valueChannel, stringEncoder);
-	}
-
-	public Value readValueRCS(RestrictedCharacterSetDatatype rcsDecoder,
-			QNameContext qnContext, DecoderChannel valueChannel,
-			StringDecoder stringDecoder) throws IOException {
-		rcsDecoder.setRestrictedCharacterSet(rcs);
-		return rcsDecoder.readValue(qnContext, valueChannel, stringDecoder);
 	}
 
 	public String toString() {
