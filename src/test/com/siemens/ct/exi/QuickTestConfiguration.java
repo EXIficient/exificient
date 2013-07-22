@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
@@ -31,8 +30,8 @@ public class QuickTestConfiguration {
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
-	public static final boolean INCLUDE_OPTIONS = true;
-	public static final boolean INCLUDE_PROFILE_VALUES = true;
+	public static final boolean INCLUDE_OPTIONS = false;
+	public static final boolean INCLUDE_PROFILE_VALUES = false;
 	public static final boolean INCLUDE_SCHEMA_ID = false;
 	public static final boolean RETAIN_ENTITY_REFERENCE = false;
 	public static final boolean INCLUDE_XSI_SCHEMALOCATION = false;
