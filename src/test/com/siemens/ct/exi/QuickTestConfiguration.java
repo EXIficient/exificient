@@ -31,7 +31,8 @@ public class QuickTestConfiguration {
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;
-	public static final boolean INCLUDE_OPTIONS = false;
+	public static final boolean INCLUDE_OPTIONS = true;
+	public static final boolean INCLUDE_PROFILE_VALUES = true;
 	public static final boolean INCLUDE_SCHEMA_ID = false;
 	public static final boolean RETAIN_ENTITY_REFERENCE = false;
 	public static final boolean INCLUDE_XSI_SCHEMALOCATION = false;
@@ -124,17 +125,17 @@ public class QuickTestConfiguration {
 		// blockSize = 40;
 		// blockSize = 200;
 		// valueMaxLength = 0;
-		// valuePartitionCapacity = 4;
-		// localValuePartitions = true;
+		// valuePartitionCapacity = 0;
+		 localValuePartitions = false;
 		// XSD_TYPES_ONLY = true;
-		// maximumNumberOfBuiltInProductions = 2;
-		// maximumNumberOfBuiltInElementGrammars = 0;
-		dtrMapTypes = new QName[1];
-		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-				"decimal");
-		dtrMapRepresentations = new QName[1];
-		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
-		assert (dtrMapTypes.length == dtrMapRepresentations.length);
+		 maximumNumberOfBuiltInProductions = 0;
+		 maximumNumberOfBuiltInElementGrammars = 0;
+//		dtrMapTypes = new QName[1];
+//		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+//				"decimal");
+//		dtrMapRepresentations = new QName[1];
+//		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
+//		assert (dtrMapTypes.length == dtrMapRepresentations.length);
 	}
 
 	// ///////////////////////////////////////////////////
