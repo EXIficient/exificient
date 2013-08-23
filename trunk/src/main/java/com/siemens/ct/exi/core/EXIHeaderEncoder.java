@@ -145,12 +145,13 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 								PROFILE, null);
 						
-						if(!f.isLocalValuePartitions() && f
-								.getMaximumNumberOfBuiltInElementGrammars() == 0 &&
-								f
-								.getMaximumNumberOfBuiltInProductions() == 0) {
-							// empty exi:p element
-						} else {
+						// feature empty exi:p element has been removed
+//						if(!f.isLocalValuePartitions() && f
+//								.getMaximumNumberOfBuiltInElementGrammars() == 0 &&
+//								f
+//								.getMaximumNumberOfBuiltInProductions() == 0) {
+//							// empty exi:p element
+//						} else {
 							/*
 							 * 1. The localValuePartitions parameter is encoded as
 							 * the sign of the decimal value: the parameter is equal
@@ -191,7 +192,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 							DecimalValue dv = new DecimalValue(negative, integral,
 									revFractional);
 							encoder.encodeCharactersForce(dv);
-						}
+//						}
 						
 						encoder.encodeEndElement(); // p
 					}
