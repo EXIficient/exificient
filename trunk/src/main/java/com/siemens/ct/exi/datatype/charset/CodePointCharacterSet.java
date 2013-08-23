@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.1
+ * @version 0.9.2-SNAPSHOT
  */
 
 public class CodePointCharacterSet extends AbstractRestrictedCharacterSet {
