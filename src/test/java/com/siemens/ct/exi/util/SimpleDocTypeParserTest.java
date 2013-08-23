@@ -51,7 +51,7 @@ public class SimpleDocTypeParserTest extends TestCase {
 
 	public void test2() throws SAXException, IOException {
 		SimpleDocTypeParser dtdParser = getDtdParser();
-		String dtd = "<!DOCTYPE pPurchaseOrder [<!ENTITY eacute \"י&#xE9;\"><!ENTITY Pub-Status \"This is a pre-release of the specification.\">]>";
+		String dtd = "<!DOCTYPE pPurchaseOrder [<!ENTITY eacute \"&#xE9;&#xE9;\"><!ENTITY Pub-Status \"This is a pre-release of the specification.\">]>";
 		dtdParser.parse(dtd);
 
 		assertTrue("pPurchaseOrder".equals(dtdParser.name));
@@ -62,7 +62,10 @@ public class SimpleDocTypeParserTest extends TestCase {
 		// System.out.println(text);
 		// System.out.println(dtdParser.text);
 		// assertTrue(text.equals(dtdParser.text));
-		assertTrue(dtdParser.text.contains("ENTITY eacute \"יי\""));
+		char c = 0xE9;
+		String s1 = String.valueOf(c);
+		assertTrue(dtdParser.text.contains(s1));
+		assertTrue(dtdParser.text.contains("ENTITY eacute \"" + s1 + s1 + "\""));
 		assertTrue(dtdParser.text
 				.contains("\"This is a pre-release of the specification.\""));
 	}

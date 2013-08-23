@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.xml.sax.InputSource;
@@ -417,29 +416,30 @@ public class RoundtripTestCase extends TestCase {
 				output.toByteArray());
 		EXIBodyDecoder decoder = new EXIStreamDecoder(factory)
 				.decodeHeader(input);
-		Assert.assertEquals(EventType.START_DOCUMENT, decoder.next());
+		assertEquals(EventType.START_DOCUMENT, decoder.next());
+		assertEquals(EventType.START_DOCUMENT, decoder.next());
 		decoder.decodeStartDocument();
-		Assert.assertEquals(EventType.START_ELEMENT_GENERIC, decoder.next());
+		assertEquals(EventType.START_ELEMENT_GENERIC, decoder.next());
 		QName actual = decoder.decodeStartElement().getQName();
 		// prefix not known yet
 		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
-		Assert.assertEquals(name, actual);
-		Assert.assertEquals(EventType.NAMESPACE_DECLARATION, decoder.next());
+		assertEquals(name, actual);
+		assertEquals(EventType.NAMESPACE_DECLARATION, decoder.next());
 		NamespaceDeclaration nsdecl = decoder.decodeNamespaceDeclaration();
-		Assert.assertEquals(name.getNamespaceURI(), nsdecl.namespaceURI);
-		Assert.assertEquals(name.getPrefix(), nsdecl.prefix);
-		Assert.assertEquals(EventType.CHARACTERS_GENERIC_UNDECLARED,
+		assertEquals(name.getNamespaceURI(), nsdecl.namespaceURI);
+		assertEquals(name.getPrefix(), nsdecl.prefix);
+		assertEquals(EventType.CHARACTERS_GENERIC_UNDECLARED,
 				decoder.next());
-		Assert.assertEquals("bob", decoder.decodeCharacters().toString());
-		Assert.assertEquals(EventType.END_ELEMENT, decoder.next());
+		assertEquals("bob", decoder.decodeCharacters().toString());
+		assertEquals(EventType.END_ELEMENT, decoder.next());
 		// prefix is known as long as EndElement wasn't called
-		Assert.assertEquals(name.getPrefix(), decoder.getElementPrefix());
+		assertEquals(name.getPrefix(), decoder.getElementPrefix());
 		actual = decoder.decodeEndElement().getQName();
-		Assert.assertEquals(name, actual);
+		assertEquals(name, actual);
 		// Assert.assertEquals(name.getPrefix(), actual.getPrefix()); // bang!
-		Assert.assertEquals(EventType.END_DOCUMENT, decoder.next());
+		assertEquals(EventType.END_DOCUMENT, decoder.next());
 		decoder.decodeEndDocument();
-		Assert.assertNull(decoder.next());
+		assertNull(decoder.next());
 
 	}
 }
