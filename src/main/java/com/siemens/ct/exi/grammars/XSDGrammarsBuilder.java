@@ -1526,7 +1526,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * i , if any.
 	 * 
 	 * @param td
-	 * @return
+	 * @return schema-informed first start tag grammar
 	 * @throws EXIException
 	 */
 	protected SchemaInformedFirstStartTagGrammar translateTypeDefinitionToFSA(
@@ -1570,7 +1570,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * i , if any.
 	 * 
 	 * @param ctd
-	 * @return
+	 * @return schema-informed first start tag grammar
 	 * @throws EXIException
 	 */
 	protected SchemaInformedFirstStartTagGrammar translateComplexTypeDefinitionToFSA(
@@ -1668,7 +1668,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * i , if any.
 	 * 
 	 * @param std
-	 * @return
+	 * @return schema-informed first start tag grammar
 	 * @throws EXIException
 	 */
 	// protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
