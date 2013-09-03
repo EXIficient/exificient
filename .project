@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>exificient</name>
-  <comment>EXIficient is an open source implementation of the W3C Efficient XML Interchange (EXI) format specification written in the Java programming language.
-
-The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <comment>EXIficient is an open source implementation of the W3C Efficient XML Interchange
+    (EXI) format specification written in the Java programming language. The EXI format is a very
+    compact representation for the Extensible Markup Language (XML) Information Set that is intended
+    to simultaneously optimize performance and the utilization of computational resources. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

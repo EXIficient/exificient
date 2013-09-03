@@ -109,6 +109,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+        </configuration>
       </plugin>
       <!-- Include Java Doc OR mvn javadoc:jar  -->
       <!-- see http://maven.apache.org/plugins/maven-javadoc-plugin/examples/javadoc-resources.html -->
