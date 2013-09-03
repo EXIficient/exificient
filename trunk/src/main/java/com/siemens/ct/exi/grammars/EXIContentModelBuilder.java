@@ -503,7 +503,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 * (see http://www.w3.org/TR/exi/#elementTerms)
 	 * 
 	 * @param el
-	 * @return
+	 * @return list of possible elements
 	 */
 	protected List<XSElementDeclaration> getPossibleElementDeclarations(
 			XSElementDeclaration el) {
