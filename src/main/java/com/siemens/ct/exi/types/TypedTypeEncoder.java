@@ -20,9 +20,12 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -38,13 +41,23 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 
 	protected Datatype lastDatatype;
 
-	public TypedTypeEncoder() {
-		super();
+	public TypedTypeEncoder() throws EXIException {
+		this(null, null);
+	}
+
+	public TypedTypeEncoder(QName[] dtrMapTypes, QName[] dtrMapRepresentations)
+			throws EXIException {
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 	public boolean isValid(Datatype datatype, Value value) {
-		lastDatatype = datatype;
-		return datatype.isValid(value);
+		if (this.dtrMapInUse) {
+			lastDatatype = this.getDtrDatatype(datatype);
+		} else {
+			lastDatatype = datatype;
+		}
+
+		return lastDatatype.isValid(value);
 	}
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,

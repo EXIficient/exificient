@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -38,7 +39,7 @@ public class StringTypeEncoder extends AbstractTypeEncoder {
 
 	String lastValidValue;
 
-	public StringTypeEncoder() {
+	public StringTypeEncoder() throws EXIException {
 		super();
 	}
 

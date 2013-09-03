@@ -20,6 +20,8 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
@@ -32,6 +34,7 @@ import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -61,16 +64,26 @@ public class LexicalTypeEncoder extends AbstractTypeEncoder {
 			new XSDIntegerCharacterSet(), null);
 	protected RestrictedCharacterSetDatatype rcsString = new RestrictedCharacterSetDatatype(
 			new XSDStringCharacterSet(), null);
-	
+
 	protected Value lastValue;
 	protected Datatype lastDatatype;
 
-	public LexicalTypeEncoder() {
-		super();
+	public LexicalTypeEncoder() throws EXIException {
+		this(null, null);
+	}
+
+	public LexicalTypeEncoder(QName[] dtrMapTypes, QName[] dtrMapRepresentations)
+			throws EXIException {
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 	public boolean isValid(Datatype datatype, Value value) {
-		lastDatatype = datatype;
+		if (this.dtrMapInUse) {
+			lastDatatype = this.getDtrDatatype(datatype);
+		} else {
+			lastDatatype = datatype;
+		}
+
 		lastValue = value;
 		return true;
 	}

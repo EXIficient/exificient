@@ -18,6 +18,10 @@
 
 package com.siemens.ct.exi.types;
 
+import javax.xml.namespace.QName;
+
+import com.siemens.ct.exi.exceptions.EXIException;
+
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
@@ -29,7 +33,13 @@ package com.siemens.ct.exi.types;
 public abstract class AbstractTypeDecoder extends AbstractTypeCoder implements
 		TypeDecoder {
 
-	public AbstractTypeDecoder() {
+	public AbstractTypeDecoder() throws EXIException {
+		this(null, null);
+	}
+
+	public AbstractTypeDecoder(QName[] dtrMapTypes,
+			QName[] dtrMapRepresentations) throws EXIException {
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 }
