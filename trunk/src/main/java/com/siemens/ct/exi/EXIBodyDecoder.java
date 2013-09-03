@@ -46,7 +46,7 @@ public interface EXIBodyDecoder {
 	/**
 	 * Sets the input stream and resets all internal states
 	 * 
-	 * @see updateInputStream(InputStream)
+	 * @see #updateInputStream(InputStream)
 	 * @param is
 	 * @throws EXIException
 	 * @throws IOException
@@ -56,7 +56,7 @@ public interface EXIBodyDecoder {
 	/**
 	 * Sets input channel and resets all internal states
 	 * 
-	 * @see updateInputChannel(DecoderChannel)
+	 * @see #updateInputChannel(DecoderChannel)
 	 * @param channel
 	 * @throws EXIException
 	 * @throws IOException
@@ -67,7 +67,7 @@ public interface EXIBodyDecoder {
 	/**
 	 * Updates input stream and does not reset internal states.
 	 * 
-	 * @see setInputStream(InputStream)
+	 * @see #setInputStream(InputStream)
 	 * @param is
 	 * @throws EXIException
 	 * @throws IOException
@@ -77,7 +77,7 @@ public interface EXIBodyDecoder {
 	/**
 	 * Updates input channel and and does not reset internal states.
 	 * 
-	 * @see setInputChannel(DecoderChannel)
+	 * @see #setInputChannel(DecoderChannel)
 	 * @param channel
 	 * @throws EXIException
 	 * @throws IOException
