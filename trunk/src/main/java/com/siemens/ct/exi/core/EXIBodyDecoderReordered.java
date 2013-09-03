@@ -229,18 +229,28 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 	// @Override
 	public void setInputStream(InputStream is) throws EXIException, IOException {
+		updateInputStream(is);
+
+		initForEachRun();
+	}
+	
+	public void updateInputStream(InputStream is) throws EXIException, IOException {
 		this.is = is;
 
 		firstChannel = true;
 		channel = getNextChannel();
-
-		initForEachRun();
 	}
 
 	public void setInputChannel(DecoderChannel channel) throws EXIException,
 			IOException {
 		throw new RuntimeException(
 				"[EXI] Reorderd EXI Body decoder needs to be set via setInputStream(...)");
+	}
+	
+	public void updateInputChannel(DecoderChannel decoderChannel)
+			throws EXIException, IOException {
+		throw new RuntimeException(
+				"[EXI] Reorderd EXI Body decoder needs to be set via updateInputStream(...)");
 	}
 
 	public DecoderChannel getNextChannel() throws IOException {

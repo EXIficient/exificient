@@ -38,6 +38,7 @@ import org.apache.xerces.impl.xs.models.CMNodeFactory;
 import org.apache.xerces.impl.xs.models.XSCMValidator;
 import org.apache.xerces.xni.QName;
 import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.parser.XMLEntityResolver;
 import org.apache.xerces.xni.parser.XMLErrorHandler;
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.apache.xerces.xni.parser.XMLParseException;
@@ -113,13 +114,19 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 
 	public void loadGrammars(XMLInputSource xsdSource) throws EXIException {
+		this.loadGrammars(xsdSource, null);
+	}
+	
+	public void loadGrammars(XMLInputSource xsdSource, XMLEntityResolver entityResolver) throws EXIException {
 		try {
 			initEachRun();
 
 			// load XSD schema & get XSModel
 			XMLSchemaLoader sl = new XMLSchemaLoader();
+			if(entityResolver != null) {
+				sl.setEntityResolver(entityResolver);
+			}
 			sl.setErrorHandler(this);
-			// sl.setEntityResolver(new NoXMLEntityResolver());
 
 			SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
 
@@ -146,10 +153,14 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		// String publicId, String systemId, String baseSystemId, Reader
 		// charStream, String encoding
 		XMLInputSource is = new XMLInputSource(null, null, null, r, null);
-		loadGrammars(is);
+		loadGrammars(is, null);
 	}
 
 	public void loadGrammars(String xsdLocation) throws EXIException {
+		this.loadGrammars(xsdLocation, null);
+	}
+	
+	public void loadGrammars(String xsdLocation, XMLEntityResolver entityResolver) throws EXIException {
 		File f = new File(xsdLocation);
 		if (f.exists()) {
 			// XSD source
@@ -158,14 +169,19 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			String baseSystemId = null; // f.getParent();
 			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 					baseSystemId);
-			loadGrammars(xsdSource);
+			loadGrammars(xsdSource, entityResolver);
 		} else {
 			throw new EXIException("XML Schema document (" + xsdLocation
 					+ ") not found.");
 		}
 	}
 
+	
 	public void loadGrammars(InputStream xsdInputStream) throws EXIException {
+		this.loadGrammars(xsdInputStream, null);
+	}
+	
+	public void loadGrammars(InputStream xsdInputStream, XMLEntityResolver entityResolver) throws EXIException {
 		// XSD source
 		String publicId = null;
 		String systemId = null;
@@ -173,7 +189,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		String encoding = null;
 		XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
 				baseSystemId, xsdInputStream, encoding);
-		loadGrammars(xsdSource);
+		loadGrammars(xsdSource, entityResolver);
 	}
 
 	public XSModel getXSModel() {

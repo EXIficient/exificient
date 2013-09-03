@@ -20,6 +20,8 @@ package com.siemens.ct.exi;
 
 import java.io.InputStream;
 
+import org.apache.xerces.xni.parser.XMLEntityResolver;
+
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.SchemaInformedGrammars;
@@ -43,32 +45,82 @@ public class GrammarFactory {
 		grammarBuilder = XSDGrammarsBuilder.newInstance();
 	}
 
+	/**
+	 * Create grammar factory instance.
+	 * 
+	 * @return GrammarFactory
+	 */
 	public static GrammarFactory newInstance() {
 		return new GrammarFactory();
 	}
 
-	/* schema file as location */
+	/**
+	 * Schema information is generated for processing the EXI body.
+	 * 
+	 * @param xsdLocation file location
+	 * @return schema-informed EXI grammars
+	 * @throws EXIException
+	 */
 	public Grammars createGrammars(String xsdLocation) throws EXIException {
+		return this.createGrammars(xsdLocation, null);
+	}
+
+	/**
+	 * Schema information is generated for processing the EXI body.
+	 * 
+	 * @param xsdLocation file location
+	 * @param entityResolver application can register XSD resolver
+	 * @return schema-informed EXI grammars
+	 * @throws EXIException
+	 */
+	public Grammars createGrammars(String xsdLocation,
+			XMLEntityResolver entityResolver) throws EXIException {
 		if (xsdLocation == null || xsdLocation.equals("")) {
 			throw new EXIException("SchemaLocation not specified correctly!");
 		} else {
 			// System.out.println("Grammar for: " + xsdLocation);
-			grammarBuilder.loadGrammars(xsdLocation);
+			grammarBuilder.loadGrammars(xsdLocation, entityResolver);
 			SchemaInformedGrammars g = grammarBuilder.toGrammars();
 			g.setSchemaId(xsdLocation);
 			return g;
 		}
 	}
 
-	/* schema file as input stream */
+	/**
+	 * Schema information is generated for processing the EXI body.
+	 * 
+	 * @param is input stream
+	 * @return schema-informed EXI grammars
+	 * @throws EXIException
+	 */
 	public Grammars createGrammars(InputStream is) throws EXIException {
-		grammarBuilder.loadGrammars(is);
+		return this.createGrammars(is, null);
+	}
+
+	/**
+	 * Schema information is generated for processing the EXI body.
+	 * 
+	 * @param is input stream
+	 * @param entityResolver application can register XSD resolver
+	 * @return schema-informed EXI grammars
+	 * @throws EXIException
+	 */
+	public Grammars createGrammars(InputStream is,
+			XMLEntityResolver entityResolver) throws EXIException {
+		grammarBuilder.loadGrammars(is, entityResolver);
 		SchemaInformedGrammars g = grammarBuilder.toGrammars();
 		g.setSchemaId("No-Schema-ID-Set");
 		return g;
 	}
 
-	/* built-in XSD types only are available */
+	/**
+	 * No user defined schema information is generated for processing the EXI body;
+	 * however, the built-in XML schema types are available for use in the EXI
+	 * body.
+	 * 
+	 * @return built-in XSD EXI grammars
+	 * @throws EXIException
+	 */
 	public Grammars createXSDTypesOnlyGrammars() throws EXIException {
 		grammarBuilder.loadXSDTypesOnlyGrammars();
 		SchemaInformedGrammars g = grammarBuilder.toGrammars();
@@ -76,7 +128,12 @@ public class GrammarFactory {
 		return g;
 	}
 
-	/* no schema information at all */
+	/**
+	 * No schema information is used for processing the EXI body (i.e. a
+	 * schema-less EXI stream)
+	 * 
+	 * @return schema-less EXI grammars
+	 */
 	public Grammars createSchemaLessGrammars() {
 		return new SchemaLessGrammars();
 	}

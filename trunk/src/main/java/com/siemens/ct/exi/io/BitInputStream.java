@@ -67,14 +67,21 @@ final public class BitInputStream {
 		this.istream = istream;
 		buffer = capacity = 0;
 	}
+	
+	// read direct byte
+	private final int readDirectByte() throws IOException {
+		int b;
+		if ((b = istream.read()) == -1) {
+			throw new EOFException("Premature EOS found while reading data.");
+		}
+		return b;
+	}
 
 	/**
 	 * If buffer is empty, read byte from underlying stream.
 	 */
 	private final void readBuffer() throws IOException {
-		if ((buffer = istream.read()) == -1) {
-			throw new EOFException("Premature EOS found while reading data.");
-		}
+		buffer = readDirectByte();
 		capacity = BUFFER_CAPACITY;
 	}
 
@@ -145,7 +152,7 @@ final public class BitInputStream {
 					& (0xff >> (BUFFER_CAPACITY - n));
 		} else if (capacity == 0 && n == BUFFER_CAPACITY) {
 			// possible to read direct byte, nothing else to do
-			result = istream.read();
+			result = readDirectByte();
 		} else {
 			// get as many bits from buffer as possible
 			result = buffer & (0xff >> (BUFFER_CAPACITY - capacity));
@@ -182,7 +189,7 @@ final public class BitInputStream {
 	 */
 	public final int read() throws IOException {
 		// possible to read direct byte?
-		return (capacity == 0) ? istream.read() : this
+		return (capacity == 0) ? readDirectByte() : this
 				.readBits(BUFFER_CAPACITY);
 	}
 
@@ -195,13 +202,17 @@ final public class BitInputStream {
 			// byte-aligned --> read all bytes at byte-border (at once?)
 			int readBytes = 0;
 			do {
-				readBytes += istream.read(b, readBytes, len - readBytes);
+				int br = istream.read(b, readBytes, len - readBytes);
+				if(br == -1) {
+					throw new EOFException("Premature EOS found while reading data.");
+				}
+				readBytes += br;
 			} while (readBytes < len);
 		} else {
 			final int shift = BUFFER_CAPACITY - capacity;
 			
 			for(int i=0; i<len; i++) {
-				b[i] = (byte) ((buffer << shift) | ((buffer = istream.read()) >> capacity));
+				b[i] = (byte) ((buffer << shift) | ((buffer = readDirectByte()) >> capacity));
 			}
 
 		}
