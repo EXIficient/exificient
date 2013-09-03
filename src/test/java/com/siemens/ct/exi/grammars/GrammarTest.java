@@ -19,17 +19,23 @@
 package com.siemens.ct.exi.grammars;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
+import org.apache.xerces.xni.XMLResourceIdentifier;
+import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.parser.XMLInputSource;
 import org.custommonkey.xmlunit.XMLConstants;
 
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -926,5 +932,69 @@ public class GrammarTest extends TestCase {
 	// Grammars g2 = getGrammarFromSchemaAsString(schema);
 	// GrammarContext gc2 = g2.getGrammarContext();
 	// }
+
+	
+	public void testXsdResolverTest() throws XNIException, IOException, EXIException {
+		// Note: resolve 2 schema files without "actual" files
+
+		InputStream isMain = new ByteArrayInputStream(sMain.getBytes());
+		
+		TestXSDResolver entityResolver = new TestXSDResolver();
+		Grammars grs = GrammarFactory.newInstance().createGrammars(isMain, entityResolver);
+		assertTrue(grs != null);
+	}
+
+	// main.xsd
+	// <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	// <xs:include schemaLocation="types.xsd"></xs:include>
+	// <xs:element name="root" type="myInt"></xs:element>
+	// </xs:schema>
+	String sMain = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n    <xs:include schemaLocation=\"types.xsd\"></xs:include>\n    <xs:element name=\"root\" type=\"myInt\"></xs:element>\n</xs:schema>\n";
+	
+	// types.xsd
+	// <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	// <xs:simpleType name="myInt">
+	// <xs:restriction base="xs:int"></xs:restriction>
+	// </xs:simpleType>
+	// </xs:schema>
+	String sTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\n    <xs:simpleType name=\"myInt\">\n        <xs:restriction base=\"xs:int\"></xs:restriction>\n    </xs:simpleType>\n</xs:schema>\n";
+	
+	
+	class TestXSDResolver implements
+			org.apache.xerces.xni.parser.XMLEntityResolver {
+
+		public TestXSDResolver() {
+		}
+
+
+		public XMLInputSource resolveEntity(
+				XMLResourceIdentifier resourceIdentifier) throws XNIException,
+				IOException {
+			// String publicId = resourceIdentifier.getPublicId();
+			// String baseSystemId = resourceIdentifier.getBaseSystemId();
+			// String expandedSystemId =
+			// resourceIdentifier.getExpandedSystemId();
+			String literalSystemId = resourceIdentifier.getLiteralSystemId(); // e.g., "types.xsd"
+			// String namespace = resourceIdentifier.getNamespace();
+
+			if (literalSystemId.equals("types.xsd")) {
+				InputStream isTypes = new ByteArrayInputStream(sTypes.getBytes());
+				
+				String publicId = null;
+				String systemId = null;
+				String baseSystemId = null;
+				String encoding = null;
+				XMLInputSource xsdSourceTypes = new XMLInputSource(publicId, systemId,
+						baseSystemId, isTypes, encoding);
+				return xsdSourceTypes;
+			} else {
+				// Note: if the entity cannot be resolved, this method should return
+				// null.
+				return null;				
+			}
+
+		}
+
+	}
 
 }

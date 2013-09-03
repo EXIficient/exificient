@@ -53,27 +53,35 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 	}
 
 	public void setInputStream(InputStream is) throws EXIException, IOException {
-
-		CodingMode codingMode = exiFactory.getCodingMode();
-
-		// setup data-stream only
-		if (codingMode == CodingMode.BIT_PACKED) {
-			// create new bit-aligned channel
-			setInputChannel(new BitDecoderChannel(is));
-		} else {
-			assert (codingMode == CodingMode.BYTE_PACKED);
-			// create new byte-aligned channel
-			setInputChannel(new ByteDecoderChannel(is));
-		}
-
+		updateInputStream(is);
+		
 		initForEachRun();
 	}
 
 	public void setInputChannel(DecoderChannel decoderChannel)
 			throws EXIException, IOException {
-		this.channel = decoderChannel;
+		updateInputChannel(decoderChannel);
 
 		initForEachRun();
+	}
+	
+	public void updateInputStream(InputStream is) throws EXIException, IOException {
+		CodingMode codingMode = exiFactory.getCodingMode();
+
+		// setup data-stream only
+		if (codingMode == CodingMode.BIT_PACKED) {
+			// create new bit-aligned channel
+			updateInputChannel(new BitDecoderChannel(is));
+		} else {
+			assert (codingMode == CodingMode.BYTE_PACKED);
+			// create new byte-aligned channel
+			updateInputChannel(new ByteDecoderChannel(is));
+		}
+	}
+	
+	public void updateInputChannel(DecoderChannel decoderChannel)
+			throws EXIException, IOException {
+		this.channel = decoderChannel;
 	}
 
 	public DecoderChannel getChannel() {

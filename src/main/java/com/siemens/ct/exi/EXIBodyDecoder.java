@@ -43,10 +43,48 @@ import com.siemens.ct.exi.values.Value;
 
 public interface EXIBodyDecoder {
 
+	/**
+	 * Sets the input stream and resets all internal states
+	 * 
+	 * @see updateInputStream(InputStream)
+	 * @param is
+	 * @throws EXIException
+	 * @throws IOException
+	 */
 	public void setInputStream(InputStream is) throws EXIException, IOException;
 
+	/**
+	 * Sets input channel and resets all internal states
+	 * 
+	 * @see updateInputChannel(DecoderChannel)
+	 * @param channel
+	 * @throws EXIException
+	 * @throws IOException
+	 */
 	public void setInputChannel(DecoderChannel channel) throws EXIException,
 			IOException;
+	
+	/**
+	 * Updates input stream and does not reset internal states.
+	 * 
+	 * @see setInputStream(InputStream)
+	 * @param is
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void updateInputStream(InputStream is) throws EXIException, IOException;
+	
+	/**
+	 * Updates input channel and and does not reset internal states.
+	 * 
+	 * @see setInputChannel(DecoderChannel)
+	 * @param channel
+	 * @throws EXIException
+	 * @throws IOException
+	 */
+	public void updateInputChannel(DecoderChannel channel) throws EXIException,
+			IOException;
+	
 
 	/**
 	 * Reports the next available EXI event-type or <code>null</code> if no more
