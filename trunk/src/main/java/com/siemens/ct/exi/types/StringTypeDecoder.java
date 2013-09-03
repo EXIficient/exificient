@@ -23,6 +23,7 @@ import java.io.IOException;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -36,7 +37,7 @@ import com.siemens.ct.exi.values.Value;
 
 public class StringTypeDecoder extends AbstractTypeDecoder {
 
-	public StringTypeDecoder() {
+	public StringTypeDecoder() throws EXIException {
 		super();
 	}
 

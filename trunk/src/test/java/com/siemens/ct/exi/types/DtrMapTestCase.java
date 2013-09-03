@@ -27,6 +27,7 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.DatatypeID;
 import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
@@ -44,7 +45,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "myByte", "");
@@ -59,14 +60,13 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// default mapping
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER);
 	}
 
 	public void testByte2String() throws IOException, EXIException {
@@ -76,7 +76,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "myByte", "");
@@ -91,15 +91,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("XXX any")));
 		// default mapping
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	public void testInt2String() throws IOException, EXIException {
@@ -109,7 +108,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "myByte", "");
@@ -124,15 +123,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("XXX any")));
 		// default mapping
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// dtr-04
@@ -373,7 +371,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
@@ -393,16 +391,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
 		assertTrue(dtrTe.isValid(dt, new StringValue("12:32:00")));
 		assertTrue(dtrTe.isValid(dt, new StringValue("Blaa bla")));
 
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// register super-type
@@ -414,7 +411,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
 
@@ -434,16 +431,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
 		assertTrue(dtrTe.isValid(dt, new StringValue("12:32:00")));
 		assertTrue(dtrTe.isValid(dt, new StringValue("Blaa bla")));
 
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// register xs:int and encode type, sub-type and anonymous type
@@ -543,7 +539,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <xs:simpleType name='stringDerived2'>"
 				+ "    <xs:restriction base='stringDerived'/>"
 				+ "  </xs:simpleType>" + "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived", "");
@@ -558,14 +554,13 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// can encode integers
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
 		// indicates that dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
 		// IntegerDatatype idt = (IntegerDatatype)
 		// dtrTe.getRecentDtrMapDatatype();
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_BIG);
@@ -586,7 +581,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  <xs:simpleType name='stringDerived2'>"
 				+ "    <xs:restriction base='stringDerived'/>"
 				+ "  </xs:simpleType>" + "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived2", "");
@@ -601,16 +596,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// can encode only int values
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+123")));
 		assertFalse(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
 
 		// indicates that an dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 	// dtr-08
@@ -629,7 +623,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				// + "    <xs:restriction base='stringDerived'/>"
 				// + "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtEnum = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "stringDerived", "");
@@ -644,16 +638,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// can encode only enum values
 		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("Nagoya")));
 
 		// indicates that NO dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.ENUMERATION);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.ENUMERATION);
 	}
 
 	// 1. register subtype of integer (short) as integer
@@ -695,9 +688,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 				dtrMapRepresentations);
 
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 		Datatype dtShort = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "short", XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		assertFalse("Should not be encodable",
@@ -832,7 +824,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dtDecimal = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "decimal", "");
 		assertTrue(dtDecimal.getBuiltInType() == BuiltInType.DECIMAL);
@@ -855,18 +847,17 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// decimals
 		assertTrue(dtrTe.isValid(dtDecimal, new StringValue("+10")));
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// indicates no dtr map is in use (default)
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 	// register xsd:integer to exi:integer, integer types should not be affected
@@ -878,7 +869,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
@@ -895,14 +886,13 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// default datatype
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
 	}
 
 	// register xsd:int to exi:integer, integer types should not be affected
@@ -914,7 +904,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    </xs:restriction>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "integer", "");
@@ -931,15 +921,55 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
 		// default mapping
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
 	}
+	
+	
+	public void testTokenToInteger() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='myToken'>"
+				+ "    <xs:restriction base='xs:token'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtToken = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "myToken", "");
+		assertTrue(dtToken.getBuiltInType() == BuiltInType.STRING);
+		
+		QName schemaTypeInteger = new QName("", "myToken");
+		assertTrue(dtToken.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+		DatatypeID dtID = dtToken.getDatatypeID();
+		assertTrue(dtID == DatatypeID.exi_string);
+
+		/* DTR Map */
+		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "token");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
+		LexicalTypeEncoder dtrLe = new LexicalTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
+
+		// integers
+		assertTrue(dtrTe.isValid(dtToken, new StringValue("+1234567890")));
+		assertFalse(dtrTe.isValid(dtToken, new StringValue("ABC")));
+		assertTrue(dtrLe.isValid(dtToken, new StringValue("+1234567890")));
+		// mapping
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
+		assertTrue(dtrLe.lastDatatype.getBuiltInType() == BuiltInType.INTEGER);
+	}
+	
 
 	// unions
 	// dtr-11
@@ -949,7 +979,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xs:union memberTypes='xs:int'/>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "unionType", "");
@@ -966,15 +996,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// dtr-09
@@ -984,7 +1013,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xs:union memberTypes='xs:int'/>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "unionType", "");
@@ -1000,15 +1029,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.DECIMAL);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.DECIMAL);
 	}
 
 	// dtr-10
@@ -1026,7 +1054,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xs:union memberTypes='xs:int'/>"
 				+ "  </xs:simpleType>"
 				+ "</xs:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "unionTypeDerived", "urn:foo");
@@ -1042,15 +1070,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// dtr map in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.DECIMAL);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.DECIMAL);
 	}
 
 	// lists
@@ -1063,7 +1090,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xsd:list itemType='xsd:int'/>"
 				+ "  </xsd:simpleType>"
 				+ "</xsd:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "listType", "urn:foo");
@@ -1082,16 +1109,15 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.LIST);
-		ListDatatype ld = (ListDatatype) dtrTe.getRecentDtrMapDatatype();
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype ld = (ListDatatype) dtrTe.lastDatatype;
 		assertTrue(ld.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
 	}
 
@@ -1102,7 +1128,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xsd:list itemType='xsd:int'/>"
 				+ "  </xsd:simpleType>"
 				+ "</xsd:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "listType", "urn:foo");
@@ -1118,15 +1144,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// null indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// dtr-14
@@ -1142,7 +1167,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xsd:list itemType='xsd:int'/>"
 				+ "  </xsd:simpleType>"
 				+ "</xsd:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dtString = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "listTypeDerived", "urn:foo");
@@ -1158,15 +1183,14 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
 
 		// null indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.STRING);
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.STRING);
 	}
 
 	// dtr-16
@@ -1183,7 +1207,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				+ "    <xsd:list itemType='xsd:int'/>"
 				+ "  </xsd:simpleType>"
 				+ "</xsd:schema>";
-		Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"listType", "urn:foo");
@@ -1200,17 +1224,16 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
-		DatatypeRepresentationMapTypeEncoder dtrTe = new DatatypeRepresentationMapTypeEncoder(
-		// defaultEncoder,
-				dtrMapTypes, dtrMapRepresentations, g);
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations);
 
 		//
 		assertTrue(dtrTe.isValid(dt, new StringValue("any string")));
 		assertTrue(dtrTe.isValid(dt, new StringValue("12345")));
 
 		// indicates that no dtr map is in use
-		assertTrue(dtrTe.getRecentDtrMapDatatype().getBuiltInType() == BuiltInType.LIST);
-		ListDatatype ld = (ListDatatype) dtrTe.getRecentDtrMapDatatype();
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.LIST);
+		ListDatatype ld = (ListDatatype) dtrTe.lastDatatype;
 		assertTrue(ld.getListDatatype().getBuiltInType() == BuiltInType.STRING);
 	}
 

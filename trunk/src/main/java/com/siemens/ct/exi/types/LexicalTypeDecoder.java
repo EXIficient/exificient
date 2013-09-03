@@ -20,6 +20,8 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
@@ -32,6 +34,7 @@ import com.siemens.ct.exi.datatype.charset.XSDHexBinaryCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDIntegerCharacterSet;
 import com.siemens.ct.exi.datatype.charset.XSDStringCharacterSet;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -62,20 +65,31 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 	protected RestrictedCharacterSetDatatype rcsString = new RestrictedCharacterSetDatatype(
 			new XSDStringCharacterSet(), null);
 
-	public LexicalTypeDecoder() {
-		super();
+	public LexicalTypeDecoder() throws EXIException {
+		this(null, null);
+	}
+
+	public LexicalTypeDecoder(QName[] dtrMapTypes, QName[] dtrMapRepresentations)
+			throws EXIException {
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 	public Value readValue(Datatype datatype, QNameContext qnContext,
 			DecoderChannel valueChannel, StringDecoder stringDecoder)
 			throws IOException {
+		if (this.dtrMapInUse) {
+			datatype = this.getDtrDatatype(datatype);
+		}
+
 		Value val;
 		switch (datatype.getDatatypeID()) {
 		case exi_base64Binary:
-			val = rcsBase64Binary.readValue(qnContext, valueChannel, stringDecoder);
+			val = rcsBase64Binary.readValue(qnContext, valueChannel,
+					stringDecoder);
 			break;
 		case exi_hexBinary:
-			val = rcsHexBinary.readValue(qnContext, valueChannel, stringDecoder);
+			val = rcsHexBinary
+					.readValue(qnContext, valueChannel, stringDecoder);
 			break;
 		case exi_boolean:
 			val = rcsBoolean.readValue(qnContext, valueChannel, stringDecoder);
@@ -105,7 +119,7 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 		default:
 			throw new UnsupportedOperationException();
 		}
-		
+
 		return val;
 	}
 }

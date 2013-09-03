@@ -51,8 +51,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.SchemaInformedGrammars;
 import com.siemens.ct.exi.grammars.SchemaLessGrammars;
-import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeDecoder;
-import com.siemens.ct.exi.types.DatatypeRepresentationMapTypeEncoder;
 import com.siemens.ct.exi.types.LexicalTypeDecoder;
 import com.siemens.ct.exi.types.LexicalTypeEncoder;
 import com.siemens.ct.exi.types.StringTypeDecoder;
@@ -495,18 +493,16 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		// create new type encoder
 		if (isSchemaInformed()) {
-			// default type encoders
+			// type encoders
+			checkDtrMap();
+
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				typeEncoder = new LexicalTypeEncoder();
+				typeEncoder = new LexicalTypeEncoder(dtrMapTypes,
+						dtrMapRepresentations);
 			} else {
-				typeEncoder = new TypedTypeEncoder();
-			}
-
-			if (dtrMapTypes != null) {
-				assert (dtrMapTypes.length == dtrMapRepresentations.length);
-				typeEncoder = new DatatypeRepresentationMapTypeEncoder(
-						dtrMapTypes, dtrMapRepresentations, grammar);
+				typeEncoder = new TypedTypeEncoder(dtrMapTypes,
+						dtrMapRepresentations);
 			}
 
 		} else {
@@ -517,23 +513,33 @@ public class DefaultEXIFactory implements EXIFactory {
 		return typeEncoder;
 	}
 
+	private void checkDtrMap() throws EXIException {
+		if (dtrMapTypes == null) {
+			dtrMapRepresentations = null;
+		} else {
+			if (dtrMapRepresentations == null
+					|| dtrMapTypes.length != dtrMapRepresentations.length) {
+				throw new EXIException(
+						"Number of arguments for DTR map must match.");
+			}
+		}
+	}
+
 	public TypeDecoder createTypeDecoder() throws EXIException {
 		TypeDecoder typeDecoder;
 
 		// create new type-decoder
 		if (isSchemaInformed()) {
-			// default type decoders
+			// type decoders
+			checkDtrMap();
+
 			if (fidelityOptions
 					.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)) {
-				typeDecoder = new LexicalTypeDecoder();
+				typeDecoder = new LexicalTypeDecoder(dtrMapTypes,
+						dtrMapRepresentations);
 			} else {
-				typeDecoder = new TypedTypeDecoder();
-			}
-
-			if (dtrMapTypes != null) {
-				assert (dtrMapTypes.length == dtrMapRepresentations.length);
-				typeDecoder = new DatatypeRepresentationMapTypeDecoder(
-						dtrMapTypes, dtrMapRepresentations, grammar);
+				typeDecoder = new TypedTypeDecoder(dtrMapTypes,
+						dtrMapRepresentations);
 			}
 		} else {
 			// strings only

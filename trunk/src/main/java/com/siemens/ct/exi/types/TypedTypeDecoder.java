@@ -20,9 +20,12 @@ package com.siemens.ct.exi.types;
 
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
+import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.Value;
 
@@ -36,13 +39,21 @@ import com.siemens.ct.exi.values.Value;
 
 public class TypedTypeDecoder extends AbstractTypeDecoder {
 
-	public TypedTypeDecoder() {
-		super();
+	public TypedTypeDecoder() throws EXIException {
+		this(null, null);
+	}
+
+	public TypedTypeDecoder(QName[] dtrMapTypes, QName[] dtrMapRepresentations)
+			throws EXIException {
+		super(dtrMapTypes, dtrMapRepresentations);
 	}
 
 	public Value readValue(Datatype datatype, QNameContext qnContext,
 			DecoderChannel valueChannel, StringDecoder stringDecoder)
 			throws IOException {
+		if (this.dtrMapInUse) {
+			datatype = this.getDtrDatatype(datatype);
+		}
 		return datatype.readValue(qnContext, valueChannel, stringDecoder);
 	}
 }
