@@ -47,9 +47,10 @@ public interface TypeEncoder extends TypeCoder {
 
 	/**
 	 * Writes previously checked valid value to channel.
-	 * 
-	 * @param encoderContext
-	 * @param valueChannel
+	 *  
+	 * @param qnContext context
+	 * @param valueChannel encoder value channel
+	 * @param stringEncoder string encoder
 	 * @throws IOException
 	 */
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
