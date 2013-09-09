@@ -21,9 +21,6 @@ package com.siemens.ct.exi.datatype;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import sun.misc.DoubleConsts;
-import sun.misc.FloatConsts;
-
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.FloatValue;
@@ -471,30 +468,30 @@ public class FloatTest extends AbstractTestCase {
 	// // Bit
 	// }
 
-	/**
-	 * Returns unbiased exponent of a <code>double</code>.
-	 */
-	public static int getExponent(double d) {
-		/*
-		 * Bitwise convert d to long, mask out exponent bits, shift to the right
-		 * and then subtract out double's bias adjust to get true exponent
-		 * value.
-		 */
-		return (int) (((Double.doubleToRawLongBits(d) & DoubleConsts.EXP_BIT_MASK) >> (DoubleConsts.SIGNIFICAND_WIDTH - 1)) - DoubleConsts.EXP_BIAS);
-	}
-
-	/**
-	 * Returns unbiased exponent of a <code>float</code>.
-	 */
-	public static int getExponent(float f) {
-		/*
-		 * Bitwise convert f to integer, mask out exponent bits, shift to the
-		 * right and then subtract out float's bias adjust to get true exponent
-		 * value
-		 */
-		return ((Float.floatToRawIntBits(f) & FloatConsts.EXP_BIT_MASK) >> (FloatConsts.SIGNIFICAND_WIDTH - 1))
-				- FloatConsts.EXP_BIAS;
-	}
+//	/**
+//	 * Returns unbiased exponent of a <code>double</code>.
+//	 */
+//	public static int getExponent(double d) {
+//		/*
+//		 * Bitwise convert d to long, mask out exponent bits, shift to the right
+//		 * and then subtract out double's bias adjust to get true exponent
+//		 * value.
+//		 */
+//		return (int) (((Double.doubleToRawLongBits(d) & DoubleConsts.EXP_BIT_MASK) >> (DoubleConsts.SIGNIFICAND_WIDTH - 1)) - DoubleConsts.EXP_BIAS);
+//	}
+//
+//	/**
+//	 * Returns unbiased exponent of a <code>float</code>.
+//	 */
+//	public static int getExponent(float f) {
+//		/*
+//		 * Bitwise convert f to integer, mask out exponent bits, shift to the
+//		 * right and then subtract out float's bias adjust to get true exponent
+//		 * value
+//		 */
+//		return ((Float.floatToRawIntBits(f) & FloatConsts.EXP_BIT_MASK) >> (FloatConsts.SIGNIFICAND_WIDTH - 1))
+//				- FloatConsts.EXP_BIAS;
+//	}
 
 	// the range of the mantissa is -(2^63) to 2^63-1
 	// the range of the exponent is -(2^14-1) to 2^14-1
