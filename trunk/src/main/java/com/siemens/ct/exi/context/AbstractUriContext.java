@@ -20,6 +20,14 @@ package com.siemens.ct.exi.context;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.9.2
+ */
+
 public abstract class AbstractUriContext implements UriContext, Serializable {
 
 	/**
