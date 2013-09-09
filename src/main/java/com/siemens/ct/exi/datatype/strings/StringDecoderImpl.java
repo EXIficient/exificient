@@ -32,7 +32,7 @@ import com.siemens.ct.exi.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.2-SNAPSHOT
+ * @version 0.9.2
  */
 
 public class StringDecoderImpl  extends AbstractStringCoder implements StringDecoder {

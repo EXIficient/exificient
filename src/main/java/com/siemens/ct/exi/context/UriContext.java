@@ -18,6 +18,14 @@
 
 package com.siemens.ct.exi.context;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.9.2
+ */
+
 public interface UriContext {
 
 	public int getNamespaceUriID();

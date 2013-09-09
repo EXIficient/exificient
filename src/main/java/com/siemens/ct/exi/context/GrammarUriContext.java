@@ -20,6 +20,13 @@ package com.siemens.ct.exi.context;
 
 import com.siemens.ct.exi.Constants;
 
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.9.2
+ */
 
 public class GrammarUriContext extends AbstractUriContext {
 

@@ -33,7 +33,7 @@ import com.siemens.ct.exi.values.IntegerValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.2-SNAPSHOT
+ * @version 0.9.2
  */
 
 public abstract class AbstractDecoderChannel implements DecoderChannel {
