@@ -35,16 +35,20 @@
     <url>http://sourceforge.net/p/exificient/_list/tickets?source=navbar</url>
   </issueManagement>
 
+  <!--
   <distributionManagement>
     <site>
       <id>exificient.sourceforge.net</id>
       <url>scp://shell.sourceforge.net/home/project-web/exificient/htdocs</url>
     </site>
   </distributionManagement>
+  -->
 
   <scm>
-    <connection>scm:svn://svn.code.sf.net/p/exificient/code/tags/exificient-0.9.2</connection>
-    <url>svn.code.sf.net/p/exificient/code/tags/exificient-0.9.2</url>
+    <connection>scm:svn://svn.code.sf.net/p/exificient/code/trunk</connection>
+	<developerConnection>scm:svn://svn.code.sf.net/p/exificient/code/trunk</developerConnection>
+    <url>http://svn.code.sf.net/p/exificient/code/trunk/</url>
+	
   </scm>
 
   <dependencies>
