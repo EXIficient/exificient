@@ -35,15 +35,6 @@
     <url>http://sourceforge.net/p/exificient/_list/tickets?source=navbar</url>
   </issueManagement>
 
-  <!--
-  <distributionManagement>
-    <site>
-      <id>exificient.sourceforge.net</id>
-      <url>scp://shell.sourceforge.net/home/project-web/exificient/htdocs</url>
-    </site>
-  </distributionManagement>
-  -->
-
   <scm>
     <connection>scm:svn:https://svn.code.sf.net/p/exificient/code</connection>
 	<developerConnection>scm:svn:https://svn.code.sf.net/p/exificient/code</developerConnection>
