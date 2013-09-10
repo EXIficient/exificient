@@ -45,9 +45,9 @@
   -->
 
   <scm>
-    <connection>scm:svn://svn.code.sf.net/p/exificient/code/trunk</connection>
-	<developerConnection>scm:svn://svn.code.sf.net/p/exificient/code/trunk</developerConnection>
-    <url>http://svn.code.sf.net/p/exificient/code/trunk/</url>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/exificient/trunk</connection>
+	<developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/exificient/trunk</developerConnection>
+    <url>http://exificient.svn.sourceforge.net/viewvc/exificient</url>
 	
   </scm>
 
