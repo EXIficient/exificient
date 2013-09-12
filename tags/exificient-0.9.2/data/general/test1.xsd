@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.siemens.com/"
+	elementFormDefault="qualified">
+	<xs:element name="list">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element name="a" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="b" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="c" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="d" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="e" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="f" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="g" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="h" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="i" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="j" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="k" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="l" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="m" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="n" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="o" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="p" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

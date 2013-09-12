@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" additionalparam=" -doctitle EXI&lt;sub&gt;ficient&lt;/sub&gt; com.siemens.ct.exi -header EXIficient com.siemens.ct.exi " author="true" classpath="lib/xercesImpl.jar;lib/xml-apis.jar;lib/test/junit-4.5.jar;lib/test/xmlunit-1.2.jar" destdir="doc/javadoc" doctitle="EXIficient" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="D:\PROJECTS\EXI\EXIficient\exi\trunk\src\main\java\overview.html" packagenames="com.siemens.ct.exi.*" sourcepath="src/main/java;" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

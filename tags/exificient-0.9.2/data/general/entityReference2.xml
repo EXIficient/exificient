@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+ <!ENTITY ent SYSTEM "entityReference2-er.xml">
+]>
+<foo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xsi:noNamespaceSchemaLocation="empty.xsd" xsi:type="xs:string">
+    <!-- entity reference -->
+    &ent; 
+</foo>
