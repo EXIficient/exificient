@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<foo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="occurrences1.xsd">
- <a>a</a>
- <b>b</b>
- <c>c</c>
- <b>b</b>
- <c>c</c>
-</foo>

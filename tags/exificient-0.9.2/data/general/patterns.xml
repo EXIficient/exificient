@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<patterns xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="patterns.xsd" >
-    <postcodeDE>81739</postcodeDE>
-    <postcodeDE>D 12345</postcodeDE>
-</patterns>

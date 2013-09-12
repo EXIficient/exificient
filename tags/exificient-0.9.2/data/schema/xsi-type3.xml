@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ipo:completelyUnknownElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ipo="http://www.example.com/IPO"
-    xsi:noNamespaceSchemaLocation="xsi-type.xsd" xsi:type="xs:int">123456</ipo:completelyUnknownElement>
-<!-- unknown element can be used with xsi:type cast -->

@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<test xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="complex-structure.xsd">
-    <Depth value="3.14159E0" id="ID" description="descrioption" timeStamp="0.01"/>
-</test>

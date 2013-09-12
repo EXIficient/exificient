@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<anyAttributes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="anyAttributes.xsd">
-    <el gender="male"  />
-    <el at1="at1" at2="at2" atunknown="xxx"></el>
-</anyAttributes>
