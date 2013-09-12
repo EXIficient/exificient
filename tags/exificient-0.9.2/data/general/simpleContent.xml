@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="simpleContent.xsd">
-    <values format="FLOAT32" numvalues="1" byteorder="INTEL"> 0FB7 </values>
-    <values format="FLOAT64" byteorder="INTEL">SMOkdHRlbiBIw7x0ZSBlaW4gw58gaW0g</values>
-</root>

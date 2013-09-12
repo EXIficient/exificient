@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="attributes.xsd">
-    <atts at1="at1" at2="at2" at3="at3" at4="at4" at5="at5" />
-    <atts at5="at5"  at3="at3"  at4="at4"  />
-    <atts at1="at1"  at3="at3"  at4="at5"  />
-</root>
