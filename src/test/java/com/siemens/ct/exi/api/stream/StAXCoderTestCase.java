@@ -72,7 +72,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 
 		// encode
 		File fOut = new File(exiOutput);
-		fOut.mkdirs();
+		fOut.getParentFile().mkdirs();
 		OutputStream exiOut = new FileOutputStream(fOut);
 		InputStream xmlIn = new FileInputStream(xmlInput);
 		TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
