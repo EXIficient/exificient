@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:complexType name="Text">
+		<xs:sequence>
+			<xs:element ref="info"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--  recursive info element etc.  -->
+	<xs:element name="info">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="2">
+				<xs:element name="text" type="Text"/>
+				<xs:element name="sss" type="xs:string"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

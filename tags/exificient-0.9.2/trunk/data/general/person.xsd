@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <xs:element name="person" >
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="firstname" type="xs:string" minOccurs="0" />
+                <xs:element name="lastname" type="xs:string" />
+                <xs:element name="telephone" type="Telephone"  minOccurs="0" />
+                <xs:element  ref="info" minOccurs="0"  />
+            </xs:sequence>
+            <xs:attribute name="age" type="xs:nonNegativeInteger"  />
+        </xs:complexType>
+    </xs:element>
+
+    <!--  recursive info element etc.  -->
+    <xs:element name="info" xml:space="preserve"  >
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="2">
+                <xs:element name="text" type="Text" />
+                <xs:element name="sss"  type="xs:string"  />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Text">
+        <xs:sequence>
+            <xs:element ref="info" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="secondRoot" type="xs:string"/>
+    
+
+    <xs:complexType name="Telephone">
+        <xs:choice>
+            <xs:element name="fixed" type="xs:string"/>
+            <xs:element name="mobile" type="xs:string" />
+            <!--  stupid testcase !!!! -->
+           <!-- <xs:element name="info" type="xs:boolean" />-->
+        </xs:choice>
+    </xs:complexType>
+    
+</xs:schema>

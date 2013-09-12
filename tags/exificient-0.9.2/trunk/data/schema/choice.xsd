@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element name="el1" type="xs:NMTOKEN"/>
+        <xs:element name="el2" type="xs:int"/>
+        <xs:element name="el3" type="xs:date"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

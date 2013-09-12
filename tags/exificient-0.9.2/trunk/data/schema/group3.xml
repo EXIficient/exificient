@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<positions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="group3.xsd" >
+    <SetPosition>
+        <XYPosition x="0.0" y="0.0"/>
+        <Depth value="0.0"/>
+    </SetPosition>
+</positions>
