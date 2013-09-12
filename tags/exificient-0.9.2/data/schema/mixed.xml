@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<letter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="mixed.xsd">
+    Dear Mr.<name>John Smith</name>.
+    Your order <orderid>1032</orderid>
+    will be shipped on <shipdate>2001-07-13</shipdate>.
+</letter>

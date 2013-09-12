@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unsignedIntegers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="unsignedInteger.xsd">
+    <unsignedInteger>0</unsignedInteger>
+    <minInclusive>10</minInclusive>
+    <minExclusive>1</minExclusive>
+    <!-- deviation -->
+    <!--<minExclusive>-51</minExclusive>-->
+    <minExclusiveNeg>-25</minExclusiveNeg>
+</unsignedIntegers>

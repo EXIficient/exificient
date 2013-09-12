@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<intVal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="empty.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xsi:type="xs:float">12.345</intVal>

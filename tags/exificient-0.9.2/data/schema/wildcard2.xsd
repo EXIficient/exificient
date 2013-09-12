@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:foo="http://www.siemens.com/foo" targetNamespace="http://www.siemens.com/foo"
+  >
+
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="wildcardsNS" type="foo:WildcardsNS"/>
+        <xs:element name="wildcards" type="foo:Wildcards"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="Wildcards">
+    <xs:sequence >
+      <xs:any />
+    </xs:sequence>
+    <xs:anyAttribute/>
+  </xs:complexType>
+
+  <xs:complexType name="WildcardsNS">
+    <xs:sequence >
+      <xs:any namespace="http://www.siemens.com/foo"/>
+    </xs:sequence>
+    <xs:anyAttribute/>
+  </xs:complexType>
+  
+  <xs:element name="elString" type="xs:string" />
+  <xs:element name="elInt" type="xs:int" />
+
+  <xs:attribute name="atFoo1" type="xs:string" />
+  
+</xs:schema>
