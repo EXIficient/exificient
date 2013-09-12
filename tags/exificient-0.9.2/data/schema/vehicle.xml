@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<vehicles xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="vehicle.xsd">
-    <vehicle xsi:type="Vehicle">
-        <weight xsi:type="xs:unsignedByte">100</weight>
-    </vehicle>
-</vehicles>

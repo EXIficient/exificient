@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ampl xmlns="asmtf2006:set"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="asmtf2006:set attributeSpace.xsd" >
-    <free_text xmlns="" xml:space="default">        
-    </free_text>
-</ampl>
