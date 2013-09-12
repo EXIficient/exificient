@@ -38,7 +38,7 @@
   <scm>
     <connection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</connection>
 	<developerConnection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</developerConnection>
-    <url>http://sourceforge.net/p/exificient/code/HEAD/tree/trunk/</url>
+    <url>http://svn.code.sf.net/p/exificient/code/trunk</url>
   </scm>
 
   <dependencies>
