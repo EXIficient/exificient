@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.api.stream;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -70,7 +71,9 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			throws AssertionFailedError, Exception {
 
 		// encode
-		OutputStream exiOut = new FileOutputStream(exiOutput);
+		File fOut = new File(exiOutput);
+		fOut.mkdirs();
+		OutputStream exiOut = new FileOutputStream(fOut);
 		InputStream xmlIn = new FileInputStream(xmlInput);
 		TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
 		tse.encodeTo(xmlIn, exiOut);
