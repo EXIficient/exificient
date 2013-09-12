@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="pattern1" type="Pattern1" maxOccurs="unbounded"/>
+        <xs:element name="pattern2" type="Pattern2" maxOccurs="unbounded"/>
+        <xs:element name="pattern3" type="Pattern3" maxOccurs="unbounded"/>
+        <xs:element name="pattern4" type="Pattern4" maxOccurs="unbounded"/>
+        <xs:element name="pattern5" type="Pattern5" maxOccurs="unbounded"/>
+        <xs:element name="pattern6" type="Pattern6" maxOccurs="unbounded"/>
+        <xs:element name="pattern7" type="Pattern7" maxOccurs="unbounded"/>
+        <xs:element name="patternSub1" type="PatternSub1" maxOccurs="unbounded"/>
+        <xs:element name="patternSub2" type="PatternSub2" maxOccurs="unbounded"/>
+        <xs:element name="patternSSN" type="PatternSSN" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="Pattern1">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-z]"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType  name="Pattern2">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z][A-Z][A-Z]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType  name="Pattern3">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="z*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="Pattern4">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\i\c"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="Pattern5">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d"/><!-- \p{Nd} -->
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType  name="Pattern6">
+    <xs:restriction base="xs:string">
+      <!-- Open Office Simple -->  
+      <xs:pattern value="([$]?([^\. ']+|'[^']+'))"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType  name="Pattern7">
+    <xs:restriction base="xs:string">
+      <!-- Open Office -->  
+      <xs:pattern value="([$]?([^\. ']+|'[^']+'))?\.[$]?[A-Z]+[$]?[0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="PatternSub1">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z-[C-X]]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="PatternSub2">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z-[C-X-[M-N]]]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Social Security Number -->
+  <xs:simpleType name="PatternSSN">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9]{3}(-| )?[0-9]{2}(-| )?[0-9]{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+
+</xs:schema>

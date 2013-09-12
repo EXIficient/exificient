@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="emptyContent.xsd">
+    <internationalPrice currency="EUR" value="23132"/>
+    <internationalPrice currency="USD" value="10.00"/>
+    <internationalPrice currency="EUR" value="88.9"></internationalPrice>
+</root>
