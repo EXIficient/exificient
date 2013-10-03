@@ -43,15 +43,20 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	/* long == 64 bits, 9 * 7bits = 63 bits */
 	private final static int MAX_OCTETS_FOR_LONG = 9;
 	
+	/* boolean values */
+	private final BooleanValue bvTrue = new BooleanValue(true);
+	private final BooleanValue bvFalse = new BooleanValue(false);
+	
 	/* Helper for building strings */
 	protected StringBuilder sbHelper;
 
 	
 	public AbstractDecoderChannel() {
 	}
-
+	
 	public BooleanValue decodeBooleanValue() throws IOException {
-		return new BooleanValue(decodeBoolean());
+		// return new BooleanValue(decodeBoolean());
+		return decodeBoolean() ? bvTrue : bvFalse;
 	}
 
 	/**
