@@ -80,13 +80,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	/** String Encoder */
 	protected final StringEncoder stringEncoder;
-	
+
 	/** Encoding options */
 	protected final EncodingOptions encodingOptions;
 
-
 	protected EventType lastEvent;
-	
 
 	public AbstractEXIBodyEncoder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
@@ -98,7 +96,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		encodingOptions = exiFactory.getEncodingOptions();
 	}
 
-
 	@Override
 	protected void initForEachRun() throws EXIException, IOException {
 		super.initForEachRun();
@@ -106,22 +103,21 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		learnedProductions = 0;
 		stringEncoder.clear();
 	}
-	
+
 	protected QNameContext encodeQName(String namespaceUri, String localName,
 			EncoderChannel channel) throws IOException {
 		// uri
 		RuntimeUriContext ruc = encodeUri(namespaceUri, channel);
-		
+
 		// local-name
 		return encodeLocalName(localName, ruc, channel);
 	}
-
 
 	protected RuntimeUriContext encodeUri(final String namespaceUri,
 			EncoderChannel channel) throws IOException {
 		int numberBitsUri = MethodsBag.getCodingLength(getNumberOfUris() + 1); // numberEntries+1
 		RuntimeUriContext ruc = this.getUri(namespaceUri);
-		
+
 		if (ruc == null) {
 			// uri string value was not found
 			// ==> zero (0) as an n-nit unsigned integer
@@ -133,16 +129,17 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		} else {
 			// string value found
 			// ==> value(i+1) is encoded as n-bit unsigned integer
-			channel.encodeNBitUnsignedInteger(ruc.namespaceUriID + 1, numberBitsUri);
+			channel.encodeNBitUnsignedInteger(ruc.namespaceUriID + 1,
+					numberBitsUri);
 		}
-		
+
 		return ruc;
 	}
 
 	protected void encodeQNamePrefix(QNameContext qnContext, String prefix,
 			EncoderChannel channel) throws IOException {
 		int namespaceUriID = qnContext.getNamespaceUriID();
-		
+
 		if (namespaceUriID == 0) {
 			// XMLConstants.NULL_NS_URI
 			// default namespace --> DEFAULT_NS_PREFIX
@@ -203,7 +200,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		return qnc;
 	}
-	
+
 	protected void encodeNamespacePrefix(RuntimeUriContext uriContext,
 			String prefix, EncoderChannel channel) throws IOException {
 
@@ -225,10 +222,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			channel.encodeNBitUnsignedInteger(pfxID + 1, nPfx);
 		}
 	}
-	
-	
-	
-	
+
 	/*
 	 * Stream
 	 */
@@ -312,21 +306,21 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		// update current rule
 		updateCurrentRule(ei.getNextGrammar());
-		
+
 		lastEvent = EventType.START_DOCUMENT;
 	}
 
 	public void encodeEndDocument() throws EXIException, IOException {
 		Production ei = getCurrentGrammar().getProduction(
 				EventType.END_DOCUMENT);
-		
+
 		if (ei != null) {
 			// encode EventCode
 			encode1stLevelEventCode(ei.getEventCode());
 		} else {
 			throw new EXIException("No EXI Event found for endDocument");
 		}
-		
+
 		lastEvent = EventType.END_DOCUMENT;
 	}
 
@@ -353,8 +347,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			nextSE = (StartElement) ei.getEvent();
 			// qname implicit by SE(qname) event, prefix only missing
 			if (preservePrefix) {
-				encodeQNamePrefix(nextSE.getQNameContext(),
-						prefix, channel);
+				encodeQNamePrefix(nextSE.getQNameContext(), prefix, channel);
 			}
 			// next context rule
 			updContextRule = ei.getNextGrammar();
@@ -365,12 +358,10 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			encode1stLevelEventCode(ei.getEventCode());
 
 			StartElementNS seNS = (StartElementNS) ei.getEvent();
-			RuntimeUriContext uc = getUri(seNS
-					.getNamespaceUriID());
+			RuntimeUriContext uc = getUri(seNS.getNamespaceUriID());
 
 			// encode local-name (and prefix)
-			QNameContext qnc = encodeLocalName(localName, uc,
-					channel);
+			QNameContext qnc = encodeLocalName(localName, uc, channel);
 			if (preservePrefix) {
 				encodeQNamePrefix(qnc, prefix, channel);
 			}
@@ -403,7 +394,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				}
 
 				// limit grammar learning ?
-				switch(this.limitGrammars()) {
+				switch (this.limitGrammars()) {
 				case XSI_TYPE:
 					this.insertXsiTypeAnyType();
 					currentGrammar = getCurrentGrammar();
@@ -426,15 +417,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 
 			// encode entire qualified name
-			QNameContext qnc = encodeQName(uri, localName,
-					channel);
+			QNameContext qnc = encodeQName(uri, localName, channel);
 			if (preservePrefix) {
 				encodeQNamePrefix(qnc, prefix, channel);
 			}
 
 			// next SE ...
 			nextSE = getGlobalStartElement(qnc);
-			
+
 			// learning for built-in grammar (here and not as part of
 			// SE_Undecl(*) because of FragmentContent!)
 			currentGrammar.learnStartElement(nextSE);
@@ -443,43 +433,49 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		// push element
 		pushElement(updContextRule, nextSE);
-		
+
 		lastEvent = EventType.START_ELEMENT;
 	}
-	
+
 	private enum ProfileDisablingMechanism {
 		/** no disabling */
 		NONE,
-		/** preferred mechanism: xsi:type attribute inserted. Note: current grammar changes & only possible right after SE */
+		/**
+		 * preferred mechanism: xsi:type attribute inserted. Note: current
+		 * grammar changes & only possible right after SE
+		 */
 		XSI_TYPE,
 		/** 2nd mechanism: production has been inserted that is not usable */
 		GHOST_PRODUCTION
 	}
-	
+
 	private final void productionLearningCounting(Grammar g) {
-		if(limitGrammarLearning) {
-			// Note: no counting for schema-informed grammars and BuiltInFragmentGrammar
-			if ( maxBuiltInProductions >= 0 && !g.isSchemaInformed() && g.getGrammarType()!=GrammarType.BUILT_IN_FRAGMENT_CONTENT  ) {
+		if (limitGrammarLearning) {
+			// Note: no counting for schema-informed grammars and
+			// BuiltInFragmentGrammar
+			if (maxBuiltInProductions >= 0
+					&& !g.isSchemaInformed()
+					&& g.getGrammarType() != GrammarType.BUILT_IN_FRAGMENT_CONTENT) {
 				learnedProductions++;
 			}
 		}
 	}
-	
 
-	
 	// Note: returns ACTION
-	private final ProfileDisablingMechanism limitGrammars() throws EXIException, IOException {
+	private final ProfileDisablingMechanism limitGrammars()
+			throws EXIException, IOException {
 		ProfileDisablingMechanism retVal = ProfileDisablingMechanism.NONE;
-		
+
 		Grammar currGrammar = getCurrentGrammar();
 
-		if(limitGrammarLearning && grammar.isSchemaInformed() && !currGrammar.isSchemaInformed()) {
-			
+		if (limitGrammarLearning && grammar.isSchemaInformed()
+				&& !currGrammar.isSchemaInformed()) {
+
 			// number of built-in grammars reached
-			if(maxBuiltInElementGrammars != -1) {
+			if (maxBuiltInElementGrammars != -1) {
 				int csize = runtimeGlobalElements.size();
 				if (csize > maxBuiltInElementGrammars) {
-					if ( currGrammar.getNumberOfEvents() == 0) {
+					if (currGrammar.getNumberOfEvents() == 0) {
 						// new grammar that hits bound
 						retVal = ProfileDisablingMechanism.XSI_TYPE;
 					} else if (isBuiltInStartTagGrammarWithAtXsiTypeOnly(currGrammar)) {
@@ -488,11 +484,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					}
 				}
 			}
-			
+
 			// number of productions reached?
-			if(this.maxBuiltInProductions != -1 && retVal == ProfileDisablingMechanism.NONE && learnedProductions >= this.maxBuiltInProductions) {
-				// bound reached 
-				if(this.lastEvent == EventType.START_ELEMENT || this.lastEvent == EventType.NAMESPACE_DECLARATION) {
+			if (this.maxBuiltInProductions != -1
+					&& retVal == ProfileDisablingMechanism.NONE
+					&& learnedProductions >= this.maxBuiltInProductions) {
+				// bound reached
+				if (this.lastEvent == EventType.START_ELEMENT
+						|| this.lastEvent == EventType.NAMESPACE_DECLARATION) {
 					// First mean possible: Insert xsi:type
 					retVal = ProfileDisablingMechanism.XSI_TYPE;
 				} else {
@@ -501,12 +500,12 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					currGrammar.stopLearning();
 				}
 			}
-			
+
 		}
 
 		return retVal;
 	}
-	
+
 	private final void insertXsiTypeAnyType() throws EXIException, IOException {
 		String pfx = null;
 		if (this.preservePrefix) {
@@ -520,8 +519,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						XMLConstants.W3C_XML_SCHEMA_NS_URI, pfx);
 			}
 		}
-		QNameValue type = new QNameValue(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, "anyType", pfx);
+		QNameValue type = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+				"anyType", pfx);
 
 		// needed to avoid grammar learning
 		this.encodeAttributeXsiType(type, pfx, true);
@@ -533,7 +532,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		if (preservePrefix) {
 			assert (sePrefix != null);
-			
+
 			// event code
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec2 = currentGrammar.get2ndLevelEventCode(
@@ -547,7 +546,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// local-element-ns
 			channel.encodeBoolean(prefix.equals(sePrefix));
-			
+
 			lastEvent = EventType.NAMESPACE_DECLARATION;
 		}
 	}
@@ -555,7 +554,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	public void encodeEndElement() throws EXIException, IOException {
 		Grammar currentGrammar = getCurrentGrammar();
 		Production ei = currentGrammar.getProduction(EventType.END_ELEMENT);
-		
+
 		if (ei != null) {
 			// encode EventCode (common case)
 			encode1stLevelEventCode(ei.getEventCode());
@@ -600,9 +599,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 							+ getElementContext() + ", "
 							+ exiFactory.toString());
 				} else {
-					
+
 					// limit grammar learning ?
-					switch(this.limitGrammars()) {
+					switch (this.limitGrammars()) {
 					case XSI_TYPE:
 						this.insertXsiTypeAnyType();
 						currentGrammar = getCurrentGrammar();
@@ -627,7 +626,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		// pop element from stack
 		popElement();
-		
+
 		lastEvent = EventType.END_ELEMENT;
 	}
 
@@ -664,7 +663,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		boolean force2ndLevelProduction = false;
 		if (this.limitGrammars() == ProfileDisablingMechanism.XSI_TYPE) {
-			force2ndLevelProduction = true;	
+			force2ndLevelProduction = true;
 		}
 		this.encodeAttributeXsiType(type, pfx, force2ndLevelProduction);
 	}
@@ -718,8 +717,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			encode2ndLevelEventCode(ec2);
 			// prefix
 			if (this.preservePrefix) {
-				encodeQNamePrefix(
-						getXsiTypeContext(), pfx, channel);
+				encodeQNamePrefix(getXsiTypeContext(), pfx, channel);
 			}
 
 		} else {
@@ -755,8 +753,22 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if (ec2 != Constants.NOT_FOUND) {
 						encode2ndLevelEventCode(ec2);
 						QNameContext qncType = getXsiTypeContext();
+
+						if (limitGrammarLearning) {
+							// 3.2 Grammar Learning Disabling Parameters
+							// - In particular, the AT(xsi:type) productions that
+							// would be inserted in
+							// grammars that would be instantiated after the
+							// maximumNumberOfBuiltInElementGrammars
+							// threshold are not counted.
+							if (runtimeGlobalElements.size() > maxBuiltInElementGrammars && currentGrammar.getNumberOfEvents() == 0) {
+								// can't evolve anymore
+								currentGrammar.stopLearning();	
+							} else {
+								this.productionLearningCounting(currentGrammar);
+							}
+						}
 						currentGrammar.learnAttribute(new Attribute(qncType));
-						this.productionLearningCounting(currentGrammar);
 					} else {
 						throw new EXIException("TypeCast " + type
 								+ " not encodable!");
@@ -764,8 +776,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				}
 				// xsi:type as qname
 				QNameContext qncType = getXsiTypeContext();
-				encodeQName(qncType.getNamespaceUri(),
-						qncType.getLocalName(), channel);
+				encodeQName(qncType.getNamespaceUri(), qncType.getLocalName(),
+						channel);
 
 				if (this.preservePrefix) {
 					encodeQNamePrefix(qncType, pfx, channel);
@@ -787,8 +799,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// as string
 			typeEncoder.isValid(BuiltIn.DEFAULT_DATATYPE, type);
-			typeEncoder.writeValue(getXsiTypeContext(), channel,
-					stringEncoder);
+			typeEncoder.writeValue(getXsiTypeContext(), channel, stringEncoder);
 
 			RuntimeUriContext uc = getUri(qnameURI);
 			if (uc != null) {
@@ -798,8 +809,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		} else {
 			// typed
-			qncType = encodeQName(qnameURI, qnameLocalName,
-					channel);
+			qncType = encodeQName(qnameURI, qnameLocalName, channel);
 
 			if (preservePrefix) {
 				encodeQNamePrefix(qncType, qnamePrefix, channel);
@@ -811,7 +821,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// update grammar according to given xsi:type
 			updateCurrentRule(qncType.getTypeGrammar());
 		}
-		
+
 		lastEvent = EventType.ATTRIBUTE_XSI_TYPE;
 	}
 
@@ -840,22 +850,19 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					encode2ndLevelEventCode(ec2);
 					// prefix
 					if (this.preservePrefix) {
-						encodeQNamePrefix(
-										getXsiNilContext(), pfx,
-										channel);
+						encodeQNamePrefix(getXsiNilContext(), pfx, channel);
 					}
 
 					// encode nil value "content" as Boolean
 					if (preserveLexicalValues) {
 						// as string
 						typeEncoder.isValid(booleanDatatype, nil);
-						typeEncoder.writeValue(
-								getXsiTypeContext(), channel,
+						typeEncoder.writeValue(getXsiTypeContext(), channel,
 								stringEncoder);
 					} else {
 						// typed
-						booleanDatatype.writeValue(null, channel,
-								stringEncoder);
+						booleanDatatype
+								.writeValue(null, channel, stringEncoder);
 					}
 
 					if (booleanDatatype.getBoolean()) { // jump to typeEmpty
@@ -872,12 +879,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						RuntimeUriContext euc = encodeUri(
 								XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 								channel);
-						encodeLocalName(Constants.XSI_NIL, euc,
-								channel);
+						encodeLocalName(Constants.XSI_NIL, euc, channel);
 						if (this.preservePrefix) {
-							encodeQNamePrefix(
-									getXsiNilContext(), pfx,
-									channel);
+							encodeQNamePrefix(getXsiNilContext(), pfx, channel);
 						}
 
 						// encode nil value "content" as Boolean
@@ -885,8 +889,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 							// as string
 							typeEncoder.isValid(booleanDatatype, nil);
 							// typeEncoder.writeValue(XSI_NIL, channel);
-							typeEncoder.writeValue(
-									getXsiNilContext(), channel,
+							typeEncoder.writeValue(getXsiNilContext(), channel,
 									stringEncoder);
 						} else {
 							// typed
@@ -914,8 +917,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
 				encodeLocalName(Constants.XSI_NIL, euc, channel);
 				if (this.preservePrefix) {
-					encodeQNamePrefix(
-							getXsiNilContext(), pfx, channel);
+					encodeQNamePrefix(getXsiNilContext(), pfx, channel);
 				}
 
 				Datatype datatype = BuiltIn.DEFAULT_DATATYPE;
@@ -927,7 +929,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			encodeAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
 					Constants.XSI_NIL, pfx, nil);
 		}
-		
+
 		lastEvent = EventType.ATTRIBUTE_XSI_NIL;
 	}
 
@@ -977,14 +979,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			next = ei.getNextGrammar();
 		} else {
 
-			switch(this.limitGrammars()) {
+			switch (this.limitGrammars()) {
 			case XSI_TYPE:
 				this.insertXsiTypeAnyType();
 				currentGrammar = this.getCurrentGrammar();
 				break;
 			case GHOST_PRODUCTION:
 			default:
-				/* no special action */	
+				/* no special action */
 				break;
 			}
 
@@ -1044,17 +1046,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						|| ei.getEvent().isEventType(
 								EventType.ATTRIBUTE_GENERIC)) {
 					// (un)declared AT(*)
-					qnc = this.encodeQName(uri, localName,
-							channel);
+					qnc = this.encodeQName(uri, localName, channel);
 					next = ei == null ? currentGrammar : ei.getNextGrammar();
 				} else {
 					// declared AT(uri:*)
 					AttributeNS atNS = (AttributeNS) ei.getEvent();
 					// localname only
-					RuntimeUriContext uc = getUri(atNS
-							.getNamespaceUriID());
-					qnc = encodeLocalName(localName, uc,
-							channel);
+					RuntimeUriContext uc = getUri(atNS.getNamespaceUriID());
+					qnc = encodeLocalName(localName, uc, channel);
 					next = ei.getNextGrammar();
 				}
 
@@ -1066,7 +1065,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				if (ei == null) {
 					// Undeclared AT(*), 2nd level
 
-					qnc = encodeUndeclaredAT(currentGrammar, uri, localName); // , ghostProduction);
+					qnc = encodeUndeclaredAT(currentGrammar, uri, localName); // ,
+																				// ghostProduction);
 					next = currentGrammar;
 				} else {
 					// Declared AT(uri:*) or AT(*) on 1st level
@@ -1089,7 +1089,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// update current rule
 		assert (next != null);
 		updateCurrentRule(next);
-		
+
 		lastEvent = EventType.ATTRIBUTE;
 	}
 
@@ -1118,8 +1118,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// declared AT(uri:*)
 			AttributeNS atNS = (AttributeNS) ei.getEvent();
 			// localname only
-			RuntimeUriContext uc = getUri(atNS
-					.getNamespaceUriID());
+			RuntimeUriContext uc = getUri(atNS.getNamespaceUriID());
 			qnc = encodeLocalName(localName, uc, channel);
 
 		} else {
@@ -1128,7 +1127,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		}
 		return qnc;
 	}
-	
+
 	private QNameContext encodeUndeclaredAT(Grammar currentGrammar, String uri,
 			String localName) throws EXIException, IOException {
 
@@ -1136,8 +1135,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		encodeAttributeEventCodeUndeclared(currentGrammar, localName);
 
 		// qualified name
-		QNameContext qnc = this.encodeQName(uri, localName,
-				channel);
+		QNameContext qnc = this.encodeQName(uri, localName, channel);
 
 		// learn attribute event
 		currentGrammar.learnAttribute(new Attribute(qnc));
@@ -1155,7 +1153,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		return null;
 	}
 
-	protected Attribute getGlobalAttribute(RuntimeUriContext uc, String localName) {
+	protected Attribute getGlobalAttribute(RuntimeUriContext uc,
+			String localName) {
 		assert (uc != null);
 		QNameContext qnc = uc.getQNameContext(localName);
 		if (qnc != null) {
@@ -1229,7 +1228,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					Grammar updContextRule;
 
 					// limit grammar learning ?
-					switch(this.limitGrammars()) {
+					switch (this.limitGrammars()) {
 					case XSI_TYPE:
 						this.insertXsiTypeAnyType();
 						currentGrammar = getCurrentGrammar();
@@ -1253,27 +1252,26 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 								.getElementContentGrammar();
 						break;
 					}
-					
-					
-//					if (limitGrammarLearning()) {
-//						// encode 1st level EventCode
-//						currentGrammar = getCurrentGrammar();
-//						ei = currentGrammar
-//								.getProduction(EventType.CHARACTERS_GENERIC);
-//						assert (ei != null);
-//						encode1stLevelEventCode(ei.getEventCode());
-//						// next rule
-//						updContextRule = ei.getNextGrammar();
-//					} else {
-//						// encode [undeclared] event-code
-//						encode2ndLevelEventCode(ecCHundeclared);
-//						// learn characters event ?
-//						currentGrammar.learnCharacters();
-//						this.grammarLearningCounting(currentGrammar);
-//						// next rule
-//						updContextRule = currentGrammar
-//								.getElementContentGrammar();
-//					}
+
+					// if (limitGrammarLearning()) {
+					// // encode 1st level EventCode
+					// currentGrammar = getCurrentGrammar();
+					// ei = currentGrammar
+					// .getProduction(EventType.CHARACTERS_GENERIC);
+					// assert (ei != null);
+					// encode1stLevelEventCode(ei.getEventCode());
+					// // next rule
+					// updContextRule = ei.getNextGrammar();
+					// } else {
+					// // encode [undeclared] event-code
+					// encode2ndLevelEventCode(ecCHundeclared);
+					// // learn characters event ?
+					// currentGrammar.learnCharacters();
+					// this.grammarLearningCounting(currentGrammar);
+					// // next rule
+					// updContextRule = currentGrammar
+					// .getElementContentGrammar();
+					// }
 
 					// content as string
 					isTypeValid(BuiltIn.DEFAULT_DATATYPE, chars);
@@ -1300,14 +1298,15 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			writeString(text);
 		}
 	}
-	
-	private final void doLimitGrammarLearningForErCmPi() throws EXIException, IOException {
-		switch(this.limitGrammars()) {
+
+	private final void doLimitGrammarLearningForErCmPi() throws EXIException,
+			IOException {
+		switch (this.limitGrammars()) {
 		case XSI_TYPE:
 			this.insertXsiTypeAnyType();
 			break;
 		default:
-			/* no special action */	
+			/* no special action */
 			break;
 		}
 	}
@@ -1317,7 +1316,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
-			
+
 			// EntityReference can be found on 2nd level
 			Grammar currentGrammar = getCurrentGrammar();
 			int ec2 = currentGrammar.get2ndLevelEventCode(
@@ -1337,7 +1336,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
-			
+
 			// comments can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec3 = currentGrammar.get3rdLevelEventCode(EventType.COMMENT,
@@ -1357,7 +1356,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
-			
+
 			// processing instructions can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
 			int ec3 = currentGrammar.get3rdLevelEventCode(

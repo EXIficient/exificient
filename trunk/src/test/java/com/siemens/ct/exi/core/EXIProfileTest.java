@@ -952,4 +952,141 @@ public class EXIProfileTest extends TestCase {
 		}
 	}
 
+	// > 3.2 Grammar Learning Disabling Parameters
+	// >
+	// > - In particular, the AT(xsi:type) productions that would be inserted in
+	// > grammars that would be instantiated after the
+	// maximumNumberOfBuiltInElementGrammars
+	// > threshold are not counted.
+	//
+	// It encodes the following XML.
+	//
+	// <A><B/><B/><B/></A>
+	//
+	// with the following settings.
+	//
+	// <param name="org.w3c.exi.ttf.useProfile" value="true"/>
+	// <param name="org.w3c.exi.ttf.useSchemas" value="true"/>
+	// <param name="org.w3c.exi.ttf.schemaLocation" value=""/>
+	// <param name="org.w3c.exi.ttf.schemaDeviations" value="false"/>
+	// <param name="org.w3c.exi.ttf.maxBuiltinGr" value="1"/>
+	// <param name="org.w3c.exi.ttf.maxBuiltinProd" value="2"/>
+	//
+	// The expectation is that xsi:type productions for <B/> never gets counted
+	// because by the time first <B/> appears, the limit for built-in grammars
+	// (it is 1 in this case) has already been reached. This makes for a room
+	// for the second <B> to be learned by A's ElementContent grammar.
+
+	public void testG1_P2() throws Exception {
+		GrammarFactory gf = GrammarFactory.newInstance();
+		Grammars g = gf.createXSDTypesOnlyGrammars();
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createStrict());
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.setGrammars(g);
+
+		factory.setMaximumNumberOfBuiltInElementGrammars(1);
+		factory.setMaximumNumberOfBuiltInProductions(2);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName qnA = new QName("", "A");
+		QName qnB = new QName("", "B");
+
+		QName qnXsiType = new QName(
+				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			String pfx = null; // unset according fidelity-options
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(qnA.getNamespaceURI(),
+					qnA.getLocalPart(), pfx);
+			{
+				encoder.encodeStartElement(qnB.getNamespaceURI(),
+						qnB.getLocalPart(), pfx);
+				encoder.encodeEndElement();
+			}
+			{
+				encoder.encodeStartElement(qnB.getNamespaceURI(),
+						qnB.getLocalPart(), pfx);
+				encoder.encodeEndElement();
+			}
+			{
+				encoder.encodeStartElement(qnB.getNamespaceURI(),
+						qnB.getLocalPart(), pfx);
+				encoder.encodeEndElement();
+			}
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().equals(qnA));
+
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName().equals(qnB));
+
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName()
+						.equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString()
+						.endsWith(":anyType"));
+
+				// Profile ghost node on 2nd level
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			{
+				// learn "B"
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName().equals(qnB));
+
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName()
+						.equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString()
+						.endsWith(":anyType"));
+
+				// Profile ghost node on 2nd level
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			{
+				// "re-use" B
+				assertTrue(decoder.next() == EventType.START_ELEMENT);
+				assertTrue(decoder.decodeStartElement().getQName().equals(qnB));
+
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName()
+						.equals(qnXsiType));
+				assertTrue(decoder.getAttributeValue().toString()
+						.endsWith(":anyType"));
+
+				// Profile ghost node on 2nd level
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
 }
