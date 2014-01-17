@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -35,6 +37,7 @@ import junit.framework.AssertionFailedError;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -61,6 +64,9 @@ enum API {
 }
 
 public abstract class AbstractTestCase extends XMLTestCase {
+	
+	public final static String ENCODING = "ISO-8859-1";
+	
 	protected Vector<TestCaseOption> testCaseOptions = new Vector<TestCaseOption>();
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();
 
@@ -184,6 +190,15 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// check XML validity OR equal
 		InputStream testDecXML = new ByteArrayInputStream(
 				xmlOutput.toByteArray());
+		
+		// Problem
+		// com.sun.org.apache.xerces.internal.impl.io.MalformedByteSequenceException: 
+		// Invalid byte 1 of 1-byte UTF-8 sequence.
+		// Solution
+		// http://www.mkyong.com/java/sax-error-malformedbytesequenceexception-invalid-byte-1-of-1-byte-utf-8-sequence/
+//		Reader reader = new InputStreamReader(testDecXML,"UTF-8");
+//		InputSource is = new InputSource(reader);
+//		is.setEncoding("UTF-8");
 
 		List<String> domDiffIssues = new ArrayList<String>();
 		// entity references
@@ -273,10 +288,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		XMLUnit.setIgnoreAttributeOrder(true);
 		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
 
-		Document docControl = TestDOMEncoder.getDocument(control);
+		Document docControl = TestDOMEncoder.getDocument(control); // , "ISO-8859-1"
 		Document docTest = null;
 		try {
-			docTest = TestDOMEncoder.getDocument(testXML);
+			docTest = TestDOMEncoder.getDocument(testXML, ENCODING);
 		} catch (SAXParseException e1) {
 			String msg = e1.getMessage();
 			if (msg.contains("The entity \"ent\" was referenced, but not declared")) {

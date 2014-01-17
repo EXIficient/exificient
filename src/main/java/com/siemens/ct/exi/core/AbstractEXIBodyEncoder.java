@@ -19,6 +19,9 @@
 package com.siemens.ct.exi.core;
 
 import java.io.IOException;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.StringTokenizer;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -1172,9 +1175,49 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				return;
 			}
 		}
+		
+//		List<String> uToks = getUriTokens(chars.toString());
+//		for(String ut : uToks) {
+//			encodeCharactersForce(new StringValue(ut));
+//		}
 
 		encodeCharactersForce(chars);
 	}
+	
+//    public static List<String> getUriTokens(String uri) {
+//		StringTokenizer st = new StringTokenizer(uri, "/#", true);
+//		ArrayList<String> uToks = new ArrayList<String>();
+//		if(st.countTokens() > 1) {
+//			int nextIndex = 0;
+//			while (st.hasMoreTokens()) {
+//				String s = st.nextToken();
+//				if("/".equals(s)) {
+//					// is delimiter
+//					assert(uToks.size() > (nextIndex-1));
+//					uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
+//				} else if("#".equals(s)) {
+//					// is delimiter
+//					assert(uToks.size() > (nextIndex-1));
+//					uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
+//				} else {
+//					if(uToks.size() > nextIndex) {
+//						// Already there
+//						uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
+//					} else {
+//						// new entry
+//						uToks.add(s);
+//						nextIndex++;
+//					}
+//				}
+//				// System.out.println("\t" + s);
+//			}
+//		} else {
+//			uToks.add(uri);
+//		}
+//    	
+//    	return uToks;
+//    }
+    
 
 	public void encodeCharactersForce(Value chars) throws EXIException,
 			IOException {

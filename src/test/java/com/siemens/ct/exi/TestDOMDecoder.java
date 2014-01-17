@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Node;
 
 import com.siemens.ct.exi.api.dom.DOMBuilder;
+import com.siemens.ct.exi.data.AbstractTestCase;
 
 public class TestDOMDecoder extends AbstractTestDecoder {
 	protected TransformerFactory tf;
@@ -67,7 +68,7 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		// due to fragments
 		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		// remaining keys
-		trans.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // "ASCII"
+		trans.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // "ASCII"
 																	// "UTF-8"
 		trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
