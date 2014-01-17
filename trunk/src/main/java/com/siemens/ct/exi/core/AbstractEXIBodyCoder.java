@@ -518,14 +518,16 @@ public abstract class AbstractEXIBodyCoder {
 			assert(preservePrefix);
 			
 			int id = Constants.NOT_FOUND;
+			int sub = 0;
 			if(guc != null) {
 				id = guc.getPrefixID(prefix);
+				sub = guc.getNumberOfPrefixes();
 			}
 			if(id == Constants.NOT_FOUND) {
 				if(prefixes != null && prefixes.size() != 0) {
 					for(int i = 0; i<prefixes.size(); i++) {
 						if ( prefixes.get(i).equals(prefix)) {
-							return i;
+							return i + sub;
 						}
 					}					
 				}

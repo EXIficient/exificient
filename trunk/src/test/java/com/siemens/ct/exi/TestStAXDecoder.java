@@ -37,6 +37,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.siemens.ct.exi.api.stream.StAXDecoder;
+import com.siemens.ct.exi.data.AbstractTestCase;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 @SuppressWarnings("all")
@@ -63,7 +64,7 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 					"yes");
 		}
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // ASCII
+		transformer.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // ASCII
 
 		exiReader = new StAXDecoder(ef);
 	}

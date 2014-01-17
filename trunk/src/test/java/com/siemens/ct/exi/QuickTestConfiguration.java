@@ -25,7 +25,7 @@ import com.siemens.ct.exi.data.GeneralTestCase;
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = true;
+	public static final boolean USE_SCHEMA = false;
 	public static boolean XSD_TYPES_ONLY = true; /* default: false */
 
 	// encoding options: include Cookie, EXI Options, SchemaId
@@ -97,9 +97,9 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// FIDELITY OPTIONS
 	static {
-		fidelityOptions = FidelityOptions.createDefault();
+		// fidelityOptions = FidelityOptions.createDefault();
 		// fidelityOptions = FidelityOptions.createStrict();
-		// fidelityOptions = FidelityOptions.createAll();
+		fidelityOptions = FidelityOptions.createAll();
 
 		// try {
 		// fidelityOptions.setFidelity(FidelityOptions.FEATURE_DTD, true);

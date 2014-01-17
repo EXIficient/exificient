@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import com.siemens.ct.exi.data.AbstractTestCase;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 @SuppressWarnings("all")
@@ -60,7 +61,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 					"yes");
 		}
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.ENCODING, "iso-8859-1"); // ASCII
+		transformer.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // ASCII
 	}
 
 	// @Override
