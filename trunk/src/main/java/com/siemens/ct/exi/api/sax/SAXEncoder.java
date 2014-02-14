@@ -19,6 +19,7 @@
 package com.siemens.ct.exi.api.sax;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -42,7 +43,7 @@ import com.siemens.ct.exi.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.2
+ * @version 0.9.3-SNAPSHOT
  */
 
 public class SAXEncoder extends DefaultHandler2 {
@@ -74,7 +75,7 @@ public class SAXEncoder extends DefaultHandler2 {
 	public void setOutputStream(OutputStream os) throws EXIException, IOException {
 		// buffer stream if not already
 		// TODO is there a *nice* way to detect whether a stream is buffered
-		if (!(os instanceof BufferedOutputStream)) {
+		if (!(os instanceof BufferedOutputStream || os instanceof ByteArrayOutputStream)) {
 			os = new BufferedOutputStream(os);
 		}
 		

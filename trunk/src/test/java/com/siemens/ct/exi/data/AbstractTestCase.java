@@ -343,7 +343,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// test options
 		for (int i = 0; i < testCaseOptions.size(); i++) {
 			TestCaseOption tco = testCaseOptions.get(i);
-
+			
 			if (tco.getFidelityOptions().equals(noValidOptions)) {
 				continue;
 			}

@@ -125,10 +125,10 @@ public class QuickTestConfiguration {
 		// blockSize = 200;
 		// valueMaxLength = 0;
 		// valuePartitionCapacity = 0;
-		 localValuePartitions = false;
+		// localValuePartitions = false;
 		// XSD_TYPES_ONLY = true;
-		 maximumNumberOfBuiltInProductions = 0;
-		 maximumNumberOfBuiltInElementGrammars = 0;
+		// maximumNumberOfBuiltInProductions = 0;
+		// maximumNumberOfBuiltInElementGrammars = 0;
 //		dtrMapTypes = new QName[1];
 //		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 //				"decimal");

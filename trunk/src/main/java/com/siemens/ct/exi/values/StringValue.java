@@ -23,7 +23,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.2
+ * @version 0.9.3-SNAPSHOT
  */
 
 public class StringValue extends AbstractValue {
