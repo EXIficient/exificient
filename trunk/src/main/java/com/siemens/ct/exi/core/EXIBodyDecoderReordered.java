@@ -720,6 +720,13 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			IOException {
 		return decodeCharacters();
 	}
+	
+
+	public Value decodeListValue(Datatype listDataype) throws EXIException,
+			IOException {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("TODO list vakue in compressed stream");
+	}
 
 	public void decodeEndDocument() throws EXIException {
 	}

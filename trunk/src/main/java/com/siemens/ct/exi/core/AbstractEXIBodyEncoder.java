@@ -1005,7 +1005,6 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			if (currentGrammar.isSchemaInformed()
 					&& (globalAT = getGlobalAttribute(uri, localName)) != null) {
-				assert (ei != null);
 				/*
 				 * In a schema-informed grammar, all productions of the form
 				 * LeftHandSide : AT (*) are evaluated as follows:

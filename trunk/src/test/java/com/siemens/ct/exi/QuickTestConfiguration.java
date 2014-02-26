@@ -21,12 +21,13 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.GeneralTestCase;
+import com.siemens.ct.exi.data.SchemaTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
 	// schema-informed / schema-less case
-	public static final boolean USE_SCHEMA = false;
-	public static boolean XSD_TYPES_ONLY = true; /* default: false */
+	public static final boolean USE_SCHEMA = true;
+	public static boolean XSD_TYPES_ONLY = false; /* default: false */
 
 	// encoding options: include Cookie, EXI Options, SchemaId
 	public static final boolean INCLUDE_COOKIE = false;

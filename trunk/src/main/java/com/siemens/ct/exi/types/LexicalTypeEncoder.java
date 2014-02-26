@@ -127,8 +127,11 @@ public class LexicalTypeEncoder extends AbstractTypeEncoder {
 			rcsInteger.writeValue(qnContext, valueChannel, stringEncoder);
 			break;
 		case exi_string:
-			rcsString.isValid(lastValue);
-			rcsString.writeValue(qnContext, valueChannel, stringEncoder);
+			// exi:string no restricted character set
+			stringEncoder.writeValue(qnContext, valueChannel,
+					lastValue.toString());
+			// rcsString.isValid(lastValue);
+			// rcsString.writeValue(qnContext, valueChannel, stringEncoder);
 			break;
 		default:
 			throw new UnsupportedOperationException();
