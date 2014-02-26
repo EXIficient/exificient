@@ -271,6 +271,11 @@ public class EXIBodyDecoderInOrder extends AbstractEXIBodyDecoder {
 		return typeDecoder.readValue(dt, getElementContext().qnameContext,
 				channel, stringDecoder);
 	}
+	
+	public Value decodeListValue(Datatype listDatatype) throws EXIException, IOException {
+		return typeDecoder.readValue(listDatatype, getElementContext().qnameContext,
+				channel, stringDecoder);
+	}
 
 	public char[] decodeEntityReference() throws EXIException, IOException {
 		return decodeEntityReferenceStructure();

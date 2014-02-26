@@ -108,7 +108,7 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 			if (isFragment) {
 				xmlw = xmlof.createXMLStreamWriter(baosFrags);
 			} else {
-				xmlw = xmlof.createXMLStreamWriter(xmlOutput);
+				xmlw = xmlof.createXMLStreamWriter(xmlOutput, "ISO 8859-1");
 			}
 
 			// XMLStreamReader exiReader = new StAXDecoder(ef, exiDocument);

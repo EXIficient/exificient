@@ -114,7 +114,10 @@ public class LexicalTypeDecoder extends AbstractTypeDecoder {
 			val = rcsInteger.readValue(qnContext, valueChannel, stringDecoder);
 			break;
 		case exi_string:
-			val = rcsString.readValue(qnContext, valueChannel, stringDecoder);
+			// exi:string no restricted character set
+			val = stringDecoder.readValue(qnContext, valueChannel);
+			// val = rcsString.readValue(qnContext, valueChannel,
+			// stringDecoder);
 			break;
 		default:
 			throw new UnsupportedOperationException();

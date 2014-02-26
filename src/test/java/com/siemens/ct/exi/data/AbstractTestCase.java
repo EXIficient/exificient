@@ -34,6 +34,10 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import junit.framework.AssertionFailedError;
 
+import org.apache.xerces.xni.XMLResourceIdentifier;
+import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.parser.XMLEntityResolver;
+import org.apache.xerces.xni.parser.XMLInputSource;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
@@ -64,9 +68,9 @@ enum API {
 }
 
 public abstract class AbstractTestCase extends XMLTestCase {
-	
+
 	public final static String ENCODING = "ISO-8859-1";
-	
+
 	protected Vector<TestCaseOption> testCaseOptions = new Vector<TestCaseOption>();
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();
 
@@ -117,62 +121,115 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setGrammars(grammar);
 		} else {
 			// schema-informed
-			Grammars grammar = grammarFactory.createGrammars(tco
-					.getSchemaLocation());
+			XMLEntityResolver entityResolver = new TestXSDResolver(); // // no
+																		// internet
+																		// connection,
+																		// try
+																		// offline
+			Grammars grammar = grammarFactory.createGrammars(
+					tco.getSchemaLocation(), entityResolver);
 			ef.setGrammars(grammar);
+
+			// EXI output stream
+			ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
+
+			// XML input stream
+			String xmlLocation = QuickTestConfiguration.getXmlLocation();
+			InputStream xmlInput = new FileInputStream(xmlLocation);
+
+			AbstractTestEncoder testEncoder = getTestEncoder(api, ef);
+
+			// --> encode
+			testEncoder.encodeTo(xmlInput, exiEncodedOutput);
+			exiEncodedOutput.flush();
+
+			// EXI input stream
+			InputStream exiDocument = new ByteArrayInputStream(
+					exiEncodedOutput.toByteArray());
+
+			EncodingOptions encodingOptions = tco.getEncodingOptions();
+			// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
+			if (encodingOptions
+					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
+					&& encodingOptions
+							.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
+				// all EXI options and schemaID from the header have to be used
+				ef = DefaultEXIFactory.newInstance();
+			}
+
+			// <-- 1. decode as SAX
+			try {
+				decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
+			} catch (Throwable e) {
+				// encode-decode msg
+				throw new Exception(
+						"{" + api + "->SAX} " + e.getLocalizedMessage() + " ["
+								+ tco.toString() + "]", e);
+			}
+
+			// <-- 2. decode as DOM
+			try {
+				exiDocument.reset();
+				decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
+			} catch (Throwable e) {
+				throw new Exception(
+						"{" + api + "->DOM} " + e.getLocalizedMessage() + " ["
+								+ tco.toString() + "]", e);
+			}
+
+			// <-- 3. decode as StAX
+			try {
+				exiDocument.reset();
+				decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
+			} catch (Throwable e) {
+				throw new Exception(
+						"{" + api + "->StAX} " + e.getLocalizedMessage() + " ["
+								+ tco.toString() + "]", e);
+			}
+		}
+	}
+
+	class TestXSDResolver implements
+			org.apache.xerces.xni.parser.XMLEntityResolver {
+
+		public TestXSDResolver() {
 		}
 
-		// EXI output stream
-		ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
+		public XMLInputSource resolveEntity(
+				XMLResourceIdentifier resourceIdentifier) throws XNIException,
+				IOException {
+			// String publicId = resourceIdentifier.getPublicId();
+			// String baseSystemId = resourceIdentifier.getBaseSystemId();
+			// String expandedSystemId =
+			// resourceIdentifier.getExpandedSystemId();
+			String literalSystemId = resourceIdentifier.getLiteralSystemId(); 
+			
+			if("XMLSchema.dtd".equals(literalSystemId)  || "datatypes.dtd".equals(literalSystemId)) {
+				InputStream isTypes = new FileInputStream(".\\data\\schemaForSchema\\" + literalSystemId);
 
-		// XML input stream
-		String xmlLocation = QuickTestConfiguration.getXmlLocation();
-		InputStream xmlInput = new FileInputStream(xmlLocation);
+				String publicId = null;
+				String systemId = null;
+				String baseSystemId = null;
+				String encoding = null;
+				XMLInputSource xsdSourceTypes = new XMLInputSource(publicId,
+				systemId, baseSystemId, isTypes, encoding);
+				return xsdSourceTypes;
+			} else if("http://www.w3.org/2001/xml.xsd".equals(literalSystemId)) {
+				InputStream isTypes = new FileInputStream(".\\data\\schemaForSchema\\" + "xml.xsd");
 
-		AbstractTestEncoder testEncoder = getTestEncoder(api, ef);
+				String publicId = null;
+				String systemId = null;
+				String baseSystemId = null;
+				String encoding = null;
+				XMLInputSource xsdSourceTypes = new XMLInputSource(publicId,
+				systemId, baseSystemId, isTypes, encoding);
+				return xsdSourceTypes;
+			} else {
+				// Note: if the entity cannot be resolved, this method
+				// should return null.
+				return null;
+			}
 
-		// --> encode
-		testEncoder.encodeTo(xmlInput, exiEncodedOutput);
-		exiEncodedOutput.flush();
-
-		// EXI input stream
-		InputStream exiDocument = new ByteArrayInputStream(
-				exiEncodedOutput.toByteArray());
-
-		EncodingOptions encodingOptions = tco.getEncodingOptions();
-		// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
-		if (encodingOptions.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
-				&& encodingOptions
-						.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
-			// all EXI options and schemaID from the header have to be used
-			ef = DefaultEXIFactory.newInstance();
-		}
-
-		// <-- 1. decode as SAX
-		try {
-			decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
-		} catch (Throwable e) {
-			// encode-decode msg
-			throw new Exception("{" + api + "->SAX} " + e.getLocalizedMessage()
-					+ " [" + tco.toString() + "]", e);
-		}
-
-		// <-- 2. decode as DOM
-		try {
-			exiDocument.reset();
-			decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
-		} catch (Throwable e) {
-			throw new Exception("{" + api + "->DOM} " + e.getLocalizedMessage()
-					+ " [" + tco.toString() + "]", e);
-		}
-
-		// <-- 3. decode as StAX
-		try {
-			exiDocument.reset();
-			decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
-		} catch (Throwable e) {
-			throw new Exception("{" + api + "->StAX} "
-					+ e.getLocalizedMessage() + " [" + tco.toString() + "]", e);
 		}
 	}
 
@@ -190,15 +247,15 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// check XML validity OR equal
 		InputStream testDecXML = new ByteArrayInputStream(
 				xmlOutput.toByteArray());
-		
+
 		// Problem
-		// com.sun.org.apache.xerces.internal.impl.io.MalformedByteSequenceException: 
+		// com.sun.org.apache.xerces.internal.impl.io.MalformedByteSequenceException:
 		// Invalid byte 1 of 1-byte UTF-8 sequence.
 		// Solution
 		// http://www.mkyong.com/java/sax-error-malformedbytesequenceexception-invalid-byte-1-of-1-byte-utf-8-sequence/
-//		Reader reader = new InputStreamReader(testDecXML,"UTF-8");
-//		InputSource is = new InputSource(reader);
-//		is.setEncoding("UTF-8");
+		// Reader reader = new InputStreamReader(testDecXML,"UTF-8");
+		// InputSource is = new InputSource(reader);
+		// is.setEncoding("UTF-8");
 
 		List<String> domDiffIssues = new ArrayList<String>();
 		// entity references
@@ -288,7 +345,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		XMLUnit.setIgnoreAttributeOrder(true);
 		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
 
-		Document docControl = TestDOMEncoder.getDocument(control); // , "ISO-8859-1"
+		Document docControl = TestDOMEncoder.getDocument(control); // ,
+																	// "ISO-8859-1"
 		Document docTest = null;
 		try {
 			docTest = TestDOMEncoder.getDocument(testXML, ENCODING);
@@ -343,7 +401,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		// test options
 		for (int i = 0; i < testCaseOptions.size(); i++) {
 			TestCaseOption tco = testCaseOptions.get(i);
-			
+
 			if (tco.getFidelityOptions().equals(noValidOptions)) {
 				continue;
 			}

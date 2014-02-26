@@ -37,11 +37,24 @@ public class ListValue extends AbstractValue {
 
 	protected final Value[] values;
 	protected final Datatype listDatatype;
+	protected final int numberOfValues;
 
 	public ListValue(Value[] values, Datatype listDatatype) {
 		super(ValueType.LIST);
 		this.values = values;
+		this.numberOfValues = values.length;
 		this.listDatatype = listDatatype;
+	}
+	
+	public ListValue(Datatype listDatatype, int numberOfValues) {
+		super(ValueType.LIST);
+		this.listDatatype = listDatatype;
+		this.numberOfValues = numberOfValues;
+		this.values = null;
+	}
+	
+	public int getNumberOfValues() {
+		return numberOfValues;
 	}
 
 	public Value[] toValues() {
