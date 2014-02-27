@@ -20,6 +20,7 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigInteger;
 
+import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -47,12 +48,25 @@ public class IntegerValue extends AbstractValue implements
 	public static final BigInteger LONG_MAX_VALUE = BigInteger
 			.valueOf(Long.MAX_VALUE);
 
-	protected final int ival;
-	protected final long lval;
-	protected final BigInteger bval;
+//	protected final int ival;
+//	protected final long lval;
+//	protected final BigInteger bval;
+	protected int ival;
+	protected long lval;
+	protected BigInteger bval;
 
 	private IntegerValue(int ival) {
 		super(ValueType.INTEGER_INT);
+		
+//		this.ival = ival;
+//		
+//		this.lval = 0L;
+//		this.bval = null;
+		
+		setIntegerValue(ival);
+	}
+	
+	public final void setIntegerValue(int ival) {
 		this.ival = ival;
 		
 		this.lval = 0L;
@@ -61,6 +75,15 @@ public class IntegerValue extends AbstractValue implements
 
 	private IntegerValue(long lval) {
 		super(ValueType.INTEGER_LONG);
+//		this.ival = 0;
+//		
+//		this.lval = lval;
+//		this.bval = null;
+		
+		setIntegerValue(lval);
+	}
+	
+	public final void setIntegerValue(long lval) {
 		this.ival = 0;
 		
 		this.lval = lval;
@@ -69,6 +92,15 @@ public class IntegerValue extends AbstractValue implements
 
 	private IntegerValue(BigInteger bval) {
 		super(ValueType.INTEGER_BIG);
+//		this.bval = bval;
+//		
+//		this.ival = 0;
+//		this.lval = 0L;
+		
+		setIntegerValue(bval);
+	}
+	
+	public final void setIntegerValue(BigInteger bval) {
 		this.bval = bval;
 		
 		this.ival = 0;
@@ -341,7 +373,8 @@ public class IntegerValue extends AbstractValue implements
 	}
 
 	public int getCharactersLength() {
-		if (slen == -1) {
+		if (ListDatatype.NEW_MEMORY_SENSITIVE) {
+			// TODO recalculate every time?
 			switch (this.valueType) {
 			case INTEGER_INT:
 				if (ival == Integer.MIN_VALUE) {
@@ -363,7 +396,32 @@ public class IntegerValue extends AbstractValue implements
 			default:
 				slen = -1;
 			}
+		} else {
+			if (slen == -1) {
+				switch (this.valueType) {
+				case INTEGER_INT:
+					if (ival == Integer.MIN_VALUE) {
+						slen = MethodsBag.INTEGER_MIN_VALUE_CHARARRAY.length;
+					} else {
+						slen = MethodsBag.getStringSize(ival);
+					}
+					break;
+				case INTEGER_LONG:
+					if (lval == Long.MIN_VALUE) {
+						slen = MethodsBag.LONG_MIN_VALUE_CHARARRAY.length;
+					} else {
+						slen = MethodsBag.getStringSize(lval);
+					}
+					break;
+				case INTEGER_BIG:
+					slen = bval.toString().length();
+					break;
+				default:
+					slen = -1;
+				}
+			}
 		}
+
 		return slen;
 	}
 
