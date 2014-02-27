@@ -384,7 +384,7 @@ public class SAXDecoder implements XMLReader {
 					ListValue lv = (ListValue) val;
 					
 					if (ListDatatype.NEW_MEMORY_SENSITIVE) {
-						System.err.println("TODO decode list value, " + lv.getListDatatype() + ", " + lv.getNumberOfValues());
+						// System.err.println("TODO decode list value, " + lv.getListDatatype() + ", " + lv.getNumberOfValues());
 						for(int k=0; k<lv.getNumberOfValues(); k++) {
 							Value lvi = decoder.decodeListValue(lv.getListDatatype());
 							ValueType vt = lvi.getValueType();

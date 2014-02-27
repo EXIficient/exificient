@@ -69,7 +69,7 @@ enum API {
 
 public abstract class AbstractTestCase extends XMLTestCase {
 
-	public final static String ENCODING = "ISO-8859-1";
+	public final static String ENCODING = "UTF-8"; // "ISO-8859-1";
 
 	protected Vector<TestCaseOption> testCaseOptions = new Vector<TestCaseOption>();
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();
