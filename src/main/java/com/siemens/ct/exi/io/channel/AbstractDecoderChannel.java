@@ -21,7 +21,6 @@ package com.siemens.ct.exi.io.channel;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.DateTimeValue;
@@ -199,7 +198,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 			return decodeUnsignedLong();
 		}
 	}
-
+	
 	public IntegerValue decodeIntegerValue() throws IOException {
 		return decodeUnsignedIntegerValue(decodeBoolean());
 	}
@@ -283,90 +282,6 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 
 		return IntegerValue.valueOf(bResult);
 	}
-	
-	protected final void decodeUnsignedIntegerValue(IntegerValue iv, boolean negative)
-			throws IOException {
-		int b;
-		for (int i = 0; i < MAX_OCTETS_FOR_LONG; i++) {
-			// Read the next octet
-			b = decode();
-			// If the most significant bit of the octet was 1,
-			// another octet is going to come
-			if (b < 128) {
-				/* no more octets */
-				switch(i) {
-				case 0:
-					/* one octet only */
-					iv.setIntegerValue(negative ? -(b+1) : b);
-					return;
-					// return IntegerValue.valueOf(negative ? -(b+1) : b);
-				case 1:
-				case 2:
-				case 3:
-					/* integer value */
-					maskedOctets[i] = b;
-					/* int == 32 bits, 4 * 7bits = 28 bits */
-					int iResult = 0;
-					for (int k = i; k >= 0 ; k--) {
-						iResult = (iResult << 7) | maskedOctets[k];
-					}
-					// For negative values, the Unsigned Integer holds the
-					// magnitude of the value minus 1
-					iv.setIntegerValue(negative ? -(iResult+1) : iResult);
-					// return IntegerValue.valueOf(negative ? -(iResult+1) : iResult);
-					return;
-				default:
-					/* long value */
-					maskedOctets[i] = b;
-					/* long == 64 bits, 9 * 7bits = 63 bits */
-					long lResult = 0L;
-					for (int k = i; k >= 0 ; k--) {
-						lResult = (lResult << 7) | maskedOctets[k];
-					}
-					// For negative values, the Unsigned Integer holds the
-					// magnitude of the value minus 1
-					iv.setIntegerValue(negative ? -(lResult+1L) : lResult);
-					// return IntegerValue.valueOf(negative ? -(lResult+1L) : lResult);
-					return;
-				}
-			} else {
-				// the 7 least significant bits hold the actual value
-				maskedOctets[i] = (b & 127);
-			}
-		}
-
-		// Grrr, we got a BigInteger value to deal with
-		BigInteger bResult = BigInteger.ZERO;
-		BigInteger multiplier = BigInteger.ONE;
-		// already read bytes
-		for (int i = 0; i < MAX_OCTETS_FOR_LONG; i++) {
-			bResult = bResult.add(multiplier.multiply(BigInteger
-					.valueOf(maskedOctets[i])));
-			multiplier = multiplier.shiftLeft(7);
-		}
-		// read new bytes
-		do {
-			// 1. Read the next octet
-			b = decode();
-			// 2. The 7 least significant bits hold the value
-			bResult = bResult.add(multiplier.multiply(BigInteger
-					.valueOf(b & 127)));
-			// 3. Multiply the multiplier by 128
-			multiplier = multiplier.shiftLeft(7);
-			// If the most significant bit of the octet was 1,
-			// another is going to come
-		} while (b > 127);
-
-		// For negative values, the Unsigned Integer holds the
-		// magnitude of the value minus 1
-		if (negative) {
-			bResult = bResult.add(BigInteger.ONE).negate();
-		}
-
-		// return IntegerValue.valueOf(bResult);
-		iv.setIntegerValue(bResult);
-		return;
-	}
 
 	/**
 	 * Decodes and returns an n-bit unsigned integer as string.
@@ -384,25 +299,13 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
 	 */
-	IntegerValue integral = IntegerValue.valueOf(0);
-	IntegerValue revFractional = IntegerValue.valueOf(1);
-	DecimalValue dv = new DecimalValue(false, integral, revFractional);
 	public DecimalValue decodeDecimalValue() throws IOException {
-		if (ListDatatype.NEW_MEMORY_SENSITIVE ) {
-			dv.setNegative(decodeBoolean());
-
-			decodeUnsignedIntegerValue(integral, false);
-			decodeUnsignedIntegerValue(revFractional, false);
-			
-			return dv;
-		} else {
-			boolean negative = decodeBoolean();
-			
-			IntegerValue integral = decodeUnsignedIntegerValue(false);
-			IntegerValue revFractional = decodeUnsignedIntegerValue(false);
-			
-			return new DecimalValue(negative, integral, revFractional);	
-		}
+		boolean negative = decodeBoolean();
+		
+		IntegerValue integral = decodeUnsignedIntegerValue(false);
+		IntegerValue revFractional = decodeUnsignedIntegerValue(false);
+		
+		return new DecimalValue(negative, integral, revFractional);	
 	}
 
 	/**

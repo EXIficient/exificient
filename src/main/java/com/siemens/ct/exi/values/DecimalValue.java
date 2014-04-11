@@ -20,7 +20,6 @@ package com.siemens.ct.exi.values;
 
 import java.math.BigDecimal;
 
-import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.util.MethodsBag;
 
 /**
@@ -35,12 +34,9 @@ public class DecimalValue extends AbstractValue {
 
 	private static final long serialVersionUID = 5268045994978250547L;
 
-//	protected final boolean negative;
-//	protected final IntegerValue integral;
-//	protected final IntegerValue revFractional;
-	protected boolean negative;
-	protected IntegerValue integral;
-	protected IntegerValue revFractional;
+	protected final boolean negative;
+	protected final IntegerValue integral;
+	protected final IntegerValue revFractional;
 	
 	protected BigDecimal bd;
 	
@@ -55,24 +51,12 @@ public class DecimalValue extends AbstractValue {
 		this.revFractional = revFractional;
 	}
 	
-	public void setNegative(boolean negative) {
-		this.negative = negative;
-	}
-	
 	public boolean isNegative() {
 		return negative;
-	}
-	
-	public void getIntegral(IntegerValue integral) {
-		this.integral = integral;
 	}
 
 	public IntegerValue getIntegral() {
 		return integral;
-	}
-
-	public void getRevFractional(IntegerValue revFractional) {
-		this.revFractional= revFractional;
 	}
 	
 	public IntegerValue getRevFractional() {
@@ -138,17 +122,10 @@ public class DecimalValue extends AbstractValue {
 	}
 
 	public int getCharactersLength() {
-		if (ListDatatype.NEW_MEMORY_SENSITIVE) {
-			// TODO recalculate every time?
+		if (slen == -1) {
 			// +12.34
 			slen = (negative ? 1 : 0) + integral.getCharactersLength() + 1
 					+ revFractional.getCharactersLength();
-		} else {
-			if (slen == -1) {
-				// +12.34
-				slen = (negative ? 1 : 0) + integral.getCharactersLength() + 1
-						+ revFractional.getCharactersLength();
-			}
 		}
 		return slen;
 	}
@@ -164,14 +141,14 @@ public class DecimalValue extends AbstractValue {
 		// dot
 		cbuffer[offset++] = '.';
 		// fractional
-		switch (revFractional.valueType) {
-		case INTEGER_INT:
+		switch (revFractional.getIntegerValueType()) {
+		case INT:
 			MethodsBag.itosReverse(revFractional.ival, offset, cbuffer);
 			break;
-		case INTEGER_LONG:
+		case LONG:
 			MethodsBag.itosReverse(revFractional.lval, offset, cbuffer);
 			break;
-		case INTEGER_BIG:
+		case BIG:
 			// TODO look for a more suitable way, big integer
 			if(sbHelper == null) {
 				sbHelper = new StringBuilder(revFractional.bval.toString());

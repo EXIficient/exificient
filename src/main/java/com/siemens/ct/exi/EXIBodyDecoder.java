@@ -26,7 +26,6 @@ import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
-import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -248,17 +247,6 @@ public interface EXIBodyDecoder {
 	 * @throws IOException
 	 */
 	public Value decodeCharacters() throws EXIException, IOException;
-	
-	/**
-	 * Decodes single list item value.
-	 * 
-	 * @param listDataype
-	 * @return <code>Value</code> for XML list item
-	 * 
-	 * @throws EXIException
-	 * @throws IOException
-	 */
-	public Value decodeListValue(Datatype listDataype) throws EXIException, IOException;
 
 	/**
 	 * Parses DOCTYPE with information items (name, publicID, systemID, text).

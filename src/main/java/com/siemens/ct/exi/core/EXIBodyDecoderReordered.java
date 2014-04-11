@@ -39,6 +39,7 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.PreReadValue;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
@@ -513,16 +514,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			Iterator<QNameContext> iterCh = this.channelDatatypes.keySet().iterator();
 			
 			if (blockValues <= Constants.MAX_NUMBER_OF_VALUES) {
-				// single compressed stream (included structure)
+				// single compressed stream (includes structure)
 				
 				while(iterCh.hasNext()) {
 					QNameContext o = iterCh.next();
-					List<Datatype> ld = this.channelDatatypes.get(o);
-					Value[] contentValues = new Value[ld.size()];
-					for (int i = 0; i < ld.size(); i++) {
-						contentValues[i] = typeDecoder.readValue(ld.get(i),
-								o, channel, stringDecoder);
-					}
+					List<Datatype> lds = this.channelDatatypes.get(o);
+					Value[] contentValues = readValues(lds, o, channel, stringDecoder);
 					PreReadValue prv = new PreReadValue(contentValues);
 					this.preReadValues.put(o, prv);
 				}
@@ -534,17 +531,12 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 
 				while(iterCh.hasNext()) {
 					QNameContext o = iterCh.next();
-					List<Datatype> ld = this.channelDatatypes.get(o);
-					if (ld.size() <= Constants.MAX_NUMBER_OF_VALUES) {
-						Value[] contentValues = new Value[ld.size()];
+					List<Datatype> lds = this.channelDatatypes.get(o);
+					if (lds.size() <= Constants.MAX_NUMBER_OF_VALUES) {
 						if (bdcLessEqual100 == null) {
 							bdcLessEqual100 = getNextChannel();
 						}
-						for (int i = 0; i < ld.size(); i++) {
-							contentValues[i] = typeDecoder.readValue(
-									ld.get(i), o, bdcLessEqual100,
-									stringDecoder);
-						}
+						Value[] contentValues = readValues(lds, o, bdcLessEqual100, stringDecoder);
 						PreReadValue prv = new PreReadValue(contentValues);
 						this.preReadValues.put(o, prv);
 					}
@@ -554,16 +546,10 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 				iterCh = this.channelDatatypes.keySet().iterator();
 				while(iterCh.hasNext()) {
 					QNameContext o = iterCh.next();
-					List<Datatype> ld = this.channelDatatypes.get(o);
-					if (ld.size() > Constants.MAX_NUMBER_OF_VALUES) {
+					List<Datatype> lds = this.channelDatatypes.get(o);
+					if (lds.size() > Constants.MAX_NUMBER_OF_VALUES) {
 						DecoderChannel bdcGreater100 = getNextChannel();
-						Value[] contentValues = new Value[ld.size()];
-						for (int i = 0; i < ld.size(); i++) {
-							contentValues[i] = typeDecoder.readValue(
-									ld.get(i), o, bdcGreater100,
-									stringDecoder);
-						}
-
+						Value[] contentValues = readValues(lds, o, bdcGreater100, stringDecoder);
 						PreReadValue prv = new PreReadValue(contentValues);
 						this.preReadValues.put(o, prv);
 					}
@@ -573,6 +559,17 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		} catch (IOException e) {
 			throw new EXIException(e);
 		}
+	}
+	
+	
+	private Value[] readValues(List<Datatype> lds, QNameContext o, DecoderChannel valueChannel, StringDecoder stringDecoder) throws IOException {
+		Value[] contentValues = new Value[lds.size()];
+		for (int i = 0; i < lds.size(); i++) {
+			contentValues[i] = typeDecoder.readValue(
+					lds.get(i), o, valueChannel, stringDecoder);
+		}
+		
+		return contentValues;
 	}
 
 	protected void setContentValues(DecoderChannel bdc,
@@ -719,13 +716,6 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	public Value decodeCharactersGenericUndeclared() throws EXIException,
 			IOException {
 		return decodeCharacters();
-	}
-	
-
-	public Value decodeListValue(Datatype listDataype) throws EXIException,
-			IOException {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("TODO list vakue in compressed stream");
 	}
 
 	public void decodeEndDocument() throws EXIException {

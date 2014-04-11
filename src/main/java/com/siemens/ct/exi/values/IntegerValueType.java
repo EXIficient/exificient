@@ -19,7 +19,7 @@
 package com.siemens.ct.exi.values;
 
 /**
- * Value types: e.g., String Values, Integers, Floats etc.
+ * Integer value types: e.g., int, long, BigInteger.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -27,23 +27,11 @@ package com.siemens.ct.exi.values;
  * @version 0.9.3-SNAPSHOT
  */
 
-public enum ValueType {
-	/** Binary */
-	BINARY_BASE64, BINARY_HEX,
-	/** Boolean */
-	BOOLEAN,
-	/** Decimal */
-	DECIMAL,
-	/** Float */
-	FLOAT,
-	/** Integer (int, long, BigInteger) */
-	INTEGER,
-	/** Datetime */
-	DATETIME,
-	/** String */
-	STRING,
-	/** List */
-	LIST,
-	/** QName */
-	QNAME;
+public enum IntegerValueType {
+	/** int */
+	INT,
+	/** long */
+	LONG,
+	/** BigInteger **/
+	BIG;
 }

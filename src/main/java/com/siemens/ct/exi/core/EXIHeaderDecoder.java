@@ -38,6 +38,7 @@ import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.IntegerValue;
+import com.siemens.ct.exi.values.IntegerValueType;
 import com.siemens.ct.exi.values.Value;
 import com.siemens.ct.exi.values.ValueType;
 
@@ -320,7 +321,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		} else if (VALUE_PARTITION_CAPACITY.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INTEGER_INT) {
+				if (iv.getIntegerValueType() == IntegerValueType.INT) {
 					f.setValuePartitionCapacity(iv.intValue());
 				} else {
 					throw new EXIException(
@@ -335,7 +336,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		} else if (BLOCK_SIZE.equals(localName)) {
 			if (value instanceof IntegerValue) {
 				IntegerValue iv = (IntegerValue) value;
-				if (iv.getValueType() == ValueType.INTEGER_INT) {
+				if (iv.getIntegerValueType() == IntegerValueType.INT) {
 					f.setBlockSize(iv.intValue());
 				} else {
 					throw new EXIException(
@@ -356,10 +357,10 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			if (value.getValueType() == ValueType.DECIMAL) {
 				DecimalValue dv = (DecimalValue) value;
 				f.setLocalValuePartitions(dv.isNegative());
-				assert (dv.getIntegral().getValueType() == ValueType.INTEGER_INT);
+				assert (dv.getIntegral().getIntegerValueType() == IntegerValueType.INT);
 				f.setMaximumNumberOfBuiltInElementGrammars(dv
 						.getIntegral().intValue() - 1);
-				assert (dv.getRevFractional().getValueType() == ValueType.INTEGER_INT);
+				assert (dv.getRevFractional().getIntegerValueType() == IntegerValueType.INT);
 				f.setMaximumNumberOfBuiltInProductions(dv.getRevFractional()
 						.intValue() - 1);
 			}

@@ -84,7 +84,7 @@ public class RoundtripTestCase extends TestCase {
 		assertTrue(dec.next() == EventType.CHARACTERS);
 		Value val = dec.decodeCharacters();
 		enc2.encodeCharacters(val);
-		assertTrue(val.getValueType() == ValueType.INTEGER_INT);
+		assertTrue(val.getValueType() == ValueType.INTEGER);
 		assertTrue(dec.next() == EventType.END_ELEMENT);
 		QName qnameEE = dec.decodeEndElement().getQName();
 		assertTrue(qnameEE.equals(qnameRoot));
