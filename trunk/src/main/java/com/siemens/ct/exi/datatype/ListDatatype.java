@@ -40,8 +40,6 @@ import com.siemens.ct.exi.values.Value;
 public class ListDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 1329094446386886766L;
-	
-	public static final boolean NEW_MEMORY_SENSITIVE = false;
 
 	private Datatype listDatatype;
 
@@ -107,19 +105,13 @@ public class ListDatatype extends AbstractDatatype {
 			StringDecoder stringDecoder) throws IOException {
 
 		int len = valueChannel.decodeUnsignedInteger();
-		Value retVal;
-
-		if(NEW_MEMORY_SENSITIVE) {
-			// do not read values ahead
-			retVal = new ListValue(listDatatype, len);
-		} else {
-			Value[]  values = new Value[len];
-			for (int i = 0; i < len; i++) {
-				values[i] = listDatatype.readValue(qnContext, valueChannel,
-						stringDecoder);
-			}
-			retVal = new ListValue(values, listDatatype);
+		
+		Value[]  values = new Value[len];
+		for (int i = 0; i < len; i++) {
+			values[i] = listDatatype.readValue(qnContext, valueChannel,
+					stringDecoder);
 		}
+		Value retVal = new ListValue(values, listDatatype);
 
 		return retVal;
 	}

@@ -111,5 +111,10 @@ public abstract class AbstractRestrictedCharacterSet implements
 	public int hashCode() {
 		return codeSet.hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return codePointList.toString();
+	}
 
 }

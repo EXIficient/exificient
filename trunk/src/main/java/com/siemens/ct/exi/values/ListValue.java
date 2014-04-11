@@ -18,6 +18,7 @@
 
 package com.siemens.ct.exi.values;
 
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import com.siemens.ct.exi.Constants;
@@ -46,25 +47,18 @@ public class ListValue extends AbstractValue {
 		this.listDatatype = listDatatype;
 	}
 	
-	public ListValue(Datatype listDatatype, int numberOfValues) {
-		super(ValueType.LIST);
-		this.listDatatype = listDatatype;
-		this.numberOfValues = numberOfValues;
-		this.values = null;
-	}
-	
 	public int getNumberOfValues() {
 		return numberOfValues;
 	}
 
-	public Value[] toValues() {
+	public Value[] toValues() throws IOException {		
 		return values;
 	}
 	
 	public Datatype getListDatatype() {
 		return listDatatype;
 	}
-
+	
 	public int getCharactersLength() {
 		if (slen == -1) {
 			slen = values.length > 0 ? (values.length - 1) : 0; // (n-1)
@@ -113,9 +107,6 @@ public class ListValue extends AbstractValue {
 		
 		return new ListValue(values, listDatatype);
 	}
-	
-
-	
 	
 	
 	protected final boolean _equals(ListValue o) {

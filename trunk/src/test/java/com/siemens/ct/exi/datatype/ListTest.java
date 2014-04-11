@@ -30,6 +30,7 @@ import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.DatatypeMappingTest;
@@ -59,7 +60,8 @@ public class ListTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		ldtInteger.writeValue(null, bitEC, null);
 		bitEC.flush();
-		Value v1 = ldtInteger.readValue(null, getBitDecoder(), null);
+		DecoderChannel dc = getBitDecoder();
+		Value v1 = ldtInteger.readValue(null, dc, null);
 		assertTrue(v1.getValueType() == ValueType.LIST);
 		ListValue lv1 = (ListValue) v1;
 		assertTrue(s.equals(lv1.toString()));

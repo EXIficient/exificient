@@ -49,7 +49,6 @@ import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
-import com.siemens.ct.exi.datatype.ListDatatype;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.util.NoEntityResolver;
@@ -382,74 +381,42 @@ public class SAXDecoder implements XMLReader {
 					break;
 				case LIST:
 					ListValue lv = (ListValue) val;
+					Value[] values = lv.toValues();
 					
-					if (ListDatatype.NEW_MEMORY_SENSITIVE) {
-						// System.err.println("TODO decode list value, " + lv.getListDatatype() + ", " + lv.getNumberOfValues());
-						for(int k=0; k<lv.getNumberOfValues(); k++) {
-							Value lvi = decoder.decodeListValue(lv.getListDatatype());
-							ValueType vt = lvi.getValueType();
+					if (values.length > 0) {
+						ValueType vt = values[0].getValueType();
+						int len;
+						
+						for (Value val2 : values) {
 							switch (vt) {
 							case BOOLEAN:
 							case STRING:
-								chars = lvi.getCharacters();
+								chars = val2.getCharacters();
 								contentHandler.characters(chars, 0,
 										chars.length);
-								// delimiter
 								contentHandler
-								.characters(
-										Constants.XSD_LIST_DELIM_CHAR_ARRAY,
-										0,
-										Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
-								break;
-							default:
-								int slen = lvi.getCharactersLength() +  1; // val+delim
-								ensureBufferCapacity(slen);
-
-								// fills char array with value
-								lvi.getCharacters(cbuffer, 0);
-								cbuffer[slen-1] = Constants.XSD_LIST_DELIM_CHAR;
-								contentHandler.characters(cbuffer, 0, slen);
-								break;
-							}							
-						}
-					} else {
-						Value[] values = lv.toValues();
-						int len;
-
-						if (values.length > 0) {
-							ValueType vt = values[0].getValueType();
-							switch (vt) {
-							case BOOLEAN:
-							case STRING:
-								for (Value val2 : values) {
-									chars = val2.getCharacters();
-									contentHandler.characters(chars, 0,
-											chars.length);
-									contentHandler
-											.characters(
-													Constants.XSD_LIST_DELIM_CHAR_ARRAY,
-													0,
-													Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
-								}
+										.characters(
+												Constants.XSD_LIST_DELIM_CHAR_ARRAY,
+												0,
+												Constants.XSD_LIST_DELIM_CHAR_ARRAY.length);
 								break;
 							default:
 								int offset = 0;
-								for (Value val2 : values) {
-									len = val2.getCharactersLength();
+								len = val2.getCharactersLength();
 
-									if (cbuffer.length < (offset + len + 1)) {
-										contentHandler.characters(cbuffer, 0,
-												offset);
-										offset = 0;
-									}
-									val2.getCharacters(cbuffer, offset);
-									offset += len;
-									cbuffer[offset++] = ' ';
+								if (cbuffer.length < (offset + len + 1)) {
+									contentHandler.characters(cbuffer, 0,
+											offset);
+									offset = 0;
 								}
+								val2.getCharacters(cbuffer, offset);
+								offset += len;
+								cbuffer[offset++] = ' ';
 								// pending chars
 								contentHandler.characters(cbuffer, 0, offset);
 								break;
 							}
+							
 						}
 					}
 					break;
@@ -566,35 +533,32 @@ public class SAXDecoder implements XMLReader {
 			break;
 		case LIST:
 			ListValue lv = (ListValue) val;
-			Value[] values = lv.toValues();
 
-			if (values.length > 0) {
+			if (lv.getNumberOfValues() > 0) {
 				if (sbHelper == null) {
 					sbHelper = new StringBuilder();
 				} else {
 					sbHelper.setLength(0);
 				}
 
+				Value[] values = lv.toValues();
 				ValueType vt = values[0].getValueType();
-				switch (vt) {
-				case BOOLEAN:
-				case STRING:
-					for (Value val2 : values) {
+				for (Value val2 : values) {
+					switch (vt) {
+					case BOOLEAN:
+					case STRING:
 						sbHelper.append(val2.getCharacters());
 						sbHelper.append(' ');
-					}
-					break;
-				default:
-					for (Value val2 : values) {
+						break;
+					default:
 						int slen = val2.getCharactersLength();
 						ensureBufferCapacity(slen);
 						val2.getCharacters(cbuffer, 0);
 						sbHelper.append(cbuffer, 0, slen);
 						sbHelper.append(' ');
+						break;
 					}
-					break;
 				}
-
 				sVal = sbHelper.toString();
 			} else {
 				sVal = Constants.EMPTY_STRING;
