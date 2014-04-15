@@ -1041,7 +1041,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 	// dtr-10
 	// <!-- "123.45" should be encoded using exi:decimal as designated by an -->
-	// <!-- DTRM entry pegged at the base datatype that is an union datatpe. -->
+	// <!-- DTRM entry pegged at the base datatype that is an union datatype. -->
 	public void testUnion3() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo' xmlns:foo='urn:foo'>"
 				+ "  <xs:simpleType name='unionTypeDerived'>"

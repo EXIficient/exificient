@@ -51,9 +51,13 @@ public class EnumerationDatatype extends AbstractDatatype {
 			QNameContext schemaType) {
 		super(BuiltInType.ENUMERATION, schemaType);
 
-		this.dtEnumValues = dtEnumValues;
-		this.enumValues = enumValues;
-		this.codingLength = MethodsBag.getCodingLength(enumValues.length);
+		if(dtEnumValues.getBuiltInType() != BuiltInType.QNAME && dtEnumValues.getBuiltInType() != BuiltInType.ENUMERATION) {
+			this.dtEnumValues = dtEnumValues;
+			this.enumValues = enumValues;
+			this.codingLength = MethodsBag.getCodingLength(enumValues.length);
+		} else {
+			throw new RuntimeException("Enumeration type values can't be of type Enumeration or QName");
+		}
 	}
 	
 	public Datatype getEnumValueDatatype() {

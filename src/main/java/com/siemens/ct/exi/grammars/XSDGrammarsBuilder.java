@@ -1712,9 +1712,11 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 					XSMultiValueFacet enumer = (XSMultiValueFacet) facet;
 					if (enumer.getFacetKind() == XSSimpleTypeDefinition.FACET_ENUMERATION) {
 						StringList enumList = enumer.getLexicalFacetValues();
-						// TODO enumeration not type-castable !?
-						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std
-								.getBaseType();
+						// avoid enumeration of enumeration
+						XSSimpleTypeDefinition stdEnum = (XSSimpleTypeDefinition) std.getBaseType();
+						while ( this.getDatatype(stdEnum).getBuiltInType() == BuiltInType.ENUMERATION ) {
+							stdEnum = (XSSimpleTypeDefinition) stdEnum.getBaseType();
+						}
 						/*
 						 * Exceptions are for schema types derived from others
 						 * by union and their subtypes, QName or Notation and
