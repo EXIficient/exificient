@@ -38,13 +38,23 @@
                                         <xs:element name="character-refs" type="xs:IDREFS"/>
                                     </xs:sequence>
                                     <xs:attribute name="identifier" type="xs:ID"/>
+                                    <xs:attribute name="keywords" type="Keywords"/>
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
+                        <xs:attribute name="ids" type="IDs"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    
+    <xs:simpleType name="Keywords">
+        <xs:list itemType="xs:string"/>
+    </xs:simpleType>
+    
+    <xs:simpleType name="IDs">
+        <xs:list itemType="xs:int"/>
+    </xs:simpleType>
     
 </xs:schema>
