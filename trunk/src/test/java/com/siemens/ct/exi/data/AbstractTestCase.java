@@ -201,8 +201,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// resourceIdentifier.getExpandedSystemId();
 			String literalSystemId = resourceIdentifier.getLiteralSystemId(); 
 			
+			// System.out.println(literalSystemId);
+			
 			if("XMLSchema.dtd".equals(literalSystemId)  || "datatypes.dtd".equals(literalSystemId)) {
-				InputStream isTypes = new FileInputStream(".\\data\\schemaForSchema\\" + literalSystemId);
+				InputStream isTypes = new FileInputStream("./data/W3C/xsd/" + literalSystemId);
 
 				String publicId = null;
 				String systemId = null;
@@ -212,7 +214,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 				systemId, baseSystemId, isTypes, encoding);
 				return xsdSourceTypes;
 			} else if("http://www.w3.org/2001/xml.xsd".equals(literalSystemId)) {
-				InputStream isTypes = new FileInputStream(".\\data\\schemaForSchema\\" + "xml.xsd");
+				InputStream isTypes = new FileInputStream("./data/W3C/xsd/" + "xml.xsd");
 
 				String publicId = null;
 				String systemId = null;
