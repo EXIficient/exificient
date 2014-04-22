@@ -4,14 +4,14 @@
     <posIntValues>5555 13213 22</posIntValues>
     <stringValues>abc defg hijk</stringValues>
     <!-- IDREFS -->
-    <books>
-        <book identifier="ID_1">
+    <books ids="-12 33 555">
+        <book identifier="ID_1" keywords="Hu ha ho">
             <isbn>1213</isbn>
             <title>Huuhh</title>
             <author-ref ref="ID_1" />
             <character-refs>ID_1 ID_2</character-refs>
         </book>        
-        <book identifier="ID_2">
+        <book identifier="ID_2" keywords="hha hoo hu">
             <isbn>1213</isbn>
             <title>Huuhh</title>
             <author-ref ref="ID_1" />
