@@ -75,6 +75,11 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		super(s);
 	}
 
+	
+	protected XMLEntityResolver getXsdEntityResolver() {
+		return new TestXSDResolver();
+	}
+	
 	private void _testOption(TestCaseOption tco, API api) throws Exception {
 		if (tco.isSchemaInformedOnly() && tco.getSchemaLocation() == null) {
 			return;
@@ -118,7 +123,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setGrammars(grammar);
 		} else {
 			// schema-informed
-			XMLEntityResolver entityResolver = new TestXSDResolver(); // // no
+			XMLEntityResolver entityResolver = getXsdEntityResolver(); // // no
 																		// internet
 																		// connection,
 																		// try
