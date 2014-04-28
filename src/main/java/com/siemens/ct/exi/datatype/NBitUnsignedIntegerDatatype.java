@@ -116,5 +116,14 @@ public class NBitUnsignedIntegerDatatype extends AbstractDatatype {
 				.decodeNBitUnsignedIntegerValue(numberOfBits4Range);
 		return iv.add(lowerBound);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(super.equals(o) && o instanceof NBitUnsignedIntegerDatatype ) {
+			NBitUnsignedIntegerDatatype nb = (NBitUnsignedIntegerDatatype) o;
+			return (this.lowerBound.equals(nb.lowerBound) && this.upperBound.equals(nb.upperBound));
+		}
+		return false;
+	}
 
 }

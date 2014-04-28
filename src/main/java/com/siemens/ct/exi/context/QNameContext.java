@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
@@ -54,15 +53,18 @@ public class QNameContext implements Serializable {
 
 	// global grammar attribute (if any)
 	Attribute grammarGlobalAttribute;
-
-	// simple datatype
-	Datatype simpleDatatype;
 	
 	// type grammar
 	SchemaInformedFirstStartTagGrammar typeGrammar;
 
-	// simple basetype
-	QNameContext simpleBaseType;
+//	// simple basetype
+//	QNameContext simpleBaseType;
+//	
+//	// simple datatype
+//	Datatype simpleDatatype;
+//	
+//	// simple base datatype
+//	Datatype simpleBaseDatatype;
 
 	public QNameContext(int namespaceUriID, int localNameID, QName qName,
 			int qNameID) {
@@ -150,14 +152,6 @@ public class QNameContext implements Serializable {
 	public Attribute getGlobalAttribute() {
 		return grammarGlobalAttribute;
 	}
-
-	public void setSimpleDatatype(Datatype simpleDatatype) {
-		this.simpleDatatype = simpleDatatype;
-	}
-	
-	public Datatype getSimpleDatatype() {
-		return this.simpleDatatype;
-	}
 	
 	public void setTypeGrammar(SchemaInformedFirstStartTagGrammar typeGrammar) {
 		this.typeGrammar = typeGrammar;
@@ -168,22 +162,43 @@ public class QNameContext implements Serializable {
 		return this.typeGrammar;
 	}
 
-	/**
-	 * Returns simple base-type
-	 * 
-	 * @return base-type
-	 */
-	public QNameContext getSimpleBaseType() {
-		return this.simpleBaseType;
-	}
 
-	/**
-	 * Set simple base-type
-	 * 
-	 */
-	public void setSimpleBaseType(QNameContext simpleBaseType) {
-		this.simpleBaseType = simpleBaseType;
-	}
+
+//	/**
+//	 * Set simple base-type
+//	 * 
+//	 */
+//	public void setSimpleBaseType(QNameContext simpleBaseType) {
+//		this.simpleBaseType = simpleBaseType;
+//	}
+//	
+//	/**
+//	 * Returns simple base-type
+//	 * 
+//	 * @return base-type
+//	 */
+//	public QNameContext getSimpleBaseType() {
+//		return this.simpleBaseType;
+//	}
+//	
+//	public void setSimpleDatatype(Datatype simpleDatatype) {
+//		this.simpleDatatype = simpleDatatype;
+//	}
+//	
+//	public Datatype getSimpleDatatype() {
+//	return this.simpleDatatype;
+//}
+//	
+//	public void setSimpleBaseDatatype(Datatype simpleBaseDatatype) {
+//		this.simpleBaseDatatype = simpleBaseDatatype;
+//	}
+//	
+//	public Datatype getSimpleBaseDatatype() {
+//		return this.simpleBaseDatatype;
+//	}
+
+	
+	
 
 	public int getNamespaceUriID() {
 		return this.namespaceUriID;

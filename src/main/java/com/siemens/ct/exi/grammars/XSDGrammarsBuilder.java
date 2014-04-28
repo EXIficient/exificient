@@ -136,6 +136,9 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	// pool for attribute-declaration of Attribute events
 	protected Map<XSAttributeDeclaration, Attribute> attributePool;
+	
+	// pool for datatypes
+	protected Map<XSSimpleTypeDefinition, Datatype> datatypePool;
 
 	// when schema information is available to describe the contents of an EXI
 	// stream and more than one element is declared with the same qname
@@ -176,6 +179,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		grammarTypes = new HashMap<QName, SchemaInformedFirstStartTagGrammar>();
 		schemaLocalNames = new HashMap<String, List<String>>();
 		attributePool = new HashMap<XSAttributeDeclaration, Attribute>();
+		datatypePool = new HashMap<XSSimpleTypeDefinition, Datatype>();		
 
 		/*
 		 * Datatype mappings
@@ -959,75 +963,76 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 					qnc.setTypeGrammar(fstr);
 					
 
-					// simple datatype
-					if (typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
-						XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) typeDef;
-						//type_i = translateSimpleTypeDefinitionToFSA(std);
-						Datatype dt = getDatatype(std);
-						
-						qnc.setSimpleDatatype(dt);
-						//System.out.println(qnc.getQName() + " --> " +  dt);
-					}
+//					// simple datatype
+//					if (typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+//						XSSimpleTypeDefinition std = (XSSimpleTypeDefinition) typeDef;
+//						//type_i = translateSimpleTypeDefinitionToFSA(std);
+//						Datatype dt = getDatatype(std);
+//						
+//						qnc.setSimpleDatatype(dt);
+//						//System.out.println(qnc.getQName() + " --> " +  dt);
+//					}
 				}
 				
 
-				// (direct) simple sub-types vs. baseType
-				if (typeDef != null
-						&& typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
-						&& !typeDef.getAnonymous()) {
-
-					XSTypeDefinition baseType = getBaseType(typeDef);
-					while (baseType != null && baseType.getAnonymous()) {
-						baseType = getBaseType(baseType);
-					}
-
-					// subtypes
-					if (baseType == null) {
-						// http://www.w3.org/2001/XMLSchema,anySimpleType
-					} else {
-						// Note: according to EXI errata enumerations are not
-						// handled by simple DTR maps
-						// There are only other enum types in hierarchy
-						Datatype dtBase = this
-								.getDatatype((XSSimpleTypeDefinition) baseType);
-						Datatype dt = this
-								.getDatatype((XSSimpleTypeDefinition) typeDef);
-
-						if (dt.getBuiltInType() == BuiltInType.ENUMERATION
-								&& dtBase.getBuiltInType() != BuiltInType.ENUMERATION) {
-							// not added as sub-type
-						} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI
-								.equals(baseType.getNamespace())
-								&& baseType.getName() == null) {
-							// e.g., xsd:ENTITIES
-						} else {
-							// Set simple baseType
-							QNameContext base = getQNameContext(
-									baseType.getNamespace(),
-									baseType.getName(), grammarUriContexts);
-							assert(base != null);
-							qnc.setSimpleBaseType(base);
-							
-							
-							
-//							// TODO subtypes needed anymore?!
-//							// List<QName> sub = subtypes.get(baseTypeQName);
-//							// System.out.println(baseType);
-//							List<QNameContext> subTypes = base
-//									.getSimpleTypeSubtypes();
-//							// List<QNameContext> subTypes =
-//							// qnc.getSimpleTypeSubtypes();
-//							if (subTypes == null) {
-//								subTypes = new ArrayList<QNameContext>();
-//								// qnc.setSimpleTypeSubtypes(subTypes);
-//								base.setSimpleTypeSubtypes(subTypes);
-//							}
-//							// QName baseTypeQName = getValueType(baseType);
-//							// subTypes.add(base);
-//							subTypes.add(qnc);
-						}
-					}
-				}
+//				// (direct) simple sub-types vs. baseType
+//				if (typeDef != null
+//						&& typeDef.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE
+//						&& !typeDef.getAnonymous()) {
+//
+//					XSTypeDefinition baseType = getBaseType(typeDef);
+//					while (baseType != null && baseType.getAnonymous()) {
+//						baseType = getBaseType(baseType);
+//					}
+//
+////					// subtypes
+////					if (baseType == null) {
+////						// http://www.w3.org/2001/XMLSchema,anySimpleType
+////					} else {
+////						// Note: according to EXI errata enumerations are not
+////						// handled by simple DTR maps
+////						// There are only other enum types in hierarchy
+////						Datatype dtBase = this
+////								.getDatatype((XSSimpleTypeDefinition) baseType);
+////						Datatype dt = this
+////								.getDatatype((XSSimpleTypeDefinition) typeDef);
+////
+////						if (dt.getBuiltInType() == BuiltInType.ENUMERATION
+////								&& dtBase.getBuiltInType() != BuiltInType.ENUMERATION) {
+////							// not added as sub-type
+////						} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI
+////								.equals(baseType.getNamespace())
+////								&& baseType.getName() == null) {
+////							// e.g., xsd:ENTITIES
+////						} else {
+////							// Set simple baseType
+////							QNameContext base = getQNameContext(
+////									baseType.getNamespace(),
+////									baseType.getName(), grammarUriContexts);
+////							assert(base != null);
+////							qnc.setSimpleBaseType(base);
+////							
+////							qnc.setSimpleBaseDatatype(dtBase);
+////							
+////							
+//////							// TODO subtypes needed anymore?!
+//////							// List<QName> sub = subtypes.get(baseTypeQName);
+//////							// System.out.println(baseType);
+//////							List<QNameContext> subTypes = base
+//////									.getSimpleTypeSubtypes();
+//////							// List<QNameContext> subTypes =
+//////							// qnc.getSimpleTypeSubtypes();
+//////							if (subTypes == null) {
+//////								subTypes = new ArrayList<QNameContext>();
+//////								// qnc.setSimpleTypeSubtypes(subTypes);
+//////								base.setSimpleTypeSubtypes(subTypes);
+//////							}
+//////							// QName baseTypeQName = getValueType(baseType);
+//////							// subTypes.add(base);
+//////							subTypes.add(qnc);
+////						}
+////					}
+//				}
 			}
 		}
 
@@ -1695,8 +1700,13 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		return type_i;
 	}
 
+
 	public Datatype getDatatype(XSSimpleTypeDefinition std) {
-		Datatype datatype = null;
+		Datatype datatype = datatypePool.get(std);
+		
+		if(datatype!= null) {
+			return datatype;
+		}
 
 		// used for dtr map
 		QName schemaType = getSchemaType(std);
@@ -1834,6 +1844,15 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		} else {
 			datatype = getDatatypeOfType(std, schemaType);
 		}
+		
+		// base datatype
+		XSTypeDefinition baseType = this.getBaseType(std);
+		if(baseType != null && baseType.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
+			XSSimpleTypeDefinition stdBaseType = (XSSimpleTypeDefinition)baseType;
+			datatype.setBaseDatatype(this.getDatatype(stdBaseType));
+		}
+		
+		datatypePool.put(std, datatype);
 
 		return datatype;
 	}
@@ -2101,7 +2120,6 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		//
 		Datatype datatype;
 		QName schemaDatatype = getXMLSchemaDatatype(std);
-		
 
 		if (BuiltIn.XSD_BASE64BINARY.equals(schemaDatatype)) {
 			datatype = new BinaryBase64Datatype(qncSchemaType);

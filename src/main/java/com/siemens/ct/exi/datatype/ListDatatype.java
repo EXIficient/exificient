@@ -115,4 +115,13 @@ public class ListDatatype extends AbstractDatatype {
 
 		return retVal;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(super.equals(o) && o instanceof ListDatatype ) {
+			ListDatatype l = (ListDatatype) o;
+			return (this.listDatatype.equals(l.listDatatype));
+		}
+		return false;
+	}
 }
