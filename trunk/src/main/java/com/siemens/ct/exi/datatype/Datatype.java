@@ -45,6 +45,10 @@ public interface Datatype extends Serializable {
 	// used for dtr map
 	public QNameContext getSchemaType();
 	
+	// base datatype
+	public Datatype getBaseDatatype();
+	public void setBaseDatatype(Datatype baseDatatype);
+	
 	// used for preserve lexicalValues
 	public DatatypeID getDatatypeID();
 

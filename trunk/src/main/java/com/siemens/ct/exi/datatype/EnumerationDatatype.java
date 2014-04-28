@@ -105,5 +105,21 @@ public class EnumerationDatatype extends AbstractDatatype {
 		assert (index >= 0 && index < enumValues.length);
 		return enumValues[index];
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(super.equals(o) && o instanceof EnumerationDatatype ) {
+			EnumerationDatatype e = (EnumerationDatatype) o;
+			if(this.dtEnumValues.equals(e.dtEnumValues) && this.enumValues.length == e.enumValues.length ) {
+				for(int i=0; i<this.enumValues.length; i++) {
+					if(!this.enumValues[i].equals(e.enumValues[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

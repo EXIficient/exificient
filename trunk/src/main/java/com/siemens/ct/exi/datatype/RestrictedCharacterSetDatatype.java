@@ -167,5 +167,14 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 		return value;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(super.equals(o) && o instanceof RestrictedCharacterSetDatatype ) {
+			RestrictedCharacterSetDatatype r = (RestrictedCharacterSetDatatype) o;
+			return (this.rcs.equals(r.rcs));
+		}
+		return false;
+	}
 
 }

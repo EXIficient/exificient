@@ -111,5 +111,14 @@ public class DatetimeDatatype extends AbstractDatatype {
 			StringDecoder stringDecoder) throws IOException {
 		return valueChannel.decodeDateTimeValue(datetimeType);
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(super.equals(o) && o instanceof DatetimeDatatype ) {
+			DatetimeDatatype dt = (DatetimeDatatype) o;
+			return (this.datetimeType == dt.getDatetimeType());
+		}
+		return false;
+	}
 
 }

@@ -163,7 +163,7 @@ public abstract class AbstractTypeCoder implements TypeCoder {
 		}
 	}
 
-	protected Datatype getDtrDatatype(Datatype datatype) {
+	protected Datatype getDtrDatatype(final Datatype datatype) {
 		assert (dtrMapInUse);
 
 		Datatype dtrDatatype;
@@ -176,38 +176,56 @@ public abstract class AbstractTypeCoder implements TypeCoder {
 			QName schemaType = qncSchemaType.getQName();
 
 			dtrDatatype = dtrMap.get(schemaType);
-
+			
 			// unions
 			if (dtrDatatype == null
 					&& datatype.getBuiltInType() == BuiltInType.STRING
 					&& ((StringDatatype) datatype).isDerivedByUnion()) {
 				dtrDatatype = datatype;
 				// union ancestors of interest
-				QNameContext baseType = qncSchemaType.getSimpleBaseType();
-				if (baseType != null) {
-					Datatype dtBase = baseType.getSimpleDatatype();
-					if (dtBase != null
-							&& dtBase.getBuiltInType() == BuiltInType.STRING
-							&& ((StringDatatype) dtBase).isDerivedByUnion()) {
-						// check again
-						dtrDatatype = null;
-					}
+				// Datatype dtBase = qncSchemaType.getSimpleBaseDatatype();
+				Datatype dtBase = datatype.getBaseDatatype();
+
+				if (dtBase != null
+						&& dtBase.getBuiltInType() == BuiltInType.STRING
+						&& ((StringDatatype) dtBase).isDerivedByUnion()) {
+					// check again
+					dtrDatatype = null;
 				}
+				
+//				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+//				if (baseType != null) {
+//					Datatype dtBase = baseType.getSimpleDatatype();
+//					if (dtBase != null
+//							&& dtBase.getBuiltInType() == BuiltInType.STRING
+//							&& ((StringDatatype) dtBase).isDerivedByUnion()) {
+//						// check again
+//						dtrDatatype = null;
+//					}
+//				}
 			}
 			// lists
 			if (dtrDatatype == null
 					&& datatype.getBuiltInType() == BuiltInType.LIST) {
 				dtrDatatype = datatype;
 				// list ancestors of interest
-				QNameContext baseType = qncSchemaType.getSimpleBaseType();
-				if (baseType != null) {
-					Datatype dtBase = baseType.getSimpleDatatype();
-					if (dtBase != null
-							&& dtBase.getBuiltInType() == BuiltInType.LIST) {
-						// check again
-						dtrDatatype = null;
-					}
+				// Datatype dtBase = qncSchemaType.getSimpleBaseDatatype();
+				Datatype dtBase = datatype.getBaseDatatype();
+				if (dtBase != null
+						&& dtBase.getBuiltInType() == BuiltInType.LIST) {
+					// check again
+					dtrDatatype = null;
 				}
+				
+//				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+//				if (baseType != null) {
+//					Datatype dtBase = baseType.getSimpleDatatype();
+//					if (dtBase != null
+//							&& dtBase.getBuiltInType() == BuiltInType.LIST) {
+//						// check again
+//						dtrDatatype = null;
+//					}
+//				}
 
 			}
 			// enums
@@ -215,19 +233,28 @@ public abstract class AbstractTypeCoder implements TypeCoder {
 					&& datatype.getBuiltInType() == BuiltInType.ENUMERATION) {
 				dtrDatatype = datatype;
 				// only ancestor types that have enums are of interest
-				QNameContext baseType = qncSchemaType.getSimpleBaseType();
-				if (baseType != null) {
-					Datatype dtBase = baseType.getSimpleDatatype();
-					if (dtBase != null
-							&& dtBase.getBuiltInType() == BuiltInType.ENUMERATION) {
-						// check again
-						dtrDatatype = null;
-					}
+				// Datatype dtBase = qncSchemaType.getSimpleBaseDatatype();
+				Datatype dtBase = datatype.getBaseDatatype();
+				if (dtBase != null
+						&& dtBase.getBuiltInType() == BuiltInType.ENUMERATION) {
+					// check again
+					dtrDatatype = null;
 				}
+				
+//				QNameContext baseType = qncSchemaType.getSimpleBaseType();
+//				if (baseType != null) {
+//					Datatype dtBase = baseType.getSimpleDatatype();
+//					if (dtBase != null
+//							&& dtBase.getBuiltInType() == BuiltInType.ENUMERATION) {
+//						// check again
+//						dtrDatatype = null;
+//					}
+//				}
 			}
 			if (dtrDatatype == null) {
 				// no mapping yet
-				dtrDatatype = updateDtrDatatype(qncSchemaType);
+				// dtrDatatype = updateDtrDatatype(qncSchemaType);
+				dtrDatatype = updateDtrDatatype(datatype);
 				// special integer handling
 				if (dtrDatatype.getBuiltInType() == BuiltInType.INTEGER
 						&& (datatype.getBuiltInType() == BuiltInType.NBIT_UNSIGNED_INTEGER || datatype
@@ -256,13 +283,23 @@ public abstract class AbstractTypeCoder implements TypeCoder {
 		return dtrDatatype;
 	}
 
-	protected Datatype updateDtrDatatype(QNameContext qncSchemaType) {
+	
+	// protected Datatype updateDtrDatatype(QNameContext qncSchemaType) {
+	protected Datatype updateDtrDatatype(Datatype datatype) {
 		assert (dtrMapInUse);
-
-		QNameContext simpleBaseType = qncSchemaType.getSimpleBaseType();
+		
+		Datatype baseDatatype = datatype.getBaseDatatype();
+		// QNameContext qncSchemaType = datatype.getSchemaType();
+		// QNameContext simpleBaseType = qncSchemaType.getSimpleBaseDatatype().getSchemaType();
+		QNameContext simpleBaseType = baseDatatype.getSchemaType();
+		
+		
 		Datatype dt = dtrMap.get(simpleBaseType.getQName());
+		
 		if (dt == null) {
-			dt = updateDtrDatatype(simpleBaseType);
+			// dt = updateDtrDatatype(simpleBaseType);
+			// dt = updateDtrDatatype(qncSchemaType.getSimpleBaseDatatype());
+			dt = updateDtrDatatype(baseDatatype);
 		} else {
 			dtrMap.put(simpleBaseType.getQName(), dt);
 		}

@@ -38,6 +38,9 @@ public abstract class AbstractDatatype implements Datatype {
 
 	// for codec map
 	protected final QNameContext schemaType;
+	
+	// base datatype
+	protected Datatype baseDatatype;
 
 	public AbstractDatatype() {
 		this(null, null);
@@ -55,13 +58,26 @@ public abstract class AbstractDatatype implements Datatype {
 	public QNameContext getSchemaType() {
 		return schemaType;
 	}
+	
+	public Datatype getBaseDatatype() {
+		return baseDatatype;
+	}
+	
+	public void setBaseDatatype(Datatype baseDatatype) {
+		this.baseDatatype = baseDatatype;
+	}
 
 	public boolean equals(Object o) {
 		if (o instanceof Datatype) {
-			return (builtInType == ((Datatype) o).getBuiltInType());
-		} else {
-			return false;
+			if(builtInType == ((Datatype) o).getBuiltInType()) {
+				if(schemaType == null) {
+					return (((Datatype) o).getSchemaType() == null);
+				} else {
+					return (schemaType.equals(((Datatype) o).getSchemaType()));
+				}
+			}
 		}
+		return false;
 	}
 
 	public int hashCode() {
