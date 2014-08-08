@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -46,15 +48,19 @@ public class EXIStreamDecoder {
 		exiHeader = new EXIHeaderDecoder();
 		// assume the default factory
 		exiBody = noOptionsFactory.createEXIBodyDecoder();
-		this.noOptionsFactory = noOptionsFactory; 
+		this.noOptionsFactory = noOptionsFactory;
 	}
-	
-	public EXIBodyDecoder getBodyOnlyDecoder(InputStream is) throws EXIException, IOException {
+
+	public EXIBodyDecoder getBodyOnlyDecoder(InputStream is)
+			throws EXIException, IOException {
+		is = checkBufferedAndMarkSupportedInputStream(is);
 		exiBody.setInputStream(is);
 		return exiBody;
 	}
 
-	public EXIBodyDecoder decodeHeader(InputStream is) throws EXIException, IOException {
+	public EXIBodyDecoder decodeHeader(InputStream is) throws EXIException,
+			IOException {
+		is = checkBufferedAndMarkSupportedInputStream(is);
 		// read header
 		BitDecoderChannel headerChannel = new BitDecoderChannel(is);
 		EXIFactory exiFactory = exiHeader
@@ -72,7 +78,24 @@ public class EXIStreamDecoder {
 		} else {
 			exiBody.setInputStream(is);
 		}
-		
+
 		return exiBody;
+	}
+
+	/**
+	 * 
+	 * @param is
+	 *            input stream
+	 * @return input stream that is buffered with <code>markSupported</code> or
+	 *         same stream if those properties are given already
+	 */
+	private InputStream checkBufferedAndMarkSupportedInputStream(InputStream is) {
+		// buffer stream if not already
+		// TODO is there a *nice* way to detect whether a stream is buffered
+		if (!(is instanceof BufferedInputStream || is instanceof ByteArrayInputStream)) {
+			is = new BufferedInputStream(is);
+		}
+
+		return is;
 	}
 }

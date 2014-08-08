@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.api.sax;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,7 +219,7 @@ public class SAXDecoder implements XMLReader {
 		}
 
 		try {
-			// setup (bit) input stream
+			// setup input stream
 			InputStream is = inputSource.getByteStream();
 
 			// systemId ?
@@ -230,13 +229,7 @@ public class SAXDecoder implements XMLReader {
 			if (is == null) {
 				throw new EXIException("No valid input source " + is);
 			}
-
-			// buffer stream if not already
-			// TODO is there a *nice* way to detect whether a stream is buffered
-			if (!(is instanceof BufferedInputStream)) {
-				is = new BufferedInputStream(is);
-			}
-
+			
 			if (exiBodyOnly) {
 				// no EXI header
 				decoder = exiStream.getBodyOnlyDecoder(is);
