@@ -98,7 +98,7 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	private char[] decodeStringOnlySupplementaryCodePoints(char[] ca, int length, int i, int codePoint) throws IOException {
 		assert(Character.isSupplementaryCodePoint(codePoint));
 		if(sbHelper == null) {
-			sbHelper = new StringBuilder();
+			sbHelper = new StringBuilder(length + 10);
 		} else {
 			sbHelper.setLength(0);
 		}

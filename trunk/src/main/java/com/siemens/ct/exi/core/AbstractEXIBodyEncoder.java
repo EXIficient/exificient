@@ -23,6 +23,10 @@ import java.io.IOException;
 //import java.util.List;
 //import java.util.StringTokenizer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -1166,6 +1170,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		return null;
 	}
 
+	private final boolean doTokenizeCHs = false;
+	
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		// Don't we want to prune insignificant whitespace characters
 		if (!preserveLexicalValues) {
@@ -1175,33 +1181,108 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			}
 		}
 		
-//		List<String> uToks = getUriTokens(chars.toString());
-//		for(String ut : uToks) {
-//			encodeCharactersForce(new StringValue(ut));
-//		}
+		if (doTokenizeCHs) {
+			String delimiters;
+			// delimiters = "/#"; // uri delimiters
+			delimiters = " ,.-\t\n\r"; // text delimiters
+			String s = chars.toString();
+			
+			// remove leading and trailing whitespaces 
+			s = s.trim();
+			
+			// remove duplicates whitespaces ?
+			// \s matches a space, tab, new line, carriage return, form feed or vertical tab
+			// + says "one or more of those"
+			
+			s = s.replaceAll("\\s+", " ");
+			
+			List<String> uToks = getTokens(s, delimiters);
+			for(String ut : uToks) {
+				encodeCharactersForce(new StringValue(ut));
+			}
+		} else {
+			encodeCharactersForce(chars);
+		}
 
-		encodeCharactersForce(chars);
 	}
 	
-//    public static List<String> getUriTokens(String uri) {
+    @SuppressWarnings("unused")
+	public static List<String> getTokens(String tokenString, String delimiters) {
+		StringTokenizer st = new StringTokenizer(tokenString, delimiters, true);
+		ArrayList<String> uToks = new ArrayList<String>();
+		if(st.countTokens() > 1) {
+			
+			boolean prevWasDelimiter = false;
+			
+			while (st.hasMoreTokens()) {
+				String t = st.nextToken();
+				
+				// collapse contiguous delimiters
+				if(uToks.size() == 0) {
+					// first, just add
+					uToks.add(t);
+					prevWasDelimiter = delimiters.contains(t);
+				} else {
+					// all others
+					if(delimiters.contains(t)) {
+						// 't' is delimiter
+//						if(prevWasDelimiter) {
+							// combine them
+							uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
+//						} else {
+//							// new token
+//							uToks.add(t);
+//						}
+						prevWasDelimiter = true;
+					} else {
+						// 't' is not a delimiter
+//						if(prevWasDelimiter) {
+//						if(t.length() > 4) {
+							// new token
+							uToks.add(t);
+//						} else {
+//							// combine them
+//							uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
+//						}
+						prevWasDelimiter = false;
+					}
+				}
+				
+			}
+		} else {
+			uToks.add(tokenString);
+		}
+		
+		if(false) {
+			System.out.println("-------------------");
+			for(String t : uToks) {
+				System.out.println("<\"" + t + "\">");
+			}
+		}
+    	
+    	return uToks;
+    }
+    
+    
+//	public static List<String> getUriTokens(String uri) {
 //		StringTokenizer st = new StringTokenizer(uri, "/#", true);
 //		ArrayList<String> uToks = new ArrayList<String>();
-//		if(st.countTokens() > 1) {
+//		if (st.countTokens() > 1) {
 //			int nextIndex = 0;
 //			while (st.hasMoreTokens()) {
 //				String s = st.nextToken();
-//				if("/".equals(s)) {
+//				if ("/".equals(s)) {
 //					// is delimiter
-//					assert(uToks.size() > (nextIndex-1));
-//					uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
-//				} else if("#".equals(s)) {
+//					assert (uToks.size() > (nextIndex - 1));
+//					uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
+//				} else if ("#".equals(s)) {
 //					// is delimiter
-//					assert(uToks.size() > (nextIndex-1));
-//					uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
+//					assert (uToks.size() > (nextIndex - 1));
+//					uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
 //				} else {
-//					if(uToks.size() > nextIndex) {
+//					if (uToks.size() > nextIndex) {
 //						// Already there
-//						uToks.set(nextIndex-1, uToks.get(nextIndex-1) + s);
+//						uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
 //					} else {
 //						// new entry
 //						uToks.add(s);
@@ -1213,9 +1294,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 //		} else {
 //			uToks.add(uri);
 //		}
-//    	
-//    	return uToks;
-//    }
+//
+//		return uToks;
+//	}
     
 
 	public void encodeCharactersForce(Value chars) throws EXIException,

@@ -21,6 +21,7 @@ package com.siemens.ct.exi;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.data.SchemaTestCase;
+import com.siemens.ct.exi.data.W3CTestCase;
 
 // @SuppressWarnings("unused")
 public class QuickTestConfiguration {
@@ -140,10 +141,10 @@ public class QuickTestConfiguration {
 	// ///////////////////////////////////////////////////
 	// TEST CASE (GROUP)
 	static {
-		SchemaTestCase.setupQuickTest();
+		// SchemaTestCase.setupQuickTest();
 		// BuiltInXSDTestCase.setupQuickTest ( );
 		// GeneralTestCase.setupQuickTest();
-		// W3CTestCase.setupQuickTest();
+		W3CTestCase.setupQuickTest();
 		// FragmentTestCase.setupQuickTest ( );
 		// DeviationsTestCase.setupQuickTest();
 		// EXIOptionsHeaderTestCase.setupQuickTest ( );
