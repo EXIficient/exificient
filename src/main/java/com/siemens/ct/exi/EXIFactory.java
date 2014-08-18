@@ -99,6 +99,24 @@ public interface EXIFactory extends Cloneable {
 	 * @see EncodingOptions
 	 */
 	public EncodingOptions getEncodingOptions();
+	
+	/**
+	 * Sets the options used by the EXI Decoder(e.g., ignore schemaId).
+	 * 
+	 * @param headerOptions
+	 *            header options
+	 * @throws EXIException
+	 * @see DecodingOptions
+	 */
+	public void setDecodingOptions(DecodingOptions options);
+
+	/**
+	 * Returns the options used by the EXI decoder.
+	 * 
+	 * @return options currently used by the factory
+	 * @see DecodingOptions
+	 */
+	public DecodingOptions getDecodingOptions();
 
 	/**
 	 * Sets specific schemaId resolver.

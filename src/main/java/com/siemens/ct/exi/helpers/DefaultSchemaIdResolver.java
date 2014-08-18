@@ -60,7 +60,11 @@ public class DefaultSchemaIdResolver implements SchemaIdResolver {
 			return getGrammarFactory().createXSDTypesOnlyGrammars();
 		} else {
 			// interpret schemaId as location
-			return getGrammarFactory().createGrammars(schemaId);
+			try {
+				return getGrammarFactory().createGrammars(schemaId);
+			} catch (Exception e) {
+				throw new EXIException(this.getClass().getName() + " failed to retrieve schemaId == " + schemaId, e);
+			}
 		}
 	}
 	

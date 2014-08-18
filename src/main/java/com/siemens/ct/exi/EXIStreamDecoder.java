@@ -95,6 +95,7 @@ public class EXIStreamDecoder {
 		if (!(is instanceof BufferedInputStream || is instanceof ByteArrayInputStream)) {
 			is = new BufferedInputStream(is);
 		}
+		is.mark(Integer.MAX_VALUE);
 
 		return is;
 	}

@@ -26,6 +26,7 @@ import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.DecodingOptions;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
@@ -80,6 +81,7 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	protected FidelityOptions fidelityOptions;
 	protected EncodingOptions encodingOptions;
+	protected DecodingOptions decodingOptions;
 
 	protected SchemaIdResolver schemaIdResolver;
 
@@ -119,6 +121,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected static void setDefaultValues(EXIFactory factory) {
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		factory.setEncodingOptions(EncodingOptions.createDefault());
+		factory.setDecodingOptions(DecodingOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setFragment(false);
 		// factory.setGrammar(GrammarFactory.newInstance()
@@ -173,6 +176,14 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public EncodingOptions getEncodingOptions() {
 		return encodingOptions;
+	}
+	
+	public void setDecodingOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions;
+	}
+
+	public DecodingOptions getDecodingOptions() {
+		return decodingOptions;
 	}
 
 	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver) {
