@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.DecodingOptions;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
@@ -348,10 +349,14 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 						+ localName);
 			}
 		} else if (SCHEMA_ID.equals(localName)) {
-			String schemaId = value.toString();
+			if(f.getDecodingOptions().isOptionEnabled(DecodingOptions.IGNORE_SCHEMA_ID)) {
+				// don't do anything
+			} else {
+				String schemaId = value.toString();
 
-			SchemaIdResolver sir = f.getSchemaIdResolver();
-			f.setGrammars(sir.resolveSchemaId(schemaId));
+				SchemaIdResolver sir = f.getSchemaIdResolver();
+				f.setGrammars(sir.resolveSchemaId(schemaId));
+			}
 		} else if (PROFILE.equals(localName)) {
 //			emptyExiP = false;
 			if (value.getValueType() == ValueType.DECIMAL) {
