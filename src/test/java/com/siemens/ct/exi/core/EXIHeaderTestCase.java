@@ -138,8 +138,7 @@ public class EXIHeaderTestCase extends TestCase {
 			noOptionsFactory = DefaultEXIFactory.newInstance();
 		}
 
-		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel,
-				noOptionsFactory);
+		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, noOptionsFactory);
 
 		assertTrue(test.equals(decodedTest));
 	}

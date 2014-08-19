@@ -34,6 +34,7 @@ import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
 import com.siemens.ct.exi.values.BooleanValue;
@@ -134,7 +135,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 			// [EXI Options] ?
 			EXIFactory exiFactory;
 			if (presenceOptions) {
-				// use default options clone and re-set if needed
+				// use default options and re-set if needed
 				exiFactory = readEXIOptions(headerChannel, noOptionsFactory);
 			} else {
 				exiFactory = noOptionsFactory;
@@ -154,8 +155,7 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 
 	}
 
-	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel,
-			EXIFactory noOptionsFactory) throws EXIException, IOException {
+	protected EXIFactory readEXIOptions(DecoderChannel decoderChannel, EXIFactory noOptionsFactory) throws EXIException, IOException {
 		EXIBodyDecoderInOrder decoder = (EXIBodyDecoderInOrder) getHeaderFactory()
 				.createEXIBodyDecoder();
 		decoder.setInputChannel(decoderChannel);
@@ -163,9 +163,11 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 		// schemaId = null;
 		// schemaIdSet = false;
 
-		// clone factory
-		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
-
+		EXIFactory exiOptionsFactory = DefaultEXIFactory.newInstance();
+		// re-use important settings
+		exiOptionsFactory.setSchemaIdResolver(noOptionsFactory.getSchemaIdResolver());
+		exiOptionsFactory.setDecodingOptions(noOptionsFactory.getDecodingOptions());
+		
 		// STRICT is special, there is no NON STRICT flag --> per default set to
 		// non strict
 		if (exiOptionsFactory.getFidelityOptions().isStrict()) {
