@@ -46,6 +46,11 @@ public class StartElement extends AbstractEvent {
 		this.qname = qnameContext.getQName();
 	}
 	
+	public StartElement(QNameContext qnc, Grammar grammar) {
+		this(qnc);
+		this.setGrammar(grammar);
+	}
+	
 	public QNameContext getQNameContext() {
 		return this.qnameContext;	
 	}
