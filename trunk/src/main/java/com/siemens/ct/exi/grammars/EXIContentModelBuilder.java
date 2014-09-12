@@ -229,11 +229,17 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	private void getMaxOccursUnboundedElements(
 			List<XSElementDeclaration> elementsMaxOccursUnbounded,
 			XSParticle xsParticle) {
+		getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsParticle, false);
+	}
+	
+	private void getMaxOccursUnboundedElements(
+			List<XSElementDeclaration> elementsMaxOccursUnbounded,
+			XSParticle xsParticle, boolean outerUnbounded) {
 		XSTerm xsTerm = xsParticle.getTerm();
-
+		
 		if (xsTerm instanceof XSElementDeclaration) {
 			XSElementDeclaration xse = (XSElementDeclaration) xsTerm;
-			if (xsParticle.getMaxOccursUnbounded()
+			if ((outerUnbounded || xsParticle.getMaxOccursUnbounded())
 					&& !elementsMaxOccursUnbounded.contains(xse)) {
 				elementsMaxOccursUnbounded.add(xse);
 			}
@@ -242,7 +248,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			XSObjectList particles = smg.getParticles();
 			for (int i = 0; i < particles.getLength(); i++) {
 				XSParticle xsp = (XSParticle) particles.item(i);
-				getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsp);
+				getMaxOccursUnboundedElements(elementsMaxOccursUnbounded, xsp, xsParticle.getMaxOccursUnbounded());
 			}
 		} else {
 			// XSWildcard
@@ -484,6 +490,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			CMState nextState, boolean isMixedContent) {
 		SchemaInformedGrammar startRule = knownStates.get(startState);
 
+		// System.out.println(knownStates);
 		if (knownStates.containsKey(nextState)) {
 			startRule.addProduction(xsEvent, knownStates.get(nextState));
 			return false;

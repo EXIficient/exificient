@@ -157,6 +157,12 @@ public abstract class AbstractTestCase extends XMLTestCase {
 							.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
 				// all EXI options and schemaID from the header have to be used
 				ef = DefaultEXIFactory.newInstance();
+			} else if (encodingOptions
+					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)) {
+				// restore schemaId// grammar
+				Grammars  grs = ef.getGrammars();
+				ef = DefaultEXIFactory.newInstance();
+				ef.setGrammars(grs);
 			}
 
 			// <-- 1. decode as SAX

@@ -162,18 +162,23 @@ public class EXIHeaderDecoder extends AbstractEXIHeader {
 
 		// schemaId = null;
 		// schemaIdSet = false;
+		
+//		// clone factory
+//		EXIFactory exiOptionsFactory = noOptionsFactory.clone();
 
 		EXIFactory exiOptionsFactory = DefaultEXIFactory.newInstance();
 		// re-use important settings
 		exiOptionsFactory.setSchemaIdResolver(noOptionsFactory.getSchemaIdResolver());
 		exiOptionsFactory.setDecodingOptions(noOptionsFactory.getDecodingOptions());
+		// re-use schema knowledge
+		exiOptionsFactory.setGrammars(noOptionsFactory.getGrammars());
 		
-		// STRICT is special, there is no NON STRICT flag --> per default set to
-		// non strict
-		if (exiOptionsFactory.getFidelityOptions().isStrict()) {
-			exiOptionsFactory.getFidelityOptions().setFidelity(
-					FidelityOptions.FEATURE_STRICT, false);
-		}
+//		// STRICT is special, there is no NON STRICT flag --> per default set to
+//		// non strict
+//		if (exiOptionsFactory.getFidelityOptions().isStrict()) {
+//			exiOptionsFactory.getFidelityOptions().setFidelity(
+//					FidelityOptions.FEATURE_STRICT, false);
+//		}
 
 		clear();
 
