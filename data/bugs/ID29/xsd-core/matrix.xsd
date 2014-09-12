@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="vector.xsd"/>
+	<xs:annotation>
+		<xs:documentation>Xsd representation of various types of two-dimensional matrices</xs:documentation>
+	</xs:annotation>
+	<xs:annotation>
+		<xs:documentation>Abstract base classes </xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdMatrix" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Base class</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdRectangularMatrix" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Base class</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdMatrix">
+				<xs:attribute name="rows" type="xs:unsignedInt" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of rows</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="columns" type="xs:unsignedInt" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Rectangular matrices</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of unsigned integers. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslBooleanMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array. Array length must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslBooleanVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each row must be of length = # columns and the total number of rows must agree with the 'rows' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslBooleanVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each column must be of length = # rowss and the total number of columns must agree with the 'columns' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCharacterMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of unsigned integers. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslCharacterMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array. Array length must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XsdCharacterVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each row must be of length = # columns and the total number of rows must agree with the 'rows' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XsdCharacterVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each column must be of length = # rowss and the total number of columns must agree with the 'columns' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of doubles. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslDoubleMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array. Array length must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each row must be of length = # columns and the total number of rows must agree with the 'rows' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each column must be of length = # rowss and the total number of columns must agree with the 'columns' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of unsigned integers. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslIntegerMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array. Array length must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslIntegerVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each row must be of length = # columns and the total number of rows must agree with the 'rows' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslIntegerVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each column must be of length = # rowss and the total number of columns must agree with the 'columns' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdIntegerVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of unsigned integers. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslSizeMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array. Array length must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslSizeVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each row must be of length = # columns and the total number of rows must agree with the 'rows' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslSizeVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Each column must be of length = # rowss and the total number of columns must agree with the 'columns' attribute. </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdSizeVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSymmetricDoubleMatrix">
+		<xs:annotation>
+			<xs:documentation>Only the lower or upper half of the matrix is specified</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslDoubleMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix stored as 1-D array</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One row at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One column at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="size" type="xs:nonNegativeInteger" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of rows or columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="storage" type="XsdLowerOrUpper" default="LOWER">
+					<xs:annotation>
+						<xs:documentation>Lower- or upper-triangular storage? Default: LOWER</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdUpperTriangularDoubleMatrix">
+		<xs:annotation>
+			<xs:documentation>Only the upper half of the matrix is specified</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslDoubleMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix contents stored in 1-D array</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One row at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One column at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="size" type="xs:unsignedInt" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of rows or columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSparseDoubleMatrix">
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:sequence>
+					<xs:element name="value" type="XslSparseDouble" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdBandDoubleMatrix">
+		<xs:annotation>
+			<xs:documentation>General (non-symmetric) double-precision banded matrix</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="band" type="XslDoubleBand" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Individual band. Array length must agree with matrix size less the absolute value of the band offset.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="size" type="xs:unsignedInt" default="0">
+			<xs:annotation>
+				<xs:documentation>Number of rows or columns</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+		<xs:attributeGroup ref="XsdValueAttributes"/>
+	</xs:complexType>
+	<xs:complexType name="XsdLowerTriangularDoubleMatrix">
+		<xs:annotation>
+			<xs:documentation>Only the lower half of the matrix is specified</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslDoubleMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix contents stored in 1-D array</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One row at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslDoubleVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One column at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="size" type="xs:nonNegativeInteger" use="optional" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of rows or columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexMatrix">
+		<xs:annotation>
+			<xs:documentation>General rectangular matrix of complex numbers. The matrix contents are specified by row, by column, or as a linear array.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdRectangularMatrix">
+				<xs:choice minOccurs="0">
+					<xs:element name="data" type="XslComplexMatrixData">
+						<xs:annotation>
+							<xs:documentation>Data stored as pair of 1-D arrays. Matrix stored as 1-D array.  Array lengths must agree with #rows x #columns</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XslComplexVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One row at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XslComplexVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One column at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdHermitianMatrix">
+		<xs:complexContent>
+			<xs:extension base="XsdMatrix">
+				<xs:sequence minOccurs="0">
+					<xs:element name="data" type="XslComplexMatrixData">
+						<xs:annotation>
+							<xs:documentation>Matrix contents stored in 1-D array</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="row" type="XsdComplexVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One row at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="column" type="XsdComplexVector" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>One column at a time </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="size" type="xs:unsignedInt" default="0">
+					<xs:annotation>
+						<xs:documentation>Number of rowsor columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="storage" type="XsdLowerOrUpper" default="LOWER">
+					<xs:annotation>
+						<xs:documentation>Lower- or upper-triangular storage? Default: LOWER</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Results</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBandDoubleMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdBandDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdBandDoubleMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdBooleanMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdBooleanMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCharacterMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdCharacterMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdComplexMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdDoubleMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdIntegerMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdMatrixResidualResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="factor" type="XsdDoubleMatrix" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>The matrix factor</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="residual" type="XsdDoubleMatrix">
+						<xs:annotation>
+							<xs:documentation>Residual matrix</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="l1Norm" type="xs:double" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>L1 norm of residual</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="l2Norm" type="xs:double" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>L2 norm of residual</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="maxNorm" type="xs:double" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Max. norm of residual</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdSizeMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdSizeMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSymmetricDoubleMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdSymmetricDoubleMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdLowerTriangularDoubleMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdLowerTriangularDoubleMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdUpperTriangularDoubleMatrixResult">
+		<xs:annotation>
+			<xs:documentation>Returns XsdDoubleMatrix output</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdUpperTriangularDoubleMatrix"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Helper classes</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XslDoubleBand">
+		<xs:annotation>
+			<xs:documentation>Individual band. Array length must agree with matrix size less the absolute value of the band offset.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="XslDoubleVector">
+				<xs:attribute name="offset" type="xs:int" use="required">
+					<xs:annotation>
+						<xs:documentation>Offset from main diagonal. The offsets must be distinct and their absolute value must not exceed the matrix size.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslSparseDouble">
+		<xs:annotation>
+			<xs:documentation>Double with row and column attributes. Used to specify non-zero elements of sparse matrices</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:double">
+				<xs:attribute name="row" type="xs:unsignedInt" use="required">
+					<xs:annotation>
+						<xs:documentation>Element row. Must be less than total # matrix rows</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="column" type="xs:unsignedInt" use="required">
+					<xs:annotation>
+						<xs:documentation>Element column. Must be less than total # matrix columns</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslBooleanMatrixData">
+		<xs:simpleContent>
+			<xs:extension base="XslBooleanVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslDoubleMatrixData">
+		<xs:simpleContent>
+			<xs:extension base="XslDoubleVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslCharacterMatrixData">
+		<xs:simpleContent>
+			<xs:extension base="XsdCharacterVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslComplexMatrixData">
+		<xs:complexContent>
+			<xs:extension base="XsdComplexVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XslIntegerMatrixData">
+		<xs:simpleContent>
+			<xs:extension base="XslIntegerVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XslSizeMatrixData">
+		<xs:simpleContent>
+			<xs:extension base="XslSizeVector">
+				<xs:attribute name="order" type="XsdRowOrColumn" default="ROW">
+					<xs:annotation>
+						<xs:documentation>Row- or column-major storage? Default: ROW major storage</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Lists of matrices</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdDoubleMatrixList">
+		<xs:sequence>
+			<xs:element name="matrix" type="XsdDoubleMatrix" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

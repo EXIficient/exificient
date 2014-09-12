@@ -148,6 +148,20 @@ public class GeneralTestCase extends AbstractTestCase {
 		testCaseOptions.lastElement().setFragments(false);
 		testCaseOptions.lastElement().setXmlEqual(false);
 		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		
+		
+		// #7c (strict & lexical-values)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.lastElement().setFidelityOptions(
+				FidelityOptions.createStrict());
+		testCaseOptions.lastElement().getFidelityOptions()
+				.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+		testCaseOptions.lastElement().setFragments(false);
+		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		testCaseOptions.lastElement().getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
+		testCaseOptions.lastElement().setSchemaInformedOnly(true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());
