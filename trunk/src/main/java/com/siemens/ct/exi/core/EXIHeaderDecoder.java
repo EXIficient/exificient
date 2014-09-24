@@ -54,7 +54,7 @@ import com.siemens.ct.exi.values.ValueType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3
+ * @version 0.9.4-SNAPSHOT
  */
 
 public class EXIHeaderDecoder extends AbstractEXIHeader {
