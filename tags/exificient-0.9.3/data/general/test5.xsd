@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+    <xsd:element name="a" type="SubscriptionReqElement" />
+    <xsd:element name="b" type="DescriptionElement" />
+    
+    <xsd:complexType name="Interval">
+        <xsd:attribute name="min" type="xsd:short" use="required"/>
+        <xsd:attribute name="max" type="xsd:short" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SubscriptionReqElement">
+        <xsd:choice>
+            <xsd:element name="interval" type="Interval"/>
+        </xsd:choice>
+        <xsd:attribute name="id" type="xsd:short" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="DescriptionElement">
+        <xsd:sequence>
+            <xsd:element name="interval" type="Interval"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:short" use="required"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+</xsd:schema>

@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="result.xsd"/>
+	<xs:include schemaLocation="value.xsd"/>
+	<xs:annotation>
+		<xs:documentation>XSD version of a 1-D array of built-in types</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanVector">
+		<xs:simpleContent>
+			<xs:extension base="XslBooleanVector">
+				<xs:attributeGroup ref="XsdVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCharacterVector">
+		<xs:simpleContent>
+			<xs:extension base="XslCharacterVector">
+				<xs:attributeGroup ref="XsdVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexVector">
+		<xs:annotation>
+			<xs:documentation>List of complex numbers</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XslComplexVector">
+				<xs:attributeGroup ref="XsdVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCorrelationVector">
+		<xs:simpleContent>
+			<xs:extension base="XslCorrelationVector">
+				<xs:attributeGroup ref="XsdCorrelationVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDateVector">
+				<xs:attributeGroup ref="XsdDateVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDoubleVector">
+				<xs:attributeGroup ref="XsdDoubleVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerVector">
+		<xs:simpleContent>
+			<xs:extension base="XslIntegerVector">
+				<xs:attributeGroup ref="XsdIntegerVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNonNegativeDoubleVector">
+		<xs:simpleContent>
+			<xs:extension base="XslNonNegativeDoubleVector">
+				<xs:attributeGroup ref="XsdNonNegativeDoubleVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveDoubleVector">
+		<xs:simpleContent>
+			<xs:extension base="XslPositiveDoubleVector">
+				<xs:attributeGroup ref="XsdPositiveDoubleVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveIntegerVector">
+		<xs:simpleContent>
+			<xs:extension base="XslPositiveIntegerVector">
+				<xs:attributeGroup ref="XsdPositiveIntegerVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdProbabilityVector">
+		<xs:simpleContent>
+			<xs:extension base="XslProbabilityVector">
+				<xs:attributeGroup ref="XsdProbabilityVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeVector">
+		<xs:simpleContent>
+			<xs:extension base="XslSizeVector">
+				<xs:attributeGroup ref="XsdSizeVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdStringVector">
+		<xs:simpleContent>
+			<xs:extension base="XslStringVector">
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTenorVector">
+				<xs:attributeGroup ref="XsdTenorVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTimeVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTimeVector">
+				<xs:attributeGroup ref="XsdDateTimeVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Any-of-the-above (can;t use polymorphism since these are mostly simple types)</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdVectorChoice">
+		<xs:annotation>
+			<xs:documentation>Choice of vector types</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="boolean" type="XslBooleanVector">
+				<xs:annotation>
+					<xs:documentation>Boolean vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="character" type="XsdCharacterVector">
+				<xs:annotation>
+					<xs:documentation>Character vector (string)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="complex" type="XsdComplexVector">
+				<xs:annotation>
+					<xs:documentation>Complex vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="date" type="XslDateVector">
+				<xs:annotation>
+					<xs:documentation>Date vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="double" type="XslDoubleVector">
+				<xs:annotation>
+					<xs:documentation>Double vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="integer" type="XslIntegerVector">
+				<xs:annotation>
+					<xs:documentation>Integer vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="size" type="XslSizeVector">
+				<xs:annotation>
+					<xs:documentation>Unsigned integer vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="string" type="XsdStringVector">
+				<xs:annotation>
+					<xs:documentation>String vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tenor" type="XslTenorVector">
+				<xs:annotation>
+					<xs:documentation>Duration vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="time" type="XslTimeVector">
+				<xs:annotation>
+					<xs:documentation>Date/time vector</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Named vectors</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdNamedBooleanVector">
+		<xs:simpleContent>
+			<xs:extension base="XslBooleanVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedComplexVector">
+		<xs:complexContent>
+			<xs:extension base="XsdComplexVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedDateVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDateVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedDoubleVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDoubleVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedIntegerVector">
+		<xs:simpleContent>
+			<xs:extension base="XslIntegerVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedSizeVector">
+		<xs:simpleContent>
+			<xs:extension base="XslSizeVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedStringVector">
+		<xs:complexContent>
+			<xs:extension base="XsdStringVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedTenorVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTenorVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNamedTimeVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTimeVector">
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Sparse vectors</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdSparseVector" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract base class </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="index" type="XslSizeVector"/>
+		</xs:sequence>
+		<xs:attribute name="size" type="xs:nonNegativeInteger" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="XsdSparseDoubleVector" abstract="false">
+		<xs:complexContent>
+			<xs:extension base="XsdSparseVector">
+				<xs:sequence>
+					<xs:element name="value" type="XslDoubleVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Smart vectors</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdSmartDateVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDateVector">
+				<xs:attributeGroup ref="XsdSmartVectorGroup"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSmartDoubleVector">
+		<xs:simpleContent>
+			<xs:extension base="XslDoubleVector">
+				<xs:attributeGroup ref="XsdSmartVectorGroup"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSmartIntegerVector">
+		<xs:simpleContent>
+			<xs:extension base="XslIntegerVector">
+				<xs:attributeGroup ref="XsdSmartVectorGroup"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSmartTenorVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTenorVector">
+				<xs:attributeGroup ref="XsdSmartVectorGroup"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSmartTimeVector">
+		<xs:simpleContent>
+			<xs:extension base="XslTimeVector">
+				<xs:attributeGroup ref="XsdSmartVectorGroup"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Results</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdVectorResult" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstract base class</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdBooleanVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslBooleanVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCharacterVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdCharacterVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdComplexVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCorrelationVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslCorrelationVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of dates</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslDateVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleVectorResult">
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslDoubleVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslIntegerVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNonNegativeDoubleVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslNonNegativeDoubleVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveDoubleVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslPositiveDoubleVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveIntegerVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslPositiveIntegerVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdProbabilityVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of booleans</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslProbabilityVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeVectorResult">
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslSizeVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdStringVectorResult">
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdSizeVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdQuantileVector">
+		<xs:simpleContent>
+			<xs:extension base="XsdDoubleVector">
+				<xs:attribute name="percentile" type="XslProbability" use="required">
+					<xs:annotation>
+						<xs:documentation>Between 0.0 and 1.0</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of xs:dateTimes</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslTenorVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTimeVectorResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of xs:dateTimes</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslTimeVector"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdVectorChoiceResult" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Returns list of xs:dateTimes</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdVectorResult">
+				<xs:choice>
+					<xs:element name="boolean" type="XsdBooleanVector">
+						<xs:annotation>
+							<xs:documentation>Boolean vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="character" type="XsdCharacterVector">
+						<xs:annotation>
+							<xs:documentation>Character vector </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="complex" type="XsdComplexVector">
+						<xs:annotation>
+							<xs:documentation>Complex vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="date" type="XsdDateVector">
+						<xs:annotation>
+							<xs:documentation>Date vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="double" type="XsdDoubleVector">
+						<xs:annotation>
+							<xs:documentation>Double vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="integer" type="XsdIntegerVector">
+						<xs:annotation>
+							<xs:documentation>Integer vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="size" type="XsdSizeVector">
+						<xs:annotation>
+							<xs:documentation>Unsigned integer vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="string" type="XsdStringVector">
+						<xs:annotation>
+							<xs:documentation>String vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="tenor" type="XsdTenorVector">
+						<xs:annotation>
+							<xs:documentation>Duration vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="time" type="XsdTimeVector">
+						<xs:annotation>
+							<xs:documentation>Date/time vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Vector map results</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedBooleanVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedComplexVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedDateVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedDoubleVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedIntegerVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedSizeVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdStringVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedStringVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedTenorVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTimeVectorMapResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNamedTimeVector" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Vector lists</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdBooleanVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdComplexVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdDateVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdDoubleVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdIntegerVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdSizeVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdTenorVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTimeVectorList">
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:sequence>
+					<xs:element name="row" type="XsdTimeVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Vector list results</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdBooleanVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdComplexVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdDateVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdDoubleVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdIntegerVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdSizeVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdTenorVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTimeVectorListResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="row" type="XsdTimeVector" minOccurs="0" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>Row vector</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Helper schemas </xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="XslBooleanVector">
+		<xs:list itemType="xs:boolean"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslCharacterVector">
+		<xs:list itemType="XsdCharacter"/>
+	</xs:simpleType>
+	<xs:complexType name="XslComplexVector">
+		<xs:annotation>
+			<xs:documentation>List of complex numbers</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="real" type="XslDoubleVector">
+				<xs:annotation>
+					<xs:documentation>List of real parts</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="imag" type="XslDoubleVector">
+				<xs:annotation>
+					<xs:documentation>List of imaginary parts</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="XslCorrelationVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="XslCorrelation"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslDateVector">
+		<xs:annotation>
+			<xs:documentation>List of dates (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslDoubleVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:double"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslIntegerVector">
+		<xs:list itemType="xs:int"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslNonNegativeDoubleVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="XslNonNegativeDouble"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslPositiveDoubleVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="XslPositiveDouble"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslPositiveIntegerVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:positiveInteger"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslProbabilityVector">
+		<xs:annotation>
+			<xs:documentation>List of doubles (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="XslProbability"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslSizeVector">
+		<xs:annotation>
+			<xs:documentation>List of unsigned integers</xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:unsignedInt"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslStringVector">
+		<xs:annotation>
+			<xs:documentation>List of strings (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslTenorVector">
+		<xs:list itemType="xs:duration"/>
+	</xs:simpleType>
+	<xs:simpleType name="XslTimeVector">
+		<xs:annotation>
+			<xs:documentation>List of xs:dateTime values (unordered) </xs:documentation>
+		</xs:annotation>
+		<xs:list itemType="xs:dateTime"/>
+	</xs:simpleType>
+	<xs:annotation>
+		<xs:documentation>Attributes</xs:documentation>
+	</xs:annotation>
+	<xs:attributeGroup name="XsdSmartVectorGroup">
+		<xs:attribute name="start" type="xs:unsignedInt" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Starting index ( Default : 0 ) </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="stride" type="xs:positiveInteger" use="optional" default="1">
+			<xs:annotation>
+				<xs:documentation>Stride (Default: 1) </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="repeat" type="xs:unsignedInt" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Starting index ( Default : 0 ) </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+</xs:schema>

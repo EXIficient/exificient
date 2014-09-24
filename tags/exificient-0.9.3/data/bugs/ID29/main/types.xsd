@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="enums.xsd"/>
+	<xs:include schemaLocation="../xsd-math/types.xsd"/> 
+	<xs:complexType name="XsdAggregate">
+		<xs:annotation>
+			<xs:documentation>Aggregate multiple indexes, prices, etc. </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="method" type="XsdAggregateType" default="TOTAL" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default: TOTAL</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="average" type="XsdAverageType" default="ARITHMETIC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default: ARITHMETIC</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="decile" type="XsdProbability" default="0.50" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default: 0.50</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="range" type="XsdSizeBounds" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Restricted range</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XsdCompounding">
+		<xs:simpleContent>
+			<xs:extension base="XsdCompoundingType">
+				<xs:attribute name="frequency" type="XsdPeriodic" default="NONE">
+					<xs:annotation>
+						<xs:documentation>Periodic compounding only</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIndex" abstract="false">
+		<xs:annotation>
+			<xs:appinfo>REFERENCE+CONSTRUCT</xs:appinfo>
+			<xs:documentation>Reference-only base index schema. This supports "simple" indexes that represent a time series of financial data and "derived" indexes that combine several simple indexs. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdMaturity">
+		<xs:annotation>
+			<xs:documentation>Date or duration</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0">
+			<xs:element name="date" type="XsdDate">
+				<xs:annotation>
+					<xs:documentation>Actual date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="tenor" type="XsdTenor">
+				<xs:annotation>
+					<xs:documentation>Offset from issue or trade date</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="IMM" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>IMM date code</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="XsdOddCouponTypes">
+		<xs:sequence>
+			<xs:element name="first" type="XsdOddCouponType" default="REGULAR" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default: REGULAR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last" type="XsdOddCouponType" default="REGULAR" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Default: REGULAR</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XsdOddCoupon">
+		<xs:annotation>
+			<xs:documentation>Odd first/last coupons</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="first" type="XsdDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>First coupon</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="last" type="XsdDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Last coupon</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XsdRoll">
+		<xs:simpleContent>
+			<xs:extension base="XsdRollType">
+				<xs:attribute name="modified" type="xs:boolean" default="false">
+					<xs:annotation>
+						<xs:documentation>Default: false</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="nearest" type="xs:boolean" default="false">
+					<xs:annotation>
+						<xs:documentation>Default: false</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attributeGroup ref="XsdEnumVariableGroup"/>
+				<xs:attributeGroup ref="XsdValueAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

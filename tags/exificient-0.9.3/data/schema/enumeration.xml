@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cars xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="enumeration.xsd">
+    <car>Audi</car>
+    <car>BMW</car>
+    <star>5</star>
+    <star>2</star>
+</cars>

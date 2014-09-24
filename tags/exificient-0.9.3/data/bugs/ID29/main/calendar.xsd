@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (x64) (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:annotation>
+		<xs:documentation>Abstract base class</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdCalendar" abstract="false">
+		<xs:annotation>
+			<xs:appinfo>REFERENCE+CONSTRUCT</xs:appinfo>
+			<xs:documentation>Holiday calendar</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdDataSchema">
+				<xs:choice minOccurs="0">
+					<xs:element name="composite" type="XslCompositeCalendar">
+						<xs:annotation>
+							<xs:documentation>Union of intersection of existing holiday calendars</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="dateList" type="XslDateListCalendar">
+						<xs:annotation>
+							<xs:documentation>List over hiolidays over date range</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="modified" type="XslModifiedCalendar">
+						<xs:annotation>
+							<xs:documentation>Modification of existing calendar</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="ruleBased" type="XslRuleBasedCalendar">
+						<xs:annotation>
+							<xs:documentation>Algorithmic calendars</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:attributeGroup ref="XsdCalendarGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Derived classes</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XslModifiedCalendar">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CONSTRUCT</xs:appinfo>
+			<xs:documentation>Add/remove holidays from calendar</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="calendar" type="XsdCalendar">
+				<xs:annotation>
+					<xs:documentation>Underlying calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="add" type="XsdDateVector" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Add new holidays</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="remove" type="XsdDateVector" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Remove existing holidays</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XslRuleBasedCalendar">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CONSTRUCT</xs:appinfo>
+			<xs:documentation>Holiday algorithms</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="Argentina" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Argentinian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Australia" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Australian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Brazil" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Brazilian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Canada" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Canadian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="China" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Chinese holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CzechRepublic" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Czech holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Denmark" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Danish holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ECB" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>ECB holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="England" type="XslUKCalendar">
+				<xs:annotation>
+					<xs:documentation>Great Britian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Finland" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Finnish holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Germany" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>German holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HongKong" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>HongKong holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Hungary" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Hungarian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Iceland" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Icelandic holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="India" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Indian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Indonesia" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Indonesian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Italy" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Italian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Japan" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Japanese holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Mexico" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Mexican holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NewZealand" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>New Zealand holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Norway" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Norwegian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Poland" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Polish holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Russia" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Russian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SaudiArabia" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Saudi holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Singapore" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Singapore holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Slovakia" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Slovakian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SouthAfrica" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>South African holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SouthKorea" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>South Korean holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Sweden" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Swsdish holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Switzerland" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Swiss holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Taiwan" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Taiwanese holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Turkey" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Turkish holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Ukraine" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Uknainian holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="UnitedStates" type="XslUSCalendar">
+				<xs:annotation>
+					<xs:documentation>USA holiday calendar</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="WeekendsOnly" type="XsdPlaceHolder">
+				<xs:annotation>
+					<xs:documentation>Just what it says</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="XslDateListCalendar">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CONSTRUCT</xs:appinfo>
+			<xs:documentation>List of holidays</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="bound" type="XsdDateBounds">
+				<xs:annotation>
+					<xs:documentation>Use first/last holiday if bound not specified </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="holiday" type="xs:date" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of holidays</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="weekend" type="XsdDayOfWeek" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Use Saturday and Sunday if not specified </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XslCompositeCalendar">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CONSTRUCT</xs:appinfo>
+			<xs:documentation>Holidays in any calendar</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:element name="intersection" type="XslCalendarList">
+				<xs:annotation>
+					<xs:documentation>Holidays in ALL of these calendars</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="union" type="XslCalendarList">
+				<xs:annotation>
+					<xs:documentation>Holidays in ANY of these calendars</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Unit tests</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdRollTest">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CALCULATE</xs:appinfo>
+			<xs:documentation>Rolls dates to nearest business dates</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdCalculationSchema">
+				<xs:sequence minOccurs="0">
+					<xs:element name="result" type="XsdDateVectorResult" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Returns a date list</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="range" type="XsdDateBounds">
+						<xs:annotation>
+							<xs:documentation>Date range  to be rolled</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="roll" type="XsdRoll">
+						<xs:annotation>
+							<xs:documentation>Roll convention. Default: NONE</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="calendar" type="XsdCalendar">
+						<xs:annotation>
+							<xs:documentation>Holiday calendar</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCalendarTest">
+		<xs:annotation>
+			<xs:appinfo>INSERT+CALCULATE</xs:appinfo>
+			<xs:documentation>Returns holidays between two dates</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdCalculationSchema">
+				<xs:sequence minOccurs="0">
+					<xs:element name="result" type="XsdDateVectorResult" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Returns list of dates</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="range" type="XsdDateBounds">
+						<xs:annotation>
+							<xs:documentation>Date range (min/max)</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="calendar" type="XsdCalendar">
+						<xs:annotation>
+							<xs:documentation>The holiday calendar</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="excludeWeekends" type="xs:boolean" default="true" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Default: true </xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Enumerated types</xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="XsdUKCalendarType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EXCHANGE"/>
+			<xs:enumeration value="METALS"/>
+			<xs:enumeration value="SETTLEMENT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdUSCalendarType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NERC"/>
+			<xs:enumeration value="NYSE"/>
+			<xs:enumeration value="GOVERNMENT_BOND"/>
+			<xs:enumeration value="SETTLEMENT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:annotation>
+		<xs:documentation>Helper classes</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XslCalendarList">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:sequence minOccurs="2" maxOccurs="unbounded"><!--   -->
+			<xs:element name="calendar" type="XsdCalendar"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="XslUKCalendar">
+		<xs:attribute name="type" type="XsdUKCalendarType" default="SETTLEMENT">
+			<xs:annotation>
+				<xs:documentation>Default: SETTLEMENT</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="XslUSCalendar">
+		<xs:attribute name="type" type="XsdUSCalendarType" default="SETTLEMENT">
+			<xs:annotation>
+				<xs:documentation>Default: SETTLEMENT</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Configuration file </xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdCalendarConfig">
+		<xs:sequence>
+			<xs:element name="calendar" type="XsdCalendar" maxOccurs="unbounded">
+				<xs:unique name="CalendarName">
+					<xs:annotation>
+						<xs:documentation>Country/exchange combination must be unique</xs:documentation>
+					</xs:annotation>
+					<xs:selector xpath="."/>
+					<xs:field xpath="@country"/>
+					<xs:field xpath="@exchange"/>
+				</xs:unique>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="xsdCalendarConfig" type="XsdCalendarConfig">
+		<xs:annotation>
+			<xs:documentation>List of holiday calendars</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:annotation>
+		<xs:documentation>Attributes</xs:documentation>
+	</xs:annotation>
+	<xs:attributeGroup name="XsdCalendarGroup">
+		<xs:attribute name="country" type="XsdCountry" use="optional">
+			<xs:annotation>
+				<xs:documentation>3-letter ISO code </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="exchange" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Country/exchange pairs must be unique</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+</xs:schema>
