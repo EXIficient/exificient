@@ -33,7 +33,7 @@ import com.siemens.ct.exi.types.BuiltIn;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3-SNAPSHOT
+ * @version 0.9.3
  */
 
 public abstract class AbstractBuiltInContent extends AbstractBuiltInGrammar {

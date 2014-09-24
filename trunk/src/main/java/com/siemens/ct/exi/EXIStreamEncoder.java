@@ -33,7 +33,7 @@ import com.siemens.ct.exi.io.channel.BitEncoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3-SNAPSHOT
+ * @version 0.9.3
  */
 
 public class EXIStreamEncoder {

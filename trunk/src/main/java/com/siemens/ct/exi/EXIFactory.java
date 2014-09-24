@@ -39,7 +39,7 @@ import com.siemens.ct.exi.types.TypeEncoder;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3-SNAPSHOT
+ * @version 0.9.3
  */
 
 public interface EXIFactory extends Cloneable {
@@ -103,8 +103,6 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Sets the options used by the EXI Decoder(e.g., ignore schemaId).
 	 * 
-	 * @param headerOptions
-	 *            header options
 	 * @throws EXIException
 	 * @see DecodingOptions
 	 */

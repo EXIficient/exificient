@@ -35,7 +35,7 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3-SNAPSHOT
+ * @version 0.9.3
  */
 
 public class EXIStreamDecoder {
