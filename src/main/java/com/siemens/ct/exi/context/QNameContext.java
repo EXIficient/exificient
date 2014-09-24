@@ -31,7 +31,7 @@ import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.3-SNAPSHOT
+ * @version 0.9.3
  */
 
 public class QNameContext implements Serializable {
