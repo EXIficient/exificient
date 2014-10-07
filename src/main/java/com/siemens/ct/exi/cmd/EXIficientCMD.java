@@ -1,0 +1,543 @@
+/*
+ * Copyright (C) 2007-2014 Siemens AG
+ *
+ * This program and its interfaces are free software;
+ * you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+package com.siemens.ct.exi.cmd;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.xml.sax.DTDHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
+import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.util.NoEntityResolver;
+
+/*
+ * 
+ * # Notebook
+ * -encode -i .\data\W3C\PrimerNotebook\notebook.xml
+ * -encode -i .\data\W3C\PrimerNotebook\notebook.xml -schema .\trunk\data\W3C\PrimerNotebook\notebook.xsd
+ * -encode -preservePrefixes -includeOptions -i .\trunk\data\W3C\PrimerNotebook\notebook.xsd
+
+ */
+/**
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.9.4-SNAPSHOT
+ */
+
+/*
+ * TODOs - fragment - selfContained - datatypeRepresentationMap
+ */
+
+public class EXIficientCMD {
+	static final PrintStream ps = System.out;
+
+	public static final String HELP = "-h";
+
+	public static final String ENCODE = "-" + CmdOption.encode;
+	public static final String DECODE = "-" + CmdOption.decode;
+
+	public static final String INPUT = "-i";
+	public static final String OUTPUT = "-o";
+
+	public static final String NO_SCHEMA = "-" + SchemaOption.noSchema;
+	public static final String XSD_SCHEMA = "-" + SchemaOption.xsdSchema;
+	public static final String SCHEMA = "-" + SchemaOption.schema;
+
+	public static final String OPTION_STRICT = "-strict";
+	public static final String PRESERVE_COMMENTS = "-preserveComments";
+	public static final String PRESERVE_LEXICAL_VALUES = "-preserveLexicalValues";
+	public static final String PRESERVE_PREFIXES = "-preservePrefixes";
+	public static final String PRESERVE_PIS = "-preservePIs";
+	public static final String PRESERVE_DTDS = "-preserveDTDs";
+
+	public static final String INCLUDE_OPTIONS = "-includeOptions";
+	public static final String INCLUDE_COOKIE = "-includeCookie";
+	public static final String INCLUDE_SCHEMA_ID = "-includeSchemaId";
+	public static final String INCLUDE_SCHEMA_LOCATION = "-includeSchemaLocation";
+	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "-includeInsignificantXsiNil";
+	public static final String INCLUDE_PROFILE_VALUES = "-includeProfileValues";
+	public static final String RETAIN_ENTITY_REFERENCE = "-retainEntityReference";
+
+	public static final String CODING_BYTEPACKED = "-bytePacked";
+	public static final String CODING_PRE_COMPRESSION = "-preCompression";
+	public static final String CODING_COMPRESSION = "-compression";
+
+	public static final String BLOCK_SIZE = "-blockSize";
+	public static final String VALUE_MAX_LENGTH = "-valueMaxLength";
+	public static final String VALUE_PARTITION_CAPACITY = "-valuePartitionCapacity";
+
+	public static final String NO_LOCAL_VALUE_PARTITIONS = "-noLocalValuePartitions";
+	public static final String MAXIMUM_NUMBER_OF_BUILT_IN_PRODUCTIONS = "-maximumNumberOfBuiltInProductions";
+	public static final String MAXIMUM_NUMBER_OF_BUILT_IN_ELEMENT_GRAMMARS = "-maximumNumberOfBuiltInElementGrammars";
+	
+	public static String DEFAULT_EXI_FILE_EXTENSION = ".exi";
+	public static String DEFAULT_XML_FILE_EXTENSION = ".xml";
+	
+	boolean inputParametersOK;
+	CmdOption cmdOption;
+	EXIFactory exiFactory;
+	String input;
+	String output;
+	
+	
+	public EXIficientCMD() {
+	}
+
+	private static void printHeader() {
+		ps.println("#########################################################################");
+		ps.println("###   EXIficient                                                     ###");
+		ps.println("###   Command-Shell Options                                          ###");
+		ps.println("#########################################################################");
+	}
+
+	private static void printHelp() {
+		printHeader();
+
+		ps.println();
+		ps.println(" " + HELP
+				+ "                               /* shows help */");
+		ps.println();
+		ps.println(" " + ENCODE);
+		ps.println(" " + DECODE);
+		ps.println();
+		ps.println(" " + INPUT + " <xml-input-file>");
+		ps.println(" " + OUTPUT + " <output-file>");
+		ps.println();
+		ps.println(" " + SCHEMA + " <schema-input-file>");
+		ps.println(" " + XSD_SCHEMA
+				+ "                       /* XML schema datatypes only */");
+		ps.println(" " + NO_SCHEMA + "                        /* default */");
+		ps.println();
+		ps.println(" " + OPTION_STRICT);
+		ps.println(" " + PRESERVE_PREFIXES);
+		ps.println(" " + PRESERVE_COMMENTS);
+		ps.println(" " + PRESERVE_LEXICAL_VALUES);
+		ps.println(" " + PRESERVE_PIS
+				+ "                     /* processing instructions */");
+		ps.println(" " + PRESERVE_DTDS
+				+ "                    /* DTDs & entity references */");
+		ps.println();
+		ps.println(" " + CODING_BYTEPACKED);
+		ps.println(" " + CODING_PRE_COMPRESSION);
+		ps.println(" " + CODING_COMPRESSION);
+		ps.println();
+		ps.println(" " + BLOCK_SIZE + " <value>");
+		ps.println(" " + VALUE_MAX_LENGTH + " <value>");
+		ps.println(" " + VALUE_PARTITION_CAPACITY + " <value>");
+		ps.println();
+		ps.println(" " + NO_LOCAL_VALUE_PARTITIONS
+				+ "          /* EXI Profile parameters */");
+		ps.println(" " + MAXIMUM_NUMBER_OF_BUILT_IN_PRODUCTIONS + " <value>");
+		ps.println(" " + MAXIMUM_NUMBER_OF_BUILT_IN_ELEMENT_GRAMMARS
+				+ " <value>");
+		ps.println();
+		ps.println(" " + INCLUDE_OPTIONS);
+		ps.println(" " + INCLUDE_COOKIE);
+		ps.println(" " + INCLUDE_SCHEMA_ID);
+		ps.println(" " + INCLUDE_SCHEMA_LOCATION);
+		ps.println(" " + INCLUDE_INSIGNIFICANT_XSI_NIL);
+		ps.println(" " + INCLUDE_PROFILE_VALUES);
+		ps.println(" " + RETAIN_ENTITY_REFERENCE);
+		ps.println();
+		ps.println("# Examples");
+		ps.println(" " + ENCODE + " " + SCHEMA
+				+ " notebook.xsd " + INPUT + " notebook.xml");
+		ps.println(" " + DECODE + " " + SCHEMA
+				+ " notebook.xsd " + INPUT + " notebook.xml.exi " + OUTPUT + " notebookDec.xml");
+	}
+
+	protected static void printError(String msg) {
+		ps.println("[ERROR] " + msg);
+	}
+	
+	protected void parseArguments(String[] args) throws EXIException {
+		// arguments that need to be set
+		cmdOption = null;
+		SchemaOption schemaOption = SchemaOption.noSchema; // default
+		String schemaLocation = null;
+
+		input = null;
+		output = null;
+
+		exiFactory = DefaultEXIFactory.newInstance();
+
+		int indexArgument = 0;
+		while (indexArgument < args.length) {
+			String argument = args[indexArgument];
+
+			// ### HELP ?
+			if (HELP.equalsIgnoreCase(argument)) {
+				printHelp();
+				break;
+			}
+			// ### CODING_OPTIONS
+			else if (ENCODE.equalsIgnoreCase(argument)) {
+				cmdOption = CmdOption.encode;
+			} else if (DECODE.equalsIgnoreCase(argument)) {
+				cmdOption = CmdOption.decode;
+			}
+			// ### IO_OPTIONS
+			else if (INPUT.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				input = args[indexArgument];
+			} else if (OUTPUT.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				output = args[indexArgument];
+			}
+			// ### SCHEMA_OPTIONS
+			else if (NO_SCHEMA.equalsIgnoreCase(argument)) {
+				// no schema
+				schemaOption = SchemaOption.noSchema;
+			} else if (XSD_SCHEMA.equalsIgnoreCase(argument)) {
+				// XML schema datatypes only
+				schemaOption = SchemaOption.xsdSchema;
+			} else if (SCHEMA.equalsIgnoreCase(argument)) {
+				// schema -> addition schema-location necessary
+				schemaOption = SchemaOption.schema;
+
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				schemaLocation = args[indexArgument];
+			}
+			// ### OPTIONS
+			else if (OPTION_STRICT.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = FidelityOptions.createStrict();
+				// fo.init ( );
+				exiFactory.setFidelityOptions(fo);
+			} else if (BLOCK_SIZE.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+				int blockSize = Integer.parseInt(args[indexArgument]);
+				exiFactory.setBlockSize(blockSize);
+			} else if (VALUE_MAX_LENGTH.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+				int valueMaxLength = Integer.parseInt(args[indexArgument]);
+				exiFactory.setValueMaxLength(valueMaxLength);
+			} else if (VALUE_PARTITION_CAPACITY.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+				int valuePartitionCapacity = Integer
+						.parseInt(args[indexArgument]);
+				exiFactory
+						.setValuePartitionCapacity(valuePartitionCapacity);
+			} else if (MAXIMUM_NUMBER_OF_BUILT_IN_ELEMENT_GRAMMARS
+					.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				int maximumNumberOfEvolvingBuiltInElementGrammars = Integer
+						.parseInt(args[indexArgument]);
+				exiFactory
+						.setMaximumNumberOfBuiltInElementGrammars(maximumNumberOfEvolvingBuiltInElementGrammars);
+			} else if (MAXIMUM_NUMBER_OF_BUILT_IN_PRODUCTIONS
+					.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				int maximumNumberOfBuiltInProductions = Integer
+						.parseInt(args[indexArgument]);
+				exiFactory
+						.setMaximumNumberOfBuiltInProductions(maximumNumberOfBuiltInProductions);
+			}
+			// Comments
+			else if (PRESERVE_COMMENTS.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = exiFactory.getFidelityOptions();
+				fo.setFidelity(FidelityOptions.FEATURE_COMMENT, true);
+			}
+			// LexicalValues
+			else if (PRESERVE_LEXICAL_VALUES.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = exiFactory.getFidelityOptions();
+				fo.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+			}
+			// Prefixes
+			else if (PRESERVE_PREFIXES.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = exiFactory.getFidelityOptions();
+				fo.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+			}
+			// PIs
+			else if (PRESERVE_PIS.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = exiFactory.getFidelityOptions();
+				fo.setFidelity(FidelityOptions.FEATURE_PI, true);
+			}
+			// DTS
+			else if (PRESERVE_DTDS.equalsIgnoreCase(argument)) {
+				FidelityOptions fo = exiFactory.getFidelityOptions();
+				fo.setFidelity(FidelityOptions.FEATURE_DTD, true);
+			}
+			// ### BYTE_ALIGNED
+			else if (CODING_BYTEPACKED.equalsIgnoreCase(argument)) {
+				exiFactory.setCodingMode(CodingMode.BYTE_PACKED);
+			}
+			// ### PRE_COMPRESSION
+			else if (CODING_PRE_COMPRESSION.equalsIgnoreCase(argument)) {
+				exiFactory.setCodingMode(CodingMode.PRE_COMPRESSION);
+			}
+			// ### COMPRESSION
+			else if (CODING_COMPRESSION.equalsIgnoreCase(argument)) {
+				exiFactory.setCodingMode(CodingMode.COMPRESSION);
+			}
+			// ### NO_LOCAL_VALUE_PARTITIONS
+			else if (NO_LOCAL_VALUE_PARTITIONS.equalsIgnoreCase(argument)) {
+				exiFactory.setLocalValuePartitions(false);
+			}
+			// ### Include EXI Options
+			else if (INCLUDE_OPTIONS.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_OPTIONS);
+			}
+			// ### Include EXI Cookie in Options
+			else if (INCLUDE_COOKIE.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_COOKIE);
+			}
+			// ### Include SchemaId in Options
+			else if (INCLUDE_SCHEMA_ID.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_SCHEMA_ID);
+			}
+			// ### Include SchemaLocation
+			else if (INCLUDE_SCHEMA_LOCATION.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
+			}
+			// ### Include SchemaLocation
+			else if (INCLUDE_INSIGNIFICANT_XSI_NIL
+					.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL);
+			}
+			// ### Include Profile Values
+			else if (INCLUDE_PROFILE_VALUES.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.INCLUDE_PROFILE_VALUES);
+			}
+			// ### Retain EntityReference
+			else if (RETAIN_ENTITY_REFERENCE.equalsIgnoreCase(argument)) {
+				exiFactory.getEncodingOptions().setOption(
+						EncodingOptions.RETAIN_ENTITY_REFERENCE);
+			} else {
+				System.out.println("Unknown option '" + argument + "'");
+			}
+
+			indexArgument++;
+		}
+
+		File fOutput = null;
+
+		// check input
+		inputParametersOK = true;
+		
+		if (cmdOption == null) {
+			inputParametersOK = false;
+			printError("Missing coding option such as " + ENCODE + " and "
+					+ DECODE);
+		}
+
+		if (input == null) {
+			inputParametersOK = false;
+			printError("Missing option -i");
+		} else if (!(new File(input)).exists()) {
+			inputParametersOK = false;
+			printError("Not existing input parameter -i, \"" + input + "\"");
+		}
+
+		if (input != null && output == null) {
+			// default output
+			if (CmdOption.encode == cmdOption) {
+				output = input + DEFAULT_EXI_FILE_EXTENSION;
+			} else {
+				output = input + DEFAULT_XML_FILE_EXTENSION;
+			}
+		}
+
+		if (output == null) {
+			inputParametersOK = false;
+			printError("Missing output specification!");
+		} else {
+			fOutput = new File(output);
+
+			if (fOutput.isDirectory()) {
+				inputParametersOK = false;
+				printError("Outputfile '" + output
+						+ "' is unexpectedly a directory");
+			} else {
+				if (fOutput.exists()) {
+					if (!fOutput.delete()) {
+						inputParametersOK = false;
+						printError("Existing outputfile '" + output
+								+ "' could not be deleted.");
+					}
+				} else {
+					// does not exits
+					assert (!fOutput.exists());
+					File parentDir = fOutput.getParentFile();
+					if (!parentDir.exists()) {
+						if (!parentDir.mkdirs()) {
+							inputParametersOK = false;
+							printError("Output directories for file '"
+									+ output + "' could not be created.");
+						}
+					}
+				}
+			}
+		}
+		
+		if (inputParametersOK) {
+			// schema available ?
+			if (SchemaOption.noSchema == schemaOption) {
+				// default: schema-less mode
+				// exiFactory.setGrammar ( "" );
+			} else if (SchemaOption.xsdSchema == schemaOption) {
+				GrammarFactory gf = GrammarFactory.newInstance();
+				exiFactory.setGrammars(gf.createXSDTypesOnlyGrammars());
+			} else {
+				GrammarFactory gf = GrammarFactory.newInstance();
+				exiFactory.setGrammars(gf.createGrammars(schemaLocation));
+			}
+		}
+
+
+	}
+	
+	protected void process() throws EXIException, TransformerException, IOException, SAXException {
+		if (inputParametersOK) {
+			// start coding
+			switch (cmdOption) {
+			case decode:
+				decode(input, exiFactory, output);
+				break;
+			case encode:
+				encode(input, exiFactory, output);
+				break;
+			default:
+				printError("Unexptected command option " + cmdOption);
+				break;
+			}
+
+		} else {
+			// something not right
+			// info messages (see above)
+			printError("Input parameters were incorrect");
+		}
+	}
+
+	public static void main(String[] args) {
+
+		if (args == null || args.length == 0) {
+			// show help
+			printHelp();
+		} else {
+			EXIficientCMD cmd = new EXIficientCMD();
+			try {
+				cmd.parseArguments(args);
+				cmd.process();
+			} catch (Exception e) {
+				printError(e.getMessage());
+			}
+		}
+	}
+
+	protected void decode(String input, EXIFactory exiFactory, String output)
+			throws EXIException, TransformerException, IOException {
+		OutputStream xmlOutput = new FileOutputStream(output);
+
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		SAXSource exiSource = new SAXSource(new InputSource(
+				new FileInputStream(input)));
+		exiSource.setXMLReader(exiFactory.createEXIReader());
+
+		transformer.transform(exiSource, new StreamResult(xmlOutput));
+
+		xmlOutput.flush();
+		xmlOutput.close();
+	}
+
+	protected void encode(String input, EXIFactory exiFactory, String output)
+			throws SAXException, EXIException, IOException {
+		OutputStream os = new FileOutputStream(output);
+
+		XMLReader parser = XMLReaderFactory.createXMLReader();
+		EXIResult exiResult = new EXIResult(exiFactory);
+		exiResult.setOutputStream(os);
+		parser.setContentHandler(exiResult.getHandler());
+
+		// add handlers
+		if (exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_COMMENT)
+				|| exiFactory.getFidelityOptions().isFidelityEnabled(
+						FidelityOptions.FEATURE_DTD)) {
+			// set LexicalHandler
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler",
+					exiResult.getLexicalHandler());
+			//
+			parser.setProperty(
+					"http://xml.org/sax/properties/declaration-handler",
+					exiResult.getLexicalHandler());
+			// set DTD handler
+			parser.setDTDHandler((DTDHandler) exiResult.getHandler());
+		}
+
+		parser.setFeature("http://xml.org/sax/features/namespaces", true);
+		// do not report namespace declarations as attributes
+		parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
+				false);
+		// avoid validation
+		parser.setFeature("http://xml.org/sax/features/validation", false);
+		// DTD
+		parser.setFeature("http://xml.org/sax/features/resolve-dtd-uris", false);
+		// *skip* resolving entities like DTDs
+		parser.setEntityResolver(new NoEntityResolver());
+
+		parser.parse(new InputSource(input));
+
+		os.flush();
+		os.close();
+	}
+
+}

@@ -53,15 +53,8 @@ public class EncodingOptions {
 
 	/** Insignificant xsi:nil values e.g., xsi:nil="false" */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
-
-	// /*
-	// * Insignificant xsi:type values e.g., xsi:type="xs:string" where type is
-	// * already string
-	// */
-	// public static final String INCLUDE_INSIGNIFICANT_XSI_TYPE =
-	// "INCLUDE_INSIGNIFICANT_XSI_TYPE";
 	
-	/** To indicate that the EXI profile is in use without advertising each parameter value, the exi:p element is encoded without any content */
+	/** To indicate that the EXI profile is in use and advertising each parameter value (exi:p element) */
 	public static final String INCLUDE_PROFILE_VALUES = "INCLUDE_PROFILE_VALUES";
 
 	/* contains options and according values */
