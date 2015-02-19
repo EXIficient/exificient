@@ -18,7 +18,6 @@
 
 package com.siemens.ct.exi.grammars;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -36,7 +35,9 @@ import org.apache.xerces.impl.xs.XSComplexTypeDecl;
 import org.apache.xerces.impl.xs.models.CMBuilder;
 import org.apache.xerces.impl.xs.models.CMNodeFactory;
 import org.apache.xerces.impl.xs.models.XSCMValidator;
+import org.apache.xerces.util.XMLResourceIdentifierImpl;
 import org.apache.xerces.xni.QName;
+import org.apache.xerces.xni.XMLResourceIdentifier;
 import org.apache.xerces.xni.XNIException;
 import org.apache.xerces.xni.parser.XMLEntityResolver;
 import org.apache.xerces.xni.parser.XMLErrorHandler;
@@ -143,7 +144,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			// Xerces Version 2.11.0
 			subGroupHandler = new SubstitutionGroupHandler(sl);
 		} catch (Exception e) {
-			throw new EXIException(e);
+			throw new EXIException("XML Schema document (" + xsdSource.getSystemId() + ") not found.", e);
 		}
 	}
 
@@ -161,19 +162,25 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	}
 	
 	public void loadGrammars(String xsdLocation, XMLEntityResolver entityResolver) throws EXIException {
-		File f = new File(xsdLocation);
-		if (f.exists()) {
-			// XSD source
+		XMLInputSource xsdSource = null;
+		
+		if(entityResolver != null) {
+			XMLResourceIdentifier rid = new XMLResourceIdentifierImpl();
+			rid.setLiteralSystemId(xsdLocation);
+			try {
+				xsdSource = entityResolver.resolveEntity(rid);
+			} catch (Exception e) {
+			}
+		}
+		if (xsdSource == null ) {
 			String systemId = xsdLocation;
 			String publicId = null;
 			String baseSystemId = null; // f.getParent();
-			XMLInputSource xsdSource = new XMLInputSource(publicId, systemId,
+			xsdSource = new XMLInputSource(publicId, systemId,
 					baseSystemId);
-			loadGrammars(xsdSource, entityResolver);
-		} else {
-			throw new EXIException("XML Schema document (" + xsdLocation
-					+ ") not found.");
 		}
+		
+		loadGrammars(xsdSource, entityResolver);
 	}
 
 	
