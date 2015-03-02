@@ -90,7 +90,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		SAXSource exiSource = new SAXSource(is);
 		exiSource.setXMLReader(exiReader);
 		transformer.transform(exiSource, result);
-
+		
 		// this.decodeTo(ef, exiDocument, xmlOutput, transformer);
 	}
 

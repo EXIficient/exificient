@@ -34,13 +34,15 @@ import com.siemens.ct.exi.util.SkipRootElementXMLEventReader;
 
 public class TestStAXEncoder extends AbstractTestEncoder {
 
+	protected EXIFactory ef;
 	protected boolean isFragment;
 	protected StAXEncoder exiWriter;
 
 	public TestStAXEncoder(EXIFactory ef) throws EXIException {
 		super();
 		exiWriter = new StAXEncoder(ef);
-		isFragment = ef.isFragment();
+		this.ef = ef;
+		this.isFragment = ef.isFragment();
 	}
 
 	// @Override
@@ -55,11 +57,20 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
 
 		// do not resolve DTDs
-		xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+		xmlFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+		// AND
 		// requires the parser to replace internal entity references with their
 		// replacement text and report them as characters
-		xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
-				Boolean.FALSE);
+//		if(this.ef.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
+			xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+			xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
+					Boolean.FALSE);			
+//		} else {
+//			xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.TRUE);
+//			xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
+//					Boolean.TRUE);
+//		}
+
 
 		if (isFragment) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
