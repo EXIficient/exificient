@@ -62,7 +62,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// GeneralTestCase.setConfigurationDocType1 ( );
 		// GeneralTestCase.setConfigurationDocType2 ( );
 		// GeneralTestCase.setConfigurationDocType3 ( );
-		// GeneralTestCase.setConfigurationEntityReference1();
+		GeneralTestCase.setConfigurationEntityReference1();
 		// GeneralTestCase.setConfigurationEntityReference2();
 		// GeneralTestCase.setConfigurationEntityReferenceUnresolved1();
 		// GeneralTestCase.setConfigurationCData1();

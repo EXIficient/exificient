@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
+import javax.xml.namespace.QName;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,6 +38,9 @@ public class EXIficientCMDTest {
 
 	final String xsdNotebook = "./data/W3C/PrimerNotebook/notebook.xsd";
 	final String xmlNotebook = "./data/W3C/PrimerNotebook/notebook.xml";
+	
+	final String xmlFragment2 = "./data/fragment/fragment2.xml.frag";
+	
 
 	@Test
 	public void test1() {
@@ -300,6 +305,134 @@ public class EXIficientCMDTest {
 		// decode
 		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
 				sOutput};
+		cmd.parseArguments(args2);
+		cmd.process();
+		
+		// EXI File should be there
+		File f = new File(sOutput);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+		
+		// XML File should be there
+		f = new File(sOutput
+				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+	}
+	
+	@Test
+	public void testFragment2() throws Exception {
+		EXIficientCMD cmd = new EXIficientCMD();
+		
+		String sOutput = xmlFragment2 + ".exii";
+		
+		// encode
+		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
+				xmlFragment2, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.FRAGMENT };
+		cmd.parseArguments(args1);
+		assertTrue(cmd.exiFactory.isFragment());
+		cmd.process();
+		
+		// decode
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
+				sOutput, EXIficientCMD.FRAGMENT };
+		cmd.parseArguments(args2);
+		assertTrue(cmd.exiFactory.isFragment());
+		cmd.process();
+		
+		// EXI File should be there
+		File f = new File(sOutput);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+		
+		// XML File should be there
+		f = new File(sOutput
+				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+	}
+	
+	@Test
+	public void testCodingSelfContained1() throws Exception {
+		EXIficientCMD cmd = new EXIficientCMD();
+		
+		String sOutput = xmlNotebook + ".exiii";
+		String qnames = "el1,el2";
+		
+		
+		// encode
+		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
+				xmlNotebook, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.SELF_CONTAINED, qnames};
+		cmd.parseArguments(args1);
+		assertTrue(cmd.exiFactory.isSelfContainedElement(new QName("el1")));
+		assertTrue(cmd.exiFactory.isSelfContainedElement(new QName("el2")));
+		cmd.process();
+		
+		// decode
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
+				sOutput, EXIficientCMD.SELF_CONTAINED, qnames};
+		cmd.parseArguments(args2);
+		cmd.process();
+		
+		// EXI File should be there
+		File f = new File(sOutput);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+		
+		// XML File should be there
+		f = new File(sOutput
+				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		if (f.exists()) {
+			// ok --> delete
+			f.delete();
+		} else {
+			fail("File " + f + " not created");
+		}
+	}
+	
+	@Test
+	public void testCodingDTR1() throws Exception {
+		EXIficientCMD cmd = new EXIficientCMD();
+		
+		String sOutput = xmlNotebook + ".exiiii";
+		String typesRepr = "{http://www.w3.org/2001/XMLSchema}date,{http://www.w3.org/2009/exi}string,{http://www.w3.org/2001/XMLSchema}string,{http://www.w3.org/2009/exi}string";
+		
+		// encode
+		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
+				xmlNotebook, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr};
+		cmd.parseArguments(args1);
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes().length == 2);
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[0].getLocalPart().equals("date"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[1].getLocalPart().equals("string"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations().length == 2);
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[0].getLocalPart().equals("string"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[1].getLocalPart().equals("string"));
+		
+		cmd.process();
+		
+		// decode
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
+				sOutput, EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr};
 		cmd.parseArguments(args2);
 		cmd.process();
 		

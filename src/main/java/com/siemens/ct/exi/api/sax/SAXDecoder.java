@@ -617,12 +617,16 @@ public class SAXDecoder implements XMLReader {
 			lexicalHandler.endDTD();
 		}
 	}
-
+	
 	protected void handleEntityReference(char[] erName) throws SAXException {
 
 		String entityReferenceName = new String(erName);
 		contentHandler.skippedEntity(entityReferenceName);
+//		contentHandler.characters(amp, 0, amp.length);
+//		contentHandler.characters(erName, 0, erName.length);
+//		contentHandler.characters(semicolon, 0, semicolon.length);
 
+		
 		// // JAXP ?
 		// char[] entity = ("&" + entityReferenceName + ";").toCharArray();
 		// contentHandler.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING,

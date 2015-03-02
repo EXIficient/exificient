@@ -24,7 +24,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.StringTokenizer;
 
+import javax.xml.namespace.QName;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -45,7 +48,9 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.util.FragmentUtilities;
 import com.siemens.ct.exi.util.NoEntityResolver;
+import com.siemens.ct.exi.util.SkipRootElementXMLReader;
 
 /*
  * 
@@ -61,10 +66,6 @@ import com.siemens.ct.exi.util.NoEntityResolver;
  * @author Joerg.Heuer@siemens.com
  * 
  * @version 0.9.4-SNAPSHOT
- */
-
-/*
- * TODOs - fragment - selfContained - datatypeRepresentationMap
  */
 
 public class EXIficientCMD {
@@ -96,6 +97,9 @@ public class EXIficientCMD {
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "-includeInsignificantXsiNil";
 	public static final String INCLUDE_PROFILE_VALUES = "-includeProfileValues";
 	public static final String RETAIN_ENTITY_REFERENCE = "-retainEntityReference";
+	public static final String FRAGMENT = "-fragment";
+	public static final String SELF_CONTAINED = "-selfContained";
+	public static final String DATATYPE_REPRESENTATION_MAP = "-datatypeRepresentationMap";
 
 	public static final String CODING_BYTEPACKED = "-bytePacked";
 	public static final String CODING_PRE_COMPRESSION = "-preCompression";
@@ -177,6 +181,10 @@ public class EXIficientCMD {
 		ps.println(" " + INCLUDE_INSIGNIFICANT_XSI_NIL);
 		ps.println(" " + INCLUDE_PROFILE_VALUES);
 		ps.println(" " + RETAIN_ENTITY_REFERENCE);
+		ps.println(" " + FRAGMENT);
+		ps.println(" " + SELF_CONTAINED + " <{urn:foo}elWithNS,elDefNS>");
+		ps.println(" " + DATATYPE_REPRESENTATION_MAP + " <qnameType,qnameRepresentation,{http://www.w3.org/2001/XMLSchema}decimal,{http://www.w3.org/2009/exi}string>");
+		
 		ps.println();
 		ps.println("# Examples");
 		ps.println(" " + ENCODE + " " + SCHEMA
@@ -360,7 +368,49 @@ public class EXIficientCMD {
 			else if (RETAIN_ENTITY_REFERENCE.equalsIgnoreCase(argument)) {
 				exiFactory.getEncodingOptions().setOption(
 						EncodingOptions.RETAIN_ENTITY_REFERENCE);
-			} else {
+			}
+			// ### FRAGMENT
+			else if (FRAGMENT.equalsIgnoreCase(argument)) {
+				exiFactory.setFragment(true);
+			}
+			// ### SELF_CONTAINED
+			else if (SELF_CONTAINED
+					.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				String qnames = args[indexArgument];
+				StringTokenizer st = new StringTokenizer(qnames, ",");
+				QName[] scElements = new QName[st.countTokens()];
+				int i = 0;
+				while(st.hasMoreTokens()) {
+					scElements[i++] = QName.valueOf(st.nextToken());
+				}
+				exiFactory.setSelfContainedElements(scElements);
+				exiFactory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_SC, true);
+			}
+			// ### DATATYPE_REPRESENTATION_MAP
+			else if (DATATYPE_REPRESENTATION_MAP
+					.equalsIgnoreCase(argument)) {
+				assert ((indexArgument + 1) < args.length);
+				indexArgument++;
+
+				String dtrs = args[indexArgument];
+				StringTokenizer st = new StringTokenizer(dtrs, ",");
+				
+				assert(st.countTokens() % 2 == 0);
+				QName[] dtrMapTypes = new QName[st.countTokens()/2];
+				QName[] dtrMapRepresentations = new QName[st.countTokens()/2];
+				
+				int i = 0;
+				while(st.hasMoreTokens()) {
+					dtrMapTypes[i] = QName.valueOf(st.nextToken());
+					dtrMapRepresentations[i] = QName.valueOf(st.nextToken());
+					i++;
+				}
+				exiFactory.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
+			}
+			else {
 				System.out.println("Unknown option '" + argument + "'");
 			}
 
@@ -492,6 +542,11 @@ public class EXIficientCMD {
 				new FileInputStream(input)));
 		exiSource.setXMLReader(exiFactory.createEXIReader());
 
+		if (exiFactory.isFragment()) {
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+					"yes");
+		}
+		
 		transformer.transform(exiSource, new StreamResult(xmlOutput));
 
 		xmlOutput.flush();
@@ -534,7 +589,19 @@ public class EXIficientCMD {
 		// *skip* resolving entities like DTDs
 		parser.setEntityResolver(new NoEntityResolver());
 
-		parser.parse(new InputSource(input));
+		InputSource is;
+		if(exiFactory.isFragment()) {
+			// surround fragment section with *root* element
+			// (necessary for xml reader to avoid messages like "root element must
+			// be well-formed")
+			is = new InputSource(FragmentUtilities.getSurroundingRootInputStream(new FileInputStream(input)));
+			// skip root element when passing infoset to EXI encoder
+			parser =  new SkipRootElementXMLReader(parser);
+		} else {
+			is = new InputSource(input);
+		}
+		
+		parser.parse(is);
 
 		os.flush();
 		os.close();
