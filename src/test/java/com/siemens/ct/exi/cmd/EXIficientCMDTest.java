@@ -293,7 +293,9 @@ public class EXIficientCMDTest {
 	public void testCoding1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
 		
-		String sOutput = xmlNotebook + ".exii";
+		File tmp = File.createTempFile("xmlNotebook", "exi");
+		String sOutput = tmp.getAbsolutePath();
+		// String sOutput = xmlNotebook + ".exii";
 		
 		
 		// encode
@@ -332,7 +334,9 @@ public class EXIficientCMDTest {
 	public void testFragment2() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
 		
-		String sOutput = xmlFragment2 + ".exii";
+		File tmp = File.createTempFile("xmlFragment2", "exi");
+		String sOutput = tmp.getAbsolutePath();
+		// String sOutput = xmlFragment2 + ".exii";
 		
 		// encode
 		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
@@ -372,7 +376,9 @@ public class EXIficientCMDTest {
 	public void testCodingSelfContained1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
 		
-		String sOutput = xmlNotebook + ".exiii";
+		File tmp = File.createTempFile("xmlNotebook", "exi");
+		String sOutput = tmp.getAbsolutePath();
+		// String sOutput = xmlNotebook + ".exiii";
 		String qnames = "el1,el2";
 		
 		
@@ -414,7 +420,8 @@ public class EXIficientCMDTest {
 	public void testCodingDTR1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
 		
-		String sOutput = xmlNotebook + ".exiiii";
+		File tmp = File.createTempFile("xmlNotebook", "exi");
+		String sOutput = tmp.getAbsolutePath(); //  xmlNotebook + ".exiiii";
 		String typesRepr = "{http://www.w3.org/2001/XMLSchema}date,{http://www.w3.org/2009/exi}string,{http://www.w3.org/2001/XMLSchema}string,{http://www.w3.org/2009/exi}string";
 		
 		// encode
