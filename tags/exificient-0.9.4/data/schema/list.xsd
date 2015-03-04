@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="list" >
+        <xs:complexType>
+            <xs:sequence>
+                <!-- Built-in Type: List -->
+                <!-- TODO: all typed derived by list, inclduing IDREFS and ENTITIES -->
+                <xs:element name="intValues" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:integer"/>
+                    </xs:simpleType>
+                 </xs:element>
+                <xs:element name="posIntValues" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:nonNegativeInteger"/>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="stringValues" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:simpleType>
+                        <xs:list itemType="xs:string"/>
+                    </xs:simpleType>
+                </xs:element>
+                <!-- IDREFS -->
+                <xs:element name="books">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="book">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="isbn" type="xs:int"/>
+                                        <xs:element name="title" type="xs:string"/>
+                                        <xs:element name="author-ref">
+                                            <xs:complexType>
+                                                <xs:attribute name="ref" type="xs:IDREF"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="character-refs" type="xs:IDREFS"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="identifier" type="xs:ID"/>
+                                    <xs:attribute name="keywords" type="Keywords"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="ids" type="IDs"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:simpleType name="Keywords">
+        <xs:list itemType="xs:string"/>
+    </xs:simpleType>
+    
+    <xs:simpleType name="IDs">
+        <xs:list itemType="xs:int"/>
+    </xs:simpleType>
+    
+</xs:schema>

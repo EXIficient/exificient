@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qnames xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="identicalQName.xsd">
+    <elInteger>
+        <content>456</content>
+    </elInteger>
+    <elFloat>
+        <content>3.44887</content>
+    </elFloat>
+    <elDate>
+        <content>2007-02-12</content>
+    </elDate>
+</qnames>

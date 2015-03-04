@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="navn" substitutionGroup="name"/>
+    <xs:element name="nome" substitutionGroup="navn"/>
+    
+    <xs:complexType name="custinfo">
+        <xs:sequence>
+            <xs:element ref="name"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="customer" type="custinfo"/>
+    <xs:element name="kunde" substitutionGroup="customer"/>
+    
+</xs:schema> 
