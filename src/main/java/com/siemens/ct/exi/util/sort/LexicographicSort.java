@@ -39,7 +39,7 @@ import com.siemens.ct.exi.grammars.event.StartElement;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.4-SNAPSHOT
+ * @version 0.9.4
  */
 
 public class LexicographicSort implements Comparator<Object>, Serializable {

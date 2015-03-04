@@ -30,7 +30,7 @@ import com.siemens.ct.exi.grammars.production.Production;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.4-SNAPSHOT
+ * @version 0.9.4
  */
 
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
