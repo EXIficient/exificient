@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2014 Siemens AG
+ * Copyright (C) 2007-2015 Siemens AG
  *
  * This program and its interfaces are free software;
  * you can redistribute it and/or modify
