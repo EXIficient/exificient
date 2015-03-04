@@ -28,7 +28,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.4
+ * @version 0.9.5-SNAPSHOT
  */
 
 public class StartElement extends AbstractEvent {
