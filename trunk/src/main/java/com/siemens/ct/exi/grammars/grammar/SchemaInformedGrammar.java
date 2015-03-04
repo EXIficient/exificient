@@ -25,7 +25,7 @@ import com.siemens.ct.exi.grammars.event.Event;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.4
+ * @version 0.9.5-SNAPSHOT
  */
 
 public interface SchemaInformedGrammar extends Grammar {
