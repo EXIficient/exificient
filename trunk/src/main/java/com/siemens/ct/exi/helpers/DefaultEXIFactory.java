@@ -70,7 +70,7 @@ import com.siemens.ct.exi.types.TypedTypeEncoder;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.4-SNAPSHOT
+ * @version 0.9.4
  */
 
 public class DefaultEXIFactory implements EXIFactory {
