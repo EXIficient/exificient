@@ -101,7 +101,8 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 		Element element = checkDocument().createElementNS(uri, qName);
 
 		// add NS declarations
-		for (PrefixMapping pm : prefixes) {
+		for (int i = 0; i < prefixes.size(); i++) {
+			PrefixMapping pm = prefixes.get(i);
 			String qname = pm.prefix.length() == 0 ? XMLConstants.XMLNS_ATTRIBUTE
 					: XMLConstants.XMLNS_ATTRIBUTE + ":" + pm.prefix;
 			Attr attr = checkDocument().createAttributeNS(

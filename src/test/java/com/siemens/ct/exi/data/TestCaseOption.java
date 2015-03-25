@@ -203,7 +203,8 @@ public class TestCaseOption {
 		// selfContained elements
 		if (this.scElements != null && this.scElements.length > 0) {
 			sb.append(", scElements=[");
-			for (QName sc : scElements) {
+			for (int i = 0; i < scElements.length; i++) {
+				QName sc = scElements[i];
 				sb.append(sc + ",");
 			}
 			sb.append("]");

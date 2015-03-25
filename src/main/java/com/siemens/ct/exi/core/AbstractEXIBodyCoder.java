@@ -254,7 +254,8 @@ public abstract class AbstractEXIBodyCoder {
 		for (int i = elementContextStackIndex; i > 0; i--) {
 			ElementContext ec = elementContextStack[i];
 			if (ec.nsDeclarations != null) {
-				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+				for (int k = 0; k < ec.nsDeclarations.size(); k++) {
+					NamespaceDeclaration ns = ec.nsDeclarations.get(k);
 					if (ns.prefix.equals(prefix)) {
 						return ns.namespaceURI;
 					}
@@ -269,7 +270,8 @@ public abstract class AbstractEXIBodyCoder {
 		for (int i = 1; i <= elementContextStackIndex; i++) {
 			ElementContext ec = elementContextStack[i];
 			if (ec.nsDeclarations != null) {
-				for (NamespaceDeclaration ns : ec.nsDeclarations) {
+				for (int k = 0; k < ec.nsDeclarations.size(); k++) {
+					NamespaceDeclaration ns = ec.nsDeclarations.get(k);
 					if (ns.namespaceURI.equals(uri)) {
 						return ns.prefix;
 					}

@@ -40,53 +40,53 @@ public class EXIOptionsHeaderTestCase extends AbstractTestCase {
 	protected void setUp() {
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
 
 		// #2
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
 
 		// #3 (all)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(true);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
 
 		// #4
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(true);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
 
 		// #5 (strict)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createStrict());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(false);
-		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setSchemaInformedOnly(true);
 
 		// #6
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.lastElement().setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.lastElement().setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
 				FidelityOptions.createStrict());
-		testCaseOptions.lastElement().setFragments(false);
-		testCaseOptions.lastElement().setXmlEqual(false);
-		testCaseOptions.lastElement().setSchemaInformedOnly(true);
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setSchemaInformedOnly(true);
 	}
 
 	@Test

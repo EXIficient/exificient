@@ -123,7 +123,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer(this.getLabel() + "//" + "\t");
+		StringBuilder sb = new StringBuilder(this.getLabel() + "//" + "\t");
 
 		sb.append("[");
 		for (int ec = 0; ec < this.getNumberOfEvents(); ec++) {
@@ -135,7 +135,8 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	}
 
 	public Production getProduction(EventType eventType) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.size(); i++) {
+			Production ei = containers.get(i);
 			if (ei.getEvent().isEventType(eventType)) {
 				if(!isExiProfilGhostNode(ei)) {
 					return ei;
@@ -157,7 +158,8 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 	public Production getStartElementProduction(String namespaceURI,
 			String localName) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.size(); i++) {
+			Production ei = containers.get(i);
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
 					&& checkQualifiedName(((StartElement) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {
@@ -175,7 +177,8 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 	public Production getAttributeProduction(String namespaceURI,
 			String localName) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.size(); i++) {
+			Production ei = containers.get(i);
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
 					&& checkQualifiedName(((Attribute) ei.getEvent()).getQName(),
 							namespaceURI, localName)) {

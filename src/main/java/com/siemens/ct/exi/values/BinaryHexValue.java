@@ -86,8 +86,8 @@ public class BinaryHexValue extends AbstractBinaryValue {
 	public int hashCode() {
 		//
 		int hc = 0;
-		for (byte b : bytes) {
-			hc = (hc * 31) ^ b;
+		for (int i = 0; i < bytes.length; i++) {
+			hc = (hc * 31) ^ bytes[i];
 		}
 
 		return hc;
