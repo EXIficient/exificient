@@ -223,20 +223,24 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 		schemaLocalNames.clear();
 		// "", empty string
-		for (String localName : Constants.LOCAL_NAMES_EMPTY) {
+		for (int i = 0; i < Constants.LOCAL_NAMES_EMPTY.length; i++) {
+			String localName = Constants.LOCAL_NAMES_EMPTY[i];
 			addLocalNameStringEntry(XMLConstants.NULL_NS_URI, localName);
 		}
 		// "http://www.w3.org/XML/1998/namespace"
-		for (String localName : Constants.LOCAL_NAMES_XML) {
+		for (int i = 0; i < Constants.LOCAL_NAMES_XML.length; i++) {
+			String localName = Constants.LOCAL_NAMES_XML[i];
 			addLocalNameStringEntry(XMLConstants.XML_NS_URI, localName);
 		}
 		// "http://www.w3.org/2001/XMLSchema-instance", xsi
-		for (String localName : Constants.LOCAL_NAMES_XSI) {
+		for (int i = 0; i < Constants.LOCAL_NAMES_XSI.length; i++) {
+			String localName = Constants.LOCAL_NAMES_XSI[i];
 			addLocalNameStringEntry(
 					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, localName);
 		}
 		// "http://www.w3.org/2001/XMLSchema", xsd
-		for (String localName : Constants.LOCAL_NAMES_XSD) {
+		for (int i = 0; i < Constants.LOCAL_NAMES_XSD.length; i++) {
+			String localName = Constants.LOCAL_NAMES_XSD[i];
 			addLocalNameStringEntry(XMLConstants.W3C_XML_SCHEMA_NS_URI,
 					localName);
 		}
@@ -283,7 +287,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				: namespaceUri;
 		assert(grammarUriContexts != null);
 
-		for (GrammarUriContext guc : grammarUriContexts) {
+		for (int i = 0; i < grammarUriContexts.length; i++) {
+			GrammarUriContext guc = grammarUriContexts[i];
 			if (guc.getNamespaceUri().equals(namespaceUri)) {
 				return guc;
 			}
@@ -449,7 +454,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		}
 		Collections.sort(uniqueNamedElementsList, lexSort);
 
-		for (QName fm : uniqueNamedElementsList) {
+		for (int i = 0; i < uniqueNamedElementsList.size(); i++) {
+			QName fm = uniqueNamedElementsList.get(i);
 			StartElement se;
 			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
 			if (elements.size() == 1 || isSameElementGrammar(elements)) {
@@ -532,7 +538,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 		Collections.sort(uniqueNamedAttributeList, lexSort);
 
-		for (QName an : uniqueNamedAttributeList) {
+		for (int i = 0; i < uniqueNamedAttributeList.size(); i++) {
+			QName an = uniqueNamedAttributeList.get(i);
 			Attribute at;
 			List<XSAttributeDeclaration> attributes = uniqueNamedAttributes
 					.get(an);
@@ -550,7 +557,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 		// SE ( F0 ) ElementFragment 1 n+1
 		// ..
-		for (QName fm : uniqueNamedElementsList) {
+		for (int i = 0; i < uniqueNamedElementsList.size(); i++) {
+			QName fm = uniqueNamedElementsList.get(i);
 			StartElement se;
 			List<XSElementDeclaration> elements = uniqueNamedElements.get(fm);
 			if (elements.size() == 1 || isSameElementGrammar(elements)) {
@@ -583,7 +591,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		// AT ( A n-1 ) [schema-typed value] ElementFragmentTypeEmpty 0 n-1
 		// AT ( * ) ElementFragmentTypeEmpty 0 n
 		// EE n+1
-		for (QName an : uniqueNamedAttributeList) {
+		for (int i = 0; i < uniqueNamedAttributeList.size(); i++) {
+			QName an = uniqueNamedAttributeList.get(i);
 			Attribute at;
 			List<XSAttributeDeclaration> attributes = uniqueNamedAttributes
 					.get(an);
@@ -685,7 +694,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			this.initializeEntries();
 			// sort entries
 			Collections.sort(this);
-			for (NamespaceUriEntry nsue : this) {
+			for (int i = 0; i < this.size(); i++) {
+				NamespaceUriEntry nsue = this.get(i);
 				Collections.sort(nsue.localNames);
 			}
 		}
@@ -732,7 +742,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		private NamespaceUriEntry checkNamespaceUriEntry(String namespaceUri) {
 			namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
 					: namespaceUri;
-			for (NamespaceUriEntry nsue : this) {
+			for (int i = 0; i < this.size(); i++) {
+				NamespaceUriEntry nsue = this.get(i);
 				if (nsue.namespaceUri.equals(namespaceUri)) {
 					return nsue;
 				}
@@ -879,7 +890,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	public SchemaInformedGrammars toGrammars() throws EXIException {
 		if (xsModel == null || schemaParsingErrors.size() > 0) {
-			StringBuffer sb = new StringBuffer(
+			StringBuilder sb = new StringBuilder(
 					"Problem occured while building XML Schema Model (XSModel)!");
 
 			for (int i = 0; i < schemaParsingErrors.size(); i++) {
@@ -931,7 +942,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		}
 
 		// updates global elements, attributes and types
-		for (GrammarUriContext guc : grammarUriContexts) {
+		for (int i = 0; i < grammarUriContexts.length; i++) {
+			GrammarUriContext guc = grammarUriContexts[i];
 			for (int k = 0; k < guc.getNumberOfQNames(); k++) {
 				QNameContext qnc = guc.getQNameContext(k);
 				String localName = qnc.getLocalName();
@@ -1059,7 +1071,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		builtInDocContentGrammar.addProduction(START_ELEMENT_GENERIC, builtInDocEndGrammar);
 		
 		// DocContent rule & add global elements (sorted)
-		for (StartElement globalElement : globalElements) {
+		for (int i = 0; i < globalElements.size(); i++) {
+			StartElement globalElement = globalElements.get(i);
 			builtInDocContentGrammar.addProduction(globalElement,
 					builtInDocEndGrammar);
 		}
@@ -1082,7 +1095,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		builtInFragmentContentGrammar.addTerminalProduction(new EndDocument());
 		
 		
-		for (StartElement fragmentElement : fragmentElements) {
+		for (int i = 0; i < fragmentElements.size(); i++) {
+			StartElement fragmentElement = fragmentElements.get(i);
 			builtInFragmentContentGrammar.addProduction(fragmentElement,
 					builtInFragmentContentGrammar);
 		}

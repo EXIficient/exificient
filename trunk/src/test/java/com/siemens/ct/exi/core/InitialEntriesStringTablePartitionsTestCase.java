@@ -19,7 +19,8 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 	protected static boolean containsValue(String[] list, String val) {
-		for (String li : list) {
+		for (int i = 0; i < list.length; i++) {
+			String li = list[i];
 			if (li.equals(val)) {
 				return true;
 			}

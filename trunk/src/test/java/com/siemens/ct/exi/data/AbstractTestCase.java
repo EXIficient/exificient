@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -68,7 +67,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 	public final static String ENCODING = "UTF-8"; // "ISO-8859-1";
 
-	protected Vector<TestCaseOption> testCaseOptions = new Vector<TestCaseOption>();
+	protected List<TestCaseOption> testCaseOptions = new ArrayList<TestCaseOption>();
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();
 
 	public AbstractTestCase(String s) {

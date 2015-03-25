@@ -162,7 +162,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 			while(iterCh.hasNext()) {
 				QNameContext contextOrder = iterCh.next();
 				List<ValueAndDatatype> lvd = channelValuesAndDatatypes.get(contextOrder);
-				for (ValueAndDatatype vd : lvd) {
+				for (int i = 0; i < lvd.size(); i++) {
+					ValueAndDatatype vd = lvd.get(i);
 					typeEncoder.isValid(vd.datatype, vd.value);
 					typeEncoder.writeValue(contextOrder, channel,
 							stringEncoder);
@@ -199,7 +200,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 				QNameContext contextOrder = iterCh.next();
 				List<ValueAndDatatype> lvd = channelValuesAndDatatypes.get(contextOrder);
 				if (lvd.size() <= Constants.MAX_NUMBER_OF_VALUES) {
-					for (ValueAndDatatype vd : lvd) {
+					for (int i = 0; i < lvd.size(); i++) {
+						ValueAndDatatype vd = lvd.get(i);
 						typeEncoder.isValid(vd.datatype, vd.value);
 						typeEncoder.writeValue(contextOrder, leq100,
 								stringEncoder);
@@ -220,7 +222,8 @@ public class EXIBodyEncoderReordered extends AbstractEXIBodyEncoder {
 				if (lvd.size() > Constants.MAX_NUMBER_OF_VALUES) {
 					// create stream
 					EncoderChannel gre100 = new ByteEncoderChannel(getStream());
-					for (ValueAndDatatype vd : lvd) {
+					for (int i = 0; i < lvd.size(); i++) {
+						ValueAndDatatype vd = lvd.get(i);
 						typeEncoder.isValid(vd.datatype, vd.value);
 						typeEncoder.writeValue(contextOrder, gre100,
 								stringEncoder);

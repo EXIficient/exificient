@@ -1010,7 +1010,7 @@ public class EXIficientGUI extends JFrame {
 					newValue = string;
 				} else {
 					String currentContent = doc.getText(0, length);
-					StringBuffer currentBuffer = new StringBuffer(
+					StringBuilder currentBuffer = new StringBuilder(
 							currentContent);
 					currentBuffer.insert(offset, string);
 					newValue = currentBuffer.toString();

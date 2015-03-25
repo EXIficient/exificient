@@ -35,7 +35,8 @@ public class GrammarContext implements Serializable {
 	}
 
 	public GrammarUriContext getGrammarUriContext(String namespaceUri) {
-		for (GrammarUriContext uc : grammarUriContexts) {
+		for (int i = 0; i < grammarUriContexts.length; i++) {
+			GrammarUriContext uc = grammarUriContexts[i];
 			if (uc.namespaceUri.equals(namespaceUri)) {
 				return uc;
 			}

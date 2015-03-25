@@ -222,7 +222,8 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public boolean isSelfContainedElement(QName element) {
 		if (scElements != null && scElements.length > 0) {
-			for (QName qname : scElements) {
+			for (int i = 0; i < scElements.length; i++) {
+				QName qname = scElements[i];
 				if (qname.equals(element)) {
 					return true;
 				}
@@ -644,11 +645,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		// dtr
 		if (this.dtrMapTypes != null && this.dtrMapTypes.length > 0) {
 			sb.append("[DTR Types=");
-			for (QName dtrMapType : dtrMapTypes) {
+			for (int i = 0; i < dtrMapTypes.length; i++) {
+				QName dtrMapType = dtrMapTypes[i];
 				sb.append(dtrMapType + " ");
 			}
 			sb.append(", Representation=");
-			for (QName dtrMapRepresentation : dtrMapRepresentations) {
+			for (int i = 0; i < dtrMapRepresentations.length; i++) {
+				QName dtrMapRepresentation = dtrMapRepresentations[i];
 				sb.append(dtrMapRepresentation + " ");
 			}
 			sb.append("]");
@@ -656,7 +659,8 @@ public class DefaultEXIFactory implements EXIFactory {
 		// sc elements
 		if (this.scElements != null && this.scElements.length > 0) {
 			sb.append("[SCElements=");
-			for (QName scElement : scElements) {
+			for (int i = 0; i < scElements.length; i++) {
+				QName scElement = scElements[i];
 				sb.append(scElement + " ");
 			}
 			sb.append("]");

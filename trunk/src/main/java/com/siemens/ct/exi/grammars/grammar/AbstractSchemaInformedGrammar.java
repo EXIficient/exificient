@@ -158,7 +158,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		boolean added = false;
 
 		// add existing events
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			Event o1 = ei.getEvent();
 
 			if (!added) {
@@ -239,7 +240,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		int eventCode = 0;
 		boolean newOneAdded = false;
 
-		for (Event ev : sortedEvents) {
+		for (int i = 0; i < sortedEvents.size(); i++) {
+			Event ev = sortedEvents.get(i);
 			if (ev == newEvent) {
 				newContainers[eventCode] = new SchemaInformedProduction(
 						newGrammar, newEvent, eventCode);
@@ -320,7 +322,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	public Production getProduction(EventType eventType) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			if (ei.getEvent().isEventType(eventType)) {
 				return ei;
 			}
@@ -329,7 +332,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	public Production getStartElementProduction(String namespaceURI, String localName) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT)
 					&& checkQualifiedName(
 							((StartElement) ei.getEvent()).getQName(),
@@ -341,7 +345,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	public Production getStartElementNSProduction(String namespaceURI) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			if (ei.getEvent().isEventType(EventType.START_ELEMENT_NS)
 					&& ((StartElementNS) ei.getEvent()).getNamespaceURI()
 							.equals(namespaceURI)) {
@@ -352,7 +357,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	public Production getAttributeProduction(String namespaceURI, String localName) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE)
 					&& checkQualifiedName(
 							((Attribute) ei.getEvent()).getQName(),
@@ -364,7 +370,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	public Production getAttributeNSProduction(String namespaceURI) {
-		for (Production ei : containers) {
+		for (int i = 0; i < containers.length; i++) {
+			Production ei = containers[i];
 			if (ei.getEvent().isEventType(EventType.ATTRIBUTE_NS)
 					&& ((AttributeNS) ei.getEvent()).getNamespaceURI().equals(
 							namespaceURI)) {

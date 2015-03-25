@@ -92,7 +92,8 @@ public class ListDatatype extends AbstractDatatype {
 		valueChannel.encodeUnsignedInteger(values.length);
 
 		// iterate over all tokens
-		for (Value v : values) {
+		for (int i = 0; i < values.length; i++) {
+			Value v = values[i];
 			boolean valid = listDatatype.isValid(v);
 			if (!valid) {
 				throw new RuntimeException("ListValue is not valid, " + v);

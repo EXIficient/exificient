@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.xerces.impl.xs.SchemaGrammar;
 import org.apache.xerces.impl.xs.SubstitutionGroupHandler;
@@ -305,7 +304,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 			int[] state = xscmVal.startContentModel();
 			@SuppressWarnings("unchecked")
-			Vector<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
+			List<XSObject> possibleElements = xscmVal.whatCanGoHere(state);
 
 			// elements that have a given maxOccurs unbounded
 			List<XSElementDeclaration> elementsMaxOccursUnbounded = new ArrayList<XSElementDeclaration>();
@@ -335,7 +334,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	abstract protected StartElement translatElementDeclarationToFSA(
 			XSElementDeclaration xsElementDeclaration) throws EXIException;
 
-	private void handleStateEntries(Vector<XSObject> possibleElements,
+	private void handleStateEntries(List<XSObject> possibleElements,
 			XSCMValidator xscmVal, int[] originalState, CMState startState,
 			Map<CMState, SchemaInformedGrammar> knownStates,
 			boolean isMixedContent,
@@ -343,7 +342,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			throws EXIException {
 		assert (knownStates.containsKey(startState));
 
-		for (XSObject xs : possibleElements) {
+		for (int ind = 0; ind < possibleElements.size(); ind++) {
+			XSObject xs = possibleElements.get(ind);
 			// copy state since it gets modified
 			int[] cstate = new int[originalState.length];
 			System.arraycopy(originalState, 0, cstate, 0, originalState.length);
@@ -362,7 +362,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 				// next possible state
 				@SuppressWarnings("unchecked")
-				Vector<XSObject> nextPossibleElements = xscmVal
+				List<XSObject> nextPossibleElements = xscmVal
 						.whatCanGoHere(cstate);
 				boolean isEnd = xscmVal.endContentModel(cstate);
 				int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
@@ -414,7 +414,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 					// next possible state
 					@SuppressWarnings("unchecked")
-					Vector<XSObject> nextPossibleElements = xscmVal
+					List<XSObject> nextPossibleElements = xscmVal
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
 					int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
@@ -446,7 +446,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 					// next possible state
 					@SuppressWarnings("unchecked")
-					Vector<XSObject> nextPossibleElements = xscmVal
+					List<XSObject> nextPossibleElements = xscmVal
 							.whatCanGoHere(cstate);
 					boolean isEnd = xscmVal.endContentModel(cstate);
 					int[] occurenceInfo = xscmVal.occurenceInfo(cstate);
@@ -576,13 +576,13 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 	 * Internal Helper Class: CMState
 	 */
 	static class CMState {
-		protected final Vector<XSObject> states;
+		protected final List<XSObject> states;
 		protected final boolean end;
 		protected final int[] state;
 		protected final List<XSElementDeclaration> elementsMaxOccursUnbounded;
 		protected final int[] occurenceInfo;
 
-		public CMState(Vector<XSObject> states, boolean end, int[] state,
+		public CMState(List<XSObject> states, boolean end, int[] state,
 				List<XSElementDeclaration> elementsMaxOccursUnbounded,
 				int[] occurenceInfo) {
 			this.states = states;
@@ -608,7 +608,8 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 							return true;
 						} else if (state[2] != other.state[2]) {
 							// any element maxOccurs unbounded
-							for (XSObject s : states) {
+							for (int i = 0; i < states.size(); i++) {
+								XSObject s = states.get(i);
 								if (elementsMaxOccursUnbounded.contains(s)) {
 									// If an array is returned it will have a
 									// length == 4 and will contain:
@@ -648,7 +649,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 
 		protected String stateToString() {
-			StringBuffer s = new StringBuffer();
+			StringBuilder s = new StringBuilder();
 			s.append('(');
 			for (int i = 0; i < state.length; i++) {
 				s.append(state[i]);
