@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 
 import com.siemens.ct.exi.api.stream.StAXEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -37,12 +38,18 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 	protected EXIFactory ef;
 	protected boolean isFragment;
 	protected StAXEncoder exiWriter;
+	protected final boolean useXMLStreamReader;
 
 	public TestStAXEncoder(EXIFactory ef) throws EXIException {
+		this(ef, false);
+	}
+	
+	public TestStAXEncoder(EXIFactory ef, boolean useXMLStreamReader) throws EXIException {
 		super();
 		exiWriter = new StAXEncoder(ef);
 		this.ef = ef;
 		this.isFragment = ef.isFragment();
+		this.useXMLStreamReader = useXMLStreamReader;
 	}
 
 	// @Override
@@ -84,17 +91,24 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 			// System.err.println("StAX, Fragments not supported yet");
 		}
 
-		// XMLStreamReader xmlReader =
-		// xmlFactory.createXMLStreamReader(xmlInput);
-		XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput);
+		if (useXMLStreamReader) {
+			XMLStreamReader streamReader = xmlFactory.createXMLStreamReader(xmlInput);
+			// TODO fragment
+			exiWriter.setOutputStream(exiOutput);
+			exiWriter.encode(streamReader);
+		} else {
+			XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput);
 
-		if (isFragment) {
-			xmlReader = new SkipRootElementXMLEventReader(xmlReader);
+			if (isFragment) {
+				xmlReader = new SkipRootElementXMLEventReader(xmlReader);
+			}
+
+			exiWriter.setOutputStream(exiOutput);
+			exiWriter.encode(xmlReader);
 		}
-
-		exiWriter.setOutputStream(exiOutput);
-		exiWriter.encode(xmlReader);
 	}
+		
+
 
 	public static void main(String[] args) throws Exception {
 

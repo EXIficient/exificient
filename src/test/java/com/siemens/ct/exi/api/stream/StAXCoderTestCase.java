@@ -51,6 +51,19 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		ef2.setFidelityOptions(FidelityOptions.createAll());
 		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
 	}
+	
+	public void testEXIbyExample() throws AssertionFailedError, Exception {
+		String xmlInput = "./data/W3C/EXIbyExample/XMLSample.xml";
+		String exiOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi";
+		String xmlOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi.xml";
+
+		EXIFactory ef1 = DefaultEXIFactory.newInstance();
+		this._test(ef1, xmlInput, exiOutput, xmlOutput, false);
+
+		EXIFactory ef2 = DefaultEXIFactory.newInstance();
+		ef2.setFidelityOptions(FidelityOptions.createAll());
+		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
+	}
 
 	public void testXsiType() throws AssertionFailedError, Exception {
 
@@ -70,31 +83,42 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			String exiOutput, String xmlOutput, boolean xmlEqual)
 			throws AssertionFailedError, Exception {
 
-		// encode
-		File fOut = new File(exiOutput);
-		fOut.getParentFile().mkdirs();
-		OutputStream exiOut = new FileOutputStream(fOut);
-		InputStream xmlIn = new FileInputStream(xmlInput);
-		TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
-		tse.encodeTo(xmlIn, exiOut);
-		exiOut.close();
-		xmlIn.close();
+		
+		for(int i=0; i<2; i++) {
+			TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
+			if(i == 0) {
+				 tse = new TestStAXEncoder(exiFactory);
+			} else {
+				 tse = new TestStAXEncoder(exiFactory, true);
+			}
+			
+			// encode
+			File fOut = new File(exiOutput);
+			fOut.getParentFile().mkdirs();
+			OutputStream exiOut = new FileOutputStream(fOut);
+			InputStream xmlIn = new FileInputStream(xmlInput);
+			tse.encodeTo(xmlIn, exiOut);
+			exiOut.close();
+			xmlIn.close();
 
-		// decode
-		InputStream exiIn = new FileInputStream(exiOutput);
-		TestStAXDecoder tsd = new TestStAXDecoder(exiFactory);
-		OutputStream xmlOut = new FileOutputStream(xmlOutput);
-		tsd.decodeTo(exiIn, xmlOut);
-		xmlOut.close();
+			// decode
+			InputStream exiIn = new FileInputStream(exiOutput);
+			TestStAXDecoder tsd = new TestStAXDecoder(exiFactory);
+			OutputStream xmlOut = new FileOutputStream(xmlOutput);
+			tsd.decodeTo(exiIn, xmlOut);
+			xmlOut.close();
 
-		// check equality
-		// @SuppressWarnings("unused")
-		// InputStream control = new FileInputStream(xmlInput);
-		InputStream testXML = new FileInputStream(xmlOutput);
-		this.checkXMLValidity(exiFactory, testXML);
-		if (xmlEqual) {
-			// this.checkXMLEquality(exiFactory, control, testXML);
+			// check equality
+			// @SuppressWarnings("unused")
+			// InputStream control = new FileInputStream(xmlInput);
+			InputStream testXML = new FileInputStream(xmlOutput);
+			this.checkXMLValidity(exiFactory, testXML);
+			if (xmlEqual) {
+				// this.checkXMLEquality(exiFactory, control, testXML);
+			}
 		}
+		
+
 
 	}
 

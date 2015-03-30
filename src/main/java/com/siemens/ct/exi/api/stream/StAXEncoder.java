@@ -264,8 +264,7 @@ public class StAXEncoder implements XMLStreamWriter {
 						xmlStream.getPIData());
 				break;
 			case XMLStreamConstants.COMMENT:
-				this.writeCharacters(xmlStream.getTextCharacters(),
-						xmlStream.getTextStart(), xmlStream.getTextLength());
+				this.writeComment(xmlStream.getText());
 				break;
 			case XMLStreamConstants.DTD:
 				// TODO DTD
@@ -322,7 +321,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			this.exiAttributes.addAttribute(namespaceURI, localName, prefix,
 					value);
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -339,7 +338,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			// CDATA
 			this.writeCharacters(data);
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -381,7 +380,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				char[] chars = data.toCharArray();
 				encoder.encodeComment(chars, 0, chars.length);
 			} catch (Exception e) {
-				throw new XMLStreamException(e);
+				throw new XMLStreamException(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -403,7 +402,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				encoder.encodeDocType(dtdParser.name, dtdParser.publicID,
 						dtdParser.systemID, dtdParser.text);
 			} catch (Exception e) {
-				throw new XMLStreamException(e);
+				throw new XMLStreamException(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -421,7 +420,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			encoder.encodeEndDocument();
 			encoder.flush();
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -438,7 +437,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			this.checkPendingEvents();
 			encoder.encodeEndElement();
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -455,7 +454,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				this.checkPendingEvents();
 				encoder.encodeEntityReference(name);
 			} catch (Exception e) {
-				throw new XMLStreamException(e);
+				throw new XMLStreamException(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -476,7 +475,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			this.exiAttributes.addNamespaceDeclaration(namespaceURI, prefix);
 			// encoder.encodeNamespaceDeclaration(namespaceURI, prefix);
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -510,7 +509,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				this.checkPendingEvents();
 				encoder.encodeProcessingInstruction(target, data);
 			} catch (Exception e) {
-				throw new XMLStreamException(e);
+				throw new XMLStreamException(e.getLocalizedMessage(), e);
 			}
 		}
 	}
@@ -527,7 +526,7 @@ public class StAXEncoder implements XMLStreamWriter {
 		try {
 			encoder.encodeStartDocument();
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -549,7 +548,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			encoder.encodeStartElement(namespaceURI, localName, prefix);
 			pendingATs = true;
 		} catch (Exception e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -561,7 +560,7 @@ public class StAXEncoder implements XMLStreamWriter {
 		try {
 			encoder.flush();
 		} catch (IOException e) {
-			throw new XMLStreamException(e);
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
 		}
 	}
 

@@ -248,7 +248,7 @@ public class SAXDecoder implements XMLReader {
 			parseEXIEvents();
 
 		} catch (EXIException e) {
-			throw new SAXException("EXI", e);
+			throw new SAXException("EXI " + e.getLocalizedMessage(), e);
 		}
 	}
 
