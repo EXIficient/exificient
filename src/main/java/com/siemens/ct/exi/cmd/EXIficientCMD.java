@@ -416,7 +416,7 @@ public class EXIficientCMD {
 
 			indexArgument++;
 		}
-
+		
 		File fOutput = null;
 
 		// check input
@@ -434,6 +434,8 @@ public class EXIficientCMD {
 		} else if (!(new File(input)).exists()) {
 			inputParametersOK = false;
 			printError("Not existing input parameter -i, \"" + input + "\"");
+		} else {
+			// ok
 		}
 
 		if (input != null && output == null) {
@@ -450,7 +452,7 @@ public class EXIficientCMD {
 			printError("Missing output specification!");
 		} else {
 			fOutput = new File(output);
-
+			
 			if (fOutput.isDirectory()) {
 				inputParametersOK = false;
 				printError("Outputfile '" + output
@@ -466,7 +468,7 @@ public class EXIficientCMD {
 					// does not exits
 					assert (!fOutput.exists());
 					File parentDir = fOutput.getParentFile();
-					if (!parentDir.exists()) {
+					if (parentDir != null && !parentDir.exists()) {
 						if (!parentDir.mkdirs()) {
 							inputParametersOK = false;
 							printError("Output directories for file '"
@@ -527,7 +529,7 @@ public class EXIficientCMD {
 				cmd.parseArguments(args);
 				cmd.process();
 			} catch (Exception e) {
-				printError(e.getMessage());
+				printError("XX"+ e.getLocalizedMessage() + e.getClass());
 			}
 		}
 	}
@@ -556,7 +558,7 @@ public class EXIficientCMD {
 	protected void encode(String input, EXIFactory exiFactory, String output)
 			throws SAXException, EXIException, IOException {
 		OutputStream os = new FileOutputStream(output);
-
+		
 		XMLReader parser = XMLReaderFactory.createXMLReader();
 		EXIResult exiResult = new EXIResult(exiFactory);
 		exiResult.setOutputStream(os);
