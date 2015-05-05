@@ -197,6 +197,10 @@ public class EXIficientCMD {
 		ps.println("[ERROR] " + msg);
 	}
 	
+	protected static void printWarning(String msg) {
+		ps.println("[Warning] " + msg);
+	}
+	
 	protected void parseArguments(String[] args) throws EXIException {
 		// arguments that need to be set
 		cmdOption = null;
@@ -207,6 +211,16 @@ public class EXIficientCMD {
 		output = null;
 
 		exiFactory = DefaultEXIFactory.newInstance();
+		
+		// warning flags
+		boolean wIncludeOptions = false;
+		boolean wIncludeSchemaId = false;
+		boolean wIncludeProfileValues = false;
+		boolean wStrict = false;
+		boolean wPreserveComments = false;
+		boolean wPreservePIs = false;
+		boolean wPreservePrefixes = false;
+		boolean wPreserveDTD = false;
 
 		int indexArgument = 0;
 		while (indexArgument < args.length) {
@@ -253,8 +267,8 @@ public class EXIficientCMD {
 			}
 			// ### OPTIONS
 			else if (OPTION_STRICT.equalsIgnoreCase(argument)) {
+				wStrict = true;
 				FidelityOptions fo = FidelityOptions.createStrict();
-				// fo.init ( );
 				exiFactory.setFidelityOptions(fo);
 			} else if (BLOCK_SIZE.equalsIgnoreCase(argument)) {
 				assert ((indexArgument + 1) < args.length);
@@ -295,7 +309,7 @@ public class EXIficientCMD {
 			// Comments
 			else if (PRESERVE_COMMENTS.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_COMMENT, true);
+				fo.setFidelity(FidelityOptions.FEATURE_COMMENT, wPreserveComments = true);
 			}
 			// LexicalValues
 			else if (PRESERVE_LEXICAL_VALUES.equalsIgnoreCase(argument)) {
@@ -305,17 +319,17 @@ public class EXIficientCMD {
 			// Prefixes
 			else if (PRESERVE_PREFIXES.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+				fo.setFidelity(FidelityOptions.FEATURE_PREFIX, wPreservePrefixes = true);
 			}
 			// PIs
 			else if (PRESERVE_PIS.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_PI, true);
+				fo.setFidelity(FidelityOptions.FEATURE_PI, wPreservePIs = true);
 			}
 			// DTS
 			else if (PRESERVE_DTDS.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_DTD, true);
+				fo.setFidelity(FidelityOptions.FEATURE_DTD, wPreserveDTD = true);
 			}
 			// ### BYTE_ALIGNED
 			else if (CODING_BYTEPACKED.equalsIgnoreCase(argument)) {
@@ -335,6 +349,7 @@ public class EXIficientCMD {
 			}
 			// ### Include EXI Options
 			else if (INCLUDE_OPTIONS.equalsIgnoreCase(argument)) {
+				wIncludeOptions = true;
 				exiFactory.getEncodingOptions().setOption(
 						EncodingOptions.INCLUDE_OPTIONS);
 			}
@@ -345,6 +360,7 @@ public class EXIficientCMD {
 			}
 			// ### Include SchemaId in Options
 			else if (INCLUDE_SCHEMA_ID.equalsIgnoreCase(argument)) {
+				wIncludeSchemaId = true;
 				exiFactory.getEncodingOptions().setOption(
 						EncodingOptions.INCLUDE_SCHEMA_ID);
 			}
@@ -361,6 +377,7 @@ public class EXIficientCMD {
 			}
 			// ### Include Profile Values
 			else if (INCLUDE_PROFILE_VALUES.equalsIgnoreCase(argument)) {
+				wIncludeProfileValues = true;
 				exiFactory.getEncodingOptions().setOption(
 						EncodingOptions.INCLUDE_PROFILE_VALUES);
 			}
@@ -417,7 +434,37 @@ public class EXIficientCMD {
 			indexArgument++;
 		}
 		
-		File fOutput = null;
+		
+		// inform user about warnings/side-effects
+		// e.g., includeOptions & includeProfileValues ignored because includeOptions not set
+		if(wIncludeSchemaId && !wIncludeOptions) {
+			printWarning(INCLUDE_SCHEMA_ID + " ignored because " + INCLUDE_OPTIONS + " not set");
+		}
+		if(wIncludeProfileValues && !wIncludeOptions) {
+			printWarning(INCLUDE_PROFILE_VALUES + " ignored because " + INCLUDE_OPTIONS + " not set");
+		}
+		// e.g., preserveXX ignored given that strict is set
+		if(exiFactory.getFidelityOptions().isStrict()) {
+			if(wPreserveComments) {
+				printWarning(PRESERVE_COMMENTS + " ignored because " + OPTION_STRICT + " is set");
+			}
+			if(wPreservePIs) {
+				printWarning(PRESERVE_PIS + " ignored because " + OPTION_STRICT + " is set");
+			}
+			if(wPreserveDTD) {
+				printWarning(PRESERVE_DTDS + " ignored because " + OPTION_STRICT + " is set");
+			}
+			if(wPreservePrefixes) {
+				printWarning(PRESERVE_PREFIXES + " ignored because " + OPTION_STRICT + " is set");
+			}
+		} else {
+			if(wStrict) {
+				printWarning(OPTION_STRICT+ " ignored because a preserveOption is set");
+			}
+		}
+		// TODO conflicting coding modes
+		// TODO SC in strict mode
+
 
 		// check input
 		inputParametersOK = true;
@@ -447,6 +494,7 @@ public class EXIficientCMD {
 			}
 		}
 
+		File fOutput = null;
 		if (output == null) {
 			inputParametersOK = false;
 			printError("Missing output specification!");
@@ -492,8 +540,6 @@ public class EXIficientCMD {
 				exiFactory.setGrammars(gf.createGrammars(schemaLocation));
 			}
 		}
-
-
 	}
 	
 	protected void process() throws EXIException, TransformerException, IOException, SAXException {
