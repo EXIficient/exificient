@@ -31,6 +31,7 @@ import java.io.OutputStream;
  */
 
 public class BitOutputStream extends OutputStream {
+	
 	public final static int BITS_IN_BYTE = 8;
 
 	/**
@@ -48,12 +49,18 @@ public class BitOutputStream extends OutputStream {
 	 * Underlying output stream to which bits and bytes are written.
 	 */
 	private OutputStream ostream;
+	
+	/**
+	 * Fully-written bytes 
+	 */
+	protected int len;
 
 	/**
 	 * Constructs an instance of this class.
 	 */
 	public BitOutputStream(OutputStream ostream) {
 		this.ostream = ostream;
+		this.len = 0;
 	}
 
 	/**
@@ -61,6 +68,15 @@ public class BitOutputStream extends OutputStream {
 	 */
 	public OutputStream getUnderlyingOutputStream() {
 		return ostream;
+	}
+	
+	/**
+	 * Returns the number of bytes written.
+	 * 
+	 * @return number of bytes
+	 */
+	public int getLength() {
+		return len;
 	}
 
 	/**
@@ -71,6 +87,7 @@ public class BitOutputStream extends OutputStream {
 			ostream.write(buffer);
 			capacity = BITS_IN_BYTE;
 			buffer = 0;
+			len++;
 		}
 	}
 
@@ -109,6 +126,7 @@ public class BitOutputStream extends OutputStream {
 			ostream.write(buffer << capacity);
 			capacity = BITS_IN_BYTE;
 			buffer = 0;
+			len++;
 		}
 	}
 
@@ -152,6 +170,7 @@ public class BitOutputStream extends OutputStream {
 			if (capacity == 0) {
 				ostream.write(buffer);
 				capacity = BITS_IN_BYTE;
+				len++;
 			}
 		} else {
 			// fill as many bits into buffer as possible
@@ -159,11 +178,13 @@ public class BitOutputStream extends OutputStream {
 					| ((b >>> (n - capacity)) & (0xff >> (BITS_IN_BYTE - capacity)));
 			n -= capacity;
 			ostream.write(buffer);
+			len++;
 
 			// possibly write whole bytes
 			while (n >= 8) {
 				n -= 8;
 				ostream.write(b >>> n);
+				len++;
 			}
 
 			// put the rest of bits into the buffer
@@ -179,6 +200,7 @@ public class BitOutputStream extends OutputStream {
 	 */
 	protected void writeDirectByte(int b) throws IOException {
 		ostream.write(b);
+		len++;
 	}
 
 	/**
@@ -188,6 +210,7 @@ public class BitOutputStream extends OutputStream {
 	protected void writeDirectBytes(byte[] b, int off, int len)
 			throws IOException {
 		ostream.write(b, off, len);
+		len += len;
 	}
 
 	@Override

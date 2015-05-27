@@ -34,8 +34,8 @@ import com.siemens.ct.exi.values.IntegerValue;
  * @version 0.9.5-SNAPSHOT
  */
 
-public abstract class AbstractEncoderChannel implements EncoderChannel {
-
+public abstract class AbstractEncoderChannel implements EncoderChannel {	
+	
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.
 	 */

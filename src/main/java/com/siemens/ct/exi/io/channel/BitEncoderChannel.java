@@ -33,6 +33,7 @@ import com.siemens.ct.exi.io.BitOutputStream;
 
 public class BitEncoderChannel extends AbstractEncoderChannel implements
 		EncoderChannel {
+	
 	/**
 	 * Underlying bit output stream to which bits and bytes are written.
 	 */
@@ -50,7 +51,7 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 	}
 
 	public int getLength() {
-		return -1;
+		return ostream.getLength();
 	}
 
 	/**

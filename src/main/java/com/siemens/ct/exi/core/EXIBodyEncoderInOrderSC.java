@@ -143,6 +143,11 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 				// Skip to the next byte-aligned boundary in the stream if it is
 				// not already at such a boundary
 				this.channel.align();
+				
+				// infor
+				if (exiFactory.getSelfContainedHandler() != null) {
+					exiFactory.getSelfContainedHandler().scElement(uri, localName, this.channel);
+				}
 
 				// start SC element
 				this.encodeStartSC(uri, localName, prefix);
