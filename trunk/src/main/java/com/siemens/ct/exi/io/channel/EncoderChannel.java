@@ -42,9 +42,8 @@ public interface EncoderChannel {
 	/**
 	 * Returns the number of bytes written.
 	 * 
-	 * This feature is optional and channels that no not support this feature
-	 * are required to report -1.
-	 * */
+	 * @return number of bytes
+	 */
 	public int getLength();
 
 	/**

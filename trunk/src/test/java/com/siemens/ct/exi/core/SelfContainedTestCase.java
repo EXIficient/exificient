@@ -22,21 +22,36 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
 
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.SelfContainedHandler;
+import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
@@ -391,6 +406,120 @@ public class SelfContainedTestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 
+	}
+
+	class SelfContainedHandlerTracker implements SelfContainedHandler {
+
+		List<Integer> scIndices;
+
+		public SelfContainedHandlerTracker() {
+			scIndices = new ArrayList<Integer>();
+		}
+
+		public List<Integer> getSCIndices() {
+			return scIndices;
+		}
+
+		public void scElement(String uri, String localName,
+				EncoderChannel channel) throws EXIException {
+			// System.out.println("SC element: {" + uri + "}" + localName);
+			// System.out.println(channel.getLength() + " --> " +
+			// channel.getOutputStream());
+			scIndices.add(channel.getLength());
+		}
+
+	}
+
+	protected void _testSelfContained2(boolean bytePacked) throws Exception {
+
+		String xmlAsString = "<foo><foo>text</foo><bla>btext</bla></foo>";
+
+		// boolean t1 = xmlAsString.matches("*");
+		// boolean t2 = xmlAsString.matches(".*");
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		// factory.setCodingMode(CodingMode.BIT_PACKED);
+		if (bytePacked) {
+			factory.setCodingMode(CodingMode.BYTE_PACKED);
+		}
+		FidelityOptions fo = factory.getFidelityOptions();
+		fo.setFidelity(FidelityOptions.FEATURE_SC, true);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// QName sc = new QName("", "bla");
+		QName sc = new QName(".*", ".*"); // any
+
+		QName[] scElements = new QName[1];
+		scElements[0] = sc;
+		SelfContainedHandlerTracker scHandler = new SelfContainedHandlerTracker();
+		factory.setSelfContainedElements(scElements, scHandler);
+
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(baos);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		xmlReader.setContentHandler(exiResult.getHandler());
+		xmlReader.parse(new InputSource(new StringReader(xmlAsString)));
+
+		// decode overall document
+		{
+			TransformerFactory tf = TransformerFactory.newInstance();
+			XMLReader exiReader = factory.createEXIReader();
+			Transformer transformer = tf.newTransformer();
+
+			ByteArrayOutputStream baosSC = new ByteArrayOutputStream();
+			Result result = new StreamResult(baosSC);
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+					baos.toByteArray());
+			InputSource is = new InputSource(bais);
+			SAXSource exiSource = new SAXSource(is);
+			exiSource.setXMLReader(exiReader);
+			transformer.transform(exiSource, result);
+
+			// System.out.println(new String(baosSC.toByteArray()));
+		}
+
+		// decode each SC elements
+		assertTrue("SC number issue", scHandler.getSCIndices().size() == 3);
+		// Note: 2 important aspects
+		// a) SC element is EXI Body only
+		// b) SC element root starts with fragment grammar
+
+		factory.setFragment(true); // see b)
+
+		for (int i = 0; i < scHandler.getSCIndices().size(); i++) {
+			TransformerFactory tf = TransformerFactory.newInstance();
+			XMLReader exiReader = factory.createEXIReader();
+			exiReader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY, true); // see
+																				// a)
+			Transformer transformer = tf.newTransformer();
+
+			ByteArrayOutputStream baosSC = new ByteArrayOutputStream();
+			Result result = new StreamResult(baosSC);
+			ByteArrayInputStream bais = new ByteArrayInputStream(
+					baos.toByteArray());
+			int scSkip = scHandler.getSCIndices().get(i);
+			if (bytePacked) {
+				scSkip += 1; // Header, TODO how can this situation be improved
+			}
+			long skip = bais.skip(scSkip);
+			assertTrue(skip == scSkip);
+			InputSource is = new InputSource(bais);
+			SAXSource exiSource = new SAXSource(is);
+			exiSource.setXMLReader(exiReader);
+			transformer.transform(exiSource, result);
+
+			// System.out.println(new String(baosSC.toByteArray()));
+		}
+	}
+
+	public void testSelfContained2BitPacked() throws Exception {
+		_testSelfContained2(false);
+	}
+
+	public void testSelfContained2BytePacked() throws Exception {
+		_testSelfContained2(true);
 	}
 
 }

@@ -33,6 +33,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
+import com.siemens.ct.exi.SelfContainedHandler;
 import com.siemens.ct.exi.api.sax.SAXDecoder;
 import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.api.sax.SAXEncoderExtendedHandler;
@@ -89,6 +90,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	protected QName[] dtrMapRepresentations;
 
 	protected QName[] scElements;
+	protected SelfContainedHandler scHandler;
 
 	/* default: 1,000,000 */
 	protected int blockSize = Constants.DEFAULT_BLOCK_SIZE;
@@ -177,7 +179,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	public EncodingOptions getEncodingOptions() {
 		return encodingOptions;
 	}
-	
+
 	public void setDecodingOptions(DecodingOptions decodingOptions) {
 		this.decodingOptions = decodingOptions;
 	}
@@ -217,19 +219,36 @@ public class DefaultEXIFactory implements EXIFactory {
 	}
 
 	public void setSelfContainedElements(QName[] scElements) {
+		setSelfContainedElements(scElements, null);
+	}
+	
+	public void setSelfContainedElements(QName[] scElements, SelfContainedHandler scHandler) {
 		this.scElements = scElements;
+		this.scHandler = scHandler;
 	}
 
 	public boolean isSelfContainedElement(QName element) {
+		assert (element != null);
+		String elementNS = element.getNamespaceURI();
+		String elementLP = element.getLocalPart();
 		if (scElements != null && scElements.length > 0) {
 			for (int i = 0; i < scElements.length; i++) {
 				QName qname = scElements[i];
-				if (qname.equals(element)) {
+				assert (qname != null);
+				if (elementNS.matches(qname.getNamespaceURI())
+						&& elementLP.matches(qname.getLocalPart())) {
 					return true;
 				}
+				// if (qname.equals(element)) {
+				// return true;
+				// }
 			}
 		}
 		return false;
+	}
+	
+	public SelfContainedHandler getSelfContainedHandler() {
+		return this.scHandler;
 	}
 
 	public void setGrammars(Grammars grammar) {

@@ -274,6 +274,18 @@ public interface EXIFactory extends Cloneable {
 	 * @param scElements
 	 */
 	public void setSelfContainedElements(QName[] scElements);
+	
+	/**
+	 * Self-contained elements may be read independently from the rest of the
+	 * EXI body, allowing them to be indexed for random access. The
+	 * "selfContained" element MUST NOT appear in an EXI options document when
+	 * one of "compression", "pre-compression" or "strict" elements are present
+	 * in the same options document.
+	 * 
+	 * @param scElements
+	 * @param scHandler handler for SC elements
+	 */
+	public void setSelfContainedElements(QName[] scElements, SelfContainedHandler scHandler);
 
 	/**
 	 * Returns boolean value telling whether a certain element is encoded as
@@ -282,6 +294,14 @@ public interface EXIFactory extends Cloneable {
 	 * @param element
 	 */
 	public boolean isSelfContainedElement(QName element);
+	
+	
+	/**
+	 * Returns selfContained element handler.
+	 * 
+	 * @return selfContained element handler or null
+	 */
+	public SelfContainedHandler getSelfContainedHandler();
 
 	/**
 	 * The EXI profile defines a parameter that can disable the use of local
