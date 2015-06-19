@@ -20,6 +20,7 @@ package com.siemens.ct.exi.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -46,6 +47,7 @@ import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.SelfContainedHandler;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -411,13 +413,19 @@ public class SelfContainedTestCase extends TestCase {
 	class SelfContainedHandlerTracker implements SelfContainedHandler {
 
 		List<Integer> scIndices;
+		List<QName> scQNames;
 
 		public SelfContainedHandlerTracker() {
 			scIndices = new ArrayList<Integer>();
+			scQNames = new ArrayList<QName>();
 		}
 
 		public List<Integer> getSCIndices() {
 			return scIndices;
+		}
+		
+		public List<QName> getSCQNames() {
+			return scQNames;
 		}
 
 		public void scElement(String uri, String localName,
@@ -426,6 +434,7 @@ public class SelfContainedTestCase extends TestCase {
 			// System.out.println(channel.getLength() + " --> " +
 			// channel.getOutputStream());
 			scIndices.add(channel.getLength());
+			scQNames.add(new QName(uri, localName));
 		}
 
 	}
@@ -520,6 +529,41 @@ public class SelfContainedTestCase extends TestCase {
 
 	public void testSelfContained2BytePacked() throws Exception {
 		_testSelfContained2(true);
+	}
+	
+	public void testSelfContainedNotebook() throws Exception {
+		String xsd = "./data/W3C/PrimerNotebook/notebook.xsd";
+		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
+		
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		// factory.setCodingMode(CodingMode.BIT_PACKED);
+		FidelityOptions fo = factory.getFidelityOptions();
+		fo.setFidelity(FidelityOptions.FEATURE_SC, true);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// QName sc = new QName("", "bla");
+		QName sc = new QName(".*", ".*"); // any
+
+		QName[] scElements = new QName[1];
+		scElements[0] = sc;
+		SelfContainedHandlerTracker scHandler = new SelfContainedHandlerTracker();
+		factory.setSelfContainedElements(scElements, scHandler);
+
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(baos);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		xmlReader.setContentHandler(exiResult.getHandler());
+		xmlReader.parse(new InputSource(new FileInputStream(xml)));
+		
+		assertTrue("Number of Indices", scHandler.getSCIndices().size() == 7);
+		assertTrue("Number of QNnames", scHandler.getSCQNames().size() == 7);
+		
+//		System.out.println(scHandler.getSCIndices());
+//		System.out.println(scHandler.getSCQNames());
+//		System.out.println("Size Stream: " + baos.size());
+		
 	}
 
 }
