@@ -1186,6 +1186,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			if (tchars.length() == 0) {
 				return;
 			}
+			// omit leading and trailing whitespace per default?
+			chars = new StringValue(tchars);
 		}
 		
 		if (doTokenizeCHs) {
