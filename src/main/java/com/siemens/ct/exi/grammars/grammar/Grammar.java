@@ -20,7 +20,6 @@ package com.siemens.ct.exi.grammars.grammar;
 
 import java.io.Serializable;
 
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -42,6 +41,14 @@ public interface Grammar extends Serializable {
 	 */
 	public boolean isSchemaInformed();
 	
+	
+	/**
+	 *  Informs whether a grammar has first level EndElement (EE) production
+	 * 
+	 * @return boolean according to whether EE is available
+	 */
+	public boolean hasEndElement();
+	
 	/*
 	 * Retrieve grammar type
 	 */
@@ -51,34 +58,9 @@ public interface Grammar extends Serializable {
 	 * number of events
 	 */
 	public int getNumberOfEvents();
+	
+	public int get1stLevelEventCodeLength(boolean withFidelityOptionsOrNonStrict);
 
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions);
-
-	/*
-	 * fetch event-code
-	 */
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions);
-
-	public int get3rdLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions);
-
-	/*
-	 * events, rules
-	 */
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions);
-
-	public EventType get3rdLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions);
-
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions);
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions);
-
-	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions);
 
 	/*
 	 * 
@@ -116,13 +98,6 @@ public interface Grammar extends Serializable {
 	 * For moving to element content grammar
 	 */
 	public Grammar getElementContentGrammar();
-
-	/*
-	 * TODO move to SchemaInformedRule Schema-deviated attributes
-	 */
-	public int getNumberOfDeclaredAttributes();
-
-	public int getLeastAttributeEventCode();
 
 	/*
 	 * 

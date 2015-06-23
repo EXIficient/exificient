@@ -171,19 +171,20 @@ public class EventCodeTest extends TestCase {
 		// AT( sku )
 		assertTrue(Use_color_0.getAttributeProduction("", "sku").getEventCode() == 1);
 		// 2nd level
-		assertTrue(Use_color_0.get2ndLevelCharacteristics(fo) == 7);
+		// assertTrue(Use_color_0.get2ndLevelCharacteristics(fo) == 7);
+		assertTrue(fo.get2ndLevelCharacteristics(Use_color_0) == 7);
 		// EE 2.0
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.END_ELEMENT_UNDECLARED, fo) == 0);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.END_ELEMENT_UNDECLARED, Use_color_0) == 0);
 		// AT(xsi:type) Use_color 0 2.1
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_XSI_TYPE, fo) == 1);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_XSI_TYPE, Use_color_0) == 1);
 		// AT(xsi:nil) Use_color 0 2.2
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_XSI_NIL, fo) == 2);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_XSI_NIL, Use_color_0) == 2);
 		// AT(*) Use_color 0 2.3
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_GENERIC_UNDECLARED, fo) == 3);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_GENERIC_UNDECLARED, Use_color_0) == 3);
 		// TODO schema invalid value
 		// AT [schema-invalid value] Use_color 0 2.4.x
 		// assertTrue( Use_color_0.get2ndLevelEventCode (
@@ -192,11 +193,11 @@ public class EventCodeTest extends TestCase {
 		// AT("sku") [schema-invalid value] Use_color 0 2.4.1
 		// AT(*) [schema-invalid value] Use_color 0 2.4.2
 		// SE(*) Use_sku 1 2.5
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.START_ELEMENT_GENERIC_UNDECLARED, fo) == 5);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.START_ELEMENT_GENERIC_UNDECLARED, Use_color_0) == 5);
 		// CH [schema-invalid value] Use_sku 1 2.6
-		assertTrue(Use_color_0.get2ndLevelEventCode(
-				EventType.CHARACTERS_GENERIC_UNDECLARED, fo) == 6);
+		assertTrue(fo.get2ndLevelEventCode(
+				EventType.CHARACTERS_GENERIC_UNDECLARED, Use_color_0) == 6);
 
 		// ### Use_color_1 ###
 		Grammar Use_color_1 = Use_color_0.getProduction(0).getNextGrammar();
@@ -816,55 +817,55 @@ public class EventCodeTest extends TestCase {
 
 		{
 			// strict
-			assertTrue(root1.get2ndLevelCharacteristics(foStrict) == 0);
+			assertTrue(foStrict.get2ndLevelCharacteristics(root1) == 0);
 
 			// default
-			assertTrue(root1.get2ndLevelCharacteristics(foDef) == 6);
-			assertTrue(root1.get2ndLevelEventType(0, foDef) == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(root1.get2ndLevelEventType(1, foDef) == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(root1.get2ndLevelEventType(2, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventType(3, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root1.get2ndLevelEventType(4, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventType(5, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE,
-					foDef) == 0);
-			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL,
-					foDef) == 1);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 2);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_INVALID_VALUE, foDef) == 3);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 4);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 5);
+			assertTrue(foDef.get2ndLevelCharacteristics(root1) == 6);
+			assertTrue(foDef.get2ndLevelEventType(0, root1) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(foDef.get2ndLevelEventType(1, root1) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(foDef.get2ndLevelEventType(2, root1) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventType(3, root1) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(foDef.get2ndLevelEventType(4, root1) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventType(5, root1) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE,
+					root1) == 0);
+			assertTrue(foDef.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL,
+					root1) == 1);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_GENERIC_UNDECLARED, root1) == 2);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_INVALID_VALUE, root1) == 3);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root1) == 4);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root1) == 5);
 
 			// all
-			assertTrue(root1.get2ndLevelCharacteristics(foAll) == (8 + 1));
-			assertTrue(root1.get2ndLevelEventType(0, foAll) == EventType.ATTRIBUTE_XSI_TYPE);
-			assertTrue(root1.get2ndLevelEventType(1, foAll) == EventType.ATTRIBUTE_XSI_NIL);
-			assertTrue(root1.get2ndLevelEventType(2, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventType(3, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root1.get2ndLevelEventType(4, foAll) == EventType.NAMESPACE_DECLARATION);
-			assertTrue(root1.get2ndLevelEventType(5, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventType(6, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root1.get2ndLevelEventType(7, foAll) == EventType.ENTITY_REFERENCE);
-			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE,
-					foAll) == 0);
-			assertTrue(root1.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL,
-					foAll) == 1);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 2);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_INVALID_VALUE, foAll) == 3);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.NAMESPACE_DECLARATION, foAll) == 4);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 5);
-			assertTrue(root1.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 6);
-			assertTrue(root1.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
-					foAll) == 7);
+			assertTrue(foAll.get2ndLevelCharacteristics(root1) == (8 + 1));
+			assertTrue(foAll.get2ndLevelEventType(0, root1) == EventType.ATTRIBUTE_XSI_TYPE);
+			assertTrue(foAll.get2ndLevelEventType(1, root1) == EventType.ATTRIBUTE_XSI_NIL);
+			assertTrue(foAll.get2ndLevelEventType(2, root1) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(3, root1) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(foAll.get2ndLevelEventType(4, root1) == EventType.NAMESPACE_DECLARATION);
+			assertTrue(foAll.get2ndLevelEventType(5, root1) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(6, root1) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(7, root1) == EventType.ENTITY_REFERENCE);
+			assertTrue(foAll.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_TYPE,
+					root1) == 0);
+			assertTrue(foAll.get2ndLevelEventCode(EventType.ATTRIBUTE_XSI_NIL,
+					root1) == 1);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_GENERIC_UNDECLARED, root1) == 2);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_INVALID_VALUE, root1) == 3);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.NAMESPACE_DECLARATION, root1) == 4);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root1) == 5);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root1) == 6);
+			assertTrue(foAll.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
+					root1) == 7);
 		}
 
 		/*
@@ -880,40 +881,40 @@ public class EventCodeTest extends TestCase {
 
 		{
 			// strict
-			assertTrue(root2.get2ndLevelCharacteristics(foStrict) == 0);
+			assertTrue(foStrict.get2ndLevelCharacteristics(root2) == 0);
 
 			// default
-			assertTrue(root2.get2ndLevelCharacteristics(foDef) == 4);
-			assertTrue(root2.get2ndLevelEventType(0, foDef) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventType(1, foDef) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root2.get2ndLevelEventType(2, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventType(3, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, foDef) == 0);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_INVALID_VALUE, foDef) == 1);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 2);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 3);
+			assertTrue(foDef.get2ndLevelCharacteristics(root2) == 4);
+			assertTrue(foDef.get2ndLevelEventType(0, root2) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventType(1, root2) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(foDef.get2ndLevelEventType(2, root2) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventType(3, root2) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_GENERIC_UNDECLARED, root2) == 0);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_INVALID_VALUE, root2) == 1);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root2) == 2);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root2) == 3);
 
 			// all
-			assertTrue(root2.get2ndLevelCharacteristics(foAll) == (5 + 1));
-			assertTrue(root2.get2ndLevelEventType(0, foAll) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventType(1, foAll) == EventType.ATTRIBUTE_INVALID_VALUE);
-			assertTrue(root2.get2ndLevelEventType(2, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventType(3, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root2.get2ndLevelEventType(4, foAll) == EventType.ENTITY_REFERENCE);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_GENERIC_UNDECLARED, foAll) == 0);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.ATTRIBUTE_INVALID_VALUE, foAll) == 1);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 2);
-			assertTrue(root2.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 3);
-			assertTrue(root2.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
-					foAll) == 4);
+			assertTrue(foAll.get2ndLevelCharacteristics(root2) == (5 + 1));
+			assertTrue(foAll.get2ndLevelEventType(0, root2) == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(1, root2) == EventType.ATTRIBUTE_INVALID_VALUE);
+			assertTrue(foAll.get2ndLevelEventType(2, root2) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(3, root2) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(4, root2) == EventType.ENTITY_REFERENCE);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_GENERIC_UNDECLARED, root2) == 0);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.ATTRIBUTE_INVALID_VALUE, root2) == 1);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root2) == 2);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root2) == 3);
+			assertTrue(foAll.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
+					root2) == 4);
 		}
 
 		/*
@@ -924,28 +925,28 @@ public class EventCodeTest extends TestCase {
 
 		{
 			// strict
-			assertTrue(root3.get2ndLevelCharacteristics(foStrict) == 0);
+			assertTrue(foStrict.get2ndLevelCharacteristics(root3) == 0);
 
 			// default
-			assertTrue(root3.get2ndLevelCharacteristics(foDef) == 2);
-			assertTrue(root3.get2ndLevelEventType(0, foDef) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEventType(1, foDef) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foDef) == 0);
-			assertTrue(root3.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foDef) == 1);
+			assertTrue(foDef.get2ndLevelCharacteristics(root3) == 2);
+			assertTrue(foDef.get2ndLevelEventType(0, root3) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventType(1, root3) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root3) == 0);
+			assertTrue(foDef.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root3) == 1);
 
 			// all
-			assertTrue(root3.get2ndLevelCharacteristics(foAll) == (3 + 1));
-			assertTrue(root3.get2ndLevelEventType(0, foAll) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEventType(1, foAll) == EventType.CHARACTERS_GENERIC_UNDECLARED);
-			assertTrue(root3.get2ndLevelEventType(2, foAll) == EventType.ENTITY_REFERENCE);
-			assertTrue(root3.get2ndLevelEventCode(
-					EventType.START_ELEMENT_GENERIC_UNDECLARED, foAll) == 0);
-			assertTrue(root3.get2ndLevelEventCode(
-					EventType.CHARACTERS_GENERIC_UNDECLARED, foAll) == 1);
-			assertTrue(root3.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
-					foAll) == 2);
+			assertTrue(foAll.get2ndLevelCharacteristics(root3) == (3 + 1));
+			assertTrue(foAll.get2ndLevelEventType(0, root3) == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(1, root3) == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			assertTrue(foAll.get2ndLevelEventType(2, root3) == EventType.ENTITY_REFERENCE);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.START_ELEMENT_GENERIC_UNDECLARED, root3) == 0);
+			assertTrue(foAll.get2ndLevelEventCode(
+					EventType.CHARACTERS_GENERIC_UNDECLARED, root3) == 1);
+			assertTrue(foAll.get2ndLevelEventCode(EventType.ENTITY_REFERENCE,
+					root3) == 2);
 		}
 
 	}

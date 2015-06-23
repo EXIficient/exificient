@@ -18,9 +18,6 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammars.event.EventType;
 
 /**
  * 
@@ -57,26 +54,6 @@ public class SchemaInformedFragmentContent extends AbstractSchemaInformedGrammar
 
 	public String toString() {
 		return "FragmentContent" + super.toString();
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		return null;
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		// No events on 2nd level
-		return Constants.NOT_FOUND;
-	}
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		return get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
-	}
-
-	@Override
-	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return get2ndLevelCharacteristics(fidelityOptions) > 0;
 	}
 
 }

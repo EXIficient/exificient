@@ -893,16 +893,16 @@ public class GrammarTest extends TestCase {
 		// docContent: SE(*)
 		Grammar doc = grs.getDocumentGrammar()
 				.getProduction(EventType.START_DOCUMENT).getNextGrammar();
-		assertTrue(doc.get1stLevelEventCodeLength(fidelityOptions) == 0);
+		assertTrue(fidelityOptions.get1stLevelEventCodeLength(doc) == 0);
 
 		// fragmentContent SE(*), ED
 		Grammar frag = grs.getFragmentGrammar()
 				.getProduction(EventType.START_DOCUMENT).getNextGrammar();
-		assertTrue(frag.get1stLevelEventCodeLength(fidelityOptions) == 1);
+		assertTrue(fidelityOptions.get1stLevelEventCodeLength(frag) == 1);
 		// fragmentContent SE(dd), SE(*), ED
 		QName qn = new QName("dd");
 		frag.learnStartElement(new StartElement(new QNameContext(0, 0, qn, 0)));
-		assertTrue(frag.get1stLevelEventCodeLength(fidelityOptions) == 2);
+		assertTrue(fidelityOptions.get1stLevelEventCodeLength(frag) == 2);
 		Event l = frag.getProduction(0).getEvent();
 		assertTrue(l.getEventType() == EventType.START_ELEMENT);
 		StartElement se = (StartElement) l;

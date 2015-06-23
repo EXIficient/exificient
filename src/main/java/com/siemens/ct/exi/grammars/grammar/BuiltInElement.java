@@ -18,9 +18,7 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
-import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 
 /**
@@ -51,34 +49,15 @@ public class BuiltInElement extends AbstractBuiltInContent {
 		addProduction(END_ELEMENT, END_RULE);
 	}
 	
+	@Override
+	public boolean hasEndElement() {
+		return true;
+	}
+	
 	public GrammarType getGrammarType() {
 		return GrammarType.BUILT_IN_ELEMENT_CONTENT;
 	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		return getEventCode(eventType,
-				get2ndLevelEventsChildContentItems(fidelityOptions));
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		return get2ndLevelEventsChildContentItems(fidelityOptions).get(
-				eventCode);
-	}
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		// childContentItems only
-		int ch2 = get2ndLevelEventsChildContentItems(fidelityOptions).size();
-
-		// 3rd level ?
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
-		}
-
-		return ch2;
-	}
-
+	
 	@Override
 	public void learnStartElement(StartElement se) {
 		addProduction(se, this);
@@ -88,18 +67,12 @@ public class BuiltInElement extends AbstractBuiltInContent {
 	 * Note: learnEndElement ( ) not necessary since EE is already present on
 	 * first level for element-content-rules
 	 */
-
+	
 	@Override
 	public void learnAttribute(Attribute at) {
 		// this should never happen!
 		throw new IllegalArgumentException(
 				"ElementContent Rule cannot learn AT events");
 	}
-
-//	@Override
-//	public void learnCharacters() {
-//		addRule(new Characters(BuiltIn.DEFAULT_VALUE_NAME,
-//				BuiltIn.DEFAULT_DATATYPE), this);
-//	}
 
 }

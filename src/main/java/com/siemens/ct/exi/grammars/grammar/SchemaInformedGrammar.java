@@ -31,6 +31,10 @@ import com.siemens.ct.exi.grammars.event.Event;
 public interface SchemaInformedGrammar extends Grammar {
 
 	public void addTerminalProduction(Event event);
+	
+	public int getNumberOfDeclaredAttributes();
+	
+	public int getLeastAttributeEventCode();
 
 	/*
 	 * Label
@@ -43,5 +47,7 @@ public interface SchemaInformedGrammar extends Grammar {
 	 * clones schema-informed rule
 	 */
 	public SchemaInformedGrammar duplicate();
+	
+	
 
 }

@@ -240,8 +240,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			IOException {
 		// 1st level
 		final Grammar currentGrammar = getCurrentGrammar();
-		int codeLength = currentGrammar
-				.get1stLevelEventCodeLength(fidelityOptions);
+		int codeLength = fidelityOptions
+				.get1stLevelEventCodeLength(currentGrammar);
 		int ec = channel.decodeNBitUnsignedInteger(codeLength);
 
 		assert (ec >= 0);
@@ -259,15 +259,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 			if (ec2 == Constants.NOT_FOUND) {
 				// 3rd level
 				int ec3 = decode3rdLevelEventCode();
-				nextEventType = currentGrammar.get3rdLevelEventType(ec3,
-						fidelityOptions);
+				nextEventType = fidelityOptions.get3rdLevelEventType(ec3);
 
 				// un-set event
 				nextEvent = null;
 				nextGrammar = null;
 			} else {
-				nextEventType = currentGrammar.get2ndLevelEventType(ec2,
-						fidelityOptions);
+				nextEventType = fidelityOptions.get2ndLevelEventType(ec2,
+						currentGrammar);
 
 				if (nextEventType == EventType.ATTRIBUTE_INVALID_VALUE) {
 					updateInvalidValueAttribute(ec);
@@ -327,11 +326,14 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 
 	protected int decode2ndLevelEventCode() throws EXIException, IOException {
 		final Grammar currentGrammar = getCurrentGrammar();
-		int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		// int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		int ch2 = fidelityOptions.get2ndLevelCharacteristics(currentGrammar);
 		int level2 = channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch2));
 
-		if (currentGrammar.get3rdLevelCharacteristics(fidelityOptions) > 0) {
+		int ch3= fidelityOptions.get3rdLevelCharacteristics();
+		
+		if (ch3 > 0) {
 			return (level2 < (ch2 - 1) ? level2 : Constants.NOT_FOUND);
 		} else {
 			return (level2 < ch2 ? level2 : Constants.NOT_FOUND);
@@ -339,8 +341,8 @@ public abstract class AbstractEXIBodyDecoder extends AbstractEXIBodyCoder
 	}
 
 	protected int decode3rdLevelEventCode() throws EXIException, IOException {
-		int ch3 = getCurrentGrammar().get3rdLevelCharacteristics(
-				fidelityOptions);
+		int ch3 = fidelityOptions.get3rdLevelCharacteristics();
+
 		return channel.decodeNBitUnsignedInteger(MethodsBag
 				.getCodingLength(ch3));
 	}
