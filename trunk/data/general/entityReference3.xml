@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo:P [
+  <!ENTITY ent SYSTEM "er-entity.xml">
+]>
+<!-- =================================================================== -->
+<!-- Tests ER where there is no declared attributes or declared          -->
+<!-- attribute wildcard.                                                 -->
+<!-- =================================================================== -->
+<foo:P xmlns:foo='urn:foo' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+  <foo:P1>
+    &ent;<!-- ER -->
+    <foo:AB>a</foo:AB>
+    &ent;<!-- ER -->
+  </foo:P1>
+  <foo:P1 xsi:nil='true'>
+    &ent;<!-- ER -->
+  </foo:P1>
+  <foo:P1 xsi:type='foo:extended_P1'>
+    &ent;<!-- ER -->
+    <foo:AB>a</foo:AB>
+    &ent;<!-- ER -->
+    <foo:AB>a</foo:AB>
+    &ent;<!-- ER -->
+  </foo:P1>
+</foo:P>

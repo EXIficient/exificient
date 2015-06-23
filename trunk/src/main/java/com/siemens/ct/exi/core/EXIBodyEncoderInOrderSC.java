@@ -136,8 +136,8 @@ public class EXIBodyEncoderInOrderSC extends EXIBodyEncoderInOrder {
 
 			// start SC fragment ?
 			if (exiFactory.isSelfContainedElement(qname)) {
-				int ec2 = getCurrentGrammar().get2ndLevelEventCode(
-						EventType.SELF_CONTAINED, fidelityOptions);
+				int ec2 = fidelityOptions.get2ndLevelEventCode(
+						EventType.SELF_CONTAINED, getCurrentGrammar());
 				encode2ndLevelEventCode(ec2);
 
 				// Skip to the next byte-aligned boundary in the stream if it is

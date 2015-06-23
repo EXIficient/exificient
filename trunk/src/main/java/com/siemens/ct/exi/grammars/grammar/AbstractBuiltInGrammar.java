@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -47,7 +46,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 
 	protected List<Production> containers;
 	// Note: BuiltInDocContent and BuiltInFragmentContent do not use this variable
-	protected int ec1Length;
+	protected int ec1Length = -1;
 
 	public AbstractBuiltInGrammar() {
 		super();
@@ -55,6 +54,9 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		ec1Length = 0;
 	}
 	
+	public boolean hasEndElement() {
+		return false;
+	}
 	
 	@Override
 	public void stopLearning() {
@@ -67,17 +69,15 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		return false;
 	}
 
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return true;
-	}
-
 	public Grammar getTypeEmpty() {
 		return this;
 	}
-
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+	
+	public int get1stLevelEventCodeLength(boolean withFidelityOptionsOrNonStrict) {
+		// Note: Exception BuiltInDocContent and BuiltInFragmentContent
 		return this.ec1Length;
 	}
+	
 
 	public int getNumberOfEvents() {
 		return containers.size();
@@ -86,7 +86,7 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 	/*
 	 * a leading rule for performance reason is added to the tail
 	 */
-	public final void addProduction(Event event, Grammar grammar) {
+	public void addProduction(Event event, Grammar grammar) {
 
 		containers.add(new SchemaLessProduction(this, grammar, event,
 				getNumberOfEvents()));
@@ -105,16 +105,6 @@ public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		}
 
 		return false;
-	}
-
-	public int getNumberOfDeclaredAttributes() {
-		throw new RuntimeException(
-				"Schema-related attribute dealing in schema-less case");
-	}
-
-	public int getLeastAttributeEventCode() {
-		throw new RuntimeException(
-				"Schema-related attribute dealing in schema-less case");
 	}
 
 	/*

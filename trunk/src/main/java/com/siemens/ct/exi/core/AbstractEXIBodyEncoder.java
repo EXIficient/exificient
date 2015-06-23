@@ -258,8 +258,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	 */
 
 	protected void encode1stLevelEventCode(int pos) throws IOException {
-		int codeLength = getCurrentGrammar().get1stLevelEventCodeLength(
-				fidelityOptions);
+		int codeLength = fidelityOptions.get1stLevelEventCodeLength(
+				getCurrentGrammar());
 		if (codeLength > 0) {
 			channel.encodeNBitUnsignedInteger(pos, codeLength);
 		}
@@ -269,10 +269,11 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// 1st level
 		final Grammar currentGrammar = getCurrentGrammar();
 		channel.encodeNBitUnsignedInteger(currentGrammar.getNumberOfEvents(),
-				currentGrammar.get1stLevelEventCodeLength(fidelityOptions));
+				fidelityOptions.get1stLevelEventCodeLength(currentGrammar));
 
 		// 2nd level
-		int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		// int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		int ch2 = fidelityOptions.get2ndLevelCharacteristics(currentGrammar);
 		assert (pos < ch2);
 
 		channel.encodeNBitUnsignedInteger(pos, MethodsBag.getCodingLength(ch2));
@@ -282,15 +283,17 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// 1st level
 		final Grammar currentGrammar = getCurrentGrammar();
 		channel.encodeNBitUnsignedInteger(currentGrammar.getNumberOfEvents(),
-				currentGrammar.get1stLevelEventCodeLength(fidelityOptions));
+				fidelityOptions.get1stLevelEventCodeLength(currentGrammar));
 
 		// 2nd level
-		int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		//int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		int ch2 = fidelityOptions.get2ndLevelCharacteristics(currentGrammar);
 		int ec2 = ch2 > 0 ? ch2 - 1 : 0; // any 2nd level events
 		channel.encodeNBitUnsignedInteger(ec2, MethodsBag.getCodingLength(ch2));
 
 		// 3rd level
-		int ch3 = currentGrammar.get3rdLevelCharacteristics(fidelityOptions);
+		int ch3 = fidelityOptions.get3rdLevelCharacteristics();
+		
 		assert (pos < ch3);
 		channel.encodeNBitUnsignedInteger(pos, MethodsBag.getCodingLength(ch3));
 	}
@@ -390,9 +393,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				updContextRule = ei.getNextGrammar();
 			} else {
 				// Undeclared SE(*) can be found on 2nd level
-				int ecSEundeclared = currentGrammar.get2ndLevelEventCode(
+				int ecSEundeclared = fidelityOptions.get2ndLevelEventCode(
 						EventType.START_ELEMENT_GENERIC_UNDECLARED,
-						fidelityOptions);
+						currentGrammar);
 
 				if (ecSEundeclared == Constants.NOT_FOUND) {
 					// Note: should never happen except in strict mode
@@ -542,9 +545,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// event code
 			final Grammar currentGrammar = getCurrentGrammar();
-			int ec2 = currentGrammar.get2ndLevelEventCode(
-					EventType.NAMESPACE_DECLARATION, fidelityOptions);
-			assert (currentGrammar.get2ndLevelEventType(ec2, fidelityOptions) == EventType.NAMESPACE_DECLARATION);
+			int ec2 = fidelityOptions.get2ndLevelEventCode(
+					EventType.NAMESPACE_DECLARATION, currentGrammar);
+			assert (fidelityOptions.get2ndLevelEventType(ec2, currentGrammar) == EventType.NAMESPACE_DECLARATION);
 			encode2ndLevelEventCode(ec2);
 
 			// prefix mapping
@@ -597,8 +600,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				encode1stLevelEventCode(ei.getEventCode());
 			} else {
 				// Undeclared EE can be found on 2nd level
-				int ecEEundeclared = currentGrammar.get2ndLevelEventCode(
-						EventType.END_ELEMENT_UNDECLARED, fidelityOptions);
+				int ecEEundeclared = fidelityOptions.get2ndLevelEventCode(
+						EventType.END_ELEMENT_UNDECLARED, currentGrammar);
 
 				if (ecEEundeclared == Constants.NOT_FOUND) {
 					// Note: should never happen except in strict mode
@@ -713,12 +716,12 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		final Grammar currentGrammar = getCurrentGrammar();
 
-		int ec2 = currentGrammar.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_XSI_TYPE, fidelityOptions);
+		int ec2 = fidelityOptions.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_XSI_TYPE, currentGrammar);
 
 		if (ec2 != Constants.NOT_FOUND) {
 
-			assert (currentGrammar.get2ndLevelEventType(ec2, fidelityOptions) == EventType.ATTRIBUTE_XSI_TYPE);
+			assert (fidelityOptions.get2ndLevelEventType(ec2, currentGrammar) == EventType.ATTRIBUTE_XSI_TYPE);
 
 			// encode event-code, AT(xsi:type)
 			encode2ndLevelEventCode(ec2);
@@ -754,9 +757,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				if (ei != null) {
 					encode1stLevelEventCode(ei.getEventCode());
 				} else {
-					ec2 = currentGrammar.get2ndLevelEventCode(
+					ec2 = fidelityOptions.get2ndLevelEventCode(
 							EventType.ATTRIBUTE_GENERIC_UNDECLARED,
-							fidelityOptions);
+							currentGrammar);
 					if (ec2 != Constants.NOT_FOUND) {
 						encode2ndLevelEventCode(ec2);
 						QNameContext qncType = getXsiTypeContext();
@@ -849,8 +852,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				}
 
 				// schema-valid boolean
-				int ec2 = siCurrentRule.get2ndLevelEventCode(
-						EventType.ATTRIBUTE_XSI_NIL, fidelityOptions);
+				int ec2 = fidelityOptions.get2ndLevelEventCode(
+						EventType.ATTRIBUTE_XSI_NIL, siCurrentRule);
 
 				if (ec2 != Constants.NOT_FOUND) {
 					// encode event-code only
@@ -918,7 +921,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				// If the value is not a schema-valid Boolean, the
 				// AT (xsi:nil) event is represented by
 				// the AT (*) [untyped value] terminal
-				encodeSchemaInvalidAttributeEventCode(currentGrammar
+				SchemaInformedGrammar sig = (SchemaInformedGrammar) currentGrammar;
+				encodeSchemaInvalidAttributeEventCode(sig
 						.getNumberOfDeclaredAttributes());
 				RuntimeUriContext euc = encodeUri(
 						XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, channel);
@@ -944,15 +948,16 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws IOException {
 		final Grammar currentGrammar = getCurrentGrammar();
 		// schema-invalid AT
-		int ec2ATdeviated = currentGrammar.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_INVALID_VALUE, fidelityOptions);
+		int ec2ATdeviated = fidelityOptions.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_INVALID_VALUE, currentGrammar);
 		encode2ndLevelEventCode(ec2ATdeviated);
 		// encode 3rd level event-code
 		// AT specialty: calculate 3rd level attribute event-code
 		// int eventCode3 = ei.getEventCode()
 		// - currentRule.getLeastAttributeEventCode();
+		SchemaInformedGrammar sig = (SchemaInformedGrammar) currentGrammar;
 		channel.encodeNBitUnsignedInteger(eventCode3,
-				MethodsBag.getCodingLength(currentGrammar
+				MethodsBag.getCodingLength(sig
 						.getNumberOfDeclaredAttributes() + 1));
 	}
 
@@ -978,8 +983,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				encode1stLevelEventCode(ei.getEventCode());
 			} else {
 				// AT specialty: calculate 3rd level attribute event-code
+				SchemaInformedGrammar sig = (SchemaInformedGrammar) currentGrammar;
 				int eventCode3 = ei.getEventCode()
-						- currentGrammar.getLeastAttributeEventCode();
+						- sig.getLeastAttributeEventCode();
 				encodeSchemaInvalidAttributeEventCode(eventCode3);
 				isTypeValid(BuiltIn.DEFAULT_DATATYPE, value);
 			}
@@ -1043,7 +1049,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					 * represents the number of attributes declared in the
 					 * schema for this context
 					 */
-					encodeSchemaInvalidAttributeEventCode(currentGrammar
+					SchemaInformedGrammar sig = (SchemaInformedGrammar) currentGrammar;
+					encodeSchemaInvalidAttributeEventCode(sig
 							.getNumberOfDeclaredAttributes());
 					isTypeValid(BuiltIn.DEFAULT_DATATYPE, value);
 				}
@@ -1101,8 +1108,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	private void encodeAttributeEventCodeUndeclared(Grammar currentGrammar,
 			String localName) throws IOException, EXIException {
-		int ecATundeclared = currentGrammar.get2ndLevelEventCode(
-				EventType.ATTRIBUTE_GENERIC_UNDECLARED, fidelityOptions);
+		int ecATundeclared = fidelityOptions.get2ndLevelEventCode(
+				EventType.ATTRIBUTE_GENERIC_UNDECLARED, currentGrammar);
 
 		if (ecATundeclared == Constants.NOT_FOUND) {
 			assert (fidelityOptions.isStrict());
@@ -1331,9 +1338,9 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				updateCurrentRule(ei.getNextGrammar());
 			} else {
 				// Undeclared CH can be found on 2nd level
-				int ecCHundeclared = currentGrammar.get2ndLevelEventCode(
+				int ecCHundeclared = fidelityOptions.get2ndLevelEventCode(
 						EventType.CHARACTERS_GENERIC_UNDECLARED,
-						fidelityOptions);
+						currentGrammar);
 
 				if (ecCHundeclared == Constants.NOT_FOUND) {
 					if (exiFactory.isFragment()) {
@@ -1410,8 +1417,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			String text) throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			// DOCTYPE can be found on 2nd level
-			int ec2 = getCurrentGrammar().get2ndLevelEventCode(
-					EventType.DOC_TYPE, fidelityOptions);
+			int ec2 = fidelityOptions.get2ndLevelEventCode(
+					EventType.DOC_TYPE, getCurrentGrammar());
 			encode2ndLevelEventCode(ec2);
 
 			// name, public, system, text AS string
@@ -1442,8 +1449,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// EntityReference can be found on 2nd level
 			Grammar currentGrammar = getCurrentGrammar();
-			int ec2 = currentGrammar.get2ndLevelEventCode(
-					EventType.ENTITY_REFERENCE, fidelityOptions);
+			int ec2 = fidelityOptions.get2ndLevelEventCode(
+					EventType.ENTITY_REFERENCE, currentGrammar);
 			encode2ndLevelEventCode(ec2);
 
 			// name AS string
@@ -1462,8 +1469,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// comments can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
-			int ec3 = currentGrammar.get3rdLevelEventCode(EventType.COMMENT,
-					fidelityOptions);
+			int ec3 = fidelityOptions.get3rdLevelEventCode(EventType.COMMENT);
 			encode3rdLevelEventCode(ec3);
 
 			// encode CM content
@@ -1482,8 +1488,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 			// processing instructions can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
-			int ec3 = currentGrammar.get3rdLevelEventCode(
-					EventType.PROCESSING_INSTRUCTION, fidelityOptions);
+			int ec3 = fidelityOptions.get3rdLevelEventCode(
+					EventType.PROCESSING_INSTRUCTION);
 			encode3rdLevelEventCode(ec3);
 
 			// encode PI content

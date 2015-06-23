@@ -18,9 +18,6 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.grammars.production.SchemaInformedProduction;
 
@@ -72,89 +69,6 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 	public GrammarType getGrammarType() {
 		return GrammarType.SCHEMA_INFORMED_START_TAG_CONTENT;
 	}
-	
-	protected int getNumberOf2ndLevelEvents(FidelityOptions fidelityOptions) {
-		// EE?, AT(*), AT(schema-invalid), SE(*), CH(*), ER?
-		return (this.hasEndElement ? 0 : 1) + 4 + (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1 : 0);
-	}
-	
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		if(fidelityOptions.isStrict()) {
-			return 0;
-		} else {
-			// EE?, AT(*), AT(schema-invalid), SE(*), CH(*), ER?
-			int ch2 = getNumberOf2ndLevelEvents(fidelityOptions);
-			return get3rdLevelCharacteristics(fidelityOptions) > 0 ? ch2 + 1 : ch2;
-		}
-	}
-	
-	
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		int ec2 = Constants.NOT_FOUND;
-		if(!fidelityOptions.isStrict()) {
-			switch(eventType) {
-			case END_ELEMENT_UNDECLARED:
-				ec2 += this.hasEndElement ? 0 : 1; // EE?
-				break;
-			case ATTRIBUTE_GENERIC_UNDECLARED:
-				ec2 += this.hasEndElement ? 0 : 1; // EE?
-				ec2++; // AT(*)
-				break;
-			case ATTRIBUTE_INVALID_VALUE:
-				ec2 += this.hasEndElement ? 0 : 1; // EE?
-				ec2 += 2; // AT(*), AT(invalid)
-				break;
-			case START_ELEMENT_GENERIC_UNDECLARED:
-				ec2 += this.hasEndElement ? 0 : 1; // EE?
-				ec2 += 2; // AT(*), AT(invalid)
-				ec2++; // SE(*)
-				break;
-			case CHARACTERS_GENERIC_UNDECLARED:
-				ec2 += this.hasEndElement ? 0 : 1; // EE?
-				ec2 += 2; // AT(*), AT(invalid)
-				ec2 += 2; // SE(*), CH(*)
-				break;
-			case ENTITY_REFERENCE:
-				if(fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-					ec2 += this.hasEndElement ? 0 : 1; // EE?
-					ec2 += 2; // AT(*), AT(invalid)
-					ec2 += 2; // SE(*), CH(*)
-					ec2++; // ER
-				} 
-				break;
-			default:
-				// no action
-			}
-		}
-		return ec2;
-	}
-	
-	private static final EventType[] POSSIBLE_EVENTS = {EventType.END_ELEMENT_UNDECLARED,
-		EventType.ATTRIBUTE_GENERIC_UNDECLARED, EventType.ATTRIBUTE_INVALID_VALUE,
-		EventType.START_ELEMENT_GENERIC_UNDECLARED, EventType.CHARACTERS_GENERIC_UNDECLARED,
-		EventType.ENTITY_REFERENCE};
-	
-	public EventType get2ndLevelEventType(int eventCode2,
-			FidelityOptions fidelityOptions) {
-		if(fidelityOptions.isStrict()) {
-			// nothing..
-			return null;
-		} else {
-			assert(eventCode2 >= 0);
-			if(this.hasEndElement) {
-				eventCode2++;
-			}
-			assert(eventCode2 < POSSIBLE_EVENTS.length);
-			return POSSIBLE_EVENTS[eventCode2];
-		}
-	}
-
-	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (!fidelityOptions.isStrict());
-	}
-	
 	
 	public void setElementContentGrammar(Grammar elementContent2) {
 		this.elementContent2 = elementContent2;

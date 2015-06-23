@@ -58,7 +58,16 @@ import com.siemens.ct.exi.util.SkipRootElementXMLReader;
  * -encode -i .\data\W3C\PrimerNotebook\notebook.xml
  * -encode -i .\data\W3C\PrimerNotebook\notebook.xml -schema .\trunk\data\W3C\PrimerNotebook\notebook.xsd
  * -encode -preservePrefixes -includeOptions -i .\trunk\data\W3C\PrimerNotebook\notebook.xsd
-
+ *  
+ * # DTDs
+ * -encode -i .\data\general\doc-10.xml -preserveDTDs
+ * -decode -i .\data\general\doc-10.xml.exi -preserveDTDs
+ * 
+ * # ER
+ * 
+ * -encode -i D:\Projects\W3C\Group\EXI\TTFMS\data\interop\schemaInformedGrammar\\undeclaredProductions\er-01.xml -preservePIs -preserveDTDs
+ * -decode -i D:\Projects\W3C\Group\EXI\TTFMS\data\interop\schemaInformedGrammar\\undeclaredProductions\er-01.xml.exi -preservePIs -preserveDTDs
+ * 
  */
 /**
  * 
@@ -601,41 +610,51 @@ public class EXIficientCMD {
 		xmlOutput.close();
 	}
 
+	
+	protected XMLReader getXMLReader() throws SAXException {
+		// create xml reader
+		XMLReader xmlReader;
+
+//		xmlReader = XMLReaderFactory
+//				.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		xmlReader = XMLReaderFactory.createXMLReader();
+
+		// set XMLReader features
+		xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
+		// do not report namespace declarations as attributes
+		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
+				false);
+		// avoid validation
+		xmlReader.setFeature("http://xml.org/sax/features/validation", false);
+		// DTD
+		xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
+				false);
+		// *skip* resolving entities like DTDs
+		xmlReader.setEntityResolver(new NoEntityResolver());
+
+		return xmlReader;
+	}
+	
 	protected void encode(String input, EXIFactory exiFactory, String output)
 			throws SAXException, EXIException, IOException {
 		OutputStream os = new FileOutputStream(output);
 		
-		XMLReader parser = XMLReaderFactory.createXMLReader();
+		XMLReader xmlReader = getXMLReader();
+		
 		EXIResult exiResult = new EXIResult(exiFactory);
 		exiResult.setOutputStream(os);
-		parser.setContentHandler(exiResult.getHandler());
+		
+		xmlReader.setContentHandler(exiResult.getHandler());
 
-		// add handlers
-		if (exiFactory.getFidelityOptions().isFidelityEnabled(
-				FidelityOptions.FEATURE_COMMENT)
-				|| exiFactory.getFidelityOptions().isFidelityEnabled(
-						FidelityOptions.FEATURE_DTD)) {
-			// set LexicalHandler
-			parser.setProperty("http://xml.org/sax/properties/lexical-handler",
-					exiResult.getLexicalHandler());
-			//
-			parser.setProperty(
-					"http://xml.org/sax/properties/declaration-handler",
-					exiResult.getLexicalHandler());
-			// set DTD handler
-			parser.setDTDHandler((DTDHandler) exiResult.getHandler());
-		}
-
-		parser.setFeature("http://xml.org/sax/features/namespaces", true);
-		// do not report namespace declarations as attributes
-		parser.setFeature("http://xml.org/sax/features/namespace-prefixes",
-				false);
-		// avoid validation
-		parser.setFeature("http://xml.org/sax/features/validation", false);
-		// DTD
-		parser.setFeature("http://xml.org/sax/features/resolve-dtd-uris", false);
-		// *skip* resolving entities like DTDs
-		parser.setEntityResolver(new NoEntityResolver());
+		// set LexicalHandler
+		xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler",
+				exiResult.getLexicalHandler());
+		// set DeclHandler
+		xmlReader.setProperty(
+				"http://xml.org/sax/properties/declaration-handler",
+				exiResult.getLexicalHandler());
+		// set DTD handler
+		xmlReader.setDTDHandler((DTDHandler) exiResult.getHandler());
 
 		InputSource is;
 		if(exiFactory.isFragment()) {
@@ -644,12 +663,12 @@ public class EXIficientCMD {
 			// be well-formed")
 			is = new InputSource(FragmentUtilities.getSurroundingRootInputStream(new FileInputStream(input)));
 			// skip root element when passing infoset to EXI encoder
-			parser =  new SkipRootElementXMLReader(parser);
+			xmlReader =  new SkipRootElementXMLReader(xmlReader);
 		} else {
 			is = new InputSource(input);
 		}
 		
-		parser.parse(is);
+		xmlReader.parse(is);
 
 		os.flush();
 		os.close();

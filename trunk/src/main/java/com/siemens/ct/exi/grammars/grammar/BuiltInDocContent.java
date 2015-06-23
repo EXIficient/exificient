@@ -18,10 +18,8 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
-import com.siemens.ct.exi.util.MethodsBag;
 
 /**
  * 
@@ -61,47 +59,17 @@ public class BuiltInDocContent extends AbstractBuiltInGrammar {
 	}
 	
 	@Override
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
-		// Note: cannot use variable this.ec1Length because does not have always 2nd level production
-		return MethodsBag.getCodingLength(containers.size() + (this.hasSecondOrThirdLevel(fidelityOptions) ? 1 : 0));
+	public final void addProduction(Event event, Grammar grammar) {
+		if(!event.isEventType(EventType.START_ELEMENT_GENERIC) || this.getNumberOfEvents() > 0) {
+			throw new RuntimeException("Mis-use of BuiltInDocContent grammar");
+		}
+		super.addProduction(event, grammar);
 	}
-
+	
 	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
+	public int get1stLevelEventCodeLength(boolean withFidelityOptionsOrNonStrict) {
+		// Note: cannot use variable this.ec1Length because does not have always 2nd level production
+		//return MethodsBag.getCodingLength(containers.size() + (withFidelityOptionsOrNonStrict ? 1 : 0));
+		return withFidelityOptionsOrNonStrict ? 1 : 0;
 	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		if (eventType == EventType.DOC_TYPE
-				&& fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return 0;
-		}
-
-		return Constants.NOT_FOUND;
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		if (eventCode == 0
-				&& fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return EventType.DOC_TYPE;
-		}
-
-		return null;
-	}
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2 = get3rdLevelCharacteristics(fidelityOptions) > 0 ? 1 : 0;
-		ch2 += fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD) ? 1
-				: 0;
-
-		return ch2;
-	}
-
 }

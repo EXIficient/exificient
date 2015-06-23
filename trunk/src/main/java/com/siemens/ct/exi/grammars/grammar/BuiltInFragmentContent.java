@@ -18,10 +18,7 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.EndDocument;
-import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 import com.siemens.ct.exi.util.MethodsBag;
 
@@ -62,30 +59,9 @@ public class BuiltInFragmentContent extends AbstractBuiltInGrammar {
 	}
 	
 	@Override
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
+	public int get1stLevelEventCodeLength(boolean withFidelityOptionsOrNonStrict) {
 		// Note: cannot use variable this.ec1Length because does not have always 2nd level production
-		return MethodsBag.getCodingLength(containers.size() + (this.hasSecondOrThirdLevel(fidelityOptions) ? 1 : 0));
-	}
-
-	@Override
-	public boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		return (fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		return Constants.NOT_FOUND;
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		return null;
-	}
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		return 0;
+		return MethodsBag.getCodingLength(containers.size() + (withFidelityOptionsOrNonStrict ? 1 : 0));
 	}
 
 	@Override

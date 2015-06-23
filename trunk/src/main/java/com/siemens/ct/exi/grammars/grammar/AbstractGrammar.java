@@ -31,7 +31,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.EndElement;
 import com.siemens.ct.exi.grammars.event.Event;
@@ -72,10 +71,6 @@ public abstract class AbstractGrammar implements Grammar {
 		addProduction(event, END_RULE);
 	}
 
-	// public boolean isFirstElementRule() {
-	// return false;
-	// }
-
 	/*
 	 * Do NOT learn per default (non-Javadoc)
 	 * 
@@ -115,62 +110,6 @@ public abstract class AbstractGrammar implements Grammar {
 		}
 	}
 
-	public int get3rdLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch3 = 0;
-
-		if (!fidelityOptions.isStrict()) {
-			// CM
-			if (fidelityOptions
-					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
-				ch3++;
-			}
-			// PI
-			if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
-				ch3++;
-			}
-		}
-
-		return ch3;
-	}
-
-	public int get3rdLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		int ec3 = Constants.NOT_FOUND;
-
-		if (!fidelityOptions.isStrict()) {
-			// CM
-			if (fidelityOptions
-					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
-				if (EventType.COMMENT == eventType) {
-					ec3 = 0;
-				} else if (EventType.PROCESSING_INSTRUCTION == eventType) {
-					ec3 = 1;
-				}
-			} else if (fidelityOptions
-					.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
-				if (EventType.PROCESSING_INSTRUCTION == eventType) {
-					ec3 = 0;
-				}
-			}
-		}
-
-		return ec3;
-	}
-
-	public EventType get3rdLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		if (eventCode == 0) {
-			if (fidelityOptions
-					.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
-				return EventType.COMMENT;
-			} else {
-				return EventType.PROCESSING_INSTRUCTION;
-			}
-		} else {
-			return EventType.PROCESSING_INSTRUCTION;
-		}
-	}
-
 	protected static int getEventCode(EventType eventType,
 			List<EventType> events) {
 		for (int i = 0; i < events.size(); i++) {
@@ -186,9 +125,6 @@ public abstract class AbstractGrammar implements Grammar {
 		return this;
 	}
 
-	// public Rule getElementContentRuleForUndeclaredSE() {
-	// return this;
-	// }
 
 	@Override
 	public boolean equals(Object obj) {

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.AttributeNS;
 import com.siemens.ct.exi.grammars.event.Event;
@@ -59,6 +58,10 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 
 	// protected SchemaInformedRule typeEmpty;
 
+	public boolean hasEndElement() {
+		return hasEndElement;
+	}
+
 	/*
 	 * schema-deviated attributes
 	 */
@@ -87,12 +90,8 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		return true;
 	}
 
-	public abstract boolean hasSecondOrThirdLevel(
-			FidelityOptions fidelityOptions);
-
-	public int get1stLevelEventCodeLength(FidelityOptions fidelityOptions) {
-		return (hasSecondOrThirdLevel(fidelityOptions) ? codeLengthB
-				: codeLengthA);
+	public int get1stLevelEventCodeLength(boolean withFidelityOptionsOrNonStrict) {
+		return withFidelityOptionsOrNonStrict ? codeLengthB : codeLengthA;
 	}
 
 	public int getNumberOfDeclaredAttributes() {

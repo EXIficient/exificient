@@ -18,9 +18,6 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammars.event.EventType;
 
 /**
  * 
@@ -52,41 +49,6 @@ public class DocEnd extends AbstractSchemaInformedGrammar {
 
 	public String toString() {
 		return "DocEnd" + super.toString();
-	}
-
-	@Override
-	public final boolean hasSecondOrThirdLevel(FidelityOptions fidelityOptions) {
-		// has second or third level (CM or PI)
-		return (fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fidelityOptions
-				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		return Constants.NOT_FOUND;
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		return null;
-	}
-
-	/*
-	 * Note: The following two grammars result in the same bit sequence,
-	 * therefore the second variant is used to keep code simple!! DocEnd : ED 0
-	 * CM DocEnd 1.0 PI DocEnd 1.1
-	 * 
-	 * DocEnd : ED 0 CM DocEnd 1.0.0 PI DocEnd 1.0.1
-	 */
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		int ch2 = 0;
-
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
-		}
-
-		return ch2;
 	}
 
 }

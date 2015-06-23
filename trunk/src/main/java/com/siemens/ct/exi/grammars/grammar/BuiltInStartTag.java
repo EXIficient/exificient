@@ -18,13 +18,8 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import java.util.List;
-
-import com.siemens.ct.exi.Constants;
-import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.grammars.event.Attribute;
-import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
 
 /**
@@ -62,56 +57,13 @@ public class BuiltInStartTag extends AbstractBuiltInContent {
 		elementContent = new BuiltInElement();
 	}
 	
+	@Override
+	public boolean hasEndElement() {
+		return learnedEE;
+	}
+	
 	public GrammarType getGrammarType() {
 		return GrammarType.BUILT_IN_START_TAG_CONTENT;
-	}
-
-	public int get2ndLevelEventCode(EventType eventType,
-			FidelityOptions fidelityOptions) {
-		List<EventType> startTagContent = get2ndLevelEventsStartTagItems(fidelityOptions);
-		int ec = getEventCode(eventType, startTagContent);
-
-		if (ec == Constants.NOT_FOUND) {
-			ec = getEventCode(eventType,
-					get2ndLevelEventsChildContentItems(fidelityOptions));
-
-			if (ec != Constants.NOT_FOUND) {
-				ec += startTagContent.size();
-			}
-		}
-
-		return ec;
-	}
-
-	public EventType get2ndLevelEventType(int eventCode,
-			FidelityOptions fidelityOptions) {
-		EventType eventType = null;
-
-		List<EventType> startTagContent = get2ndLevelEventsStartTagItems(fidelityOptions);
-
-		if (eventCode < startTagContent.size()) {
-			// in startTag events
-			eventType = startTagContent.get(eventCode);
-		} else {
-			// childContent events
-			eventType = get2ndLevelEventsChildContentItems(fidelityOptions)
-					.get(eventCode - startTagContent.size());
-		}
-
-		return eventType;
-	}
-
-	public int get2ndLevelCharacteristics(FidelityOptions fidelityOptions) {
-		// startTagContent
-		int ch2 = get2ndLevelEventsStartTagItems(fidelityOptions).size();
-		// + childContentItems
-		ch2 += get2ndLevelEventsChildContentItems(fidelityOptions).size();
-		// 3rd level ?
-		if (get3rdLevelCharacteristics(fidelityOptions) > 0) {
-			ch2++;
-		}
-
-		return ch2;
 	}
 
 	@Override
