@@ -22,6 +22,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 import com.siemens.ct.exi.core.EXIHeaderDecoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -31,6 +32,16 @@ import com.siemens.ct.exi.io.channel.BitDecoderChannel;
  * An EXI stream is an EXI header followed by an EXI body. The EXI body carries
  * the content of the document, while the EXI header communicates the options
  * used for encoding the EXI body.
+ * 
+ * <p>
+ * Note: In case of multiple EXI documents with EXI Compression mode in one
+ * stream or subsequent data in the stream/file one needs to provide the input
+ * stream as PushbackInputStream with the size of at least
+ * 
+ * DecodingOptions.PUSHBACK_BUFFER_SIZE. The reason for doing so is that the
+ * Java inflater sometimes reads beyond the EXI channel/block and
+ * PushbackInputStream allows us to push back this data so that it is not lost.
+ * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
@@ -53,14 +64,14 @@ public class EXIStreamDecoder {
 
 	public EXIBodyDecoder getBodyOnlyDecoder(InputStream is)
 			throws EXIException, IOException {
-		is = checkBufferedAndMarkSupportedInputStream(is);
+		is = checkBufferedAndPushbackStream(is);
 		exiBody.setInputStream(is);
 		return exiBody;
 	}
 
 	public EXIBodyDecoder decodeHeader(InputStream is) throws EXIException,
 			IOException {
-		is = checkBufferedAndMarkSupportedInputStream(is);
+		is = checkBufferedAndPushbackStream(is);
 		// read header
 		BitDecoderChannel headerChannel = new BitDecoderChannel(is);
 		EXIFactory exiFactory = exiHeader
@@ -89,13 +100,14 @@ public class EXIStreamDecoder {
 	 * @return input stream that is buffered with <code>markSupported</code> or
 	 *         same stream if those properties are given already
 	 */
-	private InputStream checkBufferedAndMarkSupportedInputStream(InputStream is) {
-		// buffer stream if not already
-		// TODO is there a *nice* way to detect whether a stream is buffered
-		if (!(is instanceof BufferedInputStream || is instanceof ByteArrayInputStream)) {
+	private InputStream checkBufferedAndPushbackStream(InputStream is) {
+		if (is instanceof PushbackInputStream) {
+			// push back stream, don't do anything
+		} else if (!(is instanceof BufferedInputStream || is instanceof ByteArrayInputStream)) {
+			// buffer stream if not already
+			// TODO is there a *nice* way to detect whether a stream is buffered
 			is = new BufferedInputStream(is);
 		}
-		is.mark(Integer.MAX_VALUE);
 
 		return is;
 	}

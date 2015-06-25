@@ -36,6 +36,9 @@ public class DecodingOptions {
 
 	/** SchemaId in EXI header is not used */
 	public static final String IGNORE_SCHEMA_ID = "IGNORE_SCHEMA_ID";
+	
+	/** Pushback size for multiple streams in one file */
+	public static final int PUSHBACK_BUFFER_SIZE = 512; 
 
 	/* contains options and according values */
 	protected Set<String> options;

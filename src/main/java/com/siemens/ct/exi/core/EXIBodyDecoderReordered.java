@@ -20,6 +20,7 @@ package com.siemens.ct.exi.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,10 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
+import com.siemens.ct.exi.DecodingOptions;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
@@ -43,6 +44,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.io.channel.ByteDecoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
+import com.siemens.ct.exi.io.compression.EXIInflaterInputStream;
 import com.siemens.ct.exi.types.BuiltIn;
 import com.siemens.ct.exi.values.Value;
 
@@ -234,8 +236,14 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		initForEachRun();
 	}
 	
+	EXIInflaterInputStream inflaterInputStream;
+	
 	public void updateInputStream(InputStream is) throws EXIException, IOException {
 		this.is = is;
+		if(!(this.is instanceof PushbackInputStream)) {
+			 this.is = new PushbackInputStream(is, DecodingOptions.PUSHBACK_BUFFER_SIZE);
+		}
+		inflaterInputStream = null;
 
 		firstChannel = true;
 		inflater = new Inflater(true);
@@ -253,43 +261,27 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 		throw new RuntimeException(
 				"[EXI] Reorderd EXI Body decoder needs to be set via updateInputStream(...)");
 	}
+	
+	
+	private void readjustInputStream(InputStream is) throws IOException {
+		assert((codingMode == CodingMode.COMPRESSION));
+		if (inflaterInputStream != null && inflater.getRemaining() > 0) {
+			// inflater reads beyond deflate stream, reset position
+			// System.out.println("--> Rewind " + inflater.getRemaining() + " bytes");
+			inflaterInputStream.pushback();
+		}
+	}
 
 	public DecoderChannel getNextChannel() throws IOException {
 
 		if (codingMode == CodingMode.COMPRESSION) {
-			if ( inflater.getRemaining() == 0) {
-				// no skipping needed
-			} else {
-				// skip
-				assert(is.markSupported());
-				int av = is.available() + inflater.getRemaining(); 
-				is.reset();
-				int toskip =  is.available() - av; 
-				is.skip(toskip);
-			}
-
-			inflater.reset();
+			// readjust channel of previous inflate streams
+			readjustInputStream(is);
 			
-			return new ByteDecoderChannel(new InflaterInputStream(is, inflater));
+			inflaterInputStream = new EXIInflaterInputStream((PushbackInputStream) is, inflater, DecodingOptions.PUSHBACK_BUFFER_SIZE);
+			return new ByteDecoderChannel(inflaterInputStream);
 			
-//			if (firstChannel) {
-//				// create once inflater to re-use
-//				if (inflater == null) {
-//					inflater = new Inflater(true);
-//				}
-//				// create once a decoder channel
-//				recentInflaterInputStream = new EXIInflaterInputStream(is,
-//						inflater);
-//				firstChannel = false;
-//			} else {
-//				assert (inflater != null);
-//				// any pending data ?
-//				while (!inflater.finished()) {
-//					recentInflaterInputStream.read();
-//				}
-//			}
-//			inflater.reset();
-//			return new ByteDecoderChannel(recentInflaterInputStream);
+//			 return new ByteDecoderChannel(new InflaterInputStream(is, inflater, inputBufferSize));
 		} else {
 			assert (codingMode == CodingMode.PRE_COMPRESSION);
 			if (firstChannel) {
@@ -732,18 +724,15 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			IOException {
 		return decodeCharacters();
 	}
+	
+
 
 	public void decodeEndDocument() throws EXIException {
 		if (codingMode == CodingMode.COMPRESSION) {
 			// Note: in many cases not needed (e.g., if no more EXI documents in stream )
 			// fix input stream so that another process can read data at the right position...
 			try {
-				if ( inflater.getRemaining() != 0) {
-					int av = inflater.getRemaining() + is.available();
-					is.reset();
-					int toskip = is.available() - av;
-					is.skip(toskip);
-				}
+				readjustInputStream(is);
 			} catch (IOException e) {
 				throw new EXIException(e);
 			}
@@ -786,202 +775,5 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 			this.prefix = prefix;
 		}
 	}
-
-//	public static final boolean nowrap = true; // EXI requires no wrap
-//
-//	final static int NUMBER_OF_EXI_FILES = 10;
-//
-//	final static int NUMBER_OF_HEADER_BYTES = 10;
-//	final static byte HEADER_BYTE = 123;
-//
-//	final static int NUMBER_OF_CHANNELS = 10;
-//
-//	final static int NUMBER_OF_BYTES = 5;
-//	final static boolean RANDOM_BYTES = true;
-//	final static int BYTES_LENGTH = 26;
-//
-//	public static void printJVMInfos() {
-//		System.out.println("java.class.path    : " + System.getProperty("java.class.path"));
-//		System.out.println("java.vendor        : " + System.getProperty("java.vendor"));
-//		System.out.println("java.vendor.url    : " + System.getProperty("java.vendor.url"));
-//		System.out.println("java.version       : " + System.getProperty("java.version"));
-//		System.out.println("sun.arch.data.model: " + System.getProperty("sun.arch.data.model"));
-//	}
-//	
-//	public static void main(String[] args) throws IOException {
-//
-//		printJVMInfos();
-//		
-//		List<byte[]> encodeBytes = new ArrayList<byte[]>();
-//
-//		/*
-//		 * ENCODING
-//		 */
-//
-//		ByteArrayOutputStream os = new ByteArrayOutputStream();
-//		for (int f = 0; f < NUMBER_OF_EXI_FILES; f++) {
-//			// encode
-//			for (int j = 0; j < NUMBER_OF_HEADER_BYTES; j++) {
-//				// os.write(random.nextInt()); // EXI header
-//				os.write(HEADER_BYTE);
-//			}
-//
-//			Deflater deflater = null;
-//			for (int k = 0; k < NUMBER_OF_CHANNELS; k++) {
-//				System.out.println("Channel " + k);
-//				if(deflater == null) {
-//					deflater = new Deflater(
-//							Deflater.DEFAULT_COMPRESSION, nowrap);
-//				} else {
-//					deflater.reset();
-//				}
-//
-//				DeflaterOutputStream deflaterOS = new DeflaterOutputStream(
-//						os, deflater);
-//				// some EXI data
-//				for (int i = 0; i < NUMBER_OF_BYTES; i++) {
-//					byte[] bs = getBytes(BYTES_LENGTH);
-//					encodeBytes.add(bs);
-//					System.out.println("\t" + new String(bs));
-//					deflaterOS.write(bs);
-//				}
-//
-//				// finalize deflate stream
-//				deflaterOS.finish();
-//				// deflaterOS.close();
-//			}
-//			os.flush();
-//		}
-//
-//		byte[] bytesEXI = os.toByteArray();
-//		os.close();
-//
-//		/*
-//		 * DECODING
-//		 */
-//
-//		InputStream is = new ByteArrayInputStream(bytesEXI);
-//		
-//		is = new BufferedInputStream(is); // mark supported for other not "markable" streams e.g., file stream
-//		is.mark(Integer.MAX_VALUE);
-//		
-//
-//		List<byte[]> decodeBytes = new ArrayList<byte[]>();
-//
-//		for (int f = 0; f < NUMBER_OF_EXI_FILES; f++) {
-//			
-//			System.out.println("Available Bytes before header: "
-//					+ is.available());
-//			
-//			// decode header
-//			for (int j = 0; j < NUMBER_OF_HEADER_BYTES; j++) {
-//				int h = is.read();// EXI header
-//				if (h != HEADER_BYTE) { // '€'
-//					throw new RuntimeException(
-//							"EXI Header Error BYTES MISMATCH");
-//				}
-//			}
-//			
-//			
-//			Inflater inflater = new Inflater(nowrap);
-//
-//			System.out.println("Available Bytes after header: "
-//					+ is.available());
-//
-//			// decode channels
-//			for (int k = 0; k < NUMBER_OF_CHANNELS; k++) {
-//				
-//				System.out.println("Remaining: " + inflater.getRemaining());
-//				System.out.println("Available: " + is.available());
-//				
-//				if ( inflater.getRemaining() == 0) {
-//					// no skipping needed
-//				} else {
-//					// skip
-//					int av = is.available() + inflater.getRemaining(); 
-//					is.reset();
-//					int toskip =  is.available() - av; 
-//					is.skip(toskip);
-//				}
-//
-//				inflater.reset();
-//					
-//				
-//				InflaterInputStream inflaterInputStream = new InflaterInputStream(is, inflater);
-//
-//				for (int i = 0; i < NUMBER_OF_BYTES; i++) {
-//					byte[] bs = new byte[BYTES_LENGTH];
-//					for (int l = 0; l < BYTES_LENGTH; l++) {
-//						bs[l] = (byte) inflaterInputStream.read();
-//					}
-//					decodeBytes.add(bs);
-//					System.out.println("\t" + new String(bs));
-//				}
-//
-//				System.out.println("Available Bytes after channel " + k + ": "
-//						+ is.available());
-//			}
-//			
-//			
-//			// Note: in many cases not needed (e.g., if no buffered stream passed)
-//			// fix input stream so that another process can read data at the right position...
-//			if ( inflater.getRemaining() != 0) {
-//				int av = inflater.getRemaining() + is.available();
-//				is.reset();
-//				int toskip = is.available() - av;
-//				is.skip(toskip);
-//			}
-//
-//		}
-//
-//		/*
-//		 * CONSISTENCY CHECK
-//		 */
-//		
-//		
-//		 // compare strings
-//		 if(encodeBytes.size() != decodeBytes.size()) {
-//			 throw new RuntimeException("Bytes SIZE MISMATCH");
-//		 }
-//		 
-//		 for(int i=0; i<encodeBytes.size(); i++) {
-//			 byte[] e = encodeBytes.get(i);
-//			 byte[] d = decodeBytes.get(i);
-//			 if(!Arrays.equals(e, d)) {
-//				 throw new RuntimeException("Bytes MISMATCH");
-//			 }
-//		 }
-//
-//	}
-//
-//	private static SecureRandom random = new SecureRandom();
-//
-//	public static byte[] getBytes(int len) {
-//		String s;
-//		if (RANDOM_BYTES) {
-//			s = new BigInteger(130, random).toString(32);
-//			if (s.length() > len) {
-//				s = s.substring(0, len);
-//			} else {
-//				while (s.length() < len) {
-//					s += "X";
-//				}
-//			}
-//		} else {
-//			StringBuffer sb = new StringBuffer();
-//			for (int i = 0; i < len; i++) {
-//				sb.append((char) (i + 'A'));
-//			}
-//			s = sb.toString();
-//		}
-//
-//		byte[] bs = s.getBytes();
-//		if (bs.length != len) {
-//			throw new RuntimeException("BYTES MISMATCH!!!");
-//		}
-//
-//		return bs;
-//
-//	}
 
 }
