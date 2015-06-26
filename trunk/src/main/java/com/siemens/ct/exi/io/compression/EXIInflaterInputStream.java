@@ -93,11 +93,20 @@ public class EXIInflaterInputStream extends FilterInputStream {
 		buf = new byte[size];
 	}
 
-	public void pushback() throws IOException {
+	public void pushbackAndReset() throws IOException {
+//		boolean needsInput = inf.needsInput();
+//		boolean needsDictionary = inf.needsDictionary();
+//		System.out.println("available " + this.in.available());
+//		System.out.println("finished " + inf.finished() + ", closed " + closed + ", needsInput " + needsInput + ",  needsDictionary " + needsDictionary + ", Remaining " + inf.getRemaining() + ", reachEOF " + reachEOF);
+		while(!inf.finished() && this.in.available() > 0) {
+			this.read(); // discard
+		}
+		
 		int rem = inf.getRemaining();
-		// buf, 0, len
-
-		((PushbackInputStream) in).unread(buf, len - rem, rem);
+		if(rem > 0) {
+			// System.out.println("pushback " + rem + " bytes");
+			((PushbackInputStream) in).unread(buf, len - rem, rem);			
+		}
 
 		inf.reset();
 	}

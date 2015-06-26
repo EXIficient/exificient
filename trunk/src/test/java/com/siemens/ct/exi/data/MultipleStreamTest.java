@@ -386,7 +386,7 @@ public class MultipleStreamTest extends AbstractTestCase {
 					System.out.println("--> Rewind " + inflater.getRemaining()
 							+ " bytes");
 					
-					inflaterInputStream.pushback();
+					inflaterInputStream.pushbackAndReset();
 				}
 
 			}

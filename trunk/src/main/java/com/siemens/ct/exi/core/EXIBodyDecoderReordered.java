@@ -265,10 +265,10 @@ public class EXIBodyDecoderReordered extends AbstractEXIBodyDecoder {
 	
 	private void readjustInputStream(InputStream is) throws IOException {
 		assert((codingMode == CodingMode.COMPRESSION));
-		if (inflaterInputStream != null && inflater.getRemaining() > 0) {
+		if (inflaterInputStream != null) {
 			// inflater reads beyond deflate stream, reset position
-			// System.out.println("--> Rewind " + inflater.getRemaining() + " bytes");
-			inflaterInputStream.pushback();
+			// Note: pushback needs to be called given that it resets inflater
+			inflaterInputStream.pushbackAndReset();
 		}
 	}
 
