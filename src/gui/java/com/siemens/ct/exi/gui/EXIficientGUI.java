@@ -85,6 +85,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
@@ -475,7 +476,7 @@ public class EXIficientGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public EXIficientGUI() {
-		setTitle("EXIficient");
+		setTitle("EXIficient (" + Constants.VERSION + ")");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 770, 500);
 		contentPane = new JPanel();
