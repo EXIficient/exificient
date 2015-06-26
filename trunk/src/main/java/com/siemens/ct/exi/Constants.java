@@ -30,6 +30,11 @@ import javax.xml.XMLConstants;
  */
 
 public interface Constants {
+	
+	/**
+	 * Version string to identify library (e.g., in EXIficientGUI)
+	 */
+	public static final String VERSION = "0.9.5-SNAPSHOT";
 
 	/**
 	 * <p>
