@@ -122,78 +122,76 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			ef.setGrammars(grammar);
 		} else {
 			// schema-informed
-			XMLEntityResolver entityResolver = getXsdEntityResolver(); // // no
-																		// internet
-																		// connection,
-																		// try
-																		// offline
+			// no internet connection, try offline
+			XMLEntityResolver entityResolver = getXsdEntityResolver(); 
 			Grammars grammar = grammarFactory.createGrammars(
 					tco.getSchemaLocation(), entityResolver);
 			ef.setGrammars(grammar);
-
-			// EXI output stream
-			ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
-
-			// XML input stream
-			String xmlLocation = QuickTestConfiguration.getXmlLocation();
-			InputStream xmlInput = new FileInputStream(xmlLocation);
-
-			AbstractTestEncoder testEncoder = getTestEncoder(api, ef);
-
-			// --> encode
-			testEncoder.encodeTo(xmlInput, exiEncodedOutput);
-			exiEncodedOutput.flush();
-
-			// EXI input stream
-			InputStream exiDocument = new ByteArrayInputStream(
-					exiEncodedOutput.toByteArray());
-
-			EncodingOptions encodingOptions = tco.getEncodingOptions();
-			// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
-			if (encodingOptions
-					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
-					&& encodingOptions
-							.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
-				// all EXI options and schemaID from the header have to be used
-				ef = DefaultEXIFactory.newInstance();
-			} else if (encodingOptions
-					.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)) {
-				// restore schemaId// grammar
-				Grammars  grs = ef.getGrammars();
-				ef = DefaultEXIFactory.newInstance();
-				ef.setGrammars(grs);
-			}
-
-			// <-- 1. decode as SAX
-			try {
-				decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
-			} catch (Throwable e) {
-				// encode-decode msg
-				throw new Exception(
-						"{" + api + "->SAX} " + e.getLocalizedMessage() + " ["
-								+ tco.toString() + "]", e);
-			}
-
-			// <-- 2. decode as DOM
-			try {
-				exiDocument.reset();
-				decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
-			} catch (Throwable e) {
-				throw new Exception(
-						"{" + api + "->DOM} " + e.getLocalizedMessage() + " ["
-								+ tco.toString() + "]", e);
-			}
-
-			// <-- 3. decode as StAX
-			try {
-				exiDocument.reset();
-				decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
-			} catch (Throwable e) {
-				throw new Exception(
-						"{" + api + "->StAX} " + e.getLocalizedMessage() + " ["
-								+ tco.toString() + "]", e);
-			}
 		}
+
+		// EXI output stream
+		ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
+
+		// XML input stream
+		String xmlLocation = QuickTestConfiguration.getXmlLocation();
+		InputStream xmlInput = new FileInputStream(xmlLocation);
+
+		AbstractTestEncoder testEncoder = getTestEncoder(api, ef);
+
+		// --> encode
+		testEncoder.encodeTo(xmlInput, exiEncodedOutput);
+		exiEncodedOutput.flush();
+
+		// EXI input stream
+		InputStream exiDocument = new ByteArrayInputStream(
+				exiEncodedOutput.toByteArray());
+
+		EncodingOptions encodingOptions = tco.getEncodingOptions();
+		// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
+		if (encodingOptions
+				.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
+				&& encodingOptions
+						.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
+			// all EXI options and schemaID from the header have to be used
+			ef = DefaultEXIFactory.newInstance();
+		} else if (encodingOptions
+				.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)) {
+			// restore schemaId// grammar
+			Grammars  grs = ef.getGrammars();
+			ef = DefaultEXIFactory.newInstance();
+			ef.setGrammars(grs);
+		}
+
+		// <-- 1. decode as SAX
+		try {
+			decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
+		} catch (Throwable e) {
+			// encode-decode msg
+			throw new Exception(
+					"{" + api + "->SAX} " + e.getLocalizedMessage() + " ["
+							+ tco.toString() + "]", e);
+		}
+
+		// <-- 2. decode as DOM
+		try {
+			exiDocument.reset();
+			decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
+		} catch (Throwable e) {
+			throw new Exception(
+					"{" + api + "->DOM} " + e.getLocalizedMessage() + " ["
+							+ tco.toString() + "]", e);
+		}
+
+		// <-- 3. decode as StAX
+		try {
+			exiDocument.reset();
+			decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
+		} catch (Throwable e) {
+			throw new Exception(
+					"{" + api + "->StAX} " + e.getLocalizedMessage() + " ["
+							+ tco.toString() + "]", e);
+		}
+		
 	}
 
 	class TestXSDResolver implements

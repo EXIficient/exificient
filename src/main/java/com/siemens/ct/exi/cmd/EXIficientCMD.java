@@ -56,8 +56,9 @@ import com.siemens.ct.exi.util.SkipRootElementXMLReader;
  * 
  * # Notebook
  * -encode -i .\data\W3C\PrimerNotebook\notebook.xml
- * -encode -i .\data\W3C\PrimerNotebook\notebook.xml -schema .\trunk\data\W3C\PrimerNotebook\notebook.xsd
+ * -encode -i .\data\W3C\PrimerNotebook\notebook.xml -schema .\data\W3C\PrimerNotebook\notebook.xsd
  * -encode -preservePrefixes -includeOptions -i .\trunk\data\W3C\PrimerNotebook\notebook.xsd
+ * -encode -i .\data\W3C\PrimerNotebook\notebook.xml -schema .\data\W3C\PrimerNotebook\notebook.xsd -compression
  *  
  * # DTDs
  * -encode -i .\data\general\doc-10.xml -preserveDTDs
@@ -67,6 +68,10 @@ import com.siemens.ct.exi.util.SkipRootElementXMLReader;
  * 
  * -encode -i D:\Projects\W3C\Group\EXI\TTFMS\data\interop\schemaInformedGrammar\\undeclaredProductions\er-01.xml -preservePIs -preserveDTDs
  * -decode -i D:\Projects\W3C\Group\EXI\TTFMS\data\interop\schemaInformedGrammar\\undeclaredProductions\er-01.xml.exi -preservePIs -preserveDTDs
+ * 
+ * # Bug33
+ * -encode -i  .\data\bugs\ID33\\useme.xml -compression
+ * -decode -i  .\data\bugs\ID33\\useme.xml.exi -compression
  * 
  */
 /**
@@ -584,7 +589,7 @@ public class EXIficientCMD {
 				cmd.parseArguments(args);
 				cmd.process();
 			} catch (Exception e) {
-				printError("XX"+ e.getLocalizedMessage() + e.getClass());
+				printError(e.getLocalizedMessage() + e.getClass());
 			}
 		}
 	}
