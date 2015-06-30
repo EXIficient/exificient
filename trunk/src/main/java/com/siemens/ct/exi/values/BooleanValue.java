@@ -32,17 +32,22 @@ public class BooleanValue extends AbstractValue {
 
 	private static final long serialVersionUID = -5198071608091328620L;
 
-	private static final BooleanValue BOOLEAN_VALUE_FALSE = new BooleanValue(
+	public static final BooleanValue BOOLEAN_VALUE_FALSE = new BooleanValue(
 			false);
-	private static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(
+	public static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(
 			true);
+	
+	public static final BooleanValue BOOLEAN_VALUE_0 = new BooleanValue(0);
+	public static final BooleanValue BOOLEAN_VALUE_1 = new BooleanValue(1);
+	public static final BooleanValue BOOLEAN_VALUE_2 = new BooleanValue(2);
+	public static final BooleanValue BOOLEAN_VALUE_3 = new BooleanValue(3);
 
 	protected final boolean bool;
 
 	protected final char[] characters;
 	protected final String sValue;
 
-	public BooleanValue(boolean bool) {
+	private BooleanValue(boolean bool) {
 		super(ValueType.BOOLEAN);
 		this.bool = bool;
 		if (bool) {
@@ -53,8 +58,12 @@ public class BooleanValue extends AbstractValue {
 			sValue = Constants.DECODED_BOOLEAN_FALSE;
 		}
 	}
+	
+	public static BooleanValue getBooleanValue(boolean bool) {
+		return bool ? BooleanValue.BOOLEAN_VALUE_TRUE : BooleanValue.BOOLEAN_VALUE_FALSE;
+	}
 
-	public BooleanValue(int boolID) {
+	private BooleanValue(int boolID) {
 		super(ValueType.BOOLEAN);
 		switch (boolID) {
 		case 0:
@@ -79,8 +88,31 @@ public class BooleanValue extends AbstractValue {
 			break;
 		default:
 			throw new RuntimeException(
-					"Error while decoding boolean pattern facet");
+					"Error while creating boolean pattern facet with boolID==" + boolID);
 		}
+	}
+	
+	public static BooleanValue getBooleanValue(int boolID) {
+		BooleanValue bv;
+		switch (boolID) {
+		case 0:
+			bv = BooleanValue.BOOLEAN_VALUE_0;
+			break;
+		case 1:
+			bv = BooleanValue.BOOLEAN_VALUE_1;
+			break;
+		case 2:
+			bv = BooleanValue.BOOLEAN_VALUE_2;
+			break;
+		case 3:
+			bv = BooleanValue.BOOLEAN_VALUE_3;
+			break;
+		default:
+			throw new RuntimeException(
+					"Error while creating boolean pattern facet with boolID==" + boolID);
+		}
+		
+		return bv;
 	}
 
 	public static BooleanValue parse(String value) {

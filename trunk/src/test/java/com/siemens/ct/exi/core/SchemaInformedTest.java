@@ -127,7 +127,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
 					qnRoot.getLocalPart(), pfx);
-			encoder.encodeAttributeXsiNil(new BooleanValue(false), pfx);
+			encoder.encodeAttributeXsiNil(BooleanValue.BOOLEAN_VALUE_FALSE, pfx);
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();

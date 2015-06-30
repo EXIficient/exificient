@@ -54,9 +54,6 @@ import com.siemens.ct.exi.values.StringValue;
 
 public class EXIHeaderEncoder extends AbstractEXIHeader {
 
-	protected static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(
-			true);
-
 	public EXIHeaderEncoder() throws EXIException {
 	}
 
@@ -424,7 +421,7 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// schema information is used for processing the EXI
 						// body.
 						// TODO typed fashion
-						encoder.encodeAttributeXsiNil(BOOLEAN_VALUE_TRUE, null);
+						encoder.encodeAttributeXsiNil(BooleanValue.BOOLEAN_VALUE_TRUE, null);
 					}
 				}
 

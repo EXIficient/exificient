@@ -41,12 +41,6 @@ import com.siemens.ct.exi.values.Value;
 public class BooleanFacetDatatype extends AbstractDatatype {
 
 	private static final long serialVersionUID = 3601744720431415L;
-	
-	/* boolean values */
-	private final BooleanValue bv0 = new BooleanValue(0);
-	private final BooleanValue bv1 = new BooleanValue(1);
-	private final BooleanValue bv2 = new BooleanValue(2);
-	private final BooleanValue bv3 = new BooleanValue(3);
 
 	private int lastValidBooleanID;
 	private boolean lastValidBoolean;
@@ -103,26 +97,6 @@ public class BooleanFacetDatatype extends AbstractDatatype {
 	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
 			StringDecoder stringDecoder) throws IOException {
 		int booleanID = valueChannel.decodeNBitUnsignedInteger(2);
-		BooleanValue bv;
-		switch (booleanID) {
-		case 0:
-			bv = bv0;
-			break;
-		case 1:
-			bv = bv1;
-			break;
-		case 2:
-			bv = bv2;
-			break;
-		case 3:
-			bv = bv3;
-			break;
-		default:
-			throw new RuntimeException(
-					"Error while decoding boolean pattern facet");
-		}
-		
-		return bv;
-		// return new BooleanValue(booleanID);
+		return BooleanValue.getBooleanValue(booleanID);
 	}
 }
