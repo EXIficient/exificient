@@ -57,6 +57,16 @@ public class EXIBodyDecoderInOrderSC extends EXIBodyDecoderInOrder {
 		// clear possibly remaining decoder
 		scDecoder = null;
 	}
+	
+	public void skipSCElement(long skip) throws IOException {
+		// Note: Bytes to be skipped need to be known
+		assert(this.nextEventType == EventType.SELF_CONTAINED);
+		this.channel.align();
+		for(int i=0; i<skip; i++) {
+			this.channel.decode();	
+		}
+		this.popElement();
+	}
 
 	@Override
 	public EventType next() throws EXIException, IOException {

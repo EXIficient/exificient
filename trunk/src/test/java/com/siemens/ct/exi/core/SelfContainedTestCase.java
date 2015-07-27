@@ -410,7 +410,7 @@ public class SelfContainedTestCase extends TestCase {
 
 	}
 
-	class SelfContainedHandlerTracker implements SelfContainedHandler {
+	static class SelfContainedHandlerTracker implements SelfContainedHandler {
 
 		List<Integer> scIndices;
 		List<QName> scQNames;
@@ -564,6 +564,41 @@ public class SelfContainedTestCase extends TestCase {
 //		System.out.println(scHandler.getSCQNames());
 //		System.out.println("Size Stream: " + baos.size());
 		
+	}
+	
+	public static void main(String[] args) throws EXIException, IOException, SAXException {
+		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
+		//String xsd = "./data/W3C/PrimerNotebook/notebook.xsd";
+		
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		// factory.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		// factory.setCodingMode(CodingMode.BIT_PACKED);
+		FidelityOptions fo = factory.getFidelityOptions();
+		fo.setFidelity(FidelityOptions.FEATURE_SC, true);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName sc = new QName("", "note");
+		// QName sc = new QName(".*", ".*"); // any
+		
+		QName[] scElements = new QName[1];
+		scElements[0] = sc;
+		SelfContainedHandlerTracker scHandler = new SelfContainedHandlerTracker();
+		factory.setSelfContainedElements(scElements, scHandler);
+
+		EXIResult exiResult = new EXIResult(factory);
+		exiResult.setOutputStream(baos);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		xmlReader.setContentHandler(exiResult.getHandler());
+		xmlReader.parse(new InputSource(new FileInputStream(xml)));
+		
+		for(int i=0; i<scHandler.getSCIndices().size(); i++) {
+			System.out.println(scHandler.getSCQNames().get(i) + ": " + scHandler.getSCIndices().get(i) + " bytes");
+		}
+		
+//		OutputStream os = new FileOutputStream("./out/notebook.xml.exi-sc");
+//		os.write(baos.toByteArray());
+//		os.close();
 	}
 
 }
