@@ -77,6 +77,10 @@
     <decimal>12678967.543233999999999999999999</decimal>
     <decimal>.234</decimal>
     <decimal>-.1</decimal>
+    <decimal>-0.0</decimal>
+    <decimal>+0.0</decimal>
+    <decimal>0.0</decimal>
+    <decimal>+.0</decimal>
 
     <!-- Built-in Type: Float -->
     <float>-1E4</float>

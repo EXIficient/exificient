@@ -46,6 +46,10 @@ public class DecimalValue extends AbstractValue {
 	public DecimalValue(boolean negative, IntegerValue integral,
 			IntegerValue revFractional) {
 		super(ValueType.DECIMAL);
+		// normalize "-0.0" to "0.0"
+		if (negative && IntegerValue.ZERO.equals(integral) && IntegerValue.ZERO.equals(revFractional) ) {
+			negative = false;
+		}
 		this.negative = negative;
 		this.integral = integral;
 		this.revFractional = revFractional;
