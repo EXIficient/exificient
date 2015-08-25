@@ -47,6 +47,10 @@ public class DateTimeValue extends AbstractValue {
 
 	public static final int TIMEZONE_OFFSET_IN_MINUTES = 896; // ( = 14 * 64)
 
+	// EXI seconds in representation (different to default!)
+	static final int SECONDS_IN_MINUTE = 64;
+	static final int SECONDS_IN_HOUR = 64 * 64;
+
 	public static final int MONTH_MULTIPLICATOR = 32;
 
 	public final DateTimeType type;
@@ -57,14 +61,24 @@ public class DateTimeValue extends AbstractValue {
 	public final int fractionalSecs;
 	public final boolean presenceTimezone;
 	public final int timezone;
+	public final boolean normalized;
 
 	protected Calendar cal;
+
+	protected DateTimeValue normalizedDateTimeValue;
 
 	int sizeFractionalSecs = -1;
 
 	public DateTimeValue(DateTimeType type, int year, int monthDay, int time,
 			boolean presenceFractionalSecs, int fractionalSecs,
 			boolean presenceTimezone, int timezone) {
+		this(type, year, monthDay, time, presenceFractionalSecs,
+				fractionalSecs, presenceTimezone, timezone, false);
+	}
+
+	private DateTimeValue(DateTimeType type, int year, int monthDay, int time,
+			boolean presenceFractionalSecs, int fractionalSecs,
+			boolean presenceTimezone, int timezone, boolean normalized) {
 		super(ValueType.DATETIME);
 		this.type = type;
 		this.year = year;
@@ -74,6 +88,7 @@ public class DateTimeValue extends AbstractValue {
 		this.fractionalSecs = fractionalSecs;
 		this.presenceTimezone = presenceTimezone;
 		this.timezone = timezone;
+		this.normalized = normalized;
 	}
 
 	public static DateTimeValue parse(String cal, DateTimeType type) {
@@ -130,7 +145,8 @@ public class DateTimeValue extends AbstractValue {
 				checkCharacter(sbCal, '-'); // hyphen
 				checkCharacter(sbCal, '-'); // hyphen
 				sMonthDay = parseMonth(sbCal) * MONTH_MULTIPLICATOR;
-				if (sbCal.length() > 1 && sbCal.charAt(0) == sbCal.charAt(1) && sbCal.charAt(0)  == '-' ) {
+				if (sbCal.length() > 1 && sbCal.charAt(0) == sbCal.charAt(1)
+						&& sbCal.charAt(0) == '-') {
 					checkCharacter(sbCal, '-'); // hyphen
 					checkCharacter(sbCal, '-'); // hyphen
 				}
@@ -189,7 +205,8 @@ public class DateTimeValue extends AbstractValue {
 				// minutes
 				int minutes = Integer.parseInt(sbCal.substring(4, 6));
 
-				// sTimezone = (multiplicator) * (hours * 64 + minutes) + TIMEZONE_OFFSET_IN_MINUTES;
+				// sTimezone = (multiplicator) * (hours * 64 + minutes) +
+				// TIMEZONE_OFFSET_IN_MINUTES;
 				sTimezone = (multiplicator) * (hours * 64 + minutes);
 			}
 
@@ -464,23 +481,23 @@ public class DateTimeValue extends AbstractValue {
 		return minutes * (1000 * 60); // minutes to millisec
 	}
 
-//	protected static int getFractionalSecondsReverse(int millisec) {
-//		int revFracSecs = 0;
-//		if (millisec == 0) {
-//			// ok -> 0
-//			// } else if (millisec < 10) {
-//			// revFracSecs = Integer.parseInt(new StringBuilder("00" + millisec)
-//			// .reverse().toString());
-//			// } else if (millisec < 100) {
-//			// revFracSecs = Integer.parseInt(new StringBuilder("0" + millisec)
-//			// .reverse().toString());
-//		} else {
-//			revFracSecs = Integer.parseInt(new StringBuilder(millisec + "")
-//					.reverse().toString());
-//		}
-//
-//		return revFracSecs;
-//	}
+	// protected static int getFractionalSecondsReverse(int millisec) {
+	// int revFracSecs = 0;
+	// if (millisec == 0) {
+	// // ok -> 0
+	// // } else if (millisec < 10) {
+	// // revFracSecs = Integer.parseInt(new StringBuilder("00" + millisec)
+	// // .reverse().toString());
+	// // } else if (millisec < 100) {
+	// // revFracSecs = Integer.parseInt(new StringBuilder("0" + millisec)
+	// // .reverse().toString());
+	// } else {
+	// revFracSecs = Integer.parseInt(new StringBuilder(millisec + "")
+	// .reverse().toString());
+	// }
+	//
+	// return revFracSecs;
+	// }
 
 	public int getCharactersLength() {
 		if (slen == -1) {
@@ -626,21 +643,21 @@ public class DateTimeValue extends AbstractValue {
 			ca[index++] = '.';
 			// reverse fracSecs
 			index += MethodsBag.itosReverse(fracSecs, index, ca);
-		} 
-		
+		}
+
 		return index;
 	}
 
 	private static int appendTwoDigits(char[] ca, int index, int i) {
 		if (i > 9) {
 			index += 2;
-			
+
 		} else {
 			ca[index++] = '0';
 			index++;
 		}
 		MethodsBag.itos(i, index, ca);
-		
+
 		return index;
 	}
 
@@ -663,16 +680,16 @@ public class DateTimeValue extends AbstractValue {
 			ca[index++] = '0';
 			ca[index++] = '0';
 			index += 2;
-			
+
 		} else {
 			ca[index++] = '0';
 			ca[index++] = '0';
 			ca[index++] = '0';
 			index++;
 		}
-		
+
 		MethodsBag.itos(year, index, ca);
-		
+
 		return index;
 	}
 
@@ -710,13 +727,13 @@ public class DateTimeValue extends AbstractValue {
 
 	private static int appendTime(char[] ca, int index, int time) {
 		// time = ( ( hour * 64) + minutes ) * 64 + seconds ;
-		final int secHour = 64 * 64;
-		final int secMinute = 64;
+		// final int secHour = 64 * 64;
+		// final int secMinute = 64;
 
-		int hour = time / secHour;
-		time -= hour * secHour;
-		int minutes = time / secMinute;
-		int seconds = time - minutes * secMinute;
+		int hour = time / SECONDS_IN_HOUR;
+		time -= hour * SECONDS_IN_HOUR;
+		int minutes = time / SECONDS_IN_MINUTE;
+		int seconds = time - minutes * SECONDS_IN_MINUTE;
 
 		// hh ':' mm ':' ss
 		index = appendTwoDigits(ca, index, hour);
@@ -729,21 +746,39 @@ public class DateTimeValue extends AbstractValue {
 	}
 
 	protected final boolean _equals(DateTimeValue o) {
+		boolean ret = true;
 		if (type == o.type && year == o.year && monthDay == o.monthDay
 				&& time == o.time) {
 			if (presenceFractionalSecs == o.presenceFractionalSecs) {
 				if (fractionalSecs != o.fractionalSecs) {
-					return false;
+					ret = false;
 				}
 			}
-			if (presenceTimezone == o.presenceTimezone) {
+			if (ret && presenceTimezone == o.presenceTimezone) {
 				if (timezone != o.timezone) {
-					return false;
+					ret = false;
 				}
 			}
-			return true;
+		} else {
+			ret = false;
 		}
-		return false;
+
+		if (ret) {
+			// easy match
+			return ret;
+		} else {
+			// normalize both (if not already)
+			if (this.normalized && o.normalized) {
+				// not equal
+			} else {
+				// give it another try in normalized form
+				DateTimeValue tn = this.normalize();
+				DateTimeValue on = o.normalize();
+				ret = tn._equals(on);
+			}
+		}
+
+		return ret;
 	}
 
 	@Override
@@ -758,11 +793,165 @@ public class DateTimeValue extends AbstractValue {
 			return dt == null ? false : _equals(dt);
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return type.hashCode() ^ year ^ monthDay ^ time ^ (presenceFractionalSecs ? 1 : 0) ^ 
-		fractionalSecs ^ (presenceTimezone ? 1 : 0) ^ timezone;
+		return type.hashCode() ^ year ^ monthDay ^ time
+				^ (presenceFractionalSecs ? 1 : 0) ^ fractionalSecs
+				^ (presenceTimezone ? 1 : 0) ^ timezone;
 	}
 
+	public DateTimeValue normalize() {
+		if (this.normalized) {
+			return this;
+		}
+		if (normalizedDateTimeValue == null) {
+			normalizedDateTimeValue = doNormalize();
+		}
+
+		return normalizedDateTimeValue;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////////////////////
+	// Algorithm http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#d0e11648
+	protected DateTimeValue doNormalize() {
+		// year & month & day
+		int year = this.year;
+		int month = monthDay / MONTH_MULTIPLICATOR;
+		int day = monthDay - (month * MONTH_MULTIPLICATOR);
+		// time
+		int hour = time / SECONDS_IN_HOUR;
+		int time = this.time;
+		time -= hour * SECONDS_IN_HOUR;
+		int minutes = time / SECONDS_IN_MINUTE;
+		int seconds = time - minutes * SECONDS_IN_MINUTE;
+		// timezone, per default 'Z'
+		int tzMinutes = 0;
+		int tzHours = 0;
+		if (this.presenceTimezone && this.timezone != 0) {
+			final int tz = this.timezone; // +/-
+			// hours
+			tzHours = tz / 64;
+			// minutes
+			tzMinutes = tz - (tzHours * 64);
+		}
+
+		
+		// start Algorithm
+		final int negate = -1;
+
+		// Minutes temp := S[minute] + D[minute] + carry E[minute] :=
+		// modulo(temp, 60) carry := fQuotient(temp, 60)
+		int temp = minutes + negate * tzMinutes;
+		minutes = modulo(temp, 60);
+		int carry = fQuotient(temp, 60);
+
+		// Hours temp := S[hour] + D[hour] + carry E[hour] := modulo(temp, 24)
+		// carry := fQuotient(temp, 24)
+		temp = hour + negate * tzHours + carry;
+		hour = modulo(temp, 24);
+		carry = fQuotient(temp, 24);
+
+		// Days
+		int tempDays;
+		// if S[day] > maximumDayInMonthFor(E[year], E[month])
+		if (day > maximumDayInMonthFor(year, month)) {
+			// tempDays := maximumDayInMonthFor(E[year], E[month])
+			tempDays = maximumDayInMonthFor(year, month);
+			// else if S[day] < 1
+		} else if (day < 1) {
+			// tempDays := 1
+			tempDays = 1;
+			// else
+		} else {
+			// tempDays := S[day]
+			tempDays = day;
+		}
+		// E[day] := tempDays + D[day] + carry
+		day = tempDays + carry;
+
+		while (true) {
+			if (day < 1) {
+				day = day + maximumDayInMonthFor(year, month - 1);
+				carry = -1;
+			} else if (day > maximumDayInMonthFor(year, month)) {
+				day = day - maximumDayInMonthFor(year, month);
+				carry = 1;
+			} else {
+				break;
+			}
+			temp = month + carry;
+			month = modulo(temp, 1, 13);
+			year = year + fQuotient(temp, 1, 13);
+		}
+
+		// create new DateTimeValue
+		int monthDay = month * 32 + day; // Month * 32 + Day
+		time = ((hour * 64) + minutes) * 64 + seconds;// ((Hour * 64) + Minutes)
+														// * 64 + seconds
+		boolean presenceTimezone = true;
+		int timezone = 0;
+
+		return new DateTimeValue(this.type, year, monthDay, time,
+				presenceFractionalSecs, fractionalSecs, presenceTimezone,
+				timezone, true);
+	}
+
+
+	//
+	// help function described in W3C PR Schema [E Adding durations to
+	// dateTimes]
+	//
+	protected int fQuotient(int a, int b) {
+		// fQuotient(a, b) = the greatest integer less than or equal to a/b
+		return (int) Math.floor((float) a / b);
+	}
+
+	//
+	// help function described in W3C PR Schema [E Adding durations to
+	// dateTimes]
+	//
+	protected int fQuotient(int temp, int low, int high) {
+		// fQuotient(a - low, high - low)
+		return fQuotient(temp - low, high - low);
+	}
+
+	protected int modulo(int a, int b) {
+		// a - fQuotient(a,b)*b
+		return (a - fQuotient(a, b) * b);
+	}
+
+	//
+	// help function described in W3C PR Schema [E Adding durations to
+	// dateTimes]
+	//
+	protected int modulo(int a, int low, int high) {
+		// modulo(a - low, high - low) + low 
+		return modulo(a - low, high - low) + low;
+	}
+
+	//
+	// help function described in W3C PR Schema [E Adding durations to
+	// dateTimes]
+	//
+	protected int maximumDayInMonthFor(int year, int month) {
+		// 31 M = January, March, May, July, August, October, or December
+		// 30 M = April, June, September, or November
+		// 29 M = February AND (modulo(Y, 400) = 0 OR (modulo(Y, 100) != 0) AND
+		// modulo(Y, 4) = 0)
+		// 28 Otherwise
+
+		if (month == 1 || month == 3 || month == 7 || month == 8 || month == 10
+				|| month == 12) {
+			return 31;
+		} else if (month == 4 || month == 6 || month == 9 || month == 11) {
+			return 30;
+		} else if (month == 2
+				&& (modulo(year, 400) == 0 || (modulo(year, 100) != 0)
+						&& modulo(year, 4) == 0)) {
+			return 29;
+		} else {
+			return 28;
+		}
+	}
 }
