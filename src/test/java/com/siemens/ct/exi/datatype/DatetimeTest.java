@@ -564,7 +564,136 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type)
 				.toString()));
 	}
+	
+	public void testDatetimeEquals1() throws IOException {
+		// all the same times
+		String s1 = "2015-08-11T23:00:00+09:00";
+		String s2 = "2015-08-11T16:00:00+02:00";
+		String s3 = "2015-08-11T14:00:00Z"; // UTC
+		String s4 = "2015-08-11T07:00:00-07:00";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime1 = DateTimeValue.parse(s1, type);
+		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
+		DateTimeValue datetime3 = DateTimeValue.parse(s3, type);
+		DateTimeValue datetime4 = DateTimeValue.parse(s4, type);
+		assertTrue(datetime1 != null);
+		assertTrue(datetime2 != null);
+		assertTrue(datetime3 != null);
+		assertTrue(datetime4 != null);
+		
+		DateTimeValue datetime1Norm =  datetime1.normalize();
+		DateTimeValue datetime2Norm =  datetime2.normalize();
+		DateTimeValue datetime3Norm =  datetime3.normalize();
+		DateTimeValue datetime4Norm =  datetime4.normalize();
+		
+		assertTrue(datetime1.equals(datetime2));
+		assertTrue(datetime2.equals(datetime3));
+		assertTrue(datetime3.equals(datetime4));
+		assertTrue(datetime4.equals(datetime1));
+		assertTrue(datetime1Norm.equals(datetime2));
+		assertTrue(datetime2Norm.equals(datetime3));
+		assertTrue(datetime3Norm.equals(datetime4));
+		assertTrue(datetime4Norm.equals(datetime1));
+		
+	}
+	
+	public void testDatetimeEquals2() throws IOException {
+		// all the same times
+		String s1 = "2015-08-11T24:00:00-07:30";
+		String s2 = "2015-08-12T00:00:00-07:30";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime1 = DateTimeValue.parse(s1, type);
+		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
+		assertTrue(datetime1 != null);
+		assertTrue(datetime2 != null);
+		
+		DateTimeValue datetime1Norm =  datetime1.normalize();
+		DateTimeValue datetime2Norm =  datetime2.normalize();
+		
+		assertTrue(datetime1.equals(datetime2));
+		assertTrue(datetime2.equals(datetime1Norm));
+		assertTrue(datetime2Norm.equals(datetime1Norm));
+		assertTrue(datetime1.equals(datetime2Norm));
+	}
 
+	
+	public void testDatetimeEquals3() throws IOException {
+		// all the same times
+		String s1 = "2015-08-11T16:00:00-08:00";
+		String s2 = "2015-08-11T24:00:00+00:00";
+		String s3 = "2015-08-11T24:00:00Z"; // UTC
+		String s4 = "2015-08-12T00:00:00Z";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime1 = DateTimeValue.parse(s1, type);
+		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
+		DateTimeValue datetime3 = DateTimeValue.parse(s3, type);
+		DateTimeValue datetime4 = DateTimeValue.parse(s4, type);
+		assertTrue(datetime1 != null);
+		assertTrue(datetime2 != null);
+		assertTrue(datetime3 != null);
+		assertTrue(datetime4 != null);
+		
+		DateTimeValue datetime1Norm =  datetime1.normalize();
+		DateTimeValue datetime2Norm =  datetime2.normalize();
+		DateTimeValue datetime3Norm =  datetime3.normalize();
+		DateTimeValue datetime4Norm =  datetime4.normalize();
+		
+		assertTrue(datetime1.equals(datetime2));
+		assertTrue(datetime2.equals(datetime3));
+		assertTrue(datetime3.equals(datetime4));
+		assertTrue(datetime4.equals(datetime1));
+		assertTrue(datetime1Norm.equals(datetime2));
+		assertTrue(datetime2Norm.equals(datetime3));
+		assertTrue(datetime3Norm.equals(datetime4));
+		assertTrue(datetime4Norm.equals(datetime1));
+	}
+	
+	public void testDatetimeEquals4() throws IOException {
+		// all the same times
+		String s1 = "2000-03-04T23:00:00+03:00";
+		String s2 = "2000-03-04T20:00:00Z";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime1 = DateTimeValue.parse(s1, type);
+		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
+		assertTrue(datetime1 != null);
+		assertTrue(datetime2 != null);
+		
+		DateTimeValue datetime1Norm =  datetime1.normalize();
+		DateTimeValue datetime2Norm =  datetime2.normalize();
+		
+		assertTrue(datetime1.equals(datetime2));
+		assertTrue(datetime2.equals(datetime1Norm));
+		assertTrue(datetime2Norm.equals(datetime1Norm));
+		assertTrue(datetime1.equals(datetime2Norm));
+	}
+	
+	
+	public void testDatetimeEquals5() throws IOException {
+		// all the same times
+		String s1 = "2012-02-28T20:00:00-08:00";
+		String s2 = "2012-02-29T04:00:00";
+		String s3 = "2012-03-01T01:00:00+21:00";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime1 = DateTimeValue.parse(s1, type);
+		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
+		DateTimeValue datetime3 = DateTimeValue.parse(s3, type);
+		assertTrue(datetime1 != null);
+		assertTrue(datetime2 != null);
+		assertTrue(datetime3 != null);
+		
+		DateTimeValue datetime1Norm =  datetime1.normalize();
+		DateTimeValue datetime2Norm =  datetime2.normalize();
+		DateTimeValue datetime3Norm =  datetime3.normalize();
+		
+		assertTrue(datetime1.equals(datetime2));
+		assertTrue(datetime1.equals(datetime3));
+		assertTrue(datetime3.equals(datetime2));
+		assertTrue(datetime2.equals(datetime1Norm));
+		assertTrue(datetime2Norm.equals(datetime1Norm));
+		assertTrue(datetime1.equals(datetime2Norm));
+		assertTrue(datetime1.equals(datetime3Norm));
+	}
+	
 	public void testDatetimeFail1() throws IOException {
 		String s = "12:34:XXX";
 		DateTimeType type = DateTimeType.time;
