@@ -279,6 +279,21 @@ public class DecimalTest extends AbstractTestCase {
 				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
+	
+	public void testDecimalEquals() throws IOException {
+		String s1 = "-0.0";
+		String s2 = "+0.0";
+		String s3 = "0.0";
+		String s4 = "+.0";
+		DecimalValue d1 = DecimalValue.parse(s1);
+		DecimalValue d2 = DecimalValue.parse(s2);
+		DecimalValue d3 = DecimalValue.parse(s3);
+		DecimalValue d4 = DecimalValue.parse(s4);
+		assertTrue(d1.equals(d2));
+		assertTrue(d2.equals(d3));
+		assertTrue(d3.equals(d4));
+		assertTrue(d4.equals(d1));
+	}
 
 	public void testDecimalFail1() throws IOException {
 		String s = "9.213.456";
