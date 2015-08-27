@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.values.FloatValue;
+import com.siemens.ct.exi.values.IntegerValue;
 
 public class FloatTest extends AbstractTestCase {
 
@@ -722,6 +723,137 @@ public class FloatTest extends AbstractTestCase {
 		FloatValue f2 = FloatValue.parse(s2);
 
 		assertTrue(f1.equals(f2));
+	}
+	
+	public void testFloatEquals3() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "123.012300";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = new FloatValue(1230123, -4);
+
+		assertTrue(f1.equals(f2));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(1230123)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-4)));
+	}
+	
+	public void testFloatEquals4() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "0.0";
+		String s2 = "-0.0";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = FloatValue.parse(s2);
+		FloatValue f3 = new FloatValue(0, 0);
+
+		assertTrue(f1.equals(f2));
+		assertTrue(f2.equals(f3));
+		assertTrue(f3.equals(f1));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(0)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
+		assertTrue(f2.getMantissa().equals(IntegerValue.valueOf(0)));
+		assertTrue(f2.getExponent().equals(IntegerValue.valueOf(0)));
+	}
+	
+	public void testFloatEquals5() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "1.0";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = new FloatValue(1, 0);
+
+		assertTrue(f1.equals(f2));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(1)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
+	}
+	
+	public void testFloatEquals6() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "-1230.01";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = new FloatValue(-123001, -2);
+
+		assertTrue(f1.equals(f2));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(-123001)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-2)));
+	}
+	
+	public void testFloatEquals7() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "0.1230";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = new FloatValue(123, -3);
+
+		assertTrue(f1.equals(f2));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(123)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-3)));
+	}
+	
+	public void testFloatEquals8() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "12.0";
+		String s2 = "120E-1";
+		String s3 = "1.2E1";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = FloatValue.parse(s2);
+		FloatValue f3 = FloatValue.parse(s3);
+		FloatValue f4 = new FloatValue(12, 0);
+
+		assertTrue(f1.equals(f2));
+		assertTrue(f2.equals(f3));
+		assertTrue(f3.equals(f4));
+		assertTrue(f4.equals(f1));
+		
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(12)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
+		assertTrue(f2.getMantissa().equals(IntegerValue.valueOf(12)));
+		assertTrue(f2.getExponent().equals(IntegerValue.valueOf(0)));
+		assertTrue(f3.getMantissa().equals(IntegerValue.valueOf(12)));
+		assertTrue(f3.getExponent().equals(IntegerValue.valueOf(0)));
+	}
+	
+	public void testFloatEquals9() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		String s1 = "12300";
+
+		FloatValue f1 = FloatValue.parse(s1);
+		FloatValue f2 = new FloatValue(123, 2);
+
+		assertTrue(f1.equals(f2));
+		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(123)));
+		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(2)));
+	}
+	
+	
+	public void testFloatEquals10() throws IOException {
+		// http://www.w3.org/TR/exi-c14n/#exampleFloat
+		// The canonical EXI Float MUST respect the following constraints.
+		// * A mantissa value of -0 MUST be changed to 0. If the mantissa is 0, then the exponent MUST be 0.
+		//     If the mantissa is not 0, mantissas MUST have no trailing zeros.
+		// * An exponent value of -0 MUST be changed to 0. 
+
+		FloatValue f1a = new FloatValue(-0, 0);
+		FloatValue f1b = new FloatValue(0, 0);
+		assertTrue(f1a.equals(f1b));
+		
+		FloatValue f2a = new FloatValue(-0, 12);
+		FloatValue f2b = new FloatValue(0, 0);
+		assertTrue(f2a.equals(f2b));
+		assertTrue(f2a.getExponent().equals(IntegerValue.ZERO));
+		
+		FloatValue f3a = new FloatValue(2, 120);
+		FloatValue f3b = new FloatValue(0, 0);
+		assertFalse(f3a.equals(f3b));
+		assertTrue(f3a.getMantissa().equals(IntegerValue.valueOf(2)));
+		assertTrue(f3a.getExponent().equals(IntegerValue.valueOf(120)));
 	}
 
 	public void testFloatNotEquals1() throws IOException {
