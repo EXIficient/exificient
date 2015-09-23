@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -73,6 +74,7 @@ import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
+import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -126,7 +128,6 @@ public class EXIficientGUI extends JFrame {
 
 	private JRadioButton rdbtnXmlSchemaDocument;
 	private JRadioButton rdbtnXmlSchematypesOnly;
-	private JRadioButton rdbtnStrict;
 
 	private JComboBox comboBoxAlignment;
 
@@ -137,9 +138,10 @@ public class EXIficientGUI extends JFrame {
 	final JCheckBox chckbxPreserveDTD;
 	final JCheckBox chckbxPreservePrefixes;
 	final JCheckBox chckbxLexicalValues;
+	final JCheckBox chckbxEnableSelfContained;
+	final JCheckBox chckbxStrict; 
 
 	protected JFileChooser fc;
-	private final ButtonGroup buttonGroupStrict = new ButtonGroup();
 	private JTextField textFieldDecodeEXI;
 	private JTextField textFieldDecodeXML;
 
@@ -156,6 +158,8 @@ public class EXIficientGUI extends JFrame {
 	JCheckBox checkBoxIncludeSchemaLocation;
 	JCheckBox checkBoxIncludeInsignificantXsiNil;
 	JCheckBox checkBoxRetainEntityReference;
+	// SelfContained Elements
+	JTextField textFieldSelfContainedElements;
 	// EXI profile
 	JCheckBox checkBoxNoLocalValuePartitions;
 	JTextField textFieldMaximumNumberOfBuiltInProductions;
@@ -280,6 +284,24 @@ public class EXIficientGUI extends JFrame {
 						.parseInt(textFieldMaximumNumberOfBuiltInElementGrammars
 								.getText()));
 			}
+			if (textFieldSelfContainedElements.getText().trim()
+					.length() > 0) {
+				try {
+					String qnames = textFieldSelfContainedElements.getText().trim();
+					StringTokenizer st = new StringTokenizer(qnames, ",");
+					QName[] scElements = new QName[st.countTokens()];
+					int i = 0;
+					while(st.hasMoreTokens()) {
+						scElements[i++] = QName.valueOf(st.nextToken().trim());
+					}
+					ef.setSelfContainedElements(scElements);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(this, "Syntax error: exptected list of qnames such as \"{.*}elementWithAnyNamespace, {uri:foo}elementWithDedicatedNamespace\"", "SelfContained elements syntax error ",
+					        JOptionPane.WARNING_MESSAGE);
+				}
+			}
+			
+			
 
 			EXIResult exiResult = new EXIResult(ef);
 			OutputStream fos = new FileOutputStream(exi);
@@ -314,8 +336,9 @@ public class EXIficientGUI extends JFrame {
 			ef.setGrammars(g);
 		}
 		// Strict vs. Non-Strict
-		if (rdbtnStrict.isSelected()) {
+		if (chckbxStrict.isSelected()) {
 			ef.setFidelityOptions(FidelityOptions.createStrict());
+			ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, this.chckbxLexicalValues.isSelected());
 		} else {
 			// other options
 			if (chckbxPreserveCM.isSelected()) {
@@ -338,7 +361,10 @@ public class EXIficientGUI extends JFrame {
 				ef.getFidelityOptions().setFidelity(
 						FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 			}
-
+			if (this.chckbxEnableSelfContained.isSelected()) {
+				ef.getFidelityOptions().setFidelity(
+						FidelityOptions.FEATURE_SC, true);
+			}
 		}
 		// Coding mode
 		CodingMode cm = CodingMode.valueOf(comboBoxAlignment.getSelectedItem()
@@ -506,6 +532,10 @@ public class EXIficientGUI extends JFrame {
 				"Include insignificant xsi:nil values in EXI stream (e.g., xsi:nil=\"false\")");
 		checkBoxRetainEntityReference = new JCheckBox(
 				"Retain entity references as ER event instead of trying to resolve them (e.g., &amp; vs. &)");
+		// SelfContained elements
+		textFieldSelfContainedElements = new JTextField();
+		textFieldSelfContainedElements.setUI(new HintTextFieldUI(
+				"    <none>", true, Color.GRAY));
 		// profile
 		checkBoxNoLocalValuePartitions = new JCheckBox(
 				"no localValuePartitions (indicates that no local string value partition is used)");
@@ -672,63 +702,49 @@ public class EXIficientGUI extends JFrame {
 			}
 		});
 
-		JPanel panel_6 = new JPanel();
-		panel_6.setBorder(new TitledBorder(null, "Coding Options",
+		JPanel panelCodingOptions = new JPanel();
+		panelCodingOptions.setBorder(new TitledBorder(null, "Coding Options",
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelEXIOptions.add(panel_6);
-		panel_6.setLayout(new BoxLayout(panel_6, BoxLayout.Y_AXIS));
+		panelEXIOptions.add(panelCodingOptions);
+		panelCodingOptions.setLayout(new BoxLayout(panelCodingOptions, BoxLayout.Y_AXIS));
 
-		final JRadioButton rdbtnDefault = new JRadioButton("Default");
-		rdbtnDefault.setSelected(true);
-		buttonGroupStrict.add(rdbtnDefault);
-		panel_6.add(rdbtnDefault);
-
-		JPanel panelPreserveOptions = new JPanel();
-		panel_6.add(panelPreserveOptions);
-		panelPreserveOptions.setBorder(new EmptyBorder(0, 15, 0, 0));
-		panelPreserveOptions.setLayout(new BoxLayout(panelPreserveOptions,
+		JPanel panelOptions = new JPanel();
+		panelCodingOptions.add(panelOptions);
+		panelOptions.setBorder(new EmptyBorder(0, 5, 0, 0));
+		panelOptions.setLayout(new BoxLayout(panelOptions,
 				BoxLayout.Y_AXIS));
 
+		OptionsChangeListener ocl = new OptionsChangeListener();
+		
 		chckbxPreserveCM = new JCheckBox("Preserve Comments");
-		panelPreserveOptions.add(chckbxPreserveCM);
+		chckbxPreserveCM.addChangeListener(ocl);
+		panelOptions.add(chckbxPreserveCM);
 
 		chckbxPI = new JCheckBox("Preserve Processing Instructions");
-		panelPreserveOptions.add(chckbxPI);
+		chckbxPI.addChangeListener(ocl);
+		panelOptions.add(chckbxPI);
 
 		chckbxPreserveDTD = new JCheckBox("Preserve DTDs and Entity References");
-		panelPreserveOptions.add(chckbxPreserveDTD);
+		chckbxPreserveCM.addChangeListener(ocl);
+		panelOptions.add(chckbxPreserveDTD);
 
 		chckbxPreservePrefixes = new JCheckBox("Preserve Prefixes");
-		panelPreserveOptions.add(chckbxPreservePrefixes);
+		chckbxPreservePrefixes.addChangeListener(ocl);
+		panelOptions.add(chckbxPreservePrefixes);
 
 		chckbxLexicalValues = new JCheckBox("Preserve Lexical Values");
-		panelPreserveOptions.add(chckbxLexicalValues);
-
-		rdbtnStrict = new JRadioButton("Strict");
-		rdbtnStrict
-				.setToolTipText("Strict interpretation of schemas is used to achieve better compactness (default value false)");
-		buttonGroupStrict.add(rdbtnStrict);
-		panel_6.add(rdbtnStrict);
-		rdbtnDefault.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				boolean dec = rdbtnDefault.isSelected();
-				chckbxPreserveCM.setEnabled(dec);
-				chckbxPI.setEnabled(dec);
-				chckbxPreserveDTD.setEnabled(dec);
-				chckbxPreservePrefixes.setEnabled(dec);
-				chckbxLexicalValues.setEnabled(dec);
-			}
-		});
-		rdbtnStrict.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				boolean dec = !rdbtnStrict.isSelected();
-				chckbxPreserveCM.setEnabled(dec);
-				chckbxPI.setEnabled(dec);
-				chckbxPreserveDTD.setEnabled(dec);
-				chckbxPreservePrefixes.setEnabled(dec);
-				chckbxLexicalValues.setEnabled(dec);
-			}
-		});
+		chckbxLexicalValues.addChangeListener(ocl);
+		panelOptions.add(chckbxLexicalValues);
+		
+		chckbxEnableSelfContained = new JCheckBox("Enable SelfContained Elements");
+		chckbxEnableSelfContained.addChangeListener(ocl);
+		panelOptions.add(chckbxEnableSelfContained);
+		
+		chckbxStrict = new JCheckBox("Strict interpretation of schemas");
+		chckbxStrict.addChangeListener(ocl);
+		chckbxStrict.setToolTipText("Strict interpretation of schemas is used to achieve better compactness (default value false)");
+		panelOptions.add(chckbxStrict);
+		
 
 		final JButton btnBrowseXSD = new JButton("Browse");
 		btnBrowseXSD.addActionListener(new ActionListener() {
@@ -882,6 +898,9 @@ public class EXIficientGUI extends JFrame {
 				padProfileValues.add(new JLabel("    "), BorderLayout.WEST);
 				padProfileValues.add(checkBoxIncludeProfileValues,
 						BorderLayout.CENTER);
+				
+				// possible to use selfContained elements
+				textFieldSelfContainedElements.setEnabled(chckbxEnableSelfContained.isSelected() && chckbxEnableSelfContained.isEnabled());
 
 				Object[] message = { "# EXI Header", checkBoxIncludeCookie,
 						checkBoxIncludeOptions, padSchemaId, padProfileValues,
@@ -889,6 +908,8 @@ public class EXIficientGUI extends JFrame {
 						checkBoxIncludeSchemaLocation,
 						checkBoxIncludeInsignificantXsiNil,
 						checkBoxRetainEntityReference,
+						"<html># Self-contained elements which may be read independently <br> (i.e., list of qnames such as \"{.*}elementWithAnyNamespace, {uri:foo}elementWithDedicatedNamespace\")</html>",
+						textFieldSelfContainedElements,
 						"# EXI Profile parameters",
 						checkBoxNoLocalValuePartitions,
 						"maximumNumberOfBuiltInProductions",
@@ -985,6 +1006,34 @@ public class EXIficientGUI extends JFrame {
 				doEncode();
 			}
 		});
+	}
+	
+	class OptionsChangeListener implements ChangeListener {
+
+		public void stateChanged(ChangeEvent e) {
+			if(e.getSource() == chckbxPreserveCM) {
+				
+			} else if (e.getSource() == chckbxPI) {
+				
+			} else if (e.getSource() == chckbxPreserveDTD) {
+				
+			} else if (e.getSource() == chckbxPreservePrefixes) {
+				
+			} else if (e.getSource() == chckbxLexicalValues) {
+				
+			} else if (e.getSource() == chckbxEnableSelfContained) {
+				
+			} else if (e.getSource() == chckbxStrict) {
+				boolean isStrict = chckbxStrict.isSelected();
+				chckbxPreserveCM.setEnabled(!isStrict);
+				chckbxPI.setEnabled(!isStrict);
+				chckbxPreserveDTD.setEnabled(!isStrict);
+				// chckbxPreservePrefixes still possible
+				chckbxLexicalValues.setEnabled(!isStrict);
+				chckbxEnableSelfContained.setEnabled(!isStrict);
+			}
+		}
+		
 	}
 
 	class IntegerRangeDocumentFilter extends DocumentFilter {
