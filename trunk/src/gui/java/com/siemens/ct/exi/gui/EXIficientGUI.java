@@ -92,10 +92,12 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.helpers.DefaultSchemaIdResolver;
 
 /*
  * Ideas:
@@ -153,6 +155,7 @@ public class EXIficientGUI extends JFrame {
 	JCheckBox checkBoxIncludeCookie;
 	JCheckBox checkBoxIncludeOptions;
 	JCheckBox checkBoxIncludeSchemaId;
+	JTextField textFieldIncludeSchemaIdSpecific;
 	JCheckBox checkBoxIncludeProfileValues;
 	// EXI content
 	JCheckBox checkBoxIncludeSchemaLocation;
@@ -329,6 +332,10 @@ public class EXIficientGUI extends JFrame {
 		if (rdbtnXmlSchemaDocument.isSelected()) {
 			String xsd = textFieldXSD.getText();
 			Grammars g = GrammarFactory.newInstance().createGrammars(xsd);
+			if (textFieldIncludeSchemaIdSpecific.isEnabled() && textFieldIncludeSchemaIdSpecific.getText().trim().length() > 0) {
+				String schemaId = textFieldIncludeSchemaIdSpecific.getText().trim();
+				g.setSchemaId(schemaId);
+			}
 			ef.setGrammars(g);
 		} else if (rdbtnXmlSchematypesOnly.isSelected()) {
 			Grammars g = GrammarFactory.newInstance()
@@ -447,6 +454,7 @@ public class EXIficientGUI extends JFrame {
 		});
 	}
 
+	
 	protected void doDecode() {
 		try {
 
@@ -458,6 +466,9 @@ public class EXIficientGUI extends JFrame {
 			System.out.println("Decode EXI file: " + exi + " to " + xml);
 
 			EXIFactory ef = getEXIFactory();
+			
+			SchemaIdResolver sir = new RequestSchemaIdResolver(); // ask for schema if not found
+			ef.setSchemaIdResolver(sir);
 
 			TransformerFactory tf = TransformerFactory.newInstance();
 			XMLReader exiReader = ef.createEXIReader();
@@ -494,6 +505,7 @@ public class EXIficientGUI extends JFrame {
 
 	void checkIncludeOptions() {
 		checkBoxIncludeSchemaId.setEnabled(checkBoxIncludeOptions.isSelected());
+		textFieldIncludeSchemaIdSpecific.setEnabled(checkBoxIncludeOptions.isSelected() && checkBoxIncludeSchemaId.isSelected());
 		checkBoxIncludeProfileValues.setEnabled(checkBoxIncludeOptions
 				.isSelected());
 	}
@@ -517,6 +529,9 @@ public class EXIficientGUI extends JFrame {
 				"Include EXI Options as part of the EXI header");
 		checkBoxIncludeSchemaId = new JCheckBox(
 				"Include schemaId (as part of the EXI Options)");
+		textFieldIncludeSchemaIdSpecific = new JTextField();
+		textFieldIncludeSchemaIdSpecific.setUI(new HintTextFieldUI(
+				"    default", true, Color.GRAY));
 		checkBoxIncludeProfileValues = new JCheckBox(
 				"Include EXI Profile parameters (as part of the EXI Options)");
 		checkBoxIncludeOptions.addActionListener(new ActionListener() {
@@ -524,6 +539,12 @@ public class EXIficientGUI extends JFrame {
 				checkIncludeOptions();
 			}
 		});
+		checkBoxIncludeSchemaId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				checkIncludeOptions();
+			}
+		});
+		
 		checkIncludeOptions();
 		// EXI content stream
 		checkBoxIncludeSchemaLocation = new JCheckBox(
@@ -535,7 +556,7 @@ public class EXIficientGUI extends JFrame {
 		// SelfContained elements
 		textFieldSelfContainedElements = new JTextField();
 		textFieldSelfContainedElements.setUI(new HintTextFieldUI(
-				"    <none>", true, Color.GRAY));
+				"    none", true, Color.GRAY));
 		// profile
 		checkBoxNoLocalValuePartitions = new JCheckBox(
 				"no localValuePartitions (indicates that no local string value partition is used)");
@@ -889,10 +910,17 @@ public class EXIficientGUI extends JFrame {
 		btnAdvancedOptions.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAdvancedOptions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//
 				JPanel padSchemaId = new JPanel();
 				padSchemaId.setLayout(new BorderLayout());
 				padSchemaId.add(new JLabel("    "), BorderLayout.WEST);
 				padSchemaId.add(checkBoxIncludeSchemaId, BorderLayout.CENTER);
+				//
+				JPanel padSchemaIdSpecific = new JPanel();
+				padSchemaIdSpecific.setLayout(new BorderLayout());
+				padSchemaIdSpecific.add(new JLabel("        "), BorderLayout.WEST);
+				padSchemaIdSpecific.add(textFieldIncludeSchemaIdSpecific, BorderLayout.CENTER);
+				//
 				JPanel padProfileValues = new JPanel();
 				padProfileValues.setLayout(new BorderLayout());
 				padProfileValues.add(new JLabel("    "), BorderLayout.WEST);
@@ -903,7 +931,7 @@ public class EXIficientGUI extends JFrame {
 				textFieldSelfContainedElements.setEnabled(chckbxEnableSelfContained.isSelected() && chckbxEnableSelfContained.isEnabled());
 
 				Object[] message = { "# EXI Header", checkBoxIncludeCookie,
-						checkBoxIncludeOptions, padSchemaId, padProfileValues,
+						checkBoxIncludeOptions, padSchemaId, padSchemaIdSpecific, padProfileValues,
 						"# EXI Content representation",
 						checkBoxIncludeSchemaLocation,
 						checkBoxIncludeInsignificantXsiNil,
@@ -1006,6 +1034,28 @@ public class EXIficientGUI extends JFrame {
 				doEncode();
 			}
 		});
+	}
+	
+
+	class RequestSchemaIdResolver extends DefaultSchemaIdResolver {
+		
+		@Override
+		public Grammars resolveSchemaId(String schemaId) throws EXIException {
+			try {
+				return super.resolveSchemaId(schemaId);
+			} catch (EXIException e) {
+				// default schema id resolver failed to retrieve schemaID
+				if (rdbtnXmlSchemaDocument.isSelected()) {
+					String xsd = textFieldXSD.getText();
+					JOptionPane.showMessageDialog(null, "Default SchemaIDResolver failed to retrive schemaId= " + schemaId + ". Instead the selected XML Schema '" +  xsd + "' is used");
+					return  getGrammarFactory().createGrammars(xsd);
+				} else {
+					// no schema selected, inform user
+					JOptionPane.showMessageDialog(null, "Default SchemaIDResolver failed to retrive schemaId= " + schemaId + ". Please select appropriate XML Schema on the 'Schema Information' panel!");
+					throw e;
+				}
+			}
+		}
 	}
 	
 	class OptionsChangeListener implements ChangeListener {
