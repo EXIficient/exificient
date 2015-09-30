@@ -55,5 +55,16 @@ public interface TypeEncoder extends TypeCoder {
 	 */
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException;
+	
+	/**
+	 * Writes previously checked valid value to channel in canonical form.
+	 *  
+	 * @param qnContext context
+	 * @param valueChannel encoder value channel
+	 * @param stringEncoder string encoder
+	 * @throws IOException
+	 */
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException;
 
 }

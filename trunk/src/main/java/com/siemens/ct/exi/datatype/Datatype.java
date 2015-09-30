@@ -59,6 +59,9 @@ public interface Datatype extends Serializable {
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException;
+	
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException;
 
 	/*
 	 * Decoder

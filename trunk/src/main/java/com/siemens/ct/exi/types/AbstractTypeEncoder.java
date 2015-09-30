@@ -18,9 +18,14 @@
 
 package com.siemens.ct.exi.types;
 
+import java.io.IOException;
+
 import javax.xml.namespace.QName;
 
+import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * 
@@ -40,6 +45,11 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 	public AbstractTypeEncoder(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations) throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations);
+	}
+	
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		this.writeValue(qnContext, valueChannel, stringEncoder);
 	}
 
 }

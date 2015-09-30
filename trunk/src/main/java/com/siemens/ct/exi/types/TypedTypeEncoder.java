@@ -64,4 +64,10 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 			StringEncoder stringEncoder) throws IOException {
 		lastDatatype.writeValue(qnContext, valueChannel, stringEncoder);
 	}
+	
+	@Override
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		lastDatatype.writeValueCanonical(qnContext, valueChannel, stringEncoder);
+	}
 }

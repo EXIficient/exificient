@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
@@ -37,13 +38,15 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
  * @version 0.9.5-SNAPSHOT
  */
 
-public abstract class AbstractAttributeList implements AttributeList {
+public class AttributeListImpl implements AttributeList {
 	public static final int XMLNS_PFX_START = XMLConstants.XMLNS_ATTRIBUTE
 			.length() + 1;
 
 	// options
-	protected boolean preserveSchemaLocation;
-	protected boolean preservePrefixes;
+	final protected boolean isSchemaInformed;
+	final protected boolean isCanonical;
+	final protected boolean preserveSchemaLocation;
+	final protected boolean preservePrefixes;
 
 	// xsi:type
 	protected boolean hasXsiType;
@@ -56,16 +59,18 @@ public abstract class AbstractAttributeList implements AttributeList {
 	protected String xsiNilPrefix;
 
 	// attributes
-	protected List<String> attributeURI;
-	protected List<String> attributeLocalName;
-	protected List<String> attributeValue;
-	protected List<String> attributePrefix;
+	final protected List<String> attributeURI;
+	final protected List<String> attributeLocalName;
+	final protected List<String> attributeValue;
+	final protected List<String> attributePrefix;
 	
 	// NS, prefix mappings
 	protected List<NamespaceDeclaration> nsDecls;
 
-	public AbstractAttributeList(EXIFactory exiFactory) {
+	public AttributeListImpl(EXIFactory exiFactory) {
 		// options
+		isSchemaInformed = exiFactory.getGrammars().isSchemaInformed();
+		isCanonical = exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI);
 		preserveSchemaLocation = exiFactory.getEncodingOptions()
 				.isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
@@ -197,7 +202,23 @@ public abstract class AbstractAttributeList implements AttributeList {
 	
 	
 	public void addNamespaceDeclaration(String uri, String pfx) {
-		this.nsDecls.add(new NamespaceDeclaration(uri, pfx));
+		// Canonical EXI defines that namespace declarations MUST be sorted lexicographically according to the NS prefix
+		if(this.nsDecls.size() == 0 || !this.isCanonical) {
+			this.nsDecls.add(new NamespaceDeclaration(uri, pfx));
+		} else {
+			// sort
+			int i = this.getNumberOfNamespaceDeclarations();
+
+			// greater ?
+			while (i > 0 && isGreaterNS(i - 1, pfx)) {
+				// move right
+				i--;
+			}
+			
+			// update position i
+			this.nsDecls.add(i, new NamespaceDeclaration(uri, pfx));
+		}
+		
 	}
 	
 	
@@ -208,6 +229,10 @@ public abstract class AbstractAttributeList implements AttributeList {
 	public NamespaceDeclaration getNamespaceDeclaration(int index) {
 		assert(index >= 0 && index < nsDecls.size());
 		return nsDecls.get(index);
+	}
+	
+	public void addAttribute(QName at, String value) {
+		addAttribute(at.getNamespaceURI(), at.getLocalPart(), at.getPrefix(), value);
 	}
 	
 	public void addAttribute(String uri, String localName, String pfx, String value) {
@@ -241,62 +266,60 @@ public abstract class AbstractAttributeList implements AttributeList {
 	}
 	
 
-//	public void parse(NamedNodeMap attributes) {
-//		clear();
-//
-//		for (int i = 0; i < attributes.getLength(); i++) {
-//			Node at = attributes.item(i);
-//
-//			// NS
-//			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
-//					.equals(at.getNamespaceURI())) {
-//				// do not care about NS
-//			}
-//			// xsi:*
-//			else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(at
-//					.getNamespaceURI())) {
-//				// xsi:type
-//				if (at.getLocalName().equals(Constants.XSI_TYPE)) {
-//					// Note: prefix to uri mapping is done later on
-//					setXsiType(at.getNodeValue(), at.getPrefix());
-//				}
-//				// xsi:nil
-//				else if (at.getLocalName().equals(Constants.XSI_NIL)) {
-//					setXsiNil(at.getNodeValue(), at.getPrefix());
-//				} else if ((at.getLocalName().equals(
-//						Constants.XSI_SCHEMA_LOCATION) || at.getLocalName()
-//						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
-//						&& !preserveSchemaLocation) {
-//					// prune xsi:schemaLocation
-//				} else {
-//					insertAttribute(
-//							at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-//									: at.getNamespaceURI(),
-//							at.getLocalName(),
-//							at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-//									: at.getPrefix(), at.getNodeValue());
-//				}
-//			} else {
-//				insertAttribute(
-//						at.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
-//								: at.getNamespaceURI(), at.getLocalName(),
-//						at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
-//								: at.getPrefix(), at.getNodeValue());
-//			}
-//		}
-//	}
+	protected void insertAttribute(String uri, String localName,
+			String pfx, String value) {
+		if(this.isSchemaInformed || this.isCanonical) {
+			// sorted attributes
+			int i = this.getNumberOfAttributes();
 
-	abstract protected void insertAttribute(String uri, String localName,
-			String pfx, String value);
+			// greater ?
+			while (i > 0 && isGreaterAttribute(i - 1, uri, localName)) {
+				// move right
+				i--;
+			}
 
+			// update position i
+			attributeURI.add(i, uri);
+			attributeLocalName.add(i, localName);
+			attributePrefix.add(i, pfx);
+			attributeValue.add(i, value);
+		} else {
+			// attribute order does not matter
+			attributeURI.add(uri);
+			attributeLocalName.add(localName);
+			attributePrefix.add(pfx);
+			attributeValue.add(value);
+		}
+	}
 	
-//	static final class PrefixMapping {
-//		final String prefix;
-//		final String uri;
-//
-//		public PrefixMapping(String prefix, String uri) {
-//			this.prefix = prefix;
-//			this.uri = uri;
-//		}
-//	}
+	protected final boolean isGreaterAttribute(int attributeIndex, String uri,
+			String localName) {
+
+		int compLocalName = getAttributeLocalName(attributeIndex).compareTo(localName);
+		
+		if (compLocalName > 0 ) {
+			// localName is greater
+			return true;
+		} else if (compLocalName < 0 ) {
+			// localName is smaller
+			return false;
+		} else {
+			// localName's are equal 
+			return (getAttributeURI(attributeIndex).compareTo(uri) > 0);
+		}
+	}
+	
+	protected final boolean isGreaterNS(int nsIndex, String prefix) {
+
+		int compPrefix = getNamespaceDeclaration(nsIndex).prefix.compareTo(prefix);
+		
+		if (compPrefix > 0 ) {
+			// prefix is greater
+			return true;
+		} else {
+			// prefix is smaller (or equal)
+			return false;
+		} 
+	}
+
 }

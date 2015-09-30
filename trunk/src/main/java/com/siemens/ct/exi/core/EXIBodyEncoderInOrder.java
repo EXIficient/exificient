@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
@@ -40,8 +41,11 @@ import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 
+	final boolean isCanonical;
+	
 	public EXIBodyEncoderInOrder(EXIFactory exiFactory) throws EXIException {
 		super(exiFactory);
+		this.isCanonical = exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI);
 	}
 
 	public void setOutputStream(OutputStream os) throws EXIException,
@@ -65,9 +69,15 @@ public class EXIBodyEncoderInOrder extends AbstractEXIBodyEncoder {
 	}
 
 	@Override
-	protected void writeValue(QNameContext valueContext) throws IOException {
-		typeEncoder.writeValue(valueContext, channel,
-				stringEncoder);
+	final protected void writeValue(QNameContext valueContext) throws IOException {
+		if (this.isCanonical) {
+			typeEncoder.writeValueCanonical(valueContext, channel,
+					stringEncoder);
+		} else {
+			typeEncoder.writeValue(valueContext, channel,
+					stringEncoder);	
+		}
+
 	}
 
 }

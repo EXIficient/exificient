@@ -38,10 +38,10 @@ public class EncodingOptions {
 
 	/** EXI Cookie */
 	public static final String INCLUDE_COOKIE = "INCLUDE_COOKIE";
-	
+
 	/** EXI Options */
 	public static final String INCLUDE_OPTIONS = "INCLUDE_OPTIONS";
-	
+
 	/** schemaID as part of EXI Options */
 	public static final String INCLUDE_SCHEMA_ID = "INCLUDE_SCHEMA_ID";
 
@@ -53,9 +53,18 @@ public class EncodingOptions {
 
 	/** Insignificant xsi:nil values e.g., xsi:nil="false" */
 	public static final String INCLUDE_INSIGNIFICANT_XSI_NIL = "INCLUDE_INSIGNIFICANT_XSI_NIL";
-	
-	/** To indicate that the EXI profile is in use and advertising each parameter value (exi:p element) */
+
+	/**
+	 * To indicate that the EXI profile is in use and advertising each parameter
+	 * value (exi:p element)
+	 */
 	public static final String INCLUDE_PROFILE_VALUES = "INCLUDE_PROFILE_VALUES";
+
+	/**
+	 * To indicate that the EXI stream should respect the Canonical EXI rules
+	 * see http://www.w3.org/TR/exi-c14n
+	 * */
+	public static final String CANONICAL_EXI = "http://www.w3.org/TR/exi-c14n";
 
 	/* contains options and according values */
 	protected Set<String> options;
@@ -105,6 +114,8 @@ public class EncodingOptions {
 			// } else if (key.equals(INCLUDE_INSIGNIFICANT_XSI_TYPE)) {
 			// options.add(key);
 		} else if (key.equals(INCLUDE_PROFILE_VALUES)) {
+			options.add(key);
+		} else if (key.equals(CANONICAL_EXI)) {
 			options.add(key);
 		} else {
 			throw new UnsupportedOption("EncodingOption '" + key
