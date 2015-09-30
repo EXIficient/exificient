@@ -18,6 +18,8 @@
 
 package com.siemens.ct.exi.attributes;
 
+import javax.xml.namespace.QName;
+
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 
 /**
@@ -51,6 +53,8 @@ public interface AttributeList {
 	 * Any attribute other than NS
 	 */
 	public void addAttribute(String uri, String localName, String pfx, String value);
+	
+	public void addAttribute(QName at, String value);
 	
 	/*
 	 * XSI-Type

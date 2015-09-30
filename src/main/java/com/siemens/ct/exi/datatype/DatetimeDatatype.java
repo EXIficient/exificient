@@ -106,6 +106,15 @@ public class DatetimeDatatype extends AbstractDatatype {
 			StringEncoder stringEncoder) throws IOException {
 		valueChannel.encodeDateTime(lastValidDatetime);
 	}
+	
+	@Override
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		if(!lastValidDatetime.normalized) {
+			lastValidDatetime = lastValidDatetime.normalize();
+		}
+		valueChannel.encodeDateTime(lastValidDatetime);
+	}
 
 	public Value readValue(QNameContext qnContext, DecoderChannel valueChannel,
 			StringDecoder stringDecoder) throws IOException {

@@ -18,7 +18,11 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.IOException;
+
 import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.datatype.strings.StringEncoder;
+import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltInType;
 
 /**
@@ -65,6 +69,12 @@ public abstract class AbstractDatatype implements Datatype {
 	
 	public void setBaseDatatype(Datatype baseDatatype) {
 		this.baseDatatype = baseDatatype;
+	}
+	
+	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
+			StringEncoder stringEncoder) throws IOException {
+		// most of the types are canonical per se
+		this.writeValue(qnContext, valueChannel, stringEncoder);
 	}
 
 	public boolean equals(Object o) {
