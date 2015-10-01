@@ -119,6 +119,9 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 		encoder.encodeStartDocument();
 		encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, HEADER, null);
 
+		final boolean isCanonical = f.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI);
+
 		/*
 		 * lesscommon
 		 */
@@ -141,59 +144,58 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// EXI profile options
 						encoder.encodeStartElement(Constants.W3C_EXI_NS_URI,
 								PROFILE, null);
-						
-						// feature empty exi:p element has been removed
-//						if(!f.isLocalValuePartitions() && f
-//								.getMaximumNumberOfBuiltInElementGrammars() == 0 &&
-//								f
-//								.getMaximumNumberOfBuiltInProductions() == 0) {
-//							// empty exi:p element
-//						} else {
-							/*
-							 * 1. The localValuePartitions parameter is encoded as
-							 * the sign of the decimal value: the parameter is equal
-							 * to 0 if the decimal value is positive and 1 if the
-							 * decimal value is negative.
-							 */
-							boolean negative = f.isLocalValuePartitions();
-							/*
-							 * 2. The maximumNumberOfBuiltInElementGrammars
-							 * parameter is represented by the first unsigned
-							 * integer corresponding to integral portion of the
-							 * decimal value: the
-							 * maximumNumberOfBuiltInElementGrammars parameter is
-							 * unbounded if the unsigned integer value is 0;
-							 * otherwise it is equal to the unsigned integer value -
-							 * 1.
-							 */
-							IntegerValue integral = IntegerValue
-									.valueOf(1 + f
-											.getMaximumNumberOfBuiltInElementGrammars());
-							/*
-							 * 3. The maximumNumberOfBuiltInProductions parameter is
-							 * represented by the second unsigned integer
-							 * corresponding to the fractional portion in reverse
-							 * order of the decimal value: the
-							 * maximumNumberOfBuiltInProductions parameter is
-							 * unbounded if the unsigned integer value is 0;
-							 * otherwise it is equal to the unsigned integer value -
-							 * 1.
-							 */
-							IntegerValue revFractional = IntegerValue.valueOf(1 + f
-									.getMaximumNumberOfBuiltInProductions());
 
-							QNameValue qnv = new QNameValue(
-									XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal",
-									null);
-							encoder.encodeAttributeXsiType(qnv, null);
-							DecimalValue dv = new DecimalValue(negative, integral,
-									revFractional);
-							encoder.encodeCharactersForce(dv);
-//						}
-						
+						// feature empty exi:p element has been removed
+						// if(!f.isLocalValuePartitions() && f
+						// .getMaximumNumberOfBuiltInElementGrammars() == 0 &&
+						// f
+						// .getMaximumNumberOfBuiltInProductions() == 0) {
+						// // empty exi:p element
+						// } else {
+						/*
+						 * 1. The localValuePartitions parameter is encoded as
+						 * the sign of the decimal value: the parameter is equal
+						 * to 0 if the decimal value is positive and 1 if the
+						 * decimal value is negative.
+						 */
+						boolean negative = f.isLocalValuePartitions();
+						/*
+						 * 2. The maximumNumberOfBuiltInElementGrammars
+						 * parameter is represented by the first unsigned
+						 * integer corresponding to integral portion of the
+						 * decimal value: the
+						 * maximumNumberOfBuiltInElementGrammars parameter is
+						 * unbounded if the unsigned integer value is 0;
+						 * otherwise it is equal to the unsigned integer value -
+						 * 1.
+						 */
+						IntegerValue integral = IntegerValue.valueOf(1 + f
+								.getMaximumNumberOfBuiltInElementGrammars());
+						/*
+						 * 3. The maximumNumberOfBuiltInProductions parameter is
+						 * represented by the second unsigned integer
+						 * corresponding to the fractional portion in reverse
+						 * order of the decimal value: the
+						 * maximumNumberOfBuiltInProductions parameter is
+						 * unbounded if the unsigned integer value is 0;
+						 * otherwise it is equal to the unsigned integer value -
+						 * 1.
+						 */
+						IntegerValue revFractional = IntegerValue.valueOf(1 + f
+								.getMaximumNumberOfBuiltInProductions());
+
+						QNameValue qnv = new QNameValue(
+								XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal",
+								null);
+						encoder.encodeAttributeXsiType(qnv, null);
+						DecimalValue dv = new DecimalValue(negative, integral,
+								revFractional);
+						encoder.encodeCharactersForce(dv);
+						// }
+
 						encoder.encodeEndElement(); // p
 					}
-					
+
 				}
 				/*
 				 * alignment
@@ -421,7 +423,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 						// schema information is used for processing the EXI
 						// body.
 						// TODO typed fashion
-						encoder.encodeAttributeXsiNil(BooleanValue.BOOLEAN_VALUE_TRUE, null);
+						encoder.encodeAttributeXsiNil(
+								BooleanValue.BOOLEAN_VALUE_TRUE, null);
 					}
 				}
 
@@ -487,7 +490,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	}
 
 	protected boolean isDatatypeRepresentationMap(EXIFactory f) {
-		return (f.getDatatypeRepresentationMapTypes() != null);
+		return (f.getDatatypeRepresentationMapTypes() != null && f
+				.getDatatypeRepresentationMapTypes().length > 0);
 	}
 
 	protected boolean isPreserve(EXIFactory f) {
@@ -497,11 +501,14 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 				|| fo.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
 				|| fo.isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE)
 				|| fo.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT) || fo
-				.isFidelityEnabled(FidelityOptions.FEATURE_PI));
+					.isFidelityEnabled(FidelityOptions.FEATURE_PI));
 	}
 
 	protected boolean isBlockSize(EXIFactory f) {
-		return (f.getBlockSize() != Constants.DEFAULT_BLOCK_SIZE);
+		// Canonical EXI : The element blockSize MUST be omitted if neither
+		// compression nor pre-compress is present
+		return (f.getBlockSize() != Constants.DEFAULT_BLOCK_SIZE && (f
+				.getCodingMode() == CodingMode.COMPRESSION || f.getCodingMode() == CodingMode.PRE_COMPRESSION));
 	}
 
 	protected boolean isCommon(EXIFactory f) {

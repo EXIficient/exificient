@@ -46,10 +46,5 @@ public abstract class AbstractTypeEncoder extends AbstractTypeCoder implements
 			QName[] dtrMapRepresentations) throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations);
 	}
-	
-	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,
-			StringEncoder stringEncoder) throws IOException {
-		this.writeValue(qnContext, valueChannel, stringEncoder);
-	}
 
 }

@@ -21,6 +21,7 @@ package com.siemens.ct.exi.core;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -30,12 +31,15 @@ import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.TestSAXEncoder;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -1078,5 +1082,97 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	// header MUST include EXI Options
+	public void testStreamHeader0() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		
+		String xml = "<foo>" + "text content" + "</foo>";
+		
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+		
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
+		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong setting, stream should contain the right options
+		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIBodyDecoder bdec= sdec.decodeHeader(isCan);
+		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
+		EXIBodyDecoderInOrder bdec2 =  (EXIBodyDecoderInOrder) bdec;
+		assertTrue(bdec2.exiFactory != noOptionsFactory);
+		
+		bdec2.exiFactory.createEXIReader();
+	}
+	
+	// When the alignment option compression is set, pre-compress MUST be used instead of compression.
+	public void testStreamHeader1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		factory.setCodingMode(CodingMode.COMPRESSION);
+		
+		String xml = "<foo>" + "text content" + "</foo>";
+		
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+		
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
+		noOptionsFactory.setCodingMode(CodingMode.BYTE_PACKED); // wrong setting, stream should contain the right options
+		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
+		assertTrue(bdec instanceof EXIBodyDecoderReordered);
+		EXIBodyDecoderReordered bdec2 =  (EXIBodyDecoderReordered) bdec;
+		assertTrue(bdec2.exiFactory != noOptionsFactory);
+		assertTrue(bdec2.exiFactory.getCodingMode() == CodingMode.PRE_COMPRESSION);
+	}
+	
+
+	
+	//  datatypeRepresentationMap: the tuples are to be sorted lexicographically according to the schema datatype first by {name} then by {namespace}
+	public void testStreamHeader2() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		
+		/* DTR Map */
+		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type1, type2 };
+		QName[] dtrMapRepresentations = { representation1, representation2 };
+		factory.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
+		
+		String xml = "<foo>" + "text content" + "</foo>";
+		
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+		
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
+		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong setting, stream should contain the right options
+		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIBodyDecoder bdec= sdec.decodeHeader(isCan);
+		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
+		EXIBodyDecoderInOrder bdec2 =  (EXIBodyDecoderInOrder) bdec;
+		assertTrue(bdec2.exiFactory != noOptionsFactory);
+		
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes().length == 2);
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[0].getLocalPart().equals("boolean"));
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapRepresentations()[0].getLocalPart().equals("integer"));
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[1].getLocalPart().equals("decimal"));
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapRepresentations()[1].getLocalPart().equals("string"));
+		
+	}
+	
 
 }
