@@ -23,7 +23,6 @@ import java.io.OutputStream;
 
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
