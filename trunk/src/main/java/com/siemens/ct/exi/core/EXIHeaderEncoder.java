@@ -119,8 +119,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 		encoder.encodeStartDocument();
 		encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, HEADER, null);
 
-		final boolean isCanonical = f.getEncodingOptions().isOptionEnabled(
-				EncodingOptions.CANONICAL_EXI);
+//		final boolean isCanonical = f.getEncodingOptions().isOptionEnabled(
+//				EncodingOptions.CANONICAL_EXI);
 
 		/*
 		 * lesscommon

@@ -18,14 +18,9 @@
 
 package com.siemens.ct.exi.types;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
 
-import com.siemens.ct.exi.context.QNameContext;
-import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.io.channel.EncoderChannel;
 
 /**
  * 

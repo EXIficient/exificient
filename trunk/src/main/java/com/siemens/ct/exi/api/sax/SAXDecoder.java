@@ -310,9 +310,6 @@ public class SAXDecoder implements XMLReader {
 					isStartElementDeferred = false;
 				}
 
-				// if (namespacePrefixes) {
-				// eeQNameAsString = decoder.getElementQNameAsString();
-				// }
 				/*
 				 * Note: it looks like widely used APIs (Xerces, Saxon, ..)
 				 * provide the textual qname even when
@@ -321,6 +318,10 @@ public class SAXDecoder implements XMLReader {
 				 * sourceforge.net/projects/exificient/forums/forum
 				 * /856596/topic/5839494
 				 */
+				List<NamespaceDeclaration> eePrefixes = null;
+				if (namespaces) {
+					eePrefixes = decoder.getDeclaredPrefixDeclarations();
+				}
 				String eeQNameAsString = decoder.getElementQNameAsString();
 
 				QNameContext eeQName = decoder.decodeEndElement();
@@ -329,13 +330,10 @@ public class SAXDecoder implements XMLReader {
 						eeQName.getLocalName(), eeQNameAsString);
 
 				// endPrefixMapping
-				if (namespaces) {
-					List<NamespaceDeclaration> eePrefixes = decoder.getDeclaredPrefixDeclarations();
-					if(eePrefixes != null) {
-						for (int i = 0; i < eePrefixes.size(); i++) {
-							NamespaceDeclaration ns = eePrefixes.get(i);
-							contentHandler.endPrefixMapping(ns.prefix);
-						}
+				if (namespaces && eePrefixes != null) {
+					for (int i = 0; i < eePrefixes.size(); i++) {
+						NamespaceDeclaration ns = eePrefixes.get(i);
+						contentHandler.endPrefixMapping(ns.prefix);
 					}
 				}
 				break;
