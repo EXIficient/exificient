@@ -45,18 +45,25 @@ public class StringDatatype extends AbstractDatatype {
 	protected String lastValue;
 
 	public StringDatatype(QNameContext schemaType) {
-		this(schemaType, false);
+		// default whiteSpace facet for string is preserve
+		this(schemaType, WhiteSpace.preserve);
 	}
 	
+	public StringDatatype(QNameContext schemaType, WhiteSpace whiteSpace) {
+		this(schemaType, false);
+		/* default whiteSpace facet for string is preserve */
+		this.whiteSpace = whiteSpace;
+	}
+
 	public DatatypeID getDatatypeID() {
 		return DatatypeID.exi_string;
 	}
-	
+
 	public StringDatatype(QNameContext schemaType, boolean isDerivedByUnion) {
 		super(BuiltInType.STRING, schemaType);
 		this.isDerivedByUnion = isDerivedByUnion;
 	}
-	
+
 	public boolean isDerivedByUnion() {
 		return isDerivedByUnion;
 	}
@@ -76,3 +83,4 @@ public class StringDatatype extends AbstractDatatype {
 		return stringDecoder.readValue(qnContext, valueChannel);
 	}
 }
+

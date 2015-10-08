@@ -49,8 +49,15 @@ public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
 	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
 			QNameContext schemaType) {
+		// default whiteSpace facet for string is preserve
+		this(rcs, schemaType, WhiteSpace.preserve);
+	}
+	
+	public RestrictedCharacterSetDatatype(RestrictedCharacterSet rcs,
+			QNameContext schemaType, WhiteSpace whiteSpace) {
 		super(BuiltInType.RCS_STRING, schemaType);
 		this.rcs = rcs;
+		this.whiteSpace = whiteSpace;
 	}
 	
 	public RestrictedCharacterSet getRestrictedCharacterSet() {
