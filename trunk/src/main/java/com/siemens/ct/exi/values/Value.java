@@ -47,7 +47,7 @@ public interface Value extends Serializable {
 	/**
 	 * Returns character array containing the values represented as String
 	 * representation for XML.
-	 * <p>Please consider using toCharacters(char[] cbuffer, int offset).</p>
+	 * <p>Please consider using getCharacters(char[] cbuffer, int offset).</p>
 	 * 
 	 * @return string representation of value
 	 */

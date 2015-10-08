@@ -24,6 +24,7 @@ import java.io.IOException;
 //import java.util.StringTokenizer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -39,11 +40,13 @@ import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.WhiteSpace;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.AttributeNS;
+import com.siemens.ct.exi.grammars.event.Characters;
 import com.siemens.ct.exi.grammars.event.DatatypeEvent;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.grammars.event.StartElement;
@@ -1176,19 +1179,122 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		return null;
 	}
+	
+	// returns null if no CH datatype is available
+	private WhiteSpace getDatatypeWhiteSpace() {
+		Grammar currGr = this.getCurrentGrammar();
+		if (currGr.getNumberOfEvents() > 0) {
+			Production prod = currGr.getProduction(0);
+			if(prod.getEvent().getEventType() == EventType.CHARACTERS) {
+				Characters ch = (Characters) prod.getEvent();
+				return ch.getDatatype().getWhiteSpace();
+			}
+		}
+		
+		return null;
+	}
+	
+	static void replace(char[] chars, int len) {
+		// replace
+	    // All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage return) are replaced with #x20 (space)
+		for(int i=0; i<len; i++) {
+			if(chars[i] == '\t' || chars[i] == '\n' || chars[i] == '\r') {
+				chars[i] = ' ';
+			}
+		}
+	}
+	
+	static void shiftLeft(char[] chars, int pos, int len) {
+		System.arraycopy(chars, pos+1, chars, pos, len-1);
+	}
+	
+	// returns new length
+	static int collapse(char[] chars, int len) {
+		//  collapse
+	    // After the processing implied by replace, contiguous sequences of #x20's are collapsed to a single #x20, and leading and trailing #x20's are removed. 
+		replace(chars, len);
+		
+		int newLen = len;
+		
+		// contiguous sequences of #x20's are collapsed to a single #x20
+		if(newLen > 1) {
+			int i = 0;
+			while(i<(newLen-1)) {
+				char thisChar = chars[i];
+				char nextChar = chars[i+1];
+				if (thisChar == ' ' && nextChar == ' ') {
+					// eliminate one space
+					shiftLeft(chars, i, newLen-i);
+					newLen--;
+				} else {
+					i++;	
+				}
+			}
+		}
 
-	private final boolean doTokenizeCHs = false;
+		// leading and trailing #x20's are removed
+		newLen = trim(chars, newLen);
+		
+		return newLen;
+	}
+	
+	// returns new length
+	static int trim(char[] chars, int len) {
+		// leading and trailing #x20's are removed
+		int newLen = len;
+		
+		// leading
+		while(newLen > 0 && chars[0] == ' ') {
+			// eliminate one leading space
+			shiftLeft(chars, 0, newLen);
+			newLen--;
+		}
+		// trailing
+		int i = newLen-1;
+		while(i>=0 && chars[i] == ' ') {
+			// eliminate one trailing space
+			newLen--;
+			i--;
+		}
+		
+		return newLen;
+	}
+	
+
+	private final boolean doTokenizeCHs = false; // TEST
+	
+	/** character buffer for CH trimming, replacing, collapsing */
+	char[] cbuffer;
 	
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
+		WhiteSpace ws = getDatatypeWhiteSpace();
 		// Don't we want to prune insignificant whitespace characters
-		if (!preserveLexicalValues) {
-			String tchars = chars.toString().trim();
-			if (tchars.length() == 0) {
+		if (!(preserveLexicalValues || ws==WhiteSpace.preserve)) {
+			int len = chars.getCharactersLength();
+			if(cbuffer == null || cbuffer.length < len) {
+				cbuffer = new char[len];
+			}
+			chars.getCharacters(cbuffer, 0);
+			if(ws == WhiteSpace.replace) {
+				// replace
+			    // All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage return) are replaced with #x20 (space) 
+				replace(cbuffer, len);
+			} else if (ws == WhiteSpace.collapse) {
+				// collapse
+			    // After the processing implied by replace, contiguous sequences of #x20's are collapsed to a single #x20, and leading and trailing #x20's are removed. 
+				replace(cbuffer, len);
+				len = collapse(cbuffer, len);
+			} else {
+				// schema-less, no datatype --> trim insignificant whitespaces
+				len = trim(cbuffer, len);
+			}
+			if (len == 0) {
+				// --> omit empty string
 				return;
 			}
-			// omit leading and trailing whitespace per default?
-			chars = new StringValue(tchars);
+			chars = new StringValue(new String(cbuffer, 0, len));
 		}
+		
 		
 		if (doTokenizeCHs) {
 			String delimiters;

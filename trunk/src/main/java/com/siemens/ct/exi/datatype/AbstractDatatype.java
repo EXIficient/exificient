@@ -45,6 +45,9 @@ public abstract class AbstractDatatype implements Datatype {
 	
 	// base datatype
 	protected Datatype baseDatatype;
+	
+	// whiteSpace
+	protected WhiteSpace whiteSpace;
 
 	public AbstractDatatype() {
 		this(null, null);
@@ -53,6 +56,8 @@ public abstract class AbstractDatatype implements Datatype {
 	public AbstractDatatype(BuiltInType builtInType, QNameContext schemaType) {
 		this.builtInType = builtInType;
 		this.schemaType = schemaType;
+		// For all atomic datatypes other than string the value of whiteSpace is collapse
+		whiteSpace = WhiteSpace.collapse;
 	}
 
 	public BuiltInType getBuiltInType() {
@@ -69,6 +74,10 @@ public abstract class AbstractDatatype implements Datatype {
 	
 	public void setBaseDatatype(Datatype baseDatatype) {
 		this.baseDatatype = baseDatatype;
+	}
+	
+	public WhiteSpace getWhiteSpace() {
+		return this.whiteSpace;
 	}
 	
 	public void writeValueCanonical(QNameContext qnContext, EncoderChannel valueChannel,

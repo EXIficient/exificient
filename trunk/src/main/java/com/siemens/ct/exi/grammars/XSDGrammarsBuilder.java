@@ -40,6 +40,7 @@ import org.apache.xerces.xs.XSAttributeUse;
 import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
+import org.apache.xerces.xs.XSFacet;
 import org.apache.xerces.xs.XSModel;
 import org.apache.xerces.xs.XSModelGroup;
 import org.apache.xerces.xs.XSMultiValueFacet;
@@ -72,6 +73,7 @@ import com.siemens.ct.exi.datatype.NBitUnsignedIntegerDatatype;
 import com.siemens.ct.exi.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.datatype.StringDatatype;
 import com.siemens.ct.exi.datatype.UnsignedIntegerDatatype;
+import com.siemens.ct.exi.datatype.WhiteSpace;
 import com.siemens.ct.exi.datatype.charset.CodePointCharacterSet;
 import com.siemens.ct.exi.datatype.charset.RestrictedCharacterSet;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -1755,7 +1757,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 								.equals(getSchemaType(stdEnum))
 								|| BuiltIn.XSD_NOTATION
 										.equals(getSchemaType(stdEnum))) {
-							datatype = new StringDatatype(qncSchemaType);
+							datatype = new StringDatatype(qncSchemaType, getWhiteSpaceFacet(stdEnum));
 						} else {
 							Datatype dtEnumValues = getDatatype(stdEnum);
 							Value[] values = new Value[enumList.getLength()];
@@ -2185,7 +2187,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 				if (isBuiltInTypeFacet(std, sl.getLength())) {
 					// *normal* string
-					datatype = new StringDatatype(qncSchemaType);
+					datatype = new StringDatatype(qncSchemaType, getWhiteSpaceFacet(std));
 				} else {
 					// analyze most-derived datatype facet only
 					String regexPattern = sl.item(0);
@@ -2194,21 +2196,46 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 					if (re.isEntireSetOfXMLCharacters()) {
 						// *normal* string
-						datatype = new StringDatatype(qncSchemaType);
+						datatype = new StringDatatype(qncSchemaType, getWhiteSpaceFacet(std));
 					} else {
 						// restricted char set
 						RestrictedCharacterSet rcs = new CodePointCharacterSet(
 								re.getCodePoints());
 						datatype = new RestrictedCharacterSetDatatype(rcs,
-								qncSchemaType);
+								qncSchemaType, getWhiteSpaceFacet(std));
 					}
 				}
 			} else {
-				datatype = new StringDatatype(qncSchemaType);
+				datatype = new StringDatatype(qncSchemaType, getWhiteSpaceFacet(std));
 			}
 		}
 
 		return datatype;
+	}
+	
+	private WhiteSpace getWhiteSpaceFacet(XSSimpleTypeDefinition std) {
+		// default for string is preserve
+		WhiteSpace whiteSpace = WhiteSpace.preserve;
+		boolean hasWSF = std.isDefinedFacet(XSSimpleTypeDefinition.FACET_WHITESPACE);
+		if(hasWSF) {
+			// http://www.w3.org/TR/xmlschema-2/#rf-whiteSpace
+			XSObject o =  std.getFacet(XSSimpleTypeDefinition.FACET_WHITESPACE);
+			XSFacet fac = (XSFacet) o;
+			String fv = fac.getLexicalFacetValue();
+			
+			if("preserve".equals(fv)) {
+				whiteSpace = WhiteSpace.preserve;
+			} else if ("replace".equals(fv)) {
+				whiteSpace = WhiteSpace.replace;
+			} else if ("collapse".equals(fv)) {
+				whiteSpace = WhiteSpace.collapse;
+			} else {
+				throw new RuntimeException("Unexpected WhiteSpace facet value: "
+						+ fv);
+			}
+		}
+		
+		return whiteSpace;
 	}
 
 	private boolean isBuiltInTypeFacet(XSSimpleTypeDefinition std,

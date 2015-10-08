@@ -49,6 +49,9 @@ public interface Datatype extends Serializable {
 	public Datatype getBaseDatatype();
 	public void setBaseDatatype(Datatype baseDatatype);
 	
+	// whiteSpace
+	public WhiteSpace getWhiteSpace();
+	
 	// used for preserve lexicalValues
 	public DatatypeID getDatatypeID();
 
