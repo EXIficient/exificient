@@ -70,8 +70,6 @@ public class StAXEncoder implements XMLStreamWriter {
 	protected EXIBodyEncoder encoder;
 	protected EXIStreamEncoder exiStream;
 
-	protected StringBuilder sbChars;
-
 	protected SimpleDocTypeParser dtdParser;
 
 	// preserve options
@@ -89,8 +87,6 @@ public class StAXEncoder implements XMLStreamWriter {
 	protected EncoderNamespaceContext nsContext;
 
 	public StAXEncoder(EXIFactory factory) throws EXIException {
-		// initialize char buffer
-		sbChars = new StringBuilder();
 		// attribute list & NS
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
@@ -112,7 +108,6 @@ public class StAXEncoder implements XMLStreamWriter {
 
 	protected void init() {
 		pendingATs = false;
-		sbChars.setLength(0);
 		exiAttributes.clear();
 		nsContext.reset();
 	}
@@ -280,30 +275,14 @@ public class StAXEncoder implements XMLStreamWriter {
 		// this.flush();
 	}
 
-	protected void appendChars(String text) {
-		sbChars.append(text);
-	}
-
-	protected void appendChars(char[] text, int start, int len) {
-		sbChars.append(text, start, len);
-	}
-
-	protected void checkPendingEvents() throws EXIException, IOException {
-		// AT & NS first
+	protected void checkPendingATEvents() throws EXIException, IOException {
+		// NS first & ATs
 		if (pendingATs) {
-
 			// encode NS decls and attributes
 			encoder.encodeAttributeList(exiAttributes);
 			exiAttributes.clear();
 
 			pendingATs = false;
-		}
-
-		// CH
-		if (sbChars.length() > 0) {
-			// encoder.encodeCharacters(sbChars.toString());
-			encoder.encodeCharacters(new StringValue(sbChars.toString()));
-			sbChars.setLength(0);
 		}
 	}
 
@@ -334,7 +313,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	 */
 	public void writeCData(String data) throws XMLStreamException {
 		try {
-			this.checkPendingEvents();
+			this.checkPendingATEvents();
 			// CDATA
 			this.writeCharacters(data);
 		} catch (Exception e) {
@@ -350,7 +329,12 @@ public class StAXEncoder implements XMLStreamWriter {
 	 * @see javax.xml.stream.XMLStreamWriter#writeCharacters(java.lang.String)
 	 */
 	public void writeCharacters(String text) throws XMLStreamException {
-		this.appendChars(text);
+		try {
+			this.checkPendingATEvents();
+			encoder.encodeCharacters(new StringValue(text));
+		} catch (Exception e) {
+			throw new XMLStreamException(e.getLocalizedMessage(), e);
+		}
 	}
 
 	/*
@@ -362,7 +346,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	 */
 	public void writeCharacters(char[] text, int start, int len)
 			throws XMLStreamException {
-		this.appendChars(text, start, len);
+		this.writeCharacters(new String(text, start, len));
 	}
 
 	/*
@@ -375,7 +359,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void writeComment(String data) throws XMLStreamException {
 		if (preserveComment) {
 			try {
-				this.checkPendingEvents();
+				this.checkPendingATEvents();
 				// TODO improve EXI API
 				char[] chars = data.toCharArray();
 				encoder.encodeComment(chars, 0, chars.length);
@@ -395,7 +379,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void writeDTD(String dtd) throws XMLStreamException {
 		if (preserveDTD) {
 			try {
-				this.checkPendingEvents();
+				this.checkPendingATEvents();
 				SimpleDocTypeParser dtdParser = getDtdParser();
 				dtdParser.parse(dtd);
 
@@ -416,7 +400,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	 */
 	public void writeEndDocument() throws XMLStreamException {
 		try {
-			checkPendingEvents();
+			checkPendingATEvents();
 			encoder.encodeEndDocument();
 			encoder.flush();
 		} catch (Exception e) {
@@ -434,7 +418,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	 */
 	public void writeEndElement() throws XMLStreamException {
 		try {
-			this.checkPendingEvents();
+			this.checkPendingATEvents();
 			encoder.encodeEndElement();
 		} catch (Exception e) {
 			throw new XMLStreamException(e.getLocalizedMessage(), e);
@@ -451,7 +435,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void writeEntityRef(String name) throws XMLStreamException {
 		if (preserveDTD) {
 			try {
-				this.checkPendingEvents();
+				this.checkPendingATEvents();
 				encoder.encodeEntityReference(name);
 			} catch (Exception e) {
 				throw new XMLStreamException(e.getLocalizedMessage(), e);
@@ -506,7 +490,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			throws XMLStreamException {
 		if (preservePI) {
 			try {
-				this.checkPendingEvents();
+				this.checkPendingATEvents();
 				encoder.encodeProcessingInstruction(target, data);
 			} catch (Exception e) {
 				throw new XMLStreamException(e.getLocalizedMessage(), e);
@@ -544,7 +528,7 @@ public class StAXEncoder implements XMLStreamWriter {
 			assert (namespaceURI != null);
 			assert (localName != null);
 			// System.out.println("> SE " + localName);
-			checkPendingEvents();
+			checkPendingATEvents();
 			encoder.encodeStartElement(namespaceURI, localName, prefix);
 			pendingATs = true;
 		} catch (Exception e) {

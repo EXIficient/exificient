@@ -53,9 +53,6 @@ public class SAXEncoder extends DefaultHandler2 {
 	protected EXIStreamEncoder exiStream;
 	protected EXIBodyEncoder encoder;
 
-	// buffers the characters of the characters() callback
-	protected StringBuilder sbChars;
-
 	// attributes
 	protected AttributeList exiAttributes;
 
@@ -64,9 +61,6 @@ public class SAXEncoder extends DefaultHandler2 {
 		
 		// exi stream
 		exiStream = new EXIStreamEncoder(factory);
-		
-		// initialize char buffer
-		sbChars = new StringBuilder();
 		
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
@@ -113,8 +107,6 @@ public class SAXEncoder extends DefaultHandler2 {
 
 	protected void startElementPfx(String uri, String local, String prefix,
 			Attributes attributes) throws EXIException, IOException {
-		checkPendingChars();
-
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
 		
@@ -151,7 +143,6 @@ public class SAXEncoder extends DefaultHandler2 {
 
 	public void endDocument() throws SAXException {
 		try {
-			checkPendingChars();
 			encoder.encodeEndDocument();
 			encoder.flush();
 		} catch (Exception e) {
@@ -162,7 +153,6 @@ public class SAXEncoder extends DefaultHandler2 {
 	public void endElement(String uri, String local, String raw)
 			throws SAXException {
 		try {
-			checkPendingChars();
 			encoder.encodeEndElement();
 		} catch (Exception e) {
 			throw new SAXException("endElement=" + raw, e);
@@ -172,13 +162,10 @@ public class SAXEncoder extends DefaultHandler2 {
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		sbChars.append(ch, start, length);
-	}
-
-	protected void checkPendingChars() throws EXIException, IOException {
-		if (sbChars.length() > 0) {
-			encoder.encodeCharacters(new StringValue(sbChars.toString()));
-			sbChars.setLength(0);
+		try {
+			encoder.encodeCharacters(new StringValue(new String(ch, start, length)));
+		} catch (Exception e) {
+			throw new SAXException("characters=" + new String(ch, start, length), e);
 		}
 	}
 

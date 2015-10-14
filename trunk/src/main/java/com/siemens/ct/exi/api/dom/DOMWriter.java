@@ -61,10 +61,6 @@ public class DOMWriter {
 	protected boolean preserveComments;
 	protected boolean preservePIs;
 
-	// collect char events (e.g. textA CM textB --> textA+textB if CM is not
-	// preserved)
-	protected StringBuilder sbChars;
-
 	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 
@@ -73,9 +69,6 @@ public class DOMWriter {
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
-
-		// characters
-		sbChars = new StringBuilder();
 
 		// preserve options
 		preserveComments = factory.getFidelityOptions().isFidelityEnabled(
@@ -174,23 +167,20 @@ public class DOMWriter {
 			Node n = children.item(i);
 			switch (n.getNodeType()) {
 			case Node.ELEMENT_NODE:
-				checkPendingChars();
 				encodeNode(n);
 				break;
 			case Node.ATTRIBUTE_NODE:
 				break;
 			case Node.TEXT_NODE:
-				sbChars.append(n.getNodeValue());
+				exiBody.encodeCharacters(new StringValue(n.getNodeValue()));
 				break;
 			case Node.COMMENT_NODE:
 				if (preserveComments) {
-					checkPendingChars();
 					String c = n.getNodeValue();
 					exiBody.encodeComment(c.toCharArray(), 0, c.length());
 				}
 				break;
 			case Node.DOCUMENT_TYPE_NODE:
-				checkPendingChars();
 				DocumentType dt = (DocumentType) n;
 				String publicID = dt.getPublicId() == null ? "" : dt
 						.getPublicId();
@@ -205,7 +195,6 @@ public class DOMWriter {
 				// TODO ER
 				break;
 			case Node.CDATA_SECTION_NODE:
-				checkPendingChars();
 				// String cdata = n.getNodeValue();
 				// exiBody.encodeCharacters(new
 				// StringValue(Constants.CDATA_START
@@ -214,7 +203,6 @@ public class DOMWriter {
 				break;
 			case Node.PROCESSING_INSTRUCTION_NODE:
 				if (preservePIs) {
-					checkPendingChars();
 					ProcessingInstruction pi = (ProcessingInstruction) n;
 					exiBody.encodeProcessingInstruction(pi.getTarget(),
 							pi.getData());
@@ -226,15 +214,6 @@ public class DOMWriter {
 				// throw new EXIException("Unknown NodeType? " +
 				// n.getNodeType());
 			}
-		}
-		checkPendingChars();
-	}
-
-	protected void checkPendingChars() throws EXIException, IOException {
-		if (sbChars.length() > 0) {
-			// exiBody.encodeCharacters(sbChars.toString());
-			exiBody.encodeCharacters(new StringValue(sbChars.toString()));
-			sbChars.setLength(0);
 		}
 	}
 }

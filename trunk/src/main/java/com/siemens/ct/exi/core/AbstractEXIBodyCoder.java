@@ -362,6 +362,7 @@ public abstract class AbstractEXIBodyCoder {
 		private String sqname;
 		Grammar gr; // may be modified while coding
 		List<NamespaceDeclaration> nsDeclarations; // prefix declarations
+		private Boolean isXmlSpacePreserve;
 
 		final QNameContext qnameContext;
 
@@ -388,6 +389,13 @@ public abstract class AbstractEXIBodyCoder {
 
 		String getPrefix() {
 			return this.prefix;
+		}
+		
+		void setXmlSpacePreserve(Boolean isXmlSpacePreserve) {
+			this.isXmlSpacePreserve = isXmlSpacePreserve;
+		}
+		Boolean isXmlSpacePreserve() {
+			return this.isXmlSpacePreserve;
 		}
 	}
 	
