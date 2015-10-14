@@ -199,7 +199,7 @@ public interface EXIBodyEncoder {
 			throws EXIException, IOException;
 
 	/**
-	 * Supplies characters value.
+	 * Supplies characters as Value.
 	 * 
 	 * @param chars
 	 * @throws EXIException

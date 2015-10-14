@@ -124,7 +124,6 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 		} else {
 			if (preserveComment) {
 				try {
-					checkPendingChars();
 					encoder.encodeComment(ch, start, length);
 				} catch (Exception e) {
 					throw new SAXException("comment", e);
@@ -142,7 +141,6 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 					this.docTypeText += "<?" + target + " " + data + "?>";
 				}
 			} else {
-				checkPendingChars();
 				encoder.encodeProcessingInstruction(target, data);
 			}
 		} catch (Exception e) {
@@ -166,8 +164,6 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			throws SAXException {
 		try {
 			if (preserveDTD) {
-
-				checkPendingChars();
 				docTypeName = name;
 				docTypePublicID = publicId == null ? "" : publicId;
 				docTypeSystemID = systemId == null ? "" : systemId;
@@ -198,7 +194,7 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 			if (retainEntityReference) {
 				try {
 					// &amp; --> name="amp"
-					checkPendingChars();
+					// checkPendingChars();
 				} catch (Exception e) {
 					throw new SAXException("startEntity", e);
 				}
