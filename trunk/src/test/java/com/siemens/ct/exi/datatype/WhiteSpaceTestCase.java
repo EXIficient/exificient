@@ -484,7 +484,6 @@ public class WhiteSpaceTestCase extends TestCase {
 	// - Simple data (data between s+e) are all preserved.
 	// - For complex data (data between s+s, e+s, e+e), whitespaces nodes (i.e.
 	//   strings that consist solely of whitespaces) are removed.
-	// TODO: Assumption complexData trimmed
 	public void testSchemaLessElementContent1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		
@@ -524,6 +523,62 @@ public class WhiteSpaceTestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	
+	// - For complex data (data between s+s, e+s, e+e), whitespaces nodes (i.e.
+	//   strings that consist solely of whitespaces) are removed.
+	public void testSchemaLessComplexContent1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		
+		String c = "  text  X   content ";
+		String cd1 = " C1 ";
+		String cd2 = " C2 ";
+		String xml = "<foo>" + cd1 + "<inner>" + c + "</inner>" + cd2 + "</foo>";
+		
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decode
+		{
+			EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = streamDecoder.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getLocalName().equals("foo"));
+			
+			// complex data not trimmed given that it foes consist solely of whitespaces
+			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			String svCD1 = decoder.decodeCharacters().toString(); 
+			assertTrue("'" + svCD1 + "' != '" + cd1 + "'", svCD1.equals(cd1));
+			
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(decoder.decodeStartElement().getLocalName().equals("inner"));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			String sv = decoder.decodeCharacters().toString(); 
+			assertTrue("'" + sv + "' != '" + c + "'", sv.equals(c));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+			
+			// complex data not trimmed given that it foes consist solely of whitespaces
+			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			String svCD2 = decoder.decodeCharacters().toString(); 
+			assertTrue("'" + svCD2 + "' != '" + cd2 + "'", svCD2.equals(cd2));
+			
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
 	
 	// with attribute
 	public void testSchemaLessElementContent2() throws Exception {

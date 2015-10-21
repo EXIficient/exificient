@@ -1419,6 +1419,15 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		return (c == ' ' || c == '\n' || c == '\r' || c == '\t' );
 	}
 	
+	static boolean isSolelyWS(char[] chars, int len) {
+		for(int i=0; i<len; i++) {
+			if(!isWS(chars[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	static int trimWS(char[] chars, int len) {
 		// leading and trailing whitespaces are removed
 		int newLen = len;
@@ -1490,14 +1499,18 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						// If it is schema-less:
 						//  - Simple data (data between s+e) are all preserved.
 						//  - For complex data (data between s+s, e+s, e+e), it is same as schema-informed case.
-						// TODO is SE(foo) AT(bla) <simpleData> EE still simple data?
 						if((this.lastEvent == EventType.START_ELEMENT || this.lastEvent == EventType.ATTRIBUTE
 								|| this.lastEvent == EventType.ATTRIBUTE_XSI_NIL || this.lastEvent == EventType.ATTRIBUTE_XSI_TYPE
 								|| this.lastEvent == EventType.NAMESPACE_DECLARATION) && nextEvent == EventType.END_ELEMENT) {
-							// preserve
+							// simple data --> preserve
 						} else {
+							// For complex data (data between s+s, e+s, e+e), whitespaces nodes (i.e.
+							// strings that consist solely of whitespaces) are removed
+							if(isSolelyWS(cbuffer, len)) {
+								len = 0;
+							}
 							// trim?
-							len = trimWS(cbuffer, len);
+							// len = trimWS(cbuffer, len);
 						}
 					}
 					if (len == 0) {
