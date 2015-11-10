@@ -43,8 +43,7 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class TypedTypeEncoder extends AbstractTypeEncoder {
-
-	final protected boolean isCanonical;
+	
 	protected Datatype lastDatatype;
 
 	public TypedTypeEncoder() throws EXIException {
@@ -53,13 +52,7 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 
 	public TypedTypeEncoder(QName[] dtrMapTypes, QName[] dtrMapRepresentations)
 			throws EXIException {
-		this(false, dtrMapTypes, dtrMapRepresentations);
-	}
-	
-	public TypedTypeEncoder(boolean isCanonical, QName[] dtrMapTypes, QName[] dtrMapRepresentations)
-			throws EXIException {
 		super(dtrMapTypes, dtrMapRepresentations);
-		this.isCanonical = isCanonical;
 	}
 
 	public boolean isValid(Datatype datatype, Value value) {
@@ -74,12 +67,7 @@ public class TypedTypeEncoder extends AbstractTypeEncoder {
 
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException {
-		if(isCanonical) {
-			lastDatatype.writeValueCanonical(qnContext, valueChannel, stringEncoder);
-		} else {
-			lastDatatype.writeValue(qnContext, valueChannel, stringEncoder);
-		}
-		
+		lastDatatype.writeValue(qnContext, valueChannel, stringEncoder);
 	}
 	
 }

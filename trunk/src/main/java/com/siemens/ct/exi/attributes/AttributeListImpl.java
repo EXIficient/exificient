@@ -68,14 +68,17 @@ public class AttributeListImpl implements AttributeList {
 	final protected List<String> attributeLocalName;
 	final protected List<String> attributeValue;
 	final protected List<String> attributePrefix;
-	
+
 	// NS, prefix mappings
 	protected List<NamespaceDeclaration> nsDecls;
 
 	public AttributeListImpl(EXIFactory exiFactory) {
 		// options
 		isSchemaInformed = exiFactory.getGrammars().isSchemaInformed();
-		isCanonical = exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI);
+		isCanonical = exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI)
+				|| exiFactory.getEncodingOptions().isOptionEnabled(
+						EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
 		preserveSchemaLocation = exiFactory.getEncodingOptions()
 				.isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 		preservePrefixes = exiFactory.getFidelityOptions().isFidelityEnabled(
@@ -98,9 +101,9 @@ public class AttributeListImpl implements AttributeList {
 		attributeLocalName.clear();
 		attributeValue.clear();
 		attributePrefix.clear();
-		
+
 		xsiTypeRaw = null;
-		
+
 		nsDecls.clear();
 	}
 
@@ -169,46 +172,46 @@ public class AttributeListImpl implements AttributeList {
 		this.xsiNilPrefix = xsiPrefix;
 	}
 
-//	public void parse(Attributes atts) {
-//		clear();
-//
-//		for (int i = 0; i < atts.getLength(); i++) {
-//			String localName = atts.getLocalName(i);
-//			String uri = atts.getURI(i);
-//
-//			// xsi:*
-//			if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
-//				// xsi:type
-//				if (localName.equals(Constants.XSI_TYPE)) {
-//					// Note: prefix to uri mapping is done later on
-//					setXsiType(atts.getValue(i), getPrefixOf(atts, i));
-//				}
-//				// xsi:nil
-//				else if (localName.equals(Constants.XSI_NIL)) {
-//					setXsiNil(atts.getValue(i), getPrefixOf(atts, i));
-//				} else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
-//						.equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
-//						&& !preserveSchemaLocation) {
-//					// prune xsi:schemaLocation
-//				} else {
-//					insertAttribute(atts.getURI(i), atts.getLocalName(i),
-//							getPrefixOf(atts, i), atts.getValue(i));
-//				}
-//			}
-//			// == Attribute (AT)
-//			// When schemas are used, attribute events occur in lexical order
-//			// sorted first by qname localName then by qname uri.
-//			else {
-//				insertAttribute(atts.getURI(i), atts.getLocalName(i),
-//						getPrefixOf(atts, i), atts.getValue(i));
-//			}
-//		}
-//	}
-	
-	
+	// public void parse(Attributes atts) {
+	// clear();
+	//
+	// for (int i = 0; i < atts.getLength(); i++) {
+	// String localName = atts.getLocalName(i);
+	// String uri = atts.getURI(i);
+	//
+	// // xsi:*
+	// if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+	// // xsi:type
+	// if (localName.equals(Constants.XSI_TYPE)) {
+	// // Note: prefix to uri mapping is done later on
+	// setXsiType(atts.getValue(i), getPrefixOf(atts, i));
+	// }
+	// // xsi:nil
+	// else if (localName.equals(Constants.XSI_NIL)) {
+	// setXsiNil(atts.getValue(i), getPrefixOf(atts, i));
+	// } else if ((localName.equals(Constants.XSI_SCHEMA_LOCATION) || localName
+	// .equals(Constants.XSI_NONAMESPACE_SCHEMA_LOCATION))
+	// && !preserveSchemaLocation) {
+	// // prune xsi:schemaLocation
+	// } else {
+	// insertAttribute(atts.getURI(i), atts.getLocalName(i),
+	// getPrefixOf(atts, i), atts.getValue(i));
+	// }
+	// }
+	// // == Attribute (AT)
+	// // When schemas are used, attribute events occur in lexical order
+	// // sorted first by qname localName then by qname uri.
+	// else {
+	// insertAttribute(atts.getURI(i), atts.getLocalName(i),
+	// getPrefixOf(atts, i), atts.getValue(i));
+	// }
+	// }
+	// }
+
 	public void addNamespaceDeclaration(String uri, String pfx) {
-		// Canonical EXI defines that namespace declarations MUST be sorted lexicographically according to the NS prefix
-		if(this.nsDecls.size() == 0 || !this.isCanonical) {
+		// Canonical EXI defines that namespace declarations MUST be sorted
+		// lexicographically according to the NS prefix
+		if (this.nsDecls.size() == 0 || !this.isCanonical) {
 			this.nsDecls.add(new NamespaceDeclaration(uri, pfx));
 		} else {
 			// sort
@@ -219,31 +222,32 @@ public class AttributeListImpl implements AttributeList {
 				// move right
 				i--;
 			}
-			
+
 			// update position i
 			this.nsDecls.add(i, new NamespaceDeclaration(uri, pfx));
 		}
-		
+
 	}
-	
-	
+
 	public int getNumberOfNamespaceDeclarations() {
 		return nsDecls.size();
 	}
-	
+
 	public NamespaceDeclaration getNamespaceDeclaration(int index) {
-		assert(index >= 0 && index < nsDecls.size());
+		assert (index >= 0 && index < nsDecls.size());
 		return nsDecls.get(index);
 	}
-	
+
 	public void addAttribute(QName at, String value) {
-		addAttribute(at.getNamespaceURI(), at.getLocalPart(), at.getPrefix(), value);
+		addAttribute(at.getNamespaceURI(), at.getLocalPart(), at.getPrefix(),
+				value);
 	}
-	
-	public void addAttribute(String uri, String localName, String pfx, String value) {
+
+	public void addAttribute(String uri, String localName, String pfx,
+			String value) {
 		uri = uri == null ? XMLConstants.NULL_NS_URI : uri;
-		pfx = pfx == null ? XMLConstants.DEFAULT_NS_PREFIX : pfx;		
-		
+		pfx = pfx == null ? XMLConstants.DEFAULT_NS_PREFIX : pfx;
+
 		// xsi:*
 		if (uri.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
 			// xsi:type
@@ -269,11 +273,10 @@ public class AttributeListImpl implements AttributeList {
 			insertAttribute(uri, localName, pfx, value);
 		}
 	}
-	
 
-	protected void insertAttribute(String uri, String localName,
-			String pfx, String value) {
-		if(this.isSchemaInformed || this.isCanonical) {
+	protected void insertAttribute(String uri, String localName, String pfx,
+			String value) {
+		if (this.isSchemaInformed || this.isCanonical) {
 			// sorted attributes
 			int i = this.getNumberOfAttributes();
 
@@ -296,35 +299,37 @@ public class AttributeListImpl implements AttributeList {
 			attributeValue.add(value);
 		}
 	}
-	
+
 	protected final boolean isGreaterAttribute(int attributeIndex, String uri,
 			String localName) {
 
-		int compLocalName = getAttributeLocalName(attributeIndex).compareTo(localName);
-		
-		if (compLocalName > 0 ) {
+		int compLocalName = getAttributeLocalName(attributeIndex).compareTo(
+				localName);
+
+		if (compLocalName > 0) {
 			// localName is greater
 			return true;
-		} else if (compLocalName < 0 ) {
+		} else if (compLocalName < 0) {
 			// localName is smaller
 			return false;
 		} else {
-			// localName's are equal 
+			// localName's are equal
 			return (getAttributeURI(attributeIndex).compareTo(uri) > 0);
 		}
 	}
-	
+
 	protected final boolean isGreaterNS(int nsIndex, String prefix) {
 
-		int compPrefix = getNamespaceDeclaration(nsIndex).prefix.compareTo(prefix);
-		
-		if (compPrefix > 0 ) {
+		int compPrefix = getNamespaceDeclaration(nsIndex).prefix
+				.compareTo(prefix);
+
+		if (compPrefix > 0) {
 			// prefix is greater
 			return true;
 		} else {
 			// prefix is smaller (or equal)
 			return false;
-		} 
+		}
 	}
 
 }
