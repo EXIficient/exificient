@@ -425,9 +425,11 @@ public class CanonicalEXITestCase extends TestCase {
 		// decoder
 		{
 			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
-			BitDecoderChannel bdc = new BitDecoderChannel(new ByteArrayInputStream(baos.toByteArray()));
+			BitDecoderChannel bdc = new BitDecoderChannel(
+					new ByteArrayInputStream(baos.toByteArray()));
 			decoder.setInputChannel(bdc);
-//			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+			// decoder.setInputStream(new
+			// ByteArrayInputStream(baos.toByteArray()));
 
 			assertTrue(decoder.next() == EventType.START_DOCUMENT);
 			decoder.decodeStartDocument();
@@ -436,10 +438,11 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
 
 			assertTrue(decoder.next() == EventType.CHARACTERS);
-//			// Note: 4 enumerated values.. hence decode 2 bits --> result should be zero for first ordinal position
-//			int ev = bdc.decodeNBitUnsignedInteger(2);
-//			assertTrue(ev == 0);
-			
+			// // Note: 4 enumerated values.. hence decode 2 bits --> result
+			// should be zero for first ordinal position
+			// int ev = bdc.decodeNBitUnsignedInteger(2);
+			// assertTrue(ev == 0);
+
 			Value v = decoder.decodeCharacters();
 			assertTrue(v instanceof StringValue);
 			assertTrue(v.toString().equals("small"));
@@ -449,23 +452,24 @@ public class CanonicalEXITestCase extends TestCase {
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
-			
+
 			// check that everywhere "zeros" are used and no other bit..
 			byte[] bytes = baos.toByteArray();
 			assertTrue(bytes.length == 1);
 			assertTrue(bytes[0] == 0); // 0000 0000
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 123.012300	--> 	1230123	-4
+	// 123.012300 --> 1230123 -4
 	public void testDatatypeFloat0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -513,16 +517,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 0.0 -->	0	0
+	// 0.0 --> 0 0
 	public void testDatatypeFloat1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -570,16 +575,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// -0.0 -->	0	0
+	// -0.0 --> 0 0
 	public void testDatatypeFloat2() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -627,17 +633,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 1.0	--> 1	0
+	// 1.0 --> 1 0
 	public void testDatatypeFloat3() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -685,16 +691,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// -1230.01 -->	-123001	-2
+	// -1230.01 --> -123001 -2
 	public void testDatatypeFloat4() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -742,16 +749,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 0.1230	-->	123	-3
+	// 0.1230 --> 123 -3
 	public void testDatatypeFloat5() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -799,16 +807,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 12300	-->	123	2
+	// 12300 --> 123 2
 	public void testDatatypeFloat6() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -856,16 +865,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 12.0	-->	12	0
+	// 12.0 --> 12 0
 	public void testDatatypeFloat7() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -913,17 +923,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 120E-1	-->	12	0
+	// 120E-1 --> 12 0
 	public void testDatatypeFloat8() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -971,16 +981,17 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-float
-	// 1.2E1	-->	12	0
+	// 1.2E1 --> 12 0
 	public void testDatatypeFloat9() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
 		factory.setFidelityOptions(FidelityOptions.createDefault());
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:float'>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ " </xs:element>"
+				+ "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1028,9 +1039,9 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-dateTime
-	// the same
+	// Note: used to be the same... now not anymore!!
 	// String s1 = "2015-08-11T23:00:00+09:00";
 	// String s2 = "2015-08-11T16:00:00+02:00";
 	// String s3 = "2015-08-11T14:00:00Z"; // UTC
@@ -1041,6 +1052,8 @@ public class CanonicalEXITestCase extends TestCase {
 		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ " <xs:element name='el1' type='xs:dateTime'>"
 				+ " </xs:element>" + "</xs:schema>";
+
+		String sdt = "2015-08-11T23:00:00+09:00";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1057,7 +1070,7 @@ public class CanonicalEXITestCase extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
 					null);
-			encoder.encodeCharacters(new StringValue("2015-08-11T23:00:00+09:00"));
+			encoder.encodeCharacters(new StringValue(sdt));
 			encoder.encodeEndElement();
 			encoder.encodeEndDocument();
 			encoder.flush();
@@ -1078,7 +1091,122 @@ public class CanonicalEXITestCase extends TestCase {
 			Value v = decoder.decodeCharacters();
 			assertTrue(v instanceof DateTimeValue);
 			DateTimeValue dtv = (DateTimeValue) v;
-			assertTrue(dtv.toString().equals("2015-08-11T14:00:00Z"));
+			// assertTrue(dtv.toString().equals("2015-08-11T14:00:00Z"));
+			assertTrue(dtv.toString().equals(sdt));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testDatatypeDateTime1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:date'>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		String sdt = "2003-10-30";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName s1 = new QName("", "el1");
+
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					null);
+			encoder.encodeCharacters(new StringValue(sdt));
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof DateTimeValue);
+			DateTimeValue dtv = (DateTimeValue) v;
+			assertTrue(dtv.toString().equals(sdt));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testDatatypeDateTime2() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:date'>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		String sdt = "2003-10-30Z";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName s1 = new QName("", "el1");
+
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					null);
+			encoder.encodeCharacters(new StringValue(sdt));
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof DateTimeValue);
+			DateTimeValue dtv = (DateTimeValue) v;
+			assertTrue(dtv.toString().equals(sdt));
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
@@ -1088,63 +1216,108 @@ public class CanonicalEXITestCase extends TestCase {
 		}
 	}
 	
+	public void testStreamHeaderEXIOptions0() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
+
+		String xml = "<foo>" + "text content" + "</foo>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
+		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing Bits
+		assertTrue("Presence Bit for EXI Options", bdc.decodeNBitUnsignedInteger(1) == 0); // Presence Bit for EXI Options
+	}
+	
+	public void testStreamHeaderEXIOptions1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		String xml = "<foo>" + "text content" + "</foo>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
+		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing Bits
+		assertTrue("Presence Bit for EXI Options", bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI Options
+	}
+	
+
 	// header MUST include EXI Options
 	public void testStreamHeader0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
-		
+
 		String xml = "<foo>" + "text content" + "</foo>";
-		
+
 		// encode to EXI
 		TestSAXEncoder enc = new TestSAXEncoder(factory);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
-		
+
 		// decode and check
 		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
 		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
-		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong setting, stream should contain the right options
+		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong
+																// setting,
+																// stream should
+																// contain the
+																// right options
 		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
-		EXIBodyDecoder bdec= sdec.decodeHeader(isCan);
+		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
-		EXIBodyDecoderInOrder bdec2 =  (EXIBodyDecoderInOrder) bdec;
+		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
 		assertTrue(bdec2.exiFactory != noOptionsFactory);
-		
+
 		bdec2.exiFactory.createEXIReader();
 	}
-	
-	// When the alignment option compression is set, pre-compress MUST be used instead of compression.
+
+	// When the alignment option compression is set, pre-compress MUST be used
+	// instead of compression.
 	public void testStreamHeader1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
 		factory.setCodingMode(CodingMode.COMPRESSION);
-		
+
 		String xml = "<foo>" + "text content" + "</foo>";
-		
+
 		// encode to EXI
 		TestSAXEncoder enc = new TestSAXEncoder(factory);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
-		
+
 		// decode and check
 		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
 		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
-		noOptionsFactory.setCodingMode(CodingMode.BYTE_PACKED); // wrong setting, stream should contain the right options
+		noOptionsFactory.setCodingMode(CodingMode.BYTE_PACKED); // wrong
+																// setting,
+																// stream should
+																// contain the
+																// right options
 		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
 		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderReordered);
-		EXIBodyDecoderReordered bdec2 =  (EXIBodyDecoderReordered) bdec;
+		EXIBodyDecoderReordered bdec2 = (EXIBodyDecoderReordered) bdec;
 		assertTrue(bdec2.exiFactory != noOptionsFactory);
 		assertTrue(bdec2.exiFactory.getCodingMode() == CodingMode.PRE_COMPRESSION);
 	}
-	
 
-	
-	//  datatypeRepresentationMap: the tuples are to be sorted lexicographically according to the schema datatype first by {name} then by {namespace}
+	// datatypeRepresentationMap: the tuples are to be sorted lexicographically
+	// according to the schema datatype first by {name} then by {namespace}
 	public void testStreamHeader2() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
-		
+
 		/* DTR Map */
 		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
@@ -1153,31 +1326,40 @@ public class CanonicalEXITestCase extends TestCase {
 		QName[] dtrMapTypes = { type1, type2 };
 		QName[] dtrMapRepresentations = { representation1, representation2 };
 		factory.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-		
+
 		String xml = "<foo>" + "text content" + "</foo>";
-		
+
 		// encode to EXI
 		TestSAXEncoder enc = new TestSAXEncoder(factory);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
-		
+
 		// decode and check
 		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
 		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
-		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong setting, stream should contain the right options
+		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong
+																// setting,
+																// stream should
+																// contain the
+																// right options
 		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
-		EXIBodyDecoder bdec= sdec.decodeHeader(isCan);
+		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
-		EXIBodyDecoderInOrder bdec2 =  (EXIBodyDecoderInOrder) bdec;
+		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
 		assertTrue(bdec2.exiFactory != noOptionsFactory);
-		
+
 		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes().length == 2);
-		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[0].getLocalPart().equals("boolean"));
-		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapRepresentations()[0].getLocalPart().equals("integer"));
-		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[1].getLocalPart().equals("decimal"));
-		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapRepresentations()[1].getLocalPart().equals("string"));
-		
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[0]
+				.getLocalPart().equals("boolean"));
+		assertTrue(bdec2.exiFactory
+				.getDatatypeRepresentationMapRepresentations()[0]
+				.getLocalPart().equals("integer"));
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes()[1]
+				.getLocalPart().equals("decimal"));
+		assertTrue(bdec2.exiFactory
+				.getDatatypeRepresentationMapRepresentations()[1]
+				.getLocalPart().equals("string"));
+
 	}
-	
 
 }

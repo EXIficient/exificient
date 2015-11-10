@@ -460,56 +460,70 @@ public class DefaultEXIFactory implements EXIFactory {
 		// }
 
 	}
-	
-	protected void updateFactoryAccordingCanonicalEXI() throws UnsupportedOption {
+
+	protected void updateFactoryAccordingCanonicalEXI(String canonicalOption)
+			throws UnsupportedOption {
 		// update canonical options according to canonical EXI rules
-		assert(this.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI));
+		assert (this.getEncodingOptions().isOptionEnabled(canonicalOption));
 		// * A Canonical EXI Header MUST NOT begin with the optional EXI Cookie
 		this.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_COOKIE);
-		// * Presence Bit for EXI Options MUST always be 1 (true) to indicate that the fifth part of the EXI Header, the EXI Options, is present. 
-		this.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
-		// * When the alignment option compression is set, pre-compress MUST be used instead of compression.
-		if(this.getCodingMode() == CodingMode.COMPRESSION) {
+		// * Presence Bit for EXI Options to indicate whether the fifth part
+		// of the EXI Header, the EXI Options document, is present or absent.
+		if(this.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI)) {
+			this.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		} else {
+			this.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_OPTIONS);
+		}
+		// * When the alignment option compression is set, pre-compress MUST be
+		// used instead of compression.
+		if (this.getCodingMode() == CodingMode.COMPRESSION) {
 			this.setCodingMode(CodingMode.PRE_COMPRESSION);
 		}
-		// * The element schemaId MUST always be present to indicate which schema information is used. 
+		// * The element schemaId MUST always be present to indicate which
+		// schema information is used.
 		this.getEncodingOptions().setOption(EncodingOptions.INCLUDE_SCHEMA_ID);
-		// * datatypeRepresentationMap: the tuples are to be sorted lexicographically according to the schema datatype first by {name} then by {namespace}
-		if(this.dtrMapTypes != null && this.dtrMapTypes.length > 0) {
+		// * datatypeRepresentationMap: the tuples are to be sorted
+		// lexicographically according to the schema datatype first by {name}
+		// then by {namespace}
+		if (this.dtrMapTypes != null && this.dtrMapTypes.length > 0) {
 			bubbleSort(this.dtrMapTypes, this.dtrMapRepresentations);
 		}
 	}
-	
+
 	protected void bubbleSort(QName[] dtrMapTypes, QName[] dtrMapRepresentations) {
-	    boolean swapped = true;
-	    int j = 0;
-	    QName tmpType;
-	    QName tmpRep;
-	    while (swapped) {
-	        swapped = false;
-	        j++;
-	        for (int i = 0; i < dtrMapTypes.length - j; i++) {
-	            // if (array[i] > array[i + 1]) {
-	        	if (LexicographicSort.compare(dtrMapTypes[i], dtrMapTypes[i + 1]) > 0 ) {
-	                tmpType = dtrMapTypes[i];
-	                dtrMapTypes[i] = dtrMapTypes[i + 1];
-	                dtrMapTypes[i + 1] = tmpType;
-	                tmpRep = dtrMapRepresentations[i];
-	                dtrMapRepresentations[i] = dtrMapRepresentations[i + 1];
-	                dtrMapRepresentations[i + 1] = tmpRep;
-	                swapped = true;
-	            }
-	        }
-	    }
+		boolean swapped = true;
+		int j = 0;
+		QName tmpType;
+		QName tmpRep;
+		while (swapped) {
+			swapped = false;
+			j++;
+			for (int i = 0; i < dtrMapTypes.length - j; i++) {
+				// if (array[i] > array[i + 1]) {
+				if (LexicographicSort.compare(dtrMapTypes[i],
+						dtrMapTypes[i + 1]) > 0) {
+					tmpType = dtrMapTypes[i];
+					dtrMapTypes[i] = dtrMapTypes[i + 1];
+					dtrMapTypes[i + 1] = tmpType;
+					tmpRep = dtrMapRepresentations[i];
+					dtrMapRepresentations[i] = dtrMapRepresentations[i + 1];
+					dtrMapRepresentations[i + 1] = tmpRep;
+					swapped = true;
+				}
+			}
+		}
 	}
 
 	public SAXEncoder createEXIWriter() throws EXIException {
 		// canonical EXI (http://www.w3.org/TR/exi-c14n/)
-		boolean isCanonical = this.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI);
-		if(isCanonical) {
-			updateFactoryAccordingCanonicalEXI();
+		if(this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI)) {
+			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI);
+		} else if(this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {	
+			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
 		}
-		
+
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
 				|| fidelityOptions
 						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
@@ -588,9 +602,7 @@ public class DefaultEXIFactory implements EXIFactory {
 				typeEncoder = new LexicalTypeEncoder(dtrMapTypes,
 						dtrMapRepresentations);
 			} else {
-				boolean isCanonical = this.getEncodingOptions()
-						.isOptionEnabled(EncodingOptions.CANONICAL_EXI);
-				typeEncoder = new TypedTypeEncoder(isCanonical, dtrMapTypes,
+				typeEncoder = new TypedTypeEncoder(dtrMapTypes,
 						dtrMapRepresentations);
 			}
 

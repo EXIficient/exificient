@@ -68,8 +68,14 @@ public class EncodingOptions {
 	/**
 	 * To indicate that the EXI stream should respect the Canonical EXI rules
 	 * see http://www.w3.org/TR/exi-c14n
-	 * */
+	 */
 	public static final String CANONICAL_EXI = "http://www.w3.org/TR/exi-c14n";
+	
+	/**
+	 * To indicate that the EXI stream should respect the Canonical EXI rules
+	 * see http://www.w3.org/TR/exi-c14n#WithoutEXIOptions
+	 */
+	public static final String CANONICAL_EXI_WITHOUT_EXI_OPTIONS = "http://www.w3.org/TR/exi-c14n#WithoutEXIOptions";
 
 	/* contains options and according values */
 	protected Set<String> options;
@@ -121,6 +127,10 @@ public class EncodingOptions {
 		} else if (key.equals(INCLUDE_PROFILE_VALUES)) {
 			options.add(key);
 		} else if (key.equals(CANONICAL_EXI)) {
+			options.remove(CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
+			options.add(key);
+		} else if (key.equals(CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {
+			options.remove(CANONICAL_EXI);
 			options.add(key);
 		} else {
 			throw new UnsupportedOption("EncodingOption '" + key
