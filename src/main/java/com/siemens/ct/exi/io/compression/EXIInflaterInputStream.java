@@ -85,7 +85,7 @@ public class EXIInflaterInputStream extends FilterInputStream {
 	 * @param size
 	 *            the input buffer size
 	 * @exception IllegalArgumentException
-	 *                if size is <= 0
+	 *                if size is &le; 0
 	 */
 	public EXIInflaterInputStream(PushbackInputStream in, Inflater inf, int size) {
 		super(in);
@@ -231,7 +231,7 @@ public class EXIInflaterInputStream extends FilterInputStream {
 	 * @exception IOException
 	 *                if an I/O error has occurred
 	 * @exception IllegalArgumentException
-	 *                if n < 0
+	 *                if n &lt; 0
 	 */
 	public long skip(long n) throws IOException {
 		if (n < 0) {

@@ -41,9 +41,9 @@ public interface RestrictedCharacterSet extends Serializable {
 	/**
 	 * Retrieves the code-point for given code.
 	 * 
-	 * @param code
-	 * @return codePoint
-	 * @throws IndexOutOfBoundsException
+	 * @param code code
+	 * @return codePoint code-point
+	 * @throws IndexOutOfBoundsException  out-of-bound exception
 	 */
 
 	public int getCodePoint(int code);
@@ -54,7 +54,7 @@ public interface RestrictedCharacterSet extends Serializable {
 	 * 
 	 * @param codePoint
 	 *            character of interest
-	 * @return code
+	 * @return code code
 	 */
 	public int getCode(int codePoint);
 

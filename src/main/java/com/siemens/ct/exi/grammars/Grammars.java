@@ -71,7 +71,7 @@ public interface Grammars extends Serializable {
 	 * them (null and empty string).
 	 * </p>
 	 * 
-	 * @param schemaId
+	 * @param schemaId schemaId
 	 * @throws UnsupportedOption
 	 *             if schemaId does not respect EXI restrictions (e.g.,
 	 *             schema-less grammars: schemaId == null)

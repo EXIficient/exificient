@@ -331,6 +331,12 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Encode Date-Time as a sequence of values representing the individual
 	 * components of the Date-Time.
+	 * 
+	 * @param cal calendar
+	 * @param type date-time type
+	 * @return date-time value
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public static DateTimeValue parse(Calendar cal, DateTimeType type)
 			throws IOException {
@@ -384,6 +390,9 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Returns monthDay representation defined in the EXI format (Month * 32 +
 	 * Day)
+	 * 
+	 * @param cal calendar 
+	 * @return monthDay
 	 */
 	public static int getMonthDay(Calendar cal) {
 		int month = cal.get(Calendar.MONTH) + 1;
@@ -396,6 +405,9 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Returns time representation defined in the EXI format ((Hour * 64) +
 	 * Minutes) * 64 + seconds
+	 * 
+	 * @param cal calendar 
+	 * @return time representation
 	 */
 	public static int getTime(Calendar cal) {
 		int time = cal.get(Calendar.HOUR_OF_DAY);
@@ -447,6 +459,9 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Sets month and day of the given calendar making use of of the monthDay
 	 * representation defined in EXI format
+	 * 
+	 * @param monthDay monthDay
+	 * @param cal calendar
 	 */
 	protected static void setMonthDay(int monthDay, Calendar cal) {
 		// monthDay = month * 32 + day;
@@ -459,6 +474,9 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Sets hour, minute and second of the given calendar making use of of the
 	 * time representation defined in EXI format
+	 * 
+	 * @param time time
+	 * @param cal calendar
 	 */
 	protected static void setTime(int time, Calendar cal) {
 		// ((Hour * 64) + Minutes) * 64 + seconds
@@ -473,6 +491,9 @@ public class DateTimeValue extends AbstractValue {
 
 	/**
 	 * Returns time-zone in minutes offset
+	 * 
+	 * @param cal calendar
+	 * @return time-zone in minutes offset
 	 */
 	protected static int getTimeZoneInMinutesOffset(Calendar cal) {
 		return cal.getTimeZone().getRawOffset() / (1000 * 60)
@@ -481,6 +502,8 @@ public class DateTimeValue extends AbstractValue {
 
 	/**
 	 * Returns time-zone offset in millisecs according to the given minutes
+	 * 
+	 * @return time-zone offset in millisecs
 	 */
 	protected static int getTimeZoneInMillisecs(int minutes) {
 		return minutes * (1000 * 60); // minutes to millisec

@@ -64,7 +64,7 @@ public class GrammarFactory {
 	 * 
 	 * @param xsdLocation file location
 	 * @return schema-informed EXI grammars
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	public Grammars createGrammars(String xsdLocation) throws EXIException {
 		return this.createGrammars(xsdLocation, null);
@@ -76,7 +76,7 @@ public class GrammarFactory {
 	 * @param xsdLocation file location
 	 * @param entityResolver application can register XSD resolver
 	 * @return schema-informed EXI grammars
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	public Grammars createGrammars(String xsdLocation,
 			XMLEntityResolver entityResolver) throws EXIException {
@@ -96,7 +96,7 @@ public class GrammarFactory {
 	 * 
 	 * @param is input stream
 	 * @return schema-informed EXI grammars
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	public Grammars createGrammars(InputStream is) throws EXIException {
 		return this.createGrammars(is, null);
@@ -108,7 +108,7 @@ public class GrammarFactory {
 	 * @param is input stream
 	 * @param entityResolver application can register XSD resolver
 	 * @return schema-informed EXI grammars
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	public Grammars createGrammars(InputStream is,
 			XMLEntityResolver entityResolver) throws EXIException {
@@ -124,7 +124,7 @@ public class GrammarFactory {
 	 * body.
 	 * 
 	 * @return built-in XSD EXI grammars
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	public Grammars createXSDTypesOnlyGrammars() throws EXIException {
 		grammarBuilder.loadXSDTypesOnlyGrammars();

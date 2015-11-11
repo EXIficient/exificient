@@ -35,7 +35,10 @@ public final class EmptyLocation implements Location {
     
     private EmptyLocation() {}
     
-    /** Returns the one and only instance of this class. */
+    /** Returns the one and only instance of this class.
+     *
+     * @return empty location instance
+     */
     public static EmptyLocation getInstance() {
         return EMPTY_LOCATION_INSTANCE;
     }

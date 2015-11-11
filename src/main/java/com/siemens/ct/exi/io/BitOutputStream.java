@@ -62,6 +62,8 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * Constructs an instance of this class.
+	 * 
+	 * @param ostream output stream
 	 */
 	public BitOutputStream(OutputStream ostream) {
 		this.ostream = ostream;
@@ -70,6 +72,8 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * Returns a reference to underlying output stream.
+	 * 
+	 * @return underlying output stream
 	 */
 	public OutputStream getUnderlyingOutputStream() {
 		return ostream;
@@ -99,6 +103,8 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * Returns true if stream is on a byte boundary, i.e. if no bits have been
 	 * buffered since the last byte was written to underlying stream.
+	 * 
+	 * @return whether stream is aligned
 	 */
 	public boolean isByteAligned() {
 		return (capacity == BITS_IN_BYTE);
@@ -108,6 +114,8 @@ public class BitOutputStream extends OutputStream {
 	 * Returns the number of bits that haven't been flushed. When the buffer is
 	 * full, it is automatically flushed, so the number returned by this method
 	 * is in [0, 7].
+	 * 
+	 * @return bits in buffer
 	 */
 	public int getBitsInBuffer() {
 		return (BITS_IN_BYTE - capacity);
@@ -125,6 +133,8 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * If there are some unwritten bits, pad them if necessary and write them
 	 * out.
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public void align() throws IOException {
 		if (capacity < BITS_IN_BYTE) {
@@ -137,6 +147,8 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * Write a single bit 0.
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public void writeBit0() throws IOException {
 		buffer <<= 1;
@@ -146,6 +158,8 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * Write a single bit 1.
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public void writeBit1() throws IOException {
 		buffer = (buffer << 1) | 0x1;
@@ -156,6 +170,9 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * Write the least significant bit of parameter b into the internal buffer,
 	 * flushing it if necessary.
+	 * 
+	 * @param b bit
+	 * @throws IOException IO exception
 	 */
 	protected void writeBit(int b) throws IOException {
 		buffer = (buffer << 1) | (b & 0x1);
@@ -166,6 +183,10 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * Write the n least significant bits of parameter b starting with the most
 	 * significant, i.e. from left to right.
+	 * 
+	 * @param b bits
+	 * @param n number of bits
+	 * @throws IOException IO exception
 	 */
 	public void writeBits(int b, int n) throws IOException {
 		if (n <= capacity) {
@@ -202,6 +223,9 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * Ignore current buffer, and write a byte directly to the underlying
 	 * stream.
+	 * 
+	 * @param b byte
+	 * @throws IOException IO exception
 	 */
 	protected void writeDirectByte(int b) throws IOException {
 		ostream.write(b);
@@ -211,6 +235,11 @@ public class BitOutputStream extends OutputStream {
 	/**
 	 * Ignore current buffer, and write a sequence of bytes directly to the
 	 * underlying stream.
+	 * 
+	 * @param b byte array
+	 * @param off byte array offset
+	 * @param len byte array length
+	 * @throws IOException IO exception
 	 */
 	protected void writeDirectBytes(byte[] b, int off, int len)
 			throws IOException {

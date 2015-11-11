@@ -55,7 +55,7 @@ public enum BuiltInType {
 	/** Decimal */
 	DECIMAL,
 
-	/** Float & Double */
+	/** Float &amp; Double */
 	FLOAT,
 
 	/** N-Bit UnsignedInteger */
@@ -70,7 +70,7 @@ public enum BuiltInType {
 	/** Datetime */
 	DATETIME,
 
-	/** String & RestrictedCharSet */
+	/** String &amp; RestrictedCharSet */
 	STRING,
 
 	/** Restricted character set string */

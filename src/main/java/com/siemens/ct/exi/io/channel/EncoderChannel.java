@@ -55,7 +55,7 @@ public interface EncoderChannel {
 	 * Align to next byte-aligned boundary in the stream if it is not already at
 	 * such a boundary
 	 * 
-	 * @throws IOException
+	 * @throws IOException IO exception
 	 */
 	public void align() throws IOException;
 
@@ -68,11 +68,17 @@ public interface EncoderChannel {
 	/**
 	 * Encode a single boolean value. A false value is encoded as bit (byte) 0
 	 * and true value is encode as bit (byte) 1.
+	 * 
+	 * @param b boolean
+	 * @throws IOException IO exception
 	 */
 	public void encodeBoolean(boolean b) throws IOException;
 
 	/**
 	 * Encode a binary value as a length-prefixed sequence of octets.
+	 * 
+	 * @param b byte array
+	 * @throws IOException IO exception
 	 */
 	public void encodeBinary(byte[] b) throws IOException;
 
@@ -80,6 +86,9 @@ public interface EncoderChannel {
 	 * Encode a string as a length-prefixed sequence of UCS codepoints, each of
 	 * which is encoded as an integer. Look for codepoints of more than 16 bits
 	 * that are represented as UTF-16 surrogate pairs in Java.
+	 * 
+	 * @param s string
+	 * @throws IOException IO exception
 	 */
 	public void encodeString(String s) throws IOException;
 
@@ -87,6 +96,9 @@ public interface EncoderChannel {
 	 * Encode a string as a sequence of UCS codepoints, each of which is encoded
 	 * as an integer. Look for codepoints of more than 16 bits that are
 	 * represented as UTF-16 surrogate pairs in Java.
+	 * 
+	 * @param s string
+	 * @throws IOException IO exception
 	 */
 	public void encodeStringOnly(String s) throws IOException;
 
@@ -95,6 +107,9 @@ public interface EncoderChannel {
 	 * octets. The most significant bit of the last octet is set to zero to
 	 * indicate sequence termination. Only seven bits per octet are used to
 	 * store the integer's value.
+	 * 
+	 * @param n unsigned integer
+	 * @throws IOException IO exception
 	 */
 	public void encodeUnsignedInteger(int n) throws IOException;
 
@@ -109,6 +124,9 @@ public interface EncoderChannel {
 	 * sequence of octets. The most significant bit of the last octet is set to
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
+	 * 
+	 * @param n integer
+	 * @throws IOException IO exception
 	 */
 	public void encodeInteger(int n) throws IOException;
 
@@ -125,6 +143,12 @@ public interface EncoderChannel {
 	 * values The first Integer represents the integral portion of the Decimal
 	 * value. The second positive integer represents the fractional portion of
 	 * the decimal with the digits in reverse order to preserve leading zeros.
+	 * 
+	 * @param negative is negative
+	 * @param integral integral value
+	 * @param reverseFraction reverse fraction
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public void encodeDecimal(boolean negative, IntegerValue integral,
 			IntegerValue reverseFraction) throws IOException;
@@ -133,6 +157,9 @@ public interface EncoderChannel {
 	 * Encode a Float represented as two consecutive Integers. The first Integer
 	 * represents the mantissa of the floating point number and the second
 	 * Integer represents the 10-based exponent of the floating point number
+	 * 
+	 * @param fv float value
+	 * @throws IOException IO exception
 	 */
 	public void encodeFloat(FloatValue fv) throws IOException;
 
@@ -140,8 +167,8 @@ public interface EncoderChannel {
 	 * The Date-Time datatype representation is a sequence of values
 	 * representing the individual components of the Date-Time
 	 * 
-	 * @param cal
-	 * @throws IOException
+	 * @param cal datetime
+	 * @throws IOException IO exception
 	 */
 	public void encodeDateTime(DateTimeValue cal) throws IOException;
 

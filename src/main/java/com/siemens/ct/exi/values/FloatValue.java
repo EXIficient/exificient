@@ -104,6 +104,8 @@ public class FloatValue extends AbstractValue {
 
 	/**
 	 * Integer represents the mantissa of the floating point number
+	 * 
+	 * @return integer value
 	 */
 	public IntegerValue getMantissa() {
 		return mantissa;
@@ -111,6 +113,8 @@ public class FloatValue extends AbstractValue {
 
 	/**
 	 * Integer represents the 10-based exponent of the floating point number
+	 * 
+	 * @return integer value
 	 */
 	public IntegerValue getExponent() {
 		return exponent;

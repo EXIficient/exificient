@@ -61,8 +61,8 @@ public interface Value extends Serializable {
 	/**
 	 * Fills character array with the value represented as String
 	 * 
-	 * @param cbuffer
-	 * @param offset
+	 * @param cbuffer character buffer
+	 * @param offset character buffer offset
 	 */
 	public void getCharacters(char[] cbuffer, int offset);
 	
@@ -77,8 +77,8 @@ public interface Value extends Serializable {
 	 * Returns string representation by making use of the passed character
 	 * array.
 	 * 
-	 * @param cbuffer
-	 * @param offset
+	 * @param cbuffer character buffer
+	 * @param offset character buffer offset
 	 * @return String representation
 	 */
 	public String toString(char[] cbuffer, int offset);
