@@ -590,7 +590,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// Check special case: SAX does not inform about empty ("") CH
 			// events
 			// --> if EE is not found check whether an empty CH event *helps*
-			if ((ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
+			if (currentGrammar.isSchemaInformed() && (ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
 				BuiltInType bit = ((DatatypeEvent) ei.getEvent()).getDatatype()
 						.getBuiltInType();
 				switch (bit) {
