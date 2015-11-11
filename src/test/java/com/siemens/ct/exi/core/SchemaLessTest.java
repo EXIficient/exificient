@@ -751,7 +751,7 @@ public class SchemaLessTest extends TestCase {
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			} else {
-				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+				assertTrue(et == EventType.END_ELEMENT_UNDECLARED);
 				// decoder.decodeEndElementUndeclared();
 				decoder.decodeEndElement();
 			}
