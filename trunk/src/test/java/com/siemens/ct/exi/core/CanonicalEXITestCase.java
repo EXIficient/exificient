@@ -1361,5 +1361,13 @@ public class CanonicalEXITestCase extends TestCase {
 				.getLocalPart().equals("string"));
 
 	}
+	
+	public void testEmptyCharactersSchemaInformed0() throws Exception {
+		System.err.println("TODO testEmptyCharactersSchemaInformed");
+	}
+	
+	public void testEmptyCharactersSchemaLess0() throws Exception {
+		System.err.println("TODO testEmptyCharactersSchemaLess");
+	}
 
 }
