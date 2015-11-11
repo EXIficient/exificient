@@ -107,7 +107,7 @@ public class EncodingOptions {
 	 * @param key
 	 *            referring to a specific option
 	 * 
-	 * @throws UnsupportedOption
+	 * @throws UnsupportedOption if option is not supported
 	 */
 	public void setOption(String key) throws UnsupportedOption {
 		if (key.equals(INCLUDE_COOKIE)) {
@@ -143,6 +143,7 @@ public class EncodingOptions {
 	 * 
 	 * @param key
 	 *            referring to a specific option
+	 * @return whether option was set
 	 * 
 	 */
 	public boolean unsetOption(String key) {

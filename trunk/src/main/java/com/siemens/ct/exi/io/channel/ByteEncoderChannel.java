@@ -42,6 +42,8 @@ final public class ByteEncoderChannel extends AbstractEncoderChannel implements
 
 	/**
 	 * Construct a byte aligned encoder from output stream.
+	 * 
+	 * @param os output stream
 	 */
 	public ByteEncoderChannel(OutputStream os) {
 		this.os = os;

@@ -55,7 +55,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 * @param fidelityOptions
 	 *            new fidelity options
-	 * @throws EXIException
+	 *            
 	 * @see FidelityOptions
 	 */
 	public void setFidelityOptions(FidelityOptions fidelityOptions);
@@ -92,7 +92,7 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 * @param headerOptions
 	 *            header options
-	 * @throws EXIException
+	 *            
 	 * @see EncodingOptions
 	 */
 	public void setEncodingOptions(EncodingOptions headerOptions);
@@ -108,8 +108,8 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Sets the options used by the EXI Decoder(e.g., ignore schemaId).
 	 * 
-	 * @throws EXIException
-	 * @see DecodingOptions
+	 * @param options decoding options
+	 * @see DecodingOptions decoding options
 	 */
 	public void setDecodingOptions(DecodingOptions options);
 
@@ -124,7 +124,7 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Sets specific schemaId resolver.
 	 * 
-	 * @param schemaIdResolver
+	 * @param schemaIdResolver schemaId resolver
 	 * @see SchemaIdResolver
 	 */
 	public void setSchemaIdResolver(SchemaIdResolver schemaIdResolver);
@@ -139,6 +139,9 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Informs the factory that we are dealing with an XML fragment instead of
 	 * an XML document
+	 * 
+	 * @param isFragment true if is fragment
+	 * 
 	 */
 	public void setFragment(boolean isFragment);
 
@@ -151,6 +154,9 @@ public interface EXIFactory extends Cloneable {
 
 	/**
 	 * Sets the EXI <code>Grammars</code> used for coding.
+	 * 
+	 * @param grammar grammar
+	 * 
 	 */
 	public void setGrammars(Grammars grammar);
 
@@ -165,7 +171,7 @@ public interface EXIFactory extends Cloneable {
 	/**
 	 * Re-sets the coding mode used by the factory.
 	 * 
-	 * @param codingMode
+	 * @param codingMode coding mode
 	 */
 	public void setCodingMode(CodingMode codingMode);
 
@@ -181,7 +187,7 @@ public interface EXIFactory extends Cloneable {
 	 * The default blockSize is intentionally large (1,000,000) but can be
 	 * reduced for processing large documents on devices with limited memory.
 	 * 
-	 * @param blockSize
+	 * @param blockSize blockSize
 	 */
 	public void setBlockSize(int blockSize);
 
@@ -247,6 +253,9 @@ public interface EXIFactory extends Cloneable {
 	 * representations or user-defined datatype representations for representing
 	 * specific schema datatypes. This capability is called Datatype
 	 * Representation Map.
+	 * 
+	 * @param dtrMapTypes dtrMap types
+	 * @param dtrMapRepresentations dtrMap representations
 	 */
 	public void setDatatypeRepresentationMap(QName[] dtrMapTypes,
 			QName[] dtrMapRepresentations);
@@ -276,7 +285,7 @@ public interface EXIFactory extends Cloneable {
 	 * one of "compression", "pre-compression" or "strict" elements are present
 	 * in the same options document.
 	 * 
-	 * @param scElements
+	 * @param scElements selfContained elements
 	 */
 	public void setSelfContainedElements(QName[] scElements);
 	
@@ -287,7 +296,7 @@ public interface EXIFactory extends Cloneable {
 	 * one of "compression", "pre-compression" or "strict" elements are present
 	 * in the same options document.
 	 * 
-	 * @param scElements
+	 * @param scElements selfContained elements
 	 * @param scHandler handler for SC elements
 	 */
 	public void setSelfContainedElements(QName[] scElements, SelfContainedHandler scHandler);
@@ -296,7 +305,8 @@ public interface EXIFactory extends Cloneable {
 	 * Returns boolean value telling whether a certain element is encoded as
 	 * selfContained fragment.
 	 * 
-	 * @param element
+	 * @param element qualified element name
+	 * @return true if a certain element is selfContained
 	 */
 	public boolean isSelfContainedElement(QName element);
 	
@@ -319,6 +329,8 @@ public interface EXIFactory extends Cloneable {
 	 * indicates that no local value partition is used while "1" represents the
 	 * behavior of the EXI 1.0 specification
 	 * </p>
+	 * 
+	 * @param useLocalValuePartitions whether to use localValue partitions
 	 */
 	public void setLocalValuePartitions(boolean useLocalValuePartitions);
 
@@ -342,7 +354,7 @@ public interface EXIFactory extends Cloneable {
 	 * represents the behavior of the EXI 1.0 specification
 	 * </p>
 	 * 
-	 * @param maximumNumberOfBuiltInElementGrammars
+	 * @param maximumNumberOfBuiltInElementGrammars maximum number of Built-In element grammars
 	 */
 	public void setMaximumNumberOfBuiltInElementGrammars(
 			int maximumNumberOfBuiltInElementGrammars);
@@ -366,7 +378,7 @@ public interface EXIFactory extends Cloneable {
 	 * represents the behavior of the EXI 1.0 specification
 	 * </p>
 	 * 
-	 * @param maximumNumberOfBuiltInProductions
+	 * @param maximumNumberOfBuiltInProductions maximum number of Built-In productions
 	 */
 	public void setMaximumNumberOfBuiltInProductions(
 			int maximumNumberOfBuiltInProductions);
@@ -394,8 +406,8 @@ public interface EXIFactory extends Cloneable {
 	 * needs to implement the EXIBodyEncoder interface.
 	 * 
 	 * @see EXIBodyEncoder
-	 * @param className
-	 * @throws EXIException
+	 * @param className class name
+	 * @throws EXIException EXI exception
 	 */
 	public void setEXIBodyEncoder(String className) throws EXIException;
 
@@ -403,8 +415,8 @@ public interface EXIFactory extends Cloneable {
 	 * Allows to use another body encoder implementation.
 	 * 
 	 * @see EXIBodyEncoder
-	 * @param bodyEncoder
-	 * @throws EXIException
+	 * @param bodyEncoder body encoder
+	 * @throws EXIException EXI exception
 	 */
 	public void setEXIBodyEncoder(EXIBodyEncoder bodyEncoder)
 			throws EXIException;
@@ -414,8 +426,8 @@ public interface EXIFactory extends Cloneable {
 	 * needs to implement the EXIBodyDecoder interface.
 	 * 
 	 * @see EXIBodyDecoder
-	 * @param className
-	 * @throws EXIException
+	 * @param className class name
+	 * @throws EXIException EXI exception
 	 */
 	public void setEXIBodyDecoder(String className) throws EXIException;
 
@@ -423,8 +435,8 @@ public interface EXIFactory extends Cloneable {
 	 * Allows to use another body decoder implementation.
 	 * 
 	 * @see EXIBodyDecoder
-	 * @param bodyDecoder
-	 * @throws EXIException
+	 * @param bodyDecoder body decoder
+	 * @throws EXIException EXI exception
 	 */
 	public void setEXIBodyDecoder(EXIBodyDecoder bodyDecoder)
 			throws EXIException;
@@ -433,7 +445,7 @@ public interface EXIFactory extends Cloneable {
 	 * Returns an <code>EXIBodyEncoder</code>
 	 * 
 	 * @return encoder using the previously set coding options.
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 * 
 	 */
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException;
@@ -447,8 +459,7 @@ public interface EXIFactory extends Cloneable {
 	 * </p>
 	 * 
 	 * @return writer using the previously set coding options.
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
 	 * 
 	 */
 	public SAXEncoder createEXIWriter() throws EXIException;
@@ -457,7 +468,7 @@ public interface EXIFactory extends Cloneable {
 	 * Returns an <code>EXIBodyDecoder</code>
 	 * 
 	 * @return decoder using the previously set coding options.
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 * 
 	 */
 	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException;
@@ -466,7 +477,7 @@ public interface EXIFactory extends Cloneable {
 	 * Returns an <code>EXIReader</code>
 	 * 
 	 * @return reader using the previously set coding options.
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 * 
 	 */
 	public XMLReader createEXIReader() throws EXIException;
@@ -475,7 +486,6 @@ public interface EXIFactory extends Cloneable {
 	 * Returns an EXI <code>StringEncoder</code> according coding options
 	 * 
 	 * @return String Encoder
-	 * @throws EXIException
 	 */
 	public StringEncoder createStringEncoder();
 
@@ -485,16 +495,15 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type encoder according given EXI options
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 * @see TypeEncoder
 	 */
 	public TypeEncoder createTypeEncoder() throws EXIException;
 
 	/**
-	 * Returns an EXI <code>StringDecoder</code> according coding options
+	 * Returns an EXI {@link StringDecoder} according coding options
 	 * 
 	 * @return String Decoder
-	 * @throws EXIException
 	 */
 	public StringDecoder createStringDecoder();
 
@@ -504,7 +513,7 @@ public interface EXIFactory extends Cloneable {
 	 * Preserve.LexicalValues
 	 * 
 	 * @return type decoder according given EXI options
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 * @see TypeDecoder
 	 */
 	public TypeDecoder createTypeDecoder() throws EXIException;

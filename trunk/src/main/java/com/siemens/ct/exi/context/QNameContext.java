@@ -103,21 +103,21 @@ public class QNameContext implements Serializable {
 
 	/**
 	 * Returns the default qname as string with either the pre-populated
-	 * prefixes or ns<UriID>. e.g.
+	 * prefixes or ns&lt;UriID&gt;. e.g.
 	 * <p>
-	 * 0, "" --> ""
+	 * 0, "" &rarr; ""
 	 * </p>
 	 * <p>
-	 * 1, "http://www.w3.org/XML/1998/namespace"" --> "xml"
+	 * 1, "http://www.w3.org/XML/1998/namespace"" &rarr; "xml"
 	 * </p>
 	 * <p>
-	 * 2, "http://www.w3.org/2001/XMLSchema-instance" --> "xsi"
+	 * 2, "http://www.w3.org/2001/XMLSchema-instance" &rarr; "xsi"
 	 * </p>
 	 * <p>
-	 * 3, "..." --> ns3
+	 * 3, "..." &rarr; ns3
 	 * </p>
 	 * <p>
-	 * 4, "..." --> ns4
+	 * 4, "..." &rarr; ns4
 	 * </p>
 	 * 
 	 * @return qname as String

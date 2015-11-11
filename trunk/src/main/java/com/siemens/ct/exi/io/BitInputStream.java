@@ -58,6 +58,8 @@ final public class BitInputStream {
 
 	/**
 	 * Construct an instance of this class from an input stream.
+	 * 
+	 * @param istream input stream
 	 */
 	public BitInputStream(InputStream istream) {
 		this.istream = istream;
@@ -67,6 +69,8 @@ final public class BitInputStream {
 	 * Resets this instance and sets a new underlying input stream. This method
 	 * allows instances of this class to be re-used. The resulting state after
 	 * calling this method is identical to that of a newly created instance.
+	 * 
+	 * @param istream input stream
 	 */
 	public void setInputStream(InputStream istream) {
 		this.istream = istream;
@@ -92,6 +96,8 @@ final public class BitInputStream {
 
 	/**
 	 * Discard any bits currently in the buffer to byte-align stream
+	 * 
+	 * @throws IOException IO exception
 	 */
 	public void align() throws IOException {
 		if (capacity != 0) {
@@ -102,7 +108,8 @@ final public class BitInputStream {
 	/**
 	 * Returns current byte buffer without actually reading data
 	 * 
-	 * @throws IOException
+	 * @throws IOException IO exception
+	 * @return lookAhead byte
 	 */
 	public int lookAhead() throws IOException {
 		if (capacity == 0) {
@@ -114,8 +121,8 @@ final public class BitInputStream {
 	/**
 	 * Skip n bytes
 	 * 
-	 * @param n
-	 * @throws IOException
+	 * @param n bytes
+	 * @throws IOException IO exception
 	 */
 	public void skip(long n) throws IOException {
 		if (capacity == 0) {
@@ -133,6 +140,9 @@ final public class BitInputStream {
 
 	/**
 	 * Return next bit from underlying stream.
+	 * 
+	 * @throws IOException IO exception
+	 * @return read bit
 	 */
 	public int readBit() throws IOException {
 		if (capacity == 0) {
@@ -146,6 +156,9 @@ final public class BitInputStream {
 	 * 
 	 * @param n
 	 *            The number of bits in the range [1,32].
+	 *            
+	 * @throws IOException IO exception
+	 * @return nbit value
 	 */
 	public int readBits(int n) throws IOException {
 		assert (n > 0);
@@ -190,7 +203,7 @@ final public class BitInputStream {
 	 * Reads one byte (8 bits) of data from the input stream
 	 * 
 	 * @return next byte as int
-	 * @throws IOException
+	 * @throws IOException IO exception
 	 */
 	public final int read() throws IOException {
 		// possible to read direct byte?

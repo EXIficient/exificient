@@ -66,9 +66,9 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	 * Writes the EXI header according to the header options with optional
 	 * cookie, EXI options, ..
 	 * 
-	 * @param headerChannel
-	 * @param f
-	 * @throws EXIException
+	 * @param headerChannel header channel
+	 * @param f factory 
+	 * @throws EXIException EXI exception
 	 */
 	public void write(BitEncoderChannel headerChannel, EXIFactory f)
 			throws EXIException {

@@ -44,6 +44,8 @@ public interface SelfContainedHandler {
 	 * @param uri namespaceURI of of SC element
 	 * @param localName local-name of SC element
 	 * @param channel encoder channel
+	 * 
+	 * @throws EXIException EXI exception
 	 */
 	public void scElement(String uri, String localName, EncoderChannel channel) throws EXIException;
 

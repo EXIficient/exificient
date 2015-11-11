@@ -28,7 +28,7 @@ package com.siemens.ct.exi.datatype;
  * of whiteSpace must be one of {preserve, replace, collapse}. For all atomic
  * datatypes other than string (and types derived by restriction from it) the
  * value of whiteSpace is collapse. For string the default value of whiteSpace
- * is preserve. {@link http://www.w3.org/TR/xmlschema-2/#rf-whiteSpace}
+ * is preserve. {@link}http://www.w3.org/TR/xmlschema-2/#rf-whiteSpace
  */
 public enum WhiteSpace {
 	/**

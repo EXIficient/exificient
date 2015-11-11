@@ -48,6 +48,8 @@ public class BitDecoderChannel extends AbstractDecoderChannel implements
 
 	/**
 	 * Construct a decoder from input stream
+	 * 
+	 * @param is input stream
 	 */
 	public BitDecoderChannel(InputStream is) {
 		this.istream = new BitInputStream(is);

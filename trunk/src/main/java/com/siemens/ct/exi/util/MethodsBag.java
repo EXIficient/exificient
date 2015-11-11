@@ -43,11 +43,11 @@ public class MethodsBag {
 
 	/**
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
-	 * int <param>n</param>. Returns 1 if <param>n</param> is 0.
+	 * parameter n. Returns 1 if parameter n is 0.
 	 * 
 	 * @param n
 	 *            integer value
-	 * 
+	 * @return number of 7Bit blocks
 	 */
 	public static int numberOf7BitBlocksToRepresent(final int n) {
 		assert (n >= 0);
@@ -77,10 +77,11 @@ public class MethodsBag {
 
 	/**
 	 * Returns the least number of 7 bit-blocks that is needed to represent the
-	 * long <param>l</param>. Returns 1 if <param>l</param> is 0.
+	 * parameter l. Returns 1 if parameter l is 0.
 	 * 
 	 * @param l
 	 *            long value
+	 * @return number of 7Bit blocks
 	 * 
 	 */
 	public static int numberOf7BitBlocksToRepresent(final long l) {
@@ -307,6 +308,10 @@ public class MethodsBag {
 	 * working backwards from there.
 	 * 
 	 * Will fail if i == Integer.MIN_VALUE
+	 * 
+	 * @param i integer
+	 * @param index index
+	 * @param buf character buffer
 	 */
 	public final static void itos(int i, int index, char[] buf) {
 		assert (!(i == Integer.MIN_VALUE));
@@ -350,6 +355,9 @@ public class MethodsBag {
 	 * the least significant digit at the specified index (exclusive), and
 	 * working backwards from there.
 	 * 
+	 * @param i integer
+	 * @param index index
+	 * @param buf character buffer
 	 */
 	public final static void itos(long i, int index, char[] buf) {
 		if (i == Long.MIN_VALUE) {
@@ -428,7 +436,13 @@ public class MethodsBag {
 	 * Places characters representing the integer i into the character array buf
 	 * in reverse order.
 	 * 
-	 * Will fail if i < 0 (zero)
+	 * Will fail if i &lt; 0 (zero)
+	 * 
+	 * @param i integer
+	 * @param index index
+	 * @param buf character buffer
+	 * 
+	 * @return number of written chars
 	 */
 	public final static int itosReverse(int i, int index, char[] buf) {
 		assert (i >= 0);
@@ -463,7 +477,11 @@ public class MethodsBag {
 	 * Places characters representing the integer i into the character array buf
 	 * in reverse order.
 	 * 
-	 * Will fail if i < 0 (zero)
+	 * Will fail if i &lt; 0 (zero)
+	 * 
+	 * @param i integer
+	 * @param index index
+	 * @param buf character buffer
 	 */
 	public final static void itosReverse(long i, int index, char[] buf) {
 		assert (i >= 0);

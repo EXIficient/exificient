@@ -27,13 +27,12 @@ package com.siemens.ct.exi.grammars.event;
  * <p>
  * EventTypes used to represent XML information items in EXI (see <a
  * href="http://www.w3.org/TR/exi/#eventCodeAssignment"> EXI Event Code
- * Assignment</a>).
- * 
- * <br/>
+ * Assignment</a>).</p>
  * 
  * <p>
  * Sort all productions with G i, j on the left hand side in the following
  * order:
+ * </p>
  * <ol>
  * <li>all productions with AT(qname) on the right hand side sorted lexically by
  * qname localName, then by qname uri, followed by</li>
@@ -48,7 +47,6 @@ package com.siemens.ct.exi.grammars.event;
  * <li>any production with EE on the right hand side, followed by</li>
  * <li>any production with CH on the right hand side.</li>
  * </ol>
- * </p>
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com

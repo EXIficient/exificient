@@ -41,9 +41,9 @@ public class DecodingOptions {
 
 	/** SchemaId in EXI header is not used */
 	public static final String IGNORE_SCHEMA_ID = "IGNORE_SCHEMA_ID";
-	
+
 	/** Pushback size for multiple streams in one file */
-	public static final int PUSHBACK_BUFFER_SIZE = 512; 
+	public static final int PUSHBACK_BUFFER_SIZE = 512;
 
 	/* contains options and according values */
 	protected Set<String> options;
@@ -75,6 +75,7 @@ public class DecodingOptions {
 	 *            referring to a specific option
 	 * 
 	 * @throws UnsupportedOption
+	 *             if option is not supported
 	 */
 	public void setOption(String key) throws UnsupportedOption {
 		if (key.equals(IGNORE_SCHEMA_ID)) {
@@ -90,6 +91,7 @@ public class DecodingOptions {
 	 * 
 	 * @param key
 	 *            referring to a specific option
+	 * @return informs whether option was set
 	 * 
 	 */
 	public boolean unsetOption(String key) {

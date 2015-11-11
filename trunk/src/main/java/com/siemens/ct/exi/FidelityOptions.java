@@ -151,7 +151,7 @@ public class FidelityOptions implements Serializable {
 	 *            referring to a specific feature
 	 * @param decision
 	 *            enabling or disabling feature
-	 * @throws UnsupportedOption
+	 * @throws UnsupportedOption if option is not supported
 	 */
 	public void setFidelity(String key, boolean decision)
 			throws UnsupportedOption {

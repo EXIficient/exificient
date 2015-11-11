@@ -46,6 +46,8 @@ public class BitEncoderChannel extends AbstractEncoderChannel implements
 
 	/**
 	 * Construct an encoder from output stream.
+	 * 
+	 * @param ostream output stream
 	 */
 	public BitEncoderChannel(OutputStream ostream) {
 		this.ostream = new BitOutputStream(ostream);

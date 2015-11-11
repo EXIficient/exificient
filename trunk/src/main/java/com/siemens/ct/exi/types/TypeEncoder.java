@@ -44,8 +44,8 @@ public interface TypeEncoder extends TypeCoder {
 	/**
 	 * Checks whether given value is valid according to the datatype.
 	 * 
-	 * @param datatype
-	 * @param value
+	 * @param datatype datatype
+	 * @param value value
 	 * @return boolean value indicating whether passed value is valid
 	 */
 	public boolean isValid(Datatype datatype, Value value);
@@ -56,7 +56,7 @@ public interface TypeEncoder extends TypeCoder {
 	 * @param qnContext context
 	 * @param valueChannel encoder value channel
 	 * @param stringEncoder string encoder
-	 * @throws IOException
+	 * @throws IOException IO exception
 	 */
 	public void writeValue(QNameContext qnContext, EncoderChannel valueChannel,
 			StringEncoder stringEncoder) throws IOException;

@@ -54,29 +54,29 @@ public interface EXIBodyEncoder {
 	/**
 	 * Flushes (possibly) remaining bit(s) to output stream
 	 * 
-	 * @throws IOException
+	 * @throws IOException IO exception
 	 */
 	public void flush() throws IOException;
 
 	/**
 	 * 
-	 * @param errorHandler
+	 * @param errorHandler error handler
 	 */
 	public void setErrorHandler(ErrorHandler errorHandler);
 
 	/**
 	 * Reports the beginning of a set of XML events
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeStartDocument() throws EXIException, IOException;
 
 	/**
 	 * Reports the end of a set of XML events.
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeEndDocument() throws EXIException, IOException;
 
@@ -88,13 +88,13 @@ public interface EXIBodyEncoder {
 	 * representation of the start tag.
 	 * </p>
 	 * 
-	 * @param uri
-	 * @param localName
-	 * @param prefix
+	 * @param uri element namespace URI
+	 * @param localName element local-name
+	 * @param prefix element prefix
 	 *            (can be null according to fidelity options)
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException;
@@ -110,26 +110,26 @@ public interface EXIBodyEncoder {
 	 * @param se
 	 *            start element's qname
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeStartElement(QName se) throws EXIException, IOException;
 
 	/**
 	 * Supplies the end tag of an element.
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeEndElement() throws EXIException, IOException;
 
 	/**
 	 * Supplies a list of namespace declarations, xsi:type and xsi:nil values and the remaining attributes.
 	 * 
-	 * @param attributes
+	 * @param attributes list of attributes
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeAttributeList(AttributeList attributes) throws EXIException, IOException;
 	
@@ -141,13 +141,14 @@ public interface EXIBodyEncoder {
 	 * the attribute.
 	 * </p>
 	 * 
-	 * @param uri
-	 * @param localName
-	 * @param prefix
+	 * @param uri attribute namespace URI
+	 * @param localName attribute local-name
+	 * @param prefix attribute prefix
 	 *            (can be null according to fidelity options)
-	 * @param value
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param value attribute value
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeAttribute(String uri, String localName, String prefix,
 			Value value) throws EXIException, IOException;
@@ -162,10 +163,10 @@ public interface EXIBodyEncoder {
 	 * 
 	 * @param at
 	 *            attribute's qname
-	 * @param value
+	 * @param value attribute value
 	 * 
-	 * @throws EXIException
-	 * @throws IOException
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeAttribute(QName at, Value value) throws EXIException,
 			IOException;
@@ -173,10 +174,11 @@ public interface EXIBodyEncoder {
 	/**
 	 * Namespaces are reported as a discrete Namespace event.
 	 * 
-	 * @param uri
-	 * @param prefix
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param uri namespace URI
+	 * @param prefix namespace prefix
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeNamespaceDeclaration(String uri, String prefix)
 			throws EXIException, IOException;
@@ -184,10 +186,11 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies an xsi:nil attribute.
 	 * 
-	 * @param nil
-	 * @param pfx
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param nil xsi:nil value
+	 * @param pfx xsi:nil prefix
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeAttributeXsiNil(Value nil, String pfx)
 			throws EXIException, IOException;
@@ -196,9 +199,10 @@ public interface EXIBodyEncoder {
 	 * Supplies an xsi:type case.
 	 * 
 	 * @param type xsi:type value
-	 * @param pfx
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param pfx xsi:type prefix
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeAttributeXsiType(Value type, String pfx)
 			throws EXIException, IOException;
@@ -206,21 +210,23 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies characters as Value.
 	 * 
-	 * @param chars
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param chars character values
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeCharacters(Value chars) throws EXIException, IOException;
 
 	/**
 	 * Supplies content items to represent a DOCTYPE definition
 	 * 
-	 * @param name
-	 * @param publicID
-	 * @param systemID
-	 * @param text
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param name doc-type name
+	 * @param publicID doc-type publicID
+	 * @param systemID doc-type systemID
+	 * @param text doc-type test
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeDocType(String name, String publicID, String systemID,
 			String text) throws EXIException, IOException;
@@ -228,9 +234,10 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies the name of an entity reference
 	 * 
-	 * @param name
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param name entity reference name
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeEntityReference(String name) throws EXIException,
 			IOException;
@@ -238,11 +245,12 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies the text of a comment.
 	 * 
-	 * @param ch
-	 * @param start
-	 * @param length
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param ch comment character array
+	 * @param start comment character array start
+	 * @param length comment character array length
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeComment(char[] ch, int start, int length)
 			throws EXIException, IOException;
@@ -250,10 +258,11 @@ public interface EXIBodyEncoder {
 	/**
 	 * Supplies the target and data for an underlying processing instruction.
 	 * 
-	 * @param target
-	 * @param data
-	 * @throws EXIException
-	 * @throws IOException
+	 * @param target processing instruction target
+	 * @param data processing instruction data
+	 * 
+	 * @throws EXIException EXI exception
+	 * @throws IOException IO exception
 	 */
 	public void encodeProcessingInstruction(String target, String data)
 			throws EXIException, IOException;
