@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="anyElement" type="AnyElement"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="AnyElement">
+    <xs:sequence >
+      <xs:any minOccurs="0" />
+    </xs:sequence>
+    <xs:anyAttribute/>
+  </xs:complexType>
+  
+  <xs:attribute name="globalInt" type="xs:int" />
+  <xs:attribute name="globalFloat" type="xs:float" />
+
+</xs:schema>

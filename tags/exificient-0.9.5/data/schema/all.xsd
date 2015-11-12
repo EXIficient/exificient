@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<xsd:element name="root" type="Root"/>
+	
+	<xsd:complexType name="Root">
+		<xsd:all>
+			<xsd:element name="a" type="xsd:string"/>
+			<xsd:element name="b" type="xsd:string"/>
+			<xsd:element name="c" type="xsd:string"/>
+		</xsd:all>
+	</xsd:complexType>
+</xsd:schema>

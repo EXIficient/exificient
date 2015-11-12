@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="sequence.xsd">
+    <el1>s1</el1>
+    <el2>-1</el2>
+    <el2>984932</el2>
+    <el3>2007-12-03</el3>
+</root>

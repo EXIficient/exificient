@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="../xsd-core/types.xsd"/>
+	<xs:simpleType name="XsdAggregateType">
+		<xs:annotation>
+			<xs:documentation>Maximum, minimum, average, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="AVERAGE"/>
+			<xs:enumeration value="DECILE"/>
+			<xs:enumeration value="MAXIMUM"/>
+			<xs:enumeration value="MINIMUM"/>
+			<xs:enumeration value="TOTAL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdAverageType">
+		<xs:annotation>
+			<xs:documentation>Arithmetic, geometric, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="ARITHMETIC"/>
+			<xs:enumeration value="GEOMETRIC"/>
+			<xs:enumeration value="HARMONIC"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdBinomialType">
+		<xs:annotation>
+			<xs:documentation>Binomial solution methods</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="ADDITIVE_EQP"/>
+			<xs:enumeration value="COX_ROSS_RUBINSTEIN"/>
+			<xs:enumeration value="JARROW_RUDD"/>
+			<xs:enumeration value="JOSHI4"/>
+			<xs:enumeration value="LEISEN_REIMER"/>
+			<xs:enumeration value="TIAN"/>
+			<xs:enumeration value="TRIGEORGIS"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdConjugateGradientType">
+		<xs:annotation>
+			<xs:documentation>Conjugate gradient solvers </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="FLETCHER_REEVES"/>
+			<xs:enumeration value="POLAK_RIBIERE"/>
+			<xs:enumeration value="BROYDEN_FLETCHER_GOLDFARB_SHANNO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdCopulaType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ARCHIMEDEAN"/>
+			<xs:enumeration value="DEPENDENT"/>
+			<xs:enumeration value="ELLIPTIC"/>
+			<xs:enumeration value="INDEPENDENT"/>
+			<xs:enumeration value="EXPONENTIAL"/>
+			<xs:enumeration value="MIXTURE"/>
+			<xs:enumeration value="RISK"/>
+			<xs:enumeration value="VINE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdCorrelationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KENDALL"/>
+			<xs:enumeration value="PEARSON"/>
+			<xs:enumeration value="SPEARMAN"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdDifferenceType">
+		<xs:annotation>
+			<xs:documentation>Finite-difference types</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="BACKWARD"/>
+			<xs:enumeration value="FORWARD"/>
+			<xs:enumeration value="CENTRAL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdDistributionType">
+		<xs:annotation>
+			<xs:documentation>One- and multi-dimensional distributions</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ASYMPTOTIC"/>
+			<xs:enumeration value="BERNOULLI"/>
+			<xs:enumeration value="BETA"/>
+			<xs:enumeration value="BINOMIAL"/>
+			<xs:enumeration value="CAUCHY"/>
+			<xs:enumeration value="CHI_SQUARE"/>
+			<xs:enumeration value="COMPOUND_POISSON"/>
+			<xs:enumeration value="CONDITIONAL"/>
+			<xs:enumeration value="CONVOLUTION"/>
+			<xs:enumeration value="COPULA"/>
+			<xs:enumeration value="COPULA_DISTRIBUTION"/>
+			<xs:enumeration value="DISCRETE"/>
+			<xs:enumeration value="EMPIRICAL"/>
+			<xs:enumeration value="EXPONENTIAL"/>
+			<xs:enumeration value="EXP_POWER"/>
+			<xs:enumeration value="EXTREME_VALUE"/>
+			<xs:enumeration value="FISHER_F"/>
+			<xs:enumeration value="GAMMA"/>
+			<xs:enumeration value="GENERALIZED_INVERSE_GAUSSIAN"/>
+			<xs:enumeration value="GENERIC"/>
+			<xs:enumeration value="GUMBEL"/>
+			<xs:enumeration value="INVERSE_CHI_SQUARE"/>
+			<xs:enumeration value="INVERSE_GAMMA"/>
+			<xs:enumeration value="INVERSE_GAUSSIAN"/>
+			<xs:enumeration value="LAPLACE"/>
+			<xs:enumeration value="LEVY_STABLE"/>
+			<xs:enumeration value="LHPA_GAUSSIAN"/>
+			<xs:enumeration value="LOGARITHMIC"/>
+			<xs:enumeration value="LOGISTIC"/>
+			<xs:enumeration value="LOGNORMAL"/>
+			<xs:enumeration value="MIXTURE"/>
+			<xs:enumeration value="NORMAL"/>
+			<xs:enumeration value="NORMAL_GAMMA"/>
+			<xs:enumeration value="NORMAL_INVERSE_GAUSSIAN"/>
+			<xs:enumeration value="PARETO"/>
+			<xs:enumeration value="POISSON"/>
+			<xs:enumeration value="RAYLEIGH"/>
+			<xs:enumeration value="SIMPLE"/>
+			<xs:enumeration value="SPECIAL"/>
+			<xs:enumeration value="STUDENT_T"/>
+			<xs:enumeration value="TRIANGULAR"/>
+			<xs:enumeration value="TRUNCATED"/>
+			<xs:enumeration value="UNIFORM"/>
+			<xs:enumeration value="VARIANCE_GAMMA"/>
+			<xs:enumeration value="WEIBULL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdEndpointType">
+		<xs:annotation>
+			<xs:documentation>Which endpoints (if any) to be included</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BOTH"/>
+			<xs:enumeration value="LEFT"/>
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="RIGHT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdEvolveType">
+		<xs:annotation>
+			<xs:documentation>How to evaluate coefficients in MC time-step evolution</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="EULER"/>
+			<xs:enumeration value="EULER_END"/>
+			<xs:enumeration value="EXACT"/>
+			<xs:enumeration value="MILSTEIN"/>
+			<xs:enumeration value="PREDICTOR_CORRECTOR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdExtrapolate">
+		<xs:annotation>
+			<xs:documentation>Extrapolate outside original range</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="preserve"/>
+			<xs:enumeration value="CONSTANT"/>
+			<xs:enumeration value="LINEAR"/>
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="ZERO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdGammaRngType">
+		<xs:annotation>
+			<xs:documentation>RNGs for gamma distribution</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="DEFAULT"/>
+			<xs:enumeration value="KNUTH"/>
+			<xs:enumeration value="MARSAGLIA_TSANG"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdInterpolateType">
+		<xs:annotation>
+			<xs:documentation>Corresponding to 'details' above</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ABCD"/>
+			<xs:enumeration value="BACKWARD_FLAT"/>
+			<xs:enumeration value="BASIS_SPLINE"/>
+			<xs:enumeration value="CONVEX_MONOTONE"/>
+			<xs:enumeration value="CUBIC_SPLINE"/>
+			<xs:enumeration value="FORWARD_FLAT"/>
+			<xs:enumeration value="LINEAR"/>
+			<xs:enumeration value="LOGLINEAR"/>
+			<xs:enumeration value="SABR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdLinearSolverType">
+		<xs:annotation>
+			<xs:documentation>LU decomp, Cholesky, etc.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BACKWARD"/>
+			<xs:enumeration value="CHOLESKY"/>
+			<xs:enumeration value="CONJUGATE_GRADIENT"/>
+			<xs:enumeration value="FORWARD"/>
+			<xs:enumeration value="GENERALIZED_MINIMUM_RESIDUAL"/>
+			<xs:enumeration value="LEAST_SQUARES"/>
+			<xs:enumeration value="LU_DECOMP"/>
+			<xs:enumeration value="QR_DECOMP"/>
+			<xs:enumeration value="PSEUDO_SQRT"/>
+			<xs:enumeration value="STABLE_BICONGUGATE_GRADIENT"/>
+			<xs:enumeration value="SV_DECOMP"/>
+			<xs:enumeration value="VANDERMONDE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdMinLinearBasis">
+		<xs:annotation>
+			<xs:documentation>Initial LP basis</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ADVANCED"/>
+			<xs:enumeration value="BIXBY"/>
+			<xs:enumeration value="STANDARD"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdMinLinearMethod">
+		<xs:annotation>
+			<xs:documentation>Linear programming methods</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INTERIOR"/>
+			<xs:enumeration value="SIMPLEX"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdMinLinearScale">
+		<xs:annotation>
+			<xs:documentation>scaling for linear programming</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AUTOMATIC"/>
+			<xs:enumeration value="EQUILIBRATION"/>
+			<xs:enumeration value="GEOMETRIC_MEAN"/>
+			<xs:enumeration value="NONE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdMomentType">
+		<xs:annotation>
+			<xs:documentation>First 4 moments</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="MEAN"/>
+			<xs:enumeration value="VARIANCE"/>
+			<xs:enumeration value="SKEWNESS"/>
+			<xs:enumeration value="KURTOSIS"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdNormalRngType">
+		<xs:annotation>
+			<xs:documentation>RNGs for normal distribution</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="BOX_MULLER"/>
+			<xs:enumeration value="DEFAULT"/>
+			<xs:enumeration value="RATIO"/>
+			<xs:enumeration value="ZIGGURAT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdPathScheme">
+		<xs:annotation>
+			<xs:documentation>Time-step schemes for path generation</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="EULER"/>
+			<xs:enumeration value="MILSTEIN"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdPseudoRandomType">
+		<xs:annotation>
+			<xs:documentation>Pseudo RNG types</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ECUYER"/>
+			<xs:enumeration value="KNUTH"/>
+			<xs:enumeration value="FIBONACCI"/>
+			<xs:enumeration value="GERMAIN"/>
+			<xs:enumeration value="MERSENNE"/>
+			<xs:enumeration value="MINSTD"/>
+			<xs:enumeration value="RANLUX"/>
+			<xs:enumeration value="TAUSWORTHE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdRandomType">
+		<xs:annotation>
+			<xs:documentation>Pseuo-random, quasi-random, etc</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PSEUDO"/>
+			<xs:enumeration value="QUASI"/>
+			<xs:enumeration value="TRUE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdQuasiRandomType">
+		<xs:annotation>
+			<xs:documentation>For low-discrepancy RNGs ... </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FAURE"/>
+			<xs:enumeration value="HALTON"/>
+			<xs:enumeration value="NIEDERREITER"/>
+			<xs:enumeration value="SOBOL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdSalvageType">
+		<xs:annotation>
+			<xs:documentation>For pseudo square-root calculation</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NONE"/>
+			<xs:enumeration value="SPECTRAL"/>
+			<xs:enumeration value="HYPERSPHERE"/>
+			<xs:enumeration value="LOWER_DIAGONAL"/>
+			<xs:enumeration value="HIGHAM"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdSingularValueType">
+		<xs:annotation>
+			<xs:documentation>Singular value decomposition</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DEFAULT"/>
+			<xs:enumeration value="JACOBI"/>
+			<xs:enumeration value="MODIFIED"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdSobolDirectionIntegers">
+		<xs:annotation>
+			<xs:documentation>Sobol QRNG direction integers</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="JAECKEL"/>
+			<xs:enumeration value="JOE_KUO_D5"/>
+			<xs:enumeration value="JOE_KUO_D6"/>
+			<xs:enumeration value="JOE_KUO_D7"/>
+			<xs:enumeration value="KUO"/>
+			<xs:enumeration value="KUO2"/>
+			<xs:enumeration value="KUO3"/>
+			<xs:enumeration value="SOBOL_LEVITAN"/>
+			<xs:enumeration value="SOBOL_LEVITAN_LEMIEUX"/>
+			<xs:enumeration value="UNIT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="XsdWaveletType">
+		<xs:annotation>
+			<xs:documentation>FFT and other transforms</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="BSPLINE"/>
+			<xs:enumeration value="DAUBECHIES"/>
+			<xs:enumeration value="HAAR"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
