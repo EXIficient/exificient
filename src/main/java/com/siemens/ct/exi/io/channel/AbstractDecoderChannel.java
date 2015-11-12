@@ -177,6 +177,9 @@ public abstract class AbstractDecoderChannel implements DecoderChannel {
 	 * sequence of octets. The most significant bit of the last octet is set to
 	 * zero to indicate sequence termination. Only seven bits per octet are used
 	 * to store the integer's value.
+	 * 
+	 * @return integer
+	 * @throws IOException IO exception
 	 */
 	protected int decodeInteger() throws IOException {
 		if (decodeBoolean()) {

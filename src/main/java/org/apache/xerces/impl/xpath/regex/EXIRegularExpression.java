@@ -37,7 +37,7 @@ import org.apache.xerces.impl.xpath.regex.Token.StringToken;
 import org.apache.xerces.impl.xpath.regex.Token.UnionToken;
 
 /**
- * XML Schema - Regular Expression parser <br />
+ * XML Schema - Regular Expression parser <br>
  * 
  * Analyzes an XML Schema Pattern/Facet and returns an EXI related restricted
  * character set (if possible).
