@@ -31,7 +31,7 @@ import com.siemens.ct.exi.types.BuiltInType;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5-SNAPSHOT
+ * @version 0.9.5
  */
 
 public abstract class AbstractDatatype implements Datatype {

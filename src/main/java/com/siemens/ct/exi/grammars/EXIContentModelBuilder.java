@@ -77,7 +77,7 @@ import com.siemens.ct.exi.util.sort.LexicographicSort;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5-SNAPSHOT
+ * @version 0.9.5
  */
 
 public abstract class EXIContentModelBuilder extends CMBuilder implements
