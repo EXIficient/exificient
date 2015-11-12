@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foo:root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:foo="http://www.siemens.com/foo"
+    xsi:schemaLocation="http://www.siemens.com/foo wildcard2.xsd" >
+    <foo:wildcardsNS>
+        <foo:elInt>123</foo:elInt>
+    </foo:wildcardsNS>
+    <foo:wildcards >
+        <el xsi:type="xs:string">312</el>
+    </foo:wildcards>
+    <foo:wildcardsNS>
+        <!-- invalid, approprioate namespace expected -->
+        <!--<el xsi:type="xs:string">312</el>-->
+        
+        <!-- valid, right namespace -->
+        <foo:elString>llkk</foo:elString>
+    </foo:wildcardsNS>
+    <foo:wildcards >
+        <foo:elInt>8</foo:elInt>
+    </foo:wildcards>
+</foo:root>

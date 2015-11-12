@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  
+  <xs:element name="person">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="firstname" type="xs:string"/>
+        <xs:element name="lastname" type="xs:string"/>
+        <!-- ANY  -->
+        <xs:any minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="children">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="childname" type="xs:string"
+          maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>

@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 (x64) (http://www.altova.com) by Michael Edward Rose (OmniMarkets) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="types.xsd"/>
+	<xs:include schemaLocation="value.xsd"/>
+	<xs:annotation>
+		<xs:documentation>Abstract base class</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdResult">
+		<xs:annotation>
+			<xs:documentation>Base class for output of calculation schemas</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="comment" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Optional comments</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="calculationID" type="xs:IDREF" use="required">
+			<xs:annotation>
+				<xs:documentation>Reference to calculation scherma</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="elapsedTime" type="xs:duration">
+			<xs:annotation>
+				<xs:documentation>CPU time (refine this later)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Derived classes</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanResult">
+		<xs:annotation>
+			<xs:documentation>Returns true or false</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:boolean"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCharacterResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdCharacter"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdComplexResult">
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslComplex"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdCorrelationResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslCorrelation"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateResult">
+		<xs:annotation>
+			<xs:documentation>Returns date</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:date"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateTimeResult">
+		<xs:annotation>
+			<xs:documentation>Returns dateTime</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:dateTime"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:double"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdErrorResult">
+		<xs:annotation>
+			<xs:documentation>Returns exception schema</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="error" type="XsdException"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerResult">
+		<xs:annotation>
+			<xs:documentation>Returns integer</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:integer"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdNonNegativeDoubleResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdNonNegativeDouble"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveDoubleResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XsdPositiveDouble"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdPositiveIntegerResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:positiveInteger"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdProbabilityResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="XslProbability"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdSizeResult">
+		<xs:annotation>
+			<xs:documentation>Returns integer</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:nonNegativeInteger"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdStringResult">
+		<xs:annotation>
+			<xs:documentation>Returns string</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorResult">
+		<xs:annotation>
+			<xs:documentation>Returns XML duration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:duration"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:annotation>
+		<xs:documentation>Sequences</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="XsdBooleanListResult">
+		<xs:annotation>
+			<xs:documentation>Returns true or false</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:boolean" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateListResult">
+		<xs:annotation>
+			<xs:documentation>Returns date</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:date" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDateTimeListResult">
+		<xs:annotation>
+			<xs:documentation>Returns dateTime</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:dateTime" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdDoubleListResult">
+		<xs:annotation>
+			<xs:documentation>Returns double</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:double" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdIntegerListResult">
+		<xs:annotation>
+			<xs:documentation>Returns integer</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:integer" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdStringListResult">
+		<xs:annotation>
+			<xs:documentation>Returns string</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:string" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="XsdTenorListResult">
+		<xs:annotation>
+			<xs:documentation>Returns XML duration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="XsdResult">
+				<xs:sequence>
+					<xs:element name="value" type="xs:duration" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="patterns" >
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="postcodeDE" type="PostcodeGermany"  />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- german postcode, optional "D" followed by five digits -->
+    <xs:simpleType name="PostcodeGermany">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(D )?[0-9]{5}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2007-2015 Siemens AG
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+
+package com.siemens.ct.exi.util.sort;
+
+import java.io.Serializable;
+import java.util.Comparator;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
+import org.apache.xerces.xs.XSAttributeDeclaration;
+import org.apache.xerces.xs.XSAttributeUse;
+import org.apache.xerces.xs.XSElementDeclaration;
+
+import com.siemens.ct.exi.grammars.event.Attribute;
+import com.siemens.ct.exi.grammars.event.StartElement;
+
+/**
+ * Helper Class for sorting element declarations, context et cetera.
+ * 
+ * EXI's lexical order: sorted first by qname's local-name then by qname's URI.
+ * 
+ * @author Daniel.Peintner.EXT@siemens.com
+ * @author Joerg.Heuer@siemens.com
+ * 
+ * @version 0.9.5
+ */
+
+public class LexicographicSort implements Comparator<Object>, Serializable {
+
+	private static final long serialVersionUID = 5591893050060075221L;
+
+	public int compare(Object o1, Object o2) {
+		if (o1 instanceof XSElementDeclaration
+				&& o2 instanceof XSElementDeclaration) {
+			return compare((XSElementDeclaration) o1, (XSElementDeclaration) o2);
+		} else if (o1 instanceof XSAttributeDeclaration
+				&& o2 instanceof XSAttributeDeclaration) {
+			return compare((XSAttributeDeclaration) o1,
+					(XSAttributeDeclaration) o2);
+		} else if (o1 instanceof XSAttributeUse && o2 instanceof XSAttributeUse) {
+			// attribute declaration counts
+			return compare(((XSAttributeUse) o1).getAttrDeclaration(),
+					((XSAttributeUse) o2).getAttrDeclaration());
+		} else if (o1 instanceof QName && o2 instanceof QName) {
+			return compare((QName) o1, (QName) o2);
+		} else if (o1 instanceof StartElement && o2 instanceof StartElement) {
+			return compare(((StartElement) o1).getQName(),
+					((StartElement) o2).getQName());
+		} else if (o1 instanceof Attribute && o2 instanceof Attribute) {
+			return compare(((Attribute) o1).getQName(),
+					((Attribute) o2).getQName());
+		} else {
+			throw new RuntimeException(
+					"[EXI] Unsupported types of classes for sorting.");
+		}
+	}
+
+	public static int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
+		return compare(e1.getNamespace(), e1.getName(), e2.getNamespace(),
+				e2.getName());
+	}
+
+	public static int compare(XSAttributeDeclaration a1,
+			XSAttributeDeclaration a2) {
+		return compare(a1.getNamespace(), a1.getName(), a2.getNamespace(),
+				a2.getName());
+	}
+
+	public static int compare(QName q1, QName q2) {
+		return compare(q1.getNamespaceURI(), q1.getLocalPart(),
+				q2.getNamespaceURI(), q2.getLocalPart());
+	}
+
+	// sorted lexicographically by qname local-name, then by qname uri
+	public static int compare(String ns1, String ln1, String ns2, String ln2) {
+		if (ns1 == null) {
+			ns1 = XMLConstants.NULL_NS_URI;
+		}
+		if (ns2 == null) {
+			ns2 = XMLConstants.NULL_NS_URI;
+		}
+		int cLocalPart = ln1.compareTo(ln2);
+		return (cLocalPart == 0 ? ns1.compareTo(ns2) : cLocalPart);
+	}
+
+}

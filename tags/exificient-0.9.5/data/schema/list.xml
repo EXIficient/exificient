@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="list.xsd">
+    <intValues>100 34 56 -23 1567</intValues>
+    <posIntValues>5555 13213 22</posIntValues>
+    <stringValues>abc defg hijk</stringValues>
+    <!-- IDREFS -->
+    <books ids="-12 33 555">
+        <book identifier="ID_1" keywords="Hu ha ho">
+            <isbn>1213</isbn>
+            <title>Huuhh</title>
+            <author-ref ref="ID_1" />
+            <character-refs>ID_1 ID_2</character-refs>
+        </book>        
+        <book identifier="ID_2" keywords="hha hoo hu">
+            <isbn>1213</isbn>
+            <title>Huuhh</title>
+            <author-ref ref="ID_1" />
+            <character-refs>ID_2 ID_1 ID_2</character-refs>
+        </book>   
+    </books>
+</list>
