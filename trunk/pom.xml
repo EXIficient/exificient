@@ -4,7 +4,7 @@
   <artifactId>exificient</artifactId>
   <name>EXIficient</name>
   <url>http://exificient.sourceforge.net/</url>
-  <version>0.9.5</version>
+  <version>0.9.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
     (EXI) format specification written in the Java programming language. The EXI format is a very
@@ -36,9 +36,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:svn://svn.code.sf.net/p/exificient/code/tags/exificient-0.9.5</connection>
-	<developerConnection>scm:svn:svn://svn.code.sf.net/p/exificient/code/tags/exificient-0.9.5</developerConnection>
-    <url>svn://svn.code.sf.net/p/exificient/code/tags/exificient-0.9.5</url>
+    <connection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</connection>
+	<developerConnection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</developerConnection>
+    <url>http://svn.code.sf.net/p/exificient/code</url>
   </scm>
 
   <dependencies>
