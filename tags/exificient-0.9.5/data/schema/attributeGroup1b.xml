@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="attributeGroup1.xsd">
-    <person attr2="99"></person>
-</customer>

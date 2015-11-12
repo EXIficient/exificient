@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<order xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="group1.xsd" status="final">
-    <customer>C</customer>
-    <orderdetails>OD</orderdetails>
-    <billto>to</billto>
-    <shipto>to</shipto>
-</order>

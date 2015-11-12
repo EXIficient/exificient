@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<union xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="union1.xsd">
-    <jeans_size xsi:type="sizebyno">41</jeans_size>
-    <jeans_size>large</jeans_size>
-    <jeans_size>28</jeans_size>
-    <jeans_size xsi:type="sizebystring">small</jeans_size>
-</union>
