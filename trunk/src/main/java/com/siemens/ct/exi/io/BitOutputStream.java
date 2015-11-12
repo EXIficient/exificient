@@ -90,6 +90,8 @@ public class BitOutputStream extends OutputStream {
 
 	/**
 	 * If buffer is full, write it out and reset internal state.
+	 * 
+	 * @throws IOException IO exception
 	 */
 	protected void flushBuffer() throws IOException {
 		if (capacity == 0) {

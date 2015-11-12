@@ -1551,9 +1551,9 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * grammar that accepts only the attribute uses and attribute wildcards of T
 	 * i , if any.
 	 * 
-	 * @param td
+	 * @param td type definition
 	 * @return schema-informed first start tag grammar
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	protected SchemaInformedFirstStartTagGrammar translateTypeDefinitionToFSA(
 			XSTypeDefinition td) throws EXIException {
@@ -1595,9 +1595,9 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * grammar that accepts only the attribute uses and attribute wildcards of T
 	 * i , if any.
 	 * 
-	 * @param ctd
+	 * @param ctd complex type definition
 	 * @return schema-informed first start tag grammar
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	protected SchemaInformedFirstStartTagGrammar translateComplexTypeDefinitionToFSA(
 			XSComplexTypeDefinition ctd) throws EXIException {
@@ -1693,9 +1693,9 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	 * grammar that accepts only the attribute uses and attribute wildcards of T
 	 * i , if any.
 	 * 
-	 * @param std
+	 * @param std simple type definition
 	 * @return schema-informed first start tag grammar
-	 * @throws EXIException
+	 * @throws EXIException EXI exception
 	 */
 	// protected SchemaInformedElement translateSimpleTypeDefinitionToFSA(
 	protected SchemaInformedFirstStartTagGrammar translateSimpleTypeDefinitionToFSA(

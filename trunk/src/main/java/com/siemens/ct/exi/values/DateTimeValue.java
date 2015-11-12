@@ -503,6 +503,7 @@ public class DateTimeValue extends AbstractValue {
 	/**
 	 * Returns time-zone offset in millisecs according to the given minutes
 	 * 
+	 * @param minutes minutes
 	 * @return time-zone offset in millisecs
 	 */
 	protected static int getTimeZoneInMillisecs(int minutes) {
