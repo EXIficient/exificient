@@ -28,7 +28,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5-SNAPSHOT
+ * @version 0.9.5
  */
 // re-uses code from org.apache.xerces.impl.dv.util.Base64Bin;
 public class BinaryBase64Value extends AbstractBinaryValue {

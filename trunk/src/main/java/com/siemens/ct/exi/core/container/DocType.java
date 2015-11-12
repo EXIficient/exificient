@@ -28,7 +28,7 @@ package com.siemens.ct.exi.core.container;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5-SNAPSHOT
+ * @version 0.9.5
  */
 
 public class DocType {
