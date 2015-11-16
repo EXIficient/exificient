@@ -5,7 +5,7 @@ http://exificient.sourceforge.net/
 
 The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
 
-Please report bugs via the SourceForge bug tracking system at http://sourceforge.net/p/exificient/bugs/.
+Please report bugs and issues via github at https://github.com/EXIficient/exificient/issues.
 Thank you.
 
 Copyright (c) 2007-2015 Siemens AG

@@ -3,7 +3,7 @@
   <groupId>com.siemens.ct.exi</groupId>
   <artifactId>exificient</artifactId>
   <name>EXIficient</name>
-  <url>http://exificient.sourceforge.net/</url>
+  <url>http://exificient.github.io/</url>
   <version>0.9.6-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
@@ -31,14 +31,14 @@
   </licenses>
 
   <issueManagement>
-    <system>Sourceforge Tickets</system>
-    <url>http://sourceforge.net/p/exificient/_list/tickets?source=navbar</url>
+    <system>Github Issues</system>
+    <url>https://github.com/EXIficient/exificient/issues</url>
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</connection>
-	<developerConnection>scm:svn:https://svn.code.sf.net/p/exificient/code/trunk</developerConnection>
-    <url>http://svn.code.sf.net/p/exificient/code</url>
+    <connection>scm:git:git://github.com/EXIficient/exificient.git</connection>
+	<developerConnection>scm:git:git@github.com:EXIficient/exificient.git</developerConnection>
+    <url>https://github.com/EXIficient/exificient</url>
   </scm>
 
   <dependencies>
