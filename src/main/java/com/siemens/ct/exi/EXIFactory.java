@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
 
 import org.xml.sax.XMLReader;
