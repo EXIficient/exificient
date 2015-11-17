@@ -28,7 +28,7 @@ package com.siemens.ct.exi.values;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5
+ * @version 0.9.6-SNAPSHOT
  */
 
 public abstract class AbstractValue implements Value {

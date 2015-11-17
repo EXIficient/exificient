@@ -32,7 +32,7 @@ import java.io.InputStream;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5
+ * @version 0.9.6-SNAPSHOT
  */
 
 public class ByteDecoderChannel extends AbstractDecoderChannel implements

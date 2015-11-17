@@ -36,7 +36,7 @@ import com.siemens.ct.exi.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5
+ * @version 0.9.6-SNAPSHOT
  */
 
 public abstract class AbstractStringCoder implements StringCoder {
