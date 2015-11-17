@@ -39,6 +39,7 @@ import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.Datatype;
+import com.siemens.ct.exi.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.datatype.WhiteSpace;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -591,8 +592,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// events
 			// --> if EE is not found check whether an empty CH event *helps*
 			if (currentGrammar.isSchemaInformed() && (ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
-				BuiltInType bit = ((DatatypeEvent) ei.getEvent()).getDatatype()
-						.getBuiltInType();
+				Datatype dt = ((DatatypeEvent) ei.getEvent()).getDatatype();
+				BuiltInType bit = dt.getBuiltInType();
 				switch (bit) {
 				/* empty values possible */
 				case BINARY_BASE64:
@@ -605,6 +606,19 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 						// encode empty characters first
 						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
 						// try EE again
+					} else {
+						ei = null;
+					}
+					break;
+				case ENUMERATION:
+					EnumerationDatatype edt = (EnumerationDatatype) dt;
+					if ((ei = ei.getNextGrammar().getProduction(
+							EventType.END_ELEMENT)) != null && edt.isValid(StringCoder.EMPTY_STRING_VALUE)) {
+						// encode empty characters first
+						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
+						// try EE again
+					} else {
+						ei = null;
 					}
 					break;
 				/* no empty value possible */

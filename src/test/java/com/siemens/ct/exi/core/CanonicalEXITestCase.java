@@ -53,6 +53,7 @@ import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
+import com.siemens.ct.exi.values.BinaryBase64Value;
 import com.siemens.ct.exi.values.DateTimeValue;
 import com.siemens.ct.exi.values.DecimalValue;
 import com.siemens.ct.exi.values.FloatValue;
@@ -1215,10 +1216,11 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	public void testStreamHeaderEXIOptions0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
+		factory.getEncodingOptions().setOption(
+				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
 
 		String xml = "<foo>" + "text content" + "</foo>";
 
@@ -1230,10 +1232,13 @@ public class CanonicalEXITestCase extends TestCase {
 		// decode and check
 		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
 		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
-		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing Bits
-		assertTrue("Presence Bit for EXI Options", bdc.decodeNBitUnsignedInteger(1) == 0); // Presence Bit for EXI Options
+		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing
+																					// Bits
+		assertTrue("Presence Bit for EXI Options",
+				bdc.decodeNBitUnsignedInteger(1) == 0); // Presence Bit for EXI
+														// Options
 	}
-	
+
 	public void testStreamHeaderEXIOptions1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -1248,10 +1253,12 @@ public class CanonicalEXITestCase extends TestCase {
 		// decode and check
 		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
 		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
-		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing Bits
-		assertTrue("Presence Bit for EXI Options", bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI Options
+		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing
+																					// Bits
+		assertTrue("Presence Bit for EXI Options",
+				bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI
+														// Options
 	}
-	
 
 	// header MUST include EXI Options
 	public void testStreamHeader0() throws Exception {
@@ -1361,13 +1368,351 @@ public class CanonicalEXITestCase extends TestCase {
 				.getLocalPart().equals("string"));
 
 	}
-	
-	public void testEmptyCharactersSchemaInformed0() throws Exception {
-		System.err.println("TODO testEmptyCharactersSchemaInformed");
+
+	public void testEmptyCharactersSchemaInformedString1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:string'>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof StringValue);
+			StringValue dtv = (StringValue) v;
+			assertTrue(dtv.toString().equals(""));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaInformedBinary1() throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:base64Binary'>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof BinaryBase64Value);
+			BinaryBase64Value dtv = (BinaryBase64Value) v;
+			assertTrue(dtv.toString().equals(""));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaInformedEnumeration1()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:simpleType>"
+				+ "       <xs:restriction base='xs:string'>"
+				+ "         <xs:enumeration value='A'/>"
+				+ "         <xs:enumeration value=''/>"
+				+ "       </xs:restriction>"
+				+ "   </xs:simpleType>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof StringValue);
+			StringValue dtv = (StringValue) v;
+			assertTrue(dtv.toString().equals(""));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
 	}
 	
+	public void testEmptyCharactersSchemaInformedEnumerationFail1()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:simpleType>"
+				+ "       <xs:restriction base='xs:string'>"
+				+ "         <xs:enumeration value='A'/>"
+				+ "         <xs:enumeration value='B'/>"
+				+ "       </xs:restriction>"
+				+ "   </xs:simpleType>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			// Note: no CH --> deviation
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaInformedComplexMixedContent1()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:complexType mixed='true' />"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			// Note: no empty CH for mixed content
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
 	public void testEmptyCharactersSchemaLess0() throws Exception {
-		System.err.println("TODO testEmptyCharactersSchemaLess");
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			// Note: no empty CH for schema-less streams
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
+	
+	public void testEmptyCharactersSchemaLess1() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+
+		String xml = "<el1><foo>XX</foo><foo>YY</foo><foo></foo></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("foo"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals("XX"));
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("foo"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS); // learned
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals("YY"));
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT); // learned
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("foo"));
+				
+				// Note: no empty CH for schema-less streams (even if CH exists due to learning)
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+				decoder.decodeEndElement();
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
 	}
 
 }
