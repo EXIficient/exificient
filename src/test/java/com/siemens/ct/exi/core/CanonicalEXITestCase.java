@@ -1606,6 +1606,141 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	public void testEmptyCharactersSchemaInformedComplexMixedContent2()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:complexType mixed='true'>"
+				+ "      <xs:sequence>"
+				+ "        <xs:element name='t' type='xs:string' minOccurs='0'/>"
+				+ "        <xs:element name='v' type='xs:string' minOccurs='0'/>"
+				+ "      </xs:sequence>"
+				+ "    </xs:complexType>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1><t>bla</t> X <v>foo</v></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			// Note: no empty CH for mixed content
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT);
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("t"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals("bla"));
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			
+			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC);
+			Value vX = decoder.decodeCharacters();
+			assertTrue(vX instanceof StringValue);
+			StringValue dtvX = (StringValue) vX;
+			assertTrue(dtvX.toString().equals(" X "));
+			
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT);
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("v"));
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals("foo"));
+				
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
+	public void testEmptyCharactersSchemaInformedComplexMixedContent3()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:complexType mixed='true'>"
+				+ "      <xs:sequence>"
+				+ "        <xs:element name='t' type='xs:string' minOccurs='0'/>"
+				+ "        <xs:element name='v' type='xs:string' minOccurs='0'/>"
+				+ "      </xs:sequence>"
+				+ "    </xs:complexType>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1></el1>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("el1"));
+
+			// Note: no empty CH for mixed content
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
 
 	public void testEmptyCharactersSchemaLess0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
