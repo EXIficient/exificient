@@ -1208,6 +1208,72 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(v instanceof DateTimeValue);
 			DateTimeValue dtv = (DateTimeValue) v;
 			assertTrue(dtv.toString().equals(sdt));
+			assertTrue(dtv.year == 2003);
+			assertTrue(dtv.monthDay == (10*32+30)); // Month * 32 + Day 
+			assertTrue(dtv.presenceTimezone == true);
+			assertTrue(dtv.timezone == 0);
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
+	// not adding any timezone
+	public void testDatatypeDateTime3() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:date'>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		String sdt = "2003-10-30";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+		factory.setFidelityOptions(FidelityOptions.createStrict());
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		// factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName s1 = new QName("", "el1");
+
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					null);
+			encoder.encodeCharacters(new StringValue(sdt));
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof DateTimeValue);
+			DateTimeValue dtv = (DateTimeValue) v;
+			assertTrue(dtv.toString().equals(sdt));
+			assertTrue(dtv.year == 2003);
+			assertTrue(dtv.monthDay == (10*32+30)); // Month * 32 + Day 
+			assertTrue(dtv.presenceTimezone == false);
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
