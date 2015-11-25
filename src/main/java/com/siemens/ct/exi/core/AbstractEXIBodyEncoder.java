@@ -94,13 +94,13 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	/** Encoding options */
 	protected final EncodingOptions encodingOptions;
-	
+
 	/** buffers character values before flushing them out */
 	protected List<Value> bChars;
 
 	/** The xml:space attribute is defined (default false) */
 	protected boolean isXmlSpacePreserve;
-	
+
 	/** contains last event type */
 	protected EventType lastEvent;
 
@@ -272,8 +272,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	 */
 
 	protected void encode1stLevelEventCode(int pos) throws IOException {
-		int codeLength = fidelityOptions.get1stLevelEventCodeLength(
-				getCurrentGrammar());
+		int codeLength = fidelityOptions
+				.get1stLevelEventCodeLength(getCurrentGrammar());
 		if (codeLength > 0) {
 			channel.encodeNBitUnsignedInteger(pos, codeLength);
 		}
@@ -300,14 +300,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				fidelityOptions.get1stLevelEventCodeLength(currentGrammar));
 
 		// 2nd level
-		//int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
+		// int ch2 = currentGrammar.get2ndLevelCharacteristics(fidelityOptions);
 		int ch2 = fidelityOptions.get2ndLevelCharacteristics(currentGrammar);
 		int ec2 = ch2 > 0 ? ch2 - 1 : 0; // any 2nd level events
 		channel.encodeNBitUnsignedInteger(ec2, MethodsBag.getCodingLength(ch2));
 
 		// 3rd level
 		int ch3 = fidelityOptions.get3rdLevelCharacteristics();
-		
+
 		assert (pos < ch3);
 		channel.encodeNBitUnsignedInteger(pos, MethodsBag.getCodingLength(ch3));
 	}
@@ -336,7 +336,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	public void encodeEndDocument() throws EXIException, IOException {
 		checkPendingCharacters(EventType.END_DOCUMENT);
-		
+
 		Production ei = getCurrentGrammar().getProduction(
 				EventType.END_DOCUMENT);
 
@@ -358,7 +358,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 	public void encodeStartElement(String uri, String localName, String prefix)
 			throws EXIException, IOException {
 		checkPendingCharacters(EventType.START_ELEMENT);
-		
+
 		sePrefix = prefix;
 		Production ei;
 
@@ -580,7 +580,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 	public void encodeEndElement() throws EXIException, IOException {
 		checkPendingCharacters(EventType.END_ELEMENT);
-		
+
 		Grammar currentGrammar = getCurrentGrammar();
 		Production ei = currentGrammar.getProduction(EventType.END_ELEMENT);
 
@@ -591,7 +591,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// Check special case: SAX does not inform about empty ("") CH
 			// events
 			// --> if EE is not found check whether an empty CH event *helps*
-			if (currentGrammar.isSchemaInformed() && (ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
+			if (currentGrammar.isSchemaInformed()
+					&& (ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
 				Datatype dt = ((DatatypeEvent) ei.getEvent()).getDatatype();
 				BuiltInType bit = dt.getBuiltInType();
 				switch (bit) {
@@ -613,7 +614,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				case ENUMERATION:
 					EnumerationDatatype edt = (EnumerationDatatype) dt;
 					if ((ei = ei.getNextGrammar().getProduction(
-							EventType.END_ELEMENT)) != null && edt.isValid(StringCoder.EMPTY_STRING_VALUE)) {
+							EventType.END_ELEMENT)) != null
+							&& edt.isValid(StringCoder.EMPTY_STRING_VALUE)) {
 						// encode empty characters first
 						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
 						// try EE again
@@ -668,14 +670,15 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		// pop element from stack
 		ElementContext ec = popElement();
-		
+
 		// make sure to adapt xml:space behavior
-		if(ec.isXmlSpacePreserve() != null) {
-			// check in the hierarchy whether there is xml:space present OR "default"
+		if (ec.isXmlSpacePreserve() != null) {
+			// check in the hierarchy whether there is xml:space present OR
+			// "default"
 			boolean isOtherPreserve = false;
-			for(int i=this.elementContextStackIndex; i>=0; i--) {
+			for (int i = this.elementContextStackIndex; i >= 0; i--) {
 				Boolean isP = this.elementContextStack[i].isXmlSpacePreserve();
-				if(isP != null) {
+				if (isP != null) {
 					isOtherPreserve = isP;
 					break;
 				}
@@ -812,14 +815,16 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 						if (limitGrammarLearning) {
 							// 3.2 Grammar Learning Disabling Parameters
-							// - In particular, the AT(xsi:type) productions that
+							// - In particular, the AT(xsi:type) productions
+							// that
 							// would be inserted in
 							// grammars that would be instantiated after the
 							// maximumNumberOfBuiltInElementGrammars
 							// threshold are not counted.
-							if (runtimeGlobalElements.size() > maxBuiltInElementGrammars && currentGrammar.getNumberOfEvents() == 0) {
+							if (runtimeGlobalElements.size() > maxBuiltInElementGrammars
+									&& currentGrammar.getNumberOfEvents() == 0) {
 								// can't evolve anymore
-								currentGrammar.stopLearning();	
+								currentGrammar.stopLearning();
 							} else {
 								this.productionLearningCounting(currentGrammar);
 							}
@@ -1002,9 +1007,8 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// int eventCode3 = ei.getEventCode()
 		// - currentRule.getLeastAttributeEventCode();
 		SchemaInformedGrammar sig = (SchemaInformedGrammar) currentGrammar;
-		channel.encodeNBitUnsignedInteger(eventCode3,
-				MethodsBag.getCodingLength(sig
-						.getNumberOfDeclaredAttributes() + 1));
+		channel.encodeNBitUnsignedInteger(eventCode3, MethodsBag
+				.getCodingLength(sig.getNumberOfDeclaredAttributes() + 1));
 	}
 
 	public void encodeAttribute(QName at, Value value) throws EXIException,
@@ -1148,18 +1152,18 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 		// update current rule
 		assert (next != null);
 		updateCurrentRule(next);
-		
-		if(value.getValueType() == ValueType.STRING &&  XMLConstants.XML_NS_URI.equals(uri)) {
+
+		if (value.getValueType() == ValueType.STRING
+				&& XMLConstants.XML_NS_URI.equals(uri)) {
 			ElementContext ec = this.getElementContext();
-			if("preserve".equals(value.toString())) {
+			if ("preserve".equals(value.toString())) {
 				this.isXmlSpacePreserve = true;
 				ec.setXmlSpacePreserve(Boolean.TRUE);
-			} else if("default".equals(value.toString())) {
+			} else if ("default".equals(value.toString())) {
 				this.isXmlSpacePreserve = false;
 				ec.setXmlSpacePreserve(Boolean.FALSE);
 			}
-			
-			
+
 		}
 
 		lastEvent = EventType.ATTRIBUTE;
@@ -1235,297 +1239,309 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 
 		return null;
 	}
-	
 
+	// private final boolean doTokenizeCHs = false; // TEST
+	//
+	// if (doTokenizeCHs) {
+	// String delimiters;
+	// // delimiters = "/#"; // uri delimiters
+	// delimiters = " ,.-\t\n\r"; // text delimiters
+	// String s = chars.toString();
+	//
+	// // remove leading and trailing whitespaces
+	// s = s.trim();
+	//
+	// // remove duplicates whitespaces ?
+	// // \s matches a space, tab, new line, carriage return, form feed or
+	// vertical tab
+	// // + says "one or more of those"
+	//
+	// s = s.replaceAll("\\s+", " ");
+	//
+	// List<String> uToks = getTokens(s, delimiters);
+	// for(String ut : uToks) {
+	// encodeCharactersForce(new StringValue(ut));
+	// }
+	// }
+	//
+	// @SuppressWarnings("unused")
+	// public static List<String> getTokens(String tokenString, String
+	// delimiters) {
+	// StringTokenizer st = new StringTokenizer(tokenString, delimiters, true);
+	// ArrayList<String> uToks = new ArrayList<String>();
+	// if(st.countTokens() > 1) {
+	//
+	// boolean prevWasDelimiter = false;
+	//
+	// while (st.hasMoreTokens()) {
+	// String t = st.nextToken();
+	//
+	// // collapse contiguous delimiters
+	// if(uToks.size() == 0) {
+	// // first, just add
+	// uToks.add(t);
+	// prevWasDelimiter = delimiters.contains(t);
+	// } else {
+	// // all others
+	// if(delimiters.contains(t)) {
+	// // 't' is delimiter
+	// // if(prevWasDelimiter) {
+	// // combine them
+	// uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
+	// // } else {
+	// // // new token
+	// // uToks.add(t);
+	// // }
+	// prevWasDelimiter = true;
+	// } else {
+	// // 't' is not a delimiter
+	// // if(prevWasDelimiter) {
+	// // if(t.length() > 4) {
+	// // new token
+	// uToks.add(t);
+	// // } else {
+	// // // combine them
+	// // uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
+	// // }
+	// prevWasDelimiter = false;
+	// }
+	// }
+	//
+	// }
+	// } else {
+	// uToks.add(tokenString);
+	// }
+	//
+	// if(false) {
+	// System.out.println("-------------------");
+	// for(String t : uToks) {
+	// System.out.println("<\"" + t + "\">");
+	// }
+	// }
+	//
+	// return uToks;
+	// }
+	//
+	//
+	// public static List<String> getUriTokens(String uri) {
+	// StringTokenizer st = new StringTokenizer(uri, "/#", true);
+	// ArrayList<String> uToks = new ArrayList<String>();
+	// if (st.countTokens() > 1) {
+	// int nextIndex = 0;
+	// while (st.hasMoreTokens()) {
+	// String s = st.nextToken();
+	// if ("/".equals(s)) {
+	// // is delimiter
+	// assert (uToks.size() > (nextIndex - 1));
+	// uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
+	// } else if ("#".equals(s)) {
+	// // is delimiter
+	// assert (uToks.size() > (nextIndex - 1));
+	// uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
+	// } else {
+	// if (uToks.size() > nextIndex) {
+	// // Already there
+	// uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
+	// } else {
+	// // new entry
+	// uToks.add(s);
+	// nextIndex++;
+	// }
+	// }
+	// // System.out.println("\t" + s);
+	// }
+	// } else {
+	// uToks.add(uri);
+	// }
+	//
+	// return uToks;
+	// }
 
-//	private final boolean doTokenizeCHs = false; // TEST
-//	
-//	if (doTokenizeCHs) {
-//	String delimiters;
-//	// delimiters = "/#"; // uri delimiters
-//	delimiters = " ,.-\t\n\r"; // text delimiters
-//	String s = chars.toString();
-//	
-//	// remove leading and trailing whitespaces 
-//	s = s.trim();
-//	
-//	// remove duplicates whitespaces ?
-//	// \s matches a space, tab, new line, carriage return, form feed or vertical tab
-//	// + says "one or more of those"
-//	
-//	s = s.replaceAll("\\s+", " ");
-//	
-//	List<String> uToks = getTokens(s, delimiters);
-//	for(String ut : uToks) {
-//		encodeCharactersForce(new StringValue(ut));
-//	}
-//}
-//	
-//    @SuppressWarnings("unused")
-//	public static List<String> getTokens(String tokenString, String delimiters) {
-//		StringTokenizer st = new StringTokenizer(tokenString, delimiters, true);
-//		ArrayList<String> uToks = new ArrayList<String>();
-//		if(st.countTokens() > 1) {
-//			
-//			boolean prevWasDelimiter = false;
-//			
-//			while (st.hasMoreTokens()) {
-//				String t = st.nextToken();
-//				
-//				// collapse contiguous delimiters
-//				if(uToks.size() == 0) {
-//					// first, just add
-//					uToks.add(t);
-//					prevWasDelimiter = delimiters.contains(t);
-//				} else {
-//					// all others
-//					if(delimiters.contains(t)) {
-//						// 't' is delimiter
-////						if(prevWasDelimiter) {
-//							// combine them
-//							uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
-////						} else {
-////							// new token
-////							uToks.add(t);
-////						}
-//						prevWasDelimiter = true;
-//					} else {
-//						// 't' is not a delimiter
-////						if(prevWasDelimiter) {
-////						if(t.length() > 4) {
-//							// new token
-//							uToks.add(t);
-////						} else {
-////							// combine them
-////							uToks.set(uToks.size()-1, uToks.get(uToks.size()-1)+t);
-////						}
-//						prevWasDelimiter = false;
-//					}
-//				}
-//				
-//			}
-//		} else {
-//			uToks.add(tokenString);
-//		}
-//		
-//		if(false) {
-//			System.out.println("-------------------");
-//			for(String t : uToks) {
-//				System.out.println("<\"" + t + "\">");
-//			}
-//		}
-//    	
-//    	return uToks;
-//    }
-//    
-//    
-//	public static List<String> getUriTokens(String uri) {
-//		StringTokenizer st = new StringTokenizer(uri, "/#", true);
-//		ArrayList<String> uToks = new ArrayList<String>();
-//		if (st.countTokens() > 1) {
-//			int nextIndex = 0;
-//			while (st.hasMoreTokens()) {
-//				String s = st.nextToken();
-//				if ("/".equals(s)) {
-//					// is delimiter
-//					assert (uToks.size() > (nextIndex - 1));
-//					uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
-//				} else if ("#".equals(s)) {
-//					// is delimiter
-//					assert (uToks.size() > (nextIndex - 1));
-//					uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
-//				} else {
-//					if (uToks.size() > nextIndex) {
-//						// Already there
-//						uToks.set(nextIndex - 1, uToks.get(nextIndex - 1) + s);
-//					} else {
-//						// new entry
-//						uToks.add(s);
-//						nextIndex++;
-//					}
-//				}
-//				// System.out.println("\t" + s);
-//			}
-//		} else {
-//			uToks.add(uri);
-//		}
-//
-//		return uToks;
-//	}
-	
-	
-	// returns null if no CH datatype is available
+	// returns null if no CH datatype is available or schema-less
 	private WhiteSpace getDatatypeWhiteSpace() {
 		Grammar currGr = this.getCurrentGrammar();
-		if (currGr.getNumberOfEvents() > 0) {
+		if (currGr.isSchemaInformed() && currGr.getNumberOfEvents() > 0) {
 			Production prod = currGr.getProduction(0);
-			if(prod.getEvent().getEventType() == EventType.CHARACTERS) {
+			if (prod.getEvent().getEventType() == EventType.CHARACTERS) {
 				Characters ch = (Characters) prod.getEvent();
 				return ch.getDatatype().getWhiteSpace();
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	static void replace(char[] chars, int len) {
 		// replace
-	    // All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage return) are replaced with #x20 (space)
-		for(int i=0; i<len; i++) {
-			if(chars[i] == '\t' || chars[i] == '\n' || chars[i] == '\r') {
+		// All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage
+		// return) are replaced with #x20 (space)
+		for (int i = 0; i < len; i++) {
+			if (chars[i] == '\t' || chars[i] == '\n' || chars[i] == '\r') {
 				chars[i] = ' ';
 			}
 		}
 	}
-	
+
 	static void shiftLeft(char[] chars, int pos, int len) {
-		System.arraycopy(chars, pos+1, chars, pos, len-1);
+		System.arraycopy(chars, pos + 1, chars, pos, len - 1);
 	}
-	
+
 	// returns new length
 	static int collapse(char[] chars, int len) {
-		//  collapse
-	    // After the processing implied by replace, contiguous sequences of #x20's are collapsed to a single #x20, and leading and trailing #x20's are removed. 
+		// collapse
+		// After the processing implied by replace, contiguous sequences of
+		// #x20's are collapsed to a single #x20, and leading and trailing
+		// #x20's are removed.
 		replace(chars, len);
-		
+
 		int newLen = len;
-		
+
 		// contiguous sequences of #x20's are collapsed to a single #x20
-		if(newLen > 1) {
+		if (newLen > 1) {
 			int i = 0;
-			while(i<(newLen-1)) {
+			while (i < (newLen - 1)) {
 				char thisChar = chars[i];
-				char nextChar = chars[i+1];
+				char nextChar = chars[i + 1];
 				if (thisChar == ' ' && nextChar == ' ') {
 					// eliminate one space
-					shiftLeft(chars, i, newLen-i);
+					shiftLeft(chars, i, newLen - i);
 					newLen--;
 				} else {
-					i++;	
+					i++;
 				}
 			}
 		}
 
 		// leading and trailing #x20's are removed
 		newLen = trimSpaces(chars, newLen);
-		
+
 		return newLen;
 	}
-	
+
 	// returns new length
 	static int trimSpaces(char[] chars, int len) {
 		// leading and trailing #x20's are removed
 		int newLen = len;
-		
+
 		// leading
-		while(newLen > 0 && chars[0] == ' ') {
+		while (newLen > 0 && chars[0] == ' ') {
 			// eliminate one leading space
 			shiftLeft(chars, 0, newLen);
 			newLen--;
 		}
 		// trailing
-		int i = newLen-1;
-		while(i>=0 && chars[i] == ' ') {
+		int i = newLen - 1;
+		while (i >= 0 && chars[i] == ' ') {
 			// eliminate one trailing space
 			newLen--;
 			i--;
 		}
-		
+
 		return newLen;
 	}
-	
+
 	static boolean isWS(char c) {
-		return (c == ' ' || c == '\n' || c == '\r' || c == '\t' );
+		return (c == ' ' || c == '\n' || c == '\r' || c == '\t');
 	}
-	
+
 	static boolean isSolelyWS(char[] chars, int len) {
-		for(int i=0; i<len; i++) {
-			if(!isWS(chars[i])) {
+		for (int i = 0; i < len; i++) {
+			if (!isWS(chars[i])) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	static int trimWS(char[] chars, int len) {
 		// leading and trailing whitespaces are removed
 		int newLen = len;
-		
+
 		// leading
-		while(newLen > 0 && isWS(chars[0])) {
+		while (newLen > 0 && isWS(chars[0])) {
 			// eliminate one leading space
 			shiftLeft(chars, 0, newLen);
 			newLen--;
 		}
 		// trailing
-		int i = newLen-1;
-		while(i>=0 && isWS(chars[i])) {
+		int i = newLen - 1;
+		while (i >= 0 && isWS(chars[i])) {
 			// eliminate one trailing space
 			newLen--;
 			i--;
 		}
-		
+
 		return newLen;
 	}
-	
-	
+
 	/** character buffer for CH trimming, replacing, collapsing */
 	private char[] cbuffer;
-	
+
 	private int modeValuesToCBuffer() {
 		int len = 0;
-		for(int i=0; i<bChars.size(); i++) {
+		for (int i = 0; i < bChars.size(); i++) {
 			len += bChars.get(i).getCharactersLength();
 		}
-		if(cbuffer == null || cbuffer.length < len) {
+		if (cbuffer == null || cbuffer.length < len) {
 			cbuffer = new char[len];
 		}
-		int pos = 0; 
-		for(int i=0; i<bChars.size(); i++) {
+		int pos = 0;
+		for (int i = 0; i < bChars.size(); i++) {
 			Value v = bChars.get(i);
 			v.getCharacters(cbuffer, pos);
 			pos += v.getCharactersLength();
 		}
-		assert(len == pos);
+		assert (len == pos);
 		return len;
 	}
-	
-	
-	protected void checkPendingCharacters(EventType nextEvent) throws EXIException, IOException {
+
+	protected void checkPendingCharacters(EventType nextEvent)
+			throws EXIException, IOException {
 		final int numberOfValues = bChars.size();
 		if (numberOfValues > 0) {
-			if(numberOfValues == 1 && bChars.get(0).getValueType() != ValueType.STRING) {
+			if (numberOfValues == 1
+					&& bChars.get(0).getValueType() != ValueType.STRING) {
 				// typed data uses its own whitespace rules
 				encodeCharactersForce(bChars.get(0));
 			} else {
 				// else: string or multiple typed values
 				WhiteSpace ws = getDatatypeWhiteSpace();
 				// Don't we want to prune insignificant whitespace characters
-				if (!(preserveLexicalValues || this.isXmlSpacePreserve || ws==WhiteSpace.preserve)) {
+				if (!(preserveLexicalValues || this.isXmlSpacePreserve || ws == WhiteSpace.preserve)) {
 					int len = modeValuesToCBuffer();
-					if(ws == WhiteSpace.replace) {
+					if (ws == WhiteSpace.replace) {
 						// replace
-					    // All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage return) are replaced with #x20 (space) 
+						// All occurrences of #x9 (tab), #xA (line feed) and #xD
+						// (carriage return) are replaced with #x20 (space)
 						replace(cbuffer, len);
 					} else if (ws == WhiteSpace.collapse) {
 						// collapse
-					    // After the processing implied by replace, contiguous sequences of #x20's are collapsed to a single #x20, and leading and trailing #x20's are removed. 
+						// After the processing implied by replace, contiguous
+						// sequences of #x20's are collapsed to a single #x20,
+						// and leading and trailing #x20's are removed.
 						replace(cbuffer, len);
 						len = collapse(cbuffer, len);
 					} else {
 						// schema-less, no datatype
 						// https://lists.w3.org/Archives/Public/public-exi/2015Oct/0008.html
 						// If it is schema-less:
-						//  - Simple data (data between s+e) are all preserved.
-						//  - For complex data (data between s+s, e+s, e+e), it is same as schema-informed case.
-						if((this.lastEvent == EventType.START_ELEMENT || this.lastEvent == EventType.ATTRIBUTE
-								|| this.lastEvent == EventType.ATTRIBUTE_XSI_NIL || this.lastEvent == EventType.ATTRIBUTE_XSI_TYPE
-								|| this.lastEvent == EventType.NAMESPACE_DECLARATION) && nextEvent == EventType.END_ELEMENT) {
+						// - Simple data (data between s+e) are all preserved.
+						// - For complex data (data between s+s, e+s, e+e), it
+						// is same as schema-informed case.
+						if ((this.lastEvent == EventType.START_ELEMENT
+								|| this.lastEvent == EventType.ATTRIBUTE
+								|| this.lastEvent == EventType.ATTRIBUTE_XSI_NIL
+								|| this.lastEvent == EventType.ATTRIBUTE_XSI_TYPE || this.lastEvent == EventType.NAMESPACE_DECLARATION)
+								&& (nextEvent == EventType.END_ELEMENT
+										|| nextEvent == EventType.COMMENT
+										|| nextEvent == EventType.PROCESSING_INSTRUCTION || nextEvent == EventType.DOC_TYPE)) {
 							// simple data --> preserve
 						} else {
-							// For complex data (data between s+s, e+s, e+e), whitespaces nodes (i.e.
-							// strings that consist solely of whitespaces) are removed
-							if(isSolelyWS(cbuffer, len)) {
+							// For complex data (data between s+s, e+s, e+e),
+							// whitespaces nodes (i.e.
+							// strings that consist solely of whitespaces) are
+							// removed
+							if (isSolelyWS(cbuffer, len)) {
 								len = 0;
 							}
 							// trim?
@@ -1535,30 +1551,31 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 					if (len == 0) {
 						// --> omit empty string
 					} else {
-						StringValue sv = new StringValue(new String(cbuffer, 0, len));
+						StringValue sv = new StringValue(new String(cbuffer, 0,
+								len));
 						encodeCharactersForce(sv);
 					}
 				} else {
 					// preserve data as is
-					if(numberOfValues == 1) {
+					if (numberOfValues == 1) {
 						encodeCharactersForce(bChars.get(0));
 					} else {
-						// collapse all events to a single one (not very efficient in most of the cases)
+						// collapse all events to a single one (not very
+						// efficient in most of the cases)
 						int len = modeValuesToCBuffer();
-						StringValue sv = new StringValue(new String(cbuffer, 0, len));
+						StringValue sv = new StringValue(new String(cbuffer, 0,
+								len));
 						encodeCharactersForce(sv);
-					}	
+					}
 				}
 			}
 			bChars.clear();
 		}
 	}
 
-	
 	public void encodeCharacters(Value chars) throws EXIException, IOException {
 		bChars.add(chars);
 	}
-    
 
 	protected void encodeCharactersForce(Value chars) throws EXIException,
 			IOException {
@@ -1592,9 +1609,10 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 				updateCurrentRule(ei.getNextGrammar());
 			} else {
 				// Undeclared CH can be found on 2nd level
-				int ecCHundeclared = fidelityOptions.get2ndLevelEventCode(
-						EventType.CHARACTERS_GENERIC_UNDECLARED,
-						currentGrammar);
+				int ecCHundeclared = fidelityOptions
+						.get2ndLevelEventCode(
+								EventType.CHARACTERS_GENERIC_UNDECLARED,
+								currentGrammar);
 
 				if (ecCHundeclared == Constants.NOT_FOUND) {
 					if (exiFactory.isFragment()) {
@@ -1651,10 +1669,10 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			String text) throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			checkPendingCharacters(EventType.DOC_TYPE);
-			
+
 			// DOCTYPE can be found on 2nd level
-			int ec2 = fidelityOptions.get2ndLevelEventCode(
-					EventType.DOC_TYPE, getCurrentGrammar());
+			int ec2 = fidelityOptions.get2ndLevelEventCode(EventType.DOC_TYPE,
+					getCurrentGrammar());
 			encode2ndLevelEventCode(ec2);
 
 			// name, public, system, text AS string
@@ -1681,7 +1699,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
 			checkPendingCharacters(EventType.ENTITY_REFERENCE);
-			
+
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
 
@@ -1703,7 +1721,7 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)) {
 			checkPendingCharacters(EventType.COMMENT);
-			
+
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
 
@@ -1724,14 +1742,14 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			throws EXIException, IOException {
 		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PI)) {
 			checkPendingCharacters(EventType.PROCESSING_INSTRUCTION);
-			
+
 			// grammar learning restricting (if necessary)
 			doLimitGrammarLearningForErCmPi();
 
 			// processing instructions can be found on 3rd level
 			final Grammar currentGrammar = getCurrentGrammar();
-			int ec3 = fidelityOptions.get3rdLevelEventCode(
-					EventType.PROCESSING_INSTRUCTION);
+			int ec3 = fidelityOptions
+					.get3rdLevelEventCode(EventType.PROCESSING_INSTRUCTION);
 			encode3rdLevelEventCode(ec3);
 
 			// encode PI content

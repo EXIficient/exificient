@@ -1209,7 +1209,7 @@ public class CanonicalEXITestCase extends TestCase {
 			DateTimeValue dtv = (DateTimeValue) v;
 			assertTrue(dtv.toString().equals(sdt));
 			assertTrue(dtv.year == 2003);
-			assertTrue(dtv.monthDay == (10*32+30)); // Month * 32 + Day 
+			assertTrue(dtv.monthDay == (10 * 32 + 30)); // Month * 32 + Day
 			assertTrue(dtv.presenceTimezone == true);
 			assertTrue(dtv.timezone == 0);
 
@@ -1220,7 +1220,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// not adding any timezone
 	public void testDatatypeDateTime3() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
@@ -1272,7 +1272,7 @@ public class CanonicalEXITestCase extends TestCase {
 			DateTimeValue dtv = (DateTimeValue) v;
 			assertTrue(dtv.toString().equals(sdt));
 			assertTrue(dtv.year == 2003);
-			assertTrue(dtv.monthDay == (10*32+30)); // Month * 32 + Day 
+			assertTrue(dtv.monthDay == (10 * 32 + 30)); // Month * 32 + Day
 			assertTrue(dtv.presenceTimezone == false);
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -1578,7 +1578,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	public void testEmptyCharactersSchemaInformedEnumerationFail1()
 			throws Exception {
 
@@ -1672,7 +1672,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	public void testEmptyCharactersSchemaInformedComplexMixedContent2()
 			throws Exception {
 
@@ -1687,8 +1687,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "        <xs:element name='v' type='xs:string' minOccurs='0'/>"
 				+ "      </xs:sequence>"
 				+ "    </xs:complexType>"
-				+ " </xs:element>"
-				+ "</xs:schema>";
+				+ " </xs:element>" + "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1716,36 +1715,36 @@ public class CanonicalEXITestCase extends TestCase {
 			// Note: no empty CH for mixed content
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT);
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("t"));
-				
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("t"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS);
 				Value v = decoder.decodeCharacters();
 				assertTrue(v instanceof StringValue);
 				StringValue dtv = (StringValue) v;
 				assertTrue(dtv.toString().equals("bla"));
-				
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-			
+
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC);
 			Value vX = decoder.decodeCharacters();
 			assertTrue(vX instanceof StringValue);
 			StringValue dtvX = (StringValue) vX;
 			assertTrue(dtvX.toString().equals(" X "));
-			
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT);
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("v"));
-				
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("v"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS);
 				Value v = decoder.decodeCharacters();
 				assertTrue(v instanceof StringValue);
 				StringValue dtv = (StringValue) v;
 				assertTrue(dtv.toString().equals("foo"));
-				
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
@@ -1757,7 +1756,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	public void testEmptyCharactersSchemaInformedComplexMixedContent3()
 			throws Exception {
 
@@ -1772,8 +1771,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "        <xs:element name='v' type='xs:string' minOccurs='0'/>"
 				+ "      </xs:sequence>"
 				+ "    </xs:complexType>"
-				+ " </xs:element>"
-				+ "</xs:schema>";
+				+ " </xs:element>" + "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1841,8 +1839,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	
+
 	public void testEmptyCharactersSchemaLess1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setFidelityOptions(FidelityOptions.createDefault());
@@ -1869,41 +1866,42 @@ public class CanonicalEXITestCase extends TestCase {
 
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("foo"));
-				
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("foo"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 				Value v = decoder.decodeCharacters();
 				assertTrue(v instanceof StringValue);
 				StringValue dtv = (StringValue) v;
 				assertTrue(dtv.toString().equals("XX"));
-				
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-			
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("foo"));
-				
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("foo"));
+
 				assertTrue(decoder.next() == EventType.CHARACTERS); // learned
 				Value v = decoder.decodeCharacters();
 				assertTrue(v instanceof StringValue);
 				StringValue dtv = (StringValue) v;
 				assertTrue(dtv.toString().equals("YY"));
-				
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-			
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT); // learned
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("foo"));
-				
-				// Note: no empty CH for schema-less streams (even if CH exists due to learning)
-				
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("foo"));
+
+				// Note: no empty CH for schema-less streams (even if CH exists
+				// due to learning)
+
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 				decoder.decodeEndElement();
 			}
@@ -1916,4 +1914,414 @@ public class CanonicalEXITestCase extends TestCase {
 		}
 	}
 
+	public void testEmptyCharactersSchemaLess2() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createAll());
+
+		String xml = "<None>  <!-- abc -->   </None>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("None"));
+
+			{
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("  "));
+
+				assertTrue(decoder.next() == EventType.COMMENT);
+				char[] cm = decoder.decodeComment();
+				assertTrue("'" + new String(cm) + "'",
+						new String(cm).equals(" abc "));
+
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v2 = decoder.decodeCharacters();
+				assertTrue(v2 instanceof StringValue);
+				StringValue dtv2 = (StringValue) v2;
+				assertTrue(dtv2.toString().equals("   "));
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaLess3() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createAll());
+
+		String xml = "<None>  <?PITarget PIContent?>   </None>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("None"));
+
+			{
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("  "));
+
+				assertTrue(decoder.next() == EventType.PROCESSING_INSTRUCTION);
+				@SuppressWarnings("unused")
+				com.siemens.ct.exi.core.container.ProcessingInstruction pi = decoder
+						.decodeProcessingInstruction();
+
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v2 = decoder.decodeCharacters();
+				assertTrue(v2 instanceof StringValue);
+				StringValue dtv2 = (StringValue) v2;
+				assertTrue(dtv2.toString().equals("   "));
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaLess4() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_COMMENT, true);
+
+		String xml = "<None>  <!-- abc -->   </None>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("None"));
+
+			{
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("  "));
+
+				assertTrue(decoder.next() == EventType.COMMENT);
+				char[] cm = decoder.decodeComment();
+				assertTrue("'" + new String(cm) + "'",
+						new String(cm).equals(" abc "));
+
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v2 = decoder.decodeCharacters();
+				assertTrue(v2 instanceof StringValue);
+				StringValue dtv2 = (StringValue) v2;
+				assertTrue(dtv2.toString().equals("   "));
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaLess5() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PI,
+				true);
+		factory.getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_PREFIX, true);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		String xml = "<p><a>foo</a> </p>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("a"));
+
+				{
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					Value v1 = decoder.decodeCharacters();
+					assertTrue(v1 instanceof StringValue);
+					StringValue dtv1 = (StringValue) v1;
+					assertTrue(dtv1.toString().equals("foo"));
+				}
+
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+
+				// assertTrue(decoder.next() ==
+				// EventType.CHARACTERS_GENERIC_UNDECLARED);
+				// Value v2 = decoder.decodeCharacters();
+				// assertTrue(v2 instanceof StringValue);
+				// StringValue dtv2 = (StringValue) v2;
+				// assertTrue(dtv2.toString().equals(" "));
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	public void testEmptyCharactersSchemaLess6() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PI,
+				true);
+		factory.getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_PREFIX, true);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		String xml = "<text:p xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\"  xmlns:xlink=\"http://www.w3.org/1999/xlink\" text:style-name=\"List_20_Contents\"><text:a xlink:type=\"simple\" xlink:href=\"http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/\">http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/</text:a> </text:p>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+
+			assertTrue(decoder.next() == EventType.NAMESPACE_DECLARATION);
+			decoder.decodeNamespaceDeclaration();
+
+			assertTrue(decoder.next() == EventType.NAMESPACE_DECLARATION);
+			decoder.decodeNamespaceDeclaration();
+
+			// text:style-name=\"List_20_Contents\">
+			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+			assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("style-name"));
+
+			{
+				// <text:a xlink:type=\"simple\"
+				// xlink:href=\"http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/\"
+
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("a"));
+				
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("href"));
+				
+				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("type"));
+
+				{
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					Value v1 = decoder.decodeCharacters();
+					assertTrue(v1 instanceof StringValue);
+					StringValue dtv1 = (StringValue) v1;
+					assertTrue(dtv1.toString().equals("http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/"));
+				}
+
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+
+				// assertTrue(decoder.next() ==
+				// EventType.CHARACTERS_GENERIC_UNDECLARED);
+				// Value v2 = decoder.decodeCharacters();
+				// assertTrue(v2 instanceof StringValue);
+				// StringValue dtv2 = (StringValue) v2;
+				// assertTrue(dtv2.toString().equals(" "));
+			}
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
+	// learned
+	public void testEmptyCharactersSchemaLess7() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		factory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PI,
+				true);
+		factory.getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_PREFIX, true);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+
+		String xml = "<outer><p><a/>bla</p><p>bla2</p><p>bla3</p><p><a>foo</a> </p></outer>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("outer"));
+
+			
+			
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+						.equals("a"));
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+				decoder.decodeEndElement();
+				
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("bla"));
+			}			
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+			
+			
+			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+			{
+				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("bla2"));
+			}			
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+			
+			
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+			{
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v1 = decoder.decodeCharacters();
+				assertTrue(v1 instanceof StringValue);
+				StringValue dtv1 = (StringValue) v1;
+				assertTrue(dtv1.toString().equals("bla3"));
+			}			
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+			
+			
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("p"));
+			
+			{
+				assertTrue(decoder.next() == EventType.START_ELEMENT);
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("a"));
+
+				{
+					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+					Value v1 = decoder.decodeCharacters();
+					assertTrue(v1 instanceof StringValue);
+					StringValue dtv1 = (StringValue) v1;
+					assertTrue(dtv1.toString().equals("foo"));
+				}
+
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+				decoder.decodeEndElement();
+			}
+			
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement(); // p
+			
+			
+			
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT); // outer
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
 }
