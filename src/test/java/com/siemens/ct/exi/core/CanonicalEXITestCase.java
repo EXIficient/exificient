@@ -1805,6 +1805,40 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	public void testEmptyCharactersSchemaInformedXmlSpaceStrictFail()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createStrict());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:import namespace='http://www.w3.org/XML/1998/namespace' schemaLocation='http://www.w3.org/2001/xml.xsd'/>"
+				+ " <xs:element name='el1'>"
+				+ "    <xs:complexType>"
+				+ "      <xs:sequence>"
+				+ "        <xs:element name='t' type='xs:string' minOccurs='0'/>"
+				+ "      </xs:sequence>"
+				+ "      <xs:attribute ref='xml:space'/>"
+				+ "    </xs:complexType>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<el1 xml:space='preserve'> </el1>";
+
+		// encode to EXI
+		try {
+			TestSAXEncoder enc = new TestSAXEncoder(factory);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+			
+			fail("Should fail because it cannot represent empty characters");
+		} catch (Exception e) {
+			// fine to fail
+		}
+	}
 
 	public void testEmptyCharactersSchemaLess0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
