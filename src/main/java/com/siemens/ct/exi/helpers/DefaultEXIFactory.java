@@ -35,6 +35,8 @@ import com.siemens.ct.exi.DecodingOptions;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamDecoder;
+import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
@@ -48,6 +50,8 @@ import com.siemens.ct.exi.core.EXIBodyDecoderReordered;
 import com.siemens.ct.exi.core.EXIBodyEncoderInOrder;
 import com.siemens.ct.exi.core.EXIBodyEncoderInOrderSC;
 import com.siemens.ct.exi.core.EXIBodyEncoderReordered;
+import com.siemens.ct.exi.core.EXIStreamDecoderImpl;
+import com.siemens.ct.exi.core.EXIStreamEncoderImpl;
 import com.siemens.ct.exi.datatype.strings.BoundedStringDecoderImpl;
 import com.siemens.ct.exi.datatype.strings.BoundedStringEncoderImpl;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
@@ -120,7 +124,7 @@ public class DefaultEXIFactory implements EXIFactory {
 	// /* default: no profile */
 	// protected String profile;
 
-	/* default: use no specify bod coder */
+	/* default: use no specify body coder */
 	protected EXIBodyEncoder bodyEncoder;
 	protected EXIBodyDecoder bodyDecoder;
 
@@ -445,9 +449,6 @@ public class DefaultEXIFactory implements EXIFactory {
 
 		doSanityCheck();
 
-		// if (ContextEXIBodyEncoder.USE_CONTEXT_CODER) {
-		// return new ContextEXIBodyEncoder(this);
-		// } else {
 		if (codingMode.usesRechanneling()) {
 			return new EXIBodyEncoderReordered(this);
 		} else {
@@ -457,8 +458,12 @@ public class DefaultEXIFactory implements EXIFactory {
 				return new EXIBodyEncoderInOrder(this);
 			}
 		}
-		// }
+	}
 
+	public EXIStreamEncoder createEXIStreamEncoder() throws EXIException {
+		doSanityCheck();
+
+		return new EXIStreamEncoderImpl(this);
 	}
 
 	protected void updateFactoryAccordingCanonicalEXI(String canonicalOption)
@@ -469,10 +474,13 @@ public class DefaultEXIFactory implements EXIFactory {
 		this.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_COOKIE);
 		// * Presence Bit for EXI Options to indicate whether the fifth part
 		// of the EXI Header, the EXI Options document, is present or absent.
-		if(this.getEncodingOptions().isOptionEnabled(EncodingOptions.CANONICAL_EXI)) {
-			this.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		if (this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI)) {
+			this.getEncodingOptions()
+					.setOption(EncodingOptions.INCLUDE_OPTIONS);
 		} else {
-			this.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_OPTIONS);
+			this.getEncodingOptions().unsetOption(
+					EncodingOptions.INCLUDE_OPTIONS);
 		}
 		// * When the alignment option compression is set, pre-compress MUST be
 		// used instead of compression.
@@ -516,11 +524,11 @@ public class DefaultEXIFactory implements EXIFactory {
 
 	public SAXEncoder createEXIWriter() throws EXIException {
 		// canonical EXI (http://www.w3.org/TR/exi-c14n/)
-		if(this.getEncodingOptions().isOptionEnabled(
+		if (this.getEncodingOptions().isOptionEnabled(
 				EncodingOptions.CANONICAL_EXI)) {
 			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI);
-		} else if(this.getEncodingOptions().isOptionEnabled(
-				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {	
+		} else if (this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {
 			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
 		}
 
@@ -553,6 +561,12 @@ public class DefaultEXIFactory implements EXIFactory {
 				return new EXIBodyDecoderInOrder(this);
 			}
 		}
+	}
+
+	public EXIStreamDecoder createEXIStreamDecoder() throws EXIException {
+		doSanityCheck();
+
+		return new EXIStreamDecoderImpl(this);
 	}
 
 	public XMLReader createEXIReader() throws EXIException {

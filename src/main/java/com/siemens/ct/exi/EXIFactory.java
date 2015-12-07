@@ -447,6 +447,15 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 */
 	public EXIBodyEncoder createEXIBodyEncoder() throws EXIException;
+	
+	/**
+	 * Returns an <code>EXIStreamEncoder</code>
+	 * 
+	 * @return stream encoder using the previously set coding options.
+	 * @throws EXIException EXI exception
+	 * 
+	 */
+	public EXIStreamEncoder createEXIStreamEncoder() throws EXIException;
 
 	/**
 	 * Returns a <code>SAXEncoder</code> that implements
@@ -470,6 +479,15 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 */
 	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException;
+	
+	/**
+	 * Returns an <code>EXIStreamDecoder</code>
+	 * 
+	 * @return stream decoder using the previously set coding options.
+	 * @throws EXIException EXI exception
+	 * 
+	 */
+	public EXIStreamDecoder createEXIStreamDecoder() throws EXIException;
 
 	/**
 	 * Returns an <code>EXIReader</code>

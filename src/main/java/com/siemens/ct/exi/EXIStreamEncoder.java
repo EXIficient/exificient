@@ -26,9 +26,7 @@ package com.siemens.ct.exi;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.siemens.ct.exi.core.EXIHeaderEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 
 /**
  * An EXI stream is an EXI header followed by an EXI body. The EXI body carries
@@ -41,31 +39,8 @@ import com.siemens.ct.exi.io.channel.BitEncoderChannel;
  * @version 0.9.6-SNAPSHOT
  */
 
-public class EXIStreamEncoder {
+public interface EXIStreamEncoder {
 
-	protected final EXIHeaderEncoder exiHeader;
-	protected final EXIBodyEncoder exiBody;
-	protected final EXIFactory exiFactory;
-
-	public EXIStreamEncoder(EXIFactory exiFactory) throws EXIException {
-		this.exiFactory = exiFactory;
-		exiHeader = new EXIHeaderEncoder();
-		exiBody = exiFactory.createEXIBodyEncoder();
-	}
-
-	public EXIBodyEncoder encodeHeader(OutputStream os)
-			throws EXIException, IOException {
-		// setup & write header
-		BitEncoderChannel headerChannel = new BitEncoderChannel(os);
-		exiHeader.write(headerChannel, exiFactory);
-
-		// setup data-stream for body
-		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
-			// bit-packed re-uses the header channel
-			exiBody.setOutputChannel(headerChannel);
-		} else {
-			exiBody.setOutputStream(os);
-		}
-		return exiBody;
-	}
+	public EXIBodyEncoder encodeHeader(OutputStream os) throws EXIException,
+			IOException;
 }

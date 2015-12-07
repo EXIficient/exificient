@@ -1346,7 +1346,7 @@ public class CanonicalEXITestCase extends TestCase {
 																// stream should
 																// contain the
 																// right options
-		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIStreamDecoder sdec = noOptionsFactory.createEXIStreamDecoder();
 		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
 		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
@@ -1377,7 +1377,7 @@ public class CanonicalEXITestCase extends TestCase {
 																// stream should
 																// contain the
 																// right options
-		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIStreamDecoder sdec = noOptionsFactory.createEXIStreamDecoder();
 		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderReordered);
 		EXIBodyDecoderReordered bdec2 = (EXIBodyDecoderReordered) bdec;
@@ -1415,7 +1415,7 @@ public class CanonicalEXITestCase extends TestCase {
 																// stream should
 																// contain the
 																// right options
-		EXIStreamDecoder sdec = new EXIStreamDecoder(noOptionsFactory);
+		EXIStreamDecoder sdec = noOptionsFactory.createEXIStreamDecoder();
 		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
 		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
 		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
@@ -1455,7 +1455,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1501,7 +1501,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1554,7 +1554,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1607,7 +1607,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1652,7 +1652,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1701,7 +1701,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1785,7 +1785,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1799,6 +1799,57 @@ public class CanonicalEXITestCase extends TestCase {
 			// Note: no empty CH for mixed content
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+	
+	// Taki, public mailing list
+	public void testEmptyCharactersSchemaInformedComplexMixedContent4()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='A'>"
+				+ "    <xs:complexType mixed='true'>"
+				+ "      <xs:sequence>"
+				+ "        <xs:element name='B'>"
+				+ "           <xs:complexType/>"
+				+ "        </xs:element>"
+				+ "      </xs:sequence>"
+				+ "    </xs:complexType>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<A></A>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("A"));
+
+			// Note: no empty CH for mixed content
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
@@ -1853,7 +1904,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1887,7 +1938,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -1961,7 +2012,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -2012,7 +2063,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -2065,7 +2116,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -2121,7 +2172,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -2182,7 +2233,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 
@@ -2263,7 +2314,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		// decoder
 		{
-			EXIStreamDecoder sdec = new EXIStreamDecoder(factory);
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
 			EXIBodyDecoder decoder = sdec
 					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 

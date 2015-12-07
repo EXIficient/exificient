@@ -65,7 +65,7 @@ public class SAXEncoder extends DefaultHandler2 {
 		this.factory = factory;
 		
 		// exi stream
-		exiStream = new EXIStreamEncoder(factory);
+		exiStream = factory.createEXIStreamEncoder();
 		
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();

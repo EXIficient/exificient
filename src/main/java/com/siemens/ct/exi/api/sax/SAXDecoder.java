@@ -96,7 +96,7 @@ public class SAXDecoder implements XMLReader {
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
+		this.exiStream = noOptionsFactory.createEXIStreamDecoder();
 		/*
 		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
 		 * textual qname even when

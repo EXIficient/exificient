@@ -220,11 +220,11 @@ public class RoundtripTestCase extends TestCase {
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIStreamDecoder streamDecoder = factory.createEXIStreamDecoder();
 		EXIBodyDecoder dec = streamDecoder
 				.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
+		EXIStreamEncoder streamEncoder = factory.createEXIStreamEncoder();
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
 		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 
@@ -293,11 +293,11 @@ public class RoundtripTestCase extends TestCase {
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIStreamDecoder streamDecoder = factory.createEXIStreamDecoder();
 		EXIBodyDecoder dec = streamDecoder
 				.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
+		EXIStreamEncoder streamEncoder = factory.createEXIStreamEncoder();
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
 		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 
@@ -369,11 +369,11 @@ public class RoundtripTestCase extends TestCase {
 		/*
 		 * Decode EXI and Encode EXI again
 		 */
-		EXIStreamDecoder streamDecoder = new EXIStreamDecoder(factory);
+		EXIStreamDecoder streamDecoder = factory.createEXIStreamDecoder();
 		EXIBodyDecoder dec = streamDecoder
 				.decodeHeader(new ByteArrayInputStream(os1.toByteArray()));
 
-		EXIStreamEncoder streamEncoder = new EXIStreamEncoder(factory);
+		EXIStreamEncoder streamEncoder = factory.createEXIStreamEncoder();
 		ByteArrayOutputStream os2 = new ByteArrayOutputStream();
 		EXIBodyEncoder enc2 = streamEncoder.encodeHeader(os2);
 
@@ -423,8 +423,8 @@ public class RoundtripTestCase extends TestCase {
 		QName name = new QName("http://foo", "alice", "foo");
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		EXIBodyEncoder encoder = new EXIStreamEncoder(factory)
-				.encodeHeader(output);
+		EXIBodyEncoder encoder = factory.createEXIStreamEncoder().encodeHeader(
+				output);
 		encoder.encodeStartDocument();
 		encoder.encodeStartElement(name);
 		encoder.encodeNamespaceDeclaration(name.getNamespaceURI(),
@@ -437,8 +437,8 @@ public class RoundtripTestCase extends TestCase {
 
 		ByteArrayInputStream input = new ByteArrayInputStream(
 				output.toByteArray());
-		EXIBodyDecoder decoder = new EXIStreamDecoder(factory)
-				.decodeHeader(input);
+		EXIBodyDecoder decoder = factory.createEXIStreamDecoder().decodeHeader(
+				input);
 		assertEquals(EventType.START_DOCUMENT, decoder.next());
 		assertEquals(EventType.START_DOCUMENT, decoder.next());
 		decoder.decodeStartDocument();
@@ -451,8 +451,7 @@ public class RoundtripTestCase extends TestCase {
 		NamespaceDeclaration nsdecl = decoder.decodeNamespaceDeclaration();
 		assertEquals(name.getNamespaceURI(), nsdecl.namespaceURI);
 		assertEquals(name.getPrefix(), nsdecl.prefix);
-		assertEquals(EventType.CHARACTERS_GENERIC_UNDECLARED,
-				decoder.next());
+		assertEquals(EventType.CHARACTERS_GENERIC_UNDECLARED, decoder.next());
 		assertEquals("bob", decoder.decodeCharacters().toString());
 		assertEquals(EventType.END_ELEMENT, decoder.next());
 		// prefix is known as long as EndElement wasn't called

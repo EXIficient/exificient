@@ -101,7 +101,7 @@ public class StAXDecoder implements XMLStreamReader
 
 	public StAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		this.exiStream = new EXIStreamDecoder(noOptionsFactory);
+		this.exiStream = noOptionsFactory.createEXIStreamDecoder();
 		this.attributes = new ArrayList<AttributeContainer>();
 		this.nsContext = new EXINamespaceContext();
 		

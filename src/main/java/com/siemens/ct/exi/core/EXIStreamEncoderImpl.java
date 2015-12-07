@@ -21,40 +21,53 @@
  * 
  */
 
-package com.siemens.ct.exi;
+package com.siemens.ct.exi.core;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 
+import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.EXIBodyEncoder;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 
 /**
  * An EXI stream is an EXI header followed by an EXI body. The EXI body carries
  * the content of the document, while the EXI header communicates the options
  * used for encoding the EXI body.
  * 
- * <p>
- * Note: In case of multiple EXI documents with EXI Compression mode in one
- * stream or subsequent data in the stream/file one needs to provide the input
- * stream as PushbackInputStream with the size of at least
- * 
- * DecodingOptions.PUSHBACK_BUFFER_SIZE. The reason for doing so is that the
- * Java inflater sometimes reads beyond the EXI channel/block and
- * PushbackInputStream allows us to push back this data so that it is not lost.
- * </p>
- * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
  * @version 0.9.6-SNAPSHOT
  */
+public class EXIStreamEncoderImpl implements EXIStreamEncoder {
 
-public interface EXIStreamDecoder {
+	protected final EXIHeaderEncoder exiHeader;
+	protected final EXIBodyEncoder exiBody;
+	protected final EXIFactory exiFactory;
 
-	public EXIBodyDecoder getBodyOnlyDecoder(InputStream is)
-			throws EXIException, IOException;
+	public EXIStreamEncoderImpl(EXIFactory exiFactory) throws EXIException {
+		this.exiFactory = exiFactory;
+		exiHeader = new EXIHeaderEncoder();
+		exiBody = exiFactory.createEXIBodyEncoder();
+	}
 
-	public EXIBodyDecoder decodeHeader(InputStream is) throws EXIException,
-			IOException;
+	public EXIBodyEncoder encodeHeader(OutputStream os) throws EXIException,
+			IOException {
+		// setup & write header
+		BitEncoderChannel headerChannel = new BitEncoderChannel(os);
+		exiHeader.write(headerChannel, exiFactory);
 
+		// setup data-stream for body
+		if (exiFactory.getCodingMode() == CodingMode.BIT_PACKED) {
+			// bit-packed re-uses the header channel
+			exiBody.setOutputChannel(headerChannel);
+		} else {
+			exiBody.setOutputStream(os);
+		}
+		return exiBody;
+	}
 }

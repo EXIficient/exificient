@@ -97,7 +97,7 @@ public class StAXEncoder implements XMLStreamWriter {
 		exiAttributes = attFactory.createAttributeListInstance(factory);
 		nsContext = new EncoderNamespaceContext();
 		// exi stream
-		exiStream = new EXIStreamEncoder(factory);
+		exiStream = factory.createEXIStreamEncoder();
 		// preserve options
 		FidelityOptions fo = factory.getFidelityOptions();
 		preserveDTD = fo.isFidelityEnabled(FidelityOptions.FEATURE_DTD);

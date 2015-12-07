@@ -69,7 +69,7 @@ public class DOMWriter {
 	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 
-		this.exiStream = new EXIStreamEncoder(factory);
+		this.exiStream = factory.createEXIStreamEncoder();
 
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
