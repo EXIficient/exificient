@@ -542,7 +542,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	public void close() throws XMLStreamException {
-		this.close();
+		this.flush();
 	}
 
 	public void flush() throws XMLStreamException {
