@@ -18,6 +18,29 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 * Java 1.5 or higher
 * Xerces2 Java Parser 2.9.11 or higher for schema-informed mode
 
+## Library - Code Sample
+
+```java
+/*
+* e.g. SAX
+* A parser which implements SAX (ie, a SAX Parser) functions as a stream
+* parser, with an event-driven API.
+*/
+
+// encode
+EXIResult exiResult = new EXIResult( ... );
+exiResult.setOutputStream( ... );
+XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+xmlReader.setContentHandler( exiResult.getHandler() );
+xmlReader.parse( ... );
+
+// decode
+EXISource exiSource = new EXISource( ... );
+XMLReader exiReader = exiSource.getXMLReader();
+exiReader.setContentHandler ( ... );
+exiReader.parse ( new InputSource( ... ) ); 
+```
+
 ## Changes
 
 
