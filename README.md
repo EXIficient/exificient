@@ -41,6 +41,67 @@ exiReader.setContentHandler ( ... );
 exiReader.parse ( new InputSource( ... ) ); 
 ```
 
+## Command-line Interface
+
+EXIficient also provides a command-line interface.
+
+```java
+/* Class: com.siemens.ct.exi.cmd.EXIficientCMD */
+
+      
+
+######################################################################### 
+###   EXIficient                                                      ### 
+###   Command-Shell Options                                           ### 
+######################################################################### 
+
+ -h                               /* shows help */ 
+
+ -encode 
+ -decode 
+
+ -i  
+ -o  
+
+ -schema  
+ -xsdSchema                       /* XML schema datatypes only */ 
+ -noSchema                        /* default */ 
+
+ -strict 
+ -preservePrefixes 
+ -preserveComments 
+ -preserveLexicalValues 
+ -preservePIs                     /* processing instructions */ 
+ -preserveDTDs                    /* DTDs & entity references */ 
+
+ -bytePacked 
+ -preCompression 
+ -compression 
+
+ -blockSize  
+ -valueMaxLength  
+ -valuePartitionCapacity  
+
+ -noLocalValuePartitions          /* EXI Profile parameters */ 
+ -maximumNumberOfBuiltInProductions  
+ -maximumNumberOfBuiltInElementGrammars  
+ 
+ -includeOptions 
+ -includeCookie 
+ -includeSchemaId 
+ -includeSchemaLocation 
+ -includeInsignificantXsiNil 
+ -includeProfileValues 
+ -retainEntityReference
+ -fragment 
+ -selfContained <{urn:foo}elWithNS,elDefNS>
+ -datatypeRepresentationMap  
+
+# Examples
+ -encode -schema notebook.xsd -i notebook.xml
+ -decode -schema notebook.xsd -i notebook.xml.exi -o notebookDec.xml
+```
+
 ## Changes
 
 
