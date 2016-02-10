@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import javax.xml.namespace.QName;
-
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
