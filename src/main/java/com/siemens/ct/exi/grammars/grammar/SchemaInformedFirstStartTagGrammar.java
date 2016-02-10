@@ -39,12 +39,12 @@ import javax.xml.namespace.QName;
 public interface SchemaInformedFirstStartTagGrammar extends
 		SchemaInformedStartTagGrammar {
 
-	/*
-	 * returns type-name or null if anonymous type
-	 */
-	public QName getTypeName();
-
-	public void setTypeName(QName typeName);
+//	/*
+//	 * returns type-name or null if anonymous type
+//	 */
+//	public QName getTypeName();
+//
+//	public void setTypeName(QName typeName);
 
 	/*
 	 * sets whether type is castable

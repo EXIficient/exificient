@@ -1581,7 +1581,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		if (!td.getAnonymous()) {
 			// add to localName table for string table pre-population
 			addLocalNameStringEntry(td.getNamespace(), td.getName());
-			type_i.setTypeName(typeName);
+//			type_i.setTypeName(typeName);
 			grammarTypes.put(typeName, type_i);
 		}
 

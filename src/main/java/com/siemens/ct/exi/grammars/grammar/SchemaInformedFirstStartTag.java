@@ -74,13 +74,13 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		}
 	}
 
-	public QName getTypeName() {
-		return this.typeName;
-	}
-
-	public void setTypeName(QName typeName) {
-		this.typeName = typeName;
-	}
+//	public QName getTypeName() {
+//		return this.typeName;
+//	}
+//
+//	public void setTypeName(QName typeName) {
+//		this.typeName = typeName;
+//	}
 
 	public void setTypeCastable(boolean isTypeCastable) {
 		this.isTypeCastable = isTypeCastable;
