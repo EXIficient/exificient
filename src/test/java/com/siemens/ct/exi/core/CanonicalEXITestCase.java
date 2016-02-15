@@ -1641,6 +1641,60 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	public void testEmptyCharactersSchemaInformedContent1()
+			throws Exception {
+
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='root'>"
+				+ "    <xs:complexType>"
+				+ "        <xs:sequence minOccurs=\"0\" maxOccurs=\"unbounded\">"
+				+ "            <xs:element name=\"entry\" type=\"xs:string\" />"
+				+ "        </xs:sequence>"
+				+ "    </xs:complexType>"
+				+ " </xs:element>"
+				+ "</xs:schema>";
+
+		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+
+		String xml = "<root>   <!-- no entry element at all -->     </root>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decoder
+		{
+			EXIStreamDecoder sdec = factory.createEXIStreamDecoder();
+			EXIBodyDecoder decoder = sdec
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
+					.equals("root"));
+
+			// Note: simple data --> preserve empty CH 
+			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
+			String s = decoder.decodeCharacters().toString();
+			assertTrue("Not only WS characters", s.trim().length() == 0);
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
+
+	
 
 	public void testEmptyCharactersSchemaInformedComplexMixedContent1()
 			throws Exception {
