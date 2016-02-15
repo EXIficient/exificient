@@ -39,7 +39,6 @@ import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.datatype.Datatype;
-import com.siemens.ct.exi.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.datatype.WhiteSpace;
 import com.siemens.ct.exi.datatype.strings.StringCoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
@@ -58,7 +57,6 @@ import com.siemens.ct.exi.grammars.grammar.SchemaInformedGrammar;
 import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.BuiltIn;
-import com.siemens.ct.exi.types.BuiltInType;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.util.MethodsBag;
 import com.siemens.ct.exi.util.xml.QNameUtilities;
@@ -588,82 +586,44 @@ public abstract class AbstractEXIBodyEncoder extends AbstractEXIBodyCoder
 			// encode EventCode (common case)
 			encode1stLevelEventCode(ei.getEventCode());
 		} else {
-			// Check special case: SAX does not inform about empty ("") CH
-			// events
-			// --> if EE is not found check whether an empty CH event *helps*
-			if (currentGrammar.isSchemaInformed()
-					&& (ei = currentGrammar.getProduction(EventType.CHARACTERS)) != null) {
-				Datatype dt = ((DatatypeEvent) ei.getEvent()).getDatatype();
-				BuiltInType bit = dt.getBuiltInType();
-				switch (bit) {
-				/* empty values possible */
-				case BINARY_BASE64:
-				case BINARY_HEX:
-				case STRING:
-				case LIST:
-				case RCS_STRING:
-					if ((ei = ei.getNextGrammar().getProduction(
-							EventType.END_ELEMENT)) != null) {
-						// encode empty characters first
-						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
-						// try EE again
-					} else {
-						ei = null;
-					}
-					break;
-				case ENUMERATION:
-					EnumerationDatatype edt = (EnumerationDatatype) dt;
-					if ((ei = ei.getNextGrammar().getProduction(
-							EventType.END_ELEMENT)) != null
-							&& edt.isValid(StringCoder.EMPTY_STRING_VALUE)) {
-						// encode empty characters first
-						this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
-						// try EE again
-					} else {
-						ei = null;
-					}
-					break;
-				/* no empty value possible */
-				default:
-					ei = null;
-				}
-			}
+			// Undeclared EE can be found on 2nd level
+			int ecEEundeclared = fidelityOptions.get2ndLevelEventCode(
+					EventType.END_ELEMENT_UNDECLARED, currentGrammar);
 
-			if (ei != null) {
-				// encode EventCode
-				encode1stLevelEventCode(ei.getEventCode());
-			} else {
-				// Undeclared EE can be found on 2nd level
-				int ecEEundeclared = fidelityOptions.get2ndLevelEventCode(
-						EventType.END_ELEMENT_UNDECLARED, currentGrammar);
-
-				if (ecEEundeclared == Constants.NOT_FOUND) {
+			if (ecEEundeclared == Constants.NOT_FOUND) {
+				// Should only happen in STRICT mode
+				// Special case: SAX does not inform about empty ("") CH events
+				try {
+					this.encodeCharactersForce(StringCoder.EMPTY_STRING_VALUE);
+					currentGrammar = getCurrentGrammar();
+					ei = currentGrammar.getProduction(EventType.END_ELEMENT);
+					encode1stLevelEventCode(ei.getEventCode());
+				} catch (Exception e) {
 					// Note: should never happen except in strict mode
 					throw new EXIException("Unexpected EE {"
 							+ getElementContext() + ", "
 							+ exiFactory.toString());
-				} else {
-
-					// limit grammar learning ?
-					switch (this.limitGrammars()) {
-					case XSI_TYPE:
-						this.insertXsiTypeAnyType();
-						currentGrammar = getCurrentGrammar();
-						// encode 1st level EventCode
-						ei = currentGrammar
-								.getProduction(EventType.END_ELEMENT);
-						assert (ei != null);
-						encode1stLevelEventCode(ei.getEventCode());
-						break;
-					case GHOST_PRODUCTION:
-					default:
-						// encode [undeclared] event-code
-						encode2ndLevelEventCode(ecEEundeclared);
-						// learn end-element event ?
-						currentGrammar.learnEndElement();
-						this.productionLearningCounting(currentGrammar);
-						break;
-					}
+				}
+			} else {
+				// limit grammar learning ?
+				switch (this.limitGrammars()) {
+				case XSI_TYPE:
+					this.insertXsiTypeAnyType();
+					currentGrammar = getCurrentGrammar();
+					// encode 1st level EventCode
+					ei = currentGrammar
+							.getProduction(EventType.END_ELEMENT);
+					assert (ei != null);
+					encode1stLevelEventCode(ei.getEventCode());
+					break;
+				case GHOST_PRODUCTION:
+				default:
+					// encode [undeclared] event-code
+					encode2ndLevelEventCode(ecEEundeclared);
+					// learn end-element event ?
+					currentGrammar.learnEndElement();
+					this.productionLearningCounting(currentGrammar);
+					break;
 				}
 			}
 		}

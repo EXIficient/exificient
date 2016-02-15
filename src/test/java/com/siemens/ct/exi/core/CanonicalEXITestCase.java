@@ -1466,19 +1466,25 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			assertTrue(decoder.next() == EventType.CHARACTERS);
-			Value v = decoder.decodeCharacters();
-			assertTrue(v instanceof StringValue);
-			StringValue dtv = (StringValue) v;
-			assertTrue(dtv.toString().equals(""));
+			if(newEmptyChStrategy) {
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+			} else {
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals(""));
 
-			assertTrue(decoder.next() == EventType.END_ELEMENT);
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+			}
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	final boolean newEmptyChStrategy = true;
 
 	public void testEmptyCharactersSchemaInformedBinary1() throws Exception {
 
@@ -1512,13 +1518,17 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			assertTrue(decoder.next() == EventType.CHARACTERS);
-			Value v = decoder.decodeCharacters();
-			assertTrue(v instanceof BinaryBase64Value);
-			BinaryBase64Value dtv = (BinaryBase64Value) v;
-			assertTrue(dtv.toString().equals(""));
-
-			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			
+			if(newEmptyChStrategy) {
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+			} else  {
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof BinaryBase64Value);
+				BinaryBase64Value dtv = (BinaryBase64Value) v;
+				assertTrue(dtv.toString().equals(""));
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+			}
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
@@ -1565,13 +1575,17 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			assertTrue(decoder.next() == EventType.CHARACTERS);
-			Value v = decoder.decodeCharacters();
-			assertTrue(v instanceof StringValue);
-			StringValue dtv = (StringValue) v;
-			assertTrue(dtv.toString().equals(""));
+			if(newEmptyChStrategy) {
+				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
+			} else {
+				assertTrue(decoder.next() == EventType.CHARACTERS);
+				Value v = decoder.decodeCharacters();
+				assertTrue(v instanceof StringValue);
+				StringValue dtv = (StringValue) v;
+				assertTrue(dtv.toString().equals(""));
 
-			assertTrue(decoder.next() == EventType.END_ELEMENT);
+				assertTrue(decoder.next() == EventType.END_ELEMENT);
+			}
 			decoder.decodeEndElement();
 
 			assertTrue(decoder.next() == EventType.END_DOCUMENT);
