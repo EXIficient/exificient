@@ -137,6 +137,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+		<!-- without it Travis seems to pick Xmx32m which is not a lot -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19</version>
+        <configuration>
+            <argLine>-Xmx64m</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

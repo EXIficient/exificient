@@ -137,7 +137,7 @@ public class BugTestCase extends AbstractTestCase {
 	}
 	
 //	@Test
-	public void XtestBug29() throws Exception {
+	public void testBug29() throws Exception {
 		// set up configuration
 		setConfigurationBug29();
 
@@ -163,7 +163,7 @@ public class BugTestCase extends AbstractTestCase {
 	 * and it works there, so I think the generated EXI file is ok, and it is
 	 * probably a problem with the way EXIficient is decoding it.
 	 */
-	public void XtestBug33() throws Exception {
+	public void testBug33() throws Exception {
 		// set up configuration
 		setConfigurationBug33();
 
