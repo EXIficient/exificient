@@ -507,7 +507,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	@Test
-	public void XtestComplexStructure() throws Exception {
+	public void testComplexStructure() throws Exception {
 		// set up configuration
 		setConfigurationComplexStructure();
 
@@ -577,7 +577,7 @@ public class GeneralTestCase extends AbstractTestCase {
 	}
 
 	@Test
-	public void XtestPostalRandj() throws Exception {
+	public void testPostalRandj() throws Exception {
 		// set up configuration
 		setConfigurationRandj();
 

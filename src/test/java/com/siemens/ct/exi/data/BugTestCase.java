@@ -129,14 +129,8 @@ public class BugTestCase extends AbstractTestCase {
 				.setValuePartitionCapacity(9);
 
 	}
-
 	
 	@Test
-	public void testFoo() throws Exception {
-		// success
-	}
-	
-//	@Test
 	public void testBug29() throws Exception {
 		// set up configuration
 		setConfigurationBug29();
