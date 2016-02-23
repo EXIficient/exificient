@@ -66,9 +66,12 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	 * Writes the EXI header according to the header options with optional
 	 * cookie, EXI options, ..
 	 * 
-	 * @param headerChannel header channel
-	 * @param f factory 
-	 * @throws EXIException EXI exception
+	 * @param headerChannel
+	 *            header channel
+	 * @param f
+	 *            factory
+	 * @throws EXIException
+	 *             EXI exception
 	 */
 	public void write(BitEncoderChannel headerChannel, EXIFactory f)
 			throws EXIException {
@@ -124,8 +127,8 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 		encoder.encodeStartDocument();
 		encoder.encodeStartElement(Constants.W3C_EXI_NS_URI, HEADER, null);
 
-//		final boolean isCanonical = f.getEncodingOptions().isOptionEnabled(
-//				EncodingOptions.CANONICAL_EXI);
+		// final boolean isCanonical = f.getEncodingOptions().isOptionEnabled(
+		// EncodingOptions.CANONICAL_EXI);
 
 		/*
 		 * lesscommon
@@ -495,7 +498,11 @@ public class EXIHeaderEncoder extends AbstractEXIHeader {
 	}
 
 	protected boolean isDatatypeRepresentationMap(EXIFactory f) {
-		return (f.getDatatypeRepresentationMapTypes() != null && f
+		// Canonical EXI: When the value of the Preserve.lexicalValues fidelity
+		// option is true the element datatypeRepresentationMap MUST be omitted
+		return (!f.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_LEXICAL_VALUE)
+				&& f.getDatatypeRepresentationMapTypes() != null && f
 				.getDatatypeRepresentationMapTypes().length > 0);
 	}
 

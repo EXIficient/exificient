@@ -190,6 +190,8 @@ public class EXIHeaderTestCase extends TestCase {
 	public void testEXIOptions4() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setFidelityOptions(FidelityOptions.createAll());
+		// Canonical EXI: Preserve.lexicalValues true omits datatypeRepresentationMap
+		ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, false);
 		QName[] dtrMapTypes = new QName[2];
 		dtrMapTypes[0] = new QName("", "bla");
 		dtrMapTypes[1] = new QName("ccc", "xhc");
@@ -205,6 +207,8 @@ public class EXIHeaderTestCase extends TestCase {
 	public void testEXIOptions5() throws EXIException, IOException {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setFidelityOptions(FidelityOptions.createAll());
+		// Canonical EXI: Preserve.lexicalValues true omits datatypeRepresentationMap
+		ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, false);
 		ef.setCodingMode(CodingMode.COMPRESSION);
 		ef.setBlockSize(200);
 		ef.setValueMaxLength(12);

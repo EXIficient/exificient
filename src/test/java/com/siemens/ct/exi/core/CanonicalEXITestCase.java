@@ -1435,6 +1435,54 @@ public class CanonicalEXITestCase extends TestCase {
 
 	}
 
+	// datatypeRepresentationMap: When the value of the Preserve.lexicalValues
+	// fidelity option is true the element datatypeRepresentationMap MUST be
+	// omitted.
+	public void testStreamHeader3() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		factory.getFidelityOptions().setFidelity(
+				FidelityOptions.FEATURE_LEXICAL_VALUE, true);
+
+		/* DTR Map */
+		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
+		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type1, type2 };
+		QName[] dtrMapRepresentations = { representation1, representation2 };
+		factory.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
+
+		String xml = "<foo>" + "text content" + "</foo>";
+
+		// encode to EXI
+		TestSAXEncoder enc = new TestSAXEncoder(factory);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
+
+		// decode and check
+		InputStream isCan = new ByteArrayInputStream(baos.toByteArray());
+		EXIFactory noOptionsFactory = DefaultEXIFactory.newInstance();
+		noOptionsFactory.setCodingMode(CodingMode.COMPRESSION); // wrong
+																// setting,
+																// stream should
+																// contain the
+																// right options
+		EXIStreamDecoder sdec = noOptionsFactory.createEXIStreamDecoder();
+		EXIBodyDecoder bdec = sdec.decodeHeader(isCan);
+		assertTrue(bdec instanceof EXIBodyDecoderInOrder);
+		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
+		assertTrue(bdec2.exiFactory != noOptionsFactory);
+
+		assertTrue(bdec2.exiFactory.getDatatypeRepresentationMapTypes() == null
+				|| bdec2.exiFactory.getDatatypeRepresentationMapTypes().length == 0);
+		assertTrue(bdec2.exiFactory
+				.getDatatypeRepresentationMapRepresentations() == null
+				|| bdec2.exiFactory
+						.getDatatypeRepresentationMapRepresentations().length == 0);
+
+	}
+
 	public void testEmptyCharactersSchemaInformedString1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
@@ -1466,7 +1514,7 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			if(newEmptyChStrategy) {
+			if (newEmptyChStrategy) {
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			} else {
 				assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -1483,7 +1531,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	final boolean newEmptyChStrategy = true;
 
 	public void testEmptyCharactersSchemaInformedBinary1() throws Exception {
@@ -1518,10 +1566,9 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			
-			if(newEmptyChStrategy) {
+			if (newEmptyChStrategy) {
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
-			} else  {
+			} else {
 				assertTrue(decoder.next() == EventType.CHARACTERS);
 				Value v = decoder.decodeCharacters();
 				assertTrue(v instanceof BinaryBase64Value);
@@ -1575,7 +1622,7 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("el1"));
 
-			if(newEmptyChStrategy) {
+			if (newEmptyChStrategy) {
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 			} else {
 				assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -1641,9 +1688,8 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	public void testEmptyCharactersSchemaInformedContent1()
-			throws Exception {
+
+	public void testEmptyCharactersSchemaInformedContent1() throws Exception {
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
@@ -1655,8 +1701,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "            <xs:element name=\"entry\" type=\"xs:string\" />"
 				+ "        </xs:sequence>"
 				+ "    </xs:complexType>"
-				+ " </xs:element>"
-				+ "</xs:schema>";
+				+ " </xs:element>" + "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1681,7 +1726,7 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("root"));
 
-			// Note: simple data --> preserve empty CH 
+			// Note: simple data --> preserve empty CH
 			assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 			String s = decoder.decodeCharacters().toString();
 			assertTrue("Not only WS characters", s.trim().length() == 0);
@@ -1693,8 +1738,6 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-
-	
 
 	public void testEmptyCharactersSchemaInformedComplexMixedContent1()
 			throws Exception {
@@ -1873,7 +1916,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// Taki, public mailing list
 	public void testEmptyCharactersSchemaInformedComplexMixedContent4()
 			throws Exception {
@@ -1924,7 +1967,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	public void testEmptyCharactersSchemaInformedXmlSpaceStrictFail()
 			throws Exception {
 
@@ -1939,8 +1982,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "        <xs:element name='t' type='xs:string' minOccurs='0'/>"
 				+ "      </xs:sequence>"
 				+ "      <xs:attribute ref='xml:space'/>"
-				+ "    </xs:complexType>"
-				+ " </xs:element>" + "</xs:schema>";
+				+ "    </xs:complexType>" + " </xs:element>" + "</xs:schema>";
 
 		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1952,7 +1994,7 @@ public class CanonicalEXITestCase extends TestCase {
 			TestSAXEncoder enc = new TestSAXEncoder(factory);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			enc.encodeTo(new ByteArrayInputStream(xml.getBytes()), baos);
-			
+
 			fail("Should fail because it cannot represent empty characters");
 		} catch (Exception e) {
 			// fine to fail
@@ -2320,7 +2362,8 @@ public class CanonicalEXITestCase extends TestCase {
 
 			// text:style-name=\"List_20_Contents\">
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-			assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("style-name"));
+			assertTrue(decoder.decodeAttribute().getQName().getLocalPart()
+					.equals("style-name"));
 
 			{
 				// <text:a xlink:type=\"simple\"
@@ -2329,19 +2372,23 @@ public class CanonicalEXITestCase extends TestCase {
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 				assertTrue(decoder.decodeStartElement().getQName()
 						.getLocalPart().equals("a"));
-				
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("href"));
-				
+				assertTrue(decoder.decodeAttribute().getQName().getLocalPart()
+						.equals("href"));
+
 				assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeAttribute().getQName().getLocalPart().equals("type"));
+				assertTrue(decoder.decodeAttribute().getQName().getLocalPart()
+						.equals("type"));
 
 				{
 					assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 					Value v1 = decoder.decodeCharacters();
 					assertTrue(v1 instanceof StringValue);
 					StringValue dtv1 = (StringValue) v1;
-					assertTrue(dtv1.toString().equals("http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/"));
+					assertTrue(dtv1
+							.toString()
+							.equals("http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/"));
 				}
 
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
@@ -2362,7 +2409,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// learned
 	public void testEmptyCharactersSchemaLess7() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
@@ -2393,28 +2440,25 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("outer"));
 
-			
-			
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("p"));
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
-				assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
-						.equals("a"));
+				assertTrue(decoder.decodeStartElement().getQName()
+						.getLocalPart().equals("a"));
 				assertTrue(decoder.next() == EventType.END_ELEMENT_UNDECLARED);
 				decoder.decodeEndElement();
-				
+
 				assertTrue(decoder.next() == EventType.CHARACTERS_GENERIC_UNDECLARED);
 				Value v1 = decoder.decodeCharacters();
 				assertTrue(v1 instanceof StringValue);
 				StringValue dtv1 = (StringValue) v1;
 				assertTrue(dtv1.toString().equals("bla"));
-			}			
+			}
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-			
-			
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT_GENERIC_UNDECLARED);
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("p"));
@@ -2424,11 +2468,10 @@ public class CanonicalEXITestCase extends TestCase {
 				assertTrue(v1 instanceof StringValue);
 				StringValue dtv1 = (StringValue) v1;
 				assertTrue(dtv1.toString().equals("bla2"));
-			}			
+			}
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-			
-			
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("p"));
@@ -2438,15 +2481,14 @@ public class CanonicalEXITestCase extends TestCase {
 				assertTrue(v1 instanceof StringValue);
 				StringValue dtv1 = (StringValue) v1;
 				assertTrue(dtv1.toString().equals("bla3"));
-			}			
+			}
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement();
-			
-			
+
 			assertTrue(decoder.next() == EventType.START_ELEMENT);
 			assertTrue(decoder.decodeStartElement().getQName().getLocalPart()
 					.equals("p"));
-			
+
 			{
 				assertTrue(decoder.next() == EventType.START_ELEMENT);
 				assertTrue(decoder.decodeStartElement().getQName()
@@ -2463,12 +2505,9 @@ public class CanonicalEXITestCase extends TestCase {
 				assertTrue(decoder.next() == EventType.END_ELEMENT);
 				decoder.decodeEndElement();
 			}
-			
+
 			assertTrue(decoder.next() == EventType.END_ELEMENT);
 			decoder.decodeEndElement(); // p
-			
-			
-			
 
 			assertTrue(decoder.next() == EventType.END_ELEMENT); // outer
 			decoder.decodeEndElement();
