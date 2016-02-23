@@ -130,6 +130,12 @@ public class BugTestCase extends AbstractTestCase {
 
 	}
 
+	
+	@Test
+	public void testFoo() throws Exception {
+		// success
+	}
+	
 //	@Test
 	public void XtestBug29() throws Exception {
 		// set up configuration
