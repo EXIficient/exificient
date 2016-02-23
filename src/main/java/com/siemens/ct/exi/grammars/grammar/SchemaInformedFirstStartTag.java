@@ -38,6 +38,8 @@ import com.siemens.ct.exi.grammars.production.Production;
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		implements SchemaInformedFirstStartTagGrammar, Cloneable {
 
+	private static final boolean USE_RUNTIME_EMPTY_TYPE = false;
+	
 	private static final long serialVersionUID = -6071059051303822226L;
 
 	// subtype (xsi:type) OR nillable (xsi:nill) ?
@@ -74,14 +76,6 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		}
 	}
 
-//	public QName getTypeName() {
-//		return this.typeName;
-//	}
-//
-//	public void setTypeName(QName typeName) {
-//		this.typeName = typeName;
-//	}
-
 	public void setTypeCastable(boolean isTypeCastable) {
 		this.isTypeCastable = isTypeCastable;
 	}
@@ -101,9 +95,18 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 	public void setTypeEmpty(SchemaInformedFirstStartTagGrammar typeEmpty) {
 		this.typeEmpty = typeEmpty;
 	}
+	
+	
+
+	
 
 	public SchemaInformedFirstStartTagGrammar getTypeEmpty() {
-		return this.typeEmpty;
+		if(USE_RUNTIME_EMPTY_TYPE) {
+			return (SchemaInformedFirstStartTagGrammar) getTypeEmptyInternal();
+		} else {
+			return this.typeEmpty;
+		}
+		
 	}
 	
 	@Override

@@ -23,6 +23,7 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
+import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.grammars.production.SchemaInformedProduction;
 
@@ -99,8 +100,48 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		}
 		
 		return clone;
+	}
+	
+	SchemaInformedStartTagGrammar sifst = null;
+	
+	protected SchemaInformedStartTagGrammar getTypeEmptyInternal() {
+		if(sifst == null) {
+			// SchemaInformedStartTagGrammar sifst; // = new SchemaInformedFirstStartTag();
+			if(this.getGrammarType() == GrammarType.SCHEMA_INFORMED_FIRST_START_TAG_CONTENT) {
+				sifst = new SchemaInformedFirstStartTag();
+			} else if (this.getGrammarType() == GrammarType.SCHEMA_INFORMED_START_TAG_CONTENT) {
+				sifst = new SchemaInformedStartTag();
+			} else {
+				throw new RuntimeException("Unexpected GrammarType " + this.getGrammarType() + " for typeEmpty " + this);
+			}
+			
+			for(int i=0; i<this.getNumberOfEvents(); i++) {
+				Production prod = this.getProduction(i);
+				Event ev = prod.getEvent();
+				Grammar ng = prod.getNextGrammar();
+				switch(ev.getEventType()) {
+				case ATTRIBUTE:
+				case ATTRIBUTE_NS:
+				case ATTRIBUTE_GENERIC:
+					if(ng == this) {
+						sifst.addProduction(ev, sifst);
+					} else if(ng.getGrammarType() == GrammarType.SCHEMA_INFORMED_FIRST_START_TAG_CONTENT) {
+						SchemaInformedFirstStartTag ng2 = (SchemaInformedFirstStartTag) ng;
+						sifst.addProduction(ev, ng2.getTypeEmptyInternal());
+					} else if (ng.getGrammarType() == GrammarType.SCHEMA_INFORMED_START_TAG_CONTENT) {
+						SchemaInformedStartTag ng2 =  (SchemaInformedStartTag) ng;
+						sifst.addProduction(ev, ng2.getTypeEmptyInternal());
+					} else {
+						throw new RuntimeException("Unexpected GrammarType " + ng.getGrammarType() + " for typeEmpty " + this);
+					}
+					break;
+				default:
+					sifst.addTerminalProduction(END_ELEMENT);
+				}
+			}
+		}
 		
-		
+		return sifst;
 	}
 
 	public String toString() {

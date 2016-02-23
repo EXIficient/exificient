@@ -75,8 +75,8 @@ public class TypeEmptyTest extends TestCase {
 		assertTrue(root instanceof SchemaInformedFirstStartTagGrammar);
 		{
 			SchemaInformedFirstStartTagGrammar sifstgRoot = (SchemaInformedFirstStartTagGrammar) root;
-			assertTrue(sifstgRoot.getTypeEmpty() instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgRootEmpty = sifstgRoot.getTypeEmpty();
+			assertTrue(sifstgRootEmpty instanceof SchemaInformedFirstStartTagGrammar);
 			assertTrue(sifstgRootEmpty.getNumberOfEvents() == 1);
 			Production er0 = sifstgRootEmpty.getProduction(0);
 			assertTrue(er0.getEvent().isEventType(EventType.END_ELEMENT));
@@ -88,8 +88,9 @@ public class TypeEmptyTest extends TestCase {
 		{
 			assertTrue(a instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgA = (SchemaInformedFirstStartTagGrammar) a;
-			assertTrue(sifstgA.getTypeEmpty() instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgAEmpty = sifstgA.getTypeEmpty();
+			assertTrue(sifstgAEmpty instanceof SchemaInformedFirstStartTagGrammar);
+			// System.out.println(sifstgAEmpty.getGrammarType());
 			assertTrue(sifstgAEmpty.getNumberOfEvents() == 1);
 			Production er0 = sifstgAEmpty.getProduction(0);
 			assertTrue(er0.getEvent().isEventType(EventType.END_ELEMENT));
@@ -126,8 +127,8 @@ public class TypeEmptyTest extends TestCase {
 		assertTrue(root instanceof SchemaInformedFirstStartTagGrammar);
 		{
 			SchemaInformedFirstStartTagGrammar sifstgRoot = (SchemaInformedFirstStartTagGrammar) root;
-			assertTrue(sifstgRoot.getTypeEmpty() instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgRootEmpty = sifstgRoot.getTypeEmpty();
+			assertTrue(sifstgRootEmpty instanceof SchemaInformedFirstStartTagGrammar);
 			assertTrue(sifstgRootEmpty.getNumberOfEvents() == 3);
 			assertTrue(sifstgRootEmpty.getProduction(0).getEvent().isEventType(EventType.ATTRIBUTE));
 			{
@@ -152,8 +153,8 @@ public class TypeEmptyTest extends TestCase {
 		{
 			assertTrue(a instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgA = (SchemaInformedFirstStartTagGrammar) a;
-			assertTrue(sifstgA.getTypeEmpty() instanceof SchemaInformedFirstStartTagGrammar);
 			SchemaInformedFirstStartTagGrammar sifstgAEmpty = sifstgA.getTypeEmpty();
+			assertTrue(sifstgAEmpty instanceof SchemaInformedFirstStartTagGrammar);
 			assertTrue(sifstgAEmpty.getNumberOfEvents() == 1);
 			Production er0 = sifstgAEmpty.getProduction(0);
 			assertTrue(er0.getEvent().isEventType(EventType.END_ELEMENT));
