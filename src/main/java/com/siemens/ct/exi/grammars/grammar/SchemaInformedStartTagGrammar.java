@@ -36,4 +36,6 @@ package com.siemens.ct.exi.grammars.grammar;
  */
 public interface SchemaInformedStartTagGrammar extends SchemaInformedGrammar {
 	
+	public void setElementContentGrammar(Grammar elementContent2);
+	
 }

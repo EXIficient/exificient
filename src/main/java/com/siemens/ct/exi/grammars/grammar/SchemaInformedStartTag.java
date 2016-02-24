@@ -62,6 +62,15 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 	private static final long serialVersionUID = -674782327638586700L;
 
 	protected Grammar elementContent2;
+	
+	
+	protected SchemaInformedStartTagGrammar sifst = null;
+	
+	static final SchemaInformedGrammar elementContent2Empty = new SchemaInformedElement();
+	static {
+		elementContent2Empty.addTerminalProduction(END_ELEMENT);
+	}
+	
 
 	public SchemaInformedStartTag() {
 		super();
@@ -82,6 +91,7 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 
 	@Override
 	public Grammar getElementContentGrammar() {
+		assert(elementContent2 != null);
 		return elementContent2;
 	}
 
@@ -101,12 +111,10 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		
 		return clone;
 	}
-	
-	SchemaInformedStartTagGrammar sifst = null;
+
 	
 	protected SchemaInformedStartTagGrammar getTypeEmptyInternal() {
 		if(sifst == null) {
-			// SchemaInformedStartTagGrammar sifst; // = new SchemaInformedFirstStartTag();
 			if(this.getGrammarType() == GrammarType.SCHEMA_INFORMED_FIRST_START_TAG_CONTENT) {
 				sifst = new SchemaInformedFirstStartTag();
 			} else if (this.getGrammarType() == GrammarType.SCHEMA_INFORMED_START_TAG_CONTENT) {
@@ -114,6 +122,7 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 			} else {
 				throw new RuntimeException("Unexpected GrammarType " + this.getGrammarType() + " for typeEmpty " + this);
 			}
+			sifst.setElementContentGrammar(elementContent2Empty);
 			
 			for(int i=0; i<this.getNumberOfEvents(); i++) {
 				Production prod = this.getProduction(i);
@@ -136,7 +145,9 @@ public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 					}
 					break;
 				default:
-					sifst.addTerminalProduction(END_ELEMENT);
+					if(!sifst.hasEndElement()) {
+						sifst.addTerminalProduction(END_ELEMENT);
+					}
 				}
 			}
 		}

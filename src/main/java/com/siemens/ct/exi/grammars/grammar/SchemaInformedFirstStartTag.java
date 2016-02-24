@@ -38,7 +38,7 @@ import com.siemens.ct.exi.grammars.production.Production;
 public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		implements SchemaInformedFirstStartTagGrammar, Cloneable {
 
-	private static final boolean USE_RUNTIME_EMPTY_TYPE = false;
+	private static final boolean USE_RUNTIME_EMPTY_TYPE = true;
 	
 	private static final long serialVersionUID = -6071059051303822226L;
 
