@@ -36,7 +36,7 @@ import com.siemens.ct.exi.grammars.event.StartElementNS;
 import com.siemens.ct.exi.grammars.production.Production;
 import com.siemens.ct.exi.grammars.production.SchemaInformedProduction;
 import com.siemens.ct.exi.util.MethodsBag;
-import com.siemens.ct.exi.util.sort.LexicographicSort;
+import com.siemens.ct.exi.util.sort.AttributeSort;
 
 /**
  * 
@@ -150,7 +150,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 	}
 
 	// static EventCodeAssignment eventCodeAss = new EventCodeAssignment();
-	static final LexicographicSort lexSort = new LexicographicSort();
+	static final AttributeSort attributeSort = new AttributeSort();
 
 	protected void updateSortedEvents(Event newEvent, Grammar newGrammar) {
 		// create sorted event list
@@ -176,7 +176,7 @@ public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 						// sorted lexicographically by qname local-name, then by
 						// qname
 						// uri
-						int cmpA = lexSort.compare((Attribute) o1,
+						int cmpA = attributeSort.compare((Attribute) o1,
 								(Attribute) o2);
 						if (cmpA < 0) {
 							// comes after

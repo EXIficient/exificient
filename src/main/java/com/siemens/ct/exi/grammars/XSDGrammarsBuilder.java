@@ -459,7 +459,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		while (iter.hasNext()) {
 			uniqueNamedElementsList.add(iter.next());
 		}
-		Collections.sort(uniqueNamedElementsList, lexSort);
+		Collections.sort(uniqueNamedElementsList, qnameSort);
 
 		for (int i = 0; i < uniqueNamedElementsList.size(); i++) {
 			QName fm = uniqueNamedElementsList.get(i);
@@ -543,7 +543,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			}
 		}
 
-		Collections.sort(uniqueNamedAttributeList, lexSort);
+		Collections.sort(uniqueNamedAttributeList, qnameSort);
 
 		for (int i = 0; i < uniqueNamedAttributeList.size(); i++) {
 			QName an = uniqueNamedAttributeList.get(i);
@@ -1062,8 +1062,8 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		List<StartElement> fragmentElements = getFragmentElements();
 
 		// sort both lists (declared & global elements)
-		Collections.sort(globalElements, lexSort);
-		Collections.sort(fragmentElements, lexSort);
+		Collections.sort(globalElements, startElementSort);
+		Collections.sort(fragmentElements, startElementSort);
 
 		/*
 		 * Global elements declared in the schema. G 0, G 1, ... G n-1 represent
@@ -1326,7 +1326,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				XSAttributeUse attrUse = (XSAttributeUse) attributes.item(i);
 				vSortedAttributes.add(attrUse);
 			}
-			Collections.sort(vSortedAttributes, lexSort);
+			Collections.sort(vSortedAttributes, attributeUseSort);
 
 			// traverse in reverse order
 			for (int i = vSortedAttributes.size() - 1; i >= 0; i--) {

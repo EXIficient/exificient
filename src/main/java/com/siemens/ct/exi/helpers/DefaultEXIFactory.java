@@ -71,7 +71,7 @@ import com.siemens.ct.exi.types.TypeDecoder;
 import com.siemens.ct.exi.types.TypeEncoder;
 import com.siemens.ct.exi.types.TypedTypeDecoder;
 import com.siemens.ct.exi.types.TypedTypeEncoder;
-import com.siemens.ct.exi.util.sort.LexicographicSort;
+import com.siemens.ct.exi.util.sort.QNameSort;
 
 /**
  * 
@@ -127,6 +127,8 @@ public class DefaultEXIFactory implements EXIFactory {
 	/* default: use no specify body coder */
 	protected EXIBodyEncoder bodyEncoder;
 	protected EXIBodyDecoder bodyDecoder;
+	
+	protected static final QNameSort qnameSort = new QNameSort();
 
 	protected DefaultEXIFactory() {
 	}
@@ -508,7 +510,7 @@ public class DefaultEXIFactory implements EXIFactory {
 			j++;
 			for (int i = 0; i < dtrMapTypes.length - j; i++) {
 				// if (array[i] > array[i + 1]) {
-				if (LexicographicSort.compare(dtrMapTypes[i],
+				if (qnameSort.compare(dtrMapTypes[i],
 						dtrMapTypes[i + 1]) > 0) {
 					tmpType = dtrMapTypes[i];
 					dtrMapTypes[i] = dtrMapTypes[i + 1];

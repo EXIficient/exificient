@@ -28,6 +28,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ import org.apache.xerces.xni.parser.XMLErrorHandler;
 import org.apache.xerces.xni.parser.XMLInputSource;
 import org.apache.xerces.xni.parser.XMLParseException;
 import org.apache.xerces.xs.StringList;
+import org.apache.xerces.xs.XSAttributeDeclaration;
+import org.apache.xerces.xs.XSAttributeUse;
 import org.apache.xerces.xs.XSComplexTypeDefinition;
 import org.apache.xerces.xs.XSConstants;
 import org.apache.xerces.xs.XSElementDeclaration;
@@ -70,7 +73,8 @@ import com.siemens.ct.exi.grammars.event.StartElementGeneric;
 import com.siemens.ct.exi.grammars.event.StartElementNS;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedElement;
 import com.siemens.ct.exi.grammars.grammar.SchemaInformedGrammar;
-import com.siemens.ct.exi.util.sort.LexicographicSort;
+import com.siemens.ct.exi.util.sort.QNameSort;
+import com.siemens.ct.exi.util.sort.StartElementSort;
 
 /**
  * 
@@ -92,7 +96,12 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 
 	protected static final boolean forUPA = false;
 
-	protected static final LexicographicSort lexSort = new LexicographicSort();
+	protected static final XSElementDeclarationSort elementDeclSort = new XSElementDeclarationSort();
+	protected static final XSAttributeDeclarationSort attributeDeclSort = new XSAttributeDeclarationSort();
+	protected static final XSAttributeUseSort attributeUseSort = new XSAttributeUseSort();
+	protected static final StartElementSort startElementSort = new StartElementSort();
+	
+	protected static final QNameSort qnameSort = new QNameSort();
 
 	protected SubstitutionGroupHandler subGroupHandler;
 
@@ -546,7 +555,7 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 		}
 
 		// sort list
-		Collections.sort(listElements, lexSort);
+		Collections.sort(listElements, elementDeclSort);
 
 		return listElements;
 	}
@@ -576,6 +585,28 @@ public abstract class EXIContentModelBuilder extends CMBuilder implements
 			throws XNIException {
 		schemaParsingErrors.add("[xs-warning] " + exception.getMessage());
 	}
+	
+	
+	static class XSElementDeclarationSort implements Comparator<XSElementDeclaration> {
+		public int compare(XSElementDeclaration e1, XSElementDeclaration e2) {
+			return QNameSort.compare(e1.getNamespace(), e1.getName(), e2.getNamespace(),
+					e2.getName());
+		}
+	}
+	
+	static class XSAttributeDeclarationSort implements Comparator<XSAttributeDeclaration> {
+		public int compare(XSAttributeDeclaration a1, XSAttributeDeclaration a2) {
+			return QNameSort.compare(a1.getNamespace(), a1.getName(), a2.getNamespace(),
+					a2.getName());
+		}
+	}
+	
+	static class XSAttributeUseSort implements Comparator<XSAttributeUse> {
+		public int compare(XSAttributeUse a1, XSAttributeUse a2) {
+			return attributeDeclSort.compare(a1.getAttrDeclaration(), a2.getAttrDeclaration());
+		}
+	}
+	
 	
 	/*
 	 * Internal Helper Class: CMState
