@@ -134,11 +134,9 @@ public class DefaultEXIFactory implements EXIFactory {
 		factory.setDecodingOptions(DecodingOptions.createDefault());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.setFragment(false);
-		// factory.setGrammar(GrammarFactory.newInstance()
-		// .createSchemaLessGrammar());
 		factory.setGrammars(new SchemaLessGrammars());
 
-		factory.setSchemaIdResolver(new DefaultSchemaIdResolver());
+		// factory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 	}
 
 	public static EXIFactory newInstance() {
