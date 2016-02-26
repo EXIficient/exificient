@@ -52,7 +52,7 @@ public class EXIResult extends SAXResult {
 
 	public EXIResult(EXIFactory exiFactory) throws EXIException {
 		// DefaultHandler2 handler = exiFactory.createEXIWriter(os);
-		handler = exiFactory.createEXIWriter();
+		handler = new SAXFactory(exiFactory).createEXIWriter();
 		// set internal states
 		setHandler(handler);
 		setLexicalHandler(handler);

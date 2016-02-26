@@ -48,6 +48,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.datatype.AbstractTestCase;
 import com.siemens.ct.exi.datatype.Datatype;
 import com.siemens.ct.exi.datatype.DatatypeID;
@@ -216,7 +217,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		{
 			InputSource is = new InputSource(new ByteArrayInputStream(
 					baos.toByteArray()));
-			XMLReader exiReader = exiFactory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(exiFactory).createEXIReader();
 
 			Result result = new StreamResult(baosDecXML);
 			SAXSource exiSource = new SAXSource(is);
@@ -285,7 +286,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		{
 			InputSource is = new InputSource(new ByteArrayInputStream(
 					baos.toByteArray()));
-			XMLReader exiReader = exiFactory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(exiFactory).createEXIReader();
 
 			Result result = new StreamResult(baosDecXML);
 			SAXSource exiSource = new SAXSource(is);
@@ -371,7 +372,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		{
 			InputSource is = new InputSource(new ByteArrayInputStream(
 					baos.toByteArray()));
-			XMLReader exiReader = exiFactory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(exiFactory).createEXIReader();
 
 			Result result = new StreamResult(baosDecXML);
 			SAXSource exiSource = new SAXSource(is);
@@ -532,7 +533,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		{
 			InputSource is = new InputSource(new ByteArrayInputStream(
 					baos.toByteArray()));
-			XMLReader exiReader = exiFactory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(exiFactory).createEXIReader();
 
 			Result result = new StreamResult(baosDecXML);
 			SAXSource exiSource = new SAXSource(is);

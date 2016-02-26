@@ -27,8 +27,6 @@ import java.util.Arrays;
 
 import javax.xml.namespace.QName;
 
-import org.xml.sax.XMLReader;
-
 import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.DecodingOptions;
@@ -41,9 +39,6 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.SelfContainedHandler;
-import com.siemens.ct.exi.api.sax.SAXDecoder;
-import com.siemens.ct.exi.api.sax.SAXEncoder;
-import com.siemens.ct.exi.api.sax.SAXEncoderExtendedHandler;
 import com.siemens.ct.exi.core.EXIBodyDecoderInOrder;
 import com.siemens.ct.exi.core.EXIBodyDecoderInOrderSC;
 import com.siemens.ct.exi.core.EXIBodyDecoderReordered;
@@ -390,6 +385,16 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 
 		// blockSize in NON compression mode? Just ignore it!
+		
+		
+		// canonical EXI (http://www.w3.org/TR/exi-c14n/)
+		if (this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI)) {
+			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI);
+		} else if (this.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {
+			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
+		}
 	}
 
 	public void setEXIBodyEncoder(String className) throws EXIException {
@@ -524,29 +529,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		}
 	}
 
-	public SAXEncoder createEXIWriter() throws EXIException {
-		// canonical EXI (http://www.w3.org/TR/exi-c14n/)
-		if (this.getEncodingOptions().isOptionEnabled(
-				EncodingOptions.CANONICAL_EXI)) {
-			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI);
-		} else if (this.getEncodingOptions().isOptionEnabled(
-				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS)) {
-			updateFactoryAccordingCanonicalEXI(EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
-		}
-
-		if (fidelityOptions.isFidelityEnabled(FidelityOptions.FEATURE_PREFIX)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_COMMENT)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_PI)
-				|| fidelityOptions
-						.isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			return new SAXEncoderExtendedHandler(this);
-		} else {
-			return new SAXEncoder(this);
-		}
-	}
-
 	public EXIBodyDecoder createEXIBodyDecoder() throws EXIException {
 		if (bodyDecoder != null) {
 			return bodyDecoder;
@@ -569,10 +551,6 @@ public class DefaultEXIFactory implements EXIFactory {
 		doSanityCheck();
 
 		return new EXIStreamDecoderImpl(this);
-	}
-
-	public XMLReader createEXIReader() throws EXIException {
-		return new SAXDecoder(this);
 	}
 
 	public StringEncoder createStringEncoder() {

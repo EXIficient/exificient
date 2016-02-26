@@ -25,9 +25,9 @@ package com.siemens.ct.exi;
 
 import javax.xml.namespace.QName;
 
-import org.xml.sax.XMLReader;
-
-import com.siemens.ct.exi.api.sax.SAXEncoder;
+//import org.xml.sax.XMLReader;
+//
+//import com.siemens.ct.exi.api.sax.SAXEncoder;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -66,23 +66,6 @@ public interface EXIFactory extends Cloneable {
 	 * @see FidelityOptions
 	 */
 	public FidelityOptions getFidelityOptions();
-
-	// /**
-	// * Sets an EXI profile that configures the factory.
-	// *
-	// * @param profileName
-	// * @throws UnsupportedOption
-	// * if profile is not supported
-	// */
-	// public void setProfile(String profileName) throws UnsupportedOption;
-	//
-	// /**
-	// * Returns whether a certain profile name is in use.
-	// *
-	// * @param profileName
-	// * @return boolean value indicating the use of the profile
-	// */
-	// public boolean usesProfile(String profileName);
 
 	/**
 	 * Sets the header options used by the EXI Encoder(e.g., include EXI Cookie,
@@ -458,20 +441,6 @@ public interface EXIFactory extends Cloneable {
 	public EXIStreamEncoder createEXIStreamEncoder() throws EXIException;
 
 	/**
-	 * Returns a <code>SAXEncoder</code> that implements
-	 * <code>DefaultHandler2</code>
-	 * 
-	 * <p>
-	 * Note that the output stream MUST be set.
-	 * </p>
-	 * 
-	 * @return writer using the previously set coding options.
-	 * @throws EXIException EXI exception
-	 * 
-	 */
-	public SAXEncoder createEXIWriter() throws EXIException;
-
-	/**
 	 * Returns an <code>EXIBodyDecoder</code>
 	 * 
 	 * @return decoder using the previously set coding options.
@@ -488,15 +457,6 @@ public interface EXIFactory extends Cloneable {
 	 * 
 	 */
 	public EXIStreamDecoder createEXIStreamDecoder() throws EXIException;
-
-	/**
-	 * Returns an <code>EXIReader</code>
-	 * 
-	 * @return reader using the previously set coding options.
-	 * @throws EXIException EXI exception
-	 * 
-	 */
-	public XMLReader createEXIReader() throws EXIException;
 
 	/**
 	 * Returns an EXI <code>StringEncoder</code> according coding options

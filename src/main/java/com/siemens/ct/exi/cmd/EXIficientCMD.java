@@ -51,6 +51,7 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.util.FragmentUtilities;
@@ -607,7 +608,7 @@ public class EXIficientCMD {
 		Transformer transformer = tf.newTransformer();
 		SAXSource exiSource = new SAXSource(new InputSource(
 				new FileInputStream(input)));
-		exiSource.setXMLReader(exiFactory.createEXIReader());
+		exiSource.setXMLReader(new SAXFactory(exiFactory).createEXIReader());
 
 		if (exiFactory.isFragment()) {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,

@@ -45,6 +45,7 @@ import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.TestSAXEncoder;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -1352,7 +1353,7 @@ public class CanonicalEXITestCase extends TestCase {
 		EXIBodyDecoderInOrder bdec2 = (EXIBodyDecoderInOrder) bdec;
 		assertTrue(bdec2.exiFactory != noOptionsFactory);
 
-		bdec2.exiFactory.createEXIReader();
+		new SAXFactory(bdec2.exiFactory).createEXIReader();
 	}
 
 	// When the alignment option compression is set, pre-compress MUST be used

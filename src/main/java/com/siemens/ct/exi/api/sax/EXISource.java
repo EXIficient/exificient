@@ -41,7 +41,8 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  */
 
 public class EXISource extends SAXSource {
-	EXIFactory exiFactory;
+	
+	SAXFactory saxFactory;
 
 	public EXISource() throws EXIException {
 		// use default exi-factory
@@ -49,14 +50,14 @@ public class EXISource extends SAXSource {
 	}
 
 	public EXISource(EXIFactory exiFactory) throws EXIException {
-		this.exiFactory = exiFactory;
+		this.saxFactory = new SAXFactory(exiFactory);
 
 		init();
 	}
 
 	protected void init() throws EXIException {
 		// create sax decoder
-		XMLReader xmlReader = exiFactory.createEXIReader();
+		XMLReader xmlReader = saxFactory.createEXIReader();
 
 		// set internal state
 		this.setXMLReader(xmlReader);

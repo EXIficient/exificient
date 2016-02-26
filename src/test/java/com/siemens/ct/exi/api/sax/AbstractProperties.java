@@ -59,7 +59,7 @@ public abstract class AbstractProperties extends XMLTestCase {
 		Transformer transformer = tf.newTransformer();
 
 		SAXSource exiSource = new SAXSource(new InputSource(isEXI));
-		exiSource.setXMLReader(factory.createEXIReader());
+		exiSource.setXMLReader(new SAXFactory(factory).createEXIReader());
 
 		ByteArrayOutputStream xmlDecoded = new ByteArrayOutputStream();
 		transformer.transform(exiSource, new StreamResult(xmlDecoded));

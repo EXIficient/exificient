@@ -55,6 +55,7 @@ import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.SelfContainedHandler;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -479,7 +480,7 @@ public class SelfContainedTestCase extends TestCase {
 		// decode overall document
 		{
 			TransformerFactory tf = TransformerFactory.newInstance();
-			XMLReader exiReader = factory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(factory).createEXIReader();
 			Transformer transformer = tf.newTransformer();
 
 			ByteArrayOutputStream baosSC = new ByteArrayOutputStream();
@@ -504,7 +505,7 @@ public class SelfContainedTestCase extends TestCase {
 
 		for (int i = 0; i < scHandler.getSCIndices().size(); i++) {
 			TransformerFactory tf = TransformerFactory.newInstance();
-			XMLReader exiReader = factory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(factory).createEXIReader();
 			exiReader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY, true); // see
 																				// a)
 			Transformer transformer = tf.newTransformer();

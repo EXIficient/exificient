@@ -42,6 +42,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -361,7 +362,7 @@ public class TypeEmptyTest extends TestCase {
 		{
 			InputSource is = new InputSource(new ByteArrayInputStream(
 					baos.toByteArray()));
-			XMLReader exiReader = ef.createEXIReader();
+			XMLReader exiReader = new SAXFactory(ef).createEXIReader();
 
 			Result result = new StreamResult(baosDecXML);
 			SAXSource exiSource = new SAXSource(is);

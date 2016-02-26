@@ -24,7 +24,6 @@
 package com.siemens.ct.exi.datatype;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;

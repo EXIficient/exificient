@@ -39,6 +39,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.data.AbstractTestCase;
 import com.siemens.ct.exi.exceptions.EXIException;
 
@@ -57,7 +58,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		// this.ef = ef;
 		tf = TransformerFactory.newInstance();
 
-		exiReader = ef.createEXIReader();
+		exiReader = new SAXFactory(ef).createEXIReader();
 
 		transformer = tf.newTransformer();
 

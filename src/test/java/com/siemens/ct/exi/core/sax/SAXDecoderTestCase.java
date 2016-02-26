@@ -47,6 +47,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -523,7 +524,7 @@ public class SAXDecoderTestCase extends XMLTestCase {
 			// read EXI stream
 			os.flush();
 			InputStream is = new ByteArrayInputStream(os.toByteArray());
-			XMLReader exiReader = factory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(factory).createEXIReader();
 			exiReader.setFeature("http://xml.org/sax/features/namespaces",
 					namespaces);
 			exiReader.setFeature(

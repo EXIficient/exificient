@@ -37,6 +37,7 @@ import org.xml.sax.XMLReader;
 
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 
 /**
@@ -74,7 +75,7 @@ public class DOMBuilder {
 			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation,
 					true);
 
-			XMLReader reader = factory.createEXIReader();
+			XMLReader reader = new SAXFactory(factory).createEXIReader();
 			reader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 					true);
 			reader.setContentHandler(s2dHandler);
@@ -98,7 +99,7 @@ public class DOMBuilder {
 			SaxToDomHandler s2dHandler = new SaxToDomHandler(domImplementation,
 					false);
 
-			XMLReader reader = factory.createEXIReader();
+			XMLReader reader = new SAXFactory(factory).createEXIReader();
 			// EXI Features
 			reader.setFeature(Constants.W3C_EXI_FEATURE_BODY_ONLY, exiBodyOnly);
 			// SAX Features

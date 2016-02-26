@@ -60,6 +60,7 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
 import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.compression.EXIInflaterInputStream;
@@ -105,7 +106,7 @@ public class MultipleStreamTest extends AbstractTestCase {
 			// InputSource is = new InputSource(isEXI);
 			InputSource is = new InputSource(isEXI);
 			SAXSource exiSource = new SAXSource(is);
-			XMLReader exiReader = exiFactory.createEXIReader();
+			XMLReader exiReader = new SAXFactory(exiFactory).createEXIReader();
 			exiSource.setXMLReader(exiReader);
 			ByteArrayOutputStream xmlOutput = new ByteArrayOutputStream();
 			Result result = new StreamResult(xmlOutput);
