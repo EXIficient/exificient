@@ -42,6 +42,11 @@
   </scm>
 
   <dependencies>
+	<dependency>
+	   <groupId>com.siemens.ct.exi</groupId>
+	   <artifactId>exificient-core</artifactId>
+	   <version>0.9.6-SNAPSHOT</version>
+	</dependency>
     <!-- Runtime Dependencies (schema-informed mode) -->
     <dependency>
       <groupId>xerces</groupId>
