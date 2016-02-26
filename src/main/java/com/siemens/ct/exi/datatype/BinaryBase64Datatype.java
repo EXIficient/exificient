@@ -41,8 +41,6 @@ import com.siemens.ct.exi.values.Value;
  */
 
 public class BinaryBase64Datatype extends AbstractBinaryDatatype {
-
-	private static final long serialVersionUID = 7266684611493396188L;
 	
 	public BinaryBase64Datatype(QNameContext schemaType) {
 		super(BuiltInType.BINARY_BASE64, schemaType);

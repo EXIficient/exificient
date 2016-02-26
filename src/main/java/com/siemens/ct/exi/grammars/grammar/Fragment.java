@@ -37,8 +37,6 @@ package com.siemens.ct.exi.grammars.grammar;
  */
 public class Fragment extends AbstractSchemaInformedGrammar {
 
-	private static final long serialVersionUID = 4883701889805280947L;
-
 	public Fragment() {
 		super();
 	}

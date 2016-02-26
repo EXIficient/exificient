@@ -36,8 +36,6 @@ import com.siemens.ct.exi.types.BuiltInType;
 
 public abstract class AbstractDatatype implements Datatype {
 
-	private static final long serialVersionUID = 682257950812949619L;
-
 	// default built-in datatype (no dtr map used)
 	protected final BuiltInType builtInType;
 

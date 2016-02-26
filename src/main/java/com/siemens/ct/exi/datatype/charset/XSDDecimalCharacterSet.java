@@ -37,8 +37,6 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class XSDDecimalCharacterSet extends AbstractRestrictedCharacterSet {
 
-	private static final long serialVersionUID = -7930647034394857493L;
-
 	/*
 	 * xsd:decimal { #x9, #xA, #xD, #x20, +, -, ., [0-9] }
 	 */

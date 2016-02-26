@@ -34,8 +34,6 @@ package com.siemens.ct.exi.values;
 // re-uses code from org.apache.xerces.impl.dv.util.HexBin;
 public class BinaryHexValue extends AbstractBinaryValue {
 
-	private static final long serialVersionUID = 4914135099644891193L;
-
 	private int lengthData;
 
 	public BinaryHexValue(byte[] bytes) {

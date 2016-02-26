@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
  */
 
 public class StartElementNS extends AbstractEvent {
-
-	private static final long serialVersionUID = -4465373887587175179L;
 	
 	protected final String namespaceUri;
 	protected final int namespaceUriID;

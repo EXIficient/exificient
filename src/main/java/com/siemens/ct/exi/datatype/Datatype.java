@@ -42,7 +42,7 @@ import com.siemens.ct.exi.values.Value;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface Datatype extends Serializable {
+public interface Datatype {
 	
 	// if no codec map is used
 	public BuiltInType getBuiltInType();

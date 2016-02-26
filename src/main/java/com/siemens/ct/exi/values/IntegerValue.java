@@ -38,8 +38,6 @@ import com.siemens.ct.exi.util.MethodsBag;
 public class IntegerValue extends AbstractValue implements
 		Comparable<IntegerValue> {
 
-	private static final long serialVersionUID = -7715640034582532707L;
-
 	public static final IntegerValue ZERO = new IntegerValue(0);
 
 	public static final BigInteger INTEGER_MIN_VALUE = BigInteger

@@ -35,11 +35,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  */
 
 public abstract class AbstractGrammars implements Grammars {
-
-	private static final long serialVersionUID = 1328500655881102889L;
-
-//	protected Grammar urTypeGrammar;
-
+	
 	/*
 	 * Document and Fragment Grammars
 	 */
@@ -63,15 +59,7 @@ public abstract class AbstractGrammars implements Grammars {
 	public boolean isSchemaInformed() {
 		return isSchemaInformed;
 	}
-
-//	public Grammar getUrTypeGrammar() {
-//		if (urTypeGrammar == null) {
-//			urTypeGrammar = XSDGrammarsBuilder.getUrTypeRule();
-//		}
-//
-//		return urTypeGrammar;
-//	}
-
+	
 	public Grammar getDocumentGrammar() {
 		return documentGrammar;
 	}

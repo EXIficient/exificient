@@ -35,8 +35,6 @@ package com.siemens.ct.exi.datatype.charset;
 
 public class XSDStringCharacterSet extends AbstractRestrictedCharacterSet {
 
-	private static final long serialVersionUID = 1520879767998008690L;
-
 	/*
 	 * xsd:string <none>
 	 */

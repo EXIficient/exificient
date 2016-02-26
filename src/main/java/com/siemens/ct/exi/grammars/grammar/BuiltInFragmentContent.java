@@ -44,8 +44,6 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class BuiltInFragmentContent extends AbstractBuiltInGrammar {
 
-	private static final long serialVersionUID = 5335067628889400319L;
-
 	/*
 	 * FragmentContent : SE (*) FragmentContent 0 ED 1 CM FragmentContent 2.0 PI
 	 * FragmentContent 2.1

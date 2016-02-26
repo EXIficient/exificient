@@ -46,8 +46,6 @@ import com.siemens.ct.exi.grammars.production.Production;
 
 public abstract class AbstractGrammar implements Grammar {
 
-	private static final long serialVersionUID = -1626120406315756322L;
-
 	protected static final SchemaInformedGrammar END_RULE = new SchemaInformedElement();
 	static {
 		END_RULE.setLabel("<END>");

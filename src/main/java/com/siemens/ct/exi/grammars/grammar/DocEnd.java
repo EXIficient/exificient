@@ -37,8 +37,6 @@ package com.siemens.ct.exi.grammars.grammar;
  */
 public class DocEnd extends AbstractSchemaInformedGrammar {
 
-	private static final long serialVersionUID = -3648891485531691554L;
-
 	public DocEnd() {
 		super();
 	}

@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public class Comment extends AbstractEvent {
 
-	private static final long serialVersionUID = -2444408323748616348L;
-
 	public Comment() {
 		super(EventType.COMMENT);
 	}

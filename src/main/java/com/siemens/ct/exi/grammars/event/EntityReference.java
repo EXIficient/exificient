@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public class EntityReference extends AbstractEvent {
 
-	private static final long serialVersionUID = 3358244511776101695L;
-
 	public EntityReference() {
 		super(EventType.ENTITY_REFERENCE);
 	}

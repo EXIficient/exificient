@@ -45,8 +45,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class DatetimeDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = -3235729895220215225L;
-
 	DateTimeType datetimeType;
 
 	private DateTimeValue lastValidDatetime;

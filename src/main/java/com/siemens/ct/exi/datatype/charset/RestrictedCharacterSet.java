@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi.datatype.charset;
 
-import java.io.Serializable;
 
 /**
  * If a string value is associated with a schema datatype and one or more of the
@@ -37,7 +36,7 @@ import java.io.Serializable;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface RestrictedCharacterSet extends Serializable {
+public interface RestrictedCharacterSet {
 	/**
 	 * Retrieves the code-point for given code.
 	 * 

@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public class AttributeGeneric extends AbstractEvent {
 
-	private static final long serialVersionUID = 4117757736282054751L;
-
 	public AttributeGeneric() {
 		super(EventType.ATTRIBUTE_GENERIC);
 	}

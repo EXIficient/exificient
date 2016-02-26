@@ -37,8 +37,6 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class XSDBase64CharacterSet extends AbstractRestrictedCharacterSet {
 
-	private static final long serialVersionUID = 2131801192257425675L;
-
 	/*
 	 * xsd:base64Binary { #x9, #xA, #xD, #x20, +, /, [0-9], =, [A-Z], [a-z] }
 	 */

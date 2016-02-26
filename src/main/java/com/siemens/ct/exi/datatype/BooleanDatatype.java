@@ -44,8 +44,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class BooleanDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = -6150310956233103627L;
-
 	protected BooleanValue bool;
 
 	public BooleanDatatype(QNameContext schemaType) {

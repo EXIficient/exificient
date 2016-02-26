@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
  */
 
 public class AttributeNS extends AbstractEvent {
-
-	private static final long serialVersionUID = 6004967457126269590L;
 	
 	protected final String namespaceUri;
 	protected final int namespaceUriID;

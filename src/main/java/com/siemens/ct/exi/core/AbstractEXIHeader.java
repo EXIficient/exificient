@@ -91,8 +91,6 @@ public abstract class AbstractEXIHeader {
 	
 	static class EXIOptionsHeaderGrammars implements Grammars {
 
-		private static final long serialVersionUID = -8097814828362083123L;
-
 		/* BEGIN GrammarContext ----- */
 		final String ns0 = "";
 		final QNameContext[] grammarQNames0 = {};

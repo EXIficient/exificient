@@ -47,8 +47,6 @@ import com.siemens.ct.exi.util.MethodsBag;
 public abstract class AbstractBuiltInGrammar extends AbstractGrammar implements
 		BuiltInGrammar {
 
-	private static final long serialVersionUID = -4412097592336436189L;
-
 	protected List<Production> containers;
 	// Note: BuiltInDocContent and BuiltInFragmentContent do not use this variable
 	protected int ec1Length = -1;

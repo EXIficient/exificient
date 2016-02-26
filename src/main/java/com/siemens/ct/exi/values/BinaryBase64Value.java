@@ -33,8 +33,6 @@ package com.siemens.ct.exi.values;
 // re-uses code from org.apache.xerces.impl.dv.util.Base64Bin;
 public class BinaryBase64Value extends AbstractBinaryValue {
 
-	private static final long serialVersionUID = -2690177084175673837L;
-
 	private int fewerThan24bits;
 	private int numberTriplets;
 	private int numberQuartet;

@@ -41,8 +41,6 @@ package com.siemens.ct.exi.grammars.grammar;
 
 public class SchemaInformedDocContent extends AbstractSchemaInformedGrammar {
 
-	private static final long serialVersionUID = -2644676723844219418L;
-
 	public SchemaInformedDocContent() {
 		super();
 	}

@@ -43,8 +43,6 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public abstract class AbstractBuiltInContent extends AbstractBuiltInGrammar {
 
-	private static final long serialVersionUID = -354500199734740496L;
-
 	protected static final Map<FidelityOptions, List<EventType>> optionsStartTag;
 	protected static final Map<FidelityOptions, List<EventType>> optionsChildContent;
 

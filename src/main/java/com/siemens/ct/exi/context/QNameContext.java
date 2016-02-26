@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.context;
 
-import java.io.Serializable;
-
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.grammars.event.Attribute;
@@ -39,12 +37,7 @@ import com.siemens.ct.exi.grammars.grammar.SchemaInformedFirstStartTagGrammar;
  * @version 0.9.6-SNAPSHOT
  */
 
-public class QNameContext implements Serializable {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 3603278826401543189L;
+public class QNameContext {
 	
 	final int namespaceUriID;
 	final int localNameID;

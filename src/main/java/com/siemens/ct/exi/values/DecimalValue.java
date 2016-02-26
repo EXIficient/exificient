@@ -37,8 +37,6 @@ import com.siemens.ct.exi.util.MethodsBag;
 
 public class DecimalValue extends AbstractValue {
 
-	private static final long serialVersionUID = 5268045994978250547L;
-
 	protected final boolean negative;
 	protected final IntegerValue integral;
 	protected final IntegerValue revFractional;

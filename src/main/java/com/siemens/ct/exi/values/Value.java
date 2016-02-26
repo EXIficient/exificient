@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi.values;
 
-import java.io.Serializable;
 
 /**
  * Value is a container concept encapsulating value items, e.g. String Values
@@ -35,7 +34,7 @@ import java.io.Serializable;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface Value extends Serializable {
+public interface Value {
 
 	/**
 	 * Returns type of the boxed value e.g., int or boolean.

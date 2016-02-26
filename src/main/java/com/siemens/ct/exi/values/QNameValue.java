@@ -34,8 +34,6 @@ package com.siemens.ct.exi.values;
 
 public class QNameValue extends AbstractValue {
 
-	private static final long serialVersionUID = -6092774558055449492L;
-
 	protected final String namespaceUri;
 	protected final String localName;
 	protected final String prefix;

@@ -39,8 +39,6 @@ public class SchemaInformedFirstStartTag extends SchemaInformedStartTag
 		implements SchemaInformedFirstStartTagGrammar, Cloneable {
 
 	private static final boolean USE_RUNTIME_EMPTY_TYPE = true;
-	
-	private static final long serialVersionUID = -6071059051303822226L;
 
 	// subtype (xsi:type) OR nillable (xsi:nill) ?
 	protected boolean isTypeCastable = false;

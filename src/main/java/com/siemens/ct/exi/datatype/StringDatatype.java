@@ -43,8 +43,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class StringDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = 4636133910606239257L;
-
 	protected final boolean isDerivedByUnion;
 
 	protected String lastValue;

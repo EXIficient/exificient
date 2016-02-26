@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public abstract class AbstractEvent implements Event {
 
-	private static final long serialVersionUID = -3334801751013361193L;
-
 	protected final EventType eventType;
 
 	public AbstractEvent(EventType eventType) {

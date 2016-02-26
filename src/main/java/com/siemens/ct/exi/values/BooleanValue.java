@@ -35,8 +35,6 @@ import com.siemens.ct.exi.Constants;
 
 public class BooleanValue extends AbstractValue {
 
-	private static final long serialVersionUID = -5198071608091328620L;
-
 	public static final BooleanValue BOOLEAN_VALUE_FALSE = new BooleanValue(
 			false);
 	public static final BooleanValue BOOLEAN_VALUE_TRUE = new BooleanValue(

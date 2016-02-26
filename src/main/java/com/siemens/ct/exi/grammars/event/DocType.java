@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public class DocType extends AbstractEvent {
 
-	private static final long serialVersionUID = 8995889182400873418L;
-
 	public DocType() {
 		super(EventType.DOC_TYPE);
 	}

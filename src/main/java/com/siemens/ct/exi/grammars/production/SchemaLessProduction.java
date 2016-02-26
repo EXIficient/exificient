@@ -36,8 +36,6 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
 
 public class SchemaLessProduction extends AbstractProduction {
 
-	private static final long serialVersionUID = 2559182995076922136L;
-
 	protected final Grammar father;
 
 	public SchemaLessProduction(Grammar father, Grammar next, Event event,

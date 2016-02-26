@@ -47,8 +47,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class RestrictedCharacterSetDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = -6098764255799006920L;
-
 	protected String lastValidValue;
 	protected RestrictedCharacterSet rcs;
 

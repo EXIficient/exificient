@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,9 +46,7 @@ import com.siemens.ct.exi.grammars.grammar.SchemaInformedStartTagGrammar;
  * @version 0.9.6-SNAPSHOT
  */
 
-public class FidelityOptions implements Serializable {
-
-	private static final long serialVersionUID = 2403291078846997571L;
+public class FidelityOptions {
 
 	/* Comments, ProcessingInstructions, DTDs and Prefixes are preserved */
 	public static final String FEATURE_COMMENT = "PRESERVE_COMMENTS";

@@ -59,8 +59,6 @@ import com.siemens.ct.exi.grammars.production.SchemaInformedProduction;
 public class SchemaInformedStartTag extends AbstractSchemaInformedContent
 		implements SchemaInformedStartTagGrammar, Cloneable {
 
-	private static final long serialVersionUID = -674782327638586700L;
-
 	protected Grammar elementContent2;
 	
 	

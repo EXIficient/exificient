@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi.grammars.event;
 
-import java.io.Serializable;
 
 /**
  * 
@@ -33,7 +32,7 @@ import java.io.Serializable;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface Event extends Serializable {
+public interface Event {
 
 	public EventType getEventType();
 

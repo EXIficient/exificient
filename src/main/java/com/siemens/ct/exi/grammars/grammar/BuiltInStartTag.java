@@ -48,8 +48,6 @@ import com.siemens.ct.exi.grammars.event.StartElement;
 
 public class BuiltInStartTag extends AbstractBuiltInContent {
 
-	private static final long serialVersionUID = -4877451908590620943L;
-
 	protected BuiltInElement elementContent;
 
 	protected boolean learnedEE = false;

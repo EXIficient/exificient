@@ -49,8 +49,6 @@ import com.siemens.ct.exi.util.sort.AttributeSort;
 public abstract class AbstractSchemaInformedGrammar extends AbstractGrammar
 		implements SchemaInformedGrammar {
 
-	private static final long serialVersionUID = -5145919918050815021L;
-
 	// contains all necessary event information including event-codes
 	Production[] containers = new Production[0];
 

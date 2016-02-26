@@ -42,8 +42,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class BinaryHexDatatype extends AbstractBinaryDatatype {
 
-	private static final long serialVersionUID = -1129597802269768531L;
-
 	public BinaryHexDatatype(QNameContext schemaType) {
 		super(BuiltInType.BINARY_HEX, schemaType);
 	}

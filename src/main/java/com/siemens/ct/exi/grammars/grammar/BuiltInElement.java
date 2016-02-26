@@ -45,8 +45,6 @@ import com.siemens.ct.exi.grammars.event.StartElement;
  */
 public class BuiltInElement extends AbstractBuiltInContent {
 
-	private static final long serialVersionUID = -787607643786879290L;
-
 	protected BuiltInElement() {
 		super();
 

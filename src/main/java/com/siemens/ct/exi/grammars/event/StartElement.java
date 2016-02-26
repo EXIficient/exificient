@@ -38,8 +38,6 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
 
 public class StartElement extends AbstractEvent {
 
-	private static final long serialVersionUID = -874684674312937990L;
-
 	protected final QName qname;
 	protected final QNameContext qnameContext;
 

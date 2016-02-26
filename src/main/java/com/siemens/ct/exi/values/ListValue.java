@@ -39,8 +39,6 @@ import com.siemens.ct.exi.datatype.Datatype;
 
 public class ListValue extends AbstractValue {
 
-	private static final long serialVersionUID = -8991265913614252729L;
-
 	protected final Value[] values;
 	protected final Datatype listDatatype;
 	protected final int numberOfValues;

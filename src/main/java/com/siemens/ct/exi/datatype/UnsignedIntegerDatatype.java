@@ -44,8 +44,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class UnsignedIntegerDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = 8260894749324499802L;
-
 	protected IntegerValue lastUnsignedInteger;
 
 	public UnsignedIntegerDatatype(QNameContext schemaType) {

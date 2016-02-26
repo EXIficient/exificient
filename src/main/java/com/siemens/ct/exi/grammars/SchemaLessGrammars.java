@@ -49,9 +49,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  */
 
 public class SchemaLessGrammars extends AbstractGrammars {
-
-	private static final long serialVersionUID = -6969262948282161888L;
-
+	
 	static {
 		GrammarUriContext[] grammarUriContextsX = new GrammarUriContext[3];
 		int qNameID = 0;

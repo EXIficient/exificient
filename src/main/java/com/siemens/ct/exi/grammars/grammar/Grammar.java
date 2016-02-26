@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.grammars.grammar;
 
-import java.io.Serializable;
-
 import com.siemens.ct.exi.grammars.event.Attribute;
 import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.event.EventType;
@@ -39,7 +37,7 @@ import com.siemens.ct.exi.grammars.production.Production;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface Grammar extends Serializable {
+public interface Grammar {
 
 	/*
 	 * rule created according to schema information

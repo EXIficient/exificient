@@ -33,8 +33,6 @@ package com.siemens.ct.exi.grammars.event;
 
 public class ProcessingInstruction extends AbstractEvent {
 
-	private static final long serialVersionUID = -589116641422085573L;
-
 	public ProcessingInstruction() {
 		super(EventType.PROCESSING_INSTRUCTION);
 	}

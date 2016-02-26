@@ -37,8 +37,6 @@ import com.siemens.ct.exi.util.xml.XMLWhitespace;
 
 public class XSDDateTimeCharacterSet extends AbstractRestrictedCharacterSet {
 
-	private static final long serialVersionUID = -6797473204346025876L;
-
 	/*
 	 * xsd:dateTime { #x9, #xA, #xD, #x20, +, -, ., [0-9], :, T, Z }
 	 */

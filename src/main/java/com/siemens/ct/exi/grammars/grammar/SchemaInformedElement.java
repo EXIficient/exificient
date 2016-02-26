@@ -45,8 +45,6 @@ package com.siemens.ct.exi.grammars.grammar;
 
 public class SchemaInformedElement extends AbstractSchemaInformedContent implements Cloneable {
 
-	private static final long serialVersionUID = 7009002330388834813L;
-
 	public GrammarType getGrammarType() {
 		return GrammarType.SCHEMA_INFORMED_ELEMENT_CONTENT;
 	}

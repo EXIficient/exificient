@@ -35,11 +35,6 @@ import com.siemens.ct.exi.Constants;
 
 public class GrammarUriContext extends AbstractUriContext {
 
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -6565683847377873121L;
-
 	public static String[] EMPTY_PREFIXES = new String[0];
 
 	// grammar local-names

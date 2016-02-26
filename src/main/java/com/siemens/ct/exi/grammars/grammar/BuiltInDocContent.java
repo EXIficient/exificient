@@ -43,8 +43,6 @@ import com.siemens.ct.exi.grammars.event.EventType;
 
 public class BuiltInDocContent extends AbstractBuiltInGrammar {
 
-	private static final long serialVersionUID = 3223520398225946713L;
-
 	protected Grammar docEnd;
 
 	public BuiltInDocContent(Grammar docEnd) {

@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.grammars.production;
 
-import java.io.Serializable;
-
 import com.siemens.ct.exi.grammars.event.Event;
 import com.siemens.ct.exi.grammars.grammar.Grammar;
 
@@ -36,9 +34,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  * @version 0.9.6-SNAPSHOT
  */
 
-public abstract class AbstractProduction implements Production, Serializable {
-
-	private static final long serialVersionUID = -6237642832111152869L;
+public abstract class AbstractProduction implements Production {
 
 	protected final Grammar next;
 	protected final int eventCode;

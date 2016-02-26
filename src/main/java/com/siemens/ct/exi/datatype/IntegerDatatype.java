@@ -44,8 +44,6 @@ import com.siemens.ct.exi.values.Value;
 
 public class IntegerDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = -7131847569262739592L;
-
 	private IntegerValue lastInteger;
 
 	public IntegerDatatype(QNameContext schemaType) {

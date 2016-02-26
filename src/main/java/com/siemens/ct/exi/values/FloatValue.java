@@ -40,8 +40,6 @@ import com.siemens.ct.exi.Constants;
 
 public class FloatValue extends AbstractValue {
 
-	private static final long serialVersionUID = 5799093635881195073L;
-
 	protected final IntegerValue mantissa;
 	protected final IntegerValue exponent;
 

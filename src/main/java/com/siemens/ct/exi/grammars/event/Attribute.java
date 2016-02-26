@@ -39,8 +39,6 @@ import com.siemens.ct.exi.types.BuiltIn;
 
 public class Attribute extends AbstractDatatypeEvent {
 
-	private static final long serialVersionUID = -8354368786561188680L;
-
 	protected final QName qname;
 	protected final QNameContext qnameContext;
 

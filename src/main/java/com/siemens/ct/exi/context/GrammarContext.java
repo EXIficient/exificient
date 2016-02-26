@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi.context;
 
-import java.io.Serializable;
 
 /**
  * 
@@ -33,12 +32,7 @@ import java.io.Serializable;
  * @version 0.9.6-SNAPSHOT
  */
 
-public class GrammarContext implements Serializable {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = -3384221885278934477L;
+public class GrammarContext {
 	
 	protected final GrammarUriContext[] grammarUriContexts;
 	protected final int numberofQNamesContexts;

@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.grammars;
 
-import java.io.Serializable;
-
 import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
@@ -40,13 +38,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  * @version 0.9.6-SNAPSHOT
  */
 
-public class SchemaInformedGrammars extends AbstractGrammars implements
-		Serializable {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 7647530843802602241L;
+public class SchemaInformedGrammars extends AbstractGrammars {
 
 	protected boolean builtInXMLSchemaTypesOnly = false;
 

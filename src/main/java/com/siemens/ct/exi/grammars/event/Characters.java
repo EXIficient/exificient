@@ -35,8 +35,6 @@ import com.siemens.ct.exi.datatype.Datatype;
 
 public class Characters extends AbstractDatatypeEvent {
 
-	private static final long serialVersionUID = -3710413955014691193L;
-
 	public Characters(Datatype datatype) {
 		super(EventType.CHARACTERS, datatype);
 	}

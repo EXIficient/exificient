@@ -42,8 +42,6 @@ import com.siemens.ct.exi.values.Value;
 
 public abstract class AbstractBinaryDatatype extends AbstractDatatype {
 
-	private static final long serialVersionUID = 774579535856394650L;
-
 	protected byte[] bytes;
 
 	public AbstractBinaryDatatype(BuiltInType binaryType, QNameContext schemaType) {

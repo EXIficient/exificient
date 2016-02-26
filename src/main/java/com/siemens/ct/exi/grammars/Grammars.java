@@ -23,8 +23,6 @@
 
 package com.siemens.ct.exi.grammars;
 
-import java.io.Serializable;
-
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.exceptions.UnsupportedOption;
 import com.siemens.ct.exi.grammars.grammar.Grammar;
@@ -37,7 +35,7 @@ import com.siemens.ct.exi.grammars.grammar.Grammar;
  * @version 0.9.6-SNAPSHOT
  */
 
-public interface Grammars extends Serializable {
+public interface Grammars {
 
 	/**
 	 * Schema information is used to create grammar.
