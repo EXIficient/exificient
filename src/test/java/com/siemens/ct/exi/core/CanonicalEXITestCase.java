@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
@@ -226,10 +225,10 @@ public class CanonicalEXITestCase extends TestCase {
 			encoder.encodeStartElement(s1);
 			AttributeList al = AttributeFactory.newInstance()
 					.createAttributeListInstance(factory);
-			al.addNamespaceDeclaration(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+			al.addNamespaceDeclaration(Constants.XML_SCHEMA_NS_URI,
 					"xsd");
 			al.addAttribute(new QName(
-					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type"),
+					Constants.XML_SCHEMA_INSTANCE_NS_URI, "type"),
 					"xsd:decimal");
 			encoder.encodeAttributeList(al);
 			encoder.encodeCharacters(new StringValue("-0.0"));
@@ -257,7 +256,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeAttribute()
 					.getQName()
 					.equals(new QName(
-							XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type"));
+							Constants.XML_SCHEMA_INSTANCE_NS_URI, "type"));
 			// decoder.decodeAttributeXsiType();
 
 			assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -1393,9 +1392,9 @@ public class CanonicalEXITestCase extends TestCase {
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
 
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "boolean");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type1, type2 };
 		QName[] dtrMapRepresentations = { representation1, representation2 };
@@ -1446,9 +1445,9 @@ public class CanonicalEXITestCase extends TestCase {
 				FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "boolean");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "boolean");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type1, type2 };
 		QName[] dtrMapRepresentations = { representation1, representation2 };

@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.apache.xerces.impl.xpath.regex.EXIRegularExpression;
@@ -232,23 +231,23 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		// "", empty string
 		for (int i = 0; i < Constants.LOCAL_NAMES_EMPTY.length; i++) {
 			String localName = Constants.LOCAL_NAMES_EMPTY[i];
-			addLocalNameStringEntry(XMLConstants.NULL_NS_URI, localName);
+			addLocalNameStringEntry(Constants.XML_NULL_NS_URI, localName);
 		}
 		// "http://www.w3.org/XML/1998/namespace"
 		for (int i = 0; i < Constants.LOCAL_NAMES_XML.length; i++) {
 			String localName = Constants.LOCAL_NAMES_XML[i];
-			addLocalNameStringEntry(XMLConstants.XML_NS_URI, localName);
+			addLocalNameStringEntry(Constants.XML_NS_URI, localName);
 		}
 		// "http://www.w3.org/2001/XMLSchema-instance", xsi
 		for (int i = 0; i < Constants.LOCAL_NAMES_XSI.length; i++) {
 			String localName = Constants.LOCAL_NAMES_XSI[i];
 			addLocalNameStringEntry(
-					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, localName);
+					Constants.XML_SCHEMA_INSTANCE_NS_URI, localName);
 		}
 		// "http://www.w3.org/2001/XMLSchema", xsd
 		for (int i = 0; i < Constants.LOCAL_NAMES_XSD.length; i++) {
 			String localName = Constants.LOCAL_NAMES_XSD[i];
-			addLocalNameStringEntry(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+			addLocalNameStringEntry(Constants.XML_SCHEMA_NS_URI,
 					localName);
 		}
 	}
@@ -269,7 +268,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	protected static QNameContext getQNameContext(String namespaceUri,
 			String localName, GrammarUriContext[] grammarUriContexts) {
-		namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+		namespaceUri = namespaceUri == null ? Constants.XML_NULL_NS_URI
 				: namespaceUri;
 		// uri context
 		UriContext guc = getUriContext(namespaceUri, grammarUriContexts);
@@ -290,7 +289,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	public static GrammarUriContext getUriContext(String namespaceUri,
 			GrammarUriContext[] grammarUriContexts) {
-		namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+		namespaceUri = namespaceUri == null ? Constants.XML_NULL_NS_URI
 				: namespaceUri;
 		assert(grammarUriContexts != null);
 
@@ -653,21 +652,21 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			// URI 2 "http://www.w3.org/2001/XMLSchema-instance"
 			// URI 3 "http://www.w3.org/2001/XMLSchema"
 			// URI ? <sorted URI list>
-			if (XMLConstants.NULL_NS_URI.equals(this.namespaceUri)) {
+			if (Constants.XML_NULL_NS_URI.equals(this.namespaceUri)) {
 				return -1;
-			} else if (XMLConstants.NULL_NS_URI.equals(o.namespaceUri)) {
+			} else if (Constants.XML_NULL_NS_URI.equals(o.namespaceUri)) {
 				return +1;
-			} else if (XMLConstants.XML_NS_URI.equals(this.namespaceUri)) {
+			} else if (Constants.XML_NS_URI.equals(this.namespaceUri)) {
 				return -1;
-			} else if (XMLConstants.XML_NS_URI.equals(o.namespaceUri)) {
+			} else if (Constants.XML_NS_URI.equals(o.namespaceUri)) {
 				return +1;
-			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(this.namespaceUri)) {
+			} else if (Constants.XML_SCHEMA_INSTANCE_NS_URI.equals(this.namespaceUri)) {
 				return -1;
-			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(o.namespaceUri)) {
+			} else if (Constants.XML_SCHEMA_INSTANCE_NS_URI.equals(o.namespaceUri)) {
 				return +1;
-			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(this.namespaceUri)) {
+			} else if (Constants.XML_SCHEMA_NS_URI.equals(this.namespaceUri)) {
 				return -1;
-			} else if (XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(o.namespaceUri)) {
+			} else if (Constants.XML_SCHEMA_NS_URI.equals(o.namespaceUri)) {
 				return +1;
 			} else {
 				return this.namespaceUri.compareTo(o.namespaceUri);
@@ -683,20 +682,20 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			super();
 			this.xsModel = xsModel;
 			// init default entries
-			this.add(new NamespaceUriEntry(XMLConstants.NULL_NS_URI));
+			this.add(new NamespaceUriEntry(Constants.XML_NULL_NS_URI));
 			NamespaceUriEntry nsue1 = new NamespaceUriEntry(
-					XMLConstants.XML_NS_URI);
+					Constants.XML_NS_URI);
 			nsue1.localNames.add("base");
 			nsue1.localNames.add("id");
 			nsue1.localNames.add("lang");
 			nsue1.localNames.add("space");
 			this.add(nsue1);
 			NamespaceUriEntry nsue2 = new NamespaceUriEntry(
-					XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+					Constants.XML_SCHEMA_INSTANCE_NS_URI);
 			nsue2.localNames.add("nil");
 			nsue2.localNames.add("type");
 			this.add(nsue2);
-			this.add(new NamespaceUriEntry(XMLConstants.W3C_XML_SCHEMA_NS_URI));
+			this.add(new NamespaceUriEntry(Constants.XML_SCHEMA_NS_URI));
 			// init entries
 			this.initializeEntries();
 			// sort entries
@@ -747,7 +746,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		}
 
 		private NamespaceUriEntry checkNamespaceUriEntry(String namespaceUri) {
-			namespaceUri = namespaceUri == null ? XMLConstants.NULL_NS_URI
+			namespaceUri = namespaceUri == null ? Constants.XML_NULL_NS_URI
 					: namespaceUri;
 			for (int i = 0; i < this.size(); i++) {
 				NamespaceUriEntry nsue = this.get(i);
@@ -917,11 +916,11 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 			String namespaceUri = nsue.namespaceUri;
 			// prefixes
 			String[] prefixes;
-			if (XMLConstants.NULL_NS_URI.equals(namespaceUri)) {
+			if (Constants.XML_NULL_NS_URI.equals(namespaceUri)) {
 				prefixes = Constants.PREFIXES_EMPTY;
-			} else if (XMLConstants.XML_NS_URI.equals(namespaceUri)) {
+			} else if (Constants.XML_NS_URI.equals(namespaceUri)) {
 				prefixes = Constants.PREFIXES_XML;
-			} else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI
+			} else if (Constants.XML_SCHEMA_INSTANCE_NS_URI
 					.equals(namespaceUri)) {
 				prefixes = Constants.PREFIXES_XSI;
 			} else {
@@ -1129,11 +1128,11 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 	// "http://www.w3.org/2001/XMLSchema"
 	protected static boolean isAdditionalNamespace(String namespaceURI) {
 		assert (namespaceURI != null);
-		if (namespaceURI.equals(XMLConstants.NULL_NS_URI)
-				|| namespaceURI.equals(XMLConstants.XML_NS_URI)
+		if (namespaceURI.equals(Constants.XML_NULL_NS_URI)
+				|| namespaceURI.equals(Constants.XML_NS_URI)
 				|| namespaceURI
-						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)
-				|| namespaceURI.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+						.equals(Constants.XML_SCHEMA_INSTANCE_NS_URI)
+				|| namespaceURI.equals(Constants.XML_SCHEMA_NS_URI)) {
 			return false;
 		} else {
 			return true;
@@ -1145,7 +1144,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		TreeSet<String> sortedURIs = new TreeSet<String>();
 
 		for (int i = 0; i < namespaces.getLength(); i++) {
-			String uri = namespaces.item(i) == null ? XMLConstants.NULL_NS_URI
+			String uri = namespaces.item(i) == null ? Constants.XML_NULL_NS_URI
 					: namespaces.item(i);
 			if (isAdditionalNamespace(uri)) {
 				sortedURIs.add(uri);
@@ -1163,10 +1162,10 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 		// copy to array (in right order)
 		String[] uris = new String[4 + sortedURIs.size()];
-		uris[0] = XMLConstants.NULL_NS_URI;
-		uris[1] = XMLConstants.XML_NS_URI;
-		uris[2] = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-		uris[3] = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+		uris[0] = Constants.XML_NULL_NS_URI;
+		uris[1] = Constants.XML_NS_URI;
+		uris[2] = Constants.XML_SCHEMA_INSTANCE_NS_URI;
+		uris[3] = Constants.XML_SCHEMA_NS_URI;
 		int compactID = 4;
 		for (String addUri : sortedURIs) {
 			uris[compactID] = addUri;
@@ -1194,7 +1193,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 
 	protected List<String> addNamespaceStringEntry(String namespaceURI) {
 		if (namespaceURI == null) {
-			namespaceURI = XMLConstants.NULL_NS_URI;
+			namespaceURI = Constants.XML_NULL_NS_URI;
 		}
 		// fetch localName list
 		List<String> localNameList;
@@ -1268,11 +1267,11 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		// nonPositiveInteger
 		if (td.getTypeCategory() == XSTypeDefinition.SIMPLE_TYPE) {
 			if ("negativeInteger".equals(td.getName())
-					&& XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(td
+					&& Constants.XML_SCHEMA_NS_URI.equals(td
 							.getNamespace())) {
 				XSTypeDefinition td2 = xsModel.getTypeDefinition(
 						"nonPositiveInteger",
-						XMLConstants.W3C_XML_SCHEMA_NS_URI);
+						Constants.XML_SCHEMA_NS_URI);
 				return td2;
 			} else {
 				return td.getBaseType();
@@ -1936,7 +1935,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 		 */
 		// walk up the hierarchy till we find xsd simple integer types
 		XSTypeDefinition xsdSTD = std;
-		while (!XMLConstants.W3C_XML_SCHEMA_NS_URI
+		while (!Constants.XML_SCHEMA_NS_URI
 				.equals(xsdSTD.getNamespace())) {
 			xsdSTD = xsdSTD.getBaseType();
 		}
@@ -2254,7 +2253,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				|| !baseType
 						.isDefinedFacet(XSSimpleTypeDefinition.FACET_PATTERN)) {
 			// check std type
-			isBuiltInTypeFacet = XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(std
+			isBuiltInTypeFacet = Constants.XML_SCHEMA_NS_URI.equals(std
 					.getNamespace());
 		} else {
 			if (baseType.getLexicalPattern().getLength() < patternListLength) {
@@ -2262,7 +2261,7 @@ public class XSDGrammarsBuilder extends EXIContentModelBuilder {
 				 * --> std defines the last pattern (check whether it is a
 				 * built-in type)
 				 */
-				isBuiltInTypeFacet = XMLConstants.W3C_XML_SCHEMA_NS_URI
+				isBuiltInTypeFacet = Constants.XML_SCHEMA_NS_URI
 						.equals(std.getNamespace());
 			} else {
 				// call again base type

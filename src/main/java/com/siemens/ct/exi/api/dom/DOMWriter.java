@@ -26,8 +26,6 @@ package com.siemens.ct.exi.api.dom;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.xml.XMLConstants;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
@@ -36,6 +34,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamEncoder;
@@ -122,7 +121,7 @@ public class DOMWriter {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
 		// start element
-		String namespaceURI = root.getNamespaceURI() == null ? XMLConstants.NULL_NS_URI
+		String namespaceURI = root.getNamespaceURI() == null ? Constants.XML_NULL_NS_URI
 				: root.getNamespaceURI();
 		String localName = root.getLocalName();
 		if (localName == null) {
@@ -133,7 +132,7 @@ public class DOMWriter {
 
 		String prefix = root.getPrefix();
 		if (prefix == null) {
-			prefix = XMLConstants.DEFAULT_NS_PREFIX;
+			prefix = Constants.XML_DEFAULT_NS_PREFIX;
 		}
 		exiBody.encodeStartElement(namespaceURI, localName, prefix);
 
@@ -144,9 +143,9 @@ public class DOMWriter {
 			Node at = attributes.item(i);
 
 			// NS
-			if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI
+			if (Constants.XML_NS_ATTRIBUTE_NS_URI
 					.equals(at.getNamespaceURI())) {
-				String pfx = at.getPrefix() == null ? XMLConstants.DEFAULT_NS_PREFIX
+				String pfx = at.getPrefix() == null ? Constants.XML_DEFAULT_NS_PREFIX
 						: at.getLocalName();
 				exiAttributes.addNamespaceDeclaration(at.getNodeValue(), pfx);
 			} else {

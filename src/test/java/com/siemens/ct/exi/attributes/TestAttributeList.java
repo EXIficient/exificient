@@ -23,10 +23,9 @@
 
 package com.siemens.ct.exi.attributes;
 
-import javax.xml.XMLConstants;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.exceptions.EXIException;
@@ -84,7 +83,7 @@ public class TestAttributeList extends XMLTestCase {
 
 		al.addAttribute("", "x", "x", "bla");
 		al.addAttribute("", "y", "y", "bla");
-		al.addAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type",
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type",
 				"xsi", "uri:type");
 
 		assertTrue(al.getNumberOfAttributes() == 2);
@@ -106,7 +105,7 @@ public class TestAttributeList extends XMLTestCase {
 
 		al.addAttribute("", "y", "y", "bla");
 		al.addAttribute("", "x", "x", "bla");
-		al.addAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "nil",
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "nil",
 				"xsi", "false ");
 
 		assertTrue(al.getNumberOfAttributes() == 2);
@@ -135,7 +134,7 @@ public class TestAttributeList extends XMLTestCase {
 		al.addAttribute("", "lnType", "lnType", "foo");
 		al.addAttribute("", "lnClass", "lnClass", "LLN0");
 		al.addAttribute("", "inst", "inst", "");
-		al.addAttribute(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type",
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type",
 				"xsi", "cif:tLN0");
 
 		assertTrue(al.getNumberOfAttributes() == 5);

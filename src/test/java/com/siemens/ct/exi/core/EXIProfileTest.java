@@ -26,12 +26,12 @@ package com.siemens.ct.exi.core;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
@@ -68,7 +68,7 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt1 = new QName("", "at1");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
 		String sAtValue = "atValue";
 
@@ -426,7 +426,7 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt2 = new QName("", "at2");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
 		String sAtValue = "atValue";
 
@@ -548,7 +548,7 @@ public class EXIProfileTest extends TestCase {
 		QName qnEl2 = new QName("", "el2");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
 		// String sAtValue = "atValue";
 		String sChValue = "chValue";
@@ -572,7 +572,7 @@ public class EXIProfileTest extends TestCase {
 				encoder.encodeStartElement(qnEl2.getNamespaceURI(),
 						qnEl2.getLocalPart(), pfx);
 				QNameValue qnv = new QNameValue(
-						XMLConstants.W3C_XML_SCHEMA_NS_URI, "int",
+						Constants.XML_SCHEMA_NS_URI, "int",
 						qnXsiType.getPrefix());
 				encoder.encodeAttributeXsiType(qnv, null);
 				encoder.encodeCharacters(new StringValue(sChValueTyped));
@@ -625,7 +625,7 @@ public class EXIProfileTest extends TestCase {
 				assertTrue(decoder.getAttributeValue() instanceof QNameValue);
 				QNameValue tcVal = (QNameValue) decoder.getAttributeValue();
 				assertTrue(tcVal.getNamespaceUri().equals(
-						XMLConstants.W3C_XML_SCHEMA_NS_URI));
+						Constants.XML_SCHEMA_NS_URI));
 				assertTrue(tcVal.getLocalName().equals("int"));
 
 				assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -669,7 +669,7 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt3 = new QName("", "at3");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
 		String sAtValue1 = "atValue1";
 		String sAtValue2 = "atValue2";
@@ -856,12 +856,12 @@ public class EXIProfileTest extends TestCase {
 		QName qnA = new QName("", "a");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
-		QNameValue typeInt = new QNameValue(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+		QNameValue typeInt = new QNameValue(Constants.XML_SCHEMA_NS_URI,
 				"int", null);
 		QNameValue typeDecimal = new QNameValue(
-				XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal", null);
+				Constants.XML_SCHEMA_NS_URI, "decimal", null);
 
 		String sValue1 = "12345";
 		String sValue2 = "12345.67";
@@ -1000,7 +1000,7 @@ public class EXIProfileTest extends TestCase {
 		QName qnB = new QName("", "B");
 
 		QName qnXsiType = new QName(
-				XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
+				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
 
 		// encoder
 		{

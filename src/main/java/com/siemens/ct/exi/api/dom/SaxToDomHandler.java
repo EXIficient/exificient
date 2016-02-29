@@ -26,8 +26,6 @@ package com.siemens.ct.exi.api.dom;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMImplementation;
@@ -45,6 +43,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.siemens.ct.exi.Constants;
 
 /**
  * Wraps SAX events and build DOM based on it.
@@ -108,10 +108,10 @@ class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 		// add NS declarations
 		for (int i = 0; i < prefixes.size(); i++) {
 			PrefixMapping pm = prefixes.get(i);
-			String qname = pm.prefix.length() == 0 ? XMLConstants.XMLNS_ATTRIBUTE
-					: XMLConstants.XMLNS_ATTRIBUTE + ":" + pm.prefix;
+			String qname = pm.prefix.length() == 0 ? Constants.XML_NS_ATTRIBUTE
+					: Constants.XML_NS_ATTRIBUTE + ":" + pm.prefix;
 			Attr attr = checkDocument().createAttributeNS(
-					XMLConstants.XMLNS_ATTRIBUTE_NS_URI, qname);
+					Constants.XML_NS_ATTRIBUTE_NS_URI, qname);
 			attr.setValue(pm.uri);
 			element.setAttributeNodeNS(attr);
 		}

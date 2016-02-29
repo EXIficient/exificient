@@ -29,12 +29,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.xml.XMLConstants;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamEncoder;
@@ -133,7 +132,7 @@ public class SAXEncoder extends DefaultHandler2 {
 		String localName = atts.getLocalName(index);
 
 		int lengthDifference = qname.length() - localName.length();
-		return (lengthDifference == 0 ? XMLConstants.DEFAULT_NS_PREFIX : qname
+		return (lengthDifference == 0 ? Constants.XML_DEFAULT_NS_PREFIX : qname
 				.substring(0, lengthDifference - 1));
 	}
 

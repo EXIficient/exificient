@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -226,7 +225,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				int nsCnt = xmlStream.getNamespaceCount();
 				for (int i = 0; i < nsCnt; i++) {
 					String nsPfx = xmlStream.getNamespacePrefix(i);
-					nsPfx = nsPfx == null ? XMLConstants.DEFAULT_NS_PREFIX
+					nsPfx = nsPfx == null ? Constants.XML_DEFAULT_NS_PREFIX
 							: nsPfx;
 					String nsUri = xmlStream.getNamespaceURI(i);
 					this.writeNamespace(nsPfx, nsUri);
@@ -570,7 +569,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	public void setDefaultNamespace(String uri) throws XMLStreamException {
-		this.setPrefix(XMLConstants.DEFAULT_NS_PREFIX, uri);
+		this.setPrefix(Constants.XML_DEFAULT_NS_PREFIX, uri);
 	}
 
 	public void setNamespaceContext(NamespaceContext context)
@@ -586,7 +585,7 @@ public class StAXEncoder implements XMLStreamWriter {
 
 	public void writeAttribute(String localName, String value)
 			throws XMLStreamException {
-		this.writeAttribute(XMLConstants.NULL_NS_URI, localName, value);
+		this.writeAttribute(Constants.XML_NULL_NS_URI, localName, value);
 	}
 
 	public void writeAttribute(String namespaceURI, String localName,
@@ -597,16 +596,16 @@ public class StAXEncoder implements XMLStreamWriter {
 
 	public void writeDefaultNamespace(String namespaceURI)
 			throws XMLStreamException {
-		this.setPrefix(XMLConstants.DEFAULT_NS_PREFIX, namespaceURI);
+		this.setPrefix(Constants.XML_DEFAULT_NS_PREFIX, namespaceURI);
 	}
 
 	public void writeEmptyElement(String localName) throws XMLStreamException {
-		this.writeEmptyElement(XMLConstants.NULL_NS_URI, localName);
+		this.writeEmptyElement(Constants.XML_NULL_NS_URI, localName);
 	}
 
 	public void writeEmptyElement(String namespaceURI, String localName)
 			throws XMLStreamException {
-		this.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, localName,
+		this.writeEmptyElement(Constants.XML_DEFAULT_NS_PREFIX, localName,
 				namespaceURI);
 	}
 
@@ -626,7 +625,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	public void writeStartElement(String localName) throws XMLStreamException {
-		this.writeStartElement(XMLConstants.NULL_NS_URI, localName);
+		this.writeStartElement(Constants.XML_NULL_NS_URI, localName);
 	}
 
 	public void writeStartElement(String namespaceURI, String localName)
@@ -646,8 +645,8 @@ public class StAXEncoder implements XMLStreamWriter {
 		public void reset(){
 			nsContexts.clear();
 			pushContext(); // root context for default and xml
-			bindPrefix(XMLConstants.XML_NS_URI, XMLConstants.DEFAULT_NS_PREFIX);
-			bindPrefix(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
+			bindPrefix(Constants.XML_NS_URI, Constants.XML_DEFAULT_NS_PREFIX);
+			bindPrefix(Constants.XML_NS_URI, Constants.XML_NS_PREFIX);
 		}
 		
 		public void pushContext() {

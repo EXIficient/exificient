@@ -23,7 +23,6 @@
 
 package com.siemens.ct.exi.data;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import org.junit.Test;
@@ -286,7 +285,7 @@ public class GeneralTestCase extends AbstractTestCase {
 				CodingMode.BIT_PACKED);
 		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		QName[] dtrTypes = { new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+		QName[] dtrTypes = { new QName(Constants.XML_SCHEMA_NS_URI,
 				"integer") };
 		QName[] dtrRepresentations = { new QName(Constants.W3C_EXI_NS_URI,
 				"string") };

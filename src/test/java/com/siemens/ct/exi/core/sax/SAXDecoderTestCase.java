@@ -31,8 +31,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -237,10 +235,10 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					}
 				} else if (uri.equals("http://www.w3.org/XML/1998/namespace")) {
 					assertTrue(prefix.equals("xml"));
-				} else if (uri.equals(XMLConstants.NULL_NS_URI)) {
-					assertTrue(prefix.equals(XMLConstants.DEFAULT_NS_PREFIX));
+				} else if (uri.equals(Constants.XML_NULL_NS_URI)) {
+					assertTrue(prefix.equals(Constants.XML_DEFAULT_NS_PREFIX));
 				} else if (uri
-						.equals(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI)) {
+						.equals(Constants.XML_SCHEMA_INSTANCE_NS_URI)) {
 					assertTrue(prefix.equals("xsi"));
 				} else {
 					fail("No exptected URI: " + uri);
@@ -345,9 +343,9 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					}
 				} else if (uri.equals("http://www.w3.org/XML/1998/namespace")) {
 					assertTrue(prefix.equals("xml"));
-				} else if (uri.equals(XMLConstants.NULL_NS_URI)) {
-					assertTrue(prefix.equals(XMLConstants.DEFAULT_NS_PREFIX));
-				} else if (uri.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+				} else if (uri.equals(Constants.XML_NULL_NS_URI)) {
+					assertTrue(prefix.equals(Constants.XML_DEFAULT_NS_PREFIX));
+				} else if (uri.equals(Constants.XML_SCHEMA_NS_URI)) {
 					assertTrue(prefix.equals("ns3"));
 				} else if (uri.equals("http://www.w3.org/2000/09/xmldsig#")) {
 					assertTrue(prefix.equals("ns6"));

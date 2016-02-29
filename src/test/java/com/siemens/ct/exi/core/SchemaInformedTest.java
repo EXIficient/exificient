@@ -26,12 +26,12 @@ package com.siemens.ct.exi.core;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.Constants;
 import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
@@ -195,7 +195,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
 					qnRoot.getLocalPart(), pfx);
 			encoder.encodeNamespaceDeclaration(
-					XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
+					Constants.XML_SCHEMA_NS_URI, "xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 
 			encoder.encodeEndElement();
@@ -261,7 +261,7 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
 					qnRoot.getLocalPart(), pfx);
 			encoder.encodeNamespaceDeclaration(
-					XMLConstants.W3C_XML_SCHEMA_NS_URI, "xs");
+					Constants.XML_SCHEMA_NS_URI, "xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 
 			encoder.encodeEndElement();

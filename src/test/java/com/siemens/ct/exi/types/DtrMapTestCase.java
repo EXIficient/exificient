@@ -28,7 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -79,7 +78,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -110,7 +109,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "byte");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "byte");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -142,7 +141,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -190,8 +189,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "double");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "double");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "decimal");
 		QName[] dtrMapTypes = { type1, type2 };
@@ -261,7 +260,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "string");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type1 };
 		QName[] dtrMapRepresentations = { representation1 };
@@ -345,8 +344,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setGrammars(g);
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "double");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "decimal");
 		QName[] dtrMapTypes = { type1, type2 };
@@ -450,7 +449,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertFalse(dt.isValid(new StringValue("12:32:00")));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -508,7 +507,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -657,7 +656,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeStringDerived));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "string");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "string");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -702,8 +701,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "short");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "short");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "integer");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type1, type2 };
@@ -715,7 +714,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
 				dtrMapTypes, dtrMapRepresentations);
 		Datatype dtShort = DatatypeMappingTest.getSimpleDatatypeFor(
-				schemaAsString, "short", XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				schemaAsString, "short", Constants.XML_SCHEMA_NS_URI);
 		assertFalse("Should not be encodable",
 				dtrTe.isValid(dtShort, new StringValue("XXX 12 XX")));
 		// assertTrue(dtrTe.getRecentDtrMapDatatype() == null);
@@ -770,8 +769,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		exiFactory.setGrammars(g);
 		exiFactory.setFidelityOptions(FidelityOptions.createStrict());
 		/* DTR Map */
-		QName type1 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "short");
-		QName type2 = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
+		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "short");
+		QName type2 = new QName(Constants.XML_SCHEMA_NS_URI, "integer");
 		QName representation1 = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName representation2 = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type1, type2 };
@@ -866,7 +865,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "decimal");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -905,7 +904,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "integer");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "integer");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -940,7 +939,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -975,7 +974,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertTrue(dtID == DatatypeID.exi_string);
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "token");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "token");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
@@ -1014,7 +1013,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI,
 				"anySimpleType");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "decimal");
 		QName[] dtrMapTypes = { type };
@@ -1125,7 +1124,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 				.equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI,
 				"anySimpleType");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		// QName representation = new QName(Constants.W3C_EXI_NS_URI,
@@ -1243,7 +1242,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		assertTrue(dt.getSchemaType().getQName().equals(schemaTypeInteger));
 
 		/* DTR Map */
-		QName type = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI, "int");
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");
 		QName representation = new QName(Constants.W3C_EXI_NS_URI, "string");
 		QName[] dtrMapTypes = { type };
 		QName[] dtrMapRepresentations = { representation };
