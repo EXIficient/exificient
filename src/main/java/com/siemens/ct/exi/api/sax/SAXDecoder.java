@@ -55,6 +55,7 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.helpers.DefaultSchemaIdResolver;
 import com.siemens.ct.exi.util.NoEntityResolver;
 import com.siemens.ct.exi.values.ListValue;
 import com.siemens.ct.exi.values.Value;
@@ -96,6 +97,10 @@ public class SAXDecoder implements XMLReader {
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
+		if(noOptionsFactory.getSchemaIdResolver() == null) {
+			// set default schemaId resolver
+			noOptionsFactory.setSchemaIdResolver(new DefaultSchemaIdResolver());
+		}
 		this.exiStream = noOptionsFactory.createEXIStreamDecoder();
 		/*
 		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the

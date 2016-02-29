@@ -42,6 +42,7 @@ import com.siemens.ct.exi.SchemaIdResolver;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.helpers.DefaultSchemaIdResolver;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
 import com.siemens.ct.exi.io.channel.BitEncoderChannel;
 import com.siemens.ct.exi.io.channel.DecoderChannel;
@@ -159,6 +160,10 @@ public class EXIHeaderTestCase extends TestCase {
 		EXIHeaderDecoder headerDecoder = new EXIHeaderDecoder();
 		if (noOptionsFactory == null) {
 			noOptionsFactory = DefaultEXIFactory.newInstance();
+		}
+		if(noOptionsFactory.getSchemaIdResolver() == null) {
+			// set default schemaId resolver
+			noOptionsFactory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 		}
 
 		EXIFactory decodedTest = headerDecoder.readEXIOptions(decoderChannel, noOptionsFactory);

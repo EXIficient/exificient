@@ -46,6 +46,7 @@ import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.helpers.DefaultSchemaIdResolver;
 import com.siemens.ct.exi.values.Value;
 
 /**
@@ -101,6 +102,10 @@ public class StAXDecoder implements XMLStreamReader
 
 	public StAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
+		if(noOptionsFactory.getSchemaIdResolver() == null) {
+			// set default schemaId resolver
+			noOptionsFactory.setSchemaIdResolver(new DefaultSchemaIdResolver());
+		}
 		this.exiStream = noOptionsFactory.createEXIStreamDecoder();
 		this.attributes = new ArrayList<AttributeContainer>();
 		this.nsContext = new EXINamespaceContext();
