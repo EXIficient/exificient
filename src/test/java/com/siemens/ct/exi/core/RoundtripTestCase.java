@@ -47,7 +47,6 @@ import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
-import com.siemens.ct.exi.grammars.GrammarTest;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -64,7 +63,7 @@ public class RoundtripTestCase extends TestCase {
 				+ " <xs:element name='root' type='xs:int' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setGrammars(grammar);
@@ -130,7 +129,7 @@ public class RoundtripTestCase extends TestCase {
 				+ " <xs:element name='root' type='xs:int' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars grammar = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setGrammars(grammar);

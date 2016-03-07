@@ -47,12 +47,11 @@
 	   <artifactId>exificient-core</artifactId>
 	   <version>0.9.6-SNAPSHOT</version>
 	</dependency>
-    <!-- Runtime Dependencies (schema-informed mode) -->
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.11.0</version>
-    </dependency>
+	<dependency>
+	   <groupId>com.siemens.ct.exi</groupId>
+	   <artifactId>exificient-grammars</artifactId>
+	   <version>0.9.6-SNAPSHOT</version>
+	</dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>

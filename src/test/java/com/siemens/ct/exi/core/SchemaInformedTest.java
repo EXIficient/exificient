@@ -37,7 +37,7 @@ import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarTest;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -47,6 +47,16 @@ import com.siemens.ct.exi.values.StringValue;
 import com.siemens.ct.exi.values.Value;
 
 public class SchemaInformedTest extends TestCase {
+	
+	public static Grammars getGrammarFromSchemaAsString(String schemaAsString)
+			throws Exception {
+		ByteArrayInputStream bais = new ByteArrayInputStream(
+				schemaAsString.getBytes());
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammars grammar = grammarFactory.createGrammars(bais);
+
+		return grammar;
+	}
 
 	public SchemaInformedTest(String testName) {
 		super(testName);
@@ -58,7 +68,7 @@ public class SchemaInformedTest extends TestCase {
 				+ " <xs:element name='root' type='xs:string' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
@@ -111,7 +121,7 @@ public class SchemaInformedTest extends TestCase {
 				+ " <xs:element name='root' type='xs:string' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
@@ -175,7 +185,7 @@ public class SchemaInformedTest extends TestCase {
 				+ " <xs:element name='root' type='xs:string'  >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 
@@ -239,7 +249,7 @@ public class SchemaInformedTest extends TestCase {
 				+ " <xs:element name='root' type='xs:string'  >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 

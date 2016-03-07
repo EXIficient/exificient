@@ -6,6 +6,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/com/siemens/ct/exi/exificient-core/0.9.6-SNAPSHOT/exificient-core-0.9.6-SNAPSHOT.jar" sourcepath="M2_REPO/com/siemens/ct/exi/exificient-core/0.9.6-SNAPSHOT/exificient-core-0.9.6-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/siemens/ct/exi/exificient-grammars/0.9.6-SNAPSHOT/exificient-grammars-0.9.6-SNAPSHOT.jar" sourcepath="M2_REPO/com/siemens/ct/exi/exificient-grammars/0.9.6-SNAPSHOT/exificient-grammars-0.9.6-SNAPSHOT-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0.jar" sourcepath="M2_REPO/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar" sourcepath="M2_REPO/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar" sourcepath="M2_REPO/junit/junit/4.11/junit-4.11-sources.jar"/>

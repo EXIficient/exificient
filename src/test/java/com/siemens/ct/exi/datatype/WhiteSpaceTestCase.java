@@ -32,7 +32,7 @@ import com.siemens.ct.exi.EXIBodyDecoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamDecoder;
 import com.siemens.ct.exi.TestSAXEncoder;
-import com.siemens.ct.exi.grammars.GrammarTest;
+import com.siemens.ct.exi.core.SchemaInformedTest;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -681,7 +681,7 @@ public class WhiteSpaceTestCase extends TestCase {
 				+ " <xs:element name='foo' type='xs:string'>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String c = "  text content ";
@@ -730,7 +730,7 @@ public class WhiteSpaceTestCase extends TestCase {
 				+ "</xs:restriction>"
 				+ "</xs:simpleType>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String c = " \t\r text content \n";
@@ -803,7 +803,7 @@ public class WhiteSpaceTestCase extends TestCase {
 				+ "</xs:restriction>"
 				+ "</xs:simpleType>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String c = " \t\n text \t content xyz     \n \n\r";

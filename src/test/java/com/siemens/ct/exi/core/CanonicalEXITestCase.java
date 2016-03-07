@@ -48,7 +48,6 @@ import com.siemens.ct.exi.api.sax.SAXFactory;
 import com.siemens.ct.exi.attributes.AttributeFactory;
 import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammars.GrammarTest;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.grammars.event.EventType;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
@@ -285,7 +284,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " <xs:element name='el1' type='xs:decimal'>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -341,7 +340,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " <xs:element name='el1' type='xs:nonNegativeInteger'>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -402,7 +401,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "<xs:simpleType name='size'><xs:restriction base='xs:string'><xs:enumeration value='small' /><xs:enumeration value='medium' /><xs:enumeration value='large' /><xs:enumeration value='small' /></xs:restriction></xs:simpleType>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -472,7 +471,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -530,7 +529,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -588,7 +587,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -646,7 +645,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -704,7 +703,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -762,7 +761,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -820,7 +819,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -878,7 +877,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -936,7 +935,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -994,7 +993,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -1056,7 +1055,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		String sdt = "2015-08-11T23:00:00+09:00";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -1114,7 +1113,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		String sdt = "2003-10-30";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -1171,7 +1170,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		String sdt = "2003-10-30Z";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setCodingMode(CodingMode.BIT_PACKED);
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
@@ -1233,7 +1232,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		String sdt = "2003-10-30";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 		factory.setFidelityOptions(FidelityOptions.createStrict());
 		factory.setCodingMode(CodingMode.BIT_PACKED);
@@ -1491,7 +1490,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " <xs:element name='el1' type='xs:string'>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1543,7 +1542,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " <xs:element name='el1' type='xs:base64Binary'>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1599,7 +1598,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "   </xs:simpleType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1656,7 +1655,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "   </xs:simpleType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1703,7 +1702,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "    </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<root>   <!-- no entry element at all -->     </root>";
@@ -1751,7 +1750,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>"
 				+ "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1800,7 +1799,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "    </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1><t>bla</t> X <v>foo</v></el1>";
@@ -1884,7 +1883,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "    </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1></el1>";
@@ -1935,7 +1934,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "    </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<A></A>";
@@ -1984,7 +1983,7 @@ public class CanonicalEXITestCase extends TestCase {
 				+ "      <xs:attribute ref='xml:space'/>"
 				+ "    </xs:complexType>" + " </xs:element>" + "</xs:schema>";
 
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
 
 		String xml = "<el1 xml:space='preserve'> </el1>";

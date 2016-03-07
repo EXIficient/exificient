@@ -36,10 +36,10 @@ import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.context.GrammarContext;
 import com.siemens.ct.exi.context.GrammarUriContext;
 import com.siemens.ct.exi.context.QNameContext;
+import com.siemens.ct.exi.core.SchemaInformedTest;
 import com.siemens.ct.exi.datatype.strings.StringDecoder;
 import com.siemens.ct.exi.datatype.strings.StringEncoder;
 import com.siemens.ct.exi.exceptions.EXIException;
-import com.siemens.ct.exi.grammars.GrammarTest;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.BitDecoderChannel;
@@ -535,7 +535,7 @@ public class StringTableTest extends AbstractTestCase {
 				+ " </xs:element>"
 				+ " <xs:attribute name='globalAT' type='xs:integer' />"
 				+ "</xs:schema>";
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gue = g.getGrammarEntries();
 
@@ -560,7 +560,7 @@ public class StringTableTest extends AbstractTestCase {
 				+ "   </xs:sequence>"
 				+ "   <xs:anyAttribute namespace='urn:foo'/>"
 				+ "  </xs:complexType>" + " </xs:element>" + "</xs:schema>";
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		GrammarContext gc = g.getGrammarContext();
 		// GrammarURIEntry[] gue = g.getGrammarEntries();
 
@@ -594,7 +594,7 @@ public class StringTableTest extends AbstractTestCase {
 				+ "   </xs:sequence>"
 				+ "  </xs:complexType>"
 				+ " </xs:element>" + "</xs:schema>";
-		Grammars g = GrammarTest.getGrammarFromSchemaAsString(schema);
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		// GrammarURIEntry[] gue = g.getGrammarEntries();
 		GrammarContext gc = g.getGrammarContext();
 
