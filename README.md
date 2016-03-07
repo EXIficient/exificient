@@ -23,23 +23,36 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 
 ```java
 /*
-* e.g. SAX
-* A parser which implements SAX (ie, a SAX Parser) functions as a stream
-* parser, with an event-driven API.
-*/
+ *  Setup EXIFactory as required
+ */
+EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+// e.g., add additional settings beyond the default values
+// exiFactory.setGrammars(GrammarFactory.newInstance().createGrammars("foo.xsd")); // use XML schema
+// exiFactory.setCodingMode(CodingMode.COMPRESSION); // use deflate compression for larger XML files
 
-// encode
-EXIResult exiResult = new EXIResult( ... );
-exiResult.setOutputStream( ... );
+/*
+ *  encode XML to EXI
+ */
+String fileEXI = "foo.xml.exi"; // EXI output
+OutputStream osEXI = new FileOutputStream(fileEXI);
+EXIResult exiResult = new EXIResult(exiFactory);
+exiResult.setOutputStream(osEXI);
 XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 xmlReader.setContentHandler( exiResult.getHandler() );
-xmlReader.parse( ... );
+xmlReader.parse("foo.xml"); // parse XML input
+osEXI.close();
 
-// decode
-EXISource exiSource = new EXISource( ... );
-XMLReader exiReader = exiSource.getXMLReader();
-exiReader.setContentHandler ( ... );
-exiReader.parse ( new InputSource( ... ) ); 
+/*
+ *  decode EXI to XML
+ */
+String fileXML = "foo.xml.exi.xml"; // XML output again
+Result result = new StreamResult(fileXML);
+InputSource is = new InputSource(fileEXI);
+SAXSource exiSource = new EXISource(exiFactory);
+exiSource.setInputSource(is);
+TransformerFactory tf = TransformerFactory.newInstance();
+Transformer transformer = tf.newTransformer();
+transformer.transform(exiSource, result);
 ```
 
 ## Command-line Interface
