@@ -13,6 +13,16 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 * DOM
 * StAX
 
+# Apache Maven Dependency
+
+```
+<dependency>
+   <groupId>com.siemens.ct.exi</groupId>
+   <artifactId>exificient</artifactId>
+   <version>0.9.5</version>
+</dependency>
+```
+
 ## Requirements
 
 * Java 1.5 or higher
