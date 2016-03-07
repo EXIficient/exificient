@@ -4,7 +4,7 @@
 <!--
   @(#)overview.html
 
-  Copyright (C) 2007, 2008 Siemens AG
+  Copyright (C) 2007, 2016 Siemens AG
 -->
 <!-- 
 	Useful links:
@@ -22,100 +22,11 @@
 <h1>EXIficient</h1>
 
 <p>is an open source implementation of the W3C Efficient XML Interchange (EXI) format specification written in the Java programming language
-(<a target="_blank" href="http://exificient.sourceforge.net/">http://exificient.sourceforge.net/</a>).
+(<a target="_blank" href="http://exificient.github.io">http://exificient.github.io</a>).
 <p>
 
 <p>The <a href="http://www.w3.org/TR/exi/ ">EXI format</a> is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
 </p>
-
-<h2>Requirements</h2>
-
-
-<h3>Minimum run-time requirements</h3>
-
-<ul>
-	<li>Java 1.5</li>
-	<li>Xerces 2.11+ <br />
-	(Xerces2 Java Parser, available at http://xerces.apache.org/xerces2-j/)</li>
-</ul>
-      
-
-<h3>Build &amp; test requirements</h3>
-
-<ul>
-	<li>JUnit, a framework for writing automated tests available at http://junit.org</li>
-	<li>XMLUnit, JUnit and NUnit testing for XML available at http://xmlunit.sourceforge.net/</li>
-</ul>
-
-
-<h2>Project Structure</h2>
-
-<h3>/</h3>
-Contains eclipse project files, readme, build and license information.
-
-<h3>/src</h3>
-main source (/src/main/java) files as well as test source files (/src/test/java) 
-
-<h3>/lib</h3>
-Required Xerces run-time library (xercesImpl.jar) and test-libs (junit &amp; xmlunit)
-
-<h3>/data</h3>
-contains XML and XML Schema test-data set.
-
-
-<!--
-<h2>Java source packages of interest</h2>
-
-<h3> /src/main/com/siemens/ct/exi </h3>
-
-Entry point for using EXI and setting EXI configuration.
-
-EXI fidelity-options can be set and a grammar-factory allows building EXI grammars from XML Schemas.
-The generic EXI Encoder and Decoder interface is also part of the root package.
-
-<h3> /src/main/com/siemens/ct/exi/core </h3>
-
-Core functionality such as EXI decoders/encoder for different coding-mode can be found.
-
-<h3> /src/main/com/siemens/ct/exi/api </h3>
-
-Currently the SAX and the DOM application programming Interface is supported.
-
-<h3> /src/main/com/siemens/ct/exi/datatype </h3>
-
-Built-in datatypes like encoders/decoder for float and integers can be found.
-
-The String table implementation is also part of this package.
-
-<h3> /src/main/com/siemens/ct/exi/grammar </h3>
-
-Grammars are the main concept of the EXI format. Grammars describe what is likely to occur in any context.
-We differ between schema-informed and schema-less grammars.
-
-An EXI stream consists of a sequence of events (/event) and rules (/rule) describe  the tranistion from one  to another grammar state.
-<h3> /src/main/com/siemens/ct/exi/io </h3>
-
-Routines for writing/reading single bits (instead of whole bytes) can be found as well the constructs for building EXI channels and blocks (see EXI Specification)
-
-<h3> /src/main/com/siemens/ct/exi/attributes </h3>
-
-Note: Move somewhere else ?
-<h3> /src/main/com/siemens/ct/exi/helpers </h3>
-
-Default implementation for an EXI factory and error-handler. 
-<h3> /src/main/com/siemens/ct/exi/util </h3>
-
-Collection of utility classes.
-
-<h3> /src/main/com/siemens/ct/exi/exceptions </h3>
--->
-
-
-<!--
-	TODO: Where to start when trying to understand the code
--->
-
-<!-- Put @see and @since tags down here. -->
 
 </body>
 </html>
