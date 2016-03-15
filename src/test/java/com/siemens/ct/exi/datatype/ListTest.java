@@ -95,7 +95,7 @@ public class ListTest extends AbstractTestCase {
 		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
-		QNameContext qncContext = new QNameContext(0, 0, context, 0);
+		QNameContext qncContext = new QNameContext(0, 0, context);
 		
 		TypeEncoder te = exiFactory.createTypeEncoder();
 		TypeDecoder td = exiFactory.createTypeDecoder();
@@ -133,7 +133,7 @@ public class ListTest extends AbstractTestCase {
 		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
-		QNameContext qncContext = new QNameContext(0, 0, context, 0);
+		QNameContext qncContext = new QNameContext(0, 0, context);
 		
 		TypeEncoder te = exiFactory.createTypeEncoder();
 		TypeDecoder td = exiFactory.createTypeDecoder();

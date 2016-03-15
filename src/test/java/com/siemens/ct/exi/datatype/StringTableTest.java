@@ -56,7 +56,7 @@ public class StringTableTest extends AbstractTestCase {
 		QName context = new QName("el");
 
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
-		QNameContext qncContext = new QNameContext(0, 0, context, 0);
+		QNameContext qncContext = new QNameContext(0, 0, context);
 
 		String val1 = "val1";
 		String val2 = "val2";
@@ -135,9 +135,9 @@ public class StringTableTest extends AbstractTestCase {
 
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		int namespaceUriID = 0;
-		QNameContext qncC1 = new QNameContext(namespaceUriID, 0, c1, 0);
-		QNameContext qncC2 = new QNameContext(namespaceUriID, 1, c2, 1);
-		QNameContext qncC3 = new QNameContext(namespaceUriID, 2, c3, 2);
+		QNameContext qncC1 = new QNameContext(namespaceUriID, 0, c1);
+		QNameContext qncC2 = new QNameContext(namespaceUriID, 1, c2);
+		QNameContext qncC3 = new QNameContext(namespaceUriID, 2, c3);
 
 		String val1 = "val1";
 		String val2 = "val2";
@@ -224,11 +224,11 @@ public class StringTableTest extends AbstractTestCase {
 
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		int namespaceUriID = 0;
-		QNameContext qncCa1 = new QNameContext(namespaceUriID, 0, ca1, 0);
-		QNameContext qncCex2 = new QNameContext(namespaceUriID, 1, cex2, 1);
-		QNameContext qncCex3 = new QNameContext(namespaceUriID, 2, cex3, 2);
-		QNameContext qncCexx1 = new QNameContext(namespaceUriID, 2, cexx1, 3);
-		QNameContext qncCexx2 = new QNameContext(namespaceUriID, 2, cexx2, 4);
+		QNameContext qncCa1 = new QNameContext(namespaceUriID, 0, ca1);
+		QNameContext qncCex2 = new QNameContext(namespaceUriID, 1, cex2);
+		QNameContext qncCex3 = new QNameContext(namespaceUriID, 2, cex3);
+		QNameContext qncCexx1 = new QNameContext(namespaceUriID, 2, cexx1);
+		QNameContext qncCexx2 = new QNameContext(namespaceUriID, 2, cexx2);
 
 		String atCh1 = "at-ch1";
 		String atCh2 = "at-ch2";
@@ -333,8 +333,8 @@ public class StringTableTest extends AbstractTestCase {
 
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		int namespaceUriID = 0;
-		QNameContext qncA = new QNameContext(namespaceUriID, 0, qa, 0);
-		QNameContext qncB = new QNameContext(namespaceUriID, 1, qb, 1);
+		QNameContext qncA = new QNameContext(namespaceUriID, 0, qa);
+		QNameContext qncB = new QNameContext(namespaceUriID, 1, qb);
 
 		String s3 = "123";
 		String s4 = "1234";
@@ -425,9 +425,9 @@ public class StringTableTest extends AbstractTestCase {
 
 		// EvolvingUriContext uc = new RuntimeEvolvingUriContext(0, "");
 		int namespaceUriID = 0;
-		QNameContext qncQa = new QNameContext(namespaceUriID, 0, qa, 0);
-		QNameContext qncQb = new QNameContext(namespaceUriID, 1, qb, 1);
-		QNameContext qncQc = new QNameContext(namespaceUriID, 2, qc, 2);
+		QNameContext qncQa = new QNameContext(namespaceUriID, 0, qa);
+		QNameContext qncQb = new QNameContext(namespaceUriID, 1, qb);
+		QNameContext qncQc = new QNameContext(namespaceUriID, 2, qc);
 
 		String s1 = "1";
 		String s2 = "12";
