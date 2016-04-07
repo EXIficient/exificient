@@ -23,6 +23,8 @@
 
 package com.siemens.ct.exi.data;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.CodingMode;
@@ -33,6 +35,7 @@ import com.siemens.ct.exi.FidelityOptions;
 public class TestCaseOption {
 	private CodingMode codingMode;
 	private FidelityOptions fidelityOptions;
+	private List<String> sharedStrings;
 	private boolean fragments;
 	private String schemaLocation;
 	private boolean xmlEqual;
@@ -68,6 +71,14 @@ public class TestCaseOption {
 
 	public void setFidelityOptions(FidelityOptions fidelityOptions) {
 		this.fidelityOptions = fidelityOptions;
+	}
+	
+	public void setSharedStrings(List<String> sharedStrings) {
+		this.sharedStrings = sharedStrings;
+	}
+	
+	public List<String> getSharedStrings() {
+		return this.sharedStrings;
 	}
 
 	public boolean isFragments() {

@@ -23,6 +23,9 @@
 
 package com.siemens.ct.exi.data;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.junit.Test;
@@ -121,7 +124,16 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
 		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
 		testCaseOptions.get(testCaseOptions.size()-1).setValuePartitionCapacity(9);
-
+		
+		// #9 (default+ shared strings)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		List<String> sharedStrings = Arrays.asList(new String[]{"EXI", "Do not forget it!", "shopping list", "milk, honey", "Boss", "worker"});
+		testCaseOptions.get(testCaseOptions.size()-1).setSharedStrings(sharedStrings);
 	}
 
 	@Test

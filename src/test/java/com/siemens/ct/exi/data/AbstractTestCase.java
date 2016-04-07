@@ -93,6 +93,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setCodingMode(tco.getCodingMode());
 		ef.setFidelityOptions(tco.getFidelityOptions());
+		if(tco.getSharedStrings() != null) {
+			ef.setSharedStrings(tco.getSharedStrings());
+		}
 		ef.setFragment(tco.isFragments());
 		ef.setDatatypeRepresentationMap(tco.getDtrMapTypes(),
 				tco.getDtrMapRepresentations());
