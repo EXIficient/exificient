@@ -37,7 +37,8 @@
 
   <scm>
     <connection>scm:git:git://github.com/EXIficient/exificient.git</connection>
-	<developerConnection>scm:git:git@github.com:EXIficient/exificient.git</developerConnection>
+	<!-- <developerConnection>scm:git:git@github.com:EXIficient/exificient.git</developerConnection> -->
+	<developerConnection>scm:git:https://github.com/EXIficient/exificient.git</developerConnection>
     <url>https://github.com/EXIficient/exificient</url>
   </scm>
 
@@ -45,12 +46,12 @@
 	<dependency>
 	   <groupId>com.siemens.ct.exi</groupId>
 	   <artifactId>exificient-core</artifactId>
-	   <version>0.9.6-SNAPSHOT</version>
+	   <version>0.9.6</version>
 	</dependency>
 	<dependency>
 	   <groupId>com.siemens.ct.exi</groupId>
 	   <artifactId>exificient-grammars</artifactId>
-	   <version>0.9.6-SNAPSHOT</version>
+	   <version>0.9.6</version>
 	</dependency>
     <!-- Test Dependencies -->
     <dependency>
@@ -148,6 +149,14 @@
         <version>2.19</version>
         <configuration>
             <argLine>-Xmx64m</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
     </plugins>
