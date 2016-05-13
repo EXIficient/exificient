@@ -96,6 +96,9 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		if(tco.getSharedStrings() != null) {
 			ef.setSharedStrings(tco.getSharedStrings());
 		}
+		if(tco.isUsingNonEvolvingGrammars()) {
+			ef.setUsingNonEvolvingGrammars(tco.isUsingNonEvolvingGrammars());
+		}
 		ef.setFragment(tco.isFragments());
 		ef.setDatatypeRepresentationMap(tco.getDtrMapTypes(),
 				tco.getDtrMapRepresentations());

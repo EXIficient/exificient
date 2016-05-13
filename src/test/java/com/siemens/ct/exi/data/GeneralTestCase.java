@@ -346,6 +346,15 @@ public class GeneralTestCase extends AbstractTestCase {
 		// testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
 		// testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
 		// testCaseOptions.get(testCaseOptions.size()-1).setProfile(EXIFactory.UCD_PROFILE);
+		
+		// #15 (default + non-evolving grammars)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setUsingNonEvolvingGrammars(true);
 
 	}
 

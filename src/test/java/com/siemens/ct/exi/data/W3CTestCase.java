@@ -125,7 +125,7 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
 		testCaseOptions.get(testCaseOptions.size()-1).setValuePartitionCapacity(9);
 		
-		// #9 (default+ shared strings)
+		// #9 (default + shared strings)
 		testCaseOptions.add(new TestCaseOption());
 		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
 		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
@@ -134,6 +134,7 @@ public class W3CTestCase extends AbstractTestCase {
 		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
 		List<String> sharedStrings = Arrays.asList(new String[]{"EXI", "Do not forget it!", "shopping list", "milk, honey", "Boss", "worker"});
 		testCaseOptions.get(testCaseOptions.size()-1).setSharedStrings(sharedStrings);
+		
 	}
 
 	@Test

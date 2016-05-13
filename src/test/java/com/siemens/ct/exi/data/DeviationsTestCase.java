@@ -79,6 +79,15 @@ public class DeviationsTestCase extends AbstractTestCase {
 				FidelityOptions.createAll());
 		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
 		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
+		
+		// #5 (default + non-evolving grammars)
+		testCaseOptions.add(new TestCaseOption());
+		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+				FidelityOptions.createDefault());
+		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size()-1).setUsingNonEvolvingGrammars(true);
 
 	}
 

@@ -36,6 +36,7 @@ public class TestCaseOption {
 	private CodingMode codingMode;
 	private FidelityOptions fidelityOptions;
 	private List<String> sharedStrings;
+	private boolean isNonEvolving;
 	private boolean fragments;
 	private String schemaLocation;
 	private boolean xmlEqual;
@@ -80,6 +81,16 @@ public class TestCaseOption {
 	public List<String> getSharedStrings() {
 		return this.sharedStrings;
 	}
+	
+	public void setUsingNonEvolvingGrammars(boolean isNonEvolving) {
+		this.isNonEvolving = isNonEvolving;
+	}
+
+	public boolean isUsingNonEvolvingGrammars() {
+		return this.isNonEvolving;
+	}
+	
+	
 
 	public boolean isFragments() {
 		return fragments;

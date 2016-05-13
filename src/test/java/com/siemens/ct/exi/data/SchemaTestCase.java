@@ -23,12 +23,24 @@
 
 package com.siemens.ct.exi.data;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.junit.Test;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EncodingOptions;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.QuickTestConfiguration;
+import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 
 public class SchemaTestCase extends AbstractTestCase {
 	public SchemaTestCase() {
@@ -932,6 +944,27 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setXsdLocation("./data/schema/pattern.xsd");
 		QuickTestConfiguration.setXmlLocation("./data/schema/pattern.xml");
 		QuickTestConfiguration.setExiLocation("./out/schema/pattern.xml.exi");
+	}
+	
+	public static void main(String[] args) throws EXIException, SAXException, IOException {
+		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setGrammars(GrammarFactory.newInstance().createGrammars("D:/Projects/W3C/EXI/docs/json/V2/schema-for-json-V2.xsd")); // use XML schema
+		exiFactory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_STRICT, true);
+//		exiFactory.setCodingMode(CodingMode.BYTE_PACKED);
+		
+		// TEST
+		exiFactory.setUsingNonEvolvingGrammars(true);
+		
+		String sxml = "D:/Projects/W3C/EXI/docs/json/V2/data.xml";
+		String fileEXI = sxml + ".exi"; // EXI output
+		OutputStream osEXI = new FileOutputStream(fileEXI);
+		EXIResult exiResult = new EXIResult(exiFactory);
+		exiResult.setOutputStream(osEXI);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		xmlReader.setContentHandler( exiResult.getHandler() );
+		xmlReader.parse(sxml); // parse XML input
+		osEXI.close();
+		
 	}
 
 }
