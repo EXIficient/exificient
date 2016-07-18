@@ -934,4 +934,19 @@ public class SchemaTestCase extends AbstractTestCase {
 		QuickTestConfiguration.setExiLocation("./out/schema/pattern.xml.exi");
 	}
 
+	@Test
+	public void testPMML() throws Exception {
+		// set up configuration
+		setConfigurationPMML();
+
+		// execute test
+		_test();
+	}
+
+	public static void setConfigurationPMML() {
+		QuickTestConfiguration.setXsdLocation("./data/schema/example_model.xsd");
+		QuickTestConfiguration.setXmlLocation("./data/schema/example_model.xml");
+		QuickTestConfiguration.setExiLocation("./out/schema/example_model.xml.exi");
+	}
+
 }

@@ -1,4 +1,4 @@
-/*
+package com.siemens.ct.exi.cmd;/*
  * Copyright (c) 2007-2015 Siemens AG
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,24 +28,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
+import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.api.sax.EXISource;
 import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 public final class EXIficientDemo {
 
@@ -61,7 +60,7 @@ public final class EXIficientDemo {
 	// XML Schema
 	String xsdLocation;
 
-	private void parseAndProofFileLocations(String[] args) throws Exception {
+	public void parseAndProofFileLocations(String[] args) throws Exception {
 		if (args.length >= 2) {
 			// xml
 			xmlLocation = args[0];
@@ -112,7 +111,7 @@ public final class EXIficientDemo {
 		decode(exiReader, exiLocation);
 	}
 
-	protected void codeSchemaInformed() throws Exception {
+	public void codeSchemaInformed() throws Exception {
 		String exiLocation = getEXILocation(false);
 
 		// create default factory and EXI grammar for schema
@@ -130,9 +129,9 @@ public final class EXIficientDemo {
 		exiOS.close();
 
 		// decode
-		EXISource saxSource = new EXISource(exiFactory);
-		XMLReader xmlReader = saxSource.getXMLReader();
-		decode(xmlReader, exiLocation);
+//		EXISource saxSource = new EXISource(exiFactory);
+//		XMLReader xmlReader = saxSource.getXMLReader();
+//		decode(xmlReader, exiLocation);
 	}
 
 	protected void encode(ContentHandler ch) throws SAXException, IOException {

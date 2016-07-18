@@ -22,20 +22,27 @@
  */
 package com.siemens.ct.exi.api.stream;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.AssertionFailedError;
-
+import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.FidelityOptions;
+import com.siemens.ct.exi.GrammarFactory;
+import com.siemens.ct.exi.TestDOMEncoder;
 import com.siemens.ct.exi.TestStAXDecoder;
 import com.siemens.ct.exi.TestStAXEncoder;
 import com.siemens.ct.exi.data.AbstractTestCase;
+import com.siemens.ct.exi.grammars.Grammars;
 import com.siemens.ct.exi.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.util.FragmentUtilities;
+import junit.framework.AssertionFailedError;
+import org.w3c.dom.Document;
 
 public class StAXCoderTestCase extends AbstractTestCase {
 
@@ -56,17 +63,45 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
 	}
 	
-	public void testEXIbyExample() throws AssertionFailedError, Exception {
-		String xmlInput = "./data/W3C/EXIbyExample/XMLSample.xml";
-		String exiOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi";
-		String xmlOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi.xml";
+	public static void testEXIbyExample() throws AssertionFailedError, Exception {
+		String xmlInput = "./data/schema/example_model.xml";
+		String exiOutput = "./out/example_model.xml.exi";
+		String xmlOutput = "./out/example_model.xml.exi.xml";
+		String xsdInput = "./data/schema/example_model.xsd";
 
 		EXIFactory ef1 = DefaultEXIFactory.newInstance();
-		this._test(ef1, xmlInput, exiOutput, xmlOutput, false);
+		ef1.setGrammars(getGrammarFromSchemaAsString(xsdInput));
+		ef1.setCodingMode(CodingMode.COMPRESSION);
+		_test(ef1, xmlInput, exiOutput, xmlOutput, false);
 
 		EXIFactory ef2 = DefaultEXIFactory.newInstance();
 		ef2.setFidelityOptions(FidelityOptions.createAll());
-		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
+		ef2.setGrammars(getGrammarFromSchemaAsString(xsdInput));
+		ef2.setCodingMode(CodingMode.COMPRESSION);
+		_test(ef2, xmlInput, exiOutput, xmlOutput, true);
+	}
+
+	private static Grammars getGrammarFromSchemaAsString(String xsdInput)
+			throws Exception {
+		InputStream xsd = new FileInputStream(xsdInput);
+
+		byte[] buff = new byte[8000];
+
+		int bytesRead = 0;
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+		while((bytesRead = xsd.read(buff)) != -1) {
+			bao.write(buff, 0, bytesRead);
+		}
+
+		byte[] data = bao.toByteArray();
+
+		ByteArrayInputStream bin = new ByteArrayInputStream(data);
+
+		GrammarFactory grammarFactory = GrammarFactory.newInstance();
+		Grammars grammar = grammarFactory.createGrammars(bin);
+
+		return grammar;
 	}
 
 	public void testXsiType() throws AssertionFailedError, Exception {
@@ -83,7 +118,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
 	}
 
-	protected void _test(EXIFactory exiFactory, String xmlInput,
+	protected static void _test(EXIFactory exiFactory, String xmlInput,
 			String exiOutput, String xmlOutput, boolean xmlEqual)
 			throws AssertionFailedError, Exception {
 
@@ -116,7 +151,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			// @SuppressWarnings("unused")
 			// InputStream control = new FileInputStream(xmlInput);
 			InputStream testXML = new FileInputStream(xmlOutput);
-			this.checkXMLValidity(exiFactory, testXML);
+			checkXML(exiFactory, testXML);
 			if (xmlEqual) {
 				// this.checkXMLEquality(exiFactory, control, testXML);
 			}
@@ -124,6 +159,31 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		
 
 
+	}
+
+	public static void checkXML(EXIFactory ef, InputStream testXML)
+			throws Exception {
+		if (ef.isFragment()) {
+			// surround with root element for equality check
+			testXML = FragmentUtilities.getSurroundingRootInputStream(testXML);
+		}
+
+		// try to read stream and create DOM
+		try {
+			// @SuppressWarnings("unused")
+			Document docTest = TestDOMEncoder.getDocument(testXML);
+			assertTrue(docTest != null);
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			if (msg.contains("The entity \"ent\" was referenced, but not declared")) {
+				// known issue? --> entityReference2 for StAX
+				return;
+			}
+			throw new Exception("Not able to create DOM. " + ef.getCodingMode()
+					+ ", schema=" + ef.getGrammars().isSchemaInformed() + " "
+					+ ef.getFidelityOptions().toString(), e);
+		}
+		// assertXMLValid(new InputSource(test));
 	}
 
 	// protected void encode(EXIFactory exiFactory, String xmlInput, String

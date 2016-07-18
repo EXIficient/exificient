@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dmg.org/PMML-4_2" elementFormDefault="unqualified" targetNamespace="http://www.dmg.org/PMML-4_2">
+  <xs:element name="MiningModel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="MiningSchema"/>
+        <xs:element ref="Output" minOccurs="0"/>
+        <xs:element ref="ModelExplanation" minOccurs="0"/>
+        <xs:element ref="Segmentation" minOccurs="0"/>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="modelName" type="xs:string" use="optional"/>
+      <xs:attribute name="functionName" type="MINING-FUNCTION" use="required"/>
+      <xs:attribute name="algorithmName" type="xs:string" use="optional"/>
+      <xs:attribute name="isScorable" type="xs:boolean" default="true"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Segmentation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="Segment" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="multipleModelMethod" type="MULTIPLE-MODEL-METHOD" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Segment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:group ref="PREDICATE"/>
+        <xs:group ref="MODEL-ELEMENT"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="optional"/>
+      <xs:attribute name="weight" type="NUMBER" use="optional" default="1"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="MULTIPLE-MODEL-METHOD">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="majorityVote"/>
+      <xs:enumeration value="weightedMajorityVote"/>
+      <xs:enumeration value="average"/>
+      <xs:enumeration value="weightedAverage"/>
+      <xs:enumeration value="median"/>
+      <xs:enumeration value="max"/>
+      <xs:enumeration value="sum"/>
+      <xs:enumeration value="selectFirst"/>
+      <xs:enumeration value="selectAll"/>
+      <xs:enumeration value="modelChain"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RegressionModel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="MiningSchema"/>
+        <xs:element ref="Output" minOccurs="0"/>
+        <xs:element ref="ModelExplanation" minOccurs="0"/>
+        <xs:element ref="RegressionTable" maxOccurs="unbounded"/>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="modelName" type="xs:string"/>
+      <xs:attribute name="functionName" type="MINING-FUNCTION" use="required"/>
+      <xs:attribute name="algorithmName" type="xs:string"/>
+      <xs:attribute name="modelType" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="linearRegression"/>
+            <xs:enumeration value="stepwisePolynomialRegression"/>
+            <xs:enumeration value="logisticRegression"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="targetFieldName" type="FIELD-NAME" use="optional"/>
+      <xs:attribute name="normalizationMethod" type="REGRESSIONNORMALIZATIONMETHOD" default="none"/>
+      <xs:attribute name="isScorable" type="xs:boolean" default="true"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="REGRESSIONNORMALIZATIONMETHOD">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"/>
+      <xs:enumeration value="simplemax"/>
+      <xs:enumeration value="softmax"/>
+      <xs:enumeration value="logit"/>
+      <xs:enumeration value="probit"/>
+      <xs:enumeration value="cloglog"/>
+      <xs:enumeration value="exp"/>
+      <xs:enumeration value="loglog"/>
+      <xs:enumeration value="cauchit"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RegressionTable">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="NumericPredictor" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="CategoricalPredictor" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="intercept" type="REAL-NUMBER" use="required"/>
+      <xs:attribute name="targetCategory" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NumericPredictor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="FIELD-NAME" use="required"/>
+      <xs:attribute name="exponent" type="INT-NUMBER" default="1"/>
+      <xs:attribute name="coefficient" type="REAL-NUMBER" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CategoricalPredictor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="FIELD-NAME" use="required"/>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+      <xs:attribute name="coefficient" type="REAL-NUMBER" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PMML">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Header"/>
+        <xs:element ref="DataDictionary"/>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:group ref="MODEL-ELEMENT"/>
+        </xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:group name="MODEL-ELEMENT">
+    <xs:choice>
+      <xs:element ref="MiningModel"/>
+      <xs:element ref="RegressionModel"/>
+    </xs:choice>
+  </xs:group>
+  <xs:simpleType name="MINING-FUNCTION">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="associationRules"/>
+      <xs:enumeration value="sequences"/>
+      <xs:enumeration value="classification"/>
+      <xs:enumeration value="regression"/>
+      <xs:enumeration value="clustering"/>
+      <xs:enumeration value="timeSeries"/>
+      <xs:enumeration value="mixed"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Extension">
+    <xs:complexType>
+      <xs:complexContent mixed="true">
+        <xs:restriction base="xs:anyType">
+          <xs:sequence>
+            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="extender" type="xs:string" use="optional"/>
+          <xs:attribute name="name" type="xs:string" use="optional"/>
+          <xs:attribute name="value" type="xs:string" use="optional"/>
+        </xs:restriction>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="NUMBER">
+    <xs:restriction base="xs:double"/>
+  </xs:simpleType>
+  <xs:simpleType name="INT-NUMBER">
+    <xs:restriction base="xs:integer"/>
+  </xs:simpleType>
+  <xs:simpleType name="REAL-NUMBER">
+    <xs:restriction base="xs:double"/>
+  </xs:simpleType>
+  <xs:simpleType name="PROB-NUMBER">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="PERCENTAGE-NUMBER">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="FIELD-NAME">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:complexType name="ArrayType" mixed="true">
+    <xs:attribute name="n" type="INT-NUMBER" use="optional"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="int"/>
+          <xs:enumeration value="real"/>
+          <xs:enumeration value="string"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:element name="Array" type="ArrayType"/>
+  <xs:group name="NUM-ARRAY">
+    <xs:choice>
+      <xs:element ref="Array"/>
+    </xs:choice>
+  </xs:group>
+  <xs:group name="INT-ARRAY">
+    <xs:choice>
+      <xs:element ref="Array"/>
+    </xs:choice>
+  </xs:group>
+  <xs:group name="REAL-ARRAY">
+    <xs:choice>
+      <xs:element ref="Array"/>
+    </xs:choice>
+  </xs:group>
+  <xs:group name="STRING-ARRAY">
+    <xs:choice>
+      <xs:element ref="Array"/>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="INT-SparseArray">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Indices" minOccurs="0"/>
+        <xs:element ref="INT-Entries" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="n" type="INT-NUMBER" use="optional"/>
+      <xs:attribute name="defaultValue" type="INT-NUMBER" use="optional" default="0"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="REAL-SparseArray">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Indices" minOccurs="0"/>
+        <xs:element ref="REAL-Entries" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="n" type="INT-NUMBER" use="optional"/>
+      <xs:attribute name="defaultValue" type="REAL-NUMBER" use="optional" default="0"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Indices">
+    <xs:simpleType>
+      <xs:list itemType="xs:int"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="INT-Entries">
+    <xs:simpleType>
+      <xs:list itemType="xs:int"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="REAL-Entries">
+    <xs:simpleType>
+      <xs:list itemType="xs:double"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Header">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element minOccurs="0" ref="Application"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Annotation"/>
+        <xs:element minOccurs="0" ref="Timestamp"/>
+      </xs:sequence>
+      <xs:attribute name="copyright" type="xs:string"/>
+      <xs:attribute name="description" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Application">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="version" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Annotation">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Timestamp">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Output">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="OutputField" minOccurs="1" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OutputField">
+    <xs:complexType>
+      <xs:attribute name="name" type="FIELD-NAME" use="required"/>
+      <xs:attribute name="displayName" type="xs:string"/>
+      <xs:attribute name="optype" type="OPTYPE"/>
+      <xs:attribute name="dataType" type="DATATYPE"/>
+      <xs:attribute name="targetField" type="FIELD-NAME"/>
+      <xs:attribute name="feature" type="RESULT-FEATURE" default="predictedValue"/>
+      <xs:attribute name="value" type="xs:string"/>
+      <xs:attribute name="algorithm" default="exclusiveRecommendation">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="recommendation"/>
+            <xs:enumeration value="exclusiveRecommendation"/>
+            <xs:enumeration value="ruleAssociation"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="rank" type="INT-NUMBER" default="1"/>
+      <xs:attribute name="rankBasis" default="confidence">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="confidence"/>
+            <xs:enumeration value="support"/>
+            <xs:enumeration value="lift"/>
+            <xs:enumeration value="leverage"/>
+            <xs:enumeration value="affinity"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="rankOrder" default="descending">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="descending"/>
+            <xs:enumeration value="ascending"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="isMultiValued" default="0"/>
+      <xs:attribute name="segmentId" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="RESULT-FEATURE">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="predictedValue"/>
+      <xs:enumeration value="predictedDisplayValue"/>
+      <xs:enumeration value="transformedValue"/>
+      <xs:enumeration value="decision"/>
+      <xs:enumeration value="probability"/>
+      <xs:enumeration value="affinity"/>
+      <xs:enumeration value="residual"/>
+      <xs:enumeration value="standardError"/>
+      <xs:enumeration value="clusterId"/>
+      <xs:enumeration value="clusterAffinity"/>
+      <xs:enumeration value="entityId"/>
+      <xs:enumeration value="entityAffinity"/>
+      <xs:enumeration value="warning"/>
+      <xs:enumeration value="ruleValue"/>
+      <xs:enumeration value="reasonCode"/>
+      <xs:enumeration value="antecedent"/>
+      <xs:enumeration value="consequent"/>
+      <xs:enumeration value="rule"/>
+      <xs:enumeration value="ruleId"/>
+      <xs:enumeration value="confidence"/>
+      <xs:enumeration value="support"/>
+      <xs:enumeration value="lift"/>
+      <xs:enumeration value="leverage"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DataDictionary">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="DataField" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="numberOfFields" type="xs:nonNegativeInteger"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DataField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:sequence>
+          <xs:element ref="Interval" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="Value" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:sequence>
+      <xs:attribute name="name" type="FIELD-NAME" use="required"/>
+      <xs:attribute name="displayName" type="xs:string"/>
+      <xs:attribute name="optype" type="OPTYPE" use="required"/>
+      <xs:attribute name="dataType" type="DATATYPE" use="required"/>
+      <xs:attribute name="taxonomy" type="xs:string"/>
+      <xs:attribute name="isCyclic" default="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="1"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="OPTYPE">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="categorical"/>
+      <xs:enumeration value="ordinal"/>
+      <xs:enumeration value="continuous"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DATATYPE">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="string"/>
+      <xs:enumeration value="integer"/>
+      <xs:enumeration value="float"/>
+      <xs:enumeration value="double"/>
+      <xs:enumeration value="boolean"/>
+      <xs:enumeration value="date"/>
+      <xs:enumeration value="time"/>
+      <xs:enumeration value="dateTime"/>
+      <xs:enumeration value="dateDaysSince[0]"/>
+      <xs:enumeration value="dateDaysSince[1960]"/>
+      <xs:enumeration value="dateDaysSince[1970]"/>
+      <xs:enumeration value="dateDaysSince[1980]"/>
+      <xs:enumeration value="timeSeconds"/>
+      <xs:enumeration value="dateTimeSecondsSince[0]"/>
+      <xs:enumeration value="dateTimeSecondsSince[1960]"/>
+      <xs:enumeration value="dateTimeSecondsSince[1970]"/>
+      <xs:enumeration value="dateTimeSecondsSince[1980]"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Value">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+      <xs:attribute name="displayValue" type="xs:string"/>
+      <xs:attribute name="property" default="valid">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="valid"/>
+            <xs:enumeration value="invalid"/>
+            <xs:enumeration value="missing"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Interval">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="closure" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="openClosed"/>
+            <xs:enumeration value="openOpen"/>
+            <xs:enumeration value="closedOpen"/>
+            <xs:enumeration value="closedClosed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="leftMargin" type="NUMBER"/>
+      <xs:attribute name="rightMargin" type="NUMBER"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MiningSchema">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element maxOccurs="unbounded" ref="MiningField"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MiningField">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="FIELD-NAME" use="required"/>
+      <xs:attribute name="usageType" type="FIELD-USAGE-TYPE" default="active"/>
+      <xs:attribute name="optype" type="OPTYPE"/>
+      <xs:attribute name="importance" type="PROB-NUMBER"/>
+      <xs:attribute name="outliers" type="OUTLIER-TREATMENT-METHOD" default="asIs"/>
+      <xs:attribute name="lowValue" type="NUMBER"/>
+      <xs:attribute name="highValue" type="NUMBER"/>
+      <xs:attribute name="missingValueReplacement" type="xs:string"/>
+      <xs:attribute name="missingValueTreatment" type="MISSING-VALUE-TREATMENT-METHOD"/>
+      <xs:attribute name="invalidValueTreatment" type="INVALID-VALUE-TREATMENT-METHOD" default="returnInvalid"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="FIELD-USAGE-TYPE">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="active"/>
+      <xs:enumeration value="predicted"/>
+      <xs:enumeration value="target"/>
+      <xs:enumeration value="supplementary"/>
+      <xs:enumeration value="group"/>
+      <xs:enumeration value="order"/>
+      <xs:enumeration value="frequencyWeight"/>
+      <xs:enumeration value="analysisWeight"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="OUTLIER-TREATMENT-METHOD">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="asIs"/>
+      <xs:enumeration value="asMissingValues"/>
+      <xs:enumeration value="asExtremeValues"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MISSING-VALUE-TREATMENT-METHOD">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="asIs"/>
+      <xs:enumeration value="asMean"/>
+      <xs:enumeration value="asMode"/>
+      <xs:enumeration value="asMedian"/>
+      <xs:enumeration value="asValue"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="INVALID-VALUE-TREATMENT-METHOD">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="returnInvalid"/>
+      <xs:enumeration value="asIs"/>
+      <xs:enumeration value="asMissing"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ModelExplanation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice>
+          <xs:element ref="PredictiveModelQuality" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PredictiveModelQuality">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="targetField" type="xs:string" use="required"/>
+      <xs:attribute name="dataName" type="xs:string" use="optional"/>
+      <xs:attribute name="dataUsage" default="training">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="training"/>
+            <xs:enumeration value="test"/>
+            <xs:enumeration value="validation"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="meanError" type="NUMBER" use="optional"/>
+      <xs:attribute name="meanAbsoluteError" type="NUMBER" use="optional"/>
+      <xs:attribute name="meanSquaredError" type="NUMBER" use="optional"/>
+      <xs:attribute name="rootMeanSquaredError" type="NUMBER" use="optional"/>
+      <xs:attribute name="r-squared" type="NUMBER" use="optional"/>
+      <xs:attribute name="adj-r-squared" type="NUMBER" use="optional"/>
+      <xs:attribute name="sumSquaredError" type="NUMBER" use="optional"/>
+      <xs:attribute name="sumSquaredRegression" type="NUMBER" use="optional"/>
+      <xs:attribute name="numOfRecords" type="NUMBER" use="optional"/>
+      <xs:attribute name="numOfRecordsWeighted" type="NUMBER" use="optional"/>
+      <xs:attribute name="numOfPredictors" type="NUMBER" use="optional"/>
+      <xs:attribute name="degreesOfFreedom" type="NUMBER" use="optional"/>
+      <xs:attribute name="fStatistic" type="NUMBER" use="optional"/>
+      <xs:attribute name="AIC" type="NUMBER" use="optional"/>
+      <xs:attribute name="BIC" type="NUMBER" use="optional"/>
+      <xs:attribute name="AICc" type="NUMBER" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:group name="PREDICATE">
+    <xs:choice>
+      <xs:element ref="True"/>
+      <xs:element ref="False"/>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="True">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="False">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Extension" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

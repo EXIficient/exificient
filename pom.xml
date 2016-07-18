@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.siemens.ct.exi</groupId>
@@ -5,7 +6,7 @@
   <name>EXIficient</name>
   <url>http://exificient.github.io/</url>
   <version>0.9.7-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
     (EXI) format specification written in the Java programming language. The EXI format is a very
     compact representation for the Extensible Markup Language (XML) Information Set that is intended
@@ -81,6 +82,11 @@
 		<version>2.5</version>
 	</dependency>
 	-->
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>0.1</version>
+    </dependency>
   </dependencies>
 
   <properties>
@@ -170,4 +176,7 @@
     <version>7</version>
   </parent>
 
+  <modules>
+    <module>test</module>
+  </modules>
 </project>
