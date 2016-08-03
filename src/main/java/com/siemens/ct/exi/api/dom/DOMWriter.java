@@ -86,6 +86,10 @@ public class DOMWriter {
 	}
 
 	public void encode(Document doc) throws EXIException, IOException {
+		if(exiBody == null) {
+			throw new EXIException("Please specify output stream");
+		}
+		
 		exiBody.encodeStartDocument();
 
 		// encode all child-nodes to retain root external
@@ -98,6 +102,10 @@ public class DOMWriter {
 
 	public void encodeFragment(DocumentFragment docFragment)
 			throws EXIException, IOException {
+		if(exiBody == null) {
+			throw new EXIException("Please specify output stream");
+		}
+		
 		exiBody.encodeStartDocument();
 		encodeChildNodes(docFragment.getChildNodes());
 		exiBody.encodeEndDocument();
