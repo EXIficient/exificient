@@ -134,8 +134,9 @@ public class DOMWriter {
 		String localName = root.getLocalName();
 		if (localName == null) {
 			// namespace-awareness ??
-			throw new EXIException("EXI requires namespace-aware DOM (nodes) "
-					+ root.getNodeName());
+			localName = root.getNodeName();
+//			throw new EXIException("EXI requires namespace-aware DOM (nodes) "
+//					+ root.getNodeName());
 		}
 
 		String prefix = root.getPrefix();
@@ -157,7 +158,12 @@ public class DOMWriter {
 						: at.getLocalName();
 				exiAttributes.addNamespaceDeclaration(at.getNodeValue(), pfx);
 			} else {
-				exiAttributes.addAttribute(at.getNamespaceURI(), at.getLocalName(), at.getPrefix(), at.getNodeValue());
+				String atLocalName = at.getLocalName();
+				if(atLocalName == null) {
+					// namespace-awareness ??
+					atLocalName = at.getNodeName();
+				}
+				exiAttributes.addAttribute(at.getNamespaceURI(), atLocalName, at.getPrefix(), at.getNodeValue());
 			}
 			
 		}
