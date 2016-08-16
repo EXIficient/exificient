@@ -163,7 +163,7 @@ public class EXIficientCMD {
 		ps.println(" " + ENCODE);
 		ps.println(" " + DECODE);
 		ps.println();
-		ps.println(" " + INPUT + " <xml-input-file>");
+		ps.println(" " + INPUT + " <input-file>");
 		ps.println(" " + OUTPUT + " <output-file>");
 		ps.println();
 		ps.println(" " + SCHEMA + " <schema-input-file>");
