@@ -1284,8 +1284,9 @@ public class CanonicalEXITestCase extends TestCase {
 
 	public void testStreamHeaderEXIOptions0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-		factory.getEncodingOptions().setOption(
-				EncodingOptions.CANONICAL_EXI_WITHOUT_EXI_OPTIONS);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: without EXI options
+		// factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 
 		String xml = "<foo>" + "text content" + "</foo>";
 
@@ -1307,6 +1308,8 @@ public class CanonicalEXITestCase extends TestCase {
 	public void testStreamHeaderEXIOptions1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: with EXI options
+		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 
 		String xml = "<foo>" + "text content" + "</foo>";
 
@@ -1329,6 +1332,8 @@ public class CanonicalEXITestCase extends TestCase {
 	public void testStreamHeader0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: with EXI options
+		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 
 		String xml = "<foo>" + "text content" + "</foo>";
 
@@ -1359,6 +1364,8 @@ public class CanonicalEXITestCase extends TestCase {
 	public void testStreamHeader1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: with EXI options
+		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 		factory.setCodingMode(CodingMode.COMPRESSION);
 
 		String xml = "<foo>" + "text content" + "</foo>";
@@ -1389,6 +1396,8 @@ public class CanonicalEXITestCase extends TestCase {
 	public void testStreamHeader2() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: with EXI options
+		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 
 		/* DTR Map */
 		QName type1 = new QName(Constants.XML_SCHEMA_NS_URI, "decimal");
@@ -1440,6 +1449,8 @@ public class CanonicalEXITestCase extends TestCase {
 	public void testStreamHeader3() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// Note: with EXI options
+		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 		factory.getFidelityOptions().setFidelity(
 				FidelityOptions.FEATURE_LEXICAL_VALUE, true);
 
