@@ -84,7 +84,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
@@ -115,7 +115,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
@@ -147,7 +147,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
@@ -415,7 +415,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
@@ -455,7 +455,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		assertTrue(dtrTe.isValid(dt, new StringValue("+10")));
 		// any string should be valid
@@ -578,7 +578,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// can encode integers
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+10")));
@@ -620,7 +620,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// can encode only int values
 		assertTrue(dtrTe.isValid(dtEnum, new StringValue("+123")));
@@ -662,7 +662,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// can encode only enum values
 		assertFalse(dtrTe.isValid(dtEnum, new StringValue("+10")));
@@ -712,7 +712,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 		Datatype dtShort = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "short", Constants.XML_SCHEMA_NS_URI);
 		assertFalse("Should not be encodable",
@@ -871,7 +871,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// decimals
 		assertTrue(dtrTe.isValid(dtDecimal, new StringValue("+10")));
@@ -910,7 +910,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
@@ -945,7 +945,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtInteger, new StringValue("+10")));
@@ -980,9 +980,9 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 		LexicalTypeEncoder dtrLe = new LexicalTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		// integers
 		assertTrue(dtrTe.isValid(dtToken, new StringValue("+1234567890")));
@@ -1020,7 +1020,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1053,7 +1053,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1094,7 +1094,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1133,7 +1133,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1168,7 +1168,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1207,7 +1207,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dtString, new StringValue("12345")));
@@ -1248,7 +1248,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		QName[] dtrMapRepresentations = { representation };
 		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
 		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
-				dtrMapTypes, dtrMapRepresentations);
+				dtrMapTypes, dtrMapRepresentations, null);
 
 		//
 		assertTrue(dtrTe.isValid(dt, new StringValue("any string")));
