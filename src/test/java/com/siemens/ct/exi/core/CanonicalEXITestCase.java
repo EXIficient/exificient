@@ -1489,16 +1489,18 @@ public class CanonicalEXITestCase extends TestCase {
 		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
 		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing
 																					// Bits
+		// Note: by default the Canonical EXI Option "omitOptionsDocument" is false
 		assertTrue("Presence Bit for EXI Options",
-				bdc.decodeNBitUnsignedInteger(1) == 0); // Presence Bit for EXI
+				bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI
 														// Options
 	}
 
 	public void testStreamHeaderEXIOptions1() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
-		// Note: with EXI options
-		factory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+		// Note: without EXI options
+		boolean b= factory.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_OPTIONS);
+		assertTrue("INCLUDE_OPTIONS should have been there", b);
 
 		String xml = "<foo>" + "text content" + "</foo>";
 
@@ -1513,7 +1515,7 @@ public class CanonicalEXITestCase extends TestCase {
 		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing
 																					// Bits
 		assertTrue("Presence Bit for EXI Options",
-				bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI
+				bdc.decodeNBitUnsignedInteger(1) == 0); // Presence Bit for EXI
 														// Options
 	}
 
