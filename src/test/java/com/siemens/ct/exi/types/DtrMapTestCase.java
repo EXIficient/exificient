@@ -954,6 +954,75 @@ public class DtrMapTestCase extends AbstractTestCase {
 	}
 	
 	
+	public void testUnsignedIntegerNotUsed1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='uinteger'>"
+				+ "    <xs:restriction base='xs:unsignedInt'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "uinteger", "");
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.UNSIGNED_INTEGER);
+		// IntegerDatatype idt = (IntegerDatatype) dtInteger;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
+		QName schemaTypeInteger = new QName("", "uinteger");
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "positiveInteger");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations, null);
+
+		// integers
+		assertFalse(dtrTe.isValid(dtInteger, new StringValue("-10")));
+		// default datatype
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.UNSIGNED_INTEGER);
+	}
+	
+	public void testUnsignedIntegerUsed1() throws IOException, EXIException {
+		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ "  <xs:simpleType name='uinteger'>"
+				+ "    <xs:restriction base='xs:unsignedInt'>"
+				+ "    </xs:restriction>"
+				+ "  </xs:simpleType>"
+				+ "</xs:schema>";
+		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
+
+		Datatype dtInteger = DatatypeMappingTest.getSimpleDatatypeFor(
+				schemaAsString, "uinteger", "");
+		assertTrue(dtInteger.getBuiltInType() == BuiltInType.UNSIGNED_INTEGER);
+		// IntegerDatatype idt = (IntegerDatatype) dtInteger;
+		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
+		QName schemaTypeInteger = new QName("", "uinteger");
+		assertTrue(dtInteger.getSchemaType().getQName()
+				.equals(schemaTypeInteger));
+
+		/* DTR Map */
+		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "integer");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "integer");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		// TypeEncoder defaultEncoder = new TypedTypeEncoder();
+		TypedTypeEncoder dtrTe = new TypedTypeEncoder(
+				dtrMapTypes, dtrMapRepresentations, null);
+
+		// integers
+		assertTrue(dtrTe.isValid(dtInteger, new StringValue("10")));
+		assertFalse(dtrTe.isValid(dtInteger, new StringValue("-10"))); // still unsigned integer
+		// default datatype
+		assertTrue(dtrTe.lastDatatype.getBuiltInType() == BuiltInType.UNSIGNED_INTEGER);
+	}
+	
+	
+	
 	public void testTokenToInteger() throws IOException, EXIException {
 		String schemaAsString = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 				+ "  <xs:simpleType name='myToken'>"
