@@ -1443,7 +1443,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		xmlReader.setContentHandler( exiResult.getHandler() );
 		xmlReader.parse(new InputSource(xml)); // parse XML input
 		
-		System.out.println("Size EXI " + baos.size());
+		// System.out.println("Size EXI " + baos.size());
 
 		// decode without any DTR --> interoperability
 		OutputStream baosXML = new ByteArrayOutputStream();
@@ -2010,8 +2010,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 	String xsdAsStringEString = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\r\n" + 
 			"    <xs:element name=\"root\" type=\"es\"/>\r\n" + 
 			"    <xs:simpleType name=\"es\">\r\n" + 
-			"        <xs:annotation exi:prepopulateValues=\"true\" xmlns:exi=\"http://www.w3.org/2009/exi\">\r\n" + 
-			"            <xs:appinfo>\r\n" + 
+			"        <xs:annotation>\r\n" + 
+			"            <xs:appinfo exi:prepopulateValues=\"true\" xmlns:exi=\"http://www.w3.org/2009/exi\">\r\n" + 
 			"                <xs:restriction base=\"xs:string\">\r\n" + 
 			"                    <xs:enumeration value=\"Volvo\"/>\r\n" + 
 			"                    <xs:enumeration value=\"BMW\"/>\r\n" + 
