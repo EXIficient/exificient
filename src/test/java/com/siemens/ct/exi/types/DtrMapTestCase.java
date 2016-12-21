@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
@@ -38,6 +39,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -2002,6 +2005,80 @@ public class DtrMapTestCase extends AbstractTestCase {
 				"    </cssStyleRule>\r\n" + 
 				"</stylesheet>";
 		testNoDTR(new ByteArrayInputStream(xsdAsString.getBytes()), new ByteArrayInputStream(xmlAsString.getBytes()));
+	}
+	
+	String xsdAsStringEString = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">\r\n" + 
+			"    <xs:element name=\"root\" type=\"es\"/>\r\n" + 
+			"    <xs:simpleType name=\"es\">\r\n" + 
+			"        <xs:annotation exi:prepopulateValues=\"true\" xmlns:exi=\"http://www.w3.org/2009/exi\">\r\n" + 
+			"            <xs:appinfo>\r\n" + 
+			"                <xs:restriction base=\"xs:string\">\r\n" + 
+			"                    <xs:enumeration value=\"Volvo\"/>\r\n" + 
+			"                    <xs:enumeration value=\"BMW\"/>\r\n" + 
+			"                    <xs:enumeration value=\"Volkswagen\"/>\r\n" + 
+			"                </xs:restriction>\r\n" + 
+			"            </xs:appinfo>\r\n" + 
+			"        </xs:annotation>\r\n" + 
+			"        <xs:restriction base=\"xs:string\"/>\r\n" + 
+			"    </xs:simpleType>\r\n" + 
+			"</xs:schema>";
+	
+	public void testEString1() throws EXIException, IOException, SAXException, TransformerException {
+		// valid enum match
+		String xmlAsString ="<root>Volkswagen</root>";
+		byte[] bs = testEString(xmlAsString);
+		assertTrue("Should be encoded with estring, was " + bs.length + " Bytes", bs.length < 4);
+	}
+	
+	public void testEString2() throws EXIException, IOException, SAXException, TransformerException {
+		// no valid enum match
+		String xmlAsString ="<root>Toyota</root>";
+		byte[] bs = testEString(xmlAsString);
+		assertTrue("Should be encoded as string, was " + bs.length + " Bytes", bs.length > 7);
+	}
+	
+	private byte[] testEString(String xmlAsString) throws EXIException, IOException, SAXException, TransformerException {
+		/* DTR Map */
+		QName type = new QName("", "es");
+		QName representation = new QName(Constants.W3C_EXI_NS_URI, "estring");
+		QName[] dtrMapTypes = { type };
+		QName[] dtrMapRepresentations = { representation };
+		
+		// factory
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.setFidelityOptions(FidelityOptions.createStrict());
+		ef.setGrammars(GrammarFactory.newInstance().createGrammars(new ByteArrayInputStream(xsdAsStringEString.getBytes())));
+		ef.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
+		
+		// encode 
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		EXIResult exiResult = new EXIResult(ef);
+		exiResult.setOutputStream(baos);
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		xmlReader.setContentHandler( exiResult.getHandler() );
+		xmlReader.parse(new InputSource(new ByteArrayInputStream(xmlAsString.getBytes()))); // parse XML input
+		
+		
+		
+		// decode
+		ByteArrayOutputStream baosXML = new ByteArrayOutputStream();
+		Result result = new StreamResult(baosXML);
+		InputSource is = new InputSource(new ByteArrayInputStream(baos.toByteArray()));
+		SAXSource exiSource = new EXISource(ef);
+		exiSource.setInputSource(is);
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = tf.newTransformer();
+		transformer.transform(exiSource, result);
+		
+		// System.out.println(new String(baosXML.toByteArray()));
+		
+		XMLUnit.setIgnoreWhitespace(true);
+		XMLUnit.setIgnoreAttributeOrder(true);
+		XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+		
+		XMLAssert.assertXMLEqual(new StringReader(xmlAsString), new StringReader(new String(baosXML.toByteArray())));
+		
+		return baos.toByteArray();
 	}
 
 }
