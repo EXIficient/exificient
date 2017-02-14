@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?><PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <Header description="3-Parameter Heating/Cooling Model"/>
+    <DataDictionary>
+        <DataField dataType="double" name="hdd" optype="continuous"/>
+        <DataField dataType="double" name="cdd" optype="continuous"/>
+        <DataField dataType="double" name="usage" optype="continuous"/>
+        <DataField dataType="double" name="heating_usage" optype="continuous"/>
+        <DataField dataType="double" name="cooling_usage" optype="continuous"/>
+        <DataField dataType="double" name="other_usage" optype="continuous"/>
+    </DataDictionary>
+    <MiningModel functionName="regression" isScorable="true" modelName="3PHC">
+        <MiningSchema>
+            <MiningField name="hdd"/>
+            <MiningField name="cdd"/>
+            <MiningField name="usage" usageType="target"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="heating_usage" segmentId="heating" targetField="heating_usage"/>
+            <OutputField name="cooling_usage" segmentId="cooling" targetField="cooling_usage"/>
+            <OutputField name="other_usage" segmentId="other" targetField="other_usage"/>
+        </Output>
+        <ModelExplanation>
+            <Extension extender="com.opower" name="latitude" value="38.89115"/>
+            <Extension extender="com.opower" name="longitude" value="-77.08367"/>
+            <Extension extender="com.opower" name="startDate" value="1926-04-16"/>
+            <Extension extender="com.opower" name="endDate" value="1927-09-04"/>
+            <PredictiveModelQuality numOfRecords="12.0" r-squared="0.4" rootMeanSquaredError="42.0" targetField="usage"/>
+        </ModelExplanation>
+        <Segmentation multipleModelMethod="sum">
+            <Segment id="heating">
+                <True/>
+                <RegressionModel functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="heating_usage" usageType="target"/>
+                        <MiningField name="hdd"/>
+                    </MiningSchema>
+                    <RegressionTable intercept="0.0">
+                        <NumericPredictor coefficient="0.1" name="hdd"/>
+                    </RegressionTable>
+                    <ModelExplanation>
+                        <PredictiveModelQuality numOfRecords="6.0" targetField="heating_usage"/>
+                    </ModelExplanation>
+                </RegressionModel>
+            </Segment>
+            <Segment id="cooling">
+                <True/>
+                <RegressionModel functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="cooling_usage" usageType="target"/>
+                        <MiningField name="cdd"/>
+                    </MiningSchema>
+                    <RegressionTable intercept="0.0">
+                        <NumericPredictor coefficient="0.2" name="cdd"/>
+                    </RegressionTable>
+                    <ModelExplanation>
+                        <PredictiveModelQuality numOfRecords="6.0" targetField="cooling_usage"/>
+                    </ModelExplanation>
+                </RegressionModel>
+            </Segment>
+            <Segment id="other">
+                <True/>
+                <RegressionModel functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="other_usage" usageType="target"/>
+                    </MiningSchema>
+                    <RegressionTable intercept="0.3"/>
+                </RegressionModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>
