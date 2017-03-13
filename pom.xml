@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.siemens.ct.exi</groupId>
   <artifactId>exificient</artifactId>
@@ -37,23 +39,23 @@
 
   <scm>
     <connection>scm:git:git://github.com/EXIficient/exificient.git</connection>
-	<!-- <developerConnection>scm:git:git@github.com:EXIficient/exificient.git</developerConnection> -->
-	<developerConnection>scm:git:https://github.com/EXIficient/exificient.git</developerConnection>
+    <!-- <developerConnection>scm:git:git@github.com:EXIficient/exificient.git</developerConnection> -->
+    <developerConnection>scm:git:https://github.com/EXIficient/exificient.git</developerConnection>
     <url>https://github.com/EXIficient/exificient</url>
     <tag>HEAD</tag>
   </scm>
 
   <dependencies>
-	<dependency>
-	   <groupId>com.siemens.ct.exi</groupId>
-	   <artifactId>exificient-core</artifactId>
-	   <version>0.9.7-SNAPSHOT</version>
-	</dependency>
-	<dependency>
-	   <groupId>com.siemens.ct.exi</groupId>
-	   <artifactId>exificient-grammars</artifactId>
-	   <version>0.9.7-SNAPSHOT</version>
-	</dependency>
+    <dependency>
+      <groupId>com.siemens.ct.exi</groupId>
+      <artifactId>exificient-core</artifactId>
+      <version>0.9.7-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.siemens.ct.exi</groupId>
+      <artifactId>exificient-grammars</artifactId>
+      <version>0.9.7-SNAPSHOT</version>
+    </dependency>
     <!-- Test Dependencies -->
     <dependency>
       <groupId>junit</groupId>
@@ -73,12 +75,12 @@
       <version>4.1.2</version>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	    <groupId>xpp3</groupId>
-	    <artifactId>xpp3</artifactId>
-	    <version>1.1.4c</version>
-	</dependency>
-    
+    <dependency>
+      <groupId>xpp3</groupId>
+      <artifactId>xpp3</artifactId>
+      <version>1.1.4c</version>
+    </dependency>
+
     <!-- Eclipse m2e -->
     <!--
 	<dependency>
@@ -108,11 +110,8 @@
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Version>${project.version}</Bundle-Version>
-            <Export-Package>
-              com.siemens.ct.exi.api.*,
-              com.siemens.ct.exi.cmd.*,
-              com.siemens.ct.exi.util.*
-            </Export-Package>
+            <Export-Package> com.siemens.ct.exi.api.*, com.siemens.ct.exi.cmd.*,
+              com.siemens.ct.exi.util.* </Export-Package>
           </instructions>
         </configuration>
       </plugin>
@@ -123,7 +122,7 @@
         <version>2.4</version>
         <executions>
           <execution>
-          	<id>attach-test</id>
+            <id>attach-test</id>
             <goals>
               <goal>test-jar</goal>
             </goals>
@@ -134,7 +133,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version><!--2.3.2-->
+        <version>2.2.1</version>
+        <!--2.3.2-->
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -153,7 +153,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version><!--2.3.2-->
+        <version>2.9.1</version>
+        <!--2.3.2-->
         <configuration>
           <overview>${basedir}/src/main/java/overview.html</overview>
         </configuration>
@@ -167,12 +168,12 @@
         </executions>
       </plugin>
       <plugin>
-		<!-- without it Travis seems to pick Xmx32m which is not a lot -->
+        <!-- without it Travis seems to pick Xmx32m which is not a lot -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.19</version>
         <configuration>
-            <argLine>-Xmx64m</argLine>
+          <argLine>-Xmx64m</argLine>
         </configuration>
       </plugin>
       <plugin>
