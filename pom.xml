@@ -5,7 +5,7 @@
   <name>EXIficient</name>
   <url>http://exificient.github.io/</url>
   <version>0.9.7-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
     (EXI) format specification written in the Java programming language. The EXI format is a very
     compact representation for the Extensible Markup Language (XML) Information Set that is intended
@@ -73,6 +73,12 @@
       <version>4.1.2</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+	    <groupId>xpp3</groupId>
+	    <artifactId>xpp3</artifactId>
+	    <version>1.1.4c</version>
+	</dependency>
+    
     <!-- Eclipse m2e -->
     <!--
 	<dependency>
@@ -93,6 +99,23 @@
   <build>
     <finalName>exificient</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>3.2.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Export-Package>
+              com.siemens.ct.exi.api.*,
+              com.siemens.ct.exi.cmd.*,
+              com.siemens.ct.exi.util.*
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
       <!-- Include test classes -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -155,7 +178,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
         <configuration>
           <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
@@ -164,10 +186,10 @@
   </build>
 
 
-  <parent>
+  <!-- <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
-  </parent>
+  </parent> -->
 
 </project>
