@@ -42,6 +42,8 @@ import org.xmlpull.v1.XmlSerializer;
 import com.siemens.ct.exi.EXIBodyEncoder;
 import com.siemens.ct.exi.EXIFactory;
 import com.siemens.ct.exi.EXIStreamEncoder;
+import com.siemens.ct.exi.attributes.AttributeFactory;
+import com.siemens.ct.exi.attributes.AttributeList;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.exceptions.EXIException;
 import com.siemens.ct.exi.values.StringValue;
@@ -60,11 +62,20 @@ public class EXISerializer implements XmlSerializer {
 	String currentNamespace;
 	String currentName;
 	
+	// AT or NS Events pending
+	protected boolean pendingATs;
+
+	// attributes
+	protected AttributeList exiAttributes;
+	
 
 	public EXISerializer(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 		
 		this.exiStream = factory.createEXIStreamEncoder();
+		
+		AttributeFactory attFactory = AttributeFactory.newInstance();
+		exiAttributes = attFactory.createAttributeListInstance(factory);
 		
 		nsDecls = new ArrayList<NamespaceDeclaration>();
 	}
@@ -105,9 +116,16 @@ public class EXISerializer implements XmlSerializer {
 		throw new IllegalArgumentException("EXI requires byte-based stream. Consider using OutputStream");
 	}
 
+	
+	protected void init() {
+		pendingATs = false;
+		exiAttributes.clear();
+	}
+	
 	public void startDocument(String encoding, Boolean standalone)
 			throws IOException, IllegalArgumentException, IllegalStateException {
 		try {
+			init();
 			exiBody.encodeStartDocument();
 		} catch (EXIException e) {
 			throw new IOException(e);
@@ -117,7 +135,9 @@ public class EXISerializer implements XmlSerializer {
 	public void endDocument() throws IOException, IllegalArgumentException,
 			IllegalStateException {
 		try {
+			checkPendingATEvents();
 			exiBody.encodeEndDocument();
+			exiBody.flush();
 		} catch (EXIException e) {
 			throw new IOException(e);
 		}
@@ -149,28 +169,50 @@ public class EXISerializer implements XmlSerializer {
 	public XmlSerializer startTag(String namespace, String name)
 			throws IOException, IllegalArgumentException, IllegalStateException {
 		try {
+			checkPendingATEvents();
+			
 			this.currentNamespace = namespace;
 			this.currentName = name;
 			exiBody.encodeStartElement(namespace, name, null);
+			for(int i=0; i<nsDecls.size(); i++) {
+				NamespaceDeclaration ns = nsDecls.get(i);
+				exiBody.encodeNamespaceDeclaration(ns.namespaceURI, ns.prefix);
+			}
+			nsDecls.clear();
 			return this;
 		} catch (EXIException e) {
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	protected void checkPendingATEvents() throws IOException {
+		try {
+			// NS first & ATs
+			if (pendingATs) {
+				// encode NS decls and attributes
+				
+					exiBody.encodeAttributeList(exiAttributes);
+	
+				exiAttributes.clear();
+	
+				pendingATs = false;
+			}
+		} catch (EXIException e) {
+			throw new IOException(e);
 		}
 	}
 
 	public XmlSerializer attribute(String namespace, String name, String value)
 			throws IOException, IllegalArgumentException, IllegalStateException {
-		try {
-			exiBody.encodeAttribute(namespace, name, null, new StringValue(value));
-			return this;
-		} catch (EXIException e) {
-			throw new IllegalArgumentException(e);
-		}
+		this.exiAttributes.addAttribute(namespace, name, null,
+				value);
+		return this;
 	}
 
 	public XmlSerializer endTag(String namespace, String name)
 			throws IOException, IllegalArgumentException, IllegalStateException {
 		try {
+			checkPendingATEvents();
 			exiBody.encodeEndElement();
 			return this;
 		} catch (EXIException e) {
@@ -181,6 +223,7 @@ public class EXISerializer implements XmlSerializer {
 	public XmlSerializer text(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
 		try {
+			checkPendingATEvents();
 			exiBody.encodeCharacters(new StringValue(text));
 			return this;
 		} catch (EXIException e) {
@@ -195,12 +238,14 @@ public class EXISerializer implements XmlSerializer {
 
 	public void cdsect(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
+		this.checkPendingATEvents();
 		text("<![CDATA[" + text + "]]>");
 	}
 
 	public void entityRef(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
 		try {
+			checkPendingATEvents();
 			exiBody.encodeEntityReference(text);
 		} catch (EXIException e) {
 			throw new IllegalArgumentException(e);
@@ -209,12 +254,14 @@ public class EXISerializer implements XmlSerializer {
 
 	public void processingInstruction(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
+		checkPendingATEvents();
 		text("<?" + text + "?>");
 	}
 
 	public void comment(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
 		try {
+			checkPendingATEvents();
 			char[] ch = text.toCharArray();
 			exiBody.encodeComment(ch, 0, ch.length);
 		} catch (EXIException e) {
@@ -224,6 +271,7 @@ public class EXISerializer implements XmlSerializer {
 
 	public void docdecl(String text) throws IOException,
 			IllegalArgumentException, IllegalStateException {
+		checkPendingATEvents();
 		text("<!DOCTYPE " + text + ">");
 	}
 

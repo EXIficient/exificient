@@ -288,28 +288,22 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public char[] getTextCharacters(int[] holderForStartAndLength) {
-		// TODO Auto-generated method stub
-		return null;
+		char[] ch = getText().toCharArray();
+		holderForStartAndLength[0] = 0;
+		holderForStartAndLength[1] = ch.length;
+		return ch;
 	}
 
 	public String getNamespace() {
-		// TODO Auto-generated method stub
-		return null;
+		int et = getEventType(this.eventType);
+		if(et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
+			return this.element.getNamespaceUri();
+		} else {
+			return null;
+		}
 	}
 
 	
-    /**
-     * For START_TAG or END_TAG events, the (local) name of the current
-     * element is returned when namespaces are enabled. When namespace
-     * processing is disabled, the raw name is returned.
-     * For ENTITY_REF events, the entity name is returned.
-     * If the current event is not START_TAG, END_TAG, or ENTITY_REF,
-     * null is returned.
-     * <p><b>Please note:</b> To reconstruct the raw element name
-     *  when namespaces are enabled and the prefix is not null,
-     * you will need to  add the prefix and a colon to localName..
-     *
-     */
 	public String getName() {
 		int et = getEventType(this.eventType);
 		if(et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {

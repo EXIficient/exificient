@@ -12,6 +12,7 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 * SAX 2 
 * DOM
 * StAX
+* XmlPull
 
 # Apache Maven Dependency
 
