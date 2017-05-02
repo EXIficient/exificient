@@ -545,11 +545,12 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	public void flush() throws XMLStreamException {
-		try {
-			encoder.flush();
-		} catch (IOException e) {
-			throw new XMLStreamException(e.getLocalizedMessage(), e);
-		}
+//		try {
+			// Note: encodeDocument flushes already
+			// encoder.flush();
+//		} catch (IOException e) {
+//			throw new XMLStreamException(e.getLocalizedMessage(), e);
+//		}
 	}
 
 	public NamespaceContext getNamespaceContext() {
