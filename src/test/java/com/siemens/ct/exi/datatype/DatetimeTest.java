@@ -281,6 +281,30 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type)
 				.toString()));
 	}
+	
+	
+	// Fractional seconds component MUST be omitted if its value is zero
+	public void testDatetimeFractionalSecs1() throws IOException {
+		String s = "1996-02-29T19:20:30.00Z";
+		String sDec = "1996-02-29T19:20:30Z";
+		DateTimeType type = DateTimeType.dateTime;
+		DateTimeValue datetime = DateTimeValue.parse(s, type);
+		assertTrue(datetime != null);
+//		datetime = datetime.normalize();
+		assertFalse(datetime.presenceFractionalSecs);
+		
+
+		// Bit
+		EncoderChannel bitEC = getBitEncoder();
+		bitEC.encodeDateTime(datetime);
+		bitEC.flush();
+		assertTrue(sDec.equals(getBitDecoder().decodeDateTimeValue(type)
+				.toString()));
+		// Byte
+		getByteEncoder().encodeDateTime(datetime);
+		assertTrue(sDec.equals(getByteDecoder().decodeDateTimeValue(type)
+				.toString()));
+	}
 
 	/*
 	 * dateTime
