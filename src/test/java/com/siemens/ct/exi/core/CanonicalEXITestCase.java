@@ -1470,6 +1470,67 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
+	
+	
+	// date overflow
+	public void testDatatypeDateTime7() throws Exception {
+		EXIFactory factory = DefaultEXIFactory.newInstance();
+
+		factory.setFidelityOptions(FidelityOptions.createDefault());
+		String schema = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
+				+ " <xs:element name='el1' type='xs:dateTime'>"
+				+ " </xs:element>" + "</xs:schema>";
+
+		String sdt = "2012-06-30T23:59:60-06:00";
+		String sdtUTC = "2012-07-01T06:00:00Z";
+
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
+		factory.setGrammars(g);
+		factory.setCodingMode(CodingMode.BIT_PACKED);
+		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		factory.getEncodingOptions().setOption(EncodingOptions.UTC_TIME);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		QName s1 = new QName("", "el1");
+
+		// encoder
+		{
+			EXIBodyEncoder encoder = factory.createEXIBodyEncoder();
+			encoder.setOutputStream(baos);
+			encoder.encodeStartDocument();
+			encoder.encodeStartElement(s1.getNamespaceURI(), s1.getLocalPart(),
+					null);
+			encoder.encodeCharacters(new StringValue(sdt));
+			encoder.encodeEndElement();
+			encoder.encodeEndDocument();
+			encoder.flush();
+		}
+
+		// decoder
+		{
+			EXIBodyDecoder decoder = factory.createEXIBodyDecoder();
+			decoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+
+			assertTrue(decoder.next() == EventType.START_DOCUMENT);
+			decoder.decodeStartDocument();
+
+			assertTrue(decoder.next() == EventType.START_ELEMENT);
+			assertTrue(decoder.decodeStartElement().getQName().equals(s1));
+
+			assertTrue(decoder.next() == EventType.CHARACTERS);
+			Value v = decoder.decodeCharacters();
+			assertTrue(v instanceof DateTimeValue);
+			DateTimeValue dtv = (DateTimeValue) v;
+			// assertTrue(dtv.toString().equals("2015-08-11T14:00:00Z"));
+			assertTrue(dtv.toString().equals(sdtUTC));
+
+			assertTrue(decoder.next() == EventType.END_ELEMENT);
+			decoder.decodeEndElement();
+
+			assertTrue(decoder.next() == EventType.END_DOCUMENT);
+			decoder.decodeEndDocument();
+		}
+	}
 
 	public void testStreamHeaderEXIOptions0() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
