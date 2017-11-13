@@ -126,4 +126,3 @@ EXIficient also provides a command-line interface.
  -encode -schema notebook.xsd -i notebook.xml
  -decode -schema notebook.xsd -i notebook.xml.exi -o notebookDec.xml
 ```
-
