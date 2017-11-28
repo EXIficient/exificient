@@ -23,11 +23,28 @@
 
 package com.siemens.ct.exi.datatype;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+import com.siemens.ct.exi.EXIBodyDecoder;
+import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.EXIStreamDecoder;
+import com.siemens.ct.exi.EncodingOptions;
+import com.siemens.ct.exi.api.sax.EXIResult;
+import com.siemens.ct.exi.core.SchemaInformedTest;
+import com.siemens.ct.exi.grammars.Grammars;
+import com.siemens.ct.exi.grammars.event.EventType;
+import com.siemens.ct.exi.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.io.channel.EncoderChannel;
 import com.siemens.ct.exi.types.DateTimeType;
 import com.siemens.ct.exi.values.DateTimeValue;
+import com.siemens.ct.exi.values.Value;
+import com.siemens.ct.exi.values.ValueType;
 
 public class DatetimeTest extends AbstractTestCase {
 
@@ -722,6 +739,53 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime1.equals(datetime2Norm));
 		assertTrue(datetime1.equals(datetime3Norm));
 	}
+	
+	public void testDatetimeCanonicalDatetime1() throws Exception {
+		String xml = "<A xmlns=\"urn:foo\">2013-06-03T24:00:00-06:00</A>";
+		
+		String schema = "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" targetNamespace=\"urn:foo\">\r\n" + 
+				"\r\n" + 
+				"  <xsd:element name=\"A\" type=\"xsd:dateTime\"/>\r\n" + 
+				"\r\n" + 
+				"</xsd:schema>";
+		
+		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
+		
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.setGrammars(g);
+		ef.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
+		// ef.getEncodingOptions().setOption(EncodingOptions.UTC_TIME);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		// encode
+		{
+			EXIResult exiResult = new EXIResult(ef);
+			exiResult.setOutputStream(baos);
+			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+			xmlReader.setContentHandler( exiResult.getHandler() );
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(xml.getBytes())));			
+		}
+
+		// decode
+		{
+			EXIStreamDecoder streamDecoder = ef.createEXIStreamDecoder();
+			EXIBodyDecoder bodyDecoder = streamDecoder.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+			assertTrue(bodyDecoder.next() == EventType.START_DOCUMENT);
+			bodyDecoder.decodeStartDocument();
+			assertTrue(bodyDecoder.next() == EventType.START_ELEMENT);
+			bodyDecoder.decodeStartElement();
+			assertTrue(bodyDecoder.next() == EventType.CHARACTERS);
+			Value value  = bodyDecoder.decodeCharacters();
+			assertTrue(value.getValueType() == ValueType.DATETIME);
+			DateTimeValue dtv = (DateTimeValue)value;
+			// 24 should be 0
+			assertTrue(dtv.time == 0); // time: ((Hour * 64) + Minutes) * 64 + seconds 
+			assertTrue(dtv.monthDay == (06 * 32) + 3 + 1); // Month * 32 + Day 
+		}
+		
+	}
+	
 	
 	public void testDatetimeFail1() throws IOException {
 		String s = "12:34:XXX";
