@@ -36,11 +36,11 @@ import com.siemens.ct.exi.core.CodingMode;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.main.QuickTestConfiguration;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.core.exceptions.EXIException;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 
 public class SchemaTestCase extends AbstractTestCase {
 	public SchemaTestCase() {

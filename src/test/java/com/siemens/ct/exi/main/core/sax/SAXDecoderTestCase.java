@@ -43,12 +43,12 @@ import com.siemens.ct.exi.core.CodingMode;
 import com.siemens.ct.exi.core.Constants;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
+import com.siemens.ct.exi.main.api.sax.SAXFactory;
 
 public class SAXDecoderTestCase extends XMLTestCase {
 

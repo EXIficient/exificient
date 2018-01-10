@@ -27,11 +27,11 @@ import org.custommonkey.xmlunit.XMLTestCase;
 
 import com.siemens.ct.exi.core.Constants;
 import com.siemens.ct.exi.core.EXIFactory;
-import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.core.attributes.AttributeFactory;
 import com.siemens.ct.exi.core.attributes.AttributeList;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class AttributeListTest extends XMLTestCase {
 

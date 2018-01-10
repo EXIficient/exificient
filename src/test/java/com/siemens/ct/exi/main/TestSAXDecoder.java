@@ -39,10 +39,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
-import com.siemens.ct.exi.main.data.AbstractTestCase;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.main.api.sax.SAXFactory;
+import com.siemens.ct.exi.main.data.AbstractTestCase;
 
 @SuppressWarnings("all")
 public class TestSAXDecoder extends AbstractTestDecoder {

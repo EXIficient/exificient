@@ -18,7 +18,6 @@ import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.main.api.xmlpull.EXIPullParser;
 
 public class ParserExample {
  

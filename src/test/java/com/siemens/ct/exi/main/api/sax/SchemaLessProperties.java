@@ -32,8 +32,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-
 public class SchemaLessProperties extends AbstractProperties {
 
 	private void encodeSchemaLessToEXI(OutputStream osEXI) throws Exception {

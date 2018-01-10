@@ -32,10 +32,10 @@ import junit.framework.AssertionFailedError;
 
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.main.TestXmlPullDecoder;
 import com.siemens.ct.exi.main.TestXmlPullEncoder;
 import com.siemens.ct.exi.main.data.AbstractTestCase;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 
 public class XmlPullCoderTestCase extends AbstractTestCase {
 

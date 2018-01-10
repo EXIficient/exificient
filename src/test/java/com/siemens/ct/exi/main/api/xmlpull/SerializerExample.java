@@ -10,7 +10,6 @@ import org.xmlpull.v1.XmlSerializer;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
-import com.siemens.ct.exi.main.api.xmlpull.EXISerializer;
 
 public class SerializerExample {
  

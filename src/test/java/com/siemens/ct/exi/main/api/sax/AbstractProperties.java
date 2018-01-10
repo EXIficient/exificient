@@ -42,7 +42,6 @@ import org.xml.sax.SAXException;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
 
 public abstract class AbstractProperties extends XMLTestCase {
 	String xml;

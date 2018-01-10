@@ -37,7 +37,6 @@ import com.siemens.ct.exi.core.EXIBodyEncoder;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.grammars.event.EventType;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
@@ -45,6 +44,7 @@ import com.siemens.ct.exi.core.values.BooleanValue;
 import com.siemens.ct.exi.core.values.QNameValue;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class SchemaInformedTest extends TestCase {
 	

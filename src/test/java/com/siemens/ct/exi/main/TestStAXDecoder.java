@@ -42,9 +42,9 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.main.api.stream.StAXDecoder;
 import com.siemens.ct.exi.main.data.AbstractTestCase;
-import com.siemens.ct.exi.core.exceptions.EXIException;
 
 @SuppressWarnings("all")
 public class TestStAXDecoder extends AbstractTestDecoder {

@@ -39,12 +39,12 @@ import com.siemens.ct.exi.core.EXIBodyDecoder;
 import com.siemens.ct.exi.core.EXIBodyEncoder;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.event.EventType;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class FragmentsTestCase extends TestCase {
 	protected GrammarFactory grammarFactory = GrammarFactory.newInstance();

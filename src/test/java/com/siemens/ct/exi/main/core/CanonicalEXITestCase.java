@@ -42,9 +42,6 @@ import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.EXIStreamDecoder;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.TestSAXEncoder;
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
 import com.siemens.ct.exi.core.attributes.AttributeFactory;
 import com.siemens.ct.exi.core.attributes.AttributeList;
 import com.siemens.ct.exi.core.coder.EXIBodyDecoderInOrder;
@@ -61,6 +58,9 @@ import com.siemens.ct.exi.core.values.FloatValue;
 import com.siemens.ct.exi.core.values.IntegerValue;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.TestSAXEncoder;
+import com.siemens.ct.exi.main.api.sax.SAXFactory;
 
 public class CanonicalEXITestCase extends TestCase {
 

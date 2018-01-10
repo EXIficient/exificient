@@ -29,8 +29,6 @@ import javax.xml.namespace.QName;
 
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 import com.siemens.ct.exi.core.context.QNameContext;
 import com.siemens.ct.exi.core.datatype.Datatype;
 import com.siemens.ct.exi.core.datatype.IntegerDatatype;
@@ -50,6 +48,8 @@ import com.siemens.ct.exi.core.values.ListValue;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.core.values.ValueType;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 
 public class ListTest extends AbstractTestCase {
 

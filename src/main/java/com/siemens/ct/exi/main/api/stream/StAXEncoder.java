@@ -57,8 +57,8 @@ import com.siemens.ct.exi.core.attributes.AttributeFactory;
 import com.siemens.ct.exi.core.attributes.AttributeList;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.exceptions.EXIException;
-import com.siemens.ct.exi.main.util.SimpleDocTypeParser;
 import com.siemens.ct.exi.core.values.StringValue;
+import com.siemens.ct.exi.main.util.SimpleDocTypeParser;
 
 /**
  * Serializes StAX to EXI

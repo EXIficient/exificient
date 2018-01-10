@@ -43,13 +43,10 @@ import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.api.dom.DOMBuilder;
-import com.siemens.ct.exi.main.api.dom.DOMWriter;
-import com.siemens.ct.exi.main.api.dom.DocumentFragmentBuilder;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class DOMRoundtrip extends XMLTestCase {
 

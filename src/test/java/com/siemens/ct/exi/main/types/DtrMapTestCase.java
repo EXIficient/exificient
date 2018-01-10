@@ -50,11 +50,6 @@ import com.siemens.ct.exi.core.Constants;
 import com.siemens.ct.exi.core.EXIBodyDecoder;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.main.api.sax.EXISource;
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
-import com.siemens.ct.exi.main.datatype.AbstractTestCase;
 import com.siemens.ct.exi.core.datatype.Datatype;
 import com.siemens.ct.exi.core.datatype.DatatypeID;
 import com.siemens.ct.exi.core.datatype.ListDatatype;
@@ -67,6 +62,11 @@ import com.siemens.ct.exi.core.types.LexicalTypeEncoder;
 import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
+import com.siemens.ct.exi.main.api.sax.EXISource;
+import com.siemens.ct.exi.main.api.sax.SAXFactory;
+import com.siemens.ct.exi.main.datatype.AbstractTestCase;
 
 public class DtrMapTestCase extends AbstractTestCase {
 

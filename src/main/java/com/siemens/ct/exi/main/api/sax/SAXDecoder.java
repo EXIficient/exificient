@@ -49,17 +49,17 @@ import com.siemens.ct.exi.core.EXIBodyDecoder;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.EXIStreamDecoder;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.core.context.QNameContext;
 import com.siemens.ct.exi.core.container.DocType;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
 import com.siemens.ct.exi.core.container.ProcessingInstruction;
+import com.siemens.ct.exi.core.context.QNameContext;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.event.EventType;
-import com.siemens.ct.exi.main.helpers.DefaultSchemaIdResolver;
-import com.siemens.ct.exi.main.util.NoEntityResolver;
 import com.siemens.ct.exi.core.values.ListValue;
 import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.core.values.ValueType;
+import com.siemens.ct.exi.main.helpers.DefaultSchemaIdResolver;
+import com.siemens.ct.exi.main.util.NoEntityResolver;
 
 /**
  * Parses EXI stream to SAX events.

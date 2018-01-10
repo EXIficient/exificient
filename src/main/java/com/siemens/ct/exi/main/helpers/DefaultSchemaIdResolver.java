@@ -24,10 +24,10 @@
 package com.siemens.ct.exi.main.helpers;
 
 import com.siemens.ct.exi.core.EXIFactory;
-import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.core.SchemaIdResolver;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 /**
  * 

@@ -30,15 +30,15 @@ import junit.framework.TestCase;
 
 import com.siemens.ct.exi.core.Constants;
 import com.siemens.ct.exi.core.EXIFactory;
-import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.core.coder.AbstractEXIBodyCoder.RuntimeUriContext;
 import com.siemens.ct.exi.core.coder.EXIBodyDecoderInOrder;
 import com.siemens.ct.exi.core.coder.EXIBodyEncoderInOrder;
 import com.siemens.ct.exi.core.context.GrammarContext;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
-import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
 
 public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 

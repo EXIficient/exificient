@@ -34,9 +34,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
 import com.siemens.ct.exi.core.grammars.Grammars;
+import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class SchemaProperties extends AbstractProperties {
 	String schema;

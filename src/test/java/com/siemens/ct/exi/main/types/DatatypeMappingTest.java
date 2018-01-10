@@ -41,13 +41,13 @@ import com.siemens.ct.exi.core.datatype.ListDatatype;
 import com.siemens.ct.exi.core.datatype.RestrictedCharacterSetDatatype;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
-import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
-import com.siemens.ct.exi.main.datatype.AbstractTestCase;
 import com.siemens.ct.exi.core.grammars.event.StartElement;
 import com.siemens.ct.exi.core.grammars.grammar.SchemaInformedFirstStartTagGrammar;
 import com.siemens.ct.exi.core.types.BuiltInType;
 import com.siemens.ct.exi.core.types.DateTimeType;
 import com.siemens.ct.exi.core.values.StringValue;
+import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
+import com.siemens.ct.exi.main.datatype.AbstractTestCase;
 
 public class DatatypeMappingTest extends AbstractTestCase {
 	public DatatypeMappingTest(String testName) {

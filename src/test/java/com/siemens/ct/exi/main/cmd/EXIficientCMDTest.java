@@ -40,7 +40,6 @@ import org.junit.Test;
 import com.siemens.ct.exi.core.CodingMode;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.main.cmd.EXIficientCMD;
 
 public class EXIficientCMDTest {
 

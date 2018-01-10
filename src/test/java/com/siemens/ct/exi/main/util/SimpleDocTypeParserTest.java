@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.siemens.ct.exi.main.util.SimpleDocTypeParser;
-
 public class SimpleDocTypeParserTest extends TestCase {
 
 	SimpleDocTypeParser dtdParser;

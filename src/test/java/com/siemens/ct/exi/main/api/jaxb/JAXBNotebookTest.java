@@ -19,6 +19,8 @@ import org.xml.sax.InputSource;
 
 import com.siemens.ct.exi.core.CodingMode;
 import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
 import com.siemens.ct.exi.main.api.sax.EXISource;
@@ -26,8 +28,6 @@ import com.siemens.ct.exi.main.api.stream.StAXDecoder;
 import com.siemens.ct.exi.main.api.stream.StAXEncoder;
 import com.siemens.ct.exi.main.generated.Notebook;
 import com.siemens.ct.exi.main.generated.ObjectFactory;
-import com.siemens.ct.exi.core.exceptions.EXIException;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 
 public class JAXBNotebookTest {
 

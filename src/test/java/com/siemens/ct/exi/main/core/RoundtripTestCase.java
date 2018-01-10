@@ -43,10 +43,8 @@ import com.siemens.ct.exi.core.EXIStreamDecoder;
 import com.siemens.ct.exi.core.EXIStreamEncoder;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.core.context.QNameContext;
 import com.siemens.ct.exi.core.container.NamespaceDeclaration;
+import com.siemens.ct.exi.core.context.QNameContext;
 import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.grammars.event.EventType;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
@@ -54,6 +52,8 @@ import com.siemens.ct.exi.core.values.IntegerValue;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.core.values.ValueType;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
 
 public class RoundtripTestCase extends TestCase {
 

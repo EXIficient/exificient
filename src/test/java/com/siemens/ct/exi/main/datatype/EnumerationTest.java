@@ -31,8 +31,8 @@ import com.siemens.ct.exi.core.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.core.datatype.ListDatatype;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.types.BuiltInType;
-import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 import com.siemens.ct.exi.core.values.StringValue;
+import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 
 public class EnumerationTest extends AbstractTestCase {
 

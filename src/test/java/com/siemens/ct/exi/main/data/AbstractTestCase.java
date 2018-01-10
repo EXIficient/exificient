@@ -49,6 +49,9 @@ import org.xml.sax.SAXParseException;
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.core.grammars.Grammars;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.main.AbstractTestDecoder;
 import com.siemens.ct.exi.main.AbstractTestEncoder;
@@ -60,9 +63,6 @@ import com.siemens.ct.exi.main.TestSAXEncoder;
 import com.siemens.ct.exi.main.TestStAXDecoder;
 import com.siemens.ct.exi.main.TestStAXEncoder;
 import com.siemens.ct.exi.main.util.FragmentUtilities;
-import com.siemens.ct.exi.core.exceptions.EXIException;
-import com.siemens.ct.exi.core.grammars.Grammars;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 
 enum API {
 	SAX, DOM, StAX;

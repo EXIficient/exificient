@@ -1,16 +1,5 @@
 package com.siemens.ct.exi.main.api.sax;
 
-import com.siemens.ct.exi.core.CodingMode;
-import com.siemens.ct.exi.core.EXIFactory;
-import com.siemens.ct.exi.core.EncodingOptions;
-import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.core.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.main.api.sax.EXISource;
-import com.siemens.ct.exi.main.api.sax.SAXEncoder;
-import com.siemens.ct.exi.main.api.sax.SAXFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
@@ -31,6 +20,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import com.siemens.ct.exi.core.CodingMode;
+import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.EncodingOptions;
+import com.siemens.ct.exi.core.FidelityOptions;
+import com.siemens.ct.exi.core.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 
 public class TransformerEncodeTest {
     private static final String XML =

@@ -29,9 +29,9 @@ import com.siemens.ct.exi.core.datatype.Datatype;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.io.channel.DecoderChannel;
 import com.siemens.ct.exi.core.io.channel.EncoderChannel;
-import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
+import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 
 public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
