@@ -52,7 +52,7 @@ import com.siemens.ct.exi.core.Constants;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.7-SNAPSHOT
+ * @version 1.0.0-SNAPSHOT
  */
 
 class SaxToDomHandler extends DefaultHandler implements LexicalHandler,

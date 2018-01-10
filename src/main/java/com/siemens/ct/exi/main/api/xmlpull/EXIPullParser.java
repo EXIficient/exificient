@@ -28,7 +28,7 @@ package com.siemens.ct.exi.main.api.xmlpull;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.7-SNAPSHOT
+ * @version 1.0.0-SNAPSHOT
  */
 
 import java.io.IOException;
