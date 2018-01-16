@@ -55,7 +55,7 @@ import com.siemens.ct.exi.core.Constants;
  * @version 1.0.0-SNAPSHOT
  */
 
-class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
+public class SaxToDomHandler extends DefaultHandler implements LexicalHandler,
 		DTDHandler, DeclHandler {
 
 	protected Document document;
