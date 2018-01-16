@@ -41,7 +41,7 @@ public class TestSAXDecoderN extends TestSAXDecoder {
 		super(ef);
 	}
 
-	protected void test(String exiLocation, String decodedXMLLocation)
+	public void test(String exiLocation, String decodedXMLLocation)
 			throws Exception {
 
 		// // create test-decoder
