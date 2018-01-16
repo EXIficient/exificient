@@ -51,9 +51,9 @@ public class QuickTestConfiguration {
 	public static CodingMode CODING_MODE;
 
 	// input / output files
-	static String XSD_FILE_LOCATION;
-	static String XML_FILE_LOCATION;
-	static String EXI_FILE_LOCATION;
+	public static String XSD_FILE_LOCATION;
+	public static String XML_FILE_LOCATION;
+	public static String EXI_FILE_LOCATION;
 
 	// Options
 	public static FidelityOptions fidelityOptions;
