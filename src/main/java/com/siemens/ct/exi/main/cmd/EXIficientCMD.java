@@ -89,7 +89,7 @@ import com.siemens.ct.exi.main.util.SkipRootElementXMLReader;
  */
 
 public class EXIficientCMD {
-	static final PrintStream ps = System.out;
+	public static final PrintStream ps = System.out;
 
 	public static final String HELP = "-h";
 
@@ -136,11 +136,11 @@ public class EXIficientCMD {
 	public static String DEFAULT_EXI_FILE_EXTENSION = ".exi";
 	public static String DEFAULT_XML_FILE_EXTENSION = ".xml";
 	
-	boolean inputParametersOK;
-	CmdOption cmdOption;
-	EXIFactory exiFactory;
-	String input;
-	String output;
+	protected boolean inputParametersOK;
+	protected CmdOption cmdOption;
+	protected EXIFactory exiFactory;
+	protected String input;
+	protected String output;
 	
 	
 	public EXIficientCMD() {
