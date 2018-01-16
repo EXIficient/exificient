@@ -4,7 +4,7 @@
   <artifactId>exificient</artifactId>
   <name>EXIficient</name>
   <url>http://exificient.github.io/</url>
-  <version>0.9.7</version>
+  <version>0.9.8-SNAPSHOT</version>
   <packaging>jar</packaging><!-- bundle -->
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
     (EXI) format specification written in the Java programming language. The EXI format is a very
