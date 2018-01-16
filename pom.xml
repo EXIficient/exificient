@@ -49,12 +49,12 @@
     <dependency>
       <groupId>com.siemens.ct.exi</groupId>
       <artifactId>exificient-core</artifactId>
-      <version>0.9.7-SNAPSHOT</version>
+      <version>0.9.7</version><!-- -SNAPSHOT -->
     </dependency>
     <dependency>
       <groupId>com.siemens.ct.exi</groupId>
       <artifactId>exificient-grammars</artifactId>
-      <version>0.9.7-SNAPSHOT</version>
+      <version>0.9.7</version><!-- -SNAPSHOT -->
     </dependency>
 	<dependency>
 	  <groupId>xmlpull</groupId>
