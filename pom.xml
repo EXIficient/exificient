@@ -4,7 +4,7 @@
   <artifactId>exificient</artifactId>
   <name>EXIficient</name>
   <url>http://exificient.github.io/</url>
-  <version>0.9.8-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging><!-- bundle -->
   <description>EXIficient is an open source implementation of the W3C Efficient XML Interchange
     (EXI) format specification written in the Java programming language. The EXI format is a very
@@ -47,12 +47,12 @@
     <dependency>
       <groupId>com.siemens.ct.exi</groupId>
       <artifactId>exificient-core</artifactId>
-      <version>0.9.7</version><!-- -SNAPSHOT -->
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.siemens.ct.exi</groupId>
       <artifactId>exificient-grammars</artifactId>
-      <version>0.9.7</version><!-- -SNAPSHOT -->
+      <version>1.0.0-SNAPSHOT</version>
     </dependency>
 	<dependency>
 	  <groupId>xmlpull</groupId>
@@ -99,6 +99,7 @@
     <!-- maven-compiler-plugin configuration -->
     <maven.compiler.source>1.5</maven.compiler.source>
     <maven.compiler.target>1.5</maven.compiler.target>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
 
