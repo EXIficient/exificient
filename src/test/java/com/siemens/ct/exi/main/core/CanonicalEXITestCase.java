@@ -1484,7 +1484,8 @@ public class CanonicalEXITestCase extends TestCase {
 				+ " </xs:element>" + "</xs:schema>";
 
 		String sdt = "2012-06-30T23:59:60-06:00";
-		String sdtUTC = "2012-07-01T06:00:00Z";
+		// don't change seconds to retain leap seconds
+		String sdtUTC = "2012-07-01T05:59:60Z"; 
 
 		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
