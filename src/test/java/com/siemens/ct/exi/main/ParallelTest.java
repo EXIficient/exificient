@@ -9,19 +9,27 @@ import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.api.dom.DOMBuilder;
+import com.siemens.ct.exi.main.api.dom.DOMWriter;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
-import junit.framework.TestCase;
-import org.xml.sax.SAXException;
+import com.siemens.ct.exi.main.data.AbstractTestCase;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
+import org.w3c.dom.Document;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class ParallelTest extends TestCase {
+public class ParallelTest extends AbstractTestCase {
+    public ParallelTest(String s) {
+        super(s);
+    }
+
     public static EXIFactory getExiFactory() throws EXIException {
         GrammarFactory gf = GrammarFactory.newInstance();
         Grammars grammar = gf.createGrammars("./data/XSLT/schema-for-xslt20.xsd");
@@ -30,6 +38,8 @@ public class ParallelTest extends TestCase {
         FidelityOptions fidelityOptions = FidelityOptions.createDefault();
         fidelityOptions.setFidelity(FidelityOptions.FEATURE_STRICT, true);
         fidelityOptions.setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+        // activate this option will make the tests pass
+        //fidelityOptions.setFidelity(FidelityOptions.FEATURE_LEXICAL_VALUE, true);
         exiFactory.setFidelityOptions(fidelityOptions);
         exiFactory.setCodingMode(CodingMode.COMPRESSION);
         EncodingOptions encodingOptions = EncodingOptions.createDefault();
@@ -39,70 +49,240 @@ public class ParallelTest extends TestCase {
         return exiFactory;
     }
 
-    public byte[] encodeXmlFileToExi(String path, EXIFactory exiFactory) throws EXIException, SAXException, IOException {
+    public byte[] encodeDocToExi(Document doc, EXIFactory exiFactory) throws Exception {
+        ByteArrayOutputStream exiEncodedOutput = new ByteArrayOutputStream();
+        DOMWriter enc = new DOMWriter(exiFactory);
+        enc.setOutput(exiEncodedOutput);
+        enc.encode(doc);
+        return exiEncodedOutput.toByteArray();
+    }
+
+    public byte[] encodePathToExi(String path, EXIFactory exiFactory) throws Exception {
         EXIResult exiResult = new EXIResult(exiFactory);
         ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
         exiResult.setOutputStream(osEXI);
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-        xmlReader.setContentHandler( exiResult.getHandler() );
-        xmlReader.parse(path); // parse XML input
+        xmlReader.setContentHandler(exiResult.getHandler());
+        xmlReader.parse(path);
         return osEXI.toByteArray();
     }
 
-    public static final class ExiSch{
-        public String Name;
-        public String XslPath;
-        public byte[] Exi;
-        public EXIFactory ExiFactory;
+    public Document decodeExiToDoc(byte[] exi, EXIFactory exiFactory) throws Exception {
+        InputStream exiDocument = new ByteArrayInputStream(exi);
+        DOMBuilder domBuilder = new DOMBuilder(exiFactory);
+        Document doc = domBuilder.parse(exiDocument);
+        return doc;
     }
 
-    public void test() throws IOException, SAXException, EXIException, InterruptedException, ExecutionException {
-        EXIFactory exiFactory = getExiFactory();
-        File dir = new File("./data/XSLT/Examples");
-        File[] directoryListing = dir.listFiles();
-        HashMap<String, ExiSch> nc1NameExiMap = new HashMap<String, ExiSch>();
-        for (File child : directoryListing) {
-            byte[] exi = encodeXmlFileToExi(child.getPath(), exiFactory);
-            ExiSch exiSch = new ExiSch();
-            exiSch.Exi = exi;
-            exiSch.Name = child.getName();
-            exiSch.XslPath = child.getAbsolutePath();
-            exiSch.ExiFactory = exiFactory;
-            nc1NameExiMap.put(exiSch.Name, exiSch);
+    enum ParallelExiFactory {
+        Single,
+        ThreadLocal,
+        PerTask,
+    }
+
+    public static final class ExiSch {
+        public String Name;
+        public byte[] Exi;
+        public EXIFactory ExiFactory;
+        public Document RoundTripDoc;
+        public ParallelExiFactory ParallelExiFactory;
+        public String Path;
+    }
+
+    private static class ThreadLocalExiFactory extends
+            ThreadLocal<EXIFactory> {
+
+        @Override
+        protected EXIFactory initialValue() {
+            try {
+                return ParallelTest.getExiFactory();
+            } catch (EXIException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-        Collection<Callable<ExiResult>> tasks = new ArrayList<Callable<ExiResult>>();
-        for (ExiSch exiSch : nc1NameExiMap.values()) {
-            tasks.add(new Task(exiSch));
+    }
+
+    private static final ThreadLocalExiFactory generateThreadLocalExiFactory = new ThreadLocalExiFactory();
+
+    public void testParallelEncodeWithSingleFactory() throws Exception {
+        testParallelEncode(ParallelExiFactory.Single, 8, 100, false);
+    }
+
+    public void testParallelEncodeWithThreadLocalFactory() throws Exception {
+        testParallelEncode(ParallelExiFactory.ThreadLocal, 8, 100, false);
+    }
+
+    public void testParallelEncodeWithPerTaskFactory() throws Exception {
+        testParallelEncode(ParallelExiFactory.PerTask, 8, 100, false);
+    }
+
+    private void testParallelEncode(ParallelExiFactory parallelExiFactory, int nbThreads, int nbTask, boolean testXml) throws Exception {
+        EXIFactory exiFactory = getExiFactory();
+        ArrayList<ExiSch> nc1NameExiMap = getExiSch(parallelExiFactory, testXml, exiFactory);
+        Collection<Callable<EncodeResult>> tasks = new ArrayList<Callable<EncodeResult>>();
+        for (int i = 0; i < nbTask; i++) {
+            tasks.add(new TaskEncode(nc1NameExiMap.get(i % nc1NameExiMap.size())));
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(8);
-        List<Future<ExiResult>> results = executor.invokeAll(tasks);
-        int errorCount = 0;
-        for(Future<ExiResult> result : results){
-            ExiResult exiResult = result.get();
-            if (!exiResult.valid){
-                errorCount++;
+        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+        List<Future<EncodeResult>> results = executor.invokeAll(tasks);
+        int differentExiCount = 0;
+
+        if (testXml) {
+            XMLUnit.setIgnoreWhitespace(true);
+            XMLUnit.setIgnoreAttributeOrder(true);
+            XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+            XMLUnit.setIgnoreComments(true);
+        }
+
+        for (Future<EncodeResult> result : results) {
+            EncodeResult exiResult = result.get();
+            boolean equals = Arrays.equals(exiResult.exiOriginal, exiResult.exi);
+            if (!equals) {
+                differentExiCount++;
+            }
+
+            if (testXml) {
+                Document document = decodeExiToDoc(exiResult.exi, exiFactory);
+                Diff diff = compareXML(document, exiResult.roundTripDoc);
+                if (equals) {
+                    Assert.assertTrue(diff.toString(), diff.similar());
+                } else {
+                    Assert.assertFalse(diff.toString(), diff.similar());
+                }
             }
         }
         executor.shutdown();
-        assertEquals(0, errorCount);
+        assertEquals(0, differentExiCount);
     }
 
-    private static final class ExiResult {
-        public boolean valid;
+    public void testParallelDecodeWithSingleFactory() throws Exception {
+        testParallelDecode(ParallelExiFactory.Single, 8, 14);
     }
 
-    private final class Task implements Callable<ExiResult> {
-        private final ExiSch exiSchData;
+    public void testParallelDecodeWithThreadLocalFactory() throws Exception {
+        testParallelDecode(ParallelExiFactory.ThreadLocal, 8, 14);
+    }
 
-        Task(ExiSch exiSch){
+    public void testParallelDecodeWithParTaskFactory() throws Exception {
+        testParallelDecode(ParallelExiFactory.PerTask, 8, 14);
+    }
+
+    private void testParallelDecode(ParallelExiFactory parallelExiFactory, int nbThreads, int nbTask) throws Exception {
+        EXIFactory exiFactory = getExiFactory();
+        ArrayList<ExiSch> nc1NameExiMap = getExiSch(parallelExiFactory, true, exiFactory);
+        Collection<Callable<DecodeResult>> tasks = new ArrayList<Callable<DecodeResult>>();
+        for (int i = 0; i < nbTask; i++) {
+            tasks.add(new TaskDecode(nc1NameExiMap.get(i % nc1NameExiMap.size())));
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(nbThreads);
+        List<Future<DecodeResult>> results = executor.invokeAll(tasks);
+        int differentExiCount = 0;
+
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true);
+        XMLUnit.setIgnoreComments(true);
+
+        for (Future<DecodeResult> result : results) {
+            DecodeResult exiResult = result.get();
+
+            Diff diff = compareXML(exiResult.roundTripDoc, exiResult.doc);
+            if (!diff.similar()) {
+                differentExiCount++;
+            }
+        }
+        executor.shutdown();
+        assertEquals(0, differentExiCount);
+    }
+
+    private ArrayList<ExiSch> getExiSch(ParallelExiFactory parallelExiFactory, boolean testXml, EXIFactory exiFactory) throws Exception {
+        File dir = new File("./data/XSLT/Examples");
+        File[] directoryListing = dir.listFiles();
+        ArrayList<ExiSch> nc1NameExiMap = new ArrayList<ExiSch>();
+
+        for (File child : directoryListing) {
+            byte[] exi = encodePathToExi(child.getPath(), exiFactory);
+            ExiSch exiSch = new ExiSch();
+            exiSch.Exi = exi;
+            exiSch.Name = child.getName();
+            exiSch.Path = child.getPath();
+            if (testXml) {
+                // XMLUnit 1.3 can't easily differentiate between int attribute : 1 vs 1.0
+                // so we test between decoded documents
+                exiSch.RoundTripDoc = decodeExiToDoc(exi, exiFactory);
+            }
+
+            exiSch.ParallelExiFactory = parallelExiFactory;
+            if (parallelExiFactory == ParallelExiFactory.Single) {
+                exiSch.ExiFactory = exiFactory;
+            }
+            nc1NameExiMap.add(exiSch);
+        }
+        return nc1NameExiMap;
+    }
+
+    private static final class EncodeResult {
+        public byte[] exi;
+        public byte[] exiOriginal;
+        public Document roundTripDoc;
+    }
+
+    private abstract class ExiTask {
+        protected ExiSch exiSchData;
+
+        ExiTask(ExiSch exiSch) {
             exiSchData = exiSch;
         }
-        public ExiResult call() throws Exception {
-            byte[] exi = encodeXmlFileToExi(exiSchData.XslPath, exiSchData.ExiFactory);
-            ExiResult exiResult = new ExiResult();
-            exiResult.valid = Arrays.equals(exi, exiSchData.Exi);
+
+        protected EXIFactory getExiFactory() throws EXIException {
+            EXIFactory exiFactory = exiSchData.ExiFactory;
+            if (exiFactory == null) {
+                if (exiSchData.ParallelExiFactory == ParallelExiFactory.ThreadLocal) {
+                    exiFactory = ParallelTest.generateThreadLocalExiFactory.get();
+                } else if (exiSchData.ParallelExiFactory == ParallelExiFactory.PerTask) {
+                    exiFactory = ParallelTest.getExiFactory();
+                }
+            }
+            return exiFactory;
+        }
+    }
+
+    private final class TaskEncode extends ExiTask implements Callable<EncodeResult> {
+        TaskEncode(ExiSch exiSch) {
+            super(exiSch);
+        }
+
+        public EncodeResult call() throws Exception {
+            EXIFactory exiFactory = getExiFactory();
+            byte[] exi = encodePathToExi(exiSchData.Path, exiFactory);
+            EncodeResult exiResult = new EncodeResult();
+            exiResult.exi = exi;
+            exiResult.exiOriginal = exiSchData.Exi;
+            exiResult.roundTripDoc = exiSchData.RoundTripDoc;
             return exiResult;
+        }
+    }
+
+    private static final class DecodeResult {
+        public Document doc;
+        public Document roundTripDoc;
+    }
+
+    private final class TaskDecode extends ExiTask implements Callable<DecodeResult> {
+        TaskDecode(ExiSch exiSch) {
+            super(exiSch);
+        }
+
+        public DecodeResult call() throws Exception {
+            EXIFactory exiFactory = getExiFactory();
+            Document doc = decodeExiToDoc(exiSchData.Exi, exiFactory);
+            DecodeResult decodeResult = new DecodeResult();
+            decodeResult.doc = doc;
+            decodeResult.roundTripDoc = exiSchData.RoundTripDoc;
+            return decodeResult;
         }
     }
 }
