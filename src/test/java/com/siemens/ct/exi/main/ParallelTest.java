@@ -7,12 +7,21 @@ import com.siemens.ct.exi.core.EncodingOptions;
 import com.siemens.ct.exi.core.FidelityOptions;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.grammars.Grammars;
+import com.siemens.ct.exi.core.grammars.SchemaInformedGrammars;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.grammars._2017.schemaforgrammars.ExiGrammars;
+import com.siemens.ct.exi.grammars.persistency.Grammars2X;
 import com.siemens.ct.exi.main.api.dom.DOMBuilder;
 import com.siemens.ct.exi.main.api.dom.DOMWriter;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
 import com.siemens.ct.exi.main.data.AbstractTestCase;
+
+import org.apache.xerces.impl.xs.SchemaGrammar;
+import org.apache.xerces.impl.xs.XMLSchemaLoader;
+import org.apache.xerces.xni.XNIException;
+import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xerces.xs.XSModel;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
@@ -25,10 +34,94 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamResult;
+
 public class ParallelTest extends AbstractTestCase {
     public ParallelTest(String s) {
         super(s);
     }
+    
+    
+    
+    public void testParallelXerces() throws XNIException, IOException, InterruptedException, ExecutionException {
+
+        Collection<Callable<XSModel>> tasks = new ArrayList<Callable<XSModel>>();
+        for (int i = 0; i < 25; i++) {
+        	Callable<XSModel> task = new Callable<XSModel>() {
+    			public XSModel call() throws Exception {
+    		    	String sXSD = "./data/XSLT/schema-for-xslt20.xsd";
+    		    	// load XSD schema & get XSModel
+    		    	XMLSchemaLoader sl = new XMLSchemaLoader();
+    				XMLInputSource xsdSource = new XMLInputSource(null, sXSD, null);
+    				
+    				SchemaGrammar g = (SchemaGrammar) sl.loadGrammar(xsdSource);
+    				XSModel xsModel = g.toXSModel();
+    				return xsModel;
+    			}};
+    			
+        	
+            tasks.add(task);
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        List<Future<XSModel>> results = executor.invokeAll(tasks);
+    	
+        for (Future<XSModel> result : results) {
+        	System.out.println("XSModel: " + result.get());
+        }
+    }
+    
+    
+    public void testParallelGrammarsCreation() throws XNIException, IOException, InterruptedException, ExecutionException, EXIException, ParserConfigurationException, DatatypeConfigurationException, JAXBException {
+
+        Collection<Callable<Grammars>> tasks = new ArrayList<Callable<Grammars>>();
+        for (int i = 0; i < 100; i++) {
+        	Callable<Grammars> task = new Callable<Grammars>() {
+    			public Grammars call() throws Exception {
+    				GrammarFactory gf = GrammarFactory.newInstance();
+    				Grammars grs = gf.createGrammars("./data/general/randj.xsd");
+
+    				return grs;
+    			}};
+    			
+        	
+            tasks.add(task);
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        List<Future<Grammars>> results = executor.invokeAll(tasks);
+    	
+        
+        byte[] comparisonBytes = null;
+        
+        for (Future<Grammars> result : results) {
+        	boolean equal = false;
+        	if(comparisonBytes == null) {
+        		// first item
+        		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        		Grammars2X g2j = new Grammars2X();
+        		ExiGrammars exiGrammar = g2j.toGrammarsX((SchemaInformedGrammars) result.get());
+        		Grammars2X.marshal(exiGrammar, new StreamResult(baos));
+        		// System.out.println(new String(baos.toByteArray()));
+        		comparisonBytes = baos.toByteArray();
+        		equal = true;
+        	} else {
+        		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        		Grammars2X g2j = new Grammars2X();
+        		ExiGrammars exiGrammar = g2j.toGrammarsX((SchemaInformedGrammars) result.get());
+        		Grammars2X.marshal(exiGrammar, new StreamResult(baos));
+        		byte[] bytes = baos.toByteArray();
+        		equal = Arrays.equals(comparisonBytes, bytes);
+        	}
+        	
+        	System.out.println("Grammars: " + result.get() + "\t" + equal);
+        	assertTrue(equal);
+        }
+    }
+    
 
     public static EXIFactory getExiFactory() throws EXIException {
         GrammarFactory gf = GrammarFactory.newInstance();
