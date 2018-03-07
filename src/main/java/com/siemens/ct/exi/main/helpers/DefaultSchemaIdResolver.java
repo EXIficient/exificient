@@ -40,7 +40,7 @@ import com.siemens.ct.exi.grammars.GrammarFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 0.9.5
+ * @version 1.0.0-SNAPSHOT
  */
 
 public class DefaultSchemaIdResolver implements SchemaIdResolver {
