@@ -30,7 +30,9 @@ import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.io.channel.DecoderChannel;
 import com.siemens.ct.exi.core.io.channel.EncoderChannel;
 import com.siemens.ct.exi.core.types.TypeDecoder;
+import com.siemens.ct.exi.core.types.TypeEncoder;
 import com.siemens.ct.exi.core.types.TypedTypeDecoder;
+import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.main.types.DatatypeMappingTest;
@@ -217,9 +219,10 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		// try to validate
-		assertFalse(datatype.isValid(new StringValue("12")));
+		assertFalse(typeEncoder.isValid(datatype, new StringValue("12")));
 	}
 
 	public void testNBitUnsignedIntegerFacet2() throws IOException,
@@ -238,15 +241,16 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		// write (bit & byte )
-		assertTrue(datatype.isValid(sValue));
+		assertTrue(typeEncoder.isValid(datatype, sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		datatype.writeValue(null, bitEC, null);
+		typeEncoder.writeValue(null, bitEC, null);
 		bitEC.flush();
 		// byte
-		datatype.writeValue(null, getByteEncoder(), null);
+		typeEncoder.writeValue(null, getByteEncoder(), null);
 
 		// read
 		Value sDecoded;
@@ -274,15 +278,16 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		// write (bit & byte )
-		assertTrue(datatype.isValid(sValue));
+		assertTrue(typeEncoder.isValid(datatype, sValue));
 		// bit
 		EncoderChannel bitEC = getBitEncoder();
-		datatype.writeValue(null, bitEC, null);
+		typeEncoder.writeValue(null, bitEC, null);
 		bitEC.flush();
 		// byte
-		datatype.writeValue(null, getByteEncoder(), null);
+		typeEncoder.writeValue(null, getByteEncoder(), null);
 
 		// read
 		Value sDecoded;

@@ -59,6 +59,7 @@ import com.siemens.ct.exi.core.grammars.event.EventType;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.core.types.BuiltInType;
 import com.siemens.ct.exi.core.types.LexicalTypeEncoder;
+import com.siemens.ct.exi.core.types.TypeEncoder;
 import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
@@ -406,6 +407,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		QName schemaType = new QName("", "Integer");
 
@@ -414,8 +416,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		assertTrue(dt.getSchemaType().getQName().equals(schemaType));
 
-		assertTrue(dt.isValid(new StringValue("+10")));
-		assertFalse(dt.isValid(new StringValue("12:32:00")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("+10")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("12:32:00")));
 
 		/* DTR Map */
 		QName type = schemaType;
@@ -446,6 +448,7 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// Grammars g = DatatypeMappingTest.getGrammarFor(schemaAsString);
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Integer", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		QName schemaType = new QName("", "Integer");
 
@@ -454,8 +457,8 @@ public class DtrMapTestCase extends AbstractTestCase {
 		// assertTrue(idt.getIntegerType() == IntegerType.INTEGER_32);
 		assertTrue(dt.getSchemaType().getQName().equals(schemaType));
 
-		assertTrue(dt.isValid(new StringValue("+10")));
-		assertFalse(dt.isValid(new StringValue("12:32:00")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("+10")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("12:32:00")));
 
 		/* DTR Map */
 		QName type = new QName(Constants.XML_SCHEMA_NS_URI, "int");

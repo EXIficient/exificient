@@ -31,6 +31,8 @@ import com.siemens.ct.exi.core.datatype.EnumerationDatatype;
 import com.siemens.ct.exi.core.datatype.ListDatatype;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.types.BuiltInType;
+import com.siemens.ct.exi.core.types.TypeEncoder;
+import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.main.types.DatatypeMappingTest;
 
@@ -54,18 +56,19 @@ public class EnumerationTest extends AbstractTestCase {
 	
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"tBasicTypeEnum", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 	
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 	
-		assertTrue(dt.isValid(new StringValue("BOOLEAN")));
-		assertTrue(dt.isValid(new StringValue("INT8")));
-		assertTrue(dt.isValid(new StringValue("INT16")));
-		assertTrue(dt.isValid(new StringValue("INT24")));
-		assertTrue(dt.isValid(new StringValue("INT32")));
-		assertTrue(dt.isValid(new StringValue("INT64")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("BOOLEAN")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("INT8")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("INT16")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("INT24")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("INT32")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("INT64")));
 	
-		assertFalse(dt.isValid(new StringValue("00")));
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	
 		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 		assertTrue(enumDt.getDatatypeID() == DatatypeID.exi_string);
@@ -88,17 +91,18 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		// EXI errata item
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.STRING);
 
-		assertTrue(dt.isValid(new StringValue("Hooo")));
-		assertTrue(dt.isValid(new StringValue("bla:Foo")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("Hooo")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("bla:Foo")));
 
-		assertTrue(dt.isValid(new StringValue("Baxslax")));
-		assertTrue(dt.isValid(new StringValue("-123")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("Baxslax")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("-123")));
 
 		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		//
@@ -126,20 +130,21 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		// EXI errata item
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
 
-		assertTrue(dt.isValid(new StringValue("1 2 3")));
-		assertTrue(dt.isValid(new StringValue("3 4 5")));
-		assertTrue(dt.isValid(new StringValue(" 3 4 5 ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("1 2 3")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("3 4 5")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 3 4 5 ")));
 
-		assertTrue(dt.isValid(new StringValue(" 123 456 789  "))); // any other
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 123 456 789  "))); // any other
 																	// int value
 
-		assertFalse(dt.isValid(new StringValue("xx xx")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("xx xx")));
 
 		// assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		//
@@ -225,14 +230,15 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("+0")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("+0")));
 
-		assertFalse(dt.isValid(new StringValue("+4")));
-		assertFalse(dt.isValid(new StringValue("-3")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("+4")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("-3")));
 	}
 
 	public void testEnumerationFloat1() throws IOException, EXIException {
@@ -246,17 +252,18 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue(" 1.5")));
-		assertTrue(dt.isValid(new StringValue("15E-1")));
-		assertTrue(dt.isValid(new StringValue(" 25 ")));
-		assertTrue(dt.isValid(new StringValue(" 25E0 ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 1.5")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("15E-1")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 25 ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 25E0 ")));
 
-		assertFalse(dt.isValid(new StringValue("00")));
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}
 
 	public void testEnumerationFloat2() throws IOException, EXIException {
@@ -271,16 +278,17 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("1.000")));
-		assertTrue(dt.isValid(new StringValue("1.0e0")));
-		assertTrue(dt.isValid(new StringValue("3E1")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("1.000")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("1.0e0")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("3E1")));
 
-		assertFalse(dt.isValid(new StringValue("00")));
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}
 
 	public void testEnumerationGMonthDay1() throws IOException, EXIException {
@@ -301,18 +309,19 @@ public class EnumerationTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("--01-01")));
-		assertTrue(dt.isValid(new StringValue("--05-01")));
-		assertTrue(dt.isValid(new StringValue("--07-14")));
-		assertTrue(dt.isValid(new StringValue("--11-11")));
-		assertTrue(dt.isValid(new StringValue("--12-25")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("--01-01")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("--05-01")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("--07-14")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("--11-11")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("--12-25")));
 
-		assertFalse(dt.isValid(new StringValue("00")));
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}
 
 }

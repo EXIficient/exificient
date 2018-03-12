@@ -45,6 +45,8 @@ import com.siemens.ct.exi.core.grammars.event.StartElement;
 import com.siemens.ct.exi.core.grammars.grammar.SchemaInformedFirstStartTagGrammar;
 import com.siemens.ct.exi.core.types.BuiltInType;
 import com.siemens.ct.exi.core.types.DateTimeType;
+import com.siemens.ct.exi.core.types.TypeEncoder;
+import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.grammars.XSDGrammarsBuilder;
 import com.siemens.ct.exi.main.datatype.AbstractTestCase;
@@ -632,9 +634,10 @@ public class DatatypeMappingTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"Enumeration", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(BuiltInType.ENUMERATION == dt.getBuiltInType());
-		assertTrue(dt.isValid(new StringValue("+0")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("+0")));
 
 //		assertTrue(dt.getRestrictedCharacterSet().equals(
 //				new XSDIntegerCharacterSet()));

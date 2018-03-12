@@ -44,6 +44,7 @@ import com.siemens.ct.exi.core.types.BuiltInType;
 import com.siemens.ct.exi.core.types.TypeDecoder;
 import com.siemens.ct.exi.core.types.TypeEncoder;
 import com.siemens.ct.exi.core.types.TypedTypeDecoder;
+import com.siemens.ct.exi.core.types.TypedTypeEncoder;
 import com.siemens.ct.exi.core.values.IntegerValue;
 import com.siemens.ct.exi.core.values.ListValue;
 import com.siemens.ct.exi.core.values.StringValue;
@@ -63,35 +64,46 @@ public class ListTest extends AbstractTestCase {
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
 				null);
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
-		boolean valid = ldtInteger.isValid(s);
-		assertTrue(valid);
+		
 
 		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValue(null, bitEC, null);
-		bitEC.flush();
-		DecoderChannel dc = getBitDecoder();
-		Value v1 = typeDecoder.readValue(ldtInteger, null, dc, null);
-		assertTrue(v1.getValueType() == ValueType.LIST);
-		ListValue lv1 = (ListValue) v1;
-		assertTrue(s.equals(lv1.toString()));
+		{
+			boolean valid = typeEncoder.isValid(ldtInteger, s);
+			assertTrue(valid);
+			EncoderChannel bitEC = getBitEncoder();
+			typeEncoder.writeValue(null, bitEC, null);
+			bitEC.flush();
+			DecoderChannel dc = getBitDecoder();
+			Value v1 = typeDecoder.readValue(ldtInteger, null, dc, null);
+			assertTrue(v1.getValueType() == ValueType.LIST);
+			ListValue lv1 = (ListValue) v1;
+			assertTrue(s.equals(lv1.toString()));
+		}
+
 
 		// Byte
-		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValue(null, byteEC, null);
-		Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
-		assertTrue(v2.getValueType() == ValueType.LIST);
-		ListValue lv2 = (ListValue) v2;
-		assertTrue(s.equals(lv2.toString()));
+		{
+			boolean valid = typeEncoder.isValid(ldtInteger, s);
+			assertTrue(valid);
+			EncoderChannel byteEC = getByteEncoder();
+			typeEncoder.writeValue(null, byteEC, null);
+			Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
+			assertTrue(v2.getValueType() == ValueType.LIST);
+			ListValue lv2 = (ListValue) v2;
+			assertTrue(s.equals(lv2.toString()));
+		}
+
 	}
 
 	public void testListIntegerLexical1() throws IOException, EXIException {
 		StringValue s = new StringValue("0100 034 56 -23 1567");
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
 				null);
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
-		boolean valid = ldtInteger.isValid(s);
+		boolean valid = typeEncoder.isValid(ldtInteger, s);
 		assertTrue(valid);
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
@@ -168,26 +180,36 @@ public class ListTest extends AbstractTestCase {
 		ListDatatype ldtInteger = new ListDatatype(
 				new NBitUnsignedIntegerDatatype(min, max, null), null);
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
-		boolean valid = ldtInteger.isValid(s);
-		assertTrue(valid);
+
 
 		// Bit
-		EncoderChannel bitEC = getBitEncoder();
-		ldtInteger.writeValue(null, bitEC, null);
-		bitEC.flush();
-		Value v1 = typeDecoder.readValue(ldtInteger, null, getBitDecoder(), null);
-		assertTrue(v1.getValueType() == ValueType.LIST);
-		ListValue lv1 = (ListValue) v1;
-		assertTrue(sRes.equals(lv1.toString()));
+		{
+			boolean valid = typeEncoder.isValid(ldtInteger, s);
+			assertTrue(valid);
+			EncoderChannel bitEC = getBitEncoder();
+			typeEncoder.writeValue(null, bitEC, null);
+			bitEC.flush();
+			Value v1 = typeDecoder.readValue(ldtInteger, null, getBitDecoder(), null);
+			assertTrue(v1.getValueType() == ValueType.LIST);
+			ListValue lv1 = (ListValue) v1;
+			assertTrue(sRes.equals(lv1.toString()));
+		}
+
 
 		// Byte
-		EncoderChannel byteEC = getByteEncoder();
-		ldtInteger.writeValue(null, byteEC, null);
-		Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
-		assertTrue(v2.getValueType() == ValueType.LIST);
-		ListValue lv2 = (ListValue) v2;
-		assertTrue(sRes.equals(lv2.toString()));
+		{
+			boolean valid = typeEncoder.isValid(ldtInteger, s);
+			assertTrue(valid);
+			EncoderChannel byteEC = getByteEncoder();
+			typeEncoder.writeValue(null, byteEC, null);
+			Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
+			assertTrue(v2.getValueType() == ValueType.LIST);
+			ListValue lv2 = (ListValue) v2;
+			assertTrue(sRes.equals(lv2.toString()));			
+		}
+
 	}
 
 	public void testListGMonthDayUnion1() throws IOException, EXIException {
@@ -212,14 +234,15 @@ public class ListTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"List", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue(
+		assertTrue(typeEncoder.isValid(dt, new StringValue(
 				"  --12-25  --08-15  --01-01  --07-14   ")));
 
-		assertFalse(dt.isValid(new StringValue("00")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
 	}
 
 	public void testListEnum1() throws IOException, EXIException {
@@ -240,17 +263,18 @@ public class ListTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"listOfIDsEnum", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.STRING);
 
-		assertTrue(dt.isValid(new StringValue("  AB  BC  CD   ")));
-		assertTrue(dt.isValid(new StringValue("  AB  BC     ")));
-		assertTrue(dt.isValid(new StringValue("  KL   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  AB  BC  CD   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  AB  BC     ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  KL   ")));
 
 		// assertFalse(dt.isValid(new StringValue("00")));
-		assertTrue(dt.isValid(new StringValue("00")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("00")));
 	}
 
 	public void testListEnum2() throws IOException, EXIException {
@@ -272,17 +296,18 @@ public class ListTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"listOfIntsEnum", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		ListDatatype listDt = (ListDatatype) dt;
 		assertTrue(listDt.getListDatatype().getBuiltInType() == BuiltInType.INTEGER);
 
-		assertTrue(dt.isValid(new StringValue("  1  2  3   ")));
-		assertTrue(dt.isValid(new StringValue("  4  5   6  ")));
-		assertTrue(dt.isValid(new StringValue("  9   ")));
-		assertTrue(dt.isValid(new StringValue(" 123")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  1  2  3   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  4  5   6  ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  9   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 123")));
 
-		assertFalse(dt.isValid(new StringValue("XXX")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("XXX")));
 	}
 
 	public void testListFloat1() throws IOException, EXIException {
@@ -294,13 +319,14 @@ public class ListTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"List", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue("  1e4 -10000 5.234e-2   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue("  1e4 -10000 5.234e-2   ")));
 
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}
 
 	public void testListFloat2() throws IOException, EXIException {
@@ -312,14 +338,15 @@ public class ListTest extends AbstractTestCase {
 
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"List", "");
+		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(dt.isValid(new StringValue(
+		assertTrue(typeEncoder.isValid(dt, new StringValue(
 				"  1e4 -10000 5.234e-2 \n 11.22 \t\t 4 \r\n999  ")));
 
-		assertFalse(dt.isValid(new StringValue("bla")));
+		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}
 
 }
