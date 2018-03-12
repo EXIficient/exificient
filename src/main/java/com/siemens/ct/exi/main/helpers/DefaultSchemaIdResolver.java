@@ -45,17 +45,18 @@ import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class DefaultSchemaIdResolver implements SchemaIdResolver {
 	
-	protected GrammarFactory gf;
+//	protected GrammarFactory gf;
 	
 	public DefaultSchemaIdResolver() {
 		
 	}
 	
 	protected GrammarFactory getGrammarFactory() {
-		if (gf == null) {
-			gf = GrammarFactory.newInstance();
-		}
-		return gf;
+		return GrammarFactory.newInstance();
+//		if (gf == null) {
+//			gf = GrammarFactory.newInstance();
+//		}
+//		return gf;
 	}
 	
 	public Grammars resolveSchemaId(String schemaId) throws EXIException {

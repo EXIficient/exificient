@@ -29,6 +29,8 @@ import com.siemens.ct.exi.core.datatype.Datatype;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.io.channel.DecoderChannel;
 import com.siemens.ct.exi.core.io.channel.EncoderChannel;
+import com.siemens.ct.exi.core.types.TypeDecoder;
+import com.siemens.ct.exi.core.types.TypedTypeDecoder;
 import com.siemens.ct.exi.core.values.StringValue;
 import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.main.types.DatatypeMappingTest;
@@ -235,6 +237,7 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
+		TypeDecoder typeDecoder = new TypedTypeDecoder();
 
 		// write (bit & byte )
 		assertTrue(datatype.isValid(sValue));
@@ -248,10 +251,10 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		// read
 		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(null, getBitDecoder(), null);
+		sDecoded = typeDecoder.readValue(datatype, null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(null, getByteDecoder(), null);
+		sDecoded = typeDecoder.readValue(datatype, null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
@@ -270,6 +273,7 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
 		Datatype datatype = DatatypeMappingTest.getSimpleDatatypeFor(
 				schemaAsString, "NBit", "");
+		TypeDecoder typeDecoder = new TypedTypeDecoder();
 
 		// write (bit & byte )
 		assertTrue(datatype.isValid(sValue));
@@ -283,10 +287,10 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		// read
 		Value sDecoded;
 		// bit
-		sDecoded = datatype.readValue(null, getBitDecoder(), null);
+		sDecoded = typeDecoder.readValue(datatype, null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = datatype.readValue(null, getByteDecoder(), null);
+		sDecoded = typeDecoder.readValue(datatype, null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
