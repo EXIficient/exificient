@@ -194,7 +194,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.siemens.ct.exi.gui.EXIficientGUI</mainClass>
+              <mainClass>com.siemens.ct.exi.main.cmd.EXIficientCMD</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
