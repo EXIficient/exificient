@@ -2,6 +2,11 @@
 
 EXIficient - open source implementation of the W3C [Efficient XML Interchange](http://www.w3.org/TR/exi/) (EXI) format specification.
 
+## Changes from version 0.9.7
+* Full Canonical EXI support (http://www.w3.org/TR/exi-c14n/), see https://www.w3.org/XML/EXI/implementation-report-c14n/
+* Parallel usage of same EXI grammars
+* JDK 9 support
+
 ## Changes from version 0.9.6
 * Once again Improved Canonical EXI support (http://www.w3.org/TR/exi-c14n/)
 * Bugfixes
