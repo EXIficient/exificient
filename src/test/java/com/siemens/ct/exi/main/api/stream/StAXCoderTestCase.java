@@ -270,25 +270,25 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			case XMLStreamConstants.END_DOCUMENT:
 				break;
 			case XMLStreamConstants.START_ELEMENT:
-				QName qn = exiReader.getName();
-				String pfx = exiReader.getPrefix();
-				System.out.println(">> " + pfx + " : " + qn);
+				// QName qn = exiReader.getName();
+				// String pfx = exiReader.getPrefix();
+				// System.out.println(">> " + pfx + " : " + qn);
 				
 				// NS declarations
 				int nsCnt = exiReader.getNamespaceCount();
 				nsCnts.add(nsCnt);
 				for (int i = 0; i < nsCnt; i++) {
-					String nsPfx = exiReader.getNamespacePrefix(i);
-					String nsUri = exiReader.getNamespaceURI(i);
-					System.out.println("\tNS: " +  nsPfx + " : " + nsUri);
+					// String nsPfx = exiReader.getNamespacePrefix(i);
+					// String nsUri = exiReader.getNamespaceURI(i);
+					// System.out.println("\tNS: " +  nsPfx + " : " + nsUri);
 				}
 				// attributes
 				int atCnt = exiReader.getAttributeCount();
 				for (int i = 0; i < atCnt; i++) {
-					String atPfx = exiReader.getAttributePrefix(i);
-					QName atQn = exiReader.getAttributeName(i);
-					String atVal = exiReader.getAttributeValue(i);
-					System.out.println("\tAT: " +  atPfx + " : " + atQn + " = " + atVal);
+					// String atPfx = exiReader.getAttributePrefix(i);
+					// QName atQn = exiReader.getAttributeName(i);
+					// String atVal = exiReader.getAttributeValue(i);
+					// System.out.println("\tAT: " +  atPfx + " : " + atQn + " = " + atVal);
 				}
 
 				break;
@@ -296,14 +296,14 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				// NS declarations
 				int nsCntEndElement = exiReader.getNamespaceCount();
 				int nsCntStartElement = nsCnts.remove(nsCnts.size()-1);
-				System.out.println("<< " + exiReader.getPrefix() + " : " +  exiReader.getName());
+				// System.out.println("<< " + exiReader.getPrefix() + " : " +  exiReader.getName());
 				assertTrue(exiReader.getName()+ ", " + nsCntEndElement + " vs. " + nsCntStartElement, nsCntEndElement == nsCntStartElement);
 				break;
 			case XMLStreamConstants.NAMESPACE:
 				break;
 			case XMLStreamConstants.CHARACTERS:
-				String ch = exiReader.getText();
-				System.out.println("\tCH: " +  ch);
+				// String ch = exiReader.getText();
+				// System.out.println("\tCH: " +  ch);
 				break;
 			case XMLStreamConstants.SPACE:
 				break;
