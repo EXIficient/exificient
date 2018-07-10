@@ -22,16 +22,22 @@
  */
 package com.siemens.ct.exi.main.api.stream;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
+
 import junit.framework.AssertionFailedError;
 
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
+import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.main.TestStAXDecoder;
 import com.siemens.ct.exi.main.TestStAXEncoder;
@@ -233,6 +239,84 @@ public class StAXCoderTestCase extends AbstractTestCase {
 	// xmlWriter.close();
 	// }
 	//
+	
+	// https://github.com/EXIficient/exificient/issues/18
+	public void testIssue18() throws AssertionFailedError, Exception {
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		String sxml = "<?xml version=\"1.0\" ?><ns2:create-resource-request-message xmlns:ns5=\"http://www.bubblegumproject.com/2018/polis\" xmlns=\"\" xmlns:ns3=\"http://www.bubblegumproject.com/2018/uia\" xmlns:ns2=\"http://www.bubblegumproject.com/2018/fabric\"><ns2:type>urn:fabric:type:eUol2jOc4XR67WEZ8jA2vg:0.0.0?=name=com.bubblegumproject.fabric:Type/Message/CreateResourceRequestMessage</ns2:type><ns2:coordinates>urn:fabric:co:wUv2GxsVDcFdqVu81XWMqw:0.0.0</ns2:coordinates><ns2:source>urn:fabric:co:JkaddGXCtF_66OBmbo94sg:0.0.0</ns2:source><ns2:timestamp>2018-07-10T09:59:09.594470900Z</ns2:timestamp><ns2:correlation-id>wUv2GxsVDcFdqVu81XWMqw</ns2:correlation-id><ns2:destination>urn:fabric:co:qEooMf4_59zR1RKnP7VvqQ:0.0.0</ns2:destination><ns2:data xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ns5:blog-post-data\"><ns2:type>urn:fabric:type:rE2_W6kHEdHDm_aogLb5nQ:0.0.0?=name=com.bubblegumproject.polis:/Type/Blog/BlogPostData</ns2:type><ns2:coordinates>urn:fabric:co:H0DiR9nVOTaqySRJlxPGhg:0.0.0</ns2:coordinates><ns2:title><ns3:default><ns3:value>Hello World!</ns3:value><ns3:locale>en-US</ns3:locale></ns3:default><ns3:alternatives><ns3:alt><ns3:value>Hello World!</ns3:value><ns3:locale>en-US</ns3:locale></ns3:alt></ns3:alternatives></ns2:title><ns2:created-time>2018-07-10T09:59:09.590473600Z</ns2:created-time><ns2:modified-time>2018-07-10T09:59:09.590473600Z</ns2:modified-time><ns2:segment xsi:type=\"ns2:segment\"><ns2:name>/hello-world</ns2:name></ns2:segment><ns5:content xsi:type=\"ns2:text-content\"><ns2:type>urn:fabric:type:2EewWCsXigVak99a0Z6srQ:0.0.0?=name=com.bubblegumproject.fabric:/Type/Content/Text/Plain</ns2:type><ns2:coordinates>urn:fabric:co:-kyXnYxJjuUbiqdH1IRFpg:0.0.0</ns2:coordinates><ns2:text>Hello World!</ns2:text></ns5:content><ns5:published-time>2018-07-10T09:59:09.589474300Z</ns5:published-time></ns2:data></ns2:create-resource-request-message>";
+		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
+		
+		// encode
+		TestStAXEncoder tse = new TestStAXEncoder(ef);
+		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		tse.encodeTo(isXML, osEXI);
+		
+		// decode
+		StAXDecoder exiReader = new StAXDecoder(ef);
+		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
+		
+		while (exiReader.hasNext()) {
+			int event = exiReader.next();
+
+			switch (event) {
+			case XMLStreamConstants.START_DOCUMENT:
+				// should have happened beforehand
+				break;
+			case XMLStreamConstants.END_DOCUMENT:
+				break;
+			case XMLStreamConstants.START_ELEMENT:
+				QName qn = exiReader.getName();
+				String pfx = exiReader.getPrefix();
+				System.out.println(">> " + pfx + " : " + qn);
+				
+				// NS declarations
+				int nsCnt = exiReader.getNamespaceCount();
+				for (int i = 0; i < nsCnt; i++) {
+					String nsPfx = exiReader.getNamespacePrefix(i);
+					String nsUri = exiReader.getNamespaceURI(i);
+					System.out.println("\tNS: " +  nsPfx + " : " + nsUri);
+				}
+				// attributes
+				int atCnt = exiReader.getAttributeCount();
+				for (int i = 0; i < atCnt; i++) {
+					String atPfx = exiReader.getAttributePrefix(i);
+					QName atQn = exiReader.getAttributeName(i);
+					String atVal = exiReader.getAttributeValue(i);
+					System.out.println("\tAT: " +  atPfx + " : " + atQn + " = " + atVal);
+				}
+
+				break;
+			case XMLStreamConstants.END_ELEMENT:
+				System.out.println("<< " + exiReader.getPrefix() + " : " +  exiReader.getName());
+				break;
+			case XMLStreamConstants.NAMESPACE:
+				break;
+			case XMLStreamConstants.CHARACTERS:
+				String ch = exiReader.getText();
+				System.out.println("\tCH: " +  ch);
+				break;
+			case XMLStreamConstants.SPACE:
+				break;
+			case XMLStreamConstants.ATTRIBUTE:
+				@SuppressWarnings("unused")
+				int attsX = exiReader.getAttributeCount();
+				break;
+			case XMLStreamConstants.COMMENT:
+				break;
+			case XMLStreamConstants.PROCESSING_INSTRUCTION:
+				break;
+			case XMLStreamConstants.DTD:
+				break;
+			case XMLStreamConstants.ENTITY_REFERENCE:
+				break;
+			default:
+				System.out.println("StAX Event '" + event
+						+ "' not supported!");
+			}
+		}
+		
+	}
 
 	public static void main(String[] args) throws Exception {
 
