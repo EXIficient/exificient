@@ -32,14 +32,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 
 import junit.framework.AssertionFailedError;
 
 import com.siemens.ct.exi.core.EXIFactory;
 import com.siemens.ct.exi.core.FidelityOptions;
-import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.main.TestStAXDecoder;
 import com.siemens.ct.exi.main.TestStAXEncoder;
