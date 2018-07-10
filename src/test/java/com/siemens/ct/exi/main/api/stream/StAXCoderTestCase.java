@@ -29,6 +29,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
@@ -256,6 +258,8 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		StAXDecoder exiReader = new StAXDecoder(ef);
 		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
 		
+		List<Integer> nsCnts = new ArrayList<Integer>();
+		
 		while (exiReader.hasNext()) {
 			int event = exiReader.next();
 
@@ -272,6 +276,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				
 				// NS declarations
 				int nsCnt = exiReader.getNamespaceCount();
+				nsCnts.add(nsCnt);
 				for (int i = 0; i < nsCnt; i++) {
 					String nsPfx = exiReader.getNamespacePrefix(i);
 					String nsUri = exiReader.getNamespaceURI(i);
@@ -288,7 +293,11 @@ public class StAXCoderTestCase extends AbstractTestCase {
 
 				break;
 			case XMLStreamConstants.END_ELEMENT:
+				// NS declarations
+				int nsCntEndElement = exiReader.getNamespaceCount();
+				int nsCntStartElement = nsCnts.remove(nsCnts.size()-1);
 				System.out.println("<< " + exiReader.getPrefix() + " : " +  exiReader.getName());
+				assertTrue(exiReader.getName()+ ", " + nsCntEndElement + " vs. " + nsCntStartElement, nsCntEndElement == nsCntStartElement);
 				break;
 			case XMLStreamConstants.NAMESPACE:
 				break;

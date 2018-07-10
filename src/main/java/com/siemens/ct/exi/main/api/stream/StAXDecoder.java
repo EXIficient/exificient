@@ -226,6 +226,7 @@ public class StAXDecoder implements XMLStreamReader
 	}
 	
 	String endElementPrefix;
+	List<NamespaceDeclaration> eePrefixes;
 
 	// without further attribute handling
 	protected EventType decodeEvent(EventType nextEventType)
@@ -283,6 +284,7 @@ public class StAXDecoder implements XMLStreamReader
 		case END_ELEMENT_UNDECLARED:
 //			@SuppressWarnings("unused")
 //			List<NamespaceDeclaration> eePrefixes = decoder.getDeclaredPrefixDeclarations();
+			eePrefixes = decoder.getDeclaredPrefixDeclarations();
 //			if (namespacePrefixes) {
 //				// eeQNameAsString = decoder.getElementQNameAsString();
 //			}
@@ -429,6 +431,15 @@ public class StAXDecoder implements XMLStreamReader
 		return qn;
 	}
 
+	
+	List<NamespaceDeclaration> getNamespaceDeclaration() {
+		if(eventType == EventType.END_ELEMENT || eventType == EventType.END_ELEMENT_UNDECLARED) {
+			return this.eePrefixes;
+		} else {
+			return decoder.getDeclaredPrefixDeclarations();
+		}
+	}
+	
 	/*
 	 * Returns a read only namespace context for the current position.
 	 * 
@@ -437,8 +448,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceContext()
 	 */
 	public NamespaceContext getNamespaceContext() {
-		nsContext.setNamespaceDeclarations(decoder
-				.getDeclaredPrefixDeclarations());
+		nsContext.setNamespaceDeclarations(getNamespaceDeclaration());
 		return nsContext;
 	}
 
@@ -452,9 +462,8 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceCount()
 	 */
 	public int getNamespaceCount() {
-		List<NamespaceDeclaration> nsDecls = decoder
-				.getDeclaredPrefixDeclarations();
-		return nsDecls == null ? 0 : nsDecls.size();
+		List<NamespaceDeclaration> nsDecls = getNamespaceDeclaration();
+		return nsDecls == null ? 0 : nsDecls.size();			
 	}
 
 	/*
@@ -465,7 +474,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespacePrefix(int)
 	 */
 	public String getNamespacePrefix(int index) {
-		return decoder.getDeclaredPrefixDeclarations().get(index).prefix;
+		return getNamespaceDeclaration().get(index).prefix;
 	}
 
 	/*
@@ -476,7 +485,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceURI(int)
 	 */
 	public String getNamespaceURI(int index) {
-		return decoder.getDeclaredPrefixDeclarations().get(index).namespaceURI;
+		return getNamespaceDeclaration().get(index).namespaceURI;
 	}
 
 	/*
@@ -487,8 +496,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceURI(java.lang.String)
 	 */
 	public String getNamespaceURI(String prefix) {
-		List<NamespaceDeclaration> nsDecls = decoder
-				.getDeclaredPrefixDeclarations();
+		List<NamespaceDeclaration> nsDecls = getNamespaceDeclaration();
 		for (int i = 0; i < nsDecls.size(); i++) {
 			NamespaceDeclaration nsDecl = nsDecls.get(i);
 			if (nsDecl.prefix.equals(prefix)) {
