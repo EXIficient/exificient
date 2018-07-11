@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamConstants;
 
 import junit.framework.AssertionFailedError;
@@ -323,6 +324,190 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			}
 		}
 		
+	}
+	
+	
+	// https://github.com/EXIficient/exificient/issues/18
+	public void testIssue18_simpifiedPrefix() throws AssertionFailedError, Exception {
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		String sxml = "<message xmlns:a=\"urn:a\">\r\n" + 
+				"  <type xmlns:b=\"urn:b\">\r\n" + 
+				"   </type>\r\n" + 
+				"</message>";
+		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
+		
+		// encode
+		TestStAXEncoder tse = new TestStAXEncoder(ef);
+		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		tse.encodeTo(isXML, osEXI);
+		
+		// decode
+		StAXDecoder exiReader = new StAXDecoder(ef);
+		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
+		
+		while (exiReader.hasNext()) {
+			int event = exiReader.next();
+
+			switch (event) {
+			case XMLStreamConstants.START_DOCUMENT:
+				// should have happened beforehand
+				break;
+			case XMLStreamConstants.END_DOCUMENT:
+				break;
+			case XMLStreamConstants.START_ELEMENT:
+				QName qn = exiReader.getName();
+				if(qn.getLocalPart().equals("message")) {
+					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue("a".equals(a));
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b == null);
+				} else if(qn.getLocalPart().equals("type")) {
+					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue("a".equals(a));
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue("b".equals(b));
+				} else {
+					fail("Unexpected SE qname: " + qn);
+				}
+				break;
+			case XMLStreamConstants.END_ELEMENT:
+				qn = exiReader.getName();
+				if(qn.getLocalPart().equals("message")) {
+					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue("a".equals(a));
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b == null);
+				} else if(qn.getLocalPart().equals("type")) {
+					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue("a".equals(a));
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue("b".equals(b));
+				} else {
+					fail("Unexpected EE qname: " + qn);
+				}
+				break;
+			case XMLStreamConstants.NAMESPACE:
+				break;
+			case XMLStreamConstants.CHARACTERS:
+				// String ch = exiReader.getText();
+				// System.out.println("\tCH: " +  ch);
+				break;
+			case XMLStreamConstants.SPACE:
+				break;
+			case XMLStreamConstants.ATTRIBUTE:
+				@SuppressWarnings("unused")
+				int attsX = exiReader.getAttributeCount();
+				break;
+			case XMLStreamConstants.COMMENT:
+				break;
+			case XMLStreamConstants.PROCESSING_INSTRUCTION:
+				break;
+			case XMLStreamConstants.DTD:
+				break;
+			case XMLStreamConstants.ENTITY_REFERENCE:
+				break;
+			default:
+				System.out.println("StAX Event '" + event
+						+ "' not supported!");
+			}
+		}
+	}
+	
+	// https://github.com/EXIficient/exificient/issues/18
+	public void testIssue18_simpifiedNoPrefix() throws AssertionFailedError, Exception {
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+		// Note: without prefix preservation there might be other prefixes than the one in the original XML
+		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		String sxml = "<a:message xmlns:a=\"urn:a\">\r\n" + 
+				"  <b:type xmlns:b=\"urn:b\">\r\n" + 
+				"   </b:type>\r\n" + 
+				"</a:message>";
+		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
+		
+		// encode
+		TestStAXEncoder tse = new TestStAXEncoder(ef);
+		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		tse.encodeTo(isXML, osEXI);
+		
+		// decode
+		StAXDecoder exiReader = new StAXDecoder(ef);
+		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
+		
+		while (exiReader.hasNext()) {
+			int event = exiReader.next();
+
+			switch (event) {
+			case XMLStreamConstants.START_DOCUMENT:
+				// should have happened beforehand
+				break;
+			case XMLStreamConstants.END_DOCUMENT:
+				break;
+			case XMLStreamConstants.START_ELEMENT:
+				QName qn = exiReader.getName();
+				if(qn.getLocalPart().equals("message")) {
+//					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue(a != null);
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b == null);
+				} else if(qn.getLocalPart().equals("type")) {
+//					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue(a != null);
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b != null);
+				} else {
+					fail("Unexpected SE qname: " + qn);
+				}
+				break;
+			case XMLStreamConstants.END_ELEMENT:
+				qn = exiReader.getName();
+				if(qn.getLocalPart().equals("message")) {
+//					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue(a != null);
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b == null);
+				} else if(qn.getLocalPart().equals("type")) {
+//					assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					assertTrue(a != null);
+					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					assertTrue(b != null);
+				} else {
+					fail("Unexpected EE qname: " + qn);
+				}
+				break;
+			case XMLStreamConstants.NAMESPACE:
+				break;
+			case XMLStreamConstants.CHARACTERS:
+				// String ch = exiReader.getText();
+				// System.out.println("\tCH: " +  ch);
+				break;
+			case XMLStreamConstants.SPACE:
+				break;
+			case XMLStreamConstants.ATTRIBUTE:
+				@SuppressWarnings("unused")
+				int attsX = exiReader.getAttributeCount();
+				break;
+			case XMLStreamConstants.COMMENT:
+				break;
+			case XMLStreamConstants.PROCESSING_INSTRUCTION:
+				break;
+			case XMLStreamConstants.DTD:
+				break;
+			case XMLStreamConstants.ENTITY_REFERENCE:
+				break;
+			default:
+				System.out.println("StAX Event '" + event
+						+ "' not supported!");
+			}
+		}
 	}
 
 	public static void main(String[] args) throws Exception {

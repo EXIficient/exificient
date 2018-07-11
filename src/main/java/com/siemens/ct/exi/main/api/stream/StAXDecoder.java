@@ -206,6 +206,11 @@ public class StAXDecoder implements XMLStreamReader
 
 	public int next() throws XMLStreamException {
 		try {
+			// if last eventType was EndElement remove NS Stack
+			if(this.eventType == EventType.END_ELEMENT || this.eventType == EventType.END_ELEMENT_UNDECLARED) {
+				this.nsContext.popNamespaceDeclarations();
+			}
+			
 			int ev;
 			if (this.preReadEventType == null) {
 				this.eventType = decodeEvent(decoder.next());
@@ -291,6 +296,7 @@ public class StAXDecoder implements XMLStreamReader
 //			}
 			endElementPrefix = decoder.getElementPrefix();
 			element = decoder.decodeEndElement();
+			// this.nsContext.popNamespaceDeclarations();
 			break;
 		/* CHARACTERS */
 		case CHARACTERS:
@@ -336,6 +342,9 @@ public class StAXDecoder implements XMLStreamReader
 			}	
 		} while (et == EventType.SELF_CONTAINED || ev == XMLStreamConstants.ATTRIBUTE
 				|| ev == XMLStreamConstants.NAMESPACE);
+		
+		List<NamespaceDeclaration> nsDecls = getNamespaceDeclarations();
+		this.nsContext.pushNamespaceDeclarations(nsDecls);	
 
 		this.preReadEventType = et;
 	}
@@ -451,7 +460,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceContext()
 	 */
 	public NamespaceContext getNamespaceContext() {
-		nsContext.setNamespaceDeclarations(getNamespaceDeclarations());
+		// nsContext.setNamespaceDeclarations(getNamespaceDeclarations());
 		return nsContext;
 	}
 
@@ -867,31 +876,63 @@ public class StAXDecoder implements XMLStreamReader
 	
 	class EXINamespaceContext implements NamespaceContext {
 
-		List<NamespaceDeclaration> _nsDecls;
+		// stack of NS declarations
+		List<List<NamespaceDeclaration>> _nsDecls;
+		// List<NamespaceDeclaration> _nsDecls;
+		
+		public EXINamespaceContext() {
+			this._nsDecls = new ArrayList<List<NamespaceDeclaration>>();
+		}
 
-		protected void setNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
-			_nsDecls = nsDecls;
+//		protected void setNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
+//			_nsDecls = nsDecls;
+//		}
+//		
+//		protected void addNamespaceDeclaration(NamespaceDeclaration nsDecl) {
+//			int lastIndex = _nsDecls.size()-1;
+//			List<NamespaceDeclaration> nsDecls = this._nsDecls.get(lastIndex);
+//			if(nsDecls == null) {
+//				nsDecls = new ArrayList<NamespaceDeclaration>();
+//				this._nsDecls.set(lastIndex, nsDecls);
+//			}
+//			nsDecls.add(nsDecl);
+//		}
+		
+		protected void pushNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
+			this._nsDecls.add(nsDecls);
+		}
+		
+		protected List<NamespaceDeclaration> popNamespaceDeclarations() {
+			return this._nsDecls.remove(this._nsDecls.size()-1);
 		}
 
 		public String getNamespaceURI(String prefix) {
-			if (_nsDecls != null) {
-				for (int i = 0; i < _nsDecls.size(); i++) {
-					NamespaceDeclaration nsDecl = _nsDecls.get(i);
-					if (nsDecl.prefix.equals(prefix)) {
-						return nsDecl.namespaceURI;
+			// inner hierarchy to outer
+			for(int k= _nsDecls.size()-1; k>=0; k--) {
+				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
+				if (nsDecls != null) {
+					for (int i = 0; i < nsDecls.size(); i++) {
+						NamespaceDeclaration nsDecl = nsDecls.get(i);
+						if (nsDecl.prefix.equals(prefix)) {
+							return nsDecl.namespaceURI;
+						}
 					}
-				}
+				}	
 			}
 
 			return null;
 		}
 
 		public String getPrefix(String namespaceURI) {
-			if (_nsDecls != null) {
-				for (int i = 0; i < _nsDecls.size(); i++) {
-					NamespaceDeclaration nsDecl = _nsDecls.get(i);
-					if (nsDecl.namespaceURI.equals(namespaceURI)) {
-						return nsDecl.prefix;
+			// inner hierarchy to outer
+			for(int k= _nsDecls.size()-1; k>=0; k--) {
+				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
+				if (nsDecls != null) {
+					for (int i = 0; i < nsDecls.size(); i++) {
+						NamespaceDeclaration nsDecl = nsDecls.get(i);
+						if (nsDecl.namespaceURI.equals(namespaceURI)) {
+							return nsDecl.prefix;
+						}
 					}
 				}
 			}
@@ -902,11 +943,15 @@ public class StAXDecoder implements XMLStreamReader
 		@SuppressWarnings("rawtypes")
 		public Iterator getPrefixes(String namespaceURI) {
 			List<String> prefixes = new ArrayList<String>();
-			if (_nsDecls != null) {
-				for (int i = 0; i < _nsDecls.size(); i++) {
-					NamespaceDeclaration nsDecl = _nsDecls.get(i);
-					if (nsDecl.namespaceURI.equals(namespaceURI)) {
-						prefixes.add(nsDecl.prefix);
+			// inner hierarchy to outer
+			for(int k= _nsDecls.size()-1; k>=0; k--) {
+				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
+				if (nsDecls != null) {
+					for (int i = 0; i < nsDecls.size(); i++) {
+						NamespaceDeclaration nsDecl = nsDecls.get(i);
+						if (nsDecl.namespaceURI.equals(namespaceURI)) {
+							prefixes.add(nsDecl.prefix);
+						}
 					}
 				}
 			}
