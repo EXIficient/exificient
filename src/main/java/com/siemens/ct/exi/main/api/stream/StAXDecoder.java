@@ -26,6 +26,7 @@ package com.siemens.ct.exi.main.api.stream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -432,12 +433,14 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	
-	List<NamespaceDeclaration> getNamespaceDeclaration() {
+	List<NamespaceDeclaration> getNamespaceDeclarations() {
+		List<NamespaceDeclaration> result;
 		if(eventType == EventType.END_ELEMENT || eventType == EventType.END_ELEMENT_UNDECLARED) {
-			return this.eePrefixes;
+			result = this.eePrefixes;
 		} else {
-			return decoder.getDeclaredPrefixDeclarations();
+			result = decoder.getDeclaredPrefixDeclarations();
 		}
+		return result != null ? result : Collections.<NamespaceDeclaration>emptyList();
 	}
 	
 	/*
@@ -448,7 +451,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceContext()
 	 */
 	public NamespaceContext getNamespaceContext() {
-		nsContext.setNamespaceDeclarations(getNamespaceDeclaration());
+		nsContext.setNamespaceDeclarations(getNamespaceDeclarations());
 		return nsContext;
 	}
 
@@ -462,7 +465,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceCount()
 	 */
 	public int getNamespaceCount() {
-		List<NamespaceDeclaration> nsDecls = getNamespaceDeclaration();
+		List<NamespaceDeclaration> nsDecls = getNamespaceDeclarations();
 		return nsDecls == null ? 0 : nsDecls.size();			
 	}
 
@@ -474,7 +477,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespacePrefix(int)
 	 */
 	public String getNamespacePrefix(int index) {
-		return getNamespaceDeclaration().get(index).prefix;
+		return getNamespaceDeclarations().get(index).prefix;
 	}
 
 	/*
@@ -485,7 +488,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceURI(int)
 	 */
 	public String getNamespaceURI(int index) {
-		return getNamespaceDeclaration().get(index).namespaceURI;
+		return getNamespaceDeclarations().get(index).namespaceURI;
 	}
 
 	/*
@@ -496,7 +499,7 @@ public class StAXDecoder implements XMLStreamReader
 	 * @see javax.xml.stream.XMLStreamReader#getNamespaceURI(java.lang.String)
 	 */
 	public String getNamespaceURI(String prefix) {
-		List<NamespaceDeclaration> nsDecls = getNamespaceDeclaration();
+		List<NamespaceDeclaration> nsDecls = getNamespaceDeclarations();
 		for (int i = 0; i < nsDecls.size(); i++) {
 			NamespaceDeclaration nsDecl = nsDecls.get(i);
 			if (nsDecl.prefix.equals(prefix)) {
