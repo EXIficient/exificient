@@ -47,7 +47,7 @@ import com.siemens.ct.exi.core.values.Value;
 import com.siemens.ct.exi.grammars.GrammarFactory;
 
 public class SchemaInformedTest extends TestCase {
-	
+
 	public static Grammars getGrammarFromSchemaAsString(String schemaAsString)
 			throws Exception {
 		ByteArrayInputStream bais = new ByteArrayInputStream(
@@ -204,8 +204,8 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
 					qnRoot.getLocalPart(), pfx);
-			encoder.encodeNamespaceDeclaration(
-					Constants.XML_SCHEMA_NS_URI, "xs");
+			encoder.encodeNamespaceDeclaration(Constants.XML_SCHEMA_NS_URI,
+					"xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 
 			encoder.encodeEndElement();
@@ -270,8 +270,8 @@ public class SchemaInformedTest extends TestCase {
 			encoder.encodeStartDocument();
 			encoder.encodeStartElement(qnRoot.getNamespaceURI(),
 					qnRoot.getLocalPart(), pfx);
-			encoder.encodeNamespaceDeclaration(
-					Constants.XML_SCHEMA_NS_URI, "xs");
+			encoder.encodeNamespaceDeclaration(Constants.XML_SCHEMA_NS_URI,
+					"xs");
 			encoder.encodeAttributeXsiType(new StringValue("xs:string"), pfx);
 
 			encoder.encodeEndElement();

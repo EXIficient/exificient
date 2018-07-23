@@ -100,11 +100,13 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		typeEncoder.writeValue(null, bitEC, null);
 		bitEC.flush();
-		BooleanValue val1 = (BooleanValue) typeDecoder.readValue(bool, null, getBitDecoder(), null);
+		BooleanValue val1 = (BooleanValue) typeDecoder.readValue(bool, null,
+				getBitDecoder(), null);
 		assertTrue(v == val1.toBoolean());
 		// Byte
 		typeEncoder.writeValue(null, getByteEncoder(), null);
-		BooleanValue val2 = (BooleanValue) typeDecoder.readValue(bool, null, getByteDecoder(), null);
+		BooleanValue val2 = (BooleanValue) typeDecoder.readValue(bool, null,
+				getByteDecoder(), null);
 		assertTrue(v == val2.toBoolean());
 	}
 
@@ -122,11 +124,13 @@ public class BooleanTest extends AbstractTestCase {
 		EncoderChannel bitEC = getBitEncoder();
 		typeEncoder.writeValue(null, bitEC, null);
 		bitEC.flush();
-		BooleanValue val1 = (BooleanValue) typeDecoder.readValue(bool, null, getBitDecoder(), null); 
+		BooleanValue val1 = (BooleanValue) typeDecoder.readValue(bool, null,
+				getBitDecoder(), null);
 		assertTrue(v == val1.toBoolean());
 		// Byte
 		typeEncoder.writeValue(null, getByteEncoder(), null);
-		BooleanValue val2 = (BooleanValue) typeDecoder.readValue(bool, null, getByteDecoder(), null);
+		BooleanValue val2 = (BooleanValue) typeDecoder.readValue(bool, null,
+				getByteDecoder(), null);
 		assertTrue(v == val2.toBoolean());
 	}
 

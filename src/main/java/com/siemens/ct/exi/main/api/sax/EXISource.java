@@ -37,11 +37,10 @@ import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class EXISource extends SAXSource {
-	
+
 	SAXFactory saxFactory;
 
 	public EXISource() throws EXIException {

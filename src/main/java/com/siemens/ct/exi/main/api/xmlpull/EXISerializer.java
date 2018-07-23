@@ -28,7 +28,7 @@ package com.siemens.ct.exi.main.api.xmlpull;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
+
  */
 
 import java.io.IOException;
@@ -49,41 +49,41 @@ import com.siemens.ct.exi.core.exceptions.EXIException;
 import com.siemens.ct.exi.core.values.StringValue;
 
 public class EXISerializer implements XmlSerializer {
-	
+
 	final protected EXIFactory factory;
 	final protected EXIStreamEncoder exiStream;
-	
+
 	protected EXIBodyEncoder exiBody;
-	
+
 	protected OutputStream outputStream;
-	
+
 	protected List<NamespaceDeclaration> nsDecls;
-	
+
 	String currentNamespace;
 	String currentName;
-	
+
 	// AT or NS Events pending
 	protected boolean pendingATs;
 
 	// attributes
 	protected AttributeList exiAttributes;
-	
 
 	public EXISerializer(EXIFactory factory) throws EXIException {
 		this.factory = factory;
-		
+
 		this.exiStream = factory.createEXIStreamEncoder();
-		
+
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
-		
+
 		nsDecls = new ArrayList<NamespaceDeclaration>();
 	}
 
 	public void setFeature(String name, boolean state)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO check if any feature could be of interest
-		throw new IllegalStateException("EXI does not support setting feature " + name + " to " + state);
+		throw new IllegalStateException("EXI does not support setting feature "
+				+ name + " to " + state);
 
 	}
 
@@ -94,11 +94,13 @@ public class EXISerializer implements XmlSerializer {
 	public void setProperty(String name, Object value)
 			throws IllegalArgumentException, IllegalStateException {
 		// TODO check if any property could be of interest
-		throw new IllegalStateException("EXI does not support setting property " + name + " to " + value);
+		throw new IllegalStateException(
+				"EXI does not support setting property " + name + " to "
+						+ value);
 	}
 
 	public Object getProperty(String name) {
-		return null; // unknown 
+		return null; // unknown
 	}
 
 	public void setOutput(OutputStream os, String encoding) throws IOException,
@@ -113,15 +115,15 @@ public class EXISerializer implements XmlSerializer {
 
 	public void setOutput(Writer writer) throws IOException,
 			IllegalArgumentException, IllegalStateException {
-		throw new IllegalArgumentException("EXI requires byte-based stream. Consider using OutputStream");
+		throw new IllegalArgumentException(
+				"EXI requires byte-based stream. Consider using OutputStream");
 	}
 
-	
 	protected void init() {
 		pendingATs = false;
 		exiAttributes.clear();
 	}
-	
+
 	public void startDocument(String encoding, Boolean standalone)
 			throws IOException, IllegalArgumentException, IllegalStateException {
 		try {
@@ -165,16 +167,16 @@ public class EXISerializer implements XmlSerializer {
 	public String getName() {
 		return currentName;
 	}
-	
+
 	public XmlSerializer startTag(String namespace, String name)
 			throws IOException, IllegalArgumentException, IllegalStateException {
 		try {
 			checkPendingATEvents();
-			
+
 			this.currentNamespace = namespace;
 			this.currentName = name;
 			exiBody.encodeStartElement(namespace, name, null);
-			for(int i=0; i<nsDecls.size(); i++) {
+			for (int i = 0; i < nsDecls.size(); i++) {
 				NamespaceDeclaration ns = nsDecls.get(i);
 				exiBody.encodeNamespaceDeclaration(ns.namespaceURI, ns.prefix);
 			}
@@ -184,17 +186,17 @@ public class EXISerializer implements XmlSerializer {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	protected void checkPendingATEvents() throws IOException {
 		try {
 			// NS first & ATs
 			if (pendingATs) {
 				// encode NS decls and attributes
-				
-					exiBody.encodeAttributeList(exiAttributes);
-	
+
+				exiBody.encodeAttributeList(exiAttributes);
+
 				exiAttributes.clear();
-	
+
 				pendingATs = false;
 			}
 		} catch (EXIException e) {
@@ -204,8 +206,7 @@ public class EXISerializer implements XmlSerializer {
 
 	public XmlSerializer attribute(String namespace, String name, String value)
 			throws IOException, IllegalArgumentException, IllegalStateException {
-		this.exiAttributes.addAttribute(namespace, name, null,
-				value);
+		this.exiAttributes.addAttribute(namespace, name, null, value);
 		return this;
 	}
 

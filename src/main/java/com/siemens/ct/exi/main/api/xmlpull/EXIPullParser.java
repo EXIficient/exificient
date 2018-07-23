@@ -28,7 +28,7 @@ package com.siemens.ct.exi.main.api.xmlpull;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
+
  */
 
 import java.io.IOException;
@@ -55,15 +55,15 @@ public class EXIPullParser implements XmlPullParser {
 
 	final protected EXIFactory factory;
 	final protected EXIStreamDecoder exiStream;
-	
+
 	protected EXIBodyDecoder decoder;
-	
+
 	/* current event */
 	protected EventType eventType;
-	
+
 	/* pre-read event, e.g., for attribute count */
 	protected EventType preReadEventType;
-	
+
 	protected QNameContext element;
 	protected List<AttributeContainer> attributes;
 	protected Value characters;
@@ -71,7 +71,7 @@ public class EXIPullParser implements XmlPullParser {
 	protected char[] entityReference;
 	protected char[] comment;
 	protected ProcessingInstruction processingInstruction;
-	
+
 	static class AttributeContainer {
 		final QNameContext qname;
 		final Value value;
@@ -83,11 +83,10 @@ public class EXIPullParser implements XmlPullParser {
 			this.prefix = prefix;
 		}
 	}
-	
-	
+
 	public EXIPullParser(EXIFactory factory) throws EXIException {
 		this.factory = factory;
-		
+
 		exiStream = factory.createEXIStreamDecoder();
 		this.attributes = new ArrayList<AttributeContainer>();
 		// this.nsContext = new EXINamespaceContext();
@@ -96,7 +95,8 @@ public class EXIPullParser implements XmlPullParser {
 	public void setFeature(String name, boolean state)
 			throws XmlPullParserException {
 		// TODO check if any feature could be of interest
-		throw new XmlPullParserException("EXI does not support setting feature " + name + " to " + state);
+		throw new XmlPullParserException(
+				"EXI does not support setting feature " + name + " to " + state);
 	}
 
 	public boolean getFeature(String name) {
@@ -106,15 +106,18 @@ public class EXIPullParser implements XmlPullParser {
 	public void setProperty(String name, Object value)
 			throws XmlPullParserException {
 		// TODO check if any property could be of interest
-		throw new XmlPullParserException("EXI does not support setting property " + name + " to " + value);
+		throw new XmlPullParserException(
+				"EXI does not support setting property " + name + " to "
+						+ value);
 	}
 
 	public Object getProperty(String name) {
-		return null; // unknown 
+		return null; // unknown
 	}
 
 	public void setInput(Reader in) throws XmlPullParserException {
-		throw new XmlPullParserException("EXI requires byte-based stream. Consider using InputStream.");
+		throw new XmlPullParserException(
+				"EXI requires byte-based stream. Consider using InputStream.");
 	}
 
 	public void setInput(InputStream inputStream, String inputEncoding)
@@ -127,34 +130,32 @@ public class EXIPullParser implements XmlPullParser {
 			throw new XmlPullParserException("[EXI] " + e.getMessage());
 		}
 	}
-	
-	protected void parseHeader(InputStream is) throws EXIException,
-	IOException {
+
+	protected void parseHeader(InputStream is) throws EXIException, IOException {
 		assert (is != null);
 		assert (exiStream != null);
-		
+
 		// read header
 		decoder = exiStream.decodeHeader(is);
-		
+
 		// init
 		initForEachRun();
-		
+
 		// ready to process EXI events
 		eventType = decoder.next();
 		assert (eventType == EventType.START_DOCUMENT);
 		decoder.decodeStartDocument();
 	}
-	
+
 	protected void initForEachRun() {
 		eventType = null;
-		
+
 		preReadEventType = null;
 		attributes.clear();
 	}
-	
 
 	public String getInputEncoding() {
-		return null;  // unknown 
+		return null; // unknown
 	}
 
 	public void defineEntityReplacementText(String entityName,
@@ -164,7 +165,7 @@ public class EXIPullParser implements XmlPullParser {
 	public int getNamespaceCount(int depth) throws XmlPullParserException {
 		// TODO take into account depth
 		List<NamespaceDeclaration> ns = decoder.getDeclaredPrefixDeclarations();
-		if(ns == null) {
+		if (ns == null) {
 			return 0;
 		} else {
 			return ns.size();
@@ -173,7 +174,7 @@ public class EXIPullParser implements XmlPullParser {
 
 	public String getNamespacePrefix(int pos) throws XmlPullParserException {
 		List<NamespaceDeclaration> ns = decoder.getDeclaredPrefixDeclarations();
-		if(ns == null || pos >= ns.size()) {
+		if (ns == null || pos >= ns.size()) {
 			return null;
 		} else {
 			return ns.get(pos).prefix;
@@ -182,7 +183,7 @@ public class EXIPullParser implements XmlPullParser {
 
 	public String getNamespaceUri(int pos) throws XmlPullParserException {
 		List<NamespaceDeclaration> ns = decoder.getDeclaredPrefixDeclarations();
-		if(ns == null || pos >= ns.size()) {
+		if (ns == null || pos >= ns.size()) {
 			return null;
 		} else {
 			return ns.get(pos).namespaceURI;
@@ -190,17 +191,17 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public String getNamespace(String prefix) {
-		if(prefix == null) {
+		if (prefix == null) {
 			return null;
 		}
-		
+
 		List<NamespaceDeclaration> ns = decoder.getDeclaredPrefixDeclarations();
-		if(ns != null) {
-			for(int i=ns.size()-1; i>= 0; i--) {
-				if(prefix.equals(ns.get(i).prefix)) {
+		if (ns != null) {
+			for (int i = ns.size() - 1; i >= 0; i--) {
+				if (prefix.equals(ns.get(i).prefix)) {
 					return ns.get(i).namespaceURI;
 				}
-			}			
+			}
 		}
 
 		return null;
@@ -216,11 +217,11 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public int getLineNumber() {
-		return 0;  // not supported
+		return 0; // not supported
 	}
 
 	public int getColumnNumber() {
-		return 0;  // not supported
+		return 0; // not supported
 	}
 
 	public boolean isWhitespace() throws XmlPullParserException {
@@ -248,18 +249,20 @@ public class EXIPullParser implements XmlPullParser {
 			case XmlPullParser.DOCDECL:
 				return getDocTypeString();
 			default:
-				throw new RuntimeException("Unexpected event, id=" + getEventType());
+				throw new RuntimeException("Unexpected event, id="
+						+ getEventType());
 			}
 		} catch (XmlPullParserException e) {
-			throw new RuntimeException("Unexpected text, error=" + e.getMessage());
+			throw new RuntimeException("Unexpected text, error="
+					+ e.getMessage());
 		}
 	}
-	
+
 	private String getDocTypeString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<!DOCTYPE ");
 		sb.append(docType.name);
-		
+
 		if (docType.publicID.length > 0) {
 			sb.append(" PUBLIC ");
 			sb.append('\"');
@@ -268,7 +271,7 @@ public class EXIPullParser implements XmlPullParser {
 		}
 		if (docType.systemID.length > 0) {
 			if (docType.publicID.length == 0) {
-				sb.append(" SYSTEM ");	
+				sb.append(" SYSTEM ");
 			} else {
 				sb.append(' ');
 			}
@@ -280,7 +283,7 @@ public class EXIPullParser implements XmlPullParser {
 			sb.append(' ');
 			sb.append('[');
 			sb.append(docType.text);
-			sb.append(']');			
+			sb.append(']');
 		}
 		sb.append('>');
 
@@ -296,19 +299,18 @@ public class EXIPullParser implements XmlPullParser {
 
 	public String getNamespace() {
 		int et = getEventType(this.eventType);
-		if(et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
+		if (et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
 			return this.element.getNamespaceUri();
 		} else {
 			return null;
 		}
 	}
 
-	
 	public String getName() {
 		int et = getEventType(this.eventType);
-		if(et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
+		if (et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
 			return this.element.getLocalName();
-		} else if(et == XmlPullParser.ENTITY_REF) {
+		} else if (et == XmlPullParser.ENTITY_REF) {
 			return new String(this.entityReference);
 		} else {
 			return null;
@@ -317,12 +319,13 @@ public class EXIPullParser implements XmlPullParser {
 
 	public String getPrefix() {
 		int et = getEventType(this.eventType);
-		if(et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
+		if (et == XmlPullParser.START_TAG || et == XmlPullParser.END_TAG) {
 			if (this.endElementPrefix != null) {
 				return endElementPrefix;
 			}
-			
-			// Returns the prefix of the current event or null if the event does not
+
+			// Returns the prefix of the current event or null if the event does
+			// not
 			// have a prefix
 			return decoder.getElementPrefix();
 		} else {
@@ -331,7 +334,7 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public boolean isEmptyElementTag() throws XmlPullParserException {
-		return false; // by default never degenerated 
+		return false; // by default never degenerated
 	}
 
 	public int getAttributeCount() {
@@ -339,26 +342,26 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public String getAttributeNamespace(int index) {
-		if(index >=0 && index < attributes.size()) {
+		if (index >= 0 && index < attributes.size()) {
 			return attributes.get(index).qname.getNamespaceUri();
 		} else {
-			return null;	
+			return null;
 		}
 	}
 
 	public String getAttributeName(int index) {
-		if(index >=0 && index < attributes.size()) {
+		if (index >= 0 && index < attributes.size()) {
 			return attributes.get(index).qname.getLocalName();
 		} else {
-			return null;	
+			return null;
 		}
 	}
 
 	public String getAttributePrefix(int index) {
-		if(index >=0 && index < attributes.size()) {
+		if (index >= 0 && index < attributes.size()) {
 			return attributes.get(index).prefix;
 		} else {
-			return null;	
+			return null;
 		}
 	}
 
@@ -371,35 +374,35 @@ public class EXIPullParser implements XmlPullParser {
 	}
 
 	public String getAttributeValue(int index) {
-		if(index >=0 && index < attributes.size()) {
+		if (index >= 0 && index < attributes.size()) {
 			return attributes.get(index).value.toString();
 		} else {
-			return null;	
+			return null;
 		}
 	}
 
 	public String getAttributeValue(String namespace, String name) {
-		if(name == null) {
+		if (name == null) {
 			return null;
 		}
-		if(namespace == null) {
+		if (namespace == null) {
 			namespace = "";
 		}
-		
-		for(int i=0;i<attributes.size(); i++) {
-			if(attributes.get(i).qname.getNamespaceUri().equals(namespace) && attributes.get(i).qname.getLocalName().equals(name) ) {
+
+		for (int i = 0; i < attributes.size(); i++) {
+			if (attributes.get(i).qname.getNamespaceUri().equals(namespace)
+					&& attributes.get(i).qname.getLocalName().equals(name)) {
 				return attributes.get(i).value.toString();
 			}
 		}
-		
+
 		return null;
 	}
 
 	public int getEventType() throws XmlPullParserException {
 		return getEventType(this.eventType);
 	}
-	
-	
+
 	protected static int getEventType(EventType eventType) {
 		assert (eventType != null);
 		switch (eventType) {
@@ -450,15 +453,15 @@ public class EXIPullParser implements XmlPullParser {
 	public int next() throws XmlPullParserException, IOException {
 		return this.nextToken();
 	}
-	
+
 	String endElementPrefix;
-	
+
 	// without further attribute handling
 	protected EventType decodeEvent(EventType nextEventType)
 			throws EXIException, IOException {
 
 		endElementPrefix = null;
-		
+
 		switch (nextEventType) {
 		/* DOCUMENT */
 		case START_DOCUMENT:
@@ -507,11 +510,12 @@ public class EXIPullParser implements XmlPullParser {
 		/* END ELEMENT */
 		case END_ELEMENT:
 		case END_ELEMENT_UNDECLARED:
-//			@SuppressWarnings("unused")
-//			List<NamespaceDeclaration> eePrefixes = decoder.getDeclaredPrefixDeclarations();
-//			if (namespacePrefixes) {
-//				// eeQNameAsString = decoder.getElementQNameAsString();
-//			}
+			// @SuppressWarnings("unused")
+			// List<NamespaceDeclaration> eePrefixes =
+			// decoder.getDeclaredPrefixDeclarations();
+			// if (namespacePrefixes) {
+			// // eeQNameAsString = decoder.getElementQNameAsString();
+			// }
 			endElementPrefix = decoder.getElementPrefix();
 			element = decoder.decodeEndElement();
 			break;
@@ -541,25 +545,25 @@ public class EXIPullParser implements XmlPullParser {
 
 		return nextEventType;
 	}
-	
-	protected void handleAttributes() throws EXIException, IOException, XmlPullParserException {
+
+	protected void handleAttributes() throws EXIException, IOException,
+			XmlPullParserException {
 		assert (getEventType() == XmlPullParser.START_TAG);
 		attributes.clear();
 		EventType et;
 		do {
 			et = decoder.next();
-			if(isAttributeEvent(et)) {
+			if (isAttributeEvent(et)) {
 				this.decodeEvent(et);
 			}
 		} while (isAttributeEvent(et));
 
 		this.preReadEventType = et;
 	}
-	
-	
+
 	private boolean isAttributeEvent(EventType et) {
 		boolean isAttributeEvent = false;
-		switch(et) {
+		switch (et) {
 		case ATTRIBUTE:
 		case ATTRIBUTE_NS:
 		case ATTRIBUTE_GENERIC:
@@ -577,13 +581,9 @@ public class EXIPullParser implements XmlPullParser {
 			break;
 		default:
 		}
-		
+
 		return isAttributeEvent;
 	}
-	
-
-	
-	
 
 	public int nextToken() throws XmlPullParserException, IOException {
 		try {
@@ -600,7 +600,7 @@ public class EXIPullParser implements XmlPullParser {
 			if (ev == XmlPullParser.START_TAG) {
 				handleAttributes();
 			}
-			
+
 			return ev;
 		} catch (Exception e) {
 			throw new IOException(e);

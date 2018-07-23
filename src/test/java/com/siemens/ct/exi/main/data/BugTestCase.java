@@ -129,7 +129,7 @@ public class BugTestCase extends AbstractTestCase {
 				.setValuePartitionCapacity(9);
 
 	}
-	
+
 	@Test
 	public void testBug29() throws Exception {
 		// set up configuration

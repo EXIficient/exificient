@@ -67,7 +67,6 @@ import com.siemens.ct.exi.main.util.NoEntityResolver;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class SAXDecoder implements XMLReader {
@@ -97,7 +96,7 @@ public class SAXDecoder implements XMLReader {
 
 	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		if(noOptionsFactory.getSchemaIdResolver() == null) {
+		if (noOptionsFactory.getSchemaIdResolver() == null) {
 			// set default schemaId resolver
 			noOptionsFactory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 		}
@@ -303,7 +302,7 @@ public class SAXDecoder implements XMLReader {
 			case START_ELEMENT_GENERIC:
 			case START_ELEMENT_GENERIC_UNDECLARED:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 				}
 				// defer start element and keep on processing
@@ -315,7 +314,7 @@ public class SAXDecoder implements XMLReader {
 			case END_ELEMENT:
 			case END_ELEMENT_UNDECLARED:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -352,7 +351,7 @@ public class SAXDecoder implements XMLReader {
 			case CHARACTERS_GENERIC:
 			case CHARACTERS_GENERIC_UNDECLARED:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -421,7 +420,7 @@ public class SAXDecoder implements XMLReader {
 			/* MISC */
 			case DOC_TYPE:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -430,7 +429,7 @@ public class SAXDecoder implements XMLReader {
 				break;
 			case ENTITY_REFERENCE:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -439,7 +438,7 @@ public class SAXDecoder implements XMLReader {
 				break;
 			case COMMENT:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -448,7 +447,7 @@ public class SAXDecoder implements XMLReader {
 				break;
 			case PROCESSING_INSTRUCTION:
 				// handle deferred element if any first
-				if(isStartElementDeferred) {
+				if (isStartElementDeferred) {
 					handleDeferredStartElement(deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
@@ -467,34 +466,36 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * SAX Content Handler
 	 */
-	protected void handleDeferredStartElement(QNameContext deferredStartElement, final AttributesImpl attributes) throws SAXException,
-			IOException, EXIException {
+	protected void handleDeferredStartElement(
+			QNameContext deferredStartElement, final AttributesImpl attributes)
+			throws SAXException, IOException, EXIException {
 
 		if (namespaces) {
-			List<NamespaceDeclaration> prefixes = decoder.getDeclaredPrefixDeclarations();
+			List<NamespaceDeclaration> prefixes = decoder
+					.getDeclaredPrefixDeclarations();
 			if (prefixes != null) {
 				for (int i = 0; i < prefixes.size(); i++) {
 					NamespaceDeclaration ns = prefixes.get(i);
-					contentHandler.startPrefixMapping(ns.prefix, ns.namespaceURI);
+					contentHandler.startPrefixMapping(ns.prefix,
+							ns.namespaceURI);
 				}
 			}
 		}
 
 		/*
-		 * the qualified name is required when the namespace-prefixes
-		 * property is true, and is optional when the namespace-prefixes
-		 * property is false (the default).
+		 * the qualified name is required when the namespace-prefixes property
+		 * is true, and is optional when the namespace-prefixes property is
+		 * false (the default).
 		 */
 		// String seQNameAsString = Constants.EMPTY_STRING;
 		// if (namespacePrefixes) {
 		// seQNameAsString = decoder.getElementQNameAsString();
 		// }
 		/*
-		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide
-		 * the textual qname even when
+		 * Note: it looks like widely used APIs (Xerces, Saxon, ..) provide the
+		 * textual qname even when
 		 * http://xml.org/sax/features/namespace-prefixes is set to false
-		 * http://
-		 * sourceforge.net/projects/exificient/forums/forum/856596/topic
+		 * http:// sourceforge.net/projects/exificient/forums/forum/856596/topic
 		 * /5839494
 		 */
 		String seQNameAsString = decoder.getElementQNameAsString();
@@ -520,8 +521,9 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	protected void handleAttribute(final QNameContext atQName, final AttributesImpl attributes) throws SAXException,
-			IOException, EXIException {
+	protected void handleAttribute(final QNameContext atQName,
+			final AttributesImpl attributes) throws SAXException, IOException,
+			EXIException {
 		Value val = decoder.getAttributeValue();
 		String sVal;
 

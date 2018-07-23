@@ -37,43 +37,43 @@ import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-
-public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, DeclHandler {
+public class SimpleDocTypeParser implements LexicalHandler, ContentHandler,
+		DeclHandler {
 
 	XMLReader xmlReader;
-	
+
 	public String name;
 	public String publicID;
 	public String systemID;
 	public String text;
-	
+
 	public SimpleDocTypeParser() throws SAXException {
 
 		xmlReader = XMLReaderFactory.createXMLReader();
 
 		xmlReader.setContentHandler(this);
-		
+
 		// LexicalHandler
-		xmlReader.setProperty(
-		 "http://xml.org/sax/properties/lexical-handler", this);
-		
+		xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler",
+				this);
+
 		// DeclHandler
 		xmlReader.setProperty(
 				"http://xml.org/sax/properties/declaration-handler", this);
-		
+
 		// DTD
 		xmlReader.setFeature("http://xml.org/sax/features/resolve-dtd-uris",
 				false);
 		// *skip* resolving entities like DTDs
 		xmlReader.setEntityResolver(new NoEntityResolver());
 
-//		xmlReader.setProperty(
-//				"http://xml.org/sax/properties/declaration-handler", dh);
-		
+		// xmlReader.setProperty(
+		// "http://xml.org/sax/properties/declaration-handler", dh);
+
 	}
 
 	public void parse(String docTypeDecl) throws IOException, SAXException {
-		
+
 		StringBuilder dt = new StringBuilder();
 		dt.append(docTypeDecl);
 		dt.append("<foo />");
@@ -87,7 +87,7 @@ public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, Decl
 		this.publicID = publicId == null ? "" : publicId;
 		this.systemID = systemId == null ? "" : systemId;
 		this.text = "";
-		
+
 	}
 
 	public void endDTD() throws SAXException {
@@ -104,15 +104,13 @@ public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, Decl
 
 	public void endCDATA() throws SAXException {
 	}
-	
 
 	public void comment(char[] ch, int start, int length) throws SAXException {
 	}
 
-	
 	/*
 	 * CONTENT handler
-	 */	
+	 */
 	public void setDocumentLocator(Locator locator) {
 	}
 
@@ -153,7 +151,6 @@ public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, Decl
 	public void skippedEntity(String name) throws SAXException {
 	}
 
-	
 	/*
 	 * DeclHandler
 	 */
@@ -166,8 +163,8 @@ public class SimpleDocTypeParser implements LexicalHandler, ContentHandler, Decl
 	public void attributeDecl(String eName, String aName, String type,
 			String mode, String value) throws SAXException {
 		// e.g. <!ATTLIST TVSCHEDULE NAME CDATA #REQUIRED>
-		text += "<!ATTLIST " + eName + " " + aName + " " + type
-				+ " " + mode + "> ";
+		text += "<!ATTLIST " + eName + " " + aName + " " + type + " " + mode
+				+ "> ";
 	}
 
 	public void internalEntityDecl(String name, String value)

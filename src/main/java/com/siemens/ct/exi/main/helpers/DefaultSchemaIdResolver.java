@@ -33,32 +33,33 @@ import com.siemens.ct.exi.grammars.GrammarFactory;
  * 
  * This is the default implementation of an <code>SchemaIdResolver</code> class.
  * 
- * <p>SchemaId is interpreted as file location</p>
+ * <p>
+ * SchemaId is interpreted as file location
+ * </p>
  * 
  * @see EXIFactory
  * 
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class DefaultSchemaIdResolver implements SchemaIdResolver {
-	
-//	protected GrammarFactory gf;
-	
+
+	// protected GrammarFactory gf;
+
 	public DefaultSchemaIdResolver() {
-		
+
 	}
-	
+
 	protected GrammarFactory getGrammarFactory() {
 		return GrammarFactory.newInstance();
-//		if (gf == null) {
-//			gf = GrammarFactory.newInstance();
-//		}
-//		return gf;
+		// if (gf == null) {
+		// gf = GrammarFactory.newInstance();
+		// }
+		// return gf;
 	}
-	
+
 	public Grammars resolveSchemaId(String schemaId) throws EXIException {
 		if (schemaId == null) {
 			return getGrammarFactory().createSchemaLessGrammars();
@@ -69,9 +70,10 @@ public class DefaultSchemaIdResolver implements SchemaIdResolver {
 			try {
 				return getGrammarFactory().createGrammars(schemaId);
 			} catch (Exception e) {
-				throw new EXIException(this.getClass().getName() + " failed to retrieve schemaId == " + schemaId, e);
+				throw new EXIException(this.getClass().getName()
+						+ " failed to retrieve schemaId == " + schemaId, e);
 			}
 		}
 	}
-	
+
 }

@@ -70,7 +70,8 @@ public abstract class AbstractTestCoder {
 			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
 		}
 		if (QuickTestConfiguration.INCLUDE_PROFILE_VALUES) {
-			ef.getEncodingOptions().setOption(EncodingOptions.INCLUDE_PROFILE_VALUES);
+			ef.getEncodingOptions().setOption(
+					EncodingOptions.INCLUDE_PROFILE_VALUES);
 		}
 		if (QuickTestConfiguration.INCLUDE_SCHEMA_ID) {
 			ef.getEncodingOptions()

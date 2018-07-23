@@ -66,8 +66,6 @@ public class ListTest extends AbstractTestCase {
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
 		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
-		
-
 		// Bit
 		{
 			boolean valid = typeEncoder.isValid(ldtInteger, s);
@@ -82,14 +80,14 @@ public class ListTest extends AbstractTestCase {
 			assertTrue(s.equals(lv1.toString()));
 		}
 
-
 		// Byte
 		{
 			boolean valid = typeEncoder.isValid(ldtInteger, s);
 			assertTrue(valid);
 			EncoderChannel byteEC = getByteEncoder();
 			typeEncoder.writeValue(null, byteEC, null);
-			Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
+			Value v2 = typeDecoder.readValue(ldtInteger, null,
+					getByteDecoder(), null);
 			assertTrue(v2.getValueType() == ValueType.LIST);
 			ListValue lv2 = (ListValue) v2;
 			assertTrue(s.equals(lv2.toString()));
@@ -108,29 +106,32 @@ public class ListTest extends AbstractTestCase {
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		exiFactory.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
-		
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
+		exiFactory.setGrammars(GrammarFactory.newInstance()
+				.createXSDTypesOnlyGrammars());
+
+		StringEncoder stringEncoder = exiFactory.createStringEncoder();
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
 		QNameContext qncContext = new QNameContext(0, 0, context);
-		
+
 		TypeEncoder te = exiFactory.createTypeEncoder();
 		TypeDecoder td = exiFactory.createTypeDecoder();
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		te.isValid(ldtInteger, s);
 		te.writeValue(qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(), stringDecoder);
+		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(),
+				stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
 		te.isValid(ldtInteger, s);
 		te.writeValue(qncContext, byteEC, stringEncoder);
-		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(), stringDecoder);
+		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(),
+				stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
 
@@ -141,34 +142,37 @@ public class ListTest extends AbstractTestCase {
 		ListDatatype ldtInteger = new ListDatatype(new IntegerDatatype(null),
 				null);
 
-//		boolean valid = ldtInteger.isValid(s);
-//		assertTrue(valid);
+		// boolean valid = ldtInteger.isValid(s);
+		// assertTrue(valid);
 
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setFidelityOptions(FidelityOptions.createAll());
-		exiFactory.setGrammars(GrammarFactory.newInstance().createXSDTypesOnlyGrammars());
-		
-		StringEncoder stringEncoder = exiFactory.createStringEncoder(); 
+		exiFactory.setGrammars(GrammarFactory.newInstance()
+				.createXSDTypesOnlyGrammars());
+
+		StringEncoder stringEncoder = exiFactory.createStringEncoder();
 		StringDecoder stringDecoder = exiFactory.createStringDecoder();
 		QName context = new QName("", "intList");
 		QNameContext qncContext = new QNameContext(0, 0, context);
-		
+
 		TypeEncoder te = exiFactory.createTypeEncoder();
 		TypeDecoder td = exiFactory.createTypeDecoder();
-		
+
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
 		te.isValid(ldtInteger, s);
 		te.writeValue(qncContext, bitEC, stringEncoder);
 		bitEC.flush();
-		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(), stringDecoder);
+		Value v1 = td.readValue(ldtInteger, qncContext, getBitDecoder(),
+				stringDecoder);
 		assertTrue(s.equals(v1.toString()));
 
 		// Byte
 		EncoderChannel byteEC = getByteEncoder();
 		te.isValid(ldtInteger, s);
 		te.writeValue(qncContext, byteEC, stringEncoder);
-		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(), stringDecoder);
+		Value v2 = td.readValue(ldtInteger, qncContext, getByteDecoder(),
+				stringDecoder);
 		assertTrue(s.equals(v2.toString()));
 	}
 
@@ -182,8 +186,6 @@ public class ListTest extends AbstractTestCase {
 		TypeDecoder typeDecoder = new TypedTypeDecoder();
 		TypeEncoder typeEncoder = new TypedTypeEncoder();
 
-
-
 		// Bit
 		{
 			boolean valid = typeEncoder.isValid(ldtInteger, s);
@@ -191,12 +193,12 @@ public class ListTest extends AbstractTestCase {
 			EncoderChannel bitEC = getBitEncoder();
 			typeEncoder.writeValue(null, bitEC, null);
 			bitEC.flush();
-			Value v1 = typeDecoder.readValue(ldtInteger, null, getBitDecoder(), null);
+			Value v1 = typeDecoder.readValue(ldtInteger, null, getBitDecoder(),
+					null);
 			assertTrue(v1.getValueType() == ValueType.LIST);
 			ListValue lv1 = (ListValue) v1;
 			assertTrue(sRes.equals(lv1.toString()));
 		}
-
 
 		// Byte
 		{
@@ -204,10 +206,11 @@ public class ListTest extends AbstractTestCase {
 			assertTrue(valid);
 			EncoderChannel byteEC = getByteEncoder();
 			typeEncoder.writeValue(null, byteEC, null);
-			Value v2 = typeDecoder.readValue(ldtInteger, null, getByteDecoder(), null);
+			Value v2 = typeDecoder.readValue(ldtInteger, null,
+					getByteDecoder(), null);
 			assertTrue(v2.getValueType() == ValueType.LIST);
 			ListValue lv2 = (ListValue) v2;
-			assertTrue(sRes.equals(lv2.toString()));			
+			assertTrue(sRes.equals(lv2.toString()));
 		}
 
 	}
@@ -324,7 +327,8 @@ public class ListTest extends AbstractTestCase {
 		assertTrue(dt.getBuiltInType() == BuiltInType.LIST);
 		// EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 
-		assertTrue(typeEncoder.isValid(dt, new StringValue("  1e4 -10000 5.234e-2   ")));
+		assertTrue(typeEncoder.isValid(dt, new StringValue(
+				"  1e4 -10000 5.234e-2   ")));
 
 		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
 	}

@@ -193,23 +193,23 @@ public class StringTableTest extends AbstractTestCase {
 				baos.toByteArray()));
 
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC1, bdc, stringDecoder)
-				.toString().equals(val1));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC1, bdc,
+						stringDecoder).toString().equals(val1));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc, stringDecoder)
-				.toString().equals(val2));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc,
+						stringDecoder).toString().equals(val2));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC2, bdc, stringDecoder)
-				.toString().equals(val1));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC2, bdc,
+						stringDecoder).toString().equals(val1));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc, stringDecoder)
-				.toString().equals(val3));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc,
+						stringDecoder).toString().equals(val3));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC1, bdc, stringDecoder)
-				.toString().equals(val3));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC1, bdc,
+						stringDecoder).toString().equals(val3));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc, stringDecoder)
-				.toString().equals(val3));
+				.readValue(BuiltIn.getDefaultDatatype(), qncC3, bdc,
+						stringDecoder).toString().equals(val3));
 	}
 
 	@Test
@@ -294,8 +294,8 @@ public class StringTableTest extends AbstractTestCase {
 				baos.toByteArray()));
 
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncCa1, bdc, stringDecoder)
-				.toString().equals(atCh1));
+				.readValue(BuiltIn.getDefaultDatatype(), qncCa1, bdc,
+						stringDecoder).toString().equals(atCh1));
 		assertTrue(ddl
 				.readValue(BuiltIn.getDefaultDatatype(), qncCexx1, bdc,
 						stringDecoder).toString().equals(ch1));
@@ -309,8 +309,8 @@ public class StringTableTest extends AbstractTestCase {
 				.readValue(BuiltIn.getDefaultDatatype(), qncCex3, bdc,
 						stringDecoder).toString().equals(ch3));
 		assertTrue(ddl
-				.readValue(BuiltIn.getDefaultDatatype(), qncCa1, bdc, stringDecoder)
-				.toString().equals(atCh2));
+				.readValue(BuiltIn.getDefaultDatatype(), qncCa1, bdc,
+						stringDecoder).toString().equals(atCh2));
 		assertTrue(ddl
 				.readValue(BuiltIn.getDefaultDatatype(), qncCexx1, bdc,
 						stringDecoder).toString().equals(ch1));

@@ -298,8 +298,7 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type)
 				.toString()));
 	}
-	
-	
+
 	// Fractional seconds component MUST be omitted if its value is zero
 	public void testDatetimeFractionalSecs1() throws IOException {
 		String s = "1996-02-29T19:20:30.00Z";
@@ -307,9 +306,8 @@ public class DatetimeTest extends AbstractTestCase {
 		DateTimeType type = DateTimeType.dateTime;
 		DateTimeValue datetime = DateTimeValue.parse(s, type);
 		assertTrue(datetime != null);
-//		datetime = datetime.normalize();
+		// datetime = datetime.normalize();
 		assertFalse(datetime.presenceFractionalSecs);
-		
 
 		// Bit
 		EncoderChannel bitEC = getBitEncoder();
@@ -610,7 +608,7 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(s.equals(getByteDecoder().decodeDateTimeValue(type)
 				.toString()));
 	}
-	
+
 	public void testDatetimeEquals1() throws IOException {
 		// all the same times
 		String s1 = "2015-08-11T23:00:00+09:00";
@@ -626,12 +624,12 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime2 != null);
 		assertTrue(datetime3 != null);
 		assertTrue(datetime4 != null);
-		
-		DateTimeValue datetime1Norm =  datetime1.normalize();
-		DateTimeValue datetime2Norm =  datetime2.normalize();
-		DateTimeValue datetime3Norm =  datetime3.normalize();
-		DateTimeValue datetime4Norm =  datetime4.normalize();
-		
+
+		DateTimeValue datetime1Norm = datetime1.normalize();
+		DateTimeValue datetime2Norm = datetime2.normalize();
+		DateTimeValue datetime3Norm = datetime3.normalize();
+		DateTimeValue datetime4Norm = datetime4.normalize();
+
 		assertTrue(datetime1.equals(datetime2));
 		assertTrue(datetime2.equals(datetime3));
 		assertTrue(datetime3.equals(datetime4));
@@ -640,9 +638,9 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime2Norm.equals(datetime3));
 		assertTrue(datetime3Norm.equals(datetime4));
 		assertTrue(datetime4Norm.equals(datetime1));
-		
+
 	}
-	
+
 	public void testDatetimeEquals2() throws IOException {
 		// all the same times
 		String s1 = "2015-08-11T24:00:00-07:30";
@@ -652,17 +650,16 @@ public class DatetimeTest extends AbstractTestCase {
 		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
 		assertTrue(datetime1 != null);
 		assertTrue(datetime2 != null);
-		
-		DateTimeValue datetime1Norm =  datetime1.normalize();
-		DateTimeValue datetime2Norm =  datetime2.normalize();
-		
+
+		DateTimeValue datetime1Norm = datetime1.normalize();
+		DateTimeValue datetime2Norm = datetime2.normalize();
+
 		assertTrue(datetime1.equals(datetime2));
 		assertTrue(datetime2.equals(datetime1Norm));
 		assertTrue(datetime2Norm.equals(datetime1Norm));
 		assertTrue(datetime1.equals(datetime2Norm));
 	}
 
-	
 	public void testDatetimeEquals3() throws IOException {
 		// all the same times
 		String s1 = "2015-08-11T16:00:00-08:00";
@@ -678,12 +675,12 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime2 != null);
 		assertTrue(datetime3 != null);
 		assertTrue(datetime4 != null);
-		
-		DateTimeValue datetime1Norm =  datetime1.normalize();
-		DateTimeValue datetime2Norm =  datetime2.normalize();
-		DateTimeValue datetime3Norm =  datetime3.normalize();
-		DateTimeValue datetime4Norm =  datetime4.normalize();
-		
+
+		DateTimeValue datetime1Norm = datetime1.normalize();
+		DateTimeValue datetime2Norm = datetime2.normalize();
+		DateTimeValue datetime3Norm = datetime3.normalize();
+		DateTimeValue datetime4Norm = datetime4.normalize();
+
 		assertTrue(datetime1.equals(datetime2));
 		assertTrue(datetime2.equals(datetime3));
 		assertTrue(datetime3.equals(datetime4));
@@ -693,7 +690,7 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime3Norm.equals(datetime4));
 		assertTrue(datetime4Norm.equals(datetime1));
 	}
-	
+
 	public void testDatetimeEquals4() throws IOException {
 		// all the same times
 		String s1 = "2000-03-04T23:00:00+03:00";
@@ -703,17 +700,16 @@ public class DatetimeTest extends AbstractTestCase {
 		DateTimeValue datetime2 = DateTimeValue.parse(s2, type);
 		assertTrue(datetime1 != null);
 		assertTrue(datetime2 != null);
-		
-		DateTimeValue datetime1Norm =  datetime1.normalize();
-		DateTimeValue datetime2Norm =  datetime2.normalize();
-		
+
+		DateTimeValue datetime1Norm = datetime1.normalize();
+		DateTimeValue datetime2Norm = datetime2.normalize();
+
 		assertTrue(datetime1.equals(datetime2));
 		assertTrue(datetime2.equals(datetime1Norm));
 		assertTrue(datetime2Norm.equals(datetime1Norm));
 		assertTrue(datetime1.equals(datetime2Norm));
 	}
-	
-	
+
 	public void testDatetimeEquals5() throws IOException {
 		// all the same times
 		String s1 = "2012-02-28T20:00:00-08:00";
@@ -726,11 +722,11 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime1 != null);
 		assertTrue(datetime2 != null);
 		assertTrue(datetime3 != null);
-		
-		DateTimeValue datetime1Norm =  datetime1.normalize();
-		DateTimeValue datetime2Norm =  datetime2.normalize();
-		DateTimeValue datetime3Norm =  datetime3.normalize();
-		
+
+		DateTimeValue datetime1Norm = datetime1.normalize();
+		DateTimeValue datetime2Norm = datetime2.normalize();
+		DateTimeValue datetime3Norm = datetime3.normalize();
+
 		assertTrue(datetime1.equals(datetime2));
 		assertTrue(datetime1.equals(datetime3));
 		assertTrue(datetime3.equals(datetime2));
@@ -739,54 +735,55 @@ public class DatetimeTest extends AbstractTestCase {
 		assertTrue(datetime1.equals(datetime2Norm));
 		assertTrue(datetime1.equals(datetime3Norm));
 	}
-	
+
 	public void testDatetimeCanonicalDatetime1() throws Exception {
 		String xml = "<A xmlns=\"urn:foo\">2013-06-03T24:00:00-06:00</A>";
-		
-		String schema = "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" targetNamespace=\"urn:foo\">\r\n" + 
-				"\r\n" + 
-				"  <xsd:element name=\"A\" type=\"xsd:dateTime\"/>\r\n" + 
-				"\r\n" + 
-				"</xsd:schema>";
-		
+
+		String schema = "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" targetNamespace=\"urn:foo\">\r\n"
+				+ "\r\n"
+				+ "  <xsd:element name=\"A\" type=\"xsd:dateTime\"/>\r\n"
+				+ "\r\n" + "</xsd:schema>";
+
 		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
-		
+
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setGrammars(g);
 		ef.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
 		// ef.getEncodingOptions().setOption(EncodingOptions.UTC_TIME);
-		
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
+
 		// encode
 		{
 			EXIResult exiResult = new EXIResult(ef);
 			exiResult.setOutputStream(baos);
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-			xmlReader.setContentHandler( exiResult.getHandler() );
-			xmlReader.parse(new InputSource(new ByteArrayInputStream(xml.getBytes())));			
+			xmlReader.setContentHandler(exiResult.getHandler());
+			xmlReader.parse(new InputSource(new ByteArrayInputStream(xml
+					.getBytes())));
 		}
 
 		// decode
 		{
 			EXIStreamDecoder streamDecoder = ef.createEXIStreamDecoder();
-			EXIBodyDecoder bodyDecoder = streamDecoder.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
+			EXIBodyDecoder bodyDecoder = streamDecoder
+					.decodeHeader(new ByteArrayInputStream(baos.toByteArray()));
 			assertTrue(bodyDecoder.next() == EventType.START_DOCUMENT);
 			bodyDecoder.decodeStartDocument();
 			assertTrue(bodyDecoder.next() == EventType.START_ELEMENT);
 			bodyDecoder.decodeStartElement();
 			assertTrue(bodyDecoder.next() == EventType.CHARACTERS);
-			Value value  = bodyDecoder.decodeCharacters();
+			Value value = bodyDecoder.decodeCharacters();
 			assertTrue(value.getValueType() == ValueType.DATETIME);
-			DateTimeValue dtv = (DateTimeValue)value;
+			DateTimeValue dtv = (DateTimeValue) value;
 			// 24 should be 0
-			assertTrue(dtv.time == 0); // time: ((Hour * 64) + Minutes) * 64 + seconds 
-			assertTrue(dtv.monthDay == (06 * 32) + 3 + 1); // Month * 32 + Day 
+			assertTrue(dtv.time == 0); // time: ((Hour * 64) + Minutes) * 64 +
+										// seconds
+			assertTrue(dtv.monthDay == (06 * 32) + 3 + 1); // Month * 32 + Day
 		}
-		
+
 	}
-	
-	
+
 	public void testDatetimeFail1() throws IOException {
 		String s = "12:34:XXX";
 		DateTimeType type = DateTimeType.time;

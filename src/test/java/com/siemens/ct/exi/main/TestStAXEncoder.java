@@ -49,8 +49,9 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 	public TestStAXEncoder(EXIFactory ef) throws EXIException {
 		this(ef, false);
 	}
-	
-	public TestStAXEncoder(EXIFactory ef, boolean useXMLStreamReader) throws EXIException {
+
+	public TestStAXEncoder(EXIFactory ef, boolean useXMLStreamReader)
+			throws EXIException {
 		super();
 		exiWriter = new StAXEncoder(ef);
 		this.ef = ef;
@@ -70,20 +71,21 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
 
 		// do not resolve DTDs
-		xmlFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+		xmlFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES,
+				Boolean.FALSE);
 		// AND
 		// requires the parser to replace internal entity references with their
 		// replacement text and report them as characters
-//		if(this.ef.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_DTD)) {
-			xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-			xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
-					Boolean.FALSE);			
-//		} else {
-//			xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.TRUE);
-//			xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
-//					Boolean.TRUE);
-//		}
-
+		// if(this.ef.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_DTD))
+		// {
+		xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+		xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
+				Boolean.FALSE);
+		// } else {
+		// xmlFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.TRUE);
+		// xmlFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES,
+		// Boolean.TRUE);
+		// }
 
 		if (isFragment) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -98,12 +100,14 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 		}
 
 		if (useXMLStreamReader) {
-			XMLStreamReader streamReader = xmlFactory.createXMLStreamReader(xmlInput);
+			XMLStreamReader streamReader = xmlFactory
+					.createXMLStreamReader(xmlInput);
 			// TODO fragment
 			exiWriter.setOutputStream(exiOutput);
 			exiWriter.encode(streamReader);
 		} else {
-			XMLEventReader xmlReader = xmlFactory.createXMLEventReader(xmlInput);
+			XMLEventReader xmlReader = xmlFactory
+					.createXMLEventReader(xmlInput);
 
 			if (isFragment) {
 				xmlReader = new SkipRootElementXMLEventReader(xmlReader);
@@ -113,8 +117,6 @@ public class TestStAXEncoder extends AbstractTestEncoder {
 			exiWriter.encode(xmlReader);
 		}
 	}
-		
-
 
 	public static void main(String[] args) throws Exception {
 

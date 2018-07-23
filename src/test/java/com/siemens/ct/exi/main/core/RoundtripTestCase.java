@@ -63,7 +63,8 @@ public class RoundtripTestCase extends TestCase {
 				+ " <xs:element name='root' type='xs:int' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars grammar = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = SchemaInformedTest
+				.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setGrammars(grammar);
@@ -129,7 +130,8 @@ public class RoundtripTestCase extends TestCase {
 				+ " <xs:element name='root' type='xs:int' nillable='true' >"
 				+ " </xs:element>" + "</xs:schema>";
 
-		Grammars grammar = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
+		Grammars grammar = SchemaInformedTest
+				.getGrammarFromSchemaAsString(schema);
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.setGrammars(grammar);

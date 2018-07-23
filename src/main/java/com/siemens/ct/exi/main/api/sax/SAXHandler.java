@@ -35,7 +35,6 @@ import org.xml.sax.ext.LexicalHandler;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class SAXHandler extends DefaultHandler2 {

@@ -226,11 +226,9 @@ public class CanonicalEXITestCase extends TestCase {
 			encoder.encodeStartElement(s1);
 			AttributeList al = AttributeFactory.newInstance()
 					.createAttributeListInstance(factory);
-			al.addNamespaceDeclaration(Constants.XML_SCHEMA_NS_URI,
-					"xsd");
-			al.addAttribute(new QName(
-					Constants.XML_SCHEMA_INSTANCE_NS_URI, "type"),
-					"xsd:decimal");
+			al.addNamespaceDeclaration(Constants.XML_SCHEMA_NS_URI, "xsd");
+			al.addAttribute(new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+					"type"), "xsd:decimal");
 			encoder.encodeAttributeList(al);
 			encoder.encodeCharacters(new StringValue("-0.0"));
 			encoder.encodeEndElement();
@@ -256,8 +254,8 @@ public class CanonicalEXITestCase extends TestCase {
 			assertTrue(decoder.next() == EventType.ATTRIBUTE_GENERIC_UNDECLARED);
 			decoder.decodeAttribute()
 					.getQName()
-					.equals(new QName(
-							Constants.XML_SCHEMA_INSTANCE_NS_URI, "type"));
+					.equals(new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+							"type"));
 			// decoder.decodeAttributeXsiType();
 
 			assertTrue(decoder.next() == EventType.CHARACTERS);
@@ -1283,8 +1281,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-dateTime
 	// Note: Should be the same after normalizing!!
 	// String s1 = "2015-08-11T23:00:00+09:00";
@@ -1348,7 +1345,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// http://www.w3.org/TR/exi-c14n/#dt-dateTime
 	// Note: Should be the same after normalizing!!
 	// String s1 = "2015-08-11T23:00:00+09:00";
@@ -1412,7 +1409,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
+
 	// The 2-digit numeral representing the hour must not be '24';
 	public void testDatatypeDateTime6() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
@@ -1472,8 +1469,7 @@ public class CanonicalEXITestCase extends TestCase {
 			decoder.decodeEndDocument();
 		}
 	}
-	
-	
+
 	// date overflow
 	public void testDatatypeDateTime7() throws Exception {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
@@ -1485,7 +1481,7 @@ public class CanonicalEXITestCase extends TestCase {
 
 		String sdt = "2012-06-30T23:59:60-06:00";
 		// don't change seconds to retain leap seconds
-		String sdtUTC = "2012-07-01T05:59:60Z"; 
+		String sdtUTC = "2012-07-01T05:59:60Z";
 
 		Grammars g = SchemaInformedTest.getGrammarFromSchemaAsString(schema);
 		factory.setGrammars(g);
@@ -1553,7 +1549,8 @@ public class CanonicalEXITestCase extends TestCase {
 		BitDecoderChannel bdc = new BitDecoderChannel(isCan);
 		assertTrue("Distinguishing Bits", bdc.decodeNBitUnsignedInteger(2) == 2); // Distinguishing
 																					// Bits
-		// Note: by default the Canonical EXI Option "omitOptionsDocument" is false
+		// Note: by default the Canonical EXI Option "omitOptionsDocument" is
+		// false
 		assertTrue("Presence Bit for EXI Options",
 				bdc.decodeNBitUnsignedInteger(1) == 1); // Presence Bit for EXI
 														// Options
@@ -1563,7 +1560,8 @@ public class CanonicalEXITestCase extends TestCase {
 		EXIFactory factory = DefaultEXIFactory.newInstance();
 		factory.getEncodingOptions().setOption(EncodingOptions.CANONICAL_EXI);
 		// Note: without EXI options
-		boolean b= factory.getEncodingOptions().unsetOption(EncodingOptions.INCLUDE_OPTIONS);
+		boolean b = factory.getEncodingOptions().unsetOption(
+				EncodingOptions.INCLUDE_OPTIONS);
 		assertTrue("INCLUDE_OPTIONS should have been there", b);
 
 		String xml = "<foo>" + "text content" + "</foo>";

@@ -130,8 +130,10 @@ public class MultipleStreamTest extends AbstractTestCase {
 		_testEncode(exiFactory, isBytes, numberOfEXIDocuments, osEXI);
 
 		InputStream isEXI = new ByteArrayInputStream(osEXI.toByteArray());
-		
-		_testDecode(exiFactory, isBytes, numberOfEXIDocuments, new PushbackInputStream(isEXI, DecodingOptions.PUSHBACK_BUFFER_SIZE));
+
+		_testDecode(exiFactory, isBytes, numberOfEXIDocuments,
+				new PushbackInputStream(isEXI,
+						DecodingOptions.PUSHBACK_BUFFER_SIZE));
 	}
 
 	public void testXMLNotebook4() throws Exception {
@@ -210,10 +212,10 @@ public class MultipleStreamTest extends AbstractTestCase {
 		osEXI.write(99);
 		osEXI.write(200);
 
-		
 		InputStream isEXI = new ByteArrayInputStream(osEXI.toByteArray());
 		isEXI = new BufferedInputStream(isEXI);
-		isEXI = new PushbackInputStream(isEXI, DecodingOptions.PUSHBACK_BUFFER_SIZE);
+		isEXI = new PushbackInputStream(isEXI,
+				DecodingOptions.PUSHBACK_BUFFER_SIZE);
 		_testDecode(exiFactory, baos.toByteArray(), 3, isEXI);
 
 		// System.out.println(isEXI.read());
@@ -320,7 +322,6 @@ public class MultipleStreamTest extends AbstractTestCase {
 											// stream
 		// is.mark(Integer.MAX_VALUE);
 		is = new PushbackInputStream(is, DecodingOptions.PUSHBACK_BUFFER_SIZE);
-		
 
 		List<byte[]> decodeBytes = new ArrayList<byte[]>();
 
@@ -349,9 +350,10 @@ public class MultipleStreamTest extends AbstractTestCase {
 				System.out.println("Remaining: " + inflater.getRemaining());
 				// System.out.println("Available: " + is.available());
 
-				//is.mark(inputBufferSize); // mark position for possible rewind,
-											// max size according inflater
-											// buffer
+				// is.mark(inputBufferSize); // mark position for possible
+				// rewind,
+				// max size according inflater
+				// buffer
 
 				// if ( inflater.getRemaining() == 0) {
 				// // no skipping needed
@@ -366,7 +368,8 @@ public class MultipleStreamTest extends AbstractTestCase {
 
 				@SuppressWarnings("resource")
 				EXIInflaterInputStream inflaterInputStream = new EXIInflaterInputStream(
-						(PushbackInputStream) is, inflater, DecodingOptions.PUSHBACK_BUFFER_SIZE);
+						(PushbackInputStream) is, inflater,
+						DecodingOptions.PUSHBACK_BUFFER_SIZE);
 
 				for (int i = 0; i < NUMBER_OF_BYTES; i++) {
 					byte[] bs = new byte[BYTES_LENGTH];
@@ -383,15 +386,14 @@ public class MultipleStreamTest extends AbstractTestCase {
 						+ inflater.getBytesRead() + " bytes read so far");
 
 				if (inflater.getRemaining() > 0) {
-					
-					
+
 					// inflater read beyond deflate stream, reset position
-//					is.reset();
-//					is.skip(inflater.getBytesRead());
-					
+					// is.reset();
+					// is.skip(inflater.getBytesRead());
+
 					System.out.println("--> Rewind " + inflater.getRemaining()
 							+ " bytes");
-					
+
 					inflaterInputStream.pushbackAndReset();
 				}
 
@@ -457,7 +459,5 @@ public class MultipleStreamTest extends AbstractTestCase {
 		return bs;
 
 	}
-
-
 
 }

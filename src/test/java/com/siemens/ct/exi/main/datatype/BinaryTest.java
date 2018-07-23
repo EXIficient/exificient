@@ -63,7 +63,8 @@ public class BinaryTest extends AbstractTestCase {
 		assertTrue(src.equals(val2.toString()));
 	}
 
-	public void testHexBinaryAsString0FB7_Space() throws IOException, EXIException {
+	public void testHexBinaryAsString0FB7_Space() throws IOException,
+			EXIException {
 		StringValue src = new StringValue(" 0FB7 ");
 		String src_2 = "0FB7";
 
@@ -122,7 +123,8 @@ public class BinaryTest extends AbstractTestCase {
 		assertTrue(src.equals(val2.toString()));
 	}
 
-	public void testBase64AsString0FB7_Spaces() throws IOException, EXIException {
+	public void testBase64AsString0FB7_Spaces() throws IOException,
+			EXIException {
 		StringValue src = new StringValue("  0  F B 7 ");
 		String src_2 = "0FB7";
 

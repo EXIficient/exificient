@@ -237,8 +237,7 @@ public class SAXDecoderTestCase extends XMLTestCase {
 					assertTrue(prefix.equals("xml"));
 				} else if (uri.equals(Constants.XML_NULL_NS_URI)) {
 					assertTrue(prefix.equals(Constants.XML_DEFAULT_NS_PREFIX));
-				} else if (uri
-						.equals(Constants.XML_SCHEMA_INSTANCE_NS_URI)) {
+				} else if (uri.equals(Constants.XML_SCHEMA_INSTANCE_NS_URI)) {
 					assertTrue(prefix.equals("xsi"));
 				} else {
 					fail("No exptected URI: " + uri);

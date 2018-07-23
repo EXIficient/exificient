@@ -73,15 +73,15 @@ public class TestCaseOption {
 	public void setFidelityOptions(FidelityOptions fidelityOptions) {
 		this.fidelityOptions = fidelityOptions;
 	}
-	
+
 	public void setSharedStrings(List<String> sharedStrings) {
 		this.sharedStrings = sharedStrings;
 	}
-	
+
 	public List<String> getSharedStrings() {
 		return this.sharedStrings;
 	}
-	
+
 	public void setUsingNonEvolvingGrammars(boolean isNonEvolving) {
 		this.isNonEvolving = isNonEvolving;
 	}
@@ -89,8 +89,6 @@ public class TestCaseOption {
 	public boolean isUsingNonEvolvingGrammars() {
 		return this.isNonEvolving;
 	}
-	
-	
 
 	public boolean isFragments() {
 		return fragments;

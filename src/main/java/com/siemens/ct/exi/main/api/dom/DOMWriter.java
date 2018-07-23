@@ -50,7 +50,6 @@ import com.siemens.ct.exi.core.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class DOMWriter {
@@ -86,10 +85,10 @@ public class DOMWriter {
 	}
 
 	public void encode(Document doc) throws EXIException, IOException {
-		if(exiBody == null) {
+		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
 		}
-		
+
 		exiBody.encodeStartDocument();
 
 		// encode all child-nodes to retain root external
@@ -102,10 +101,10 @@ public class DOMWriter {
 
 	public void encodeFragment(DocumentFragment docFragment)
 			throws EXIException, IOException {
-		if(exiBody == null) {
+		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
 		}
-		
+
 		exiBody.encodeStartDocument();
 		encodeChildNodes(docFragment.getChildNodes());
 		exiBody.encodeEndDocument();
@@ -135,8 +134,9 @@ public class DOMWriter {
 		if (localName == null) {
 			// namespace-awareness ??
 			localName = root.getNodeName();
-//			throw new EXIException("EXI requires namespace-aware DOM (nodes) "
-//					+ root.getNodeName());
+			// throw new
+			// EXIException("EXI requires namespace-aware DOM (nodes) "
+			// + root.getNodeName());
 		}
 
 		String prefix = root.getPrefix();
@@ -152,22 +152,22 @@ public class DOMWriter {
 			Node at = attributes.item(i);
 
 			// NS
-			if (Constants.XML_NS_ATTRIBUTE_NS_URI
-					.equals(at.getNamespaceURI())) {
+			if (Constants.XML_NS_ATTRIBUTE_NS_URI.equals(at.getNamespaceURI())) {
 				String pfx = at.getPrefix() == null ? Constants.XML_DEFAULT_NS_PREFIX
 						: at.getLocalName();
 				exiAttributes.addNamespaceDeclaration(at.getNodeValue(), pfx);
 			} else {
 				String atLocalName = at.getLocalName();
-				if(atLocalName == null) {
+				if (atLocalName == null) {
 					// namespace-awareness ??
 					atLocalName = at.getNodeName();
 				}
-				exiAttributes.addAttribute(at.getNamespaceURI(), atLocalName, at.getPrefix(), at.getNodeValue());
+				exiAttributes.addAttribute(at.getNamespaceURI(), atLocalName,
+						at.getPrefix(), at.getNodeValue());
 			}
-			
+
 		}
-		
+
 		exiBody.encodeAttributeList(exiAttributes);
 		exiAttributes.clear();
 

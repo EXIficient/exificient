@@ -66,7 +66,6 @@ import com.siemens.ct.exi.main.util.SimpleDocTypeParser;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class StAXEncoder implements XMLStreamWriter {
@@ -545,18 +544,18 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	public void flush() throws XMLStreamException {
-//		try {
-			// Note: encodeDocument flushes already
-			// encoder.flush();
-//		} catch (IOException e) {
-//			throw new XMLStreamException(e.getLocalizedMessage(), e);
-//		}
+		// try {
+		// Note: encodeDocument flushes already
+		// encoder.flush();
+		// } catch (IOException e) {
+		// throw new XMLStreamException(e.getLocalizedMessage(), e);
+		// }
 	}
 
 	public NamespaceContext getNamespaceContext() {
-//		if (this.nsContext == null) {
-//			this.nsContext = DefaultNamespaceContext.getInstance();
-//		}
+		// if (this.nsContext == null) {
+		// this.nsContext = DefaultNamespaceContext.getInstance();
+		// }
 		return this.nsContext;
 	}
 
@@ -576,8 +575,9 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void setNamespaceContext(NamespaceContext context)
 			throws XMLStreamException {
 		// TODO how to properly allow that
-		throw new IllegalArgumentException("NamespaceContext cannot be replaced");
-//		this.nsContext = context;
+		throw new IllegalArgumentException(
+				"NamespaceContext cannot be replaced");
+		// this.nsContext = context;
 	}
 
 	public void setPrefix(String prefix, String uri) throws XMLStreamException {
@@ -591,8 +591,8 @@ public class StAXEncoder implements XMLStreamWriter {
 
 	public void writeAttribute(String namespaceURI, String localName,
 			String value) throws XMLStreamException {
-		this.writeAttribute(getNamespaceContext().getPrefix(namespaceURI), namespaceURI,
-				localName, value);
+		this.writeAttribute(getNamespaceContext().getPrefix(namespaceURI),
+				namespaceURI, localName, value);
 	}
 
 	public void writeDefaultNamespace(String namespaceURI)
@@ -631,103 +631,103 @@ public class StAXEncoder implements XMLStreamWriter {
 
 	public void writeStartElement(String namespaceURI, String localName)
 			throws XMLStreamException {
-		this.writeStartElement(getNamespaceContext().getPrefix(namespaceURI), localName,
-				namespaceURI);
+		this.writeStartElement(getNamespaceContext().getPrefix(namespaceURI),
+				localName, namespaceURI);
 	}
-	
+
 	static class EncoderNamespaceContext implements NamespaceContext {
 
 		List<List<NamespaceDeclaration>> nsContexts;
-		
+
 		public EncoderNamespaceContext() {
 			nsContexts = new ArrayList<List<NamespaceDeclaration>>();
 		}
-		
-		public void reset(){
+
+		public void reset() {
 			nsContexts.clear();
 			pushContext(); // root context for default and xml
 			bindPrefix(Constants.XML_NS_URI, Constants.XML_DEFAULT_NS_PREFIX);
 			bindPrefix(Constants.XML_NS_URI, Constants.XML_NS_PREFIX);
 		}
-		
+
 		public void pushContext() {
 			nsContexts.add(null);
 		}
-		
+
 		public void bindPrefix(String namespaceURI, String prefix) {
-			final int level = nsContexts.size()-1;
+			final int level = nsContexts.size() - 1;
 			List<NamespaceDeclaration> l = nsContexts.get(level);
-			if(l == null) {
+			if (l == null) {
 				l = new ArrayList<NamespaceDeclaration>();
 				nsContexts.set(level, l);
 			}
-			
+
 			l.add(new NamespaceDeclaration(namespaceURI, prefix));
-			
+
 		}
-		
+
 		// return previously bound prefixes
 		public List<NamespaceDeclaration> popContext() {
-			assert(nsContexts.size() > 1); // outer root always there
-			return nsContexts.remove(nsContexts.size()-1);
+			assert (nsContexts.size() > 1); // outer root always there
+			return nsContexts.remove(nsContexts.size() - 1);
 		}
-		
+
 		public String getNamespaceURI(String prefix) {
 			// from bottom to top
 			int level = nsContexts.size() - 1;
-			while(level >= 0) {
+			while (level >= 0) {
 				List<NamespaceDeclaration> l = nsContexts.get(level);
-				if(l != null) {
-					for(NamespaceDeclaration nsDecl : l) {
-						if(nsDecl.prefix.equals(prefix)) {
+				if (l != null) {
+					for (NamespaceDeclaration nsDecl : l) {
+						if (nsDecl.prefix.equals(prefix)) {
 							return nsDecl.namespaceURI;
 						}
 					}
 				}
 				level--;
 			}
-			
+
 			return null;
 		}
 
 		public String getPrefix(String namespaceURI) {
 			// from bottom to top
 			int level = nsContexts.size() - 1;
-			while(level >= 0) {
+			while (level >= 0) {
 				List<NamespaceDeclaration> l = nsContexts.get(level);
-				if(l != null) {
-					for(NamespaceDeclaration nsDecl : l) {
-						if(nsDecl.namespaceURI.equals(namespaceURI)) {
+				if (l != null) {
+					for (NamespaceDeclaration nsDecl : l) {
+						if (nsDecl.namespaceURI.equals(namespaceURI)) {
 							return nsDecl.prefix;
 						}
 					}
 				}
 				level--;
 			}
-			
+
 			return null;
 		}
 
 		@SuppressWarnings("rawtypes")
 		public Iterator getPrefixes(String namespaceURI) {
 			List<String> prefixes = new ArrayList<String>();
-			
+
 			int level = nsContexts.size() - 1;
-			while(level >= 0) {
+			while (level >= 0) {
 				List<NamespaceDeclaration> l = nsContexts.get(level);
-				if(l != null) {
-					for(NamespaceDeclaration nsDecl : l) {
-						if(nsDecl.namespaceURI.equals(namespaceURI)) {
+				if (l != null) {
+					for (NamespaceDeclaration nsDecl : l) {
+						if (nsDecl.namespaceURI.equals(namespaceURI)) {
 							prefixes.add(nsDecl.prefix);
 						}
 					}
 				}
 				level--;
 			}
-			
+
 			return prefixes.iterator();
 		}
-		
+
 	}
 
 }

@@ -53,23 +53,23 @@ public class EnumerationTest extends AbstractTestCase {
 				+ "    <xs:simpleType name='tBasicTypeEnum'>"
 				+ "        <xs:restriction base='tPredefinedBasicTypeEnum'/>"
 				+ "    </xs:simpleType>" + "</xs:schema>";
-	
+
 		Datatype dt = DatatypeMappingTest.getSimpleDatatypeFor(schemaAsString,
 				"tBasicTypeEnum", "");
 		TypeEncoder typeEncoder = new TypedTypeEncoder();
-	
+
 		assertTrue(dt.getBuiltInType() == BuiltInType.ENUMERATION);
-	
+
 		assertTrue(typeEncoder.isValid(dt, new StringValue("BOOLEAN")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue("INT8")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue("INT16")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue("INT24")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue("INT32")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue("INT64")));
-	
+
 		assertFalse(typeEncoder.isValid(dt, new StringValue("00")));
 		assertFalse(typeEncoder.isValid(dt, new StringValue("bla")));
-	
+
 		EnumerationDatatype enumDt = (EnumerationDatatype) dt;
 		assertTrue(enumDt.getDatatypeID() == DatatypeID.exi_string);
 		// assertTrue(enumDt.getEnumValueBuiltInType() == BuiltInType.STRING);
@@ -141,8 +141,9 @@ public class EnumerationTest extends AbstractTestCase {
 		assertTrue(typeEncoder.isValid(dt, new StringValue("3 4 5")));
 		assertTrue(typeEncoder.isValid(dt, new StringValue(" 3 4 5 ")));
 
-		assertTrue(typeEncoder.isValid(dt, new StringValue(" 123 456 789  "))); // any other
-																	// int value
+		assertTrue(typeEncoder.isValid(dt, new StringValue(" 123 456 789  "))); // any
+																				// other
+		// int value
 
 		assertFalse(typeEncoder.isValid(dt, new StringValue("xx xx")));
 

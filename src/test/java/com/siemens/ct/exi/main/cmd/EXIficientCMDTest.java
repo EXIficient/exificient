@@ -61,9 +61,8 @@ public class EXIficientCMDTest {
 
 	final String xsdNotebook = "./data/W3C/PrimerNotebook/notebook.xsd";
 	final String xmlNotebook = "./data/W3C/PrimerNotebook/notebook.xml";
-	
+
 	final String xmlFragment2 = "./data/fragment/fragment2.xml.frag";
-	
 
 	@Test
 	public void test1() {
@@ -262,11 +261,16 @@ public class EXIficientCMDTest {
 		cmd.process();
 
 		assertTrue(cmd.exiFactory.getCodingMode() == CodingMode.BIT_PACKED);
-		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_COMMENT));
-		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_LEXICAL_VALUE));
-		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_PREFIX));
-		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_PI));
-		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(FidelityOptions.FEATURE_DTD));
+		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_COMMENT));
+		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_LEXICAL_VALUE));
+		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PREFIX));
+		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_PI));
+		assertTrue(cmd.exiFactory.getFidelityOptions().isFidelityEnabled(
+				FidelityOptions.FEATURE_DTD));
 
 		// File should be there
 		File f = new File(xmlNotebook
@@ -278,28 +282,34 @@ public class EXIficientCMDTest {
 			fail("File " + f + " not created");
 		}
 	}
-	
+
 	@Test
 	public void testEncodingOptions1() throws Exception {
 		String[] args = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
 				xmlNotebook, EXIficientCMD.INCLUDE_OPTIONS,
-				EXIficientCMD.INCLUDE_COOKIE ,
-				EXIficientCMD.INCLUDE_SCHEMA_ID , EXIficientCMD.INCLUDE_SCHEMA_LOCATION ,
+				EXIficientCMD.INCLUDE_COOKIE, EXIficientCMD.INCLUDE_SCHEMA_ID,
+				EXIficientCMD.INCLUDE_SCHEMA_LOCATION,
 				EXIficientCMD.INCLUDE_INSIGNIFICANT_XSI_NIL,
-				EXIficientCMD.INCLUDE_PROFILE_VALUES ,
-				EXIficientCMD.RETAIN_ENTITY_REFERENCE};
+				EXIficientCMD.INCLUDE_PROFILE_VALUES,
+				EXIficientCMD.RETAIN_ENTITY_REFERENCE };
 		EXIficientCMD cmd = new EXIficientCMD();
 		cmd.parseArguments(args);
 		cmd.process();
 
 		assertTrue(cmd.exiFactory.getCodingMode() == CodingMode.BIT_PACKED);
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_COOKIE));
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID));
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_XSI_SCHEMALOCATION));
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL));
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.INCLUDE_PROFILE_VALUES));
-		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(EncodingOptions.RETAIN_ENTITY_REFERENCE));
-		
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.INCLUDE_COOKIE));
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.INCLUDE_SCHEMA_ID));
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.INCLUDE_XSI_SCHEMALOCATION));
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL));
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.INCLUDE_PROFILE_VALUES));
+		assertTrue(cmd.exiFactory.getEncodingOptions().isOptionEnabled(
+				EncodingOptions.RETAIN_ENTITY_REFERENCE));
+
 		// File should be there
 		File f = new File(xmlNotebook
 				+ EXIficientCMD.DEFAULT_EXI_FILE_EXTENSION);
@@ -310,29 +320,26 @@ public class EXIficientCMDTest {
 			fail("File " + f + " not created");
 		}
 	}
-	
-	
+
 	@Test
 	public void testCoding1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
-		
+
 		File tmp = File.createTempFile("xmlNotebook", "exi");
 		String sOutput = tmp.getAbsolutePath();
 		// String sOutput = xmlNotebook + ".exii";
-		
-		
+
 		// encode
 		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
-				xmlNotebook, EXIficientCMD.OUTPUT, sOutput};
+				xmlNotebook, EXIficientCMD.OUTPUT, sOutput };
 		cmd.parseArguments(args1);
 		cmd.process();
-		
+
 		// decode
-		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
-				sOutput};
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT, sOutput };
 		cmd.parseArguments(args2);
 		cmd.process();
-		
+
 		// EXI File should be there
 		File f = new File(sOutput);
 		if (f.exists()) {
@@ -341,10 +348,9 @@ public class EXIficientCMDTest {
 		} else {
 			fail("File " + f + " not created");
 		}
-		
+
 		// XML File should be there
-		f = new File(sOutput
-				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		f = new File(sOutput + EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
 		if (f.exists()) {
 			// ok --> delete
 			f.delete();
@@ -352,29 +358,30 @@ public class EXIficientCMDTest {
 			fail("File " + f + " not created");
 		}
 	}
-	
+
 	@Test
 	public void testFragment2() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
-		
+
 		File tmp = File.createTempFile("xmlFragment2", "exi");
 		String sOutput = tmp.getAbsolutePath();
 		// String sOutput = xmlFragment2 + ".exii";
-		
+
 		// encode
 		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
-				xmlFragment2, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.FRAGMENT };
+				xmlFragment2, EXIficientCMD.OUTPUT, sOutput,
+				EXIficientCMD.FRAGMENT };
 		cmd.parseArguments(args1);
 		assertTrue(cmd.exiFactory.isFragment());
 		cmd.process();
-		
+
 		// decode
-		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
-				sOutput, EXIficientCMD.FRAGMENT };
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT, sOutput,
+				EXIficientCMD.FRAGMENT };
 		cmd.parseArguments(args2);
 		assertTrue(cmd.exiFactory.isFragment());
 		cmd.process();
-		
+
 		// EXI File should be there
 		File f = new File(sOutput);
 		if (f.exists()) {
@@ -383,10 +390,9 @@ public class EXIficientCMDTest {
 		} else {
 			fail("File " + f + " not created");
 		}
-		
+
 		// XML File should be there
-		f = new File(sOutput
-				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		f = new File(sOutput + EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
 		if (f.exists()) {
 			// ok --> delete
 			f.delete();
@@ -394,31 +400,31 @@ public class EXIficientCMDTest {
 			fail("File " + f + " not created");
 		}
 	}
-	
+
 	@Test
 	public void testCodingSelfContained1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
-		
+
 		File tmp = File.createTempFile("xmlNotebook", "exi");
 		String sOutput = tmp.getAbsolutePath();
 		// String sOutput = xmlNotebook + ".exiii";
 		String qnames = "el1,el2";
-		
-		
+
 		// encode
 		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
-				xmlNotebook, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.SELF_CONTAINED, qnames};
+				xmlNotebook, EXIficientCMD.OUTPUT, sOutput,
+				EXIficientCMD.SELF_CONTAINED, qnames };
 		cmd.parseArguments(args1);
 		assertTrue(cmd.exiFactory.isSelfContainedElement(new QName("el1")));
 		assertTrue(cmd.exiFactory.isSelfContainedElement(new QName("el2")));
 		cmd.process();
-		
+
 		// decode
-		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
-				sOutput, EXIficientCMD.SELF_CONTAINED, qnames};
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT, sOutput,
+				EXIficientCMD.SELF_CONTAINED, qnames };
 		cmd.parseArguments(args2);
 		cmd.process();
-		
+
 		// EXI File should be there
 		File f = new File(sOutput);
 		if (f.exists()) {
@@ -427,10 +433,9 @@ public class EXIficientCMDTest {
 		} else {
 			fail("File " + f + " not created");
 		}
-		
+
 		// XML File should be there
-		f = new File(sOutput
-				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		f = new File(sOutput + EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
 		if (f.exists()) {
 			// ok --> delete
 			f.delete();
@@ -438,34 +443,39 @@ public class EXIficientCMDTest {
 			fail("File " + f + " not created");
 		}
 	}
-	
+
 	@Test
 	public void testCodingDTR1() throws Exception {
 		EXIficientCMD cmd = new EXIficientCMD();
-		
+
 		File tmp = File.createTempFile("xmlNotebook", "exi");
-		String sOutput = tmp.getAbsolutePath(); //  xmlNotebook + ".exiiii";
+		String sOutput = tmp.getAbsolutePath(); // xmlNotebook + ".exiiii";
 		String typesRepr = "{http://www.w3.org/2001/XMLSchema}date,{http://www.w3.org/2009/exi}string,{http://www.w3.org/2001/XMLSchema}string,{http://www.w3.org/2009/exi}string";
-		
+
 		// encode
 		String[] args1 = { EXIficientCMD.ENCODE, EXIficientCMD.INPUT,
-				xmlNotebook, EXIficientCMD.OUTPUT, sOutput, EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr};
+				xmlNotebook, EXIficientCMD.OUTPUT, sOutput,
+				EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr };
 		cmd.parseArguments(args1);
 		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes().length == 2);
-		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[0].getLocalPart().equals("date"));
-		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[1].getLocalPart().equals("string"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[0]
+				.getLocalPart().equals("date"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapTypes()[1]
+				.getLocalPart().equals("string"));
 		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations().length == 2);
-		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[0].getLocalPart().equals("string"));
-		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[1].getLocalPart().equals("string"));
-		
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[0]
+				.getLocalPart().equals("string"));
+		assertTrue(cmd.exiFactory.getDatatypeRepresentationMapRepresentations()[1]
+				.getLocalPart().equals("string"));
+
 		cmd.process();
-		
+
 		// decode
-		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT,
-				sOutput, EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr};
+		String[] args2 = { EXIficientCMD.DECODE, EXIficientCMD.INPUT, sOutput,
+				EXIficientCMD.DATATYPE_REPRESENTATION_MAP, typesRepr };
 		cmd.parseArguments(args2);
 		cmd.process();
-		
+
 		// EXI File should be there
 		File f = new File(sOutput);
 		if (f.exists()) {
@@ -474,10 +484,9 @@ public class EXIficientCMDTest {
 		} else {
 			fail("File " + f + " not created");
 		}
-		
+
 		// XML File should be there
-		f = new File(sOutput
-				+ EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
+		f = new File(sOutput + EXIficientCMD.DEFAULT_XML_FILE_EXTENSION);
 		if (f.exists()) {
 			// ok --> delete
 			f.delete();

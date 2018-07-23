@@ -43,69 +43,79 @@ public class BuiltInXSDTestCase extends AbstractTestCase {
 	protected void setUp() {
 		// #1 (default)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
 
 		// #2
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BYTE_PACKED);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.BYTE_PACKED);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
 
 		// #3
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.PRE_COMPRESSION);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.PRE_COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
 
 		// #4
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
 
 		// #5 (all)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(true);
 
 		// #6
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createAll());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(true);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(true);
 
 		// #7 (strict)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createStrict());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setSchemaInformedOnly(true);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setSchemaInformedOnly(
+				true);
 
 		// #8
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.COMPRESSION);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.COMPRESSION);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createStrict());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setSchemaInformedOnly(true);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setSchemaInformedOnly(
+				true);
 	}
 
 	@Test

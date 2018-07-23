@@ -67,8 +67,8 @@ public class EXIProfileTest extends TestCase {
 		QName qnEl1 = new QName("", "el1");
 		QName qnAt1 = new QName("", "at1");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
 		String sAtValue = "atValue";
 
@@ -425,8 +425,8 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt1 = new QName("", "at1");
 		QName qnAt2 = new QName("", "at2");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
 		String sAtValue = "atValue";
 
@@ -547,8 +547,8 @@ public class EXIProfileTest extends TestCase {
 		QName qnEl1 = new QName("", "el1");
 		QName qnEl2 = new QName("", "el2");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
 		// String sAtValue = "atValue";
 		String sChValue = "chValue";
@@ -571,9 +571,8 @@ public class EXIProfileTest extends TestCase {
 			{
 				encoder.encodeStartElement(qnEl2.getNamespaceURI(),
 						qnEl2.getLocalPart(), pfx);
-				QNameValue qnv = new QNameValue(
-						Constants.XML_SCHEMA_NS_URI, "int",
-						qnXsiType.getPrefix());
+				QNameValue qnv = new QNameValue(Constants.XML_SCHEMA_NS_URI,
+						"int", qnXsiType.getPrefix());
 				encoder.encodeAttributeXsiType(qnv, null);
 				encoder.encodeCharacters(new StringValue(sChValueTyped));
 				encoder.encodeEndElement();
@@ -668,8 +667,8 @@ public class EXIProfileTest extends TestCase {
 		QName qnAt2 = new QName("", "at2");
 		QName qnAt3 = new QName("", "at3");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
 		String sAtValue1 = "atValue1";
 		String sAtValue2 = "atValue2";
@@ -855,13 +854,13 @@ public class EXIProfileTest extends TestCase {
 		QName qnRoot = new QName("", "root");
 		QName qnA = new QName("", "a");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
-		QNameValue typeInt = new QNameValue(Constants.XML_SCHEMA_NS_URI,
-				"int", null);
-		QNameValue typeDecimal = new QNameValue(
-				Constants.XML_SCHEMA_NS_URI, "decimal", null);
+		QNameValue typeInt = new QNameValue(Constants.XML_SCHEMA_NS_URI, "int",
+				null);
+		QNameValue typeDecimal = new QNameValue(Constants.XML_SCHEMA_NS_URI,
+				"decimal", null);
 
 		String sValue1 = "12345";
 		String sValue2 = "12345.67";
@@ -999,8 +998,8 @@ public class EXIProfileTest extends TestCase {
 		QName qnA = new QName("", "A");
 		QName qnB = new QName("", "B");
 
-		QName qnXsiType = new QName(
-				Constants.XML_SCHEMA_INSTANCE_NS_URI, "type");
+		QName qnXsiType = new QName(Constants.XML_SCHEMA_INSTANCE_NS_URI,
+				"type");
 
 		// encoder
 		{

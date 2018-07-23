@@ -75,7 +75,7 @@ public class TestDOMDecoder extends AbstractTestDecoder {
 		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		// remaining keys
 		trans.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // "ASCII"
-																	// "UTF-8"
+		// "UTF-8"
 		trans.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		// // TEST DOCTYPE

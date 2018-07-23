@@ -56,11 +56,10 @@ import com.siemens.ct.exi.main.helpers.DefaultSchemaIdResolver;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class StAXDecoder implements XMLStreamReader
-//XMLEventReader
+// XMLEventReader
 {
 
 	protected EXIFactory noOptionsFactory;
@@ -88,7 +87,7 @@ public class StAXDecoder implements XMLStreamReader
 
 	/* namespace context */
 	protected EXINamespaceContext nsContext;
-	
+
 	static class AttributeContainer {
 		final QNameContext qname;
 		final Value value;
@@ -103,17 +102,18 @@ public class StAXDecoder implements XMLStreamReader
 
 	public StAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
-		if(noOptionsFactory.getSchemaIdResolver() == null) {
+		if (noOptionsFactory.getSchemaIdResolver() == null) {
 			// set default schemaId resolver
 			noOptionsFactory.setSchemaIdResolver(new DefaultSchemaIdResolver());
 		}
 		this.exiStream = noOptionsFactory.createEXIStreamDecoder();
 		this.attributes = new ArrayList<AttributeContainer>();
 		this.nsContext = new EXINamespaceContext();
-		
+
 	}
-	
-	public void setInputStream(InputStream is) throws EXIException, IOException, XMLStreamException {
+
+	public void setInputStream(InputStream is) throws EXIException,
+			IOException, XMLStreamException {
 		parseHeader(is);
 	}
 
@@ -207,10 +207,11 @@ public class StAXDecoder implements XMLStreamReader
 	public int next() throws XMLStreamException {
 		try {
 			// if last eventType was EndElement remove NS Stack
-			if(this.eventType == EventType.END_ELEMENT || this.eventType == EventType.END_ELEMENT_UNDECLARED) {
+			if (this.eventType == EventType.END_ELEMENT
+					|| this.eventType == EventType.END_ELEMENT_UNDECLARED) {
 				this.nsContext.popNamespaceDeclarations();
 			}
-			
+
 			int ev;
 			if (this.preReadEventType == null) {
 				this.eventType = decodeEvent(decoder.next());
@@ -224,13 +225,13 @@ public class StAXDecoder implements XMLStreamReader
 			if (ev == XMLStreamConstants.START_ELEMENT) {
 				handleAttributes();
 			}
-			
+
 			return ev;
 		} catch (Exception e) {
 			throw new XMLStreamException(e);
 		}
 	}
-	
+
 	String endElementPrefix;
 	List<NamespaceDeclaration> eePrefixes;
 
@@ -239,7 +240,7 @@ public class StAXDecoder implements XMLStreamReader
 			throws EXIException, IOException {
 
 		endElementPrefix = null;
-		
+
 		switch (nextEventType) {
 		/* DOCUMENT */
 		case START_DOCUMENT:
@@ -288,12 +289,13 @@ public class StAXDecoder implements XMLStreamReader
 		/* END ELEMENT */
 		case END_ELEMENT:
 		case END_ELEMENT_UNDECLARED:
-//			@SuppressWarnings("unused")
-//			List<NamespaceDeclaration> eePrefixes = decoder.getDeclaredPrefixDeclarations();
+			// @SuppressWarnings("unused")
+			// List<NamespaceDeclaration> eePrefixes =
+			// decoder.getDeclaredPrefixDeclarations();
 			eePrefixes = decoder.getDeclaredPrefixDeclarations();
-//			if (namespacePrefixes) {
-//				// eeQNameAsString = decoder.getElementQNameAsString();
-//			}
+			// if (namespacePrefixes) {
+			// // eeQNameAsString = decoder.getElementQNameAsString();
+			// }
 			endElementPrefix = decoder.getElementPrefix();
 			element = decoder.decodeEndElement();
 			// this.nsContext.popNamespaceDeclarations();
@@ -336,15 +338,17 @@ public class StAXDecoder implements XMLStreamReader
 		do {
 			et = decoder.next();
 			ev = getEventType(et);
-			if (et == EventType.SELF_CONTAINED || ev == XMLStreamConstants.ATTRIBUTE
+			if (et == EventType.SELF_CONTAINED
+					|| ev == XMLStreamConstants.ATTRIBUTE
 					|| ev == XMLStreamConstants.NAMESPACE) {
 				decodeEvent(et);
-			}	
-		} while (et == EventType.SELF_CONTAINED || ev == XMLStreamConstants.ATTRIBUTE
+			}
+		} while (et == EventType.SELF_CONTAINED
+				|| ev == XMLStreamConstants.ATTRIBUTE
 				|| ev == XMLStreamConstants.NAMESPACE);
-		
+
 		List<NamespaceDeclaration> nsDecls = getNamespaceDeclarations();
-		this.nsContext.pushNamespaceDeclarations(nsDecls);	
+		this.nsContext.pushNamespaceDeclarations(nsDecls);
 
 		this.preReadEventType = et;
 	}
@@ -380,11 +384,12 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getAttributeValue(String namespaceURI, String localName) {
-		// Returns the normalized attribute value of the attribute with the namespace and localName
+		// Returns the normalized attribute value of the attribute with the
+		// namespace and localName
 		// If the namespaceURI is null the namespace is not checked for equality
-		for(AttributeContainer ac : attributes) {
-			if(ac.qname.getLocalName().equals(localName)) {
-				if(namespaceURI == null) {
+		for (AttributeContainer ac : attributes) {
+			if (ac.qname.getLocalName().equals(localName)) {
+				if (namespaceURI == null) {
 					return ac.value.toString();
 				} else if (ac.qname.getNamespaceUri().equals(namespaceURI)) {
 					return ac.value.toString();
@@ -400,9 +405,8 @@ public class StAXDecoder implements XMLStreamReader
 		return null;
 	}
 
-	
 	public String getElementText() throws XMLStreamException {
-		//  Reads the content of a text-only element,
+		// Reads the content of a text-only element,
 		// an exception is thrown if this is not a text-only element.
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
@@ -430,28 +434,31 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	/*
-	 * Returns a QName for the current START_ELEMENT or END_ELEMENT event 
+	 * Returns a QName for the current START_ELEMENT or END_ELEMENT event
 	 * 
 	 * (non-Javadoc)
+	 * 
 	 * @see javax.xml.stream.XMLStreamReader#getName()
 	 */
 	public QName getName() {
 		// Returns a QName for the current START_ELEMENT or END_ELEMENT event
-		QName qn = new QName( element.getNamespaceUri(), element.getLocalName(), this.getPrefix());
+		QName qn = new QName(element.getNamespaceUri(), element.getLocalName(),
+				this.getPrefix());
 		return qn;
 	}
 
-	
 	List<NamespaceDeclaration> getNamespaceDeclarations() {
 		List<NamespaceDeclaration> result;
-		if(eventType == EventType.END_ELEMENT || eventType == EventType.END_ELEMENT_UNDECLARED) {
+		if (eventType == EventType.END_ELEMENT
+				|| eventType == EventType.END_ELEMENT_UNDECLARED) {
 			result = this.eePrefixes;
 		} else {
 			result = decoder.getDeclaredPrefixDeclarations();
 		}
-		return result != null ? result : Collections.<NamespaceDeclaration>emptyList();
+		return result != null ? result : Collections
+				.<NamespaceDeclaration> emptyList();
 	}
-	
+
 	/*
 	 * Returns a read only namespace context for the current position.
 	 * 
@@ -475,7 +482,7 @@ public class StAXDecoder implements XMLStreamReader
 	 */
 	public int getNamespaceCount() {
 		List<NamespaceDeclaration> nsDecls = getNamespaceDeclarations();
-		return nsDecls == null ? 0 : nsDecls.size();			
+		return nsDecls == null ? 0 : nsDecls.size();
 	}
 
 	/*
@@ -544,7 +551,7 @@ public class StAXDecoder implements XMLStreamReader
 		if (this.endElementPrefix != null) {
 			return endElementPrefix;
 		}
-		
+
 		// Returns the prefix of the current event or null if the event does not
 		// have a prefix
 		if (getEventType() == XMLStreamConstants.START_ELEMENT
@@ -583,12 +590,12 @@ public class StAXDecoder implements XMLStreamReader
 			throw new RuntimeException("Unexpected event, id=" + getEventType());
 		}
 	}
-	
+
 	private String getDocTypeString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<!DOCTYPE ");
 		sb.append(docType.name);
-		
+
 		if (docType.publicID.length > 0) {
 			sb.append(" PUBLIC ");
 			sb.append('\"');
@@ -597,7 +604,7 @@ public class StAXDecoder implements XMLStreamReader
 		}
 		if (docType.systemID.length > 0) {
 			if (docType.publicID.length == 0) {
-				sb.append(" SYSTEM ");	
+				sb.append(" SYSTEM ");
 			} else {
 				sb.append(' ');
 			}
@@ -609,7 +616,7 @@ public class StAXDecoder implements XMLStreamReader
 			sb.append(' ');
 			sb.append('[');
 			sb.append(docType.text);
-			sb.append(']');			
+			sb.append(']');
 		}
 		sb.append('>');
 
@@ -627,7 +634,7 @@ public class StAXDecoder implements XMLStreamReader
 		case XMLStreamConstants.ENTITY_REFERENCE:
 			return this.entityReference;
 		case XMLStreamConstants.DTD:
-			 return getDocTypeString().toCharArray();
+			return getDocTypeString().toCharArray();
 		default:
 			throw new RuntimeException("Unexpected event, id=" + getEventType());
 		}
@@ -655,27 +662,31 @@ public class StAXDecoder implements XMLStreamReader
 		 * "targetStart + length" must be less than or equal to length of
 		 * "target".
 		 */
-		// arraycopy(Object source, int sourcePosition, Object destination, int destinationPosition, int numberOfElements)
-		if (this.getTextLength() > ( target.length - targetStart )) {
+		// arraycopy(Object source, int sourcePosition, Object destination, int
+		// destinationPosition, int numberOfElements)
+		if (this.getTextLength() > (target.length - targetStart)) {
 			throw new RuntimeException("Buffer too small!");
 		}
-		
+
 		switch (getEventType()) {
 		case XMLStreamConstants.CHARACTERS:
 		case XMLStreamConstants.SPACE:
 			this.characters.getCharacters(target, targetStart);
-			
-//			//System.arraycopy(this.characters, sourceStart, target, targetStart, length);
-//			char[] ch = this.characters.getCharacters(target, targetStart);
-//			if (ch != target) {
-//				System.arraycopy(ch, sourceStart, target, targetStart, length);
-//			}
+
+			// //System.arraycopy(this.characters, sourceStart, target,
+			// targetStart, length);
+			// char[] ch = this.characters.getCharacters(target, targetStart);
+			// if (ch != target) {
+			// System.arraycopy(ch, sourceStart, target, targetStart, length);
+			// }
 			return length;
 		case XMLStreamConstants.COMMENT:
-			System.arraycopy(this.comment, sourceStart, target, targetStart, length);
+			System.arraycopy(this.comment, sourceStart, target, targetStart,
+					length);
 			return length;
 		case XMLStreamConstants.ENTITY_REFERENCE:
-			System.arraycopy(this.entityReference, sourceStart, target, targetStart, length);
+			System.arraycopy(this.entityReference, sourceStart, target,
+					targetStart, length);
 			return length;
 		case XMLStreamConstants.DTD:
 			char[] dt = getDocTypeString().toCharArray();
@@ -684,7 +695,7 @@ public class StAXDecoder implements XMLStreamReader
 		default:
 			throw new RuntimeException("Unexpected event, id=" + getEventType());
 		}
-		
+
 	}
 
 	public int getTextLength() {
@@ -758,7 +769,7 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public boolean isEndElement() {
-		return  getEventType() == XMLStreamConstants.END_ELEMENT ;
+		return getEventType() == XMLStreamConstants.END_ELEMENT;
 	}
 
 	/*
@@ -872,43 +883,45 @@ public class StAXDecoder implements XMLStreamReader
 	public boolean standaloneSet() {
 		return false;
 	}
-	
-	
+
 	class EXINamespaceContext implements NamespaceContext {
 
 		// stack of NS declarations
 		List<List<NamespaceDeclaration>> _nsDecls;
+
 		// List<NamespaceDeclaration> _nsDecls;
-		
+
 		public EXINamespaceContext() {
 			this._nsDecls = new ArrayList<List<NamespaceDeclaration>>();
 		}
 
-//		protected void setNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
-//			_nsDecls = nsDecls;
-//		}
-//		
-//		protected void addNamespaceDeclaration(NamespaceDeclaration nsDecl) {
-//			int lastIndex = _nsDecls.size()-1;
-//			List<NamespaceDeclaration> nsDecls = this._nsDecls.get(lastIndex);
-//			if(nsDecls == null) {
-//				nsDecls = new ArrayList<NamespaceDeclaration>();
-//				this._nsDecls.set(lastIndex, nsDecls);
-//			}
-//			nsDecls.add(nsDecl);
-//		}
-		
-		protected void pushNamespaceDeclarations(List<NamespaceDeclaration> nsDecls) {
+		// protected void setNamespaceDeclarations(List<NamespaceDeclaration>
+		// nsDecls) {
+		// _nsDecls = nsDecls;
+		// }
+		//
+		// protected void addNamespaceDeclaration(NamespaceDeclaration nsDecl) {
+		// int lastIndex = _nsDecls.size()-1;
+		// List<NamespaceDeclaration> nsDecls = this._nsDecls.get(lastIndex);
+		// if(nsDecls == null) {
+		// nsDecls = new ArrayList<NamespaceDeclaration>();
+		// this._nsDecls.set(lastIndex, nsDecls);
+		// }
+		// nsDecls.add(nsDecl);
+		// }
+
+		protected void pushNamespaceDeclarations(
+				List<NamespaceDeclaration> nsDecls) {
 			this._nsDecls.add(nsDecls);
 		}
-		
+
 		protected List<NamespaceDeclaration> popNamespaceDeclarations() {
-			return this._nsDecls.remove(this._nsDecls.size()-1);
+			return this._nsDecls.remove(this._nsDecls.size() - 1);
 		}
 
 		public String getNamespaceURI(String prefix) {
 			// inner hierarchy to outer
-			for(int k= _nsDecls.size()-1; k>=0; k--) {
+			for (int k = _nsDecls.size() - 1; k >= 0; k--) {
 				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
 				if (nsDecls != null) {
 					for (int i = 0; i < nsDecls.size(); i++) {
@@ -917,7 +930,7 @@ public class StAXDecoder implements XMLStreamReader
 							return nsDecl.namespaceURI;
 						}
 					}
-				}	
+				}
 			}
 
 			return null;
@@ -925,7 +938,7 @@ public class StAXDecoder implements XMLStreamReader
 
 		public String getPrefix(String namespaceURI) {
 			// inner hierarchy to outer
-			for(int k= _nsDecls.size()-1; k>=0; k--) {
+			for (int k = _nsDecls.size() - 1; k >= 0; k--) {
 				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
 				if (nsDecls != null) {
 					for (int i = 0; i < nsDecls.size(); i++) {
@@ -944,7 +957,7 @@ public class StAXDecoder implements XMLStreamReader
 		public Iterator getPrefixes(String namespaceURI) {
 			List<String> prefixes = new ArrayList<String>();
 			// inner hierarchy to outer
-			for(int k= _nsDecls.size()-1; k>=0; k--) {
+			for (int k = _nsDecls.size() - 1; k >= 0; k--) {
 				List<NamespaceDeclaration> nsDecls = _nsDecls.get(k);
 				if (nsDecls != null) {
 					for (int i = 0; i < nsDecls.size(); i++) {

@@ -63,7 +63,7 @@ public class QuickTestConfiguration {
 	public static boolean localValuePartitions = true;
 	public static int maximumNumberOfBuiltInElementGrammars = -1;
 	public static int maximumNumberOfBuiltInProductions = -1;
-	
+
 	public static QName[] selfContainedElements;
 
 	public static QName[] dtrMapTypes;
@@ -137,12 +137,13 @@ public class QuickTestConfiguration {
 		// XSD_TYPES_ONLY = true;
 		// maximumNumberOfBuiltInProductions = 0;
 		// maximumNumberOfBuiltInElementGrammars = 0;
-//		dtrMapTypes = new QName[1];
-//		dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
-//				"decimal");
-//		dtrMapRepresentations = new QName[1];
-//		dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI, "string");
-//		assert (dtrMapTypes.length == dtrMapRepresentations.length);
+		// dtrMapTypes = new QName[1];
+		// dtrMapTypes[0] = new QName(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+		// "decimal");
+		// dtrMapRepresentations = new QName[1];
+		// dtrMapRepresentations[0] = new QName(Constants.W3C_EXI_NS_URI,
+		// "string");
+		// assert (dtrMapTypes.length == dtrMapRepresentations.length);
 	}
 
 	// ///////////////////////////////////////////////////

@@ -277,10 +277,13 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 		// Initial Entries in Uri Partition
 		assertTrue(encoder.getNumberOfUris() == 4);
-		assertTrue(encoder.getUri(Constants.XML_NULL_NS_URI).getNamespaceUriID() == 0);
+		assertTrue(encoder.getUri(Constants.XML_NULL_NS_URI)
+				.getNamespaceUriID() == 0);
 		assertTrue(encoder.getUri(Constants.XML_NS_URI).getNamespaceUriID() == 1);
-		assertTrue(encoder.getUri(Constants.XML_SCHEMA_INSTANCE_NS_URI).getNamespaceUriID() == 2);
-		assertTrue(encoder.getUri(Constants.XML_SCHEMA_NS_URI).getNamespaceUriID() == 3);
+		assertTrue(encoder.getUri(Constants.XML_SCHEMA_INSTANCE_NS_URI)
+				.getNamespaceUriID() == 2);
+		assertTrue(encoder.getUri(Constants.XML_SCHEMA_NS_URI)
+				.getNamespaceUriID() == 3);
 
 		// Initial Entries in Local-Name Partitions
 		RuntimeUriContext uc0 = encoder.getUri(Constants.XML_NULL_NS_URI);
@@ -376,10 +379,13 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 
 		// Initial Entries in Uri Partition
 		assertTrue(encoder.getNumberOfUris() == 4);
-		assertTrue(encoder.getUri(Constants.XML_NULL_NS_URI).getNamespaceUriID() == 0);
+		assertTrue(encoder.getUri(Constants.XML_NULL_NS_URI)
+				.getNamespaceUriID() == 0);
 		assertTrue(encoder.getUri(Constants.XML_NS_URI).getNamespaceUriID() == 1);
-		assertTrue(encoder.getUri(Constants.XML_SCHEMA_INSTANCE_NS_URI).getNamespaceUriID() == 2);
-		assertTrue(encoder.getUri(Constants.XML_SCHEMA_NS_URI).getNamespaceUriID() == 3);
+		assertTrue(encoder.getUri(Constants.XML_SCHEMA_INSTANCE_NS_URI)
+				.getNamespaceUriID() == 2);
+		assertTrue(encoder.getUri(Constants.XML_SCHEMA_NS_URI)
+				.getNamespaceUriID() == 3);
 
 		// Initial Entries in Local-Name Partitions
 		// some more than usual, #34
@@ -392,8 +398,7 @@ public class InitialEntriesStringTablePartitionsTestCase extends TestCase {
 		// XSI-NS "nil", "type"
 		assertTrue(encoder.getUri(Constants.XML_SCHEMA_INSTANCE_NS_URI)
 				.getNumberOfQNames() == 2);
-		RuntimeUriContext uc3 = encoder
-				.getUri(Constants.XML_SCHEMA_NS_URI);
+		RuntimeUriContext uc3 = encoder.getUri(Constants.XML_SCHEMA_NS_URI);
 		// XSD-NS "ENTITIES", ..., "unsignedShort"
 		// Note: there should be some more new local-names!!! # 126
 		assertTrue(uc3.getNumberOfQNames() > 120);

@@ -85,8 +85,8 @@ public class AttributeListTest extends XMLTestCase {
 
 		al.addAttribute("", "x", "x", "bla");
 		al.addAttribute("", "y", "y", "bla");
-		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type",
-				"xsi", "uri:type");
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type", "xsi",
+				"uri:type");
 
 		assertTrue(al.getNumberOfAttributes() == 2);
 		assertTrue(al.hasXsiNil() == false);
@@ -107,8 +107,8 @@ public class AttributeListTest extends XMLTestCase {
 
 		al.addAttribute("", "y", "y", "bla");
 		al.addAttribute("", "x", "x", "bla");
-		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "nil",
-				"xsi", "false ");
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "nil", "xsi",
+				"false ");
 
 		assertTrue(al.getNumberOfAttributes() == 2);
 		assertTrue(al.hasXsiNil() == true);
@@ -136,8 +136,8 @@ public class AttributeListTest extends XMLTestCase {
 		al.addAttribute("", "lnType", "lnType", "foo");
 		al.addAttribute("", "lnClass", "lnClass", "LLN0");
 		al.addAttribute("", "inst", "inst", "");
-		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type",
-				"xsi", "cif:tLN0");
+		al.addAttribute(Constants.XML_SCHEMA_INSTANCE_NS_URI, "type", "xsi",
+				"cif:tLN0");
 
 		assertTrue(al.getNumberOfAttributes() == 5);
 		assertTrue(al.hasXsiNil() == false);

@@ -85,7 +85,6 @@ import com.siemens.ct.exi.main.util.SkipRootElementXMLReader;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class EXIficientCMD {
@@ -132,17 +131,16 @@ public class EXIficientCMD {
 	public static final String NO_LOCAL_VALUE_PARTITIONS = "-noLocalValuePartitions";
 	public static final String MAXIMUM_NUMBER_OF_BUILT_IN_PRODUCTIONS = "-maximumNumberOfBuiltInProductions";
 	public static final String MAXIMUM_NUMBER_OF_BUILT_IN_ELEMENT_GRAMMARS = "-maximumNumberOfBuiltInElementGrammars";
-	
+
 	public static String DEFAULT_EXI_FILE_EXTENSION = ".exi";
 	public static String DEFAULT_XML_FILE_EXTENSION = ".xml";
-	
+
 	protected boolean inputParametersOK;
 	protected CmdOption cmdOption;
 	protected EXIFactory exiFactory;
 	protected String input;
 	protected String output;
-	
-	
+
 	public EXIficientCMD() {
 	}
 
@@ -203,24 +201,26 @@ public class EXIficientCMD {
 		ps.println(" " + RETAIN_ENTITY_REFERENCE);
 		ps.println(" " + FRAGMENT);
 		ps.println(" " + SELF_CONTAINED + " <{urn:foo}elWithNS,elDefNS>");
-		ps.println(" " + DATATYPE_REPRESENTATION_MAP + " <qnameType,qnameRepresentation,{http://www.w3.org/2001/XMLSchema}decimal,{http://www.w3.org/2009/exi}string>");
-		
+		ps.println(" "
+				+ DATATYPE_REPRESENTATION_MAP
+				+ " <qnameType,qnameRepresentation,{http://www.w3.org/2001/XMLSchema}decimal,{http://www.w3.org/2009/exi}string>");
+
 		ps.println();
 		ps.println("# Examples");
-		ps.println(" " + ENCODE + " " + SCHEMA
-				+ " notebook.xsd " + INPUT + " notebook.xml");
-		ps.println(" " + DECODE + " " + SCHEMA
-				+ " notebook.xsd " + INPUT + " notebook.xml.exi " + OUTPUT + " notebookDec.xml");
+		ps.println(" " + ENCODE + " " + SCHEMA + " notebook.xsd " + INPUT
+				+ " notebook.xml");
+		ps.println(" " + DECODE + " " + SCHEMA + " notebook.xsd " + INPUT
+				+ " notebook.xml.exi " + OUTPUT + " notebookDec.xml");
 	}
 
 	protected static void printError(String msg) {
 		ps.println("[ERROR] " + msg);
 	}
-	
+
 	protected static void printWarning(String msg) {
 		ps.println("[Warning] " + msg);
 	}
-	
+
 	protected void parseArguments(String[] args) throws EXIException {
 		// arguments that need to be set
 		cmdOption = null;
@@ -231,7 +231,7 @@ public class EXIficientCMD {
 		output = null;
 
 		exiFactory = DefaultEXIFactory.newInstance();
-		
+
 		// warning flags
 		boolean wIncludeOptions = false;
 		boolean wIncludeSchemaId = false;
@@ -305,8 +305,7 @@ public class EXIficientCMD {
 				indexArgument++;
 				int valuePartitionCapacity = Integer
 						.parseInt(args[indexArgument]);
-				exiFactory
-						.setValuePartitionCapacity(valuePartitionCapacity);
+				exiFactory.setValuePartitionCapacity(valuePartitionCapacity);
 			} else if (MAXIMUM_NUMBER_OF_BUILT_IN_ELEMENT_GRAMMARS
 					.equalsIgnoreCase(argument)) {
 				assert ((indexArgument + 1) < args.length);
@@ -329,7 +328,8 @@ public class EXIficientCMD {
 			// Comments
 			else if (PRESERVE_COMMENTS.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_COMMENT, wPreserveComments = true);
+				fo.setFidelity(FidelityOptions.FEATURE_COMMENT,
+						wPreserveComments = true);
 			}
 			// LexicalValues
 			else if (PRESERVE_LEXICAL_VALUES.equalsIgnoreCase(argument)) {
@@ -339,7 +339,8 @@ public class EXIficientCMD {
 			// Prefixes
 			else if (PRESERVE_PREFIXES.equalsIgnoreCase(argument)) {
 				FidelityOptions fo = exiFactory.getFidelityOptions();
-				fo.setFidelity(FidelityOptions.FEATURE_PREFIX, wPreservePrefixes = true);
+				fo.setFidelity(FidelityOptions.FEATURE_PREFIX,
+						wPreservePrefixes = true);
 			}
 			// PIs
 			else if (PRESERVE_PIS.equalsIgnoreCase(argument)) {
@@ -390,8 +391,7 @@ public class EXIficientCMD {
 						EncodingOptions.INCLUDE_XSI_SCHEMALOCATION);
 			}
 			// ### Include SchemaLocation
-			else if (INCLUDE_INSIGNIFICANT_XSI_NIL
-					.equalsIgnoreCase(argument)) {
+			else if (INCLUDE_INSIGNIFICANT_XSI_NIL.equalsIgnoreCase(argument)) {
 				exiFactory.getEncodingOptions().setOption(
 						EncodingOptions.INCLUDE_INSIGNIFICANT_XSI_NIL);
 			}
@@ -411,8 +411,7 @@ public class EXIficientCMD {
 				exiFactory.setFragment(true);
 			}
 			// ### SELF_CONTAINED
-			else if (SELF_CONTAINED
-					.equalsIgnoreCase(argument)) {
+			else if (SELF_CONTAINED.equalsIgnoreCase(argument)) {
 				assert ((indexArgument + 1) < args.length);
 				indexArgument++;
 
@@ -420,75 +419,81 @@ public class EXIficientCMD {
 				StringTokenizer st = new StringTokenizer(qnames, ",");
 				QName[] scElements = new QName[st.countTokens()];
 				int i = 0;
-				while(st.hasMoreTokens()) {
+				while (st.hasMoreTokens()) {
 					scElements[i++] = QName.valueOf(st.nextToken());
 				}
 				exiFactory.setSelfContainedElements(scElements);
-				exiFactory.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_SC, true);
+				exiFactory.getFidelityOptions().setFidelity(
+						FidelityOptions.FEATURE_SC, true);
 			}
 			// ### DATATYPE_REPRESENTATION_MAP
-			else if (DATATYPE_REPRESENTATION_MAP
-					.equalsIgnoreCase(argument)) {
+			else if (DATATYPE_REPRESENTATION_MAP.equalsIgnoreCase(argument)) {
 				assert ((indexArgument + 1) < args.length);
 				indexArgument++;
 
 				String dtrs = args[indexArgument];
 				StringTokenizer st = new StringTokenizer(dtrs, ",");
-				
-				assert(st.countTokens() % 2 == 0);
-				QName[] dtrMapTypes = new QName[st.countTokens()/2];
-				QName[] dtrMapRepresentations = new QName[st.countTokens()/2];
-				
+
+				assert (st.countTokens() % 2 == 0);
+				QName[] dtrMapTypes = new QName[st.countTokens() / 2];
+				QName[] dtrMapRepresentations = new QName[st.countTokens() / 2];
+
 				int i = 0;
-				while(st.hasMoreTokens()) {
+				while (st.hasMoreTokens()) {
 					dtrMapTypes[i] = QName.valueOf(st.nextToken());
 					dtrMapRepresentations[i] = QName.valueOf(st.nextToken());
 					i++;
 				}
-				exiFactory.setDatatypeRepresentationMap(dtrMapTypes, dtrMapRepresentations);
-			}
-			else {
+				exiFactory.setDatatypeRepresentationMap(dtrMapTypes,
+						dtrMapRepresentations);
+			} else {
 				System.out.println("Unknown option '" + argument + "'");
 			}
 
 			indexArgument++;
 		}
-		
-		
+
 		// inform user about warnings/side-effects
-		// e.g., includeOptions & includeProfileValues ignored because includeOptions not set
-		if(wIncludeSchemaId && !wIncludeOptions) {
-			printWarning(INCLUDE_SCHEMA_ID + " ignored because " + INCLUDE_OPTIONS + " not set");
+		// e.g., includeOptions & includeProfileValues ignored because
+		// includeOptions not set
+		if (wIncludeSchemaId && !wIncludeOptions) {
+			printWarning(INCLUDE_SCHEMA_ID + " ignored because "
+					+ INCLUDE_OPTIONS + " not set");
 		}
-		if(wIncludeProfileValues && !wIncludeOptions) {
-			printWarning(INCLUDE_PROFILE_VALUES + " ignored because " + INCLUDE_OPTIONS + " not set");
+		if (wIncludeProfileValues && !wIncludeOptions) {
+			printWarning(INCLUDE_PROFILE_VALUES + " ignored because "
+					+ INCLUDE_OPTIONS + " not set");
 		}
 		// e.g., preserveXX ignored given that strict is set
-		if(exiFactory.getFidelityOptions().isStrict()) {
-			if(wPreserveComments) {
-				printWarning(PRESERVE_COMMENTS + " ignored because " + OPTION_STRICT + " is set");
+		if (exiFactory.getFidelityOptions().isStrict()) {
+			if (wPreserveComments) {
+				printWarning(PRESERVE_COMMENTS + " ignored because "
+						+ OPTION_STRICT + " is set");
 			}
-			if(wPreservePIs) {
-				printWarning(PRESERVE_PIS + " ignored because " + OPTION_STRICT + " is set");
+			if (wPreservePIs) {
+				printWarning(PRESERVE_PIS + " ignored because " + OPTION_STRICT
+						+ " is set");
 			}
-			if(wPreserveDTD) {
-				printWarning(PRESERVE_DTDS + " ignored because " + OPTION_STRICT + " is set");
+			if (wPreserveDTD) {
+				printWarning(PRESERVE_DTDS + " ignored because "
+						+ OPTION_STRICT + " is set");
 			}
-			if(wPreservePrefixes) {
-				printWarning(PRESERVE_PREFIXES + " ignored because " + OPTION_STRICT + " is set");
+			if (wPreservePrefixes) {
+				printWarning(PRESERVE_PREFIXES + " ignored because "
+						+ OPTION_STRICT + " is set");
 			}
 		} else {
-			if(wStrict) {
-				printWarning(OPTION_STRICT+ " ignored because a preserveOption is set");
+			if (wStrict) {
+				printWarning(OPTION_STRICT
+						+ " ignored because a preserveOption is set");
 			}
 		}
 		// TODO conflicting coding modes
 		// TODO SC in strict mode
 
-
 		// check input
 		inputParametersOK = true;
-		
+
 		if (cmdOption == null) {
 			inputParametersOK = false;
 			printError("Missing coding option such as " + ENCODE + " and "
@@ -520,7 +525,7 @@ public class EXIficientCMD {
 			printError("Missing output specification!");
 		} else {
 			fOutput = new File(output);
-			
+
 			if (fOutput.isDirectory()) {
 				inputParametersOK = false;
 				printError("Outputfile '" + output
@@ -539,14 +544,14 @@ public class EXIficientCMD {
 					if (parentDir != null && !parentDir.exists()) {
 						if (!parentDir.mkdirs()) {
 							inputParametersOK = false;
-							printError("Output directories for file '"
-									+ output + "' could not be created.");
+							printError("Output directories for file '" + output
+									+ "' could not be created.");
 						}
 					}
 				}
 			}
 		}
-		
+
 		if (inputParametersOK) {
 			// schema available ?
 			if (SchemaOption.noSchema == schemaOption) {
@@ -561,8 +566,9 @@ public class EXIficientCMD {
 			}
 		}
 	}
-	
-	protected void process() throws EXIException, TransformerException, IOException, SAXException {
+
+	protected void process() throws EXIException, TransformerException,
+			IOException, SAXException {
 		if (inputParametersOK) {
 			// start coding
 			switch (cmdOption) {
@@ -614,20 +620,19 @@ public class EXIficientCMD {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 					"yes");
 		}
-		
+
 		transformer.transform(exiSource, new StreamResult(xmlOutput));
 
 		xmlOutput.flush();
 		xmlOutput.close();
 	}
 
-	
 	protected XMLReader getXMLReader() throws SAXException {
 		// create xml reader
 		XMLReader xmlReader;
 
-//		xmlReader = XMLReaderFactory
-//				.createXMLReader("org.apache.xerces.parsers.SAXParser");
+		// xmlReader = XMLReaderFactory
+		// .createXMLReader("org.apache.xerces.parsers.SAXParser");
 		xmlReader = XMLReaderFactory.createXMLReader();
 
 		// set XMLReader features
@@ -645,16 +650,16 @@ public class EXIficientCMD {
 
 		return xmlReader;
 	}
-	
+
 	protected void encode(String input, EXIFactory exiFactory, String output)
 			throws SAXException, EXIException, IOException {
 		OutputStream os = new FileOutputStream(output);
-		
+
 		XMLReader xmlReader = getXMLReader();
-		
+
 		EXIResult exiResult = new EXIResult(exiFactory);
 		exiResult.setOutputStream(os);
-		
+
 		xmlReader.setContentHandler(exiResult.getHandler());
 
 		// set LexicalHandler
@@ -668,17 +673,21 @@ public class EXIficientCMD {
 		xmlReader.setDTDHandler((DTDHandler) exiResult.getHandler());
 
 		InputSource is;
-		if(exiFactory.isFragment()) {
+		if (exiFactory.isFragment()) {
 			// surround fragment section with *root* element
-			// (necessary for xml reader to avoid messages like "root element must
+			// (necessary for xml reader to avoid messages like "root element
+			// must
 			// be well-formed")
-			is = new InputSource(FragmentUtilities.getSurroundingRootInputStream(new FileInputStream(input)));
+			is = new InputSource(
+					FragmentUtilities
+							.getSurroundingRootInputStream(new FileInputStream(
+									input)));
 			// skip root element when passing infoset to EXI encoder
-			xmlReader =  new SkipRootElementXMLReader(xmlReader);
+			xmlReader = new SkipRootElementXMLReader(xmlReader);
 		} else {
 			is = new InputSource(input);
 		}
-		
+
 		xmlReader.parse(is);
 
 		os.flush();

@@ -48,12 +48,11 @@ import com.siemens.ct.exi.core.values.StringValue;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class SAXEncoder extends DefaultHandler2 {
 	protected EXIFactory factory;
-	
+
 	protected EXIStreamEncoder exiStream;
 	protected EXIBodyEncoder encoder;
 
@@ -62,22 +61,24 @@ public class SAXEncoder extends DefaultHandler2 {
 
 	public SAXEncoder(EXIFactory factory) throws EXIException {
 		this.factory = factory;
-		
+
 		// exi stream
 		exiStream = factory.createEXIStreamEncoder();
-		
+
 		// attribute list
 		AttributeFactory attFactory = AttributeFactory.newInstance();
 		exiAttributes = attFactory.createAttributeListInstance(factory);
 	}
-	
-	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException {
 		// buffer stream if not already
 		// TODO is there a *nice* way to detect whether a stream is buffered
-		if (!(os instanceof BufferedOutputStream || os instanceof ByteArrayOutputStream || os instanceof DataOutputStream)) {
+		if (!(os instanceof BufferedOutputStream
+				|| os instanceof ByteArrayOutputStream || os instanceof DataOutputStream)) {
 			os = new BufferedOutputStream(os);
 		}
-		
+
 		// write header & get body encoder
 		this.encoder = exiStream.encodeHeader(os);
 	}
@@ -113,19 +114,20 @@ public class SAXEncoder extends DefaultHandler2 {
 			Attributes attributes) throws EXIException, IOException {
 		// start element
 		encoder.encodeStartElement(uri, local, prefix);
-		
+
 		// add remaining attributes (if any)
 		if (attributes != null) {
 			for (int i = 0; i < attributes.getLength(); i++) {
-				exiAttributes.addAttribute(attributes.getURI(i), attributes.getLocalName(i), getPrefixOf(attributes, i), attributes.getValue(i));
-			}	
+				exiAttributes.addAttribute(attributes.getURI(i),
+						attributes.getLocalName(i), getPrefixOf(attributes, i),
+						attributes.getValue(i));
+			}
 		}
-		
+
 		// encode NS and attributes
 		encoder.encodeAttributeList(exiAttributes);
 		exiAttributes.clear();
 	}
-
 
 	private String getPrefixOf(Attributes atts, int index) {
 		String qname = atts.getQName(index);
@@ -136,7 +138,6 @@ public class SAXEncoder extends DefaultHandler2 {
 				.substring(0, lengthDifference - 1));
 	}
 
-	
 	public void startDocument() throws SAXException {
 		try {
 			encoder.encodeStartDocument();
@@ -167,9 +168,11 @@ public class SAXEncoder extends DefaultHandler2 {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		try {
-			encoder.encodeCharacters(new StringValue(new String(ch, start, length)));
+			encoder.encodeCharacters(new StringValue(new String(ch, start,
+					length)));
 		} catch (Exception e) {
-			throw new SAXException("characters=" + new String(ch, start, length), e);
+			throw new SAXException("characters="
+					+ new String(ch, start, length), e);
 		}
 	}
 

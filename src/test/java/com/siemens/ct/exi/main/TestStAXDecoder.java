@@ -70,7 +70,8 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 					"yes");
 		}
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // ASCII
+		transformer.setOutputProperty(OutputKeys.ENCODING,
+				AbstractTestCase.ENCODING); // ASCII
 
 		exiReader = new StAXDecoder(ef);
 	}
@@ -114,7 +115,8 @@ public class TestStAXDecoder extends AbstractTestDecoder {
 			if (isFragment) {
 				xmlw = xmlof.createXMLStreamWriter(baosFrags);
 			} else {
-				xmlw = xmlof.createXMLStreamWriter(xmlOutput, AbstractTestCase.ENCODING);
+				xmlw = xmlof.createXMLStreamWriter(xmlOutput,
+						AbstractTestCase.ENCODING);
 			}
 
 			// XMLStreamReader exiReader = new StAXDecoder(ef, exiDocument);

@@ -474,30 +474,33 @@ public class FloatTest extends AbstractTestCase {
 	// // Bit
 	// }
 
-//	/**
-//	 * Returns unbiased exponent of a <code>double</code>.
-//	 */
-//	public static int getExponent(double d) {
-//		/*
-//		 * Bitwise convert d to long, mask out exponent bits, shift to the right
-//		 * and then subtract out double's bias adjust to get true exponent
-//		 * value.
-//		 */
-//		return (int) (((Double.doubleToRawLongBits(d) & DoubleConsts.EXP_BIT_MASK) >> (DoubleConsts.SIGNIFICAND_WIDTH - 1)) - DoubleConsts.EXP_BIAS);
-//	}
-//
-//	/**
-//	 * Returns unbiased exponent of a <code>float</code>.
-//	 */
-//	public static int getExponent(float f) {
-//		/*
-//		 * Bitwise convert f to integer, mask out exponent bits, shift to the
-//		 * right and then subtract out float's bias adjust to get true exponent
-//		 * value
-//		 */
-//		return ((Float.floatToRawIntBits(f) & FloatConsts.EXP_BIT_MASK) >> (FloatConsts.SIGNIFICAND_WIDTH - 1))
-//				- FloatConsts.EXP_BIAS;
-//	}
+	// /**
+	// * Returns unbiased exponent of a <code>double</code>.
+	// */
+	// public static int getExponent(double d) {
+	// /*
+	// * Bitwise convert d to long, mask out exponent bits, shift to the right
+	// * and then subtract out double's bias adjust to get true exponent
+	// * value.
+	// */
+	// return (int) (((Double.doubleToRawLongBits(d) &
+	// DoubleConsts.EXP_BIT_MASK) >> (DoubleConsts.SIGNIFICAND_WIDTH - 1)) -
+	// DoubleConsts.EXP_BIAS);
+	// }
+	//
+	// /**
+	// * Returns unbiased exponent of a <code>float</code>.
+	// */
+	// public static int getExponent(float f) {
+	// /*
+	// * Bitwise convert f to integer, mask out exponent bits, shift to the
+	// * right and then subtract out float's bias adjust to get true exponent
+	// * value
+	// */
+	// return ((Float.floatToRawIntBits(f) & FloatConsts.EXP_BIT_MASK) >>
+	// (FloatConsts.SIGNIFICAND_WIDTH - 1))
+	// - FloatConsts.EXP_BIAS;
+	// }
 
 	// the range of the mantissa is -(2^63) to 2^63-1
 	// the range of the exponent is -(2^14-1) to 2^14-1
@@ -729,7 +732,7 @@ public class FloatTest extends AbstractTestCase {
 
 		assertTrue(f1.equals(f2));
 	}
-	
+
 	public void testFloatEquals3() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "123.012300";
@@ -738,11 +741,11 @@ public class FloatTest extends AbstractTestCase {
 		FloatValue f2 = new FloatValue(1230123, -4);
 
 		assertTrue(f1.equals(f2));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(1230123)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-4)));
 	}
-	
+
 	public void testFloatEquals4() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "0.0";
@@ -755,13 +758,13 @@ public class FloatTest extends AbstractTestCase {
 		assertTrue(f1.equals(f2));
 		assertTrue(f2.equals(f3));
 		assertTrue(f3.equals(f1));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(0)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
 		assertTrue(f2.getMantissa().equals(IntegerValue.valueOf(0)));
 		assertTrue(f2.getExponent().equals(IntegerValue.valueOf(0)));
 	}
-	
+
 	public void testFloatEquals5() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "1.0";
@@ -770,11 +773,11 @@ public class FloatTest extends AbstractTestCase {
 		FloatValue f2 = new FloatValue(1, 0);
 
 		assertTrue(f1.equals(f2));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(1)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
 	}
-	
+
 	public void testFloatEquals6() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "-1230.01";
@@ -783,11 +786,11 @@ public class FloatTest extends AbstractTestCase {
 		FloatValue f2 = new FloatValue(-123001, -2);
 
 		assertTrue(f1.equals(f2));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(-123001)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-2)));
 	}
-	
+
 	public void testFloatEquals7() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "0.1230";
@@ -796,11 +799,11 @@ public class FloatTest extends AbstractTestCase {
 		FloatValue f2 = new FloatValue(123, -3);
 
 		assertTrue(f1.equals(f2));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(123)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(-3)));
 	}
-	
+
 	public void testFloatEquals8() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "12.0";
@@ -816,7 +819,7 @@ public class FloatTest extends AbstractTestCase {
 		assertTrue(f2.equals(f3));
 		assertTrue(f3.equals(f4));
 		assertTrue(f4.equals(f1));
-		
+
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(12)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(0)));
 		assertTrue(f2.getMantissa().equals(IntegerValue.valueOf(12)));
@@ -824,7 +827,7 @@ public class FloatTest extends AbstractTestCase {
 		assertTrue(f3.getMantissa().equals(IntegerValue.valueOf(12)));
 		assertTrue(f3.getExponent().equals(IntegerValue.valueOf(0)));
 	}
-	
+
 	public void testFloatEquals9() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		String s1 = "12300";
@@ -836,24 +839,24 @@ public class FloatTest extends AbstractTestCase {
 		assertTrue(f1.getMantissa().equals(IntegerValue.valueOf(123)));
 		assertTrue(f1.getExponent().equals(IntegerValue.valueOf(2)));
 	}
-	
-	
+
 	public void testFloatEquals10() throws IOException {
 		// http://www.w3.org/TR/exi-c14n/#exampleFloat
 		// The canonical EXI Float MUST respect the following constraints.
-		// * A mantissa value of -0 MUST be changed to 0. If the mantissa is 0, then the exponent MUST be 0.
-		//     If the mantissa is not 0, mantissas MUST have no trailing zeros.
-		// * An exponent value of -0 MUST be changed to 0. 
+		// * A mantissa value of -0 MUST be changed to 0. If the mantissa is 0,
+		// then the exponent MUST be 0.
+		// If the mantissa is not 0, mantissas MUST have no trailing zeros.
+		// * An exponent value of -0 MUST be changed to 0.
 
 		FloatValue f1a = new FloatValue(-0, 0);
 		FloatValue f1b = new FloatValue(0, 0);
 		assertTrue(f1a.equals(f1b));
-		
+
 		FloatValue f2a = new FloatValue(-0, 12);
 		FloatValue f2b = new FloatValue(0, 0);
 		assertTrue(f2a.equals(f2b));
 		assertTrue(f2a.getExponent().equals(IntegerValue.ZERO));
-		
+
 		FloatValue f3a = new FloatValue(2, 120);
 		FloatValue f3b = new FloatValue(0, 0);
 		assertFalse(f3a.equals(f3b));

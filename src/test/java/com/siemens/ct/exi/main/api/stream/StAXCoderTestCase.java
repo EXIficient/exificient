@@ -62,7 +62,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		ef2.setFidelityOptions(FidelityOptions.createAll());
 		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
 	}
-	
+
 	public void testEXIbyExample() throws AssertionFailedError, Exception {
 		String xmlInput = "./data/W3C/EXIbyExample/XMLSample.xml";
 		String exiOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi";
@@ -94,15 +94,14 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			String exiOutput, String xmlOutput, boolean xmlEqual)
 			throws AssertionFailedError, Exception {
 
-		
-		for(int i=0; i<2; i++) {
+		for (int i = 0; i < 2; i++) {
 			TestStAXEncoder tse = new TestStAXEncoder(exiFactory);
-			if(i == 0) {
-				 tse = new TestStAXEncoder(exiFactory);
+			if (i == 0) {
+				tse = new TestStAXEncoder(exiFactory);
 			} else {
-				 tse = new TestStAXEncoder(exiFactory, true);
+				tse = new TestStAXEncoder(exiFactory, true);
 			}
-			
+
 			// encode
 			File fOut = new File(exiOutput);
 			fOut.getParentFile().mkdirs();
@@ -128,8 +127,6 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				// this.checkXMLEquality(exiFactory, control, testXML);
 			}
 		}
-		
-
 
 	}
 
@@ -240,25 +237,26 @@ public class StAXCoderTestCase extends AbstractTestCase {
 	// xmlWriter.close();
 	// }
 	//
-	
+
 	// https://github.com/EXIficient/exificient/issues/18
 	public void testIssue18() throws AssertionFailedError, Exception {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
+		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX,
+		// true);
 		String sxml = "<?xml version=\"1.0\" ?><ns2:create-resource-request-message xmlns:ns5=\"http://www.bubblegumproject.com/2018/polis\" xmlns=\"\" xmlns:ns3=\"http://www.bubblegumproject.com/2018/uia\" xmlns:ns2=\"http://www.bubblegumproject.com/2018/fabric\"><ns2:type>urn:fabric:type:eUol2jOc4XR67WEZ8jA2vg:0.0.0?=name=com.bubblegumproject.fabric:Type/Message/CreateResourceRequestMessage</ns2:type><ns2:coordinates>urn:fabric:co:wUv2GxsVDcFdqVu81XWMqw:0.0.0</ns2:coordinates><ns2:source>urn:fabric:co:JkaddGXCtF_66OBmbo94sg:0.0.0</ns2:source><ns2:timestamp>2018-07-10T09:59:09.594470900Z</ns2:timestamp><ns2:correlation-id>wUv2GxsVDcFdqVu81XWMqw</ns2:correlation-id><ns2:destination>urn:fabric:co:qEooMf4_59zR1RKnP7VvqQ:0.0.0</ns2:destination><ns2:data xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ns5:blog-post-data\"><ns2:type>urn:fabric:type:rE2_W6kHEdHDm_aogLb5nQ:0.0.0?=name=com.bubblegumproject.polis:/Type/Blog/BlogPostData</ns2:type><ns2:coordinates>urn:fabric:co:H0DiR9nVOTaqySRJlxPGhg:0.0.0</ns2:coordinates><ns2:title><ns3:default><ns3:value>Hello World!</ns3:value><ns3:locale>en-US</ns3:locale></ns3:default><ns3:alternatives><ns3:alt><ns3:value>Hello World!</ns3:value><ns3:locale>en-US</ns3:locale></ns3:alt></ns3:alternatives></ns2:title><ns2:created-time>2018-07-10T09:59:09.590473600Z</ns2:created-time><ns2:modified-time>2018-07-10T09:59:09.590473600Z</ns2:modified-time><ns2:segment xsi:type=\"ns2:segment\"><ns2:name>/hello-world</ns2:name></ns2:segment><ns5:content xsi:type=\"ns2:text-content\"><ns2:type>urn:fabric:type:2EewWCsXigVak99a0Z6srQ:0.0.0?=name=com.bubblegumproject.fabric:/Type/Content/Text/Plain</ns2:type><ns2:coordinates>urn:fabric:co:-kyXnYxJjuUbiqdH1IRFpg:0.0.0</ns2:coordinates><ns2:text>Hello World!</ns2:text></ns5:content><ns5:published-time>2018-07-10T09:59:09.589474300Z</ns5:published-time></ns2:data></ns2:create-resource-request-message>";
 		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
-		
+
 		// encode
 		TestStAXEncoder tse = new TestStAXEncoder(ef);
-		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
 		tse.encodeTo(isXML, osEXI);
-		
+
 		// decode
 		StAXDecoder exiReader = new StAXDecoder(ef);
 		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
-		
+
 		List<Integer> nsCnts = new ArrayList<Integer>();
-		
+
 		while (exiReader.hasNext()) {
 			int event = exiReader.next();
 
@@ -272,14 +270,14 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				// QName qn = exiReader.getName();
 				// String pfx = exiReader.getPrefix();
 				// System.out.println(">> " + pfx + " : " + qn);
-				
+
 				// NS declarations
 				int nsCnt = exiReader.getNamespaceCount();
 				nsCnts.add(nsCnt);
 				for (int i = 0; i < nsCnt; i++) {
 					// String nsPfx = exiReader.getNamespacePrefix(i);
 					// String nsUri = exiReader.getNamespaceURI(i);
-					// System.out.println("\tNS: " +  nsPfx + " : " + nsUri);
+					// System.out.println("\tNS: " + nsPfx + " : " + nsUri);
 				}
 				// attributes
 				int atCnt = exiReader.getAttributeCount();
@@ -287,22 +285,26 @@ public class StAXCoderTestCase extends AbstractTestCase {
 					// String atPfx = exiReader.getAttributePrefix(i);
 					// QName atQn = exiReader.getAttributeName(i);
 					// String atVal = exiReader.getAttributeValue(i);
-					// System.out.println("\tAT: " +  atPfx + " : " + atQn + " = " + atVal);
+					// System.out.println("\tAT: " + atPfx + " : " + atQn +
+					// " = " + atVal);
 				}
 
 				break;
 			case XMLStreamConstants.END_ELEMENT:
 				// NS declarations
 				int nsCntEndElement = exiReader.getNamespaceCount();
-				int nsCntStartElement = nsCnts.remove(nsCnts.size()-1);
-				// System.out.println("<< " + exiReader.getPrefix() + " : " +  exiReader.getName());
-				assertTrue(exiReader.getName()+ ", " + nsCntEndElement + " vs. " + nsCntStartElement, nsCntEndElement == nsCntStartElement);
+				int nsCntStartElement = nsCnts.remove(nsCnts.size() - 1);
+				// System.out.println("<< " + exiReader.getPrefix() + " : " +
+				// exiReader.getName());
+				assertTrue(exiReader.getName() + ", " + nsCntEndElement
+						+ " vs. " + nsCntStartElement,
+						nsCntEndElement == nsCntStartElement);
 				break;
 			case XMLStreamConstants.NAMESPACE:
 				break;
 			case XMLStreamConstants.CHARACTERS:
 				// String ch = exiReader.getText();
-				// System.out.println("\tCH: " +  ch);
+				// System.out.println("\tCH: " + ch);
 				break;
 			case XMLStreamConstants.SPACE:
 				break;
@@ -319,33 +321,32 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			case XMLStreamConstants.ENTITY_REFERENCE:
 				break;
 			default:
-				System.out.println("StAX Event '" + event
-						+ "' not supported!");
+				System.out.println("StAX Event '" + event + "' not supported!");
 			}
 		}
-		
+
 	}
-	
-	
+
 	// https://github.com/EXIficient/exificient/issues/18
-	public void testIssue18_simpifiedPrefix() throws AssertionFailedError, Exception {
+	public void testIssue18_simpifiedPrefix() throws AssertionFailedError,
+			Exception {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		String sxml = "<message xmlns:a=\"urn:a\">\r\n" + 
-				"  <type xmlns:b=\"urn:b\">\r\n" + 
-				"   </type>\r\n" + 
-				"</message>";
+		ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX,
+				true);
+		String sxml = "<message xmlns:a=\"urn:a\">\r\n"
+				+ "  <type xmlns:b=\"urn:b\">\r\n" + "   </type>\r\n"
+				+ "</message>";
 		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
-		
+
 		// encode
 		TestStAXEncoder tse = new TestStAXEncoder(ef);
-		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
 		tse.encodeTo(isXML, osEXI);
-		
+
 		// decode
 		StAXDecoder exiReader = new StAXDecoder(ef);
 		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
-		
+
 		while (exiReader.hasNext()) {
 			int event = exiReader.next();
 
@@ -357,17 +358,21 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.START_ELEMENT:
 				QName qn = exiReader.getName();
-				if(qn.getLocalPart().equals("message")) {
+				if (qn.getLocalPart().equals("message")) {
 					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue("a".equals(a));
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b == null);
-				} else if(qn.getLocalPart().equals("type")) {
+				} else if (qn.getLocalPart().equals("type")) {
 					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue("a".equals(a));
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue("b".equals(b));
 				} else {
 					fail("Unexpected SE qname: " + qn);
@@ -375,17 +380,21 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.END_ELEMENT:
 				qn = exiReader.getName();
-				if(qn.getLocalPart().equals("message")) {
+				if (qn.getLocalPart().equals("message")) {
 					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue("a".equals(a));
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b == null);
-				} else if(qn.getLocalPart().equals("type")) {
+				} else if (qn.getLocalPart().equals("type")) {
 					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue("a".equals(a));
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue("b".equals(b));
 				} else {
 					fail("Unexpected EE qname: " + qn);
@@ -395,7 +404,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.CHARACTERS:
 				// String ch = exiReader.getText();
-				// System.out.println("\tCH: " +  ch);
+				// System.out.println("\tCH: " + ch);
 				break;
 			case XMLStreamConstants.SPACE:
 				break;
@@ -412,32 +421,33 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			case XMLStreamConstants.ENTITY_REFERENCE:
 				break;
 			default:
-				System.out.println("StAX Event '" + event
-						+ "' not supported!");
+				System.out.println("StAX Event '" + event + "' not supported!");
 			}
 		}
 	}
-	
+
 	// https://github.com/EXIficient/exificient/issues/18
-	public void testIssue18_simpifiedNoPrefix() throws AssertionFailedError, Exception {
+	public void testIssue18_simpifiedNoPrefix() throws AssertionFailedError,
+			Exception {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
-		// Note: without prefix preservation there might be other prefixes than the one in the original XML
-		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX, true);
-		String sxml = "<a:message xmlns:a=\"urn:a\">\r\n" + 
-				"  <b:type xmlns:b=\"urn:b\">\r\n" + 
-				"   </b:type>\r\n" + 
-				"</a:message>";
+		// Note: without prefix preservation there might be other prefixes than
+		// the one in the original XML
+		// ef.getFidelityOptions().setFidelity(FidelityOptions.FEATURE_PREFIX,
+		// true);
+		String sxml = "<a:message xmlns:a=\"urn:a\">\r\n"
+				+ "  <b:type xmlns:b=\"urn:b\">\r\n" + "   </b:type>\r\n"
+				+ "</a:message>";
 		InputStream isXML = new ByteArrayInputStream(sxml.getBytes());
-		
+
 		// encode
 		TestStAXEncoder tse = new TestStAXEncoder(ef);
-		ByteArrayOutputStream osEXI =  new ByteArrayOutputStream();
+		ByteArrayOutputStream osEXI = new ByteArrayOutputStream();
 		tse.encodeTo(isXML, osEXI);
-		
+
 		// decode
 		StAXDecoder exiReader = new StAXDecoder(ef);
 		exiReader.setInputStream(new ByteArrayInputStream(osEXI.toByteArray()));
-		
+
 		while (exiReader.hasNext()) {
 			int event = exiReader.next();
 
@@ -449,17 +459,21 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.START_ELEMENT:
 				QName qn = exiReader.getName();
-				if(qn.getLocalPart().equals("message")) {
-//					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+				if (qn.getLocalPart().equals("message")) {
+					// assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue(a != null);
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b == null);
-				} else if(qn.getLocalPart().equals("type")) {
-//					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+				} else if (qn.getLocalPart().equals("type")) {
+					// assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue(a != null);
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b != null);
 				} else {
 					fail("Unexpected SE qname: " + qn);
@@ -467,17 +481,21 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.END_ELEMENT:
 				qn = exiReader.getName();
-				if(qn.getLocalPart().equals("message")) {
-//					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+				if (qn.getLocalPart().equals("message")) {
+					// assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue(a != null);
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b == null);
-				} else if(qn.getLocalPart().equals("type")) {
-//					assertTrue(exiReader.getNamespaceCount() == 1);
-					String a = exiReader.getNamespaceContext().getPrefix("urn:a");
+				} else if (qn.getLocalPart().equals("type")) {
+					// assertTrue(exiReader.getNamespaceCount() == 1);
+					String a = exiReader.getNamespaceContext().getPrefix(
+							"urn:a");
 					assertTrue(a != null);
-					String b = exiReader.getNamespaceContext().getPrefix("urn:b");
+					String b = exiReader.getNamespaceContext().getPrefix(
+							"urn:b");
 					assertTrue(b != null);
 				} else {
 					fail("Unexpected EE qname: " + qn);
@@ -487,7 +505,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 				break;
 			case XMLStreamConstants.CHARACTERS:
 				// String ch = exiReader.getText();
-				// System.out.println("\tCH: " +  ch);
+				// System.out.println("\tCH: " + ch);
 				break;
 			case XMLStreamConstants.SPACE:
 				break;
@@ -504,8 +522,7 @@ public class StAXCoderTestCase extends AbstractTestCase {
 			case XMLStreamConstants.ENTITY_REFERENCE:
 				break;
 			default:
-				System.out.println("StAX Event '" + event
-						+ "' not supported!");
+				System.out.println("StAX Event '" + event + "' not supported!");
 			}
 		}
 	}

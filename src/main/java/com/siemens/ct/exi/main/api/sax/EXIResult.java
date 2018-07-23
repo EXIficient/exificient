@@ -38,13 +38,12 @@ import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class EXIResult extends SAXResult {
 
 	protected SAXEncoder handler;
-	
+
 	public EXIResult() throws IOException, EXIException {
 		// use default exi-factory
 		this(DefaultEXIFactory.newInstance());
@@ -57,8 +56,9 @@ public class EXIResult extends SAXResult {
 		setHandler(handler);
 		setLexicalHandler(handler);
 	}
-	
-	public void setOutputStream(OutputStream os) throws EXIException, IOException {
+
+	public void setOutputStream(OutputStream os) throws EXIException,
+			IOException {
 		handler.setOutputStream(os);
 	}
 

@@ -284,7 +284,7 @@ public class DecimalTest extends AbstractTestCase {
 				d.getRevFractional());
 		assertTrue(s.equals(getByteDecoder().decodeDecimalValue().toString()));
 	}
-	
+
 	public void testDecimalEquals() throws IOException {
 		String s1 = "-0.0";
 		String s2 = "+0.0";

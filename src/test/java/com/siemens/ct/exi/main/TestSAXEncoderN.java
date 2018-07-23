@@ -41,8 +41,7 @@ public class TestSAXEncoderN extends TestSAXEncoder {
 		super(ef);
 	}
 
-	public void test(String xmlLocation, String exiLocation)
-			throws Exception {
+	public void test(String xmlLocation, String exiLocation) throws Exception {
 
 		long startTime = System.currentTimeMillis();
 

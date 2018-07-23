@@ -285,8 +285,7 @@ public class GeneralTestCase extends AbstractTestCase {
 				CodingMode.BIT_PACKED);
 		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		QName[] dtrTypes = { new QName(Constants.XML_SCHEMA_NS_URI,
-				"integer") };
+		QName[] dtrTypes = { new QName(Constants.XML_SCHEMA_NS_URI, "integer") };
 		QName[] dtrRepresentations = { new QName(Constants.W3C_EXI_NS_URI,
 				"string") };
 		testCaseOptions.get(testCaseOptions.size() - 1)
@@ -346,15 +345,17 @@ public class GeneralTestCase extends AbstractTestCase {
 		// testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
 		// testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
 		// testCaseOptions.get(testCaseOptions.size()-1).setProfile(EXIFactory.UCD_PROFILE);
-		
+
 		// #15 (default + non-evolving grammars)
 		testCaseOptions.add(new TestCaseOption());
-		testCaseOptions.get(testCaseOptions.size()-1).setCodingMode(CodingMode.BIT_PACKED);
-		testCaseOptions.get(testCaseOptions.size()-1).setFidelityOptions(
+		testCaseOptions.get(testCaseOptions.size() - 1).setCodingMode(
+				CodingMode.BIT_PACKED);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFidelityOptions(
 				FidelityOptions.createDefault());
-		testCaseOptions.get(testCaseOptions.size()-1).setFragments(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setXmlEqual(false);
-		testCaseOptions.get(testCaseOptions.size()-1).setUsingNonEvolvingGrammars(true);
+		testCaseOptions.get(testCaseOptions.size() - 1).setFragments(false);
+		testCaseOptions.get(testCaseOptions.size() - 1).setXmlEqual(false);
+		testCaseOptions.get(testCaseOptions.size() - 1)
+				.setUsingNonEvolvingGrammars(true);
 
 	}
 
@@ -370,7 +371,7 @@ public class GeneralTestCase extends AbstractTestCase {
 		// execute test
 		_test(noValidOptions);
 	}
-	
+
 	@Test
 	public void testPerson() throws Exception {
 		// set up configuration
@@ -825,9 +826,6 @@ public class GeneralTestCase extends AbstractTestCase {
 				.setExiLocation("./out/general/entityReference2.xml.exi");
 	}
 
-
-	
-	
 	@Test
 	public void testEntityReference2() throws Exception {
 		// set up configuration
@@ -865,8 +863,6 @@ public class GeneralTestCase extends AbstractTestCase {
 		QuickTestConfiguration
 				.setExiLocation("./out/general/entityReference3.xml.exi");
 	}
-
-
 
 	@Test
 	public void testEntityReference3() throws Exception {

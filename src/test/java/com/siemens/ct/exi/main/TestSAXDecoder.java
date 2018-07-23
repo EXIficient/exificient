@@ -68,7 +68,8 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 					"yes");
 		}
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.ENCODING, AbstractTestCase.ENCODING); // ASCII
+		transformer.setOutputProperty(OutputKeys.ENCODING,
+				AbstractTestCase.ENCODING); // ASCII
 	}
 
 	// @Override
@@ -97,7 +98,7 @@ public class TestSAXDecoder extends AbstractTestDecoder {
 		SAXSource exiSource = new SAXSource(is);
 		exiSource.setXMLReader(exiReader);
 		transformer.transform(exiSource, result);
-		
+
 		// this.decodeTo(ef, exiDocument, xmlOutput, transformer);
 	}
 

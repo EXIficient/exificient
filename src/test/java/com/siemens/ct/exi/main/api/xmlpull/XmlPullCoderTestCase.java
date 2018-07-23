@@ -55,7 +55,7 @@ public class XmlPullCoderTestCase extends AbstractTestCase {
 		ef2.setFidelityOptions(FidelityOptions.createAll());
 		this._test(ef2, xmlInput, exiOutput, xmlOutput, true);
 	}
-	
+
 	public void testEXIbyExample() throws AssertionFailedError, Exception {
 		String xmlInput = "./data/W3C/EXIbyExample/XMLSample.xml";
 		String exiOutput = "./out/W3C/EXIbyExample/XMLSample.xml.exi";
@@ -87,15 +87,14 @@ public class XmlPullCoderTestCase extends AbstractTestCase {
 			String exiOutput, String xmlOutput, boolean xmlEqual)
 			throws AssertionFailedError, Exception {
 
-		
-		for(int i=0; i<2; i++) {
+		for (int i = 0; i < 2; i++) {
 			TestXmlPullEncoder tse = new TestXmlPullEncoder(exiFactory);
-			if(i == 0) {
-				 tse = new TestXmlPullEncoder(exiFactory);
+			if (i == 0) {
+				tse = new TestXmlPullEncoder(exiFactory);
 			} else {
-				 tse = new TestXmlPullEncoder(exiFactory, true);
+				tse = new TestXmlPullEncoder(exiFactory, true);
 			}
-			
+
 			// encode
 			File fOut = new File(exiOutput);
 			fOut.getParentFile().mkdirs();
@@ -121,8 +120,6 @@ public class XmlPullCoderTestCase extends AbstractTestCase {
 				// this.checkXMLEquality(exiFactory, control, testXML);
 			}
 		}
-		
-
 
 	}
 

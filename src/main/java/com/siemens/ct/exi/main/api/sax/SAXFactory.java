@@ -7,9 +7,9 @@ import com.siemens.ct.exi.core.FidelityOptions;
 import com.siemens.ct.exi.core.exceptions.EXIException;
 
 public class SAXFactory {
-	
+
 	final EXIFactory exiFactory;
-	
+
 	public SAXFactory(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
 	}
@@ -18,13 +18,13 @@ public class SAXFactory {
 	 * Returns an <code>EXIReader</code>
 	 * 
 	 * @return reader using the previously set coding options.
-	 * @throws EXIException EXI exception
+	 * @throws EXIException
+	 *             EXI exception
 	 * 
 	 */
 	public XMLReader createEXIReader() throws EXIException {
 		return new SAXDecoder(exiFactory);
 	}
-	
 
 	/**
 	 * Returns a <code>SAXEncoder</code> that implements
@@ -35,7 +35,8 @@ public class SAXFactory {
 	 * </p>
 	 * 
 	 * @return writer using the previously set coding options.
-	 * @throws EXIException EXI exception
+	 * @throws EXIException
+	 *             EXI exception
 	 * 
 	 */
 	public SAXEncoder createEXIWriter() throws EXIException {

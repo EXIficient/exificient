@@ -35,7 +35,6 @@ import javax.xml.stream.events.XMLEvent;
  * @author Daniel.Peintner.EXT@siemens.com
  * @author Joerg.Heuer@siemens.com
  * 
- * @version 1.0.1
  */
 
 public class SkipRootElementXMLEventReader implements XMLEventReader {

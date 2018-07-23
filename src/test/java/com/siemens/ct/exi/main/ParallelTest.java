@@ -69,7 +69,7 @@ public class ParallelTest extends AbstractTestCase {
 		for (int i = 0; i < 25; i++) {
 			Callable<XSModel> task = new Callable<XSModel>() {
 				public XSModel call() throws Exception {
-					XMLEntityResolver entityResolver = new TestXSDResolver(); 
+					XMLEntityResolver entityResolver = new TestXSDResolver();
 					String sXSD = "./data/XSLT/schema-for-xslt20.xsd";
 					// load XSD schema & get XSModel
 					XMLSchemaLoader sl = new XMLSchemaLoader();
@@ -149,9 +149,9 @@ public class ParallelTest extends AbstractTestCase {
 	public static EXIFactory getExiFactory() throws EXIException {
 		GrammarFactory gf = GrammarFactory.newInstance();
 		// no internet connection, try offline
-		XMLEntityResolver entityResolver = new TestXSDResolver(); 
-		Grammars grammar = gf
-				.createGrammars("./data/XSLT/schema-for-xslt20.xsd", entityResolver);
+		XMLEntityResolver entityResolver = new TestXSDResolver();
+		Grammars grammar = gf.createGrammars(
+				"./data/XSLT/schema-for-xslt20.xsd", entityResolver);
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
 		exiFactory.setGrammars(grammar);
 		FidelityOptions fidelityOptions = FidelityOptions.createDefault();
@@ -333,7 +333,7 @@ public class ParallelTest extends AbstractTestCase {
 
 	private ArrayList<ExiSch> getExiSch(ParallelExiFactory parallelExiFactory,
 			boolean testXml, EXIFactory exiFactory) throws Exception {
-//		File dir = new File("./data/XSLT/Examples");
+		// File dir = new File("./data/XSLT/Examples");
 		File dir = new File("./data/W3C/XMLSample");
 		File[] directoryListing = dir.listFiles();
 		ArrayList<ExiSch> nc1NameExiMap = new ArrayList<ExiSch>();

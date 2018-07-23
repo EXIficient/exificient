@@ -32,85 +32,90 @@ import com.siemens.ct.exi.main.generated.ObjectFactory;
 public class JAXBNotebookTest {
 
 	@Test
-	public void testSAX() throws JAXBException, EXIException, IOException, DatatypeConfigurationException {
+	public void testSAX() throws JAXBException, EXIException, IOException,
+			DatatypeConfigurationException {
 		String xsd = "./data/W3C/PrimerNotebook/notebook.xsd";
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		exiFactory.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));	
-	
+		exiFactory
+				.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));
+
 		_testSAX(exiFactory);
-		
+
 		exiFactory.setCodingMode(CodingMode.COMPRESSION);
 		_testSAX(exiFactory);
 	}
-	
-	void _testSAX(EXIFactory exiFactory) throws JAXBException, EXIException, IOException, DatatypeConfigurationException {
+
+	void _testSAX(EXIFactory exiFactory) throws JAXBException, EXIException,
+			IOException, DatatypeConfigurationException {
 		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
-		
+
 		// create JAXB context
 		JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
-		
+
 		// read xml by creating unmarshaller
 		Unmarshaller u = context.createUnmarshaller();
-		Notebook notebook = (Notebook) u.unmarshal(new FileInputStream(xml));	
-		
+		Notebook notebook = (Notebook) u.unmarshal(new FileInputStream(xml));
+
 		// create EXI marshaller
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Marshaller mExi = context.createMarshaller();
 		EXIResult result = new EXIResult(exiFactory);
 		result.setOutputStream(baos);
 		mExi.marshal(notebook, result);
-		
+
 		// create EXI unmarshaller
 		Unmarshaller uEXI = context.createUnmarshaller();
 		EXISource source = new EXISource(exiFactory);
-		source.setInputSource(new InputSource(new ByteArrayInputStream(baos.toByteArray())));
+		source.setInputSource(new InputSource(new ByteArrayInputStream(baos
+				.toByteArray())));
 		Object o = uEXI.unmarshal(source);
 		assertTrue(o instanceof Notebook);
 		Notebook notebook2 = (Notebook) o;
-		
+
 		assertTrue(notebook.getDate().equals(notebook2.getDate()));
 	}
-	
-	
-	
+
 	@Test
-	public void testStAX() throws JAXBException, EXIException, IOException, DatatypeConfigurationException, XMLStreamException {
+	public void testStAX() throws JAXBException, EXIException, IOException,
+			DatatypeConfigurationException, XMLStreamException {
 		String xsd = "./data/W3C/PrimerNotebook/notebook.xsd";
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
-		exiFactory.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));	
-		
+		exiFactory
+				.setGrammars(GrammarFactory.newInstance().createGrammars(xsd));
+
 		_testStAX(exiFactory);
-		
+
 		exiFactory.setCodingMode(CodingMode.COMPRESSION);
 		_testStAX(exiFactory);
 	}
-	
-	
-	void _testStAX(EXIFactory exiFactory) throws JAXBException, EXIException, IOException, DatatypeConfigurationException, XMLStreamException {
+
+	void _testStAX(EXIFactory exiFactory) throws JAXBException, EXIException,
+			IOException, DatatypeConfigurationException, XMLStreamException {
 		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
-		
+
 		// create JAXB context
 		JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
-		
+
 		// read xml by creating unmarshaller
 		Unmarshaller u = context.createUnmarshaller();
 		Notebook notebook = (Notebook) u.unmarshal(new FileInputStream(xml));
-		
+
 		// create EXI marshaller
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Marshaller mExi = context.createMarshaller();
 		StAXEncoder staxEncoder = new StAXEncoder(exiFactory);
 		staxEncoder.setOutputStream(baos);
 		mExi.marshal(notebook, staxEncoder);
-		
+
 		// create EXI unmarshaller
 		Unmarshaller uEXI = context.createUnmarshaller();
 		StAXDecoder staxDecoder = new StAXDecoder(exiFactory);
-		staxDecoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+		staxDecoder
+				.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
 		Object o = uEXI.unmarshal(staxDecoder);
 		assertTrue(o instanceof Notebook);
 		Notebook notebook2 = (Notebook) o;
-		
+
 		assertTrue(notebook.getDate().equals(notebook2.getDate()));
 	}
 

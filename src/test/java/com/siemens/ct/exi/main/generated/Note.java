@@ -5,7 +5,6 @@
 // Generiert: 2017.05.02 um 10:51:45 AM CEST 
 //
 
-
 package com.siemens.ct.exi.main.generated;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,11 +15,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-
 /**
- * <p>Java-Klasse für Note complex type.
+ * <p>
+ * Java-Klasse für Note complex type.
  * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser
+ * Klasse enthalten ist.
  * 
  * <pre>
  * &lt;complexType name="Note">
@@ -40,116 +41,101 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Note", propOrder = {
-    "subject",
-    "body"
-})
+@XmlType(name = "Note", propOrder = { "subject", "body" })
 public class Note {
 
-    @XmlElement(required = true)
-    protected String subject;
-    @XmlElement(required = true)
-    protected String body;
-    @XmlAttribute(name = "date", required = true)
-    @XmlSchemaType(name = "date")
-    protected XMLGregorianCalendar date;
-    @XmlAttribute(name = "category")
-    protected String category;
+	@XmlElement(required = true)
+	protected String subject;
+	@XmlElement(required = true)
+	protected String body;
+	@XmlAttribute(name = "date", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar date;
+	@XmlAttribute(name = "category")
+	protected String category;
 
-    /**
-     * Ruft den Wert der subject-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSubject() {
-        return subject;
-    }
+	/**
+	 * Ruft den Wert der subject-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getSubject() {
+		return subject;
+	}
 
-    /**
-     * Legt den Wert der subject-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSubject(String value) {
-        this.subject = value;
-    }
+	/**
+	 * Legt den Wert der subject-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setSubject(String value) {
+		this.subject = value;
+	}
 
-    /**
-     * Ruft den Wert der body-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getBody() {
-        return body;
-    }
+	/**
+	 * Ruft den Wert der body-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getBody() {
+		return body;
+	}
 
-    /**
-     * Legt den Wert der body-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setBody(String value) {
-        this.body = value;
-    }
+	/**
+	 * Legt den Wert der body-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setBody(String value) {
+		this.body = value;
+	}
 
-    /**
-     * Ruft den Wert der date-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getDate() {
-        return date;
-    }
+	/**
+	 * Ruft den Wert der date-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link XMLGregorianCalendar }
+	 * 
+	 */
+	public XMLGregorianCalendar getDate() {
+		return date;
+	}
 
-    /**
-     * Legt den Wert der date-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setDate(XMLGregorianCalendar value) {
-        this.date = value;
-    }
+	/**
+	 * Legt den Wert der date-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link XMLGregorianCalendar }
+	 * 
+	 */
+	public void setDate(XMLGregorianCalendar value) {
+		this.date = value;
+	}
 
-    /**
-     * Ruft den Wert der category-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getCategory() {
-        return category;
-    }
+	/**
+	 * Ruft den Wert der category-Eigenschaft ab.
+	 * 
+	 * @return possible object is {@link String }
+	 * 
+	 */
+	public String getCategory() {
+		return category;
+	}
 
-    /**
-     * Legt den Wert der category-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setCategory(String value) {
-        this.category = value;
-    }
+	/**
+	 * Legt den Wert der category-Eigenschaft fest.
+	 * 
+	 * @param value
+	 *            allowed object is {@link String }
+	 * 
+	 */
+	public void setCategory(String value) {
+		this.category = value;
+	}
 
 }

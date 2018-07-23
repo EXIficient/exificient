@@ -76,11 +76,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		super(s);
 	}
 
-	
 	protected XMLEntityResolver getXsdEntityResolver() {
 		return new TestXSDResolver();
 	}
-	
+
 	private void _testOption(TestCaseOption tco, API api) throws Exception {
 		if (tco.isSchemaInformedOnly() && tco.getSchemaLocation() == null) {
 			return;
@@ -90,10 +89,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		EXIFactory ef = DefaultEXIFactory.newInstance();
 		ef.setCodingMode(tco.getCodingMode());
 		ef.setFidelityOptions(tco.getFidelityOptions());
-		if(tco.getSharedStrings() != null) {
+		if (tco.getSharedStrings() != null) {
 			ef.setSharedStrings(tco.getSharedStrings());
 		}
-		if(tco.isUsingNonEvolvingGrammars()) {
+		if (tco.isUsingNonEvolvingGrammars()) {
 			ef.setUsingNonEvolvingGrammars(tco.isUsingNonEvolvingGrammars());
 		}
 		ef.setFragment(tco.isFragments());
@@ -131,7 +130,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		} else {
 			// schema-informed
 			// no internet connection, try offline
-			XMLEntityResolver entityResolver = getXsdEntityResolver(); 
+			XMLEntityResolver entityResolver = getXsdEntityResolver();
 			Grammars grammar = grammarFactory.createGrammars(
 					tco.getSchemaLocation(), entityResolver);
 			ef.setGrammars(grammar);
@@ -156,8 +155,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 
 		EncodingOptions encodingOptions = tco.getEncodingOptions();
 		// if (tco.isIncludeOptions() && tco.isIncludeSchemaId()) {
-		if (encodingOptions
-				.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
+		if (encodingOptions.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)
 				&& encodingOptions
 						.isOptionEnabled(EncodingOptions.INCLUDE_SCHEMA_ID)) {
 			// all EXI options and schemaID from the header have to be used
@@ -165,7 +163,7 @@ public abstract class AbstractTestCase extends XMLTestCase {
 		} else if (encodingOptions
 				.isOptionEnabled(EncodingOptions.INCLUDE_OPTIONS)) {
 			// restore schemaId// grammar
-			Grammars  grs = ef.getGrammars();
+			Grammars grs = ef.getGrammars();
 			ef = DefaultEXIFactory.newInstance();
 			ef.setGrammars(grs);
 		}
@@ -175,9 +173,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			decode(ef, exiDocument, API.SAX, tco.isXmlEqual());
 		} catch (Throwable e) {
 			// encode-decode msg
-			throw new Exception(
-					"{" + api + "->SAX} " + e.getLocalizedMessage() + " ["
-							+ tco.toString() + "]", e);
+			throw new Exception("{" + api + "->SAX} " + e.getLocalizedMessage()
+					+ " [" + tco.toString() + "]", e);
 		}
 
 		// <-- 2. decode as DOM
@@ -185,9 +182,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			exiDocument.reset();
 			decode(ef, exiDocument, API.DOM, tco.isXmlEqual());
 		} catch (Throwable e) {
-			throw new Exception(
-					"{" + api + "->DOM} " + e.getLocalizedMessage() + " ["
-							+ tco.toString() + "]", e);
+			throw new Exception("{" + api + "->DOM} " + e.getLocalizedMessage()
+					+ " [" + tco.toString() + "]", e);
 		}
 
 		// <-- 3. decode as StAX
@@ -195,11 +191,10 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			exiDocument.reset();
 			decode(ef, exiDocument, API.StAX, tco.isXmlEqual());
 		} catch (Throwable e) {
-			throw new Exception(
-					"{" + api + "->StAX} " + e.getLocalizedMessage() + " ["
-							+ tco.toString() + "]", e);
+			throw new Exception("{" + api + "->StAX} "
+					+ e.getLocalizedMessage() + " [" + tco.toString() + "]", e);
 		}
-		
+
 	}
 
 	protected void decode(EXIFactory ef, InputStream exiDocument, API api,
@@ -337,7 +332,8 @@ public abstract class AbstractTestCase extends XMLTestCase {
 			// assertion failure
 			String msg = e.getMessage();
 			// System.out.println(msg);
-			if (msg.contains("Expected doctype name 'html'") || msg.contains("Hello & good bye!")) {
+			if (msg.contains("Expected doctype name 'html'")
+					|| msg.contains("Hello & good bye!")) {
 				// do nothing, false failure
 			} else if (msg
 					.contains("Expected number of child nodes '3' but was '2' - comparing <greeting...> at /greeting[1] to <greeting...> at /greeting[1]")) {

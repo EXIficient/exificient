@@ -258,7 +258,8 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		sDecoded = typeDecoder.readValue(datatype, null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = typeDecoder.readValue(datatype, null, getByteDecoder(), null);
+		sDecoded = typeDecoder
+				.readValue(datatype, null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 
@@ -295,7 +296,8 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 		sDecoded = typeDecoder.readValue(datatype, null, getBitDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 		// byte
-		sDecoded = typeDecoder.readValue(datatype, null, getByteDecoder(), null);
+		sDecoded = typeDecoder
+				.readValue(datatype, null, getByteDecoder(), null);
 		assertTrue(sValue + " != " + sDecoded, sDecoded.equals(sValue));
 	}
 

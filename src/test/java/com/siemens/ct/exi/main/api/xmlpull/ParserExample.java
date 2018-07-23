@@ -20,49 +20,52 @@ import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
 
 public class ParserExample {
- 
+
 	public static void main(final String[] args) throws XmlPullParserException,
 			MalformedURLException, IOException, EXIException, SAXException {
-		
+
 		String xml = "./data/W3C/PrimerNotebook/notebook.xml";
 
 		EXIFactory factory = DefaultEXIFactory.newInstance();
-		
+
 		// Encode to EXI
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		EXIResult exiResult = new EXIResult(factory);
 		exiResult.setOutputStream(baos);
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-		xmlReader.setContentHandler( exiResult.getHandler() );
+		xmlReader.setContentHandler(exiResult.getHandler());
 		xmlReader.parse(xml); // parse XML input
-		
+
 		// read from EXI through EXIPullParser
 		System.out.println("### E X I ###");
 		XmlPullParser xppEXI = new EXIPullParser(factory);
 		xppEXI.setInput(new ByteArrayInputStream(baos.toByteArray()), null);
 		read(xppEXI);
-		
+
 		// XML Pull parser
 		System.out.println("### X M L ###");
-		XmlPullParser xppXML = XmlPullParserFactory.newInstance().newPullParser();
+		XmlPullParser xppXML = XmlPullParserFactory.newInstance()
+				.newPullParser();
 		BufferedReader in = new BufferedReader(new FileReader(xml));
 		xppXML.setInput(in);
 		read(xppXML);
 
 	}
-	
-	
-	static void read(XmlPullParser xpp) throws XmlPullParserException, IOException {
+
+	static void read(XmlPullParser xpp) throws XmlPullParserException,
+			IOException {
 		while (xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
 			int ev = xpp.next();
-			switch(ev) {
+			switch (ev) {
 			case XmlPullParser.START_TAG:
 				System.out.println("SE > " + xpp.getName());
 				int atCnt = xpp.getAttributeCount();
-				if(atCnt > 0) {
+				if (atCnt > 0) {
 					System.out.println("\t" + atCnt + "# Attributes ");
-					for(int i=0;i<atCnt; i++) {
-						System.out.println("\t" + i + "\t" + xpp.getAttributeName(i) + " : " + xpp.getAttributeValue(i));
+					for (int i = 0; i < atCnt; i++) {
+						System.out.println("\t" + i + "\t"
+								+ xpp.getAttributeName(i) + " : "
+								+ xpp.getAttributeValue(i));
 					}
 				}
 				// xpp.getNamespaceCount(depth)

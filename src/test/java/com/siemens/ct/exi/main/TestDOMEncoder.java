@@ -69,8 +69,9 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 			throws ParserConfigurationException, SAXException, IOException {
 		return getDocument(istr, "UTF-8");
 	}
-	
-	public static Document getDocument(InputStream istr, String encoding) throws ParserConfigurationException, SAXException, IOException {
+
+	public static Document getDocument(InputStream istr, String encoding)
+			throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		dfactory.setNamespaceAware(true);
 
@@ -80,32 +81,31 @@ public class TestDOMEncoder extends AbstractTestEncoder {
 		documentBuilder.setEntityResolver(new NoEntityResolver());
 
 		documentBuilder.setErrorHandler(null);
-		
-		Reader reader = new InputStreamReader(istr,encoding);
+
+		Reader reader = new InputStreamReader(istr, encoding);
 		InputSource is = new InputSource(reader);
 		is.setEncoding(encoding);
-		
+
 		Document doc = documentBuilder.parse(is);
 
 		return doc;
 	}
-	
-	
-//	public static Document getDocument(InputSource is)
-//			throws ParserConfigurationException, SAXException, IOException {
-//		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-//		dfactory.setNamespaceAware(true);
-//
-//		DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
-//
-//		// *skip* resolving entities like DTDs
-//		documentBuilder.setEntityResolver(new NoEntityResolver());
-//
-//		documentBuilder.setErrorHandler(null);
-//		Document doc = documentBuilder.parse(is);
-//
-//		return doc;
-//	}
+
+	// public static Document getDocument(InputSource is)
+	// throws ParserConfigurationException, SAXException, IOException {
+	// DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+	// dfactory.setNamespaceAware(true);
+	//
+	// DocumentBuilder documentBuilder = dfactory.newDocumentBuilder();
+	//
+	// // *skip* resolving entities like DTDs
+	// documentBuilder.setEntityResolver(new NoEntityResolver());
+	//
+	// documentBuilder.setErrorHandler(null);
+	// Document doc = documentBuilder.parse(is);
+	//
+	// return doc;
+	// }
 
 	public static DocumentFragment getDocumentFragment(InputStream is)
 			throws ParserConfigurationException, SAXException, IOException {
