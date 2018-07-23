@@ -20,7 +20,7 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 <dependency>
    <groupId>com.siemens.ct.exi</groupId>
    <artifactId>exificient</artifactId>
-   <version>1.0.0</version>
+   <version>1.0.1</version>
 </dependency>
 ```
 
