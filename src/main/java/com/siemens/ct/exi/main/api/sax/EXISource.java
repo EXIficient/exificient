@@ -35,7 +35,7 @@ import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
  * Acts as an holder for SAX-style Source.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

@@ -65,7 +65,7 @@ import com.siemens.ct.exi.main.util.NoEntityResolver;
  * Parses EXI stream to SAX events.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

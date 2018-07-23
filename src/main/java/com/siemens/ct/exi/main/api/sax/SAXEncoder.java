@@ -46,7 +46,7 @@ import com.siemens.ct.exi.core.values.StringValue;
  * Serializes SAX events to EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

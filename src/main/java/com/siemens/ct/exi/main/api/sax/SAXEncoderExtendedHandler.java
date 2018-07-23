@@ -36,7 +36,7 @@ import com.siemens.ct.exi.core.util.xml.QNameUtilities;
  * Serializes SAX events (also entity references and such) to EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

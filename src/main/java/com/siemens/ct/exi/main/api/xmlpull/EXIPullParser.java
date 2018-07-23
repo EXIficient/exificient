@@ -26,7 +26,7 @@ package com.siemens.ct.exi.main.api.xmlpull;
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
 
  */

@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
  * Builds a <code>DocumentFragment</code> for a given EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

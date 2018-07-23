@@ -44,7 +44,7 @@ import com.siemens.ct.exi.main.api.sax.SAXFactory;
  * Builds a <code>Document</code> for a given EXI stream.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

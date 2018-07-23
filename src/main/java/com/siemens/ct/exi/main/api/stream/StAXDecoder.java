@@ -54,7 +54,7 @@ import com.siemens.ct.exi.main.helpers.DefaultSchemaIdResolver;
  * De-Serializes EXI to StAX
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

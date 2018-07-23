@@ -33,7 +33,7 @@ import javax.xml.stream.events.XMLEvent;
 /**
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 

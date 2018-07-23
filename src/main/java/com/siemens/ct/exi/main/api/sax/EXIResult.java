@@ -36,7 +36,7 @@ import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
  * Acts as an holder for a transformation Result.
  * 
  * @author Daniel.Peintner.EXT@siemens.com
- * @author Joerg.Heuer@siemens.com
+ * @author Richard.Kuntschke@siemens.com
  * 
  */
 
