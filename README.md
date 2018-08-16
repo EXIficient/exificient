@@ -136,7 +136,7 @@ Note: in general all options are set in a way that a small EXI stream is produce
 |------------------------|---------------------------------------------------------------------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | blockSize              | Specifies the block size used for EXI compression                   | 1,000,000 | The default blockSize is intentionally large but can be reduced                                                                                                                            |
 | valueMaxLength         | Specifies the total capacity of value partitions in a string table  | unbounded | Reducing the number reduces the possible required memory usage                                                                                                                             |
-| valuePartitionCapacity | Specifies the total capacity of value partitions in a string table  | unbounded | Often strings larger strings (> 16 characters) are unlikely to be a string table hit. Hence setting a lower value may reduce memory usage and speed up processing for no string table hits |
+| valuePartitionCapacity | Specifies the total capacity of value partitions in a string table  | unbounded | Often larger strings (> 16 characters) are unlikely to be a string table hit. Hence setting a lower value may reduce memory usage and speed up processing for no string table hits |
 
 
 | com.siemens.ct.exi.core.FidelityOptions |                                                                 |         |
