@@ -52,6 +52,9 @@ public class IssueTestCase extends AbstractTestCase {
 	// https://github.com/EXIficient/exificient/issues/20
 	public void testIssue20() throws Exception {
 		EXIFactory exiFactory = DefaultEXIFactory.newInstance();
+		exiFactory.setValueMaxLength(16);
+		// exiFactory.setCodingMode(CodingMode.COMPRESSION);
+
 		String sxmlIssue20 = "./data/issues/issue20/treebank_e.xml";
 		
 		File fEXI = File.createTempFile("testIssue20", ".exi");
@@ -69,7 +72,7 @@ public class IssueTestCase extends AbstractTestCase {
 			xmlReader.parse(sxmlIssue20); // parse XML input
 			osEXI.close();
 			long endEncode = System.currentTimeMillis();
-			System.out.println("Encode time for " + sxmlIssue20 + " is " + (endEncode-startEncode) + "ms");
+			System.out.println("Encode time for " + sxmlIssue20 + " is " + (endEncode-startEncode) + "ms to " + fEXI.length() +"Bytes, " + System.getProperty("java.version"));
 		}
 		
 		// decode
@@ -85,8 +88,6 @@ public class IssueTestCase extends AbstractTestCase {
 			long endDecode = System.currentTimeMillis();
 			System.out.println("Decode time for " + sxmlIssue20 + " is " + (endDecode-startDecode) + "ms");
 		}
-
-		
 	}
 	
 	
