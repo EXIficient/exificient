@@ -247,6 +247,8 @@ public class SAXDecoder implements XMLReader {
 
 		} catch (EXIException e) {
 			throw new SAXException("EXI " + e.getLocalizedMessage(), e);
+		} finally {
+			decoder = null;
 		}
 	}
 
