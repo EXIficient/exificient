@@ -74,8 +74,6 @@ public class SAXDecoder implements XMLReader {
 	protected EXIFactory noOptionsFactory;
 	protected EXIStreamDecoder exiStream;
 
-	protected EXIBodyDecoder decoder;
-
 	protected ContentHandler contentHandler;
 	protected DTDHandler dtdHandler;
 	protected LexicalHandler lexicalHandler;
@@ -232,6 +230,7 @@ public class SAXDecoder implements XMLReader {
 				throw new EXIException("No valid input source " + is);
 			}
 
+			EXIBodyDecoder decoder;
 			if (exiBodyOnly) {
 				// no EXI header
 				decoder = exiStream.getBodyOnlyDecoder(is);
@@ -243,16 +242,14 @@ public class SAXDecoder implements XMLReader {
 			}
 
 			// process EXI events
-			parseEXIEvents();
+			parseEXIEvents(decoder);
 
 		} catch (EXIException e) {
 			throw new SAXException("EXI " + e.getLocalizedMessage(), e);
-		} finally {
-			decoder = null;
 		}
 	}
 
-	protected void parseEXIEvents() throws IOException, EXIException,
+	protected void parseEXIEvents(EXIBodyDecoder decoder) throws IOException, EXIException,
 			SAXException {
 
 		EventType eventType;
@@ -275,10 +272,10 @@ public class SAXDecoder implements XMLReader {
 				break;
 			/* ATTRIBUTES */
 			case ATTRIBUTE_XSI_NIL:
-				handleAttribute(decoder.decodeAttributeXsiNil(), attributes);
+				handleAttribute(decoder, decoder.decodeAttributeXsiNil(), attributes);
 				break;
 			case ATTRIBUTE_XSI_TYPE:
-				handleAttribute(decoder.decodeAttributeXsiType(), attributes);
+				handleAttribute(decoder, decoder.decodeAttributeXsiType(), attributes);
 				break;
 			case ATTRIBUTE:
 			case ATTRIBUTE_NS:
@@ -286,7 +283,7 @@ public class SAXDecoder implements XMLReader {
 			case ATTRIBUTE_GENERIC_UNDECLARED:
 			case ATTRIBUTE_INVALID_VALUE:
 			case ATTRIBUTE_ANY_INVALID_VALUE:
-				handleAttribute(decoder.decodeAttribute(), attributes);
+				handleAttribute(decoder, decoder.decodeAttribute(), attributes);
 				break;
 			/* NAMESPACE DECLARATION */
 			case NAMESPACE_DECLARATION:
@@ -305,7 +302,7 @@ public class SAXDecoder implements XMLReader {
 			case START_ELEMENT_GENERIC_UNDECLARED:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 				}
 				// defer start element and keep on processing
 				deferredStartElement = decoder.decodeStartElement();
@@ -317,7 +314,7 @@ public class SAXDecoder implements XMLReader {
 			case END_ELEMENT_UNDECLARED:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -354,7 +351,7 @@ public class SAXDecoder implements XMLReader {
 			case CHARACTERS_GENERIC_UNDECLARED:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -423,7 +420,7 @@ public class SAXDecoder implements XMLReader {
 			case DOC_TYPE:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -432,7 +429,7 @@ public class SAXDecoder implements XMLReader {
 			case ENTITY_REFERENCE:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -441,7 +438,7 @@ public class SAXDecoder implements XMLReader {
 			case COMMENT:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -450,7 +447,7 @@ public class SAXDecoder implements XMLReader {
 			case PROCESSING_INSTRUCTION:
 				// handle deferred element if any first
 				if (isStartElementDeferred) {
-					handleDeferredStartElement(deferredStartElement, attributes);
+					handleDeferredStartElement(decoder, deferredStartElement, attributes);
 					isStartElementDeferred = false;
 				}
 
@@ -468,7 +465,7 @@ public class SAXDecoder implements XMLReader {
 	/*
 	 * SAX Content Handler
 	 */
-	protected void handleDeferredStartElement(
+	protected void handleDeferredStartElement(EXIBodyDecoder decoder,
 			QNameContext deferredStartElement, final AttributesImpl attributes)
 			throws SAXException, IOException, EXIException {
 
@@ -523,7 +520,7 @@ public class SAXDecoder implements XMLReader {
 		}
 	}
 
-	protected void handleAttribute(final QNameContext atQName,
+	protected void handleAttribute(EXIBodyDecoder decoder, final QNameContext atQName,
 			final AttributesImpl attributes) throws SAXException, IOException,
 			EXIException {
 		Value val = decoder.getAttributeValue();
