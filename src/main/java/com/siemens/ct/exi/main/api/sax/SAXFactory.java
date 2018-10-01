@@ -8,7 +8,7 @@ import com.siemens.ct.exi.core.exceptions.EXIException;
 
 public class SAXFactory {
 
-	final EXIFactory exiFactory;
+	protected final EXIFactory exiFactory;
 
 	public SAXFactory(EXIFactory exiFactory) {
 		this.exiFactory = exiFactory;
