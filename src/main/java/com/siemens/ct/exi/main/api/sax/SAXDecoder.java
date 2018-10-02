@@ -82,8 +82,8 @@ public class SAXDecoder implements XMLReader {
 
 	protected static final String ATTRIBUTE_TYPE = "CDATA";
 
-	final static int DEFAULT_CHAR_BUFFER_SIZE = 4096;
-	protected char[] cbuffer = new char[DEFAULT_CHAR_BUFFER_SIZE];
+	protected static final int DEFAULT_CHAR_BUFFER_SIZE = 4096;
+	protected char[] cbuffer;
 
 	protected boolean namespaces = true;
 	protected boolean namespacePrefixes = false;
@@ -92,7 +92,7 @@ public class SAXDecoder implements XMLReader {
 	/* Helper for building strings */
 	protected StringBuilder sbHelper;
 
-	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
+	protected SAXDecoder(EXIFactory noOptionsFactory, char[] cbuffer) throws EXIException {
 		this.noOptionsFactory = noOptionsFactory;
 		if (noOptionsFactory.getSchemaIdResolver() == null) {
 			// set default schemaId resolver
@@ -111,6 +111,11 @@ public class SAXDecoder implements XMLReader {
 				FidelityOptions.FEATURE_PREFIX)) {
 			namespacePrefixes = true;
 		}
+		this.cbuffer = cbuffer;
+	}
+
+	public SAXDecoder(EXIFactory noOptionsFactory) throws EXIException {
+		this(noOptionsFactory, new char[DEFAULT_CHAR_BUFFER_SIZE]);
 	}
 
 	/*
@@ -508,7 +513,7 @@ public class SAXDecoder implements XMLReader {
 		attributes.clear();
 	}
 
-	private final void ensureBufferCapacity(int reqSize) {
+	protected void ensureBufferCapacity(int reqSize) {
 		if (reqSize > cbuffer.length) {
 			int newSize = cbuffer.length;
 
