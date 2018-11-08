@@ -20,14 +20,14 @@ The EXI format is a very compact representation for the Extensible Markup Langua
 <dependency>
    <groupId>com.siemens.ct.exi</groupId>
    <artifactId>exificient</artifactId>
-   <version>1.0.1</version>
+   <version>1.0.4</version>
 </dependency>
 ```
 
 ## Requirements
 
 * Java 1.5 or higher
-* Xerces2 Java Parser 2.9.11 or higher for schema-informed mode
+* Xerces2 Java Parser
 
 
 ## Library - Code Sample

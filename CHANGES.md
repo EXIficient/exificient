@@ -2,6 +2,10 @@
 
 EXIficient - open source implementation of the W3C [Efficient XML Interchange](http://www.w3.org/TR/exi/) (EXI) format specification.
 
+## Changes from version 1.0.1
+* Bump xerces to 2.12.0
+* Allow SAXDecoder.cbuffer to be managed by subclasses 
+
 ## Changes from version 1.0.0
 * Fix StAX namespace issue
 

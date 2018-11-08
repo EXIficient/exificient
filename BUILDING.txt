@@ -44,6 +44,6 @@ Apache Maven Dependency Information
 <dependency>
    <groupId>com.siemens.ct.exi</groupId>
    <artifactId>exificient</artifactId>
-   <version>1.0.1</version>
+   <version>1.0.4</version>
 </dependency>
 
