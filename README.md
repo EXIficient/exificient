@@ -4,7 +4,7 @@ EXIficient - open source implementation of the W3C [Efficient XML Interchange](h
 
 The EXI format is a very compact representation for the Extensible Markup Language (XML) Information Set that is intended to simultaneously optimize performance and the utilization of computational resources.
 
-[![Build Status](https://travis-ci.org/EXIficient/exificient.svg?branch=master)](https://travis-ci.org/EXIficient/exificient)
+[![Java CI](https://github.com/EXIficient/exificient/actions/workflows/java-ci.yml/badge.svg)](https://github.com/EXIficient/exificient/actions/workflows/java-ci.yml)
 
 ## API support
 
