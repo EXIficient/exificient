@@ -406,15 +406,34 @@ public class StAXDecoder implements XMLStreamReader
 	}
 
 	public String getElementText() throws XMLStreamException {
-		// Reads the content of a text-only element,
-		// an exception is thrown if this is not a text-only element.
-		switch (getEventType()) {
-		case XMLStreamConstants.CHARACTERS:
-		case XMLStreamConstants.SPACE:
-			return characters.toString();
-		default:
-			throw new RuntimeException("Unexpected event, id=" + getEventType());
+		// see https://docs.oracle.com/javase/8/docs/api/javax/xml/stream/XMLStreamReader.html#getElementText--
+		if(getEventType() != XMLStreamConstants.START_ELEMENT) {
+			throw new XMLStreamException(
+					"parser must be on START_ELEMENT to read next text", getLocation());
 		}
+		int eventType = next();
+		StringBuffer buf = new StringBuffer();
+		while(eventType != XMLStreamConstants.END_ELEMENT ) {
+			if(eventType == XMLStreamConstants.CHARACTERS
+					|| eventType == XMLStreamConstants.CDATA
+					|| eventType == XMLStreamConstants.SPACE
+					|| eventType == XMLStreamConstants.ENTITY_REFERENCE) {
+				buf.append(getText());
+			} else if(eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
+					|| eventType == XMLStreamConstants.COMMENT) {
+				// skipping
+			} else if(eventType == XMLStreamConstants.END_DOCUMENT) {
+				throw new XMLStreamException("unexpected end of document when reading element text content");
+			} else if(eventType == XMLStreamConstants.START_ELEMENT) {
+				throw new XMLStreamException(
+						"element text content may not contain START_ELEMENT", getLocation());
+			} else {
+				throw new XMLStreamException(
+						"Unexpected event type "+eventType, getLocation());
+			}
+			eventType = next();
+		}
+		return buf.toString();
 	}
 
 	public String getEncoding() {
