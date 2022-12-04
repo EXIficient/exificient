@@ -102,6 +102,8 @@ public class EXIficientCMD {
 	public static final String XSD_SCHEMA = "-" + SchemaOption.xsdSchema;
 	public static final String SCHEMA = "-" + SchemaOption.schema;
 
+	public static final String SCHEMA_ID = "-schemaId";
+	public static final String BYTE_ID = "-byteId";
 	public static final String OPTION_STRICT = "-strict";
 	public static final String PRESERVE_COMMENTS = "-preserveComments";
 	public static final String PRESERVE_LEXICAL_VALUES = "-preserveLexicalValues";
@@ -286,7 +288,14 @@ public class EXIficientCMD {
 				schemaLocation = args[indexArgument];
 			}
 			// ### OPTIONS
-			else if (OPTION_STRICT.equalsIgnoreCase(argument)) {
+			else if (SCHEMA_ID.equalsIgnoreCase(argument)) {
+        indexArgument++;
+				exiFactory.setSchemaId(args[indexArgument]);
+      } else if (BYTE_ID.equalsIgnoreCase(argument)) {
+        indexArgument++;
+        int byteVal = Integer.valueOf(args[indexArgument]);
+        exiFactory.setByteId(byteVal);
+      } else if (OPTION_STRICT.equalsIgnoreCase(argument)) {
 				wStrict = true;
 				FidelityOptions fo = FidelityOptions.createStrict();
 				exiFactory.setFidelityOptions(fo);
