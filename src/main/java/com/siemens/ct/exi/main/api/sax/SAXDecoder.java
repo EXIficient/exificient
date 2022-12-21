@@ -251,6 +251,10 @@ public class SAXDecoder implements XMLReader {
 
 		} catch (EXIException e) {
 			throw new SAXException("EXI " + e.getLocalizedMessage(), e);
+		} catch (IllegalArgumentException i) {
+			// This typically occurs when decoding a non-EXI file and we
+			// attempt to decode a byte that is not a valid Unicode code point
+			throw new SAXException("Error decoding EXI file: " + i.getLocalizedMessage());
 		}
 	}
 
