@@ -28,8 +28,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.Attributes;
@@ -48,6 +54,7 @@ import com.siemens.ct.exi.core.grammars.Grammars;
 import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
 import com.siemens.ct.exi.grammars.GrammarFactory;
 import com.siemens.ct.exi.main.api.sax.EXIResult;
+import com.siemens.ct.exi.main.api.sax.EXISource;
 import com.siemens.ct.exi.main.api.sax.SAXFactory;
 
 public class SAXDecoderTestCase extends XMLTestCase {
@@ -487,6 +494,17 @@ public class SAXDecoderTestCase extends XMLTestCase {
 				CodingMode.COMPRESSION);
 	}
 
+
+	public void testEncodeSchemaAwareDecodeUnaware() throws Exception {
+		boolean namespacePrefixes = true;
+		boolean preservePrefixes = true;
+
+		String xsdLocation = "./data/bugs/gh33/Book2.dfdl.xsd";
+		String xmlLocation = "./data/bugs/gh33/test_Book2.expected.xml";
+
+		_testDecodeError(xmlLocation, xsdLocation);
+	}
+
 	protected void _test(String xml, String xsdLoc, TestContentHandler tch,
 			boolean namespacePrefixes, boolean preservePrefixes,
 			CodingMode codingMode) throws SAXException, IOException,
@@ -537,4 +555,46 @@ public class SAXDecoderTestCase extends XMLTestCase {
 		}
 	}
 
+	public void _testDecodeError(String xmlPath, String xsdLoc)
+			throws SAXException, IOException, EXIException, TransformerException {
+
+		try {
+			EXIFactory factory = DefaultEXIFactory.newInstance();
+
+			if (xsdLoc != null) {
+				GrammarFactory gf = GrammarFactory.newInstance();
+				Grammars g = gf.createGrammars(xsdLoc);
+				factory.setGrammars(g);
+			}
+
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+			// write EXI stream
+			{
+				XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+
+				EXIResult exiResult = new EXIResult(factory);
+				exiResult.setOutputStream(os);
+				xmlReader.setContentHandler(exiResult.getHandler());
+
+				xmlReader.parse(new InputSource(new FileReader(xmlPath)));
+			}
+
+			// decode EXI stream
+			os.flush();
+			InputStream is = new ByteArrayInputStream(os.toByteArray());
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			EXISource exiSource = new EXISource(DefaultEXIFactory.newInstance());
+			exiSource.setInputSource(new InputSource(is));
+			StreamResult res = new StreamResult(bos);
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer transformer = tf.newTransformer();
+			XMLReader exiReader = new SAXFactory(DefaultEXIFactory.newInstance()).createEXIReader();
+			transformer.transform(exiSource, res);
+		} catch (TransformerException t) {
+			// Do nothing, TransformerException is expected
+		} catch (Exception e) {
+			fail("Caught unexpected exception: " + e.getMessage());
+		}
+	}
 }
