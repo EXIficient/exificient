@@ -186,14 +186,14 @@
         <configuration>
           <overview>${basedir}/src/main/java/overview.html</overview>
         </configuration>
-        <executions>
+        <!-- <executions>
           <execution>
             <id>attach-javadocs</id>
             <goals>
               <goal>jar</goal>
             </goals>
           </execution>
-        </executions>
+        </executions> -->
       </plugin>
       <plugin>
         <!-- without it Travis seems to pick Xmx32m which is not a lot -->
