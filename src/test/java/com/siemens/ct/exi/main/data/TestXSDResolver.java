@@ -36,6 +36,12 @@ public class TestXSDResolver implements
 			XMLInputSource xsdSourceTypes = new XMLInputSource(publicId,
 					systemId, baseSystemId, isTypes, encoding);
 			return xsdSourceTypes;
+		} else if ("http://www.w3.org/2001/XMLSchema.xsd".equals(literalSystemId)) {
+			InputStream isTypes = new FileInputStream("./data/W3C/xsd/"
+					+ "XMLSchema.xsd");
+			XMLInputSource xsdSourceTypes = new XMLInputSource(null,
+					null, null, isTypes, null);
+			return xsdSourceTypes;
 		} else if ("http://www.w3.org/2001/xml.xsd".equals(literalSystemId)) {
 			InputStream isTypes = new FileInputStream("./data/W3C/xsd/"
 					+ "xml.xsd");
