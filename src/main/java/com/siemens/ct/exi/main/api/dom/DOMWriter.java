@@ -26,6 +26,8 @@ package com.siemens.ct.exi.main.api.dom;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
@@ -53,18 +55,22 @@ import com.siemens.ct.exi.core.values.StringValue;
  */
 
 public class DOMWriter {
+	
+	/** The logger used in this class. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(DOMWriter.class);
+
 	protected EXIFactory factory;
 	protected EXIStreamEncoder exiStream;
 	protected EXIBodyEncoder exiBody;
 
 	// attributes
-	private AttributeList exiAttributes;
+	private final AttributeList exiAttributes;
 
 	protected boolean preserveWhitespaces;
 	protected boolean preserveComments;
 	protected boolean preservePIs;
 
-	public DOMWriter(EXIFactory factory) throws EXIException {
+	public DOMWriter(final EXIFactory factory) throws EXIException {
 		this.factory = factory;
 
 		this.exiStream = factory.createEXIStreamEncoder();
@@ -80,11 +86,11 @@ public class DOMWriter {
 				FidelityOptions.FEATURE_PI);
 	}
 
-	public void setOutput(OutputStream os) throws EXIException, IOException {
+	public void setOutput(final OutputStream os) throws EXIException, IOException {
 		exiBody = exiStream.encodeHeader(os);
 	}
 
-	public void encode(Document doc) throws EXIException, IOException {
+	public void encode(final Document doc) throws EXIException, IOException {
 		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
 		}
@@ -99,7 +105,7 @@ public class DOMWriter {
 		exiBody.flush();
 	}
 
-	public void encodeFragment(DocumentFragment docFragment)
+	public void encodeFragment(final DocumentFragment docFragment)
 			throws EXIException, IOException {
 		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
@@ -111,7 +117,7 @@ public class DOMWriter {
 		exiBody.flush();
 	}
 
-	public void encode(Node n) throws EXIException, IOException {
+	public void encode(final Node n) throws EXIException, IOException {
 		if (n.getNodeType() == Node.DOCUMENT_NODE) {
 			encode((Document) n);
 		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE) {
@@ -124,7 +130,7 @@ public class DOMWriter {
 		}
 	}
 
-	protected void encodeNode(Node root) throws EXIException, IOException {
+	protected void encodeNode(final Node root) throws EXIException, IOException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
 		// start element
@@ -179,7 +185,7 @@ public class DOMWriter {
 		exiBody.encodeEndElement();
 	}
 
-	protected void encodeChildNodes(NodeList children) throws EXIException,
+	protected void encodeChildNodes(final NodeList children) throws EXIException,
 			IOException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
@@ -227,7 +233,7 @@ public class DOMWriter {
 				}
 				break;
 			default:
-				System.err.println("[WARNING] Unhandled DOM NodeType: "
+				LOGGER.error("[WARNING] Unhandled DOM NodeType: "
 						+ n.getNodeType());
 				// throw new EXIException("Unknown NodeType? " +
 				// n.getNodeType());
