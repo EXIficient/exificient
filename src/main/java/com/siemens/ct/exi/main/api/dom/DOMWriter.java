@@ -64,13 +64,13 @@ public class DOMWriter {
 	protected EXIBodyEncoder exiBody;
 
 	// attributes
-	private final AttributeList exiAttributes;
+	private AttributeList exiAttributes;
 
 	protected boolean preserveWhitespaces;
 	protected boolean preserveComments;
 	protected boolean preservePIs;
 
-	public DOMWriter(final EXIFactory factory) throws EXIException {
+	public DOMWriter(EXIFactory factory) throws EXIException {
 		this.factory = factory;
 
 		this.exiStream = factory.createEXIStreamEncoder();
@@ -86,11 +86,11 @@ public class DOMWriter {
 				FidelityOptions.FEATURE_PI);
 	}
 
-	public void setOutput(final OutputStream os) throws EXIException, IOException {
+	public void setOutput(OutputStream os) throws EXIException, IOException {
 		exiBody = exiStream.encodeHeader(os);
 	}
 
-	public void encode(final Document doc) throws EXIException, IOException {
+	public void encode(Document doc) throws EXIException, IOException {
 		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
 		}
@@ -105,7 +105,7 @@ public class DOMWriter {
 		exiBody.flush();
 	}
 
-	public void encodeFragment(final DocumentFragment docFragment)
+	public void encodeFragment(DocumentFragment docFragment)
 			throws EXIException, IOException {
 		if (exiBody == null) {
 			throw new EXIException("Please specify output stream");
@@ -117,7 +117,7 @@ public class DOMWriter {
 		exiBody.flush();
 	}
 
-	public void encode(final Node n) throws EXIException, IOException {
+	public void encode(Node n) throws EXIException, IOException {
 		if (n.getNodeType() == Node.DOCUMENT_NODE) {
 			encode((Document) n);
 		} else if (n.getNodeType() == Node.DOCUMENT_FRAGMENT_NODE) {
@@ -130,7 +130,7 @@ public class DOMWriter {
 		}
 	}
 
-	protected void encodeNode(final Node root) throws EXIException, IOException {
+	protected void encodeNode(Node root) throws EXIException, IOException {
 		assert (root.getNodeType() == Node.ELEMENT_NODE);
 
 		// start element
@@ -185,7 +185,7 @@ public class DOMWriter {
 		exiBody.encodeEndElement();
 	}
 
-	protected void encodeChildNodes(final NodeList children) throws EXIException,
+	protected void encodeChildNodes(NodeList children) throws EXIException,
 			IOException {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node n = children.item(i);
