@@ -46,6 +46,8 @@ import javax.xml.stream.events.ProcessingInstruction;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.siemens.ct.exi.core.Constants;
@@ -69,6 +71,9 @@ import com.siemens.ct.exi.main.util.SimpleDocTypeParser;
  */
 
 public class StAXEncoder implements XMLStreamWriter {
+
+	/** The logger used in this class. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(StAXEncoder.class);
 
 	protected EXIBodyEncoder encoder;
 	protected EXIStreamEncoder exiStream;
@@ -192,7 +197,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				this.writeEntityRef(er.getName());
 				break;
 			default:
-				System.out.println("StAX Event '" + event + "' not supported!");
+				LOGGER.warn("StAX Event '{}' not supported!", event);
 			}
 		}
 
@@ -271,7 +276,7 @@ public class StAXEncoder implements XMLStreamWriter {
 				// TODO ER
 				break;
 			default:
-				System.out.println("Event '" + event + "' not supported!");
+				LOGGER.warn("Event '{}' not supported!", event);
 			}
 		}
 
