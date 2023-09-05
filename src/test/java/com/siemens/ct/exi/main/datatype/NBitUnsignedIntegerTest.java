@@ -57,11 +57,11 @@ public class NBitUnsignedIntegerTest extends AbstractTestCase {
 
 	/**
 	 * Returns the least number of bits that is needed to represent the int
-	 * <param>n</param>. Returns 1 if <param>n</param> is 0.
+	 * <code>n</code>. Returns 1 if <code>n</code> is 0.
 	 * 
 	 * @param n
-	 *            Integer value. If <param>n</param> is negative it is
-	 *            interpreted as a unsigned int. Thus, for every n < 0 we have
+	 *            Integer value. If <code>n</code> is negative it is
+	 *            interpreted as a unsigned int. Thus, for every n &lt; 0 we have
 	 *            log2Ceil(n) = 32.
 	 * 
 	 */
