@@ -26,6 +26,8 @@ package com.siemens.ct.exi.main.api.dom;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.DocumentType;
@@ -53,6 +55,10 @@ import com.siemens.ct.exi.core.values.StringValue;
  */
 
 public class DOMWriter {
+	
+	/** The logger used in this class. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(DOMWriter.class);
+
 	protected EXIFactory factory;
 	protected EXIStreamEncoder exiStream;
 	protected EXIBodyEncoder exiBody;
@@ -227,7 +233,7 @@ public class DOMWriter {
 				}
 				break;
 			default:
-				System.err.println("[WARNING] Unhandled DOM NodeType: "
+				LOGGER.error("[WARNING] Unhandled DOM NodeType: "
 						+ n.getNodeType());
 				// throw new EXIException("Unknown NodeType? " +
 				// n.getNodeType());
