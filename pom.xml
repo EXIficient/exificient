@@ -196,6 +196,7 @@
         <!--2.3.2-->
         <configuration>
           <overview>${basedir}/src/main/java/overview.html</overview>
+          <additionalJOption>-Xdoclint:none</additionalJOption>
         </configuration>
         <!-- <executions>
           <execution>
