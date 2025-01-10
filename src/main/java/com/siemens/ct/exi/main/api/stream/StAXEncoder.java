@@ -626,7 +626,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void writeEmptyElement(String prefix, String localName,
 			String namespaceURI) throws XMLStreamException {
 		this.writeStartElement(prefix, localName, namespaceURI);
-		// Note: we cannot close immediate since attributes might follow
+		// Note: we cannot close the element immediately since attributes might follow
 		// this.writeEndElement();
 		emptyElement = true;
 	}
