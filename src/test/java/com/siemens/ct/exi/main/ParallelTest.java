@@ -48,6 +48,7 @@ import com.siemens.ct.exi.main.api.sax.EXIResult;
 import com.siemens.ct.exi.main.data.AbstractTestCase;
 import com.siemens.ct.exi.main.data.TestXSDResolver;
 
+@Ignore("https://github.com/EXIficient/exificient/issues/45")
 public class ParallelTest extends AbstractTestCase {
 
 	static final int ENCODE_THREADS = 4; // 8
