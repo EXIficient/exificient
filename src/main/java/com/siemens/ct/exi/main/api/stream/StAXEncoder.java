@@ -85,6 +85,9 @@ public class StAXEncoder implements XMLStreamWriter {
 	protected final boolean preserveComment;
 	protected final boolean preservePI;
 
+	// indicate whether an "empty" element was started
+	protected boolean emptyElement;
+
 	// AT or NS Events pending
 	protected boolean pendingATs;
 
@@ -115,6 +118,7 @@ public class StAXEncoder implements XMLStreamWriter {
 	}
 
 	protected void init() {
+		emptyElement = false;
 		pendingATs = false;
 		exiAttributes.clear();
 		nsContext.reset();
@@ -289,8 +293,12 @@ public class StAXEncoder implements XMLStreamWriter {
 			// encode NS decls and attributes
 			encoder.encodeAttributeList(exiAttributes);
 			exiAttributes.clear();
-
 			pendingATs = false;
+
+			if (emptyElement) {
+				encoder.encodeEndElement();
+				emptyElement = false;
+			}
 		}
 	}
 
@@ -618,7 +626,9 @@ public class StAXEncoder implements XMLStreamWriter {
 	public void writeEmptyElement(String prefix, String localName,
 			String namespaceURI) throws XMLStreamException {
 		this.writeStartElement(prefix, localName, namespaceURI);
-		this.writeEndElement();
+		// Note: we cannot close the element immediately since attributes might follow
+		// this.writeEndElement();
+		emptyElement = true;
 	}
 
 	public void writeStartDocument(String version) throws XMLStreamException {

@@ -527,6 +527,96 @@ public class StAXCoderTestCase extends AbstractTestCase {
 		}
 	}
 
+
+	// https://github.com/EXIficient/exificient/issues/43
+	public void testEmptyElement() throws Exception {
+		// <head>
+		//   <link rel="stylesheet" href="css/xmlwriter01.css" />
+		//   <title>myTitle</title>
+		// </head>
+
+		EXIFactory ef = DefaultEXIFactory.newInstance();
+
+		// Version A: empty Element with SE ... EE
+		{
+			StAXEncoder staxEncoder = new StAXEncoder(ef);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			staxEncoder.setOutputStream(baos);
+
+			staxEncoder.writeStartDocument();
+			staxEncoder.writeStartElement("head");
+			staxEncoder.writeStartElement("link");
+			staxEncoder.writeAttribute("rel", "stylesheet");
+			staxEncoder.writeAttribute("href", "css/xmlwriter01.css");
+			staxEncoder.writeEndElement();
+			staxEncoder.writeStartElement("title");
+			staxEncoder.writeCharacters("myTitle");
+			staxEncoder.writeEndElement();
+			staxEncoder.writeEndElement();
+			staxEncoder.writeEndDocument();
+
+			// decode
+			StAXDecoder staxDecoder = new StAXDecoder(ef);
+			staxDecoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+			_checkDecodeEmptyElement(staxDecoder);
+		}
+
+
+		// Version B: using writeEmptyElement
+		{
+			StAXEncoder staxEncoder = new StAXEncoder(ef);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			staxEncoder.setOutputStream(baos);
+
+			staxEncoder.writeStartDocument();
+			staxEncoder.writeStartElement("head");
+			staxEncoder.writeEmptyElement("link");
+			staxEncoder.writeAttribute("rel", "stylesheet");
+			staxEncoder.writeAttribute("href", "css/xmlwriter01.css");
+			staxEncoder.writeStartElement("title");
+			staxEncoder.writeCharacters("myTitle");
+			staxEncoder.writeEndElement();
+			staxEncoder.writeEndElement();
+			staxEncoder.writeEndDocument();
+
+			// decode
+			StAXDecoder staxDecoder = new StAXDecoder(ef);
+			staxDecoder.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
+			_checkDecodeEmptyElement(staxDecoder);
+		}
+	}
+
+	void _checkDecodeEmptyElement(StAXDecoder staxDecoder) throws Exception {
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.START_ELEMENT, staxDecoder.next());
+		assertEquals("head", staxDecoder.getName().getLocalPart());
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.START_ELEMENT, staxDecoder.next());
+		assertEquals("link", staxDecoder.getName().getLocalPart());
+
+		assertEquals(2, staxDecoder.getAttributeCount());
+		assertEquals("rel", staxDecoder.getAttributeName(0).getLocalPart());
+		assertEquals("stylesheet", staxDecoder.getAttributeValue(0));
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.END_ELEMENT, staxDecoder.next());
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.START_ELEMENT, staxDecoder.next());
+		assertEquals("title", staxDecoder.getName().getLocalPart());
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.CHARACTERS, staxDecoder.next());
+		assertEquals("myTitle", new String(staxDecoder.getTextCharacters()));
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.END_ELEMENT, staxDecoder.next());
+
+		assertTrue(staxDecoder.hasNext());
+		assertEquals(XMLStreamConstants.END_ELEMENT, staxDecoder.next());
+	}
+
 	public static void main(String[] args) throws Exception {
 
 		StAXCoderTestCase st = new StAXCoderTestCase("StAX");
