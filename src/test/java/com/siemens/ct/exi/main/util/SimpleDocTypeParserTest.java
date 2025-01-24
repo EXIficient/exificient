@@ -93,4 +93,18 @@ public class SimpleDocTypeParserTest extends TestCase {
 				.contains("\"This is a pre-release of the specification.\""));
 	}
 
+	public void testIssue46() throws SAXException, IOException {
+		// https://github.com/EXIficient/exificient/issues/46
+		SimpleDocTypeParser dtdParser = getDtdParser();
+		String dtd = "<!DOCTYPE foo [\n" +
+				"  <!ELEMENT foo ANY >\n" +
+				"<!ENTITY file SYSTEM \"file:./fragment.xml\" >]>";
+		dtdParser.parse(dtd);
+
+		assertTrue("foo".equals(dtdParser.name));
+		assertTrue("".equals(dtdParser.publicID));
+		assertTrue("".equals(dtdParser.systemID));
+		assertTrue(dtdParser.text.equals("<!ELEMENT foo ANY> <!ENTITY file SYSTEM \"file:./fragment.xml\"> "));
+	}
+
 }
