@@ -285,6 +285,11 @@ public class SAXEncoderExtendedHandler extends SAXEncoder {
 
 	public void externalEntityDecl(String name, String publicId, String systemId)
 			throws SAXException {
+		if (preserveDTD) {
+			// e.g. <!ENTITY file SYSTEM "file:./fragment.xml" >
+			String id = publicId == null || publicId.trim().length() > 0 ? "SYSTEM" : publicId;
+			docTypeText += "<!ENTITY " + " " + name + " " + id + " \"" + systemId + "\" > ";
+		}
 	}
 
 }
